@@ -1,0 +1,69 @@
+//----------------------------------------------------------------------------
+template<class TYP>
+G4bool GmParameterList<TYP>::AddParam( const G4String& name, const TYP& val )
+{
+  typename GmParameterList<TYP>::iterator ite = GmParameterList<TYP>::find(name);
+  if( ite != GmParameterList<TYP>::end() ) {
+    (*ite).second.Set( val );
+    return FALSE;
+  } else {
+    (*this)[name] = GmParameter<TYP>(val);
+//  G4cout << "ADD PARAM numb " << size() << G4endl;
+    return TRUE;
+  }
+}
+
+
+//----------------------------------------------------------------------------
+template<class TYP>
+TYP GmParameterList<TYP>::GetValue( const G4String& parname, G4bool& parExists )
+{
+//G4cout << "enter  GmParameterList<TYP>::GetValue " << parname << " exists " << parExists << G4endl;
+
+  typename GmParameterList<TYP>::const_iterator ite = GmParameterList<TYP>::find(parname);
+/*  typename GmParameterList<TYP>::const_iterator itet;
+  G4cout << "PARAM numb " << size() << G4endl;
+  for( itet = begin(); itet != end(); itet++) {
+    G4cout << "PARAM " << (*itet).first << " = " << ((*itet).second)() << G4endl;
+    if( parname == (*itet).first ) G4cout << "!!equal found " << G4endl;
+  }
+*/
+  if( ite == GmParameterList<TYP>::end() ) {
+    parExists = FALSE;
+    TYP typ = TYP();
+//G4cout << "  GmParameterList<TYP>::GetValue " << parname << " exists " << parExists << G4endl;
+    return typ;
+  } else {
+    parExists = TRUE;
+// G4cout << "  GmParameterList<TYP>::GetValue " << parname << " exists " << parExists << " = " << ((*ite).second)() << G4endl;
+    return ((*ite).second)();
+  }
+}
+
+    
+//----------------------------------------------------------------------------
+template<class TYP>
+void GmParameterList<TYP>::DumpList( const G4String& type, std::ostream& out )
+{
+
+  out << "PARAMETER DECLARED IN COMMAND FILE  of TYPE : " << type << G4endl;
+  typename GmParameterList<TYP>::const_iterator itet;  
+  for( itet = this->begin(); itet != this->end(); itet++) {
+    G4cout << "PARAM " << (*itet).first << " = " << ((*itet).second)() << G4endl;
+  }
+	
+}	
+   
+ 
+//----------------------------------------------------------------------------
+template<class TYP>
+void GmParameterList<TYP>::DumpListNoValue( const G4String& type, std::ostream& out )
+{
+
+  out << "PARAMETER DECLARED IN COMMAND FILE  of TYPE : " << type << G4endl;
+  typename GmParameterList<TYP>::const_iterator itet;  
+  for( itet = this->begin(); itet != this->end(); itet++) {
+    G4cout << "PARAM " << (*itet).first << " = " << G4endl;
+  }
+	
+}	

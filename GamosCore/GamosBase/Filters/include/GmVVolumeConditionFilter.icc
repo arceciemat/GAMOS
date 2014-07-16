@@ -1,0 +1,58 @@
+#include "GmVVolumeConditionFilter.hh"
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosUtils/include/GmG4Utils.hh"
+#include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
+#include "G4Track.hh"
+#include "G4LogicalVolume.hh"
+#include "G4LogicalVolumeStore.hh"
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+GmVVolumeConditionFilter<TCond,TVol>::GmVVolumeConditionFilter(G4String name)
+  :GmVFilter(name)
+{
+  theCondition = new TCond;
+  theFilterVolume = new TVol;
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+GmVVolumeConditionFilter<TCond,TVol>::~GmVVolumeConditionFilter()
+{ 
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+G4bool GmVVolumeConditionFilter<TCond,TVol>::AcceptStep(const G4Step* aStep)
+{
+  const G4VTouchable* touch = theCondition->GetTouchableFromStep( aStep );
+  if( touch && theFilterVolume->AcceptTouchable( touch ) ){
+    return TRUE;
+  }
+  return FALSE;
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+G4bool GmVVolumeConditionFilter<TCond,TVol>::AcceptTrack(const G4Track* aTrack)
+{
+  const G4VTouchable* touch = theCondition->GetTouchableFromTrack( aTrack );
+  if( touch && theFilterVolume->AcceptTouchable( touch ) ){
+    return TRUE;
+  }
+  return FALSE;
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+  void GmVVolumeConditionFilter<TCond,TVol>::show()
+{
+  theFilterVolume->show();
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+  void GmVVolumeConditionFilter<TCond,TVol>::SetParameters( std::vector<G4String>& params)
+{
+  theFilterVolume->SetParameters(params);
+}
