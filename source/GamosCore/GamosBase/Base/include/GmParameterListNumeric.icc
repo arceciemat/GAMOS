@@ -1,0 +1,62 @@
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+
+//----------------------------------------------------------------------------
+G4bool GmParameterListNumeric::AddParam( const G4String& name, const G4double& val )
+{
+  GmParameterListNumeric::iterator ite = GmParameterListNumeric::find(name);
+  if( ite != GmParameterListNumeric::end() ) {
+    (*ite).second.Set( val );
+    return FALSE;
+  } else {
+    G4double resolvedVal = GmGenUtils::GetValue( val );
+    (*this)[name] = GmParameter<G4double>(resolvedVal);
+//  G4cout << "ADD PARAM numb " << size() << G4endl;
+    return TRUE;
+  }
+}
+
+
+//----------------------------------------------------------------------------
+G4double GmParameterListNumeric::GmGenUtils::GetValue( const G4String& parname, G4bool& parExists )
+{
+//G4cout << "enter  GmParameterListNumeric::GmGenUtils::GetValue " << parname << " exists " << parExists << G4endl;
+
+  GmParameterListNumeric::const_iterator ite = GmParameterListNumeric::find(parname);
+
+  if( ite == GmParameterListNumeric::end() ) {
+    parExists = FALSE;
+    G4double typ = G4double();
+//G4cout << "  GmParameterListNumeric::GmGenUtils::GetValue " << parname << " exists " << parExists << G4endl;
+    return typ;
+  } else {
+    parExists = TRUE;
+// G4cout << "  GmParameterListNumeric::GmGenUtils::GetValue " << parname << " exists " << parExists << " = " << ((*ite).second)() << G4endl;
+    return ((*ite).second)();
+  }
+}
+
+    
+//----------------------------------------------------------------------------
+void GmParameterListNumeric::DumpList( const G4String& type, std::ostream& out )
+{
+
+  out << "PARAMETER DECLARED IN COMMAND FILE of TYPE : " << type << G4endl;
+  GmParameterListNumeric::const_iterator itet;  
+  for( itet = this->begin(); itet != this->end(); itet++) {
+    G4cout << "PARAM " << (*itet).first << " = " << ((*itet).second)() << G4endl;
+  }
+	
+}	
+   
+ 
+//----------------------------------------------------------------------------
+void GmParameterListNumeric::DumpListNoValue( const G4String& type, std::ostream& out )
+{
+
+  out << "PARAMETER DECLARED IN COMMAND FILE  of TYPE : " << type << G4endl;
+  GmParameterListNumeric::const_iterator itet;  
+  for( itet = this->begin(); itet != this->end(); itet++) {
+    G4cout << "PARAM " << (*itet).first << " = " << G4endl;
+  }
+	
+}

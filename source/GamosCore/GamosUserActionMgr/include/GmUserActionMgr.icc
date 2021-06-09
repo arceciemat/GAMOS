@@ -1,0 +1,13 @@
+ 
+//------------------------------------------------------------------------
+template <class TYP>
+void GmUserActionMgr::CheckIfRepeated( const TYP* actionList, const G4String& name, const G4String& msg, G4bool bAcceptRep )
+{
+  if( actionList->CountActions(name) > 1 ) {
+    if( bAcceptRep ) { 
+      G4cerr << "!WARNING User"+msg+"Action is already in List: " << name << G4endl; 
+    } else {
+      G4Exception("GmUserActionMgr::CheckIfRepeated",G4String("User"+msg+"Action is repeated ").c_str(),FatalErrorInArgument,G4String(" Action name: "+name).c_str() );
+    }
+  }
+}

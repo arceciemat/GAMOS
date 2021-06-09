@@ -1,0 +1,64 @@
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+
+//----------------------------------------------------------------------------
+G4bool GmParameterListVNumeric::AddParam( const G4String& name, const std::vector<G4double>& val )
+{
+  GmParameterListVNumeric::iterator ite = GmParameterListVNumeric::find(name);
+  if( ite != GmParameterListVNumeric::end() ) {
+    (*ite).second.Set( val );
+    return FALSE;
+  } else {
+    std::vector<G4double> resolvedVal;
+    for( unsigned int ii = 0; ii < val.size(); ii++ ){
+      resolvedVal.push_back( GmGenUtils::GetValue( val ) );	 
+    }
+    (*this)[name] = GmParameter<std::vector<G4double> >(resolvedVal);
+//  G4cout << "ADD PARAM numb " << size() << G4endl;
+    return TRUE;
+  }
+}
+
+
+//----------------------------------------------------------------------------
+std::vector<G4double> GmParameterListVNumeric::GmGenUtils::GetValue( const G4String& parname, G4bool& parExists )
+{
+//G4cout << "enter  GmParameterListVNumeric::GmGenUtils::GetValue " << parname << " exists " << parExists << G4endl;
+
+  GmParameterListVNumeric::const_iterator ite = GmParameterListVNumeric::find(parname);
+
+  if( ite == GmParameterListVNumeric::end() ) {
+    parExists = FALSE;
+    std::vector<G4double> typ;
+//G4cout << "  GmParameterListVNumeric::GmGenUtils::GetValue " << parname << " exists " << parExists << G4endl;
+    return typ;
+  } else {
+    parExists = TRUE;
+// G4cout << "  GmParameterListVNumeric::GmGenUtils::GetValue " << parname << " exists " << parExists << " = " << ((*ite).second)() << G4endl;
+    return ((*ite).second)();
+  }
+}
+
+    
+//----------------------------------------------------------------------------
+void GmParameterListVNumeric::DumpList( const G4String& type, std::ostream& out )
+{
+
+  out << "PARAMETER DECLARED IN COMMAND FILE of TYPE : " << type << G4endl;
+  GmParameterListVNumeric::const_iterator itet;  
+  for( itet = this->begin(); itet != this->end(); itet++) {
+    G4cout << "PARAM " << (*itet).first << " = " << ((*itet).second)() << G4endl;
+  }
+	
+}	
+   
+ 
+//----------------------------------------------------------------------------
+void GmParameterListVNumeric::DumpListNoValue( const G4String& type, std::ostream& out )
+{
+  out << "PARAMETER DECLARED IN COMMAND FILE  of TYPE : " << type << G4endl;
+  GmParameterListVNumeric::const_iterator itet;  
+  for( itet = this->begin(); itet != this->end(); itet++) {
+    G4cout << "PARAM " << (*itet).first << " = " << G4endl;
+  }
+	
+}

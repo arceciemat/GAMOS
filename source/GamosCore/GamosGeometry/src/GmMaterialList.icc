@@ -1,0 +1,161 @@
+#include "G4Material.hh"
+#include "G4MaterialTable.hh"
+
+
+//--------------------------------------------------
+
+  G4double a, iz, z, density;
+  G4String matName, symbol;
+  G4int nel;
+  G4int ncomponents,natoms;
+
+  // -------------- SINGLE ELEMENTS -----------------------------------------
+
+  
+  a = 1.00797*g/mole;
+  G4Element* el_H  = new G4Element(matName="Hidrogen", symbol="H", iz=1.,  a);
+  a = 12.0111*g/mole;
+  G4Element* el_C  = new G4Element(matName="Carbon"  , symbol="C", iz=6.,  a);
+  a = 14.0067*g/mole;
+  G4Element* el_N  = new G4Element(matName="Nitrogen", symbol="N", iz=7.,  a);
+  a = 15.9994*g/mole;
+  G4Element* el_O  = new G4Element(matName="Oxigen"  , symbol="O", iz=8.,  a);
+  a = 18.9984*g/mole;
+  G4Element* el_F  = new G4Element(matName="Fluorine", symbol="F", iz=9.,  a);
+  a=22.99*g/mole;
+  G4Element* el_Na = new G4Element(matName="Sodium",  symbol="Na",  z=11., a);
+  a = 26.9815*g/mole;
+  G4Element* el_Al = new G4Element(matName="Aluminium",symbol="Al",iz=13., a);
+  a = 28.09*g/mole;
+  G4Element* el_Si = new G4Element(matName="Silicon", symbol="Si" , z= 14.,a);
+  a = 35.453*g/mole;
+  G4Element* el_Cl = new G4Element(matName="Chlorine", symbol="Cl",iz=17., a);
+  a=40.08*g/mole;
+//  G4Element* el_Ca = new G4Element(matName="Calcium", symbol="Ca",  z=20., a);
+  a=55.850*g/mole;
+//  G4Element* el_Fe = new G4Element(matName="Iron",    symbol="Fe",  z=26., a);
+  a = 65.37*g/mole;
+  G4Element* el_Zn = new G4Element(matName="Zinc",     symbol="Zn",iz=30., a);
+  a = 72.64*g/mole;
+  G4Element* el_Ge=  new G4Element(matName="Germanium", symbol="Ge",iz=32.,a);
+  a = 79.909*g/mole;
+  G4Element* el_Br = new G4Element(matName="Bromine",  symbol="Br",iz=35., a);
+  a = 112.40*g/mole;
+  G4Element* el_Cd = new G4Element(matName="Cadmium",  symbol="Cd",iz=48., a);
+  a = 127.60*g/mole;
+  G4Element* el_Te = new G4Element(matName="Tellurium",symbol="Te",iz=52., a);
+  a = 126.9*g/mole;
+  G4Element* el_I =  new G4Element(matName="Iodine",  symbol="I",  iz=53., a);
+  a = 132.9*g/mole;
+//  G4Element* el_Cs=  new G4Element(matName="Caesium", symbol="Cs", iz=55., a);
+  a = 138.91*g/mole;
+  G4Element* el_La=  new G4Element(matName="Lanthanum",symbol="La", iz=57.,a);
+  a = 174.97*g/mole;
+  G4Element* el_Lu=  new G4Element(matName="Lutetium",symbol="La", iz=71.,a);
+  a = 208.98*g/mole;
+  G4Element* el_Bi=  new G4Element(matName="Bismuth",  symbol="Bi", iz=83.,a);
+ 
+
+
+  // -------------- MATERIALS -----------------------------------------
+ 
+  // Air
+  density = 1.29*mg/cm3;
+  G4Material* Air = new G4Material(matName="Air", density, nel=2);
+  Air->AddElement(el_N, .7);
+  Air->AddElement(el_O, .3);
+  // Teflon
+  density = 2.2 *g/cm3;
+  G4Material* Teflon = new G4Material(matName="Teflon", density, ncomponents=2);
+  Teflon->AddElement(el_C, natoms=2);
+  Teflon->AddElement(el_F, natoms=4);
+  // PVC
+  density = 1.4 *g/cm3;
+  G4Material* PVC = new G4Material(matName="PVC",density, ncomponents=3);
+  PVC->AddElement(el_C , natoms=2);
+  PVC->AddElement(el_H , natoms=3);
+  PVC->AddElement(el_Cl, natoms=1);
+  // Plexiglass
+  density = 1.19*g/cm3;
+  G4Material* Plexiglas = new G4Material(matName="Plexiglass",density, ncomponents=3);
+  Plexiglas->AddElement(el_C, natoms=5);
+  Plexiglas->AddElement(el_H, natoms=8);
+  Plexiglas->AddElement(el_O, natoms=2);
+  // Alumina
+  density = 3.8*g/cm3;
+  G4Material* Alumina = new G4Material(matName="Alumina",density, ncomponents=2);
+  Alumina->AddElement(el_Al, natoms=2);
+  Alumina->AddElement(el_O, natoms=3);
+
+ // CZT
+  density = 5.85*g/cm3;
+  G4Material* CZT = new G4Material(matName="CZT",density, ncomponents=3);
+  CZT->AddElement(el_Cd, natoms= 96);
+  CZT->AddElement(el_Zn, natoms=  4);
+  CZT->AddElement(el_Te, natoms=100);
+
+  // Wood=carbon
+  density=2.26*g/cm3;
+  a = 12.0111*g/mole;
+  G4Material* wood_carbon = new G4Material(matName="wood_carbon", z=6., a, density);
+
+  // Aluminum
+  density = 2.700*g/cm3;
+  a = 26.98*g/mole;
+  G4Material* Aluminum = new G4Material(matName="Aluminum", z=13., a, density);
+  // Copper
+  density = 8.960*g/cm3;
+  a = 63.55*g/mole;
+  G4Material* Copper = new G4Material(matName="Copper", z=29., a, density);
+  // Lead
+  a = 207.19*g/mole;
+  density = 11.35*g/cm3;
+  G4Material* Lead = new G4Material(matName="Lead", z=82., a, density);
+  // Iron
+  a = 55.85*g/mole;
+  density = 7.87*g/cm3;
+  G4Material* Iron = new G4Material(matName="Iron", z=26., a, density);
+  // Berillium
+  a = 9.0122*g/mole;
+  density = 1.85*g/cm3;
+  G4Material* Berillium = new G4Material(matName="Berillium", z=4., a, density);
+
+
+  //Quartz
+  density = 2.200*g/cm3;
+  G4Material* quartz = new G4Material(matName="Quartz", density, ncomponents=2);
+  quartz->AddElement(el_Si, natoms=1);
+  quartz->AddElement(el_O , natoms=2);
+  //LaBr
+  density = 5.3*g/cm3;
+  G4Material* LaBr3 = new G4Material(matName="LaBr3", density, ncomponents = 2);
+  LaBr3->AddElement(el_La, natoms=1);
+  LaBr3->AddElement(el_Br, natoms=3);
+  //INa
+  density = 3.67*g/cm3;
+  G4Material* INa = new G4Material(matName="INa", density, ncomponents = 2);
+  INa->AddElement(el_I, natoms=1);
+  INa->AddElement(el_Na,natoms=1);
+  //Water
+  density = 1.00*g/cm3;
+  G4Material* Water = new G4Material(matName="Water", density, ncomponents = 2);
+  Water->AddElement(el_H, natoms=2);
+  Water->AddElement(el_O,natoms=1);
+
+  // BGO (data from CCC)
+  density = 7.13*g/cm3;
+  G4Material* BGO =  new G4Material(matName="BGO", density, ncomponents = 3);
+  BGO->AddElement(el_Bi, natoms=4);
+  BGO->AddElement(el_Ge, natoms=3);
+  BGO->AddElement(el_O, natoms=12);
+
+  // LSO (data from CCC) Lu2SiO5
+  density = 7.4*g/cm3;
+  G4Material* LSO =  new G4Material(matName="LSO", density, ncomponents = 3);
+  LSO->AddElement(el_Lu, natoms=2);
+  LSO->AddElement(el_Si, natoms=1);
+  LSO->AddElement(el_O,  natoms=5);
+
+
+//  G4cout << G4endl << "Material List : " << G4endl << G4endl;
+//  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
