@@ -1,0 +1,192 @@
+#include "DicomLine.hh"
+#include "DicomLineList.hh"
+#include "DicomMgr.hh"
+#include "DicomVImage.hh"
+#include "DicomParameterMgr.hh"
+#include "DicomVerbosity.hh"
+
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosReadDICOM/include/GmReadPhantomStMgr.hh"
+
+#include "G4GeometryTolerance.hh"
+typedef std::multimap<G4double,size_t> mmdi;
+
+//-----------------------------------------------------------------------------
+DicomLine::DicomLine( G4String name, DPOrientation ori )
+  : DicomVLine(name,ori) 
+{
+  theOrientation = DPOrientXY;
+}
+
+//-----------------------------------------------------------------------------
+DicomLine::DicomLine( G4ThreeVector point, G4ThreeVector dir, G4String name, DPOrientation ori )
+  : DicomVLine(name,ori)
+{
+  thePoints.push_back(point);
+  theDirections.push_back(dir);
+}
+
+//-----------------------------------------------------------------------------
+std::map<G4double,G4double> DicomLine::FindValues( DicomVImage* image)
+{
+  std::map<G4double,G4double> intersValues;
+  
+  if( DicomVerb(infoVerb) ) G4cout << theName << " DicomLine::FindValues in image " << image->GetName() << " " << DicomVImage::GetModalityStr(image->GetModality()) << G4endl;
+  //  double PRECISION = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
+  //  G4double PRECISION = 1.e-6;
+  G4double PRECISION = image->GetPrecision();
+
+  G4ThreeVector pos = thePoints[0];
+  G4ThreeVector dir = theDirections[0];
+  G4ThreeVector pos0 = thePos0;
+  std::vector<G4double>* data = image->GetData();
+  if( DicomVerb(infoVerb) ) G4cout << theName << " DicomLine::FindValues pos " << pos << " dir " << dir << " pos0 " << pos0 << G4endl;
+ 
+  //--- Store XYZ variables in  vectors
+  std::vector<size_t> nVoxelV = image->GetNoVoxelsV();
+  std::vector<G4double> fMinV = image->GetMinV();
+  std::vector<G4double> fMaxV = image->GetMaxV();
+  std::vector<G4double> fVoxelDimV = image->GetVoxelDimV();
+  std::vector<G4String> fAxisNameV;
+  fAxisNameV.push_back("X");
+  fAxisNameV.push_back("Y");
+  fAxisNameV.push_back("Z");
+
+  G4double distMax = -DBL_MAX;
+  for( size_t ii=0; ii < 3; ii++ ){
+    G4double phantomWall = fMinV[ii]+ (0.5 + 0.5*GmGenUtils::sign(dir[ii]))* (fMaxV[ii]-fMinV[ii]);
+    G4double dist = -DBL_MAX;
+    if( fabs(dir[ii]) > PRECISION ) dist = (-pos[ii] + phantomWall) / dir[ii];
+    distMax = std::max(distMax,dist);
+  }  
+  if( DicomVerb(debugVerb) ) G4cout << "@@@@ FindValues total distMax to one phantom border " << distMax << G4endl;
+
+  //----- Check if it is out of phantom
+  G4int isOut = 0;
+  for( size_t ii=0; ii < 3; ii++ ){
+    if( pos[ii] > fMaxV[ii] ) {
+      if( dir[ii] >= 0 ) {
+	G4Exception("DicomLine::FineValues",
+		    "",
+		    JustWarning,
+		    ("Position in "+ fAxisNameV[ii] + " is bigger than phantom limits but direction is not negative").c_str());
+      }
+      isOut += 2*std::pow(10,ii);
+    } else if( pos[ii] < fMinV[ii]) {
+      if( dir[ii] <= 0 ) {
+	G4Exception("DicomLine::FineValues",
+		    "",
+		    //		    FatalException,
+		    JustWarning,
+		    ("Position in "+ fAxisNameV[ii] + " is smaller than phantom limits but direction is not positive").c_str());
+      }
+      isOut += std::pow(10,ii);
+    }
+    if( DicomVerb(debugVerb) ) G4cout << "@@@@ FindValues IsOut?= " << ii << " : " << isOut << "   : xyz 2 if positive border, 1 if negative border " << G4endl;  
+  }
+  
+  if( DicomVerb(infoVerb) ) {
+    G4cout << "@@@@ FindValues IsOut= " << isOut
+	   << " phantom min " << fMinV[0] << " " << fMinV[1] << " " << fMinV[2] 
+	   << " phantom max " << fMaxV[0] << " " << fMaxV[1] << " " << fMaxV[2] << G4endl;
+  }
+  
+  //--- If it is out, find the smallest distance to phantom, and move pos to it
+  G4double distAccum = 0.;
+  if( isOut != 0 ) {
+    G4double dist = -DBL_MAX;
+    distMax = -DBL_MAX;
+    for( size_t ii=0; ii < 3; ii++ ){
+      if( fabs(dir[ii]) < PRECISION ) continue;
+      int io = G4int(isOut/std::pow(10,ii))%10;
+      if( DicomVerb(testVerb) ) G4cout << "@@@@ FindValues Distance to out check coord= " << ii << " isOut= " << io << G4endl;
+      if( io == 1 ) { // 
+	if( fabs(dir[ii]) > PRECISION ) dist = (-pos[ii] + fMinV[ii]) / dir[ii];
+	if( DicomVerb(testVerb) ) G4cout << "@@@@ FindValues Distance to out negative wall " << " dist= " << dist << " ==(" << (-pos[ii] + fMinV[ii]) << "/" << dir[ii] << ")" <<G4endl;
+      } else if( io == 2 ) {
+	if( fabs(dir[ii]) > PRECISION ) dist = (-pos[ii] + fMaxV[ii]) / dir[ii];
+	if( DicomVerb(-testVerb) ) G4cout << "@@@@ FindValues Distance to out " << " dist= " << dist<< " ==(" << (-pos[ii] + fMaxV[ii]) << "/" << dir[ii] << G4endl;
+      }      
+      distMax = std::max(distMax,dist);
+    }
+    if( DicomVerb(infoVerb) ) G4cout << "@@@@ FindValues FINAL Distance to out " << distMax << G4endl;
+
+    for( size_t ii=0; ii < 3; ii++ ){
+      pos[ii] += dir[ii]*( distMax + PRECISION );
+      if( DicomVerb(infoVerb) ) G4cout << "@@@@ FindValues pos in phantom border " << ii << " = " << pos << G4endl;
+    }
+  }
+  //--- Check it is indeed in phantom border
+  for( size_t ii=0; ii < 3; ii++ ){
+    if( (pos[ii] - fMaxV[ii]) > PRECISION || (-pos[ii] + fMinV[ii]) > PRECISION ) {
+      G4cerr << "@@@@ FindValues pos " << " = " << pos << G4endl;
+      G4cerr << "@@@@ FindValues dir " << " = " << dir << G4endl;
+      G4Exception("DicomLine::FineValues",
+		  "FindValues",
+		  JustWarning,
+		  "line does not intersect phantom");
+    }
+  }
+  
+  //--- Get Voxel ID of initial position
+  std::vector<G4int> voxelID = {0,0,0};
+  //  std::vector<size_t> idMax;
+  for( size_t ii=0; ii < 3; ii++ ){
+    voxelID[ii] = GmGenUtils::GetBelowInt((pos[ii]-fMinV[ii])/fVoxelDimV[ii]+PRECISION);
+    //  G4int idMaxXNew = GmGenUtils::GetAboveInt((theImageMaxX-phMinX)/voxelFWidthX);
+    //  G4int phNVoxelXNew = idMaxXNew - idMinXNew;
+  }
+  if( DicomVerb(infoVerb) ) G4cout << "@@@@ FindValues 1st voxelID " << voxelID[0] << " " << voxelID[1] << " " << voxelID[2] << G4endl;
+
+  //--- FIND NEXT VOXEL
+  mmdi dists;
+  for( ;; ) {
+    dists.clear();
+    for( size_t ii=0; ii < 3; ii++ ){
+      G4double voxelWall = fMinV[ii] + (voxelID[ii] + 0.5 + 0.5*GmGenUtils::sign(dir[ii]))*fVoxelDimV[ii];
+      G4double dist = DBL_MAX;
+      if( fabs(dir[ii]) > PRECISION ) {
+	dist = (-pos[ii] + voxelWall) / dir[ii];
+	dist = G4int(dist/PRECISION)*PRECISION;
+      }
+      dists.insert(mmdi::value_type(dist,ii));
+      if( DicomVerb(debugVerb) ) G4cout << "@@@@ FindValues dist to voxelWall " << ii << " = " << dist << " voxelWall= " << voxelWall << G4endl;
+    }
+    G4double distMin = (*(dists.begin())).first; // minimal of distance along X, y and Z
+    distAccum += distMin;
+    for( size_t ii=0; ii < 3; ii++ ){
+      pos[ii] += dir[ii]*( distMin + PRECISION );
+    }
+    if( DicomVerb(debugVerb) ) G4cout << "@@@@ FindValues pos new " << pos << " distAccum " << distAccum << " distMin " << distMin <<  G4endl;
+    std::pair<mmdi::const_iterator,mmdi::const_iterator> pite = dists.equal_range(distMin);
+    mmdi::const_iterator ite;
+    G4bool bEnded = false;
+    for( ite = pite.first; ite != pite.second; ite++ ) {
+      size_t ii = (*ite).second;
+      voxelID[ii] += GmGenUtils::sign(dir[ii]);
+      if( DicomVerb(debugVerb) ) G4cout << "@@@@ FindValues new VoxelID " << ii << " : " << voxelID[ii] << G4endl;   
+      if( voxelID[ii] < 0 || voxelID[ii] >= G4int(nVoxelV[ii]) ) {
+	bEnded = true;
+	break;
+      }    
+    }
+    if( DicomVerb(debugVerb) ) G4cout << "@@@@ FindValues voxelID new " << voxelID[0] << " " << voxelID[1] << " " << voxelID[2] << G4endl;
+    if( bEnded ) break;
+    size_t copyNo = voxelID[0] + voxelID[1]*nVoxelV[0] + voxelID[2]*nVoxelV[0]*nVoxelV[1];
+    G4double value = data->at(copyNo);
+    if( DicomVerb(debugVerb) ) G4cout << "@@@@ FindValues copyNo " << copyNo << " VALUE= " << value << " at dist " << distAccum + distMin/2.
+				      << " voxel_centre (" << fMinV[0]+(voxelID[0]+0.5)*fVoxelDimV[0] << "," << fMinV[1]+(voxelID[1]+0.5)*fVoxelDimV[1] << "," << fMinV[2]+(voxelID[2]+0.5)*fVoxelDimV[2] << ") pos " << pos << G4endl;
+    G4double distHis = distAccum + distMin/2.;
+    if( bUsePos0 ) {
+      G4ThreeVector diffPos = pos - pos0;
+      distHis = diffPos.mag() * cos(diffPos.angle(dir));
+      //      G4cout << " distHis " << distHis << " " << diffPos << " " << diffPos.mag() << " : " << pos << " -  "<< pos0 << " * " << cos(diffPos.angle(dir)) << " " << diffPos.angle(dir) << G4endl;  //GDEB
+    }
+    //    G4double maxValInFile = 100;
+    //t    if( fabs(distHis) < maxValInFile )
+    intersValues[distHis] = value;
+  }
+
+  if(DicomVerb(debugVerb) ) G4cout << "@@@@ FindValues ended N intersections: " << intersValues.size() << G4endl;
+										  return intersValues;
+}
