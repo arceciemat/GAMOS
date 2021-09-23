@@ -1,0 +1,45 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise2b
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/exercise1.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/gamos/setParam boper:NSplit 100
+/gamos/setParam boper:BiasPrimaryOnly 1
+/gamos/setParam boper:BiasOnlyOnce 1
+/gamos/setParam boper:NKill 100
+/gamos/setParam boper:XDim 15.*cm
+/gamos/setParam boper:YDim 15.*cm
+/gamos/setParam boper:ZPos 90.*cm
+/gamos/physics/biasing/createOperator boper DirBremsSplitting
+/gamos/physics/biasing/addParticleProcesses2Oper e- eBrem boper
+
+/run/initialize
+
+/gamos/physics/biasing/associateOper2LogVol Anode boper
+
+### Generator distributions 
+/gamos/generator/addSingleParticleSource mySource e- 150.*keV
+/gamos/generator/positionDist mySource GmGenerDistPositionInG4Volumes Source
+/gamos/generator/directionDist mySource GmGenerDistDirectionConst 0. 1. 0.
+
+### Faster multiple scattering
+/process/msc/StepLimit Minimal
+
+### Write phase space
+/gamos/analysis/histo1Max *Energy* 2.
+/gamos/setParam RTPhaseSpaceUA:FileName xrayZBS
+/gamos/setParam RTPhaseSpaceUA:ZStops -10.*cm
+/gamos/setParam RTPhaseSpaceUA:KillAfterLastZStop 1
+/gamos/userAction RTPhaseSpaceUA
+
+### Print some info
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmCountTracksUA
+
+/gamos/random/setSeeds 2142  22211 
+
+
+/gamos/random/restoreSeeds  1201 1201
+/run/beamOn 1000000

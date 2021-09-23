@@ -1,0 +1,28 @@
+/gamos/setParam GmGeometryFromText:FileName exercise5.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_AllHP
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source proton 10.*MeV
+
+/gamos/userAction GmKillAtSteppingActionUA  GmSecondaryFilter
+
+## only create tracks from primary and secondary particles
+/gamos/filter tertiaryF GmNumericDataFilter ParentTrackID 2 99999
+/gamos/userAction GmKillAtStackingActionUA tertiaryF
+
+/gamos/filter fromPrimaryF GmParentFilter GmPrimaryFilter
+
+
+/gamos/userAction GmCountTracksUA
+/gamos/userAction GmCountTracksAndStepsUA
+/gamos/userAction GmCountProcessesUA 
+
+# force proton to make about 100 steps
+/gamos/physics/userLimits/setMaxStep UL1 * proton 0.001
+
+/gamos/random/restoreSeeds 1114 1114
+/run/beamOn 100000

@@ -1,0 +1,19 @@
+/gamos/verbosity ShieldingVerbosity debug
+/gamos/setParam GmGeometryUseMaterials:Materials G4_Al G4_Cu G4_STAINLESS-STEEL
+/gamos/setParam GmGeometryUseMaterials:FileName isotopes.geom
+/gamos/geometry GmGeometryUseMaterials
+/gamos/physicsList G4QGSP_BIC_AllHP
+
+/gamos/setParam SHPrintPHPChannelThickYieldUA:minE 0.*MeV
+/gamos/setParam SHPrintPHPChannelThickYieldUA:maxE 9.*MeV
+/gamos/setParam SHPrintPHPChannelThickYieldUA:nStepsE 101
+/gamos/setParam SHPrintPHPChannelThickYieldUA:logE 0
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source proton 1.*MeV
+
+/gamos/userAction SHPrintPHPChannelThickYieldUA
+
+/run/beamOn 1

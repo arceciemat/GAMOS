@@ -1,0 +1,34 @@
+### Set the suffix of output files
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4b
+
+### Set geometry, physics and generator
+/gamos/setParam GmGeometryFromText:FileName ../exercise2/marinelli_beaker.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMExtendedPhysics
+/gamos/generator GmGenerator
+
+### Initialize Geant4 geometry and physics
+/run/initialize
+
+### Set generator particle distributions
+/gamos/generator/addSingleParticleSource source Co60[0.0] 0*MeV
+## place source inside the water solution
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes SOLUTION_*
+
+### Set the Ge as sensitive detector
+/gamos/analysis/histo1Max *Energy* 1.5
+/gamos/SD/assocSD2LogVol GmSDSimple Detector DETECTOR_Ge
+/gamos/userAction GmHitsHistosUA
+
+### Print a message each 1000 events
+/gamos/userAction GmCountTracksUA
+
+### kill anti neutrinos before they are tracked
+/gamos/filter anti_nu_eF GmParticleFilter anti_nu_e 
+/gamos/userAction GmKillAtStackingActionUA  anti_nu_eF
+
+### stop electrons and deposit their energy locally
+/gamos/physics/userLimits/setMinEKin UL1 DETECTOR_Ge e- 1000.
+
+### Run events
+/run/beamOn 100000

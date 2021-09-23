@@ -1,0 +1,36 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4a
+/gamos/setParam GmGeometryFromText:FileName exercise4.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/run/initialize
+
+### Generator distributions 
+/gamos/generator/addSingleParticleSource mySource e- 150.*keV
+/gamos/generator/positionDist mySource GmGenerDistPositionInG4Volumes Source
+/gamos/generator/directionDist mySource GmGenerDistDirectionConst 0. 1. 0.
+
+### Faster multiple scattering
+/process/msc/StepLimit Minimal
+
+### PDS gammas as a function of process
+/gamos/setParam GmPDS:ScoreNeutrons 0
+/gamos/setParam GmPDS:ScoreGammas 1
+/gamos/setParam GmPDS:DetectorName PDS_detector
+/gamos/setParam GmPDS:AngleDeviationFileName angleDeviation.gammaALL.root
+
+/gamos/setParam GmPDS:PrintHstar 1
+/gamos/setParam GmPDS:HistosFileName   pds
+
+/gamos/userAction GmPDSUA 
+
+### Print some info
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmCountTracksUA
+
+/gamos/random/setSeeds 1112 1112
+
+/run/beamOn 1000000
+
+

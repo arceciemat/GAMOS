@@ -1,0 +1,27 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName ../exercise3/exercise3.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+/gamos/verbosity GmSDVerbosity 5
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source neutron 10.*MeV
+/gamos/generator/positionDist source Exer2GenerDistPosition  1.*cm
+/gamos/generator/directionDist source GmGenerDistDirectionConst 1. 0. 0.
+
+/gamos/setParam SD:DetUnitID:NAncestors 2
+/gamos/SD/assocSD2LogVol GmSDSimple CalorSD Crystal
+/gamos/SD/assocSD2LogVol GmSDSimple TrackerSD Tracker
+/gamos/userAction GmHitsHistosUA 
+
+/gamos/setParam hits.bin:FileName myhits.out
+/gamos/userAction GmHitsWriteUA
+
+/run/beamOn 10
+

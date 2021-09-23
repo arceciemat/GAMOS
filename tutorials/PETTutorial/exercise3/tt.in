@@ -1,0 +1,34 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise3c
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/pet.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/GmPhysics/replacePhysics gamma-lowener
+/gamos/GmPhysics/replacePhysics electron-lowener
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmHistosGammaAtSD
+/P  SD:GmHitsWriteUA:BinFile 0
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmHitsWriteUA
+/gamos/userAction GmRecHitsHistosUA
+/gamos/userAction PETEventClassifierUA
+
+/run/initialize
+
+/gamos/setParam SD:EnergyResol:Calor 0.2
+/gamos/setParam SD:MeasuringTime:Calor 1.e-6*s
+
+/gamos/SD/assocSD2LogVol GmSDSimple Calor Crystal
+/gamos/SD/recHitBuilder GmRecHitBuilderByBlock Calor 
+
+
+/gamos/generator/addIsotopeSource source F18 1.E-4*curie
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+/gamos/generator/timeDist source GmGenerDistTimeConstantChange 14338919*second
+
+/run/beamOn 10000
+
+/gamos/base/printParametersUsage 999
+

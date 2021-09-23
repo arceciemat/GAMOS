@@ -1,0 +1,18 @@
+Inelastic:
+G4HadronicProcess::GetMeanFreePath 
+  G4CrossSectionDataStore::GetCrossSection(
+    G4NeutronHPInelasticData::GetCrossSection
+      G4PhysicsVector::GetValue
+        G4PhysicsVector::Value
+          G4LPhysicsFreeVector::FindBinLocation
+           G4PhysicsVector::Interpolation();
+             G4PhysicsVector::LinearInterpolation();
+
+G4UHadronElasticProcess::GetMeanFreePath( 
+  G4UHadronElasticProcess::GetMicroscopicCrossSection(
+    G4CrossSectionDataStore::GetCrossSection
+      G4NeutronHPElasticData::GetCrossSection 
+        G4PhysicsVector::GetValue
+          G4PhysicsVector::Value
+	    G4PhysicsVector::Interpolation();
+              G4PhysicsVector::LinearInterpolation();

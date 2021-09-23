@@ -1,0 +1,2889 @@
+@@@@@ Running GAMOS with script: exercise3.angle.gg.in
+
+**************************************************************
+ Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+ Using Random Engine: MixMaxRng
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+"/vis/list" to see available colours.
+/control/execute exercise3.angle.gg.in
+/gamos/setParam GmGeometryFromText:FileName exercise3.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+<<< Geant4 Physics List simulation engine: QGSP_BIC_HP
+
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nEventsPerRun 1000000
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:minE 1.E-1*MeV
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:maxE 1.E+1*MeV
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nStepsE 11
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:logE 1
+/gamos/generator GmGeneratorChangeEnergyAndMaterial
+/gamos/setParam GmCountTracksUA:EachNEvent 100000
+/gamos/userAction GmCountTracksUA
+/run/initialize
+/home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5
+@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic
+@@@ G4ParticleHPInelasticData instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Elastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Inelastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/setParam GmPDSCreateAngleTablesUA:SecondaryParticleName gamma
+/gamos/setParam GmPDSCreateAngleTablesUA:HistoFileName angleDeviation.gamma.gamma
+/gamos/userAction GmPDSCreateAngleTablesUA
+/gamos/userAction GmKillAtStackingActionUA GmSecondaryFilter
+/run/beamOn 100000000
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 1
+### ===  Ignore cuts flag:   1
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 174 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 20 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 160 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LowEPComptonModel : Emin=    0 eV  Emax=   20 MeV Fluo
+        KleinNishina : Emin=   20 MeV Emax=  100 TeV Fluo
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+      BetheHeitler5D : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 20 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 180 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=  100 keV  deltaVI
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e-, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for e+  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             PenIoni : Emin=    0 eV  Emax=  100 keV
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e+, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for GenericIon  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV
+
+ionIoni:  for GenericIon  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.001 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+         ParamICRU73 : Emin=    0 eV  Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for GenericIon SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+======================================================================
+======          Radioactive Decay Physics Parameters           =======
+======================================================================
+Max life time                                     1.4427e+06 ps
+Internal e- conversion flag                       1
+Stored internal conversion coefficients           1
+Enable correlated gamma emission                  0
+Max 2J for sampling of angular correlations       10
+Atomic de-excitation enabled                      1
+Auger electron emission enabled                   1
+Auger cascade enabled                             1
+Check EM cuts disabled for atomic de-excitation   1
+Use Bearden atomic level energies                 0
+======================================================================
+
+msc:  for alpha  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+ionIoni:  for alpha  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            BraggIon : Emin=    0 eV  Emax=7.9452 MeV  deltaVI
+          BetheBloch : Emin=7.9452 MeV Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for alpha SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for anti_proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for anti_proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for anti_proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for anti_proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for anti_proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of kaon+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of mu+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Elastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Inelastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 8, A = 18 is not found and CrossSection set to 0.
+
+msc:  for pi+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of pi+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+====================================================================
+                  HADRONIC PROCESSES SUMMARY (verbose level 1)
+
+---------------------------------------------------
+                           Hadronic Processes for GenericIon
+
+  Process: ionElastic
+        Model:          NNDiffuseElastic: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: ionInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: RadioactiveDecayBase
+
+---------------------------------------------------
+                           Hadronic Processes for He3
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: He3Inelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for alpha
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: alphaInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for anti_He3
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_He3Inelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_alpha
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_alphaInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_deuteron
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_deuteronInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_neutron
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100.1 MeV
+        Model:              AntiAElastic: 100 MeV ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_neutronInelastic
+        Model:                      FTFP: 0 eV  ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_proton
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100.1 MeV
+        Model:              AntiAElastic: 100 MeV ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_protonInelastic
+        Model:                      FTFP: 0 eV  ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_triton
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_tritonInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for deuteron
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: dInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for e+
+
+  Process: electronNuclear
+        Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for e-
+
+  Process: electronNuclear
+        Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for gamma
+
+  Process: photonNuclear
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+        Model:           TheoFSGenerator: 3 GeV ---> 100 TeV
+     Cr_sctns:            PhotoNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for kaon+
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: kaon+Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for kaon-
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: kaon-Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: hBertiniCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for lambda
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: lambdaInelastic
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+        Model:                      FTFP: 3 GeV ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for mu+
+
+  Process: muonNuclear
+        Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for mu-
+
+  Process: muonNuclear
+        Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
+
+  Process: muMinusCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for neutron
+
+  Process: hadElastic
+        Model:             hElasticCHIPS: 19.5 MeV ---> 100 TeV
+        Model:          NeutronHPElastic: 0 eV  ---> 20 MeV
+     Cr_sctns:        NeutronHPElasticXS: 0 eV  ---> 20 MeV
+     Cr_sctns:        G4NeutronElasticXS: 0 eV  ---> 100 TeV
+
+  Process: neutronInelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            Binary Cascade: 19.9 MeV ---> 6 GeV
+        Model:        NeutronHPInelastic: 0 eV  ---> 20 MeV
+     Cr_sctns:      NeutronHPInelasticXS: 0 eV  ---> 20 MeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: nCapture
+        Model:          NeutronHPCapture: 0 eV  ---> 20 MeV
+        Model:               nRadCapture: 19.9 MeV ---> 100 TeV
+     Cr_sctns:        NeutronHPCaptureXS: 0 eV  ---> 20 MeV
+     Cr_sctns:        G4NeutronCaptureXS: 0 eV  ---> 100 TeV
+
+  Process: nFission
+        Model:          NeutronHPFission: 0 eV  ---> 20 MeV
+        Model:                G4LFission: 19.9 MeV ---> 100 TeV
+     Cr_sctns:        NeutronHPFissionXS: 0 eV  ---> 20 MeV
+     Cr_sctns:          GheishaFissionXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for pi+
+
+  Process: hadElastic
+        Model:           hElasticGlauber: 0 eV  ---> 100 TeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: pi+Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for pi-
+
+  Process: hadElastic
+        Model:           hElasticGlauber: 0 eV  ---> 100 TeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: pi-Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: hBertiniCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for proton
+
+  Process: hadElastic
+        Model:             hElasticCHIPS: 0 eV  ---> 100 TeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: protonInelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            Binary Cascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for triton
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: tInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+================================================================
+=======================================================================
+======       Pre-compound/De-excitation Physics Parameters     ========
+=======================================================================
+Type of pre-compound inverse x-section              3
+Pre-compound model active                           1
+Pre-compound excitation low energy (MeV)            0.1
+Pre-compound excitation high energy (MeV)           30
+Type of de-excitation inverse x-section             3
+Type of de-excitation factory                       Evaporation+GEM
+Number of de-excitation channels                    68
+Min excitation energy (keV)                         0.01
+Min energy per nucleon for multifragmentation (MeV) 2e+05
+Limit excitation energy for Fermi BreakUp (MeV)     20
+Level density (1/MeV)                               0.075
+Use simple level density model                      1
+Use discrete excitation energy of the residual      0
+Time limit for long lived isomeres (ns)             1442.7
+Internal e- conversion flag                         1
+Store e- internal conversion data                   1
+Electron internal conversion ID                     0
+Correlated gamma emission flag                      0
+Max 2J for sampling of angular correlations         10
+Upload data before 1st event for                Z < 9
+=======================================================================
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+0x55a6cf9910f0 GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromGe 3
+G4GeometryManager::ReportVoxelStats -- Voxel Statistics
+
+    Total memory consumed for geometry optimisation:   0 kByte
+    Total CPU time elapsed for geometry optimisation: 0 seconds
+
+    Voxelisation: top CPU users:
+    Percent   Total CPU    System CPU       Memory  Volume
+    -------   ----------   ----------     --------  ----------
+       0.00         0.00         0.00            0k world
+
+    Voxelisation: top memory users:
+    Percent     Memory      Heads    Nodes   Pointers    Total CPU    Volume
+    -------   --------     ------   ------   --------   ----------    ----------
+     100.00          0k         1        2          4         0.00    world
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 1
+### ===  Ignore cuts flag:   1
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 174 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 20 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 160 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LowEPComptonModel : Emin=    0 eV  Emax=   20 MeV Fluo
+        KleinNishina : Emin=   20 MeV Emax=  100 TeV Fluo
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+      BetheHeitler5D : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 20 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 180 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=  100 keV  deltaVI
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e-, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for e+  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             PenIoni : Emin=    0 eV  Emax=  100 keV
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e+, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for GenericIon  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV
+
+ionIoni:  for GenericIon  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.001 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+         ParamICRU73 : Emin=    0 eV  Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for GenericIon SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for alpha  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+ionIoni:  for alpha  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            BraggIon : Emin=    0 eV  Emax=7.9452 MeV  deltaVI
+          BetheBloch : Emin=7.9452 MeV Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for alpha SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for anti_proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for anti_proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for anti_proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for anti_proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for anti_proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of kaon+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of mu+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of pi+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : No 
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+
+Index : 2     used in the geometry : No 
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+
+====================================================================
+
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : No 
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+
+Index : 2     used in the geometry : No 
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+
+====================================================================
+
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 0.1E0 : cos Deviation Angle = 5100001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 0.1E0 : log10 Interaction Distance (cm) = 5100002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 0.1E0 : cos Deviation Angle = 5200001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 0.1E0 : log10 Interaction Distance (cm) = 5200002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 0.1E0 : cos Deviation Angle = 5300001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 0.1E0 : log10 Interaction Distance (cm) = 5300002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 0.1E0 : cos Deviation Angle = 5400001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 0.1E0 : log10 Interaction Distance (cm) = 5400002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 0.1E0 : cos Deviation Angle = 5500001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 0.1E0 : log10 Interaction Distance (cm) = 5500002
+ %%% EVENT 0 NTRACKS 1 TOTAL NTRACKS 1
+ %%% EVENT 100000 NTRACKS 1 TOTAL NTRACKS 100001
+ %%% EVENT 200000 NTRACKS 1 TOTAL NTRACKS 200001
+ %%% EVENT 300000 NTRACKS 1 TOTAL NTRACKS 300001
+ %%% EVENT 400000 NTRACKS 1 TOTAL NTRACKS 400001
+ %%% EVENT 500000 NTRACKS 1 TOTAL NTRACKS 500001
+ %%% EVENT 600000 NTRACKS 1 TOTAL NTRACKS 600001
+ %%% EVENT 700000 NTRACKS 1 TOTAL NTRACKS 700001
+ %%% EVENT 800000 NTRACKS 1 TOTAL NTRACKS 800001
+ %%% EVENT 900000 NTRACKS 1 TOTAL NTRACKS 900001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 0.1584E0 : cos Deviation Angle = 5101001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 0.1584E0 : log10 Interaction Distance (cm) = 5101002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 0.1584E0 : cos Deviation Angle = 5201001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 0.1584E0 : log10 Interaction Distance (cm) = 5201002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 0.1584E0 : cos Deviation Angle = 5301001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 0.1584E0 : log10 Interaction Distance (cm) = 5301002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 0.1584E0 : cos Deviation Angle = 5401001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 0.1584E0 : log10 Interaction Distance (cm) = 5401002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 0.1584E0 : cos Deviation Angle = 5501001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 0.1584E0 : log10 Interaction Distance (cm) = 5501002
+ %%% EVENT 1000000 NTRACKS 1 TOTAL NTRACKS 1e+06
+ %%% EVENT 1100000 NTRACKS 1 TOTAL NTRACKS 1.1e+06
+ %%% EVENT 1200000 NTRACKS 1 TOTAL NTRACKS 1.2e+06
+ %%% EVENT 1300000 NTRACKS 1 TOTAL NTRACKS 1.3e+06
+ %%% EVENT 1400000 NTRACKS 1 TOTAL NTRACKS 1.4e+06
+ %%% EVENT 1500000 NTRACKS 1 TOTAL NTRACKS 1.5e+06
+ %%% EVENT 1600000 NTRACKS 1 TOTAL NTRACKS 1.6e+06
+ %%% EVENT 1700000 NTRACKS 1 TOTAL NTRACKS 1.7e+06
+ %%% EVENT 1800000 NTRACKS 1 TOTAL NTRACKS 1.8e+06
+ %%% EVENT 1900000 NTRACKS 1 TOTAL NTRACKS 1.9e+06
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 0.2511E0 : cos Deviation Angle = 5102001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 0.2511E0 : log10 Interaction Distance (cm) = 5102002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 0.2511E0 : cos Deviation Angle = 5202001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 0.2511E0 : log10 Interaction Distance (cm) = 5202002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 0.2511E0 : cos Deviation Angle = 5302001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 0.2511E0 : log10 Interaction Distance (cm) = 5302002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 0.2511E0 : cos Deviation Angle = 5402001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 0.2511E0 : log10 Interaction Distance (cm) = 5402002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 0.2511E0 : cos Deviation Angle = 5502001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 0.2511E0 : log10 Interaction Distance (cm) = 5502002
+ %%% EVENT 2000000 NTRACKS 1 TOTAL NTRACKS 2e+06
+ %%% EVENT 2100000 NTRACKS 1 TOTAL NTRACKS 2.1e+06
+ %%% EVENT 2200000 NTRACKS 1 TOTAL NTRACKS 2.2e+06
+ %%% EVENT 2300000 NTRACKS 1 TOTAL NTRACKS 2.3e+06
+ %%% EVENT 2400000 NTRACKS 1 TOTAL NTRACKS 2.4e+06
+ %%% EVENT 2500000 NTRACKS 1 TOTAL NTRACKS 2.5e+06
+ %%% EVENT 2600000 NTRACKS 1 TOTAL NTRACKS 2.6e+06
+ %%% EVENT 2700000 NTRACKS 1 TOTAL NTRACKS 2.7e+06
+ %%% EVENT 2800000 NTRACKS 1 TOTAL NTRACKS 2.8e+06
+ %%% EVENT 2900000 NTRACKS 1 TOTAL NTRACKS 2.9e+06
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 0.3981E0 : cos Deviation Angle = 5103001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 0.3981E0 : log10 Interaction Distance (cm) = 5103002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 0.3981E0 : cos Deviation Angle = 5203001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 0.3981E0 : log10 Interaction Distance (cm) = 5203002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 0.3981E0 : cos Deviation Angle = 5303001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 0.3981E0 : log10 Interaction Distance (cm) = 5303002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 0.3981E0 : cos Deviation Angle = 5403001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 0.3981E0 : log10 Interaction Distance (cm) = 5403002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 0.3981E0 : cos Deviation Angle = 5503001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 0.3981E0 : log10 Interaction Distance (cm) = 5503002
+ %%% EVENT 3000000 NTRACKS 1 TOTAL NTRACKS 3e+06
+ %%% EVENT 3100000 NTRACKS 1 TOTAL NTRACKS 3.1e+06
+ %%% EVENT 3200000 NTRACKS 1 TOTAL NTRACKS 3.2e+06
+ %%% EVENT 3300000 NTRACKS 1 TOTAL NTRACKS 3.3e+06
+ %%% EVENT 3400000 NTRACKS 1 TOTAL NTRACKS 3.4e+06
+ %%% EVENT 3500000 NTRACKS 1 TOTAL NTRACKS 3.5e+06
+ %%% EVENT 3600000 NTRACKS 1 TOTAL NTRACKS 3.6e+06
+ %%% EVENT 3700000 NTRACKS 1 TOTAL NTRACKS 3.7e+06
+ %%% EVENT 3800000 NTRACKS 1 TOTAL NTRACKS 3.8e+06
+ %%% EVENT 3900000 NTRACKS 1 TOTAL NTRACKS 3.9e+06
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 0.6309E0 : cos Deviation Angle = 5104001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 0.6309E0 : log10 Interaction Distance (cm) = 5104002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 0.6309E0 : cos Deviation Angle = 5204001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 0.6309E0 : log10 Interaction Distance (cm) = 5204002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 0.6309E0 : cos Deviation Angle = 5304001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 0.6309E0 : log10 Interaction Distance (cm) = 5304002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 0.6309E0 : cos Deviation Angle = 5404001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 0.6309E0 : log10 Interaction Distance (cm) = 5404002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 0.6309E0 : cos Deviation Angle = 5504001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 0.6309E0 : log10 Interaction Distance (cm) = 5504002
+ %%% EVENT 4000000 NTRACKS 1 TOTAL NTRACKS 4e+06
+ %%% EVENT 4100000 NTRACKS 1 TOTAL NTRACKS 4.1e+06
+ %%% EVENT 4200000 NTRACKS 1 TOTAL NTRACKS 4.2e+06
+ %%% EVENT 4300000 NTRACKS 1 TOTAL NTRACKS 4.3e+06
+ %%% EVENT 4400000 NTRACKS 1 TOTAL NTRACKS 4.4e+06
+ %%% EVENT 4500000 NTRACKS 1 TOTAL NTRACKS 4.5e+06
+ %%% EVENT 4600000 NTRACKS 1 TOTAL NTRACKS 4.6e+06
+ %%% EVENT 4700000 NTRACKS 1 TOTAL NTRACKS 4.7e+06
+ %%% EVENT 4800000 NTRACKS 1 TOTAL NTRACKS 4.8e+06
+ %%% EVENT 4900000 NTRACKS 1 TOTAL NTRACKS 4.9e+06
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 1E0 : cos Deviation Angle = 5105001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 1E0 : log10 Interaction Distance (cm) = 5105002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 1E0 : cos Deviation Angle = 5205001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 1E0 : log10 Interaction Distance (cm) = 5205002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 1E0 : cos Deviation Angle = 5305001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 1E0 : log10 Interaction Distance (cm) = 5305002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 1E0 : cos Deviation Angle = 5405001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 1E0 : log10 Interaction Distance (cm) = 5405002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 1E0 : cos Deviation Angle = 5505001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 1E0 : log10 Interaction Distance (cm) = 5505002
+ %%% EVENT 5000000 NTRACKS 1 TOTAL NTRACKS 5e+06
+ %%% EVENT 5100000 NTRACKS 1 TOTAL NTRACKS 5.1e+06
+ %%% EVENT 5200000 NTRACKS 1 TOTAL NTRACKS 5.2e+06
+ %%% EVENT 5300000 NTRACKS 1 TOTAL NTRACKS 5.3e+06
+ %%% EVENT 5400000 NTRACKS 1 TOTAL NTRACKS 5.4e+06
+ %%% EVENT 5500000 NTRACKS 1 TOTAL NTRACKS 5.5e+06
+ %%% EVENT 5600000 NTRACKS 1 TOTAL NTRACKS 5.6e+06
+ %%% EVENT 5700000 NTRACKS 1 TOTAL NTRACKS 5.7e+06
+ %%% EVENT 5800000 NTRACKS 1 TOTAL NTRACKS 5.8e+06
+ %%% EVENT 5900000 NTRACKS 1 TOTAL NTRACKS 5.9e+06
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 1.5848E0 : cos Deviation Angle = 5106001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 1.5848E0 : log10 Interaction Distance (cm) = 5106002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 1.5848E0 : cos Deviation Angle = 5206001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 1.5848E0 : log10 Interaction Distance (cm) = 5206002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 1.5848E0 : cos Deviation Angle = 5306001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 1.5848E0 : log10 Interaction Distance (cm) = 5306002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 1.5848E0 : cos Deviation Angle = 5406001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 1.5848E0 : log10 Interaction Distance (cm) = 5406002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 1.5848E0 : cos Deviation Angle = 5506001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 1.5848E0 : log10 Interaction Distance (cm) = 5506002
+ %%% EVENT 6000000 NTRACKS 1 TOTAL NTRACKS 6e+06
+ %%% EVENT 6100000 NTRACKS 1 TOTAL NTRACKS 6.1e+06
+ %%% EVENT 6200000 NTRACKS 1 TOTAL NTRACKS 6.2e+06
+ %%% EVENT 6300000 NTRACKS 1 TOTAL NTRACKS 6.3e+06
+ %%% EVENT 6400000 NTRACKS 1 TOTAL NTRACKS 6.4e+06
+ %%% EVENT 6500000 NTRACKS 1 TOTAL NTRACKS 6.5e+06
+ %%% EVENT 6600000 NTRACKS 1 TOTAL NTRACKS 6.6e+06
+ %%% EVENT 6700000 NTRACKS 1 TOTAL NTRACKS 6.7e+06
+ %%% EVENT 6800000 NTRACKS 1 TOTAL NTRACKS 6.8e+06
+ %%% EVENT 6900000 NTRACKS 1 TOTAL NTRACKS 6.9e+06
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 2.5118E0 : cos Deviation Angle = 5107001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 2.5118E0 : log10 Interaction Distance (cm) = 5107002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 2.5118E0 : cos Deviation Angle = 5207001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 2.5118E0 : log10 Interaction Distance (cm) = 5207002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 2.5118E0 : cos Deviation Angle = 5307001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 2.5118E0 : log10 Interaction Distance (cm) = 5307002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 2.5118E0 : cos Deviation Angle = 5407001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 2.5118E0 : log10 Interaction Distance (cm) = 5407002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 2.5118E0 : cos Deviation Angle = 5507001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 2.5118E0 : log10 Interaction Distance (cm) = 5507002
+ %%% EVENT 7000000 NTRACKS 1 TOTAL NTRACKS 7e+06
+ %%% EVENT 7100000 NTRACKS 1 TOTAL NTRACKS 7.1e+06
+ %%% EVENT 7200000 NTRACKS 1 TOTAL NTRACKS 7.2e+06
+ %%% EVENT 7300000 NTRACKS 1 TOTAL NTRACKS 7.3e+06
+ %%% EVENT 7400000 NTRACKS 1 TOTAL NTRACKS 7.4e+06
+ %%% EVENT 7500000 NTRACKS 1 TOTAL NTRACKS 7.5e+06
+ %%% EVENT 7600000 NTRACKS 1 TOTAL NTRACKS 7.6e+06
+ %%% EVENT 7700000 NTRACKS 1 TOTAL NTRACKS 7.7e+06
+ %%% EVENT 7800000 NTRACKS 1 TOTAL NTRACKS 7.8e+06
+ %%% EVENT 7900000 NTRACKS 1 TOTAL NTRACKS 7.9e+06
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 3.981E0 : cos Deviation Angle = 5108001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 3.981E0 : log10 Interaction Distance (cm) = 5108002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 3.981E0 : cos Deviation Angle = 5208001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 3.981E0 : log10 Interaction Distance (cm) = 5208002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 3.981E0 : cos Deviation Angle = 5308001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 3.981E0 : log10 Interaction Distance (cm) = 5308002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 3.981E0 : cos Deviation Angle = 5408001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 3.981E0 : log10 Interaction Distance (cm) = 5408002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 3.981E0 : cos Deviation Angle = 5508001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 3.981E0 : log10 Interaction Distance (cm) = 5508002
+ %%% EVENT 8000000 NTRACKS 1 TOTAL NTRACKS 8e+06
+ %%% EVENT 8100000 NTRACKS 1 TOTAL NTRACKS 8.1e+06
+ %%% EVENT 8200000 NTRACKS 1 TOTAL NTRACKS 8.2e+06
+ %%% EVENT 8300000 NTRACKS 1 TOTAL NTRACKS 8.3e+06
+ %%% EVENT 8400000 NTRACKS 1 TOTAL NTRACKS 8.4e+06
+ %%% EVENT 8500000 NTRACKS 1 TOTAL NTRACKS 8.5e+06
+ %%% EVENT 8600000 NTRACKS 1 TOTAL NTRACKS 8.6e+06
+ %%% EVENT 8700000 NTRACKS 1 TOTAL NTRACKS 8.7e+06
+ %%% EVENT 8800000 NTRACKS 1 TOTAL NTRACKS 8.8e+06
+ %%% EVENT 8900000 NTRACKS 1 TOTAL NTRACKS 8.9e+06
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 6.3095E0 : cos Deviation Angle = 5109001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 6.3095E0 : log10 Interaction Distance (cm) = 5109002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 6.3095E0 : cos Deviation Angle = 5209001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 6.3095E0 : log10 Interaction Distance (cm) = 5209002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 6.3095E0 : cos Deviation Angle = 5309001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 6.3095E0 : log10 Interaction Distance (cm) = 5309002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 6.3095E0 : cos Deviation Angle = 5409001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 6.3095E0 : log10 Interaction Distance (cm) = 5409002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 6.3095E0 : cos Deviation Angle = 5509001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 6.3095E0 : log10 Interaction Distance (cm) = 5509002
+ %%% EVENT 9000000 NTRACKS 1 TOTAL NTRACKS 9e+06
+ %%% EVENT 9100000 NTRACKS 1 TOTAL NTRACKS 9.1e+06
+ %%% EVENT 9200000 NTRACKS 1 TOTAL NTRACKS 9.2e+06
+ %%% EVENT 9300000 NTRACKS 1 TOTAL NTRACKS 9.3e+06
+ %%% EVENT 9400000 NTRACKS 1 TOTAL NTRACKS 9.4e+06
+ %%% EVENT 9500000 NTRACKS 1 TOTAL NTRACKS 9.5e+06
+ %%% EVENT 9600000 NTRACKS 1 TOTAL NTRACKS 9.6e+06
+ %%% EVENT 9700000 NTRACKS 1 TOTAL NTRACKS 9.7e+06
+ %%% EVENT 9800000 NTRACKS 1 TOTAL NTRACKS 9.8e+06
+ %%% EVENT 9900000 NTRACKS 1 TOTAL NTRACKS 9.9e+06
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 1E1 : cos Deviation Angle = 5110001
+ CreateHisto1D gamma - gamma : phot : G4_AIR : 1E1 : log10 Interaction Distance (cm) = 5110002
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 1E1 : cos Deviation Angle = 5210001
+ CreateHisto1D gamma - gamma : compt : G4_AIR : 1E1 : log10 Interaction Distance (cm) = 5210002
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 1E1 : cos Deviation Angle = 5310001
+ CreateHisto1D gamma - gamma : conv : G4_AIR : 1E1 : log10 Interaction Distance (cm) = 5310002
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 1E1 : cos Deviation Angle = 5410001
+ CreateHisto1D gamma - gamma : Rayl : G4_AIR : 1E1 : log10 Interaction Distance (cm) = 5410002
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 1E1 : cos Deviation Angle = 5510001
+ CreateHisto1D gamma - gamma : photonNuclear : G4_AIR : 1E1 : log10 Interaction Distance (cm) = 5510002
+ %%% EVENT 10000000 NTRACKS 1 TOTAL NTRACKS 1e+07
+ %%% EVENT 10100000 NTRACKS 1 TOTAL NTRACKS 1.01e+07
+ %%% EVENT 10200000 NTRACKS 1 TOTAL NTRACKS 1.02e+07
+ %%% EVENT 10300000 NTRACKS 1 TOTAL NTRACKS 1.03e+07
+ %%% EVENT 10400000 NTRACKS 1 TOTAL NTRACKS 1.04e+07
+ %%% EVENT 10500000 NTRACKS 1 TOTAL NTRACKS 1.05e+07
+ %%% EVENT 10600000 NTRACKS 1 TOTAL NTRACKS 1.06e+07
+ %%% EVENT 10700000 NTRACKS 1 TOTAL NTRACKS 1.07e+07
+ %%% EVENT 10800000 NTRACKS 1 TOTAL NTRACKS 1.08e+07
+ %%% EVENT 10900000 NTRACKS 1 TOTAL NTRACKS 1.09e+07
+G4GeometryManager::ReportVoxelStats -- Voxel Statistics
+
+    Total memory consumed for geometry optimisation:   0 kByte
+    Total CPU time elapsed for geometry optimisation: 0 seconds
+
+    Voxelisation: top CPU users:
+    Percent   Total CPU    System CPU       Memory  Volume
+    -------   ----------   ----------     --------  ----------
+       0.00         0.00         0.00            0k world
+
+    Voxelisation: top memory users:
+    Percent     Memory      Heads    Nodes   Pointers    Total CPU    Volume
+    -------   --------     ------   ------   --------   ----------    ----------
+     100.00          0k         1        2          4         0.00    world
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 1
+### ===  Ignore cuts flag:   1
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 174 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 20 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 160 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LowEPComptonModel : Emin=    0 eV  Emax=   20 MeV Fluo
+        KleinNishina : Emin=   20 MeV Emax=  100 TeV Fluo
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+      BetheHeitler5D : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 20 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 180 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=  100 keV  deltaVI
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e-, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for e+  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             PenIoni : Emin=    0 eV  Emax=  100 keV
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e+, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for GenericIon  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV
+
+ionIoni:  for GenericIon  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.001 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+         ParamICRU73 : Emin=    0 eV  Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for GenericIon SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for alpha  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+ionIoni:  for alpha  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            BraggIon : Emin=    0 eV  Emax=7.9452 MeV  deltaVI
+          BetheBloch : Emin=7.9452 MeV Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for alpha SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for anti_proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for anti_proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for anti_proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for anti_proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for anti_proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of kaon+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of mu+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of pi+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : No 
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+
+Index : 1     used in the geometry : Yes
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : No 
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+
+====================================================================
+
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : No 
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+
+Index : 1     used in the geometry : Yes
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : No 
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+
+====================================================================
+
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 0.1E0 : cos Deviation Angle = 5100011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 0.1E0 : log10 Interaction Distance (cm) = 5100012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 0.1E0 : cos Deviation Angle = 5200011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 0.1E0 : log10 Interaction Distance (cm) = 5200012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 0.1E0 : cos Deviation Angle = 5300011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 0.1E0 : log10 Interaction Distance (cm) = 5300012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 0.1E0 : cos Deviation Angle = 5400011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 0.1E0 : log10 Interaction Distance (cm) = 5400012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 0.1E0 : cos Deviation Angle = 5500011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 0.1E0 : log10 Interaction Distance (cm) = 5500012
+ %%% EVENT 11000000 NTRACKS 1 TOTAL NTRACKS 1.1e+07
+ %%% EVENT 11100000 NTRACKS 1 TOTAL NTRACKS 1.11e+07
+ %%% EVENT 11200000 NTRACKS 1 TOTAL NTRACKS 1.12e+07
+ %%% EVENT 11300000 NTRACKS 1 TOTAL NTRACKS 1.13e+07
+ %%% EVENT 11400000 NTRACKS 1 TOTAL NTRACKS 1.14e+07
+ %%% EVENT 11500000 NTRACKS 1 TOTAL NTRACKS 1.15e+07
+ %%% EVENT 11600000 NTRACKS 1 TOTAL NTRACKS 1.16e+07
+ %%% EVENT 11700000 NTRACKS 1 TOTAL NTRACKS 1.17e+07
+ %%% EVENT 11800000 NTRACKS 1 TOTAL NTRACKS 1.18e+07
+ %%% EVENT 11900000 NTRACKS 1 TOTAL NTRACKS 1.19e+07
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 0.1584E0 : cos Deviation Angle = 5101011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 0.1584E0 : log10 Interaction Distance (cm) = 5101012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 0.1584E0 : cos Deviation Angle = 5201011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 0.1584E0 : log10 Interaction Distance (cm) = 5201012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 0.1584E0 : cos Deviation Angle = 5301011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 0.1584E0 : log10 Interaction Distance (cm) = 5301012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 0.1584E0 : cos Deviation Angle = 5401011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 0.1584E0 : log10 Interaction Distance (cm) = 5401012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 0.1584E0 : cos Deviation Angle = 5501011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 0.1584E0 : log10 Interaction Distance (cm) = 5501012
+ %%% EVENT 12000000 NTRACKS 1 TOTAL NTRACKS 1.2e+07
+ %%% EVENT 12100000 NTRACKS 1 TOTAL NTRACKS 1.21e+07
+ %%% EVENT 12200000 NTRACKS 1 TOTAL NTRACKS 1.22e+07
+ %%% EVENT 12300000 NTRACKS 1 TOTAL NTRACKS 1.23e+07
+ %%% EVENT 12400000 NTRACKS 1 TOTAL NTRACKS 1.24e+07
+ %%% EVENT 12500000 NTRACKS 1 TOTAL NTRACKS 1.25e+07
+ %%% EVENT 12600000 NTRACKS 1 TOTAL NTRACKS 1.26e+07
+ %%% EVENT 12700000 NTRACKS 1 TOTAL NTRACKS 1.27e+07
+ %%% EVENT 12800000 NTRACKS 1 TOTAL NTRACKS 1.28e+07
+ %%% EVENT 12900000 NTRACKS 1 TOTAL NTRACKS 1.29e+07
+ GmPDSCreateAngleTablesUA::UserSteppingAction no seco and no change direction!!?!?  PROCESS= compt momPre (0.393031,0.107083,-0.913269) momPost (0.393031,0.107083,-0.913269)
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 0.2511E0 : cos Deviation Angle = 5102011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 0.2511E0 : log10 Interaction Distance (cm) = 5102012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 0.2511E0 : cos Deviation Angle = 5202011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 0.2511E0 : log10 Interaction Distance (cm) = 5202012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 0.2511E0 : cos Deviation Angle = 5302011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 0.2511E0 : log10 Interaction Distance (cm) = 5302012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 0.2511E0 : cos Deviation Angle = 5402011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 0.2511E0 : log10 Interaction Distance (cm) = 5402012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 0.2511E0 : cos Deviation Angle = 5502011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 0.2511E0 : log10 Interaction Distance (cm) = 5502012
+ %%% EVENT 13000000 NTRACKS 1 TOTAL NTRACKS 1.3e+07
+ %%% EVENT 13100000 NTRACKS 1 TOTAL NTRACKS 1.31e+07
+ %%% EVENT 13200000 NTRACKS 1 TOTAL NTRACKS 1.32e+07
+ %%% EVENT 13300000 NTRACKS 1 TOTAL NTRACKS 1.33e+07
+ %%% EVENT 13400000 NTRACKS 1 TOTAL NTRACKS 1.34e+07
+ %%% EVENT 13500000 NTRACKS 1 TOTAL NTRACKS 1.35e+07
+ %%% EVENT 13600000 NTRACKS 1 TOTAL NTRACKS 1.36e+07
+ %%% EVENT 13700000 NTRACKS 1 TOTAL NTRACKS 1.37e+07
+ %%% EVENT 13800000 NTRACKS 1 TOTAL NTRACKS 1.38e+07
+ %%% EVENT 13900000 NTRACKS 1 TOTAL NTRACKS 1.39e+07
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 0.3981E0 : cos Deviation Angle = 5103011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 0.3981E0 : log10 Interaction Distance (cm) = 5103012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 0.3981E0 : cos Deviation Angle = 5203011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 0.3981E0 : log10 Interaction Distance (cm) = 5203012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 0.3981E0 : cos Deviation Angle = 5303011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 0.3981E0 : log10 Interaction Distance (cm) = 5303012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 0.3981E0 : cos Deviation Angle = 5403011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 0.3981E0 : log10 Interaction Distance (cm) = 5403012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 0.3981E0 : cos Deviation Angle = 5503011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 0.3981E0 : log10 Interaction Distance (cm) = 5503012
+ %%% EVENT 14000000 NTRACKS 1 TOTAL NTRACKS 1.4e+07
+ %%% EVENT 14100000 NTRACKS 1 TOTAL NTRACKS 1.41e+07
+ %%% EVENT 14200000 NTRACKS 1 TOTAL NTRACKS 1.42e+07
+ %%% EVENT 14300000 NTRACKS 1 TOTAL NTRACKS 1.43e+07
+ %%% EVENT 14400000 NTRACKS 1 TOTAL NTRACKS 1.44e+07
+ %%% EVENT 14500000 NTRACKS 1 TOTAL NTRACKS 1.45e+07
+ %%% EVENT 14600000 NTRACKS 1 TOTAL NTRACKS 1.46e+07
+ %%% EVENT 14700000 NTRACKS 1 TOTAL NTRACKS 1.47e+07
+ %%% EVENT 14800000 NTRACKS 1 TOTAL NTRACKS 1.48e+07
+ %%% EVENT 14900000 NTRACKS 1 TOTAL NTRACKS 1.49e+07
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 0.6309E0 : cos Deviation Angle = 5104011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 0.6309E0 : log10 Interaction Distance (cm) = 5104012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 0.6309E0 : cos Deviation Angle = 5204011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 0.6309E0 : log10 Interaction Distance (cm) = 5204012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 0.6309E0 : cos Deviation Angle = 5304011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 0.6309E0 : log10 Interaction Distance (cm) = 5304012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 0.6309E0 : cos Deviation Angle = 5404011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 0.6309E0 : log10 Interaction Distance (cm) = 5404012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 0.6309E0 : cos Deviation Angle = 5504011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 0.6309E0 : log10 Interaction Distance (cm) = 5504012
+ %%% EVENT 15000000 NTRACKS 1 TOTAL NTRACKS 1.5e+07
+ %%% EVENT 15100000 NTRACKS 1 TOTAL NTRACKS 1.51e+07
+ %%% EVENT 15200000 NTRACKS 1 TOTAL NTRACKS 1.52e+07
+ %%% EVENT 15300000 NTRACKS 1 TOTAL NTRACKS 1.53e+07
+ %%% EVENT 15400000 NTRACKS 1 TOTAL NTRACKS 1.54e+07
+ %%% EVENT 15500000 NTRACKS 1 TOTAL NTRACKS 1.55e+07
+ %%% EVENT 15600000 NTRACKS 1 TOTAL NTRACKS 1.56e+07
+ %%% EVENT 15700000 NTRACKS 1 TOTAL NTRACKS 1.57e+07
+ %%% EVENT 15800000 NTRACKS 1 TOTAL NTRACKS 1.58e+07
+ %%% EVENT 15900000 NTRACKS 1 TOTAL NTRACKS 1.59e+07
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 1E0 : cos Deviation Angle = 5105011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 1E0 : log10 Interaction Distance (cm) = 5105012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 1E0 : cos Deviation Angle = 5205011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 1E0 : log10 Interaction Distance (cm) = 5205012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 1E0 : cos Deviation Angle = 5305011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 1E0 : log10 Interaction Distance (cm) = 5305012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 1E0 : cos Deviation Angle = 5405011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 1E0 : log10 Interaction Distance (cm) = 5405012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 1E0 : cos Deviation Angle = 5505011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 1E0 : log10 Interaction Distance (cm) = 5505012
+ %%% EVENT 16000000 NTRACKS 1 TOTAL NTRACKS 1.6e+07
+ %%% EVENT 16100000 NTRACKS 1 TOTAL NTRACKS 1.61e+07
+ %%% EVENT 16200000 NTRACKS 1 TOTAL NTRACKS 1.62e+07
+ %%% EVENT 16300000 NTRACKS 1 TOTAL NTRACKS 1.63e+07
+ %%% EVENT 16400000 NTRACKS 1 TOTAL NTRACKS 1.64e+07
+ %%% EVENT 16500000 NTRACKS 1 TOTAL NTRACKS 1.65e+07
+ %%% EVENT 16600000 NTRACKS 1 TOTAL NTRACKS 1.66e+07
+ %%% EVENT 16700000 NTRACKS 1 TOTAL NTRACKS 1.67e+07
+ %%% EVENT 16800000 NTRACKS 1 TOTAL NTRACKS 1.68e+07
+ %%% EVENT 16900000 NTRACKS 1 TOTAL NTRACKS 1.69e+07
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 1.5848E0 : cos Deviation Angle = 5106011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 1.5848E0 : log10 Interaction Distance (cm) = 5106012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 1.5848E0 : cos Deviation Angle = 5206011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 1.5848E0 : log10 Interaction Distance (cm) = 5206012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 1.5848E0 : cos Deviation Angle = 5306011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 1.5848E0 : log10 Interaction Distance (cm) = 5306012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 1.5848E0 : cos Deviation Angle = 5406011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 1.5848E0 : log10 Interaction Distance (cm) = 5406012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 1.5848E0 : cos Deviation Angle = 5506011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 1.5848E0 : log10 Interaction Distance (cm) = 5506012
+ %%% EVENT 17000000 NTRACKS 1 TOTAL NTRACKS 1.7e+07
+ %%% EVENT 17100000 NTRACKS 1 TOTAL NTRACKS 1.71e+07
+ %%% EVENT 17200000 NTRACKS 1 TOTAL NTRACKS 1.72e+07
+ %%% EVENT 17300000 NTRACKS 1 TOTAL NTRACKS 1.73e+07
+ %%% EVENT 17400000 NTRACKS 1 TOTAL NTRACKS 1.74e+07
+ %%% EVENT 17500000 NTRACKS 1 TOTAL NTRACKS 1.75e+07
+ %%% EVENT 17600000 NTRACKS 1 TOTAL NTRACKS 1.76e+07
+ %%% EVENT 17700000 NTRACKS 1 TOTAL NTRACKS 1.77e+07
+ %%% EVENT 17800000 NTRACKS 1 TOTAL NTRACKS 1.78e+07
+ %%% EVENT 17900000 NTRACKS 1 TOTAL NTRACKS 1.79e+07
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 2.5118E0 : cos Deviation Angle = 5107011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 2.5118E0 : log10 Interaction Distance (cm) = 5107012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 2.5118E0 : cos Deviation Angle = 5207011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 2.5118E0 : log10 Interaction Distance (cm) = 5207012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 2.5118E0 : cos Deviation Angle = 5307011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 2.5118E0 : log10 Interaction Distance (cm) = 5307012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 2.5118E0 : cos Deviation Angle = 5407011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 2.5118E0 : log10 Interaction Distance (cm) = 5407012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 2.5118E0 : cos Deviation Angle = 5507011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 2.5118E0 : log10 Interaction Distance (cm) = 5507012
+ %%% EVENT 18000000 NTRACKS 1 TOTAL NTRACKS 1.8e+07
+ %%% EVENT 18100000 NTRACKS 1 TOTAL NTRACKS 1.81e+07
+ %%% EVENT 18200000 NTRACKS 1 TOTAL NTRACKS 1.82e+07
+ %%% EVENT 18300000 NTRACKS 1 TOTAL NTRACKS 1.83e+07
+ %%% EVENT 18400000 NTRACKS 1 TOTAL NTRACKS 1.84e+07
+ %%% EVENT 18500000 NTRACKS 1 TOTAL NTRACKS 1.85e+07
+ %%% EVENT 18600000 NTRACKS 1 TOTAL NTRACKS 1.86e+07
+ %%% EVENT 18700000 NTRACKS 1 TOTAL NTRACKS 1.87e+07
+ %%% EVENT 18800000 NTRACKS 1 TOTAL NTRACKS 1.88e+07
+ %%% EVENT 18900000 NTRACKS 1 TOTAL NTRACKS 1.89e+07
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 3.981E0 : cos Deviation Angle = 5108011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 3.981E0 : log10 Interaction Distance (cm) = 5108012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 3.981E0 : cos Deviation Angle = 5208011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 3.981E0 : log10 Interaction Distance (cm) = 5208012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 3.981E0 : cos Deviation Angle = 5308011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 3.981E0 : log10 Interaction Distance (cm) = 5308012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 3.981E0 : cos Deviation Angle = 5408011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 3.981E0 : log10 Interaction Distance (cm) = 5408012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 3.981E0 : cos Deviation Angle = 5508011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 3.981E0 : log10 Interaction Distance (cm) = 5508012
+ %%% EVENT 19000000 NTRACKS 1 TOTAL NTRACKS 1.9e+07
+ %%% EVENT 19100000 NTRACKS 1 TOTAL NTRACKS 1.91e+07
+ %%% EVENT 19200000 NTRACKS 1 TOTAL NTRACKS 1.92e+07
+ %%% EVENT 19300000 NTRACKS 1 TOTAL NTRACKS 1.93e+07
+ %%% EVENT 19400000 NTRACKS 1 TOTAL NTRACKS 1.94e+07
+ %%% EVENT 19500000 NTRACKS 1 TOTAL NTRACKS 1.95e+07
+ %%% EVENT 19600000 NTRACKS 1 TOTAL NTRACKS 1.96e+07
+ %%% EVENT 19700000 NTRACKS 1 TOTAL NTRACKS 1.97e+07
+ %%% EVENT 19800000 NTRACKS 1 TOTAL NTRACKS 1.98e+07
+ %%% EVENT 19900000 NTRACKS 1 TOTAL NTRACKS 1.99e+07
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 6.3095E0 : cos Deviation Angle = 5109011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 6.3095E0 : log10 Interaction Distance (cm) = 5109012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 6.3095E0 : cos Deviation Angle = 5209011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 6.3095E0 : log10 Interaction Distance (cm) = 5209012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 6.3095E0 : cos Deviation Angle = 5309011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 6.3095E0 : log10 Interaction Distance (cm) = 5309012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 6.3095E0 : cos Deviation Angle = 5409011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 6.3095E0 : log10 Interaction Distance (cm) = 5409012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 6.3095E0 : cos Deviation Angle = 5509011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 6.3095E0 : log10 Interaction Distance (cm) = 5509012
+ %%% EVENT 20000000 NTRACKS 1 TOTAL NTRACKS 2e+07
+ %%% EVENT 20100000 NTRACKS 1 TOTAL NTRACKS 2.01e+07
+ %%% EVENT 20200000 NTRACKS 1 TOTAL NTRACKS 2.02e+07
+ %%% EVENT 20300000 NTRACKS 1 TOTAL NTRACKS 2.03e+07
+ %%% EVENT 20400000 NTRACKS 1 TOTAL NTRACKS 2.04e+07
+ %%% EVENT 20500000 NTRACKS 1 TOTAL NTRACKS 2.05e+07
+ %%% EVENT 20600000 NTRACKS 1 TOTAL NTRACKS 2.06e+07
+ %%% EVENT 20700000 NTRACKS 1 TOTAL NTRACKS 2.07e+07
+ %%% EVENT 20800000 NTRACKS 1 TOTAL NTRACKS 2.08e+07
+ %%% EVENT 20900000 NTRACKS 1 TOTAL NTRACKS 2.09e+07
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 1E1 : cos Deviation Angle = 5110011
+ CreateHisto1D gamma - gamma : phot : CONCRETE : 1E1 : log10 Interaction Distance (cm) = 5110012
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 1E1 : cos Deviation Angle = 5210011
+ CreateHisto1D gamma - gamma : compt : CONCRETE : 1E1 : log10 Interaction Distance (cm) = 5210012
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 1E1 : cos Deviation Angle = 5310011
+ CreateHisto1D gamma - gamma : conv : CONCRETE : 1E1 : log10 Interaction Distance (cm) = 5310012
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 1E1 : cos Deviation Angle = 5410011
+ CreateHisto1D gamma - gamma : Rayl : CONCRETE : 1E1 : log10 Interaction Distance (cm) = 5410012
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 1E1 : cos Deviation Angle = 5510011
+ CreateHisto1D gamma - gamma : photonNuclear : CONCRETE : 1E1 : log10 Interaction Distance (cm) = 5510012
+ %%% EVENT 21000000 NTRACKS 1 TOTAL NTRACKS 2.1e+07
+ %%% EVENT 21100000 NTRACKS 1 TOTAL NTRACKS 2.11e+07
+ %%% EVENT 21200000 NTRACKS 1 TOTAL NTRACKS 2.12e+07
+ %%% EVENT 21300000 NTRACKS 1 TOTAL NTRACKS 2.13e+07
+ %%% EVENT 21400000 NTRACKS 1 TOTAL NTRACKS 2.14e+07
+ %%% EVENT 21500000 NTRACKS 1 TOTAL NTRACKS 2.15e+07
+ %%% EVENT 21600000 NTRACKS 1 TOTAL NTRACKS 2.16e+07
+ %%% EVENT 21700000 NTRACKS 1 TOTAL NTRACKS 2.17e+07
+ %%% EVENT 21800000 NTRACKS 1 TOTAL NTRACKS 2.18e+07
+ %%% EVENT 21900000 NTRACKS 1 TOTAL NTRACKS 2.19e+07
+G4GeometryManager::ReportVoxelStats -- Voxel Statistics
+
+    Total memory consumed for geometry optimisation:   0 kByte
+    Total CPU time elapsed for geometry optimisation: 0 seconds
+
+    Voxelisation: top CPU users:
+    Percent   Total CPU    System CPU       Memory  Volume
+    -------   ----------   ----------     --------  ----------
+       0.00         0.00         0.00            0k world
+
+    Voxelisation: top memory users:
+    Percent     Memory      Heads    Nodes   Pointers    Total CPU    Volume
+    -------   --------     ------   ------   --------   ----------    ----------
+     100.00          0k         1        2          4         0.00    world
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 1
+### ===  Ignore cuts flag:   1
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 174 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 20 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 160 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LowEPComptonModel : Emin=    0 eV  Emax=   20 MeV Fluo
+        KleinNishina : Emin=   20 MeV Emax=  100 TeV Fluo
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+      BetheHeitler5D : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 20 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 180 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=  100 keV  deltaVI
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e-, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for e+  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             PenIoni : Emin=    0 eV  Emax=  100 keV
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e+, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for GenericIon  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV
+
+ionIoni:  for GenericIon  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.001 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+         ParamICRU73 : Emin=    0 eV  Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for GenericIon SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for alpha  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+ionIoni:  for alpha  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            BraggIon : Emin=    0 eV  Emax=7.9452 MeV  deltaVI
+          BetheBloch : Emin=7.9452 MeV Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for alpha SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for anti_proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for anti_proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for anti_proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for anti_proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for anti_proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of kaon+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of mu+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of pi+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : No 
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+
+Index : 1     used in the geometry : No 
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+
+Index : 2     used in the geometry : Yes
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : No 
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+
+Index : 1     used in the geometry : No 
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+
+Index : 2     used in the geometry : Yes
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 0.1E0 : cos Deviation Angle = 5100021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 0.1E0 : log10 Interaction Distance (cm) = 5100022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 0.1E0 : cos Deviation Angle = 5200021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 0.1E0 : log10 Interaction Distance (cm) = 5200022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 0.1E0 : cos Deviation Angle = 5300021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 0.1E0 : log10 Interaction Distance (cm) = 5300022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 0.1E0 : cos Deviation Angle = 5400021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 0.1E0 : log10 Interaction Distance (cm) = 5400022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 0.1E0 : cos Deviation Angle = 5500021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 0.1E0 : log10 Interaction Distance (cm) = 5500022
+ %%% EVENT 22000000 NTRACKS 1 TOTAL NTRACKS 2.2e+07
+ %%% EVENT 22100000 NTRACKS 1 TOTAL NTRACKS 2.21e+07
+ %%% EVENT 22200000 NTRACKS 1 TOTAL NTRACKS 2.22e+07
+ %%% EVENT 22300000 NTRACKS 1 TOTAL NTRACKS 2.23e+07
+ %%% EVENT 22400000 NTRACKS 1 TOTAL NTRACKS 2.24e+07
+ %%% EVENT 22500000 NTRACKS 1 TOTAL NTRACKS 2.25e+07
+ %%% EVENT 22600000 NTRACKS 1 TOTAL NTRACKS 2.26e+07
+ %%% EVENT 22700000 NTRACKS 1 TOTAL NTRACKS 2.27e+07
+ %%% EVENT 22800000 NTRACKS 1 TOTAL NTRACKS 2.28e+07
+ %%% EVENT 22900000 NTRACKS 1 TOTAL NTRACKS 2.29e+07
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 0.1584E0 : cos Deviation Angle = 5101021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 0.1584E0 : log10 Interaction Distance (cm) = 5101022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 0.1584E0 : cos Deviation Angle = 5201021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 0.1584E0 : log10 Interaction Distance (cm) = 5201022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 0.1584E0 : cos Deviation Angle = 5301021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 0.1584E0 : log10 Interaction Distance (cm) = 5301022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 0.1584E0 : cos Deviation Angle = 5401021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 0.1584E0 : log10 Interaction Distance (cm) = 5401022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 0.1584E0 : cos Deviation Angle = 5501021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 0.1584E0 : log10 Interaction Distance (cm) = 5501022
+ %%% EVENT 23000000 NTRACKS 1 TOTAL NTRACKS 2.3e+07
+ %%% EVENT 23100000 NTRACKS 1 TOTAL NTRACKS 2.31e+07
+ %%% EVENT 23200000 NTRACKS 1 TOTAL NTRACKS 2.32e+07
+ %%% EVENT 23300000 NTRACKS 1 TOTAL NTRACKS 2.33e+07
+ %%% EVENT 23400000 NTRACKS 1 TOTAL NTRACKS 2.34e+07
+ %%% EVENT 23500000 NTRACKS 1 TOTAL NTRACKS 2.35e+07
+ %%% EVENT 23600000 NTRACKS 1 TOTAL NTRACKS 2.36e+07
+ %%% EVENT 23700000 NTRACKS 1 TOTAL NTRACKS 2.37e+07
+ %%% EVENT 23800000 NTRACKS 1 TOTAL NTRACKS 2.38e+07
+ %%% EVENT 23900000 NTRACKS 1 TOTAL NTRACKS 2.39e+07
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 0.2511E0 : cos Deviation Angle = 5102021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 0.2511E0 : log10 Interaction Distance (cm) = 5102022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 0.2511E0 : cos Deviation Angle = 5202021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 0.2511E0 : log10 Interaction Distance (cm) = 5202022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 0.2511E0 : cos Deviation Angle = 5302021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 0.2511E0 : log10 Interaction Distance (cm) = 5302022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 0.2511E0 : cos Deviation Angle = 5402021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 0.2511E0 : log10 Interaction Distance (cm) = 5402022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 0.2511E0 : cos Deviation Angle = 5502021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 0.2511E0 : log10 Interaction Distance (cm) = 5502022
+ %%% EVENT 24000000 NTRACKS 1 TOTAL NTRACKS 2.4e+07
+ %%% EVENT 24100000 NTRACKS 1 TOTAL NTRACKS 2.41e+07
+ %%% EVENT 24200000 NTRACKS 1 TOTAL NTRACKS 2.42e+07
+ %%% EVENT 24300000 NTRACKS 1 TOTAL NTRACKS 2.43e+07
+ %%% EVENT 24400000 NTRACKS 1 TOTAL NTRACKS 2.44e+07
+ %%% EVENT 24500000 NTRACKS 1 TOTAL NTRACKS 2.45e+07
+ %%% EVENT 24600000 NTRACKS 1 TOTAL NTRACKS 2.46e+07
+ %%% EVENT 24700000 NTRACKS 1 TOTAL NTRACKS 2.47e+07
+ %%% EVENT 24800000 NTRACKS 1 TOTAL NTRACKS 2.48e+07
+ %%% EVENT 24900000 NTRACKS 1 TOTAL NTRACKS 2.49e+07
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 0.3981E0 : cos Deviation Angle = 5103021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 0.3981E0 : log10 Interaction Distance (cm) = 5103022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 0.3981E0 : cos Deviation Angle = 5203021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 0.3981E0 : log10 Interaction Distance (cm) = 5203022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 0.3981E0 : cos Deviation Angle = 5303021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 0.3981E0 : log10 Interaction Distance (cm) = 5303022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 0.3981E0 : cos Deviation Angle = 5403021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 0.3981E0 : log10 Interaction Distance (cm) = 5403022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 0.3981E0 : cos Deviation Angle = 5503021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 0.3981E0 : log10 Interaction Distance (cm) = 5503022
+ %%% EVENT 25000000 NTRACKS 1 TOTAL NTRACKS 2.5e+07
+ %%% EVENT 25100000 NTRACKS 1 TOTAL NTRACKS 2.51e+07
+ %%% EVENT 25200000 NTRACKS 1 TOTAL NTRACKS 2.52e+07
+ %%% EVENT 25300000 NTRACKS 1 TOTAL NTRACKS 2.53e+07
+ %%% EVENT 25400000 NTRACKS 1 TOTAL NTRACKS 2.54e+07
+ %%% EVENT 25500000 NTRACKS 1 TOTAL NTRACKS 2.55e+07
+ %%% EVENT 25600000 NTRACKS 1 TOTAL NTRACKS 2.56e+07
+ %%% EVENT 25700000 NTRACKS 1 TOTAL NTRACKS 2.57e+07
+ %%% EVENT 25800000 NTRACKS 1 TOTAL NTRACKS 2.58e+07
+ %%% EVENT 25900000 NTRACKS 1 TOTAL NTRACKS 2.59e+07
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 0.6309E0 : cos Deviation Angle = 5104021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 0.6309E0 : log10 Interaction Distance (cm) = 5104022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 0.6309E0 : cos Deviation Angle = 5204021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 0.6309E0 : log10 Interaction Distance (cm) = 5204022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 0.6309E0 : cos Deviation Angle = 5304021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 0.6309E0 : log10 Interaction Distance (cm) = 5304022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 0.6309E0 : cos Deviation Angle = 5404021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 0.6309E0 : log10 Interaction Distance (cm) = 5404022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 0.6309E0 : cos Deviation Angle = 5504021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 0.6309E0 : log10 Interaction Distance (cm) = 5504022
+ %%% EVENT 26000000 NTRACKS 1 TOTAL NTRACKS 2.6e+07
+ %%% EVENT 26100000 NTRACKS 1 TOTAL NTRACKS 2.61e+07
+ %%% EVENT 26200000 NTRACKS 1 TOTAL NTRACKS 2.62e+07
+ %%% EVENT 26300000 NTRACKS 1 TOTAL NTRACKS 2.63e+07
+ %%% EVENT 26400000 NTRACKS 1 TOTAL NTRACKS 2.64e+07
+ %%% EVENT 26500000 NTRACKS 1 TOTAL NTRACKS 2.65e+07
+ %%% EVENT 26600000 NTRACKS 1 TOTAL NTRACKS 2.66e+07
+ %%% EVENT 26700000 NTRACKS 1 TOTAL NTRACKS 2.67e+07
+ %%% EVENT 26800000 NTRACKS 1 TOTAL NTRACKS 2.68e+07
+ %%% EVENT 26900000 NTRACKS 1 TOTAL NTRACKS 2.69e+07
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 1E0 : cos Deviation Angle = 5105021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 1E0 : log10 Interaction Distance (cm) = 5105022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 1E0 : cos Deviation Angle = 5205021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 1E0 : log10 Interaction Distance (cm) = 5205022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 1E0 : cos Deviation Angle = 5305021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 1E0 : log10 Interaction Distance (cm) = 5305022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 1E0 : cos Deviation Angle = 5405021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 1E0 : log10 Interaction Distance (cm) = 5405022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 1E0 : cos Deviation Angle = 5505021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 1E0 : log10 Interaction Distance (cm) = 5505022
+ %%% EVENT 27000000 NTRACKS 1 TOTAL NTRACKS 2.7e+07
+ %%% EVENT 27100000 NTRACKS 1 TOTAL NTRACKS 2.71e+07
+ %%% EVENT 27200000 NTRACKS 1 TOTAL NTRACKS 2.72e+07
+ %%% EVENT 27300000 NTRACKS 1 TOTAL NTRACKS 2.73e+07
+ %%% EVENT 27400000 NTRACKS 1 TOTAL NTRACKS 2.74e+07
+ %%% EVENT 27500000 NTRACKS 1 TOTAL NTRACKS 2.75e+07
+ %%% EVENT 27600000 NTRACKS 1 TOTAL NTRACKS 2.76e+07
+ %%% EVENT 27700000 NTRACKS 1 TOTAL NTRACKS 2.77e+07
+ %%% EVENT 27800000 NTRACKS 1 TOTAL NTRACKS 2.78e+07
+ %%% EVENT 27900000 NTRACKS 1 TOTAL NTRACKS 2.79e+07
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 1.5848E0 : cos Deviation Angle = 5106021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 1.5848E0 : log10 Interaction Distance (cm) = 5106022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 1.5848E0 : cos Deviation Angle = 5206021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 1.5848E0 : log10 Interaction Distance (cm) = 5206022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 1.5848E0 : cos Deviation Angle = 5306021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 1.5848E0 : log10 Interaction Distance (cm) = 5306022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 1.5848E0 : cos Deviation Angle = 5406021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 1.5848E0 : log10 Interaction Distance (cm) = 5406022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 1.5848E0 : cos Deviation Angle = 5506021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 1.5848E0 : log10 Interaction Distance (cm) = 5506022
+ %%% EVENT 28000000 NTRACKS 1 TOTAL NTRACKS 2.8e+07
+ %%% EVENT 28100000 NTRACKS 1 TOTAL NTRACKS 2.81e+07
+ %%% EVENT 28200000 NTRACKS 1 TOTAL NTRACKS 2.82e+07
+ %%% EVENT 28300000 NTRACKS 1 TOTAL NTRACKS 2.83e+07
+ %%% EVENT 28400000 NTRACKS 1 TOTAL NTRACKS 2.84e+07
+ %%% EVENT 28500000 NTRACKS 1 TOTAL NTRACKS 2.85e+07
+ %%% EVENT 28600000 NTRACKS 1 TOTAL NTRACKS 2.86e+07
+ %%% EVENT 28700000 NTRACKS 1 TOTAL NTRACKS 2.87e+07
+ %%% EVENT 28800000 NTRACKS 1 TOTAL NTRACKS 2.88e+07
+ %%% EVENT 28900000 NTRACKS 1 TOTAL NTRACKS 2.89e+07
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 2.5118E0 : cos Deviation Angle = 5107021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 2.5118E0 : log10 Interaction Distance (cm) = 5107022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 2.5118E0 : cos Deviation Angle = 5207021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 2.5118E0 : log10 Interaction Distance (cm) = 5207022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 2.5118E0 : cos Deviation Angle = 5307021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 2.5118E0 : log10 Interaction Distance (cm) = 5307022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 2.5118E0 : cos Deviation Angle = 5407021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 2.5118E0 : log10 Interaction Distance (cm) = 5407022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 2.5118E0 : cos Deviation Angle = 5507021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 2.5118E0 : log10 Interaction Distance (cm) = 5507022
+ %%% EVENT 29000000 NTRACKS 1 TOTAL NTRACKS 2.9e+07
+ %%% EVENT 29100000 NTRACKS 1 TOTAL NTRACKS 2.91e+07
+ %%% EVENT 29200000 NTRACKS 1 TOTAL NTRACKS 2.92e+07
+ %%% EVENT 29300000 NTRACKS 1 TOTAL NTRACKS 2.93e+07
+ %%% EVENT 29400000 NTRACKS 1 TOTAL NTRACKS 2.94e+07
+ %%% EVENT 29500000 NTRACKS 1 TOTAL NTRACKS 2.95e+07
+ %%% EVENT 29600000 NTRACKS 1 TOTAL NTRACKS 2.96e+07
+ %%% EVENT 29700000 NTRACKS 1 TOTAL NTRACKS 2.97e+07
+ %%% EVENT 29800000 NTRACKS 1 TOTAL NTRACKS 2.98e+07
+ %%% EVENT 29900000 NTRACKS 1 TOTAL NTRACKS 2.99e+07
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 3.981E0 : cos Deviation Angle = 5108021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 3.981E0 : log10 Interaction Distance (cm) = 5108022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 3.981E0 : cos Deviation Angle = 5208021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 3.981E0 : log10 Interaction Distance (cm) = 5208022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 3.981E0 : cos Deviation Angle = 5308021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 3.981E0 : log10 Interaction Distance (cm) = 5308022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 3.981E0 : cos Deviation Angle = 5408021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 3.981E0 : log10 Interaction Distance (cm) = 5408022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 3.981E0 : cos Deviation Angle = 5508021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 3.981E0 : log10 Interaction Distance (cm) = 5508022
+ %%% EVENT 30000000 NTRACKS 1 TOTAL NTRACKS 3e+07
+ %%% EVENT 30100000 NTRACKS 1 TOTAL NTRACKS 3.01e+07
+ %%% EVENT 30200000 NTRACKS 1 TOTAL NTRACKS 3.02e+07
+ %%% EVENT 30300000 NTRACKS 1 TOTAL NTRACKS 3.03e+07
+ %%% EVENT 30400000 NTRACKS 1 TOTAL NTRACKS 3.04e+07
+ %%% EVENT 30500000 NTRACKS 1 TOTAL NTRACKS 3.05e+07
+ %%% EVENT 30600000 NTRACKS 1 TOTAL NTRACKS 3.06e+07
+ %%% EVENT 30700000 NTRACKS 1 TOTAL NTRACKS 3.07e+07
+ %%% EVENT 30800000 NTRACKS 1 TOTAL NTRACKS 3.08e+07
+ %%% EVENT 30900000 NTRACKS 1 TOTAL NTRACKS 3.09e+07
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 6.3095E0 : cos Deviation Angle = 5109021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 6.3095E0 : log10 Interaction Distance (cm) = 5109022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 6.3095E0 : cos Deviation Angle = 5209021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 6.3095E0 : log10 Interaction Distance (cm) = 5209022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 6.3095E0 : cos Deviation Angle = 5309021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 6.3095E0 : log10 Interaction Distance (cm) = 5309022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 6.3095E0 : cos Deviation Angle = 5409021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 6.3095E0 : log10 Interaction Distance (cm) = 5409022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 6.3095E0 : cos Deviation Angle = 5509021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 6.3095E0 : log10 Interaction Distance (cm) = 5509022
+ %%% EVENT 31000000 NTRACKS 1 TOTAL NTRACKS 3.1e+07
+ %%% EVENT 31100000 NTRACKS 1 TOTAL NTRACKS 3.11e+07
+ %%% EVENT 31200000 NTRACKS 1 TOTAL NTRACKS 3.12e+07
+ %%% EVENT 31300000 NTRACKS 1 TOTAL NTRACKS 3.13e+07
+ %%% EVENT 31400000 NTRACKS 1 TOTAL NTRACKS 3.14e+07
+ %%% EVENT 31500000 NTRACKS 1 TOTAL NTRACKS 3.15e+07
+ %%% EVENT 31600000 NTRACKS 1 TOTAL NTRACKS 3.16e+07
+ %%% EVENT 31700000 NTRACKS 1 TOTAL NTRACKS 3.17e+07
+ %%% EVENT 31800000 NTRACKS 1 TOTAL NTRACKS 3.18e+07
+ %%% EVENT 31900000 NTRACKS 1 TOTAL NTRACKS 3.19e+07
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 1E1 : cos Deviation Angle = 5110021
+ CreateHisto1D gamma - gamma : phot : G4_POLYETHYLENE : 1E1 : log10 Interaction Distance (cm) = 5110022
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 1E1 : cos Deviation Angle = 5210021
+ CreateHisto1D gamma - gamma : compt : G4_POLYETHYLENE : 1E1 : log10 Interaction Distance (cm) = 5210022
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 1E1 : cos Deviation Angle = 5310021
+ CreateHisto1D gamma - gamma : conv : G4_POLYETHYLENE : 1E1 : log10 Interaction Distance (cm) = 5310022
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 1E1 : cos Deviation Angle = 5410021
+ CreateHisto1D gamma - gamma : Rayl : G4_POLYETHYLENE : 1E1 : log10 Interaction Distance (cm) = 5410022
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 1E1 : cos Deviation Angle = 5510021
+ CreateHisto1D gamma - gamma : photonNuclear : G4_POLYETHYLENE : 1E1 : log10 Interaction Distance (cm) = 5510022
+ %%% EVENT 32000000 NTRACKS 1 TOTAL NTRACKS 3.2e+07
+ %%% EVENT 32100000 NTRACKS 1 TOTAL NTRACKS 3.21e+07
+ %%% EVENT 32200000 NTRACKS 1 TOTAL NTRACKS 3.22e+07
+ %%% EVENT 32300000 NTRACKS 1 TOTAL NTRACKS 3.23e+07
+ %%% EVENT 32400000 NTRACKS 1 TOTAL NTRACKS 3.24e+07
+ %%% EVENT 32500000 NTRACKS 1 TOTAL NTRACKS 3.25e+07
+ %%% EVENT 32600000 NTRACKS 1 TOTAL NTRACKS 3.26e+07
+ %%% EVENT 32700000 NTRACKS 1 TOTAL NTRACKS 3.27e+07
+ %%% EVENT 32800000 NTRACKS 1 TOTAL NTRACKS 3.28e+07
+ %%% EVENT 32900000 NTRACKS 1 TOTAL NTRACKS 3.29e+07
+GmGeneratorChangeEnergyAndMaterial::ChangeMaterialOrSource()  maximum number of worlds reached and still some events not produced, please diminish the number of events to be at most 33000000
+ Run terminated.
+Run Summary
+  Run Aborted after 33000000 events processed.
+  User=1031.580000s Real=1032.231501s Sys=0.090000s
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 angleDeviation.gamma.gamma:NormalizeToNEvents
+=== saving histograms in file === angleDeviation.gamma.gamma.root

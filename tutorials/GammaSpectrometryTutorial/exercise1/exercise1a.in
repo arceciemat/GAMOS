@@ -1,0 +1,33 @@
+### Set the suffix of output files
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise1a	
+
+### Set geometry, physics and generator
+/gamos/setParam GmGeometryFromText:FileName detector.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+### Initialize Geant4 geometry and physics
+/run/initialize
+
+### Set generator particle distributions
+## source 1
+/gamos/generator/addSingleParticleSource source1 gamma 1173*keV
+/gamos/generator/positionDist source1 GmGenerDistPositionPoint 0. 0. -5*cm
+
+## source 2
+/gamos/generator/addSingleParticleSource source2 gamma 1333*keV
+/gamos/generator/positionDist source2 GmGenerDistPositionPoint 0. 0. -5*cm
+
+### Set the crystal as sensitive detector
+/gamos/analysis/histo1Max *Energy* 3000
+/gamos/analysis/histo1NBins *Energy* 300
+/gamos/SD/assocSD2LogVol GmSDSimple Calor crystal
+### store hits created in the sensitive detector
+/gamos/userAction GmHitsHistosUA
+
+### Print a message each 1000 events
+/gamos/userAction GmCountTracksUA
+
+### Run events
+/run/beamOn 100000

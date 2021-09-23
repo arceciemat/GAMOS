@@ -1,0 +1,285 @@
+@@@@@ Running GAMOS with script: exercise4a.in
+
+**************************************************************
+ Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+ Using Random Engine: MixMaxRng
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+"/vis/list" to see available colours.
+/control/execute exercise4a.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4a
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/pet.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/GmPhysics/replacePhysics gamma-lowener
+GmEMPhysics::Replaceing PhysicsList component gamma-lowener
+G4VModularPhysicsList::ReplacePhysics: gamma-standardwith type : 22  is replaces with gamma-lowener
+GmEMPhysics::ReplacePhysicsList: gamma-lowener is registered
+/gamos/GmPhysics/replacePhysics electron-lowener
+GmEMPhysics::Replaceing PhysicsList component electron-lowener
+G4VModularPhysicsList::ReplacePhysics: electron-standardwith type : 11  is replaces with electron-lowener
+GmEMPhysics::ReplacePhysicsList: electron-lowener is registered
+/gamos/generator GmGenerator
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmRecHitsHistosUA
+/run/initialize
+GmPhysicsGammaLowEner::ConstructProcess 
+/gamos/setParam SD:EnergyResol:Calor 0.2
+/gamos/setParam SD:MeasuringTime:Calor 1.e-6*s
+/gamos/SD/assocSD2LogVol GmSDSimple Calor Crystal
+ DeadTimeDUListByBlock: NShift 100
+ GmDetUnitIDBuilderFromAncestors sdType Calor
+/gamos/SD/recHitBuilder GmRecHitBuilderByBlock Calor
+/gamos/generator/addIsotopeSource source F18 1.E9*becquerel
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+/run/beamOn 10000
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : G4_Al
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  2.3478 keV    e-  131.031 keV    e+  128.416 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : LSO
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  15.1545 keV    e-  205.548 keV    e+  200.096 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 3     used in the geometry : Yes
+ Material : G4_WATER
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.10981 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+ CreateHisto1D Hits: SD ALL:Nhits = 201001
+ CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+ CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+ CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+ CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+ CreateHisto1D Hits: SD ALL:N E depos = 201006
+ CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+ CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+ CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+ CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+ CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+ CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+ CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+ CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+ CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+ CreateHisto1D Hits: SD Calor: Nhits = 201101
+ CreateHisto1D Hits: SD Calor: Energy (MeV) = 201102
+ CreateHisto1D Hits: SD Calor: Width R3 (mm) = 201103
+ CreateHisto1D Hits: SD Calor: Width Z (mm) = 201104
+ CreateHisto1D Hits: SD Calor: Width phi (deg) = 201105
+ CreateHisto1D Hits: SD Calor: N E depos = 201106
+ CreateHisto1D Hits: SD Calor: Time span (ns) = 201107
+ CreateHisto1D Hits: SD Calor: Distance between hits (mm) = 201108
+ CreateHisto1D Hits: SD Calor: X hit (mm) = 201111
+ CreateHisto1D Hits: SD Calor: Y hit (mm) = 201112
+ CreateHisto1D Hits: SD Calor: Z hit (mm) = 201113
+ CreateHisto1D Hits: SD Calor: R2 hit (mm) = 201114
+ CreateHisto1D Hits: SD Calor: PHI hit (deg) = 201115
+ CreateHisto1D Hits: SD Calor: THETA hit (deg) = 201116
+ CreateHisto1D Hits: SD Calor: R3 hit (mm) = 201117
+ CreateHisto1D RecHits: SD ALL:N rec hits = 202001
+ CreateHisto1D RecHits: SD ALL:Energy (MeV) = 202002
+ CreateHisto1D RecHits: SD ALL:Width R3 (mm) = 202003
+ CreateHisto1D RecHits: SD ALL:Width Z (mm) = 202004
+ CreateHisto1D RecHits: SD ALL:Width phi (deg) = 202005
+ CreateHisto1D RecHits: SD ALL:N sim hits = 202006
+ CreateHisto1D RecHits: SD ALL:Time span (ns) = 202007
+ CreateHisto1D RecHits: SD ALL:Distance between hits (mm) = 202008
+ CreateHisto1D RecHits: SD Calor: N rec hits = 202101
+ CreateHisto1D RecHits: SD Calor: Energy (MeV) = 202102
+ CreateHisto1D RecHits: SD Calor: Width R3 (mm) = 202103
+ CreateHisto1D RecHits: SD Calor: Width Z (mm) = 202104
+ CreateHisto1D RecHits: SD Calor: Width phi (deg) = 202105
+ CreateHisto1D RecHits: SD Calor: N sim hits = 202106
+ CreateHisto1D RecHits: SD Calor: Time span (ns) = 202107
+ CreateHisto1D RecHits: SD Calor: Distance between hits (mm) = 202108
+ Run terminated.
+Run Summary
+  Number of events processed : 10000
+  User=12.240000s Real=12.246736s Sys=0.010000s
+@@@@ GmCountProcessesUA
+ PART_COUNT: e+ = 10000
+ PART_COUNT: e- = 80559
+ PART_COUNT: gamma = 28549
+ PROC_COUNT e+ : Transportation = 26
+ PROC_COUNT e+ : annihil = 10004
+ PROC_COUNT e+ : eBrem = 128
+ PROC_COUNT e+ : eBrem_NoSeco = 1
+ PROC_COUNT e+ : eIoni = 499
+ PROC_COUNT e+ : eIoni_NoSeco = 10171
+ PROC_COUNT e+ : msc = 1446
+ PROC_COUNT e+ : ALL = 22275
+ PROC_COUNT e- : Transportation = 202
+ PROC_COUNT e- : eBrem = 786
+ PROC_COUNT e- : eBrem_NoSeco = 44
+ PROC_COUNT e- : eIoni = 1274
+ PROC_COUNT e- : eIoni_NoSeco = 122062
+ PROC_COUNT e- : msc = 11599
+ PROC_COUNT e- : ALL = 135967
+ PROC_COUNT gamma : Rayl = 3482
+ PROC_COUNT gamma : Transportation = 70332
+ PROC_COUNT gamma : compt = 58983
+ PROC_COUNT gamma : phot = 19801
+PROC_COUNT gamma : ALL = 152598
+PROC_CREATOR_COUNT e+ : Primary = 10000
+PROC_CREATOR_COUNT e- : compt = 58983
+PROC_CREATOR_COUNT e- : eIoni = 1773
+PROC_CREATOR_COUNT e- : phot = 19803
+PROC_CREATOR_COUNT gamma : annihil = 20000
+PROC_CREATOR_COUNT gamma : compt = 65
+PROC_CREATOR_COUNT gamma : eBrem = 914
+PROC_CREATOR_COUNT gamma : phot = 7570
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 hits.exercise4a:NormalizeToNEvents
+=== saving histograms in file === hits.exercise4a.root
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 recHits.exercise4a:NormalizeToNEvents
+=== saving histograms in file === recHits.exercise4a.root

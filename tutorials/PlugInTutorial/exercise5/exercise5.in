@@ -1,0 +1,25 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName ../exercise3/exercise3.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source neutron 10.*MeV
+/gamos/generator/positionDist source Exer2GenerDistPosition  1.*cm
+/gamos/generator/directionDist source GmGenerDistDirectionConst 1. 0. 0.
+
+/gamos/scoring/createMFDetector detCrystal Crystal 
+/gamos/scoring/addScorer2MFD EdepositScorer GmG4PSEnergyDeposit detCrystal
+
+/gamos/scoring/addScorer2MFD nsecoScorer GmG4PSNofSecondary detCrystal
+/gamos/filter E100Filter GmKineticEnergyFilter 100.*keV 100.*GeV
+/gamos/scoring/addFilter2Scorer E100Filter nsecoScorer
+
+/run/beamOn 100
+

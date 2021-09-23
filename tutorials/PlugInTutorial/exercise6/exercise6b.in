@@ -1,0 +1,37 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName ../exercise3/exercise3.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+/gamos/verbosity GmSDVerbosity debug
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+
+/run/initialize
+
+/gamos/generator/addIsotopeSource source F18 1.E-3*curie
+/gamos/generator/positionDist source Exer2GenerDistPosition  1.*cm
+/gamos/generator/directionDist source GmGenerDistDirectionConst 1. 0. 0.
+
+/gamos/setParam SD:DeadTimeParalizable:CalorSD 0
+/gamos/setParam SD:DetUnitID:NAncestors 2
+/gamos/setParam SD:EnergyResol:CalorSD 0.2
+/gamos/setParam SD:EnergyResol:TrackerSD 0.02
+/gamos/setParam SD:MeasuringTime:CalorSD 1.*ms
+/gamos/setParam SD:DeadTime:CalorSD 100.
+/gamos/setParam SD:MeasuringTime:TrackerSD 1.*ms
+/gamos/setParam SD:DeadTime:TrackerSD 1.*ms
+/gamos/SD/assocSD2LogVol GmSDSimple CalorSD Crystal
+/gamos/SD/assocSD2LogVol GmSDSimple TrackerSD Tracker
+/gamos/SD/recHitBuilder GmRecHitBuilder1to1 CalorSD
+/gamos/SD/recHitBuilder GmRecHitBuilder1to1 TrackerSD
+
+/gamos/userAction GmHitsHistosUA 
+/gamos/userAction GmRecHitsHistosUA 
+
+/gamos/setParam hits.bin:FileName myhits.out
+/gamos/userAction GmHitsWriteUA
+
+/run/beamOn 10
+

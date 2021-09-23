@@ -1,0 +1,14 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName exercise1.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource mySource e- 1.*MeV
+/gamos/physics/userLimits/setMinEKin UL1 * e- 500.*keV
+
+/run/beamOn 10
+

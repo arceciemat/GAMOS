@@ -1,0 +1,218 @@
+/control/execute exercise4b.DoseEWBS.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4b.Dose
+/gamos/setParam GmReadPhantomGeometry:FileName ../exercise3/world.geom
+/gamos/setParam GmSimplePhantomGeometry:MaterialNames G4_WATER G4_LUNG_ICRP G4_BONE_COMPACT_ICRU
+/gamos/setParam GmSimplePhantomGeometry:MaterialZVoxels 10 10 80
+/gamos/setParam GmSimplePhantomGeometry:MaterialDensities 1. 0.3 1.85
+/gamos/setParam GmSimplePhantomGeometry:NVoxels 100 100 100
+/gamos/setParam GmSimplePhantomGeometry:PhantomDims -500 500 -500 500 -500 500
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. -1400.
+/gamos/setParam GmReadPhantomGeometry:InitialRotAngles 0*deg 0. 0.
+/gamos/geometry GmSimplePhantomGeometry
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/setParam RTGeneratorPhaseSpace:FileName testEWBS
+/gamos/setParam RTGeneratorPhaseSpace:InitialDisplacement 0. 0. 0.
+/gamos/setParam RTGeneratorPhaseSpace:InitialRotAngles 0. 0. 0.*deg
+/gamos/setParam RTGeneratorPhaseSpace:MaxNReuse 10
+/gamos/generator RTGeneratorPhaseSpace
+/run/initialize
+0x560af9a61df0 thePhantomParam->SetMaterials( 3
+GmPhysicsGammaLowEner::ConstructProcess 
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+ GmVPrimitiveScorer::SetParameters: no parameters 
+/gamos/analysis/histo1Min *Dose -18
+/gamos/analysis/histo1Max *Dose -9
+/gamos/analysis/histo1Min *volume -18
+/gamos/analysis/histo1Max *volume -9
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorer
+phantomContainer GmRegularParamUtils::GetPhantomMotherTranslation (0,0,-1400) global (0,0,-1400)
+phantomContainer GmRegularParamUtils::GetPhantomMotherRotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+ global 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+ RTPSPDoseHistos nvoxel 100 100 100
+ RTPSPDoseHistos half dim 5 5 5
+ RTPSPDoseHistos translation (0,0,-1400)
+ RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+/gamos/setParam GmPSPrinterSqdose_doseScorer:FileName sqdose_899.out
+/gamos/scoring/addPrinter2Scorer GmPSPrinterSqdose doseScorer
+/gamos/userAction GmCountTracksUA
+/run/beamOn 1000000
+G4RunManagerKernel -- G4ScoreSplittingProcess is appended to all particles.
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : G4_WATER1
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.10981 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : G4_LUNG_ICRP0.3
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  42.371 keV    e+  42.0872 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 3     used in the geometry : Yes
+ Material : G4_BONE_COMPACT_ICRU1.85
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.63878 keV    e-  116.885 keV    e+  115.325 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+ %%% EVENT 0 NTRACKS 1 TOTAL NTRACKS 1
+ %%% EVENT 1000 NTRACKS 1 TOTAL NTRACKS 5870
+ %%% EVENT 2000 NTRACKS 1 TOTAL NTRACKS 11340
+ %%% EVENT 3000 NTRACKS 1 TOTAL NTRACKS 16859
+ %%% EVENT 4000 NTRACKS 17 TOTAL NTRACKS 22564
+ %%% EVENT 5000 NTRACKS 1 TOTAL NTRACKS 28655
+ %%% EVENT 6000 NTRACKS 1 TOTAL NTRACKS 34999
+ %%% EVENT 7000 NTRACKS 1 TOTAL NTRACKS 41021
+ %%% EVENT 8000 NTRACKS 12 TOTAL NTRACKS 46825
+ %%% EVENT 9000 NTRACKS 20 TOTAL NTRACKS 53206
+ %%% EVENT 10000 NTRACKS 1 TOTAL NTRACKS 59051
+ %%% EVENT 11000 NTRACKS 14 TOTAL NTRACKS 65909
+ %%% EVENT 12000 NTRACKS 5 TOTAL NTRACKS 72406
+ %%% EVENT 13000 NTRACKS 11 TOTAL NTRACKS 78681
+ %%% EVENT 14000 NTRACKS 5 TOTAL NTRACKS 84807
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Too many events demanded
+      issued by : RTGeneratorPhaseSpace::GeneratePrimaries
+FAILED reading event  14390
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+ Run terminated.
+Run Summary
+  Run Aborted after 14391 events processed.
+  User=2.910000s Real=2.913491s Sys=0.000000s
+SetUnit RTPSPDoseHistos 1e-12 Name Gy
+ CreateHisto1D RTPSPDoseHistos: Dose = 36201
+ CreateHisto1D RTPSPDoseHistos: Dose-volume = 36202
+ CreateHisto1D RTPSPDoseHistos: Dose Error REL = 36203
+ CreateHisto1D RTPSPDoseHistos: log10(Dose Error REL) = 36204
+ CreateHisto1D RTPSPDoseHistos: Dose Error = 36205
+ CreateHisto1D RTPSPDoseHistos: log10(Dose Error) = 36206
+ CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error) = 36207
+ CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error REL) = 36208
+RTPSPDoseHistos MINIMUM DOSE 6.21827e-22 Gy 
+RTPSPDoseHistos MAXIMUM DOSE 8.81211e-16 Gy 
+RTPSPDoseHistos AVERAGE ERROR 20% = 0.707756
+RTPSPDoseHistos AVERAGE ERROR 50% = 0.534042
+RTPSPDoseHistos AVERAGE ERROR 90% = 0.410453
+RTPSPDoseHistos TOTAL DOSE = 8.79174e-13 +-(REL) 0.00950288
+ CreateHisto1D RTPSPDoseHistos: Dose Profile X_merged = 66301
+ CreateHisto1D RTPSPDoseHistos: Dose Profile Y_merged = 66302
+ CreateHisto1D RTPSPDoseHistos: Dose Profile Z_merged = 66303
+ CreateHisto2D RTPSPDoseHistos: Dose XY_merged = 66304
+ CreateHisto2D RTPSPDoseHistos: Dose XZ_merged = 66305
+ CreateHisto2D RTPSPDoseHistos: Dose YZ_merged = 66306
+SetUnit GmPSPrinterSqdose 1e-12 Name Gy
+ HEADER NEvent 100051 Nvoxels 100 100 100
+ TYPE 0
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 dose_RTPSPDoseHistos.exercise4b.Dose:NormalizeToNEvents
+=== saving histograms in file === dose_RTPSPDoseHistos.exercise4b.Dose.root

@@ -1,0 +1,32 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise1b
+
+/gamos/setParam GmGeometryFromText:FileName exercise1.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/gamos/verbosity GmAnalysisVerbosity debug
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+
+### Make histogram of energy lost in detector by each track 
+/gamos/filter detectorFilter GmInLogicalVolumeFilter detector
+/gamos/setParam GmTrackDataHistosUA_detectorFilter:FileName mystep
+/gamos/setParam GmTrackDataHistosUA_detectorFilter:DataList AccumulatedEnergyDeposited
+/gamos/userAction GmTrackDataHistosUA detectorFilter
+
+### Make histogram of energy lost by gammas and electrons at each step in each volume
+/gamos/setParam GmStepDataHistosUA_GmClassifierByLogicalVolume:DataList AccumulatedEnergyLost
+/gamos/userAction GmStepDataHistosUA GmClassifierByLogicalVolume
+
+### Make histogram of kinetic energy when a gamma or electron enters the detector
+/gamos/filter enterDetectorFilter GmEnterLogicalVolumeFilter detector
+/gamos/setParam GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:DataList FinalKineticEnergy
+/gamos/analysis/histo1Max GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:*:FinalKineticEnergy 1.1
+/gamos/userAction GmStepDataHistosUA enterDetectorFilter GmClassifierByParticle
+
+/run/beamOn 10000
+

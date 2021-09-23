@@ -1,0 +1,25 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName ../exercise3/exercise3.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+
+/run/initialize
+
+/gamos/generator/addIsotopeSource source F18 1.E-3*curie
+/gamos/generator/positionDist source Exer2GenerDistPosition  1.*cm
+/gamos/generator/directionDist source GmGenerDistDirectionConst 1. 0. 0.
+
+/gamos/SD/assocSD2LogVol Exer6SD CalorSD Crystal
+
+/gamos/userAction GmHitsHistosUA 
+
+/gamos/setParam hits.bin:FileName myhits.out
+/gamos/userAction GmHitsWriteUA
+
+/run/beamOn 10
+

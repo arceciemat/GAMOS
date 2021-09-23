@@ -1,0 +1,1567 @@
+/control/execute exercise3d.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise3d
+/tracking/verbose 0
+/run/verbose 1
+/control/verbose 1
+/gamos/setParam GmReadPhantomGeometry:FileName ../exercise2/linac.geom
+/gamos/setParam GmSimplePhantomGeometry:MaterialNames G4_WATER G4_LUNG_ICRP G4_BONE_COMPACT_ICRU
+/gamos/setParam GmSimplePhantomGeometry:MaterialZVoxels 10 10 80
+/gamos/setParam GmSimplePhantomGeometry:MaterialDensities 1. 0.3 1.85
+/gamos/setParam GmSimplePhantomGeometry:NVoxels 10 10 100
+/gamos/setParam GmSimplePhantomGeometry:PhantomDims -500 500 -500 500 -500 500
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. -1400.
+/gamos/setParam GmReadPhantomGeometry:InitialRotAngles 0*deg 0. 0.
+/gamos/geometry GmSimplePhantomGeometry
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/generator GmGenerator
+/gamos/geometry/createRegion targetReg target
+/gamos/physics/setCuts targetReg 10. 0.1
+/run/setCut 100.
+/gamos/userAction GmCountTracksUA
+/gamos/userAction GmCountProcessesUA
+/run/initialize
+100 ANGLEN_ROT 0.333412 0: -0.233743 N: 0.0996687   -100 141.295
+0x560dcbfdae20 thePhantomParam->SetMaterials( 3
+GmPhysicsGammaLowEner::ConstructProcess 
+/gamos/userAction RTReuseAtZPlaneUA
+/gamos/setParam RTReuseAtZPlane:ZReusePlane 900
+/gamos/setParam RTReuseAtZPlane:NReuse 10
+/gamos/RT/ReuseAtZPlane
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+ GmVPrimitiveScorer::SetParameters: no parameters 
+/gamos/analysis/histo1Min *Dose -18
+/gamos/analysis/histo1Max *Dose -9
+/gamos/analysis/histo1Min *volume -18
+/gamos/analysis/histo1Max *volume -9
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorer
+phantomContainer GmRegularParamUtils::GetPhantomMotherTranslation (0,0,-1400) global (0,0,-1400)
+phantomContainer GmRegularParamUtils::GetPhantomMotherRotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+ global 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+ RTPSPDoseHistos nvoxel 10 10 100
+ RTPSPDoseHistos half dim 50 50 5
+ RTPSPDoseHistos translation (0,0,-1400)
+ RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+/gamos/scoring/addPrinter2Scorer GmPSPrinterCout doseScorer
+/gamos/setParam GmPSPrinterSqdose_doseScorer:FileName sqdose.direct.out
+/gamos/scoring/addPrinter2Scorer GmPSPrinterSqdose doseScorer
+/run/beamOn 100000
+G4RunManagerKernel -- G4ScoreSplittingProcess is appended to all particles.
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 2 regions:
+          DefaultRegionForTheWorld  1  1  0
+          targetReg  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  10 cm     e-  10 cm     e+  10 cm  proton 10 cm 
+ Energy thresholds :  gamma  1.21113 keV    e-  86.9654 keV    e+  86.0932 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : G4_W
+ Range cuts        :  gamma  10 cm     e-  10 cm     e+  10 cm  proton 10 cm 
+ Energy thresholds :  gamma  10 GeV    e-  1.65138 GeV    e+  1.48303 GeV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : SiFeMn
+ Range cuts        :  gamma  10 cm     e-  10 cm     e+  10 cm  proton 10 cm 
+ Energy thresholds :  gamma  578.575 keV    e-  214.105 MeV    e+  202.898 MeV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 3     used in the geometry : Yes
+ Material : G4_WATER1
+ Range cuts        :  gamma  10 cm     e-  10 cm     e+  10 cm  proton 10 cm 
+ Energy thresholds :  gamma  24.7508 keV    e-  23.3091 MeV    e+  21.9412 MeV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 4     used in the geometry : Yes
+ Material : G4_LUNG_ICRP0.3
+ Range cuts        :  gamma  10 cm     e-  10 cm     e+  10 cm  proton 10 cm 
+ Energy thresholds :  gamma  12.3046 keV    e-  6.24458 MeV    e+  5.91773 MeV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 5     used in the geometry : Yes
+ Material : G4_BONE_COMPACT_ICRU1.85
+ Range cuts        :  gamma  10 cm     e-  10 cm     e+  10 cm  proton 10 cm 
+ Energy thresholds :  gamma  52.5364 keV    e-  42.6766 MeV    e+  40.4429 MeV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 6     used in the geometry : Yes
+ Material : G4_Cu
+ Range cuts        :  gamma  1 cm     e-  100 um     e+  100 um  proton 0 fm 
+ Energy thresholds :  gamma  70.1382 keV    e-  249.775 keV    e+  243.15 keV proton -1 MeV
+ Region(s) which use this couple : 
+    targetReg
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+ %%% EVENT 0 NTRACKS 2 TOTAL NTRACKS 2
+ %%% EVENT 1000 NTRACKS 2 TOTAL NTRACKS 4440
+ %%% EVENT 2000 NTRACKS 4 TOTAL NTRACKS 8933
+ %%% EVENT 3000 NTRACKS 2 TOTAL NTRACKS 13612
+ %%% EVENT 4000 NTRACKS 4 TOTAL NTRACKS 18141
+ %%% EVENT 5000 NTRACKS 3 TOTAL NTRACKS 22497
+ %%% EVENT 6000 NTRACKS 8 TOTAL NTRACKS 27052
+ %%% EVENT 7000 NTRACKS 5 TOTAL NTRACKS 31690
+ %%% EVENT 8000 NTRACKS 6 TOTAL NTRACKS 36108
+ %%% EVENT 9000 NTRACKS 6 TOTAL NTRACKS 40721
+ %%% EVENT 10000 NTRACKS 5 TOTAL NTRACKS 45298
+ %%% EVENT 11000 NTRACKS 1 TOTAL NTRACKS 49939
+ %%% EVENT 12000 NTRACKS 1 TOTAL NTRACKS 54489
+ %%% EVENT 13000 NTRACKS 10 TOTAL NTRACKS 58983
+ %%% EVENT 14000 NTRACKS 4 TOTAL NTRACKS 63606
+ %%% EVENT 15000 NTRACKS 4 TOTAL NTRACKS 68103
+ %%% EVENT 16000 NTRACKS 6 TOTAL NTRACKS 72898
+ %%% EVENT 17000 NTRACKS 3 TOTAL NTRACKS 77544
+ %%% EVENT 18000 NTRACKS 7 TOTAL NTRACKS 82096
+ %%% EVENT 19000 NTRACKS 6 TOTAL NTRACKS 86718
+ %%% EVENT 20000 NTRACKS 3 TOTAL NTRACKS 91285
+ %%% EVENT 21000 NTRACKS 5 TOTAL NTRACKS 95904
+ %%% EVENT 22000 NTRACKS 3 TOTAL NTRACKS 100591
+ %%% EVENT 23000 NTRACKS 5 TOTAL NTRACKS 105058
+ %%% EVENT 24000 NTRACKS 1 TOTAL NTRACKS 109750
+ %%% EVENT 25000 NTRACKS 3 TOTAL NTRACKS 114210
+ %%% EVENT 26000 NTRACKS 1 TOTAL NTRACKS 118740
+ %%% EVENT 27000 NTRACKS 6 TOTAL NTRACKS 123312
+ %%% EVENT 28000 NTRACKS 6 TOTAL NTRACKS 128054
+ %%% EVENT 29000 NTRACKS 4 TOTAL NTRACKS 132686
+ %%% EVENT 30000 NTRACKS 3 TOTAL NTRACKS 137182
+ %%% EVENT 31000 NTRACKS 4 TOTAL NTRACKS 141732
+ %%% EVENT 32000 NTRACKS 2 TOTAL NTRACKS 146342
+ %%% EVENT 33000 NTRACKS 9 TOTAL NTRACKS 150809
+ %%% EVENT 34000 NTRACKS 2 TOTAL NTRACKS 155403
+ %%% EVENT 35000 NTRACKS 3 TOTAL NTRACKS 159876
+ %%% EVENT 36000 NTRACKS 6 TOTAL NTRACKS 164369
+ %%% EVENT 37000 NTRACKS 4 TOTAL NTRACKS 168929
+ %%% EVENT 38000 NTRACKS 3 TOTAL NTRACKS 173461
+ %%% EVENT 39000 NTRACKS 3 TOTAL NTRACKS 178124
+ %%% EVENT 40000 NTRACKS 4 TOTAL NTRACKS 182529
+ %%% EVENT 41000 NTRACKS 5 TOTAL NTRACKS 187101
+ %%% EVENT 42000 NTRACKS 4 TOTAL NTRACKS 191746
+ %%% EVENT 43000 NTRACKS 6 TOTAL NTRACKS 196130
+ %%% EVENT 44000 NTRACKS 5 TOTAL NTRACKS 200563
+ %%% EVENT 45000 NTRACKS 11 TOTAL NTRACKS 205167
+ %%% EVENT 46000 NTRACKS 5 TOTAL NTRACKS 209725
+ %%% EVENT 47000 NTRACKS 1 TOTAL NTRACKS 214173
+ %%% EVENT 48000 NTRACKS 5 TOTAL NTRACKS 218584
+ %%% EVENT 49000 NTRACKS 3 TOTAL NTRACKS 223246
+ %%% EVENT 50000 NTRACKS 6 TOTAL NTRACKS 227786
+ %%% EVENT 51000 NTRACKS 4 TOTAL NTRACKS 232371
+ %%% EVENT 52000 NTRACKS 3 TOTAL NTRACKS 236969
+ %%% EVENT 53000 NTRACKS 2 TOTAL NTRACKS 241447
+ %%% EVENT 54000 NTRACKS 2 TOTAL NTRACKS 246118
+ %%% EVENT 55000 NTRACKS 5 TOTAL NTRACKS 250777
+ %%% EVENT 56000 NTRACKS 5 TOTAL NTRACKS 255380
+ %%% EVENT 57000 NTRACKS 2 TOTAL NTRACKS 259897
+ %%% EVENT 58000 NTRACKS 2 TOTAL NTRACKS 264379
+ %%% EVENT 59000 NTRACKS 9 TOTAL NTRACKS 268928
+ %%% EVENT 60000 NTRACKS 13 TOTAL NTRACKS 273507
+ %%% EVENT 61000 NTRACKS 9 TOTAL NTRACKS 278120
+ %%% EVENT 62000 NTRACKS 3 TOTAL NTRACKS 282638
+ %%% EVENT 63000 NTRACKS 1 TOTAL NTRACKS 287121
+ %%% EVENT 64000 NTRACKS 5 TOTAL NTRACKS 291818
+ %%% EVENT 65000 NTRACKS 4 TOTAL NTRACKS 296482
+ %%% EVENT 66000 NTRACKS 5 TOTAL NTRACKS 301115
+ %%% EVENT 67000 NTRACKS 4 TOTAL NTRACKS 305652
+ %%% EVENT 68000 NTRACKS 6 TOTAL NTRACKS 309988
+ %%% EVENT 69000 NTRACKS 5 TOTAL NTRACKS 314616
+ %%% EVENT 70000 NTRACKS 2 TOTAL NTRACKS 319031
+ %%% EVENT 71000 NTRACKS 5 TOTAL NTRACKS 323527
+ %%% EVENT 72000 NTRACKS 7 TOTAL NTRACKS 327982
+ %%% EVENT 73000 NTRACKS 1 TOTAL NTRACKS 332646
+ %%% EVENT 74000 NTRACKS 8 TOTAL NTRACKS 337217
+ %%% EVENT 75000 NTRACKS 2 TOTAL NTRACKS 341679
+ %%% EVENT 76000 NTRACKS 2 TOTAL NTRACKS 346327
+ %%% EVENT 77000 NTRACKS 3 TOTAL NTRACKS 350910
+ %%% EVENT 78000 NTRACKS 9 TOTAL NTRACKS 355508
+ %%% EVENT 79000 NTRACKS 2 TOTAL NTRACKS 360001
+ %%% EVENT 80000 NTRACKS 5 TOTAL NTRACKS 364679
+ %%% EVENT 81000 NTRACKS 1 TOTAL NTRACKS 369282
+ %%% EVENT 82000 NTRACKS 6 TOTAL NTRACKS 373852
+ %%% EVENT 83000 NTRACKS 2 TOTAL NTRACKS 378382
+ %%% EVENT 84000 NTRACKS 5 TOTAL NTRACKS 382876
+ %%% EVENT 85000 NTRACKS 8 TOTAL NTRACKS 387366
+ %%% EVENT 86000 NTRACKS 10 TOTAL NTRACKS 391859
+ %%% EVENT 87000 NTRACKS 3 TOTAL NTRACKS 396498
+ %%% EVENT 88000 NTRACKS 3 TOTAL NTRACKS 401184
+ %%% EVENT 89000 NTRACKS 5 TOTAL NTRACKS 405764
+ %%% EVENT 90000 NTRACKS 4 TOTAL NTRACKS 410432
+ %%% EVENT 91000 NTRACKS 6 TOTAL NTRACKS 414917
+ %%% EVENT 92000 NTRACKS 5 TOTAL NTRACKS 419451
+ %%% EVENT 93000 NTRACKS 10 TOTAL NTRACKS 424104
+ %%% EVENT 94000 NTRACKS 2 TOTAL NTRACKS 428900
+ %%% EVENT 95000 NTRACKS 9 TOTAL NTRACKS 433476
+ %%% EVENT 96000 NTRACKS 6 TOTAL NTRACKS 437984
+ %%% EVENT 97000 NTRACKS 2 TOTAL NTRACKS 442592
+ %%% EVENT 98000 NTRACKS 6 TOTAL NTRACKS 447253
+ %%% EVENT 99000 NTRACKS 7 TOTAL NTRACKS 451705
+ Run terminated.
+Run Summary
+  Number of events processed : 100000
+  User=24.920000s Real=24.930476s Sys=0.000000s
+SetUnit RTPSPDoseHistos 1e-12 Name Gy
+ CreateHisto1D RTPSPDoseHistos: Dose = 36201
+ CreateHisto1D RTPSPDoseHistos: Dose-volume = 36202
+ CreateHisto1D RTPSPDoseHistos: Dose Error REL = 36203
+ CreateHisto1D RTPSPDoseHistos: log10(Dose Error REL) = 36204
+ CreateHisto1D RTPSPDoseHistos: Dose Error = 36205
+ CreateHisto1D RTPSPDoseHistos: log10(Dose Error) = 36206
+ CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error) = 36207
+ CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error REL) = 36208
+RTPSPDoseHistos MINIMUM DOSE 5.17084e-22 Gy 
+RTPSPDoseHistos MAXIMUM DOSE 1.91839e-16 Gy 
+RTPSPDoseHistos AVERAGE ERROR 20% = 0.415905
+RTPSPDoseHistos AVERAGE ERROR 50% = 0.339082
+RTPSPDoseHistos AVERAGE ERROR 90% = 0.281942
+RTPSPDoseHistos TOTAL DOSE = 7.91924e-15 +-(REL) 0.0351698
+ CreateHisto1D RTPSPDoseHistos: Dose Profile X_merged = 66301
+ CreateHisto1D RTPSPDoseHistos: Dose Profile Y_merged = 66302
+ CreateHisto1D RTPSPDoseHistos: Dose Profile Z_merged = 66303
+ CreateHisto2D RTPSPDoseHistos: Dose XY_merged = 66304
+ CreateHisto2D RTPSPDoseHistos: Dose XZ_merged = 66305
+ CreateHisto2D RTPSPDoseHistos: Dose YZ_merged = 66306
+SetUnit GmPSPrinterCout 1e-12 Name Gy
+
+ MultiFunctionalDet: doseDet
+ PrimitiveScorer: doseScorer
+ Number of entries= 1196
+  index: 436  = 1.95753e-18 +-(REL) 1 Gy sumV2= 3.83193e-36
+  index: 1042  = 3.95224e-17 +-(REL) 1 Gy sumV2= 1.56202e-33
+  index: 2102  = 6.55059e-19 +-(REL) 1 Gy sumV2= 4.29103e-37
+  index: 2246  = 5.12493e-19 +-(REL) 1 Gy sumV2= 2.62649e-37
+  index: 2257  = 6.77588e-19 +-(REL) 1 Gy sumV2= 4.59125e-37
+  index: 2312  = 3.59612e-20 +-(REL) 1 Gy sumV2= 1.29321e-39
+  index: 2345  = 1.44911e-18 +-(REL) 1 Gy sumV2= 2.09993e-36
+  index: 2356  = 3.95785e-19 +-(REL) 1 Gy sumV2= 1.56646e-37
+  index: 2403  = 6.28925e-19 +-(REL) 1 Gy sumV2= 3.95547e-37
+  index: 2412  = 2.22622e-20 +-(REL) 1 Gy sumV2= 4.95606e-40
+  index: 2436  = 8.1571e-19 +-(REL) 1 Gy sumV2= 6.65384e-37
+  index: 2456  = 1.31159e-19 +-(REL) 1 Gy sumV2= 1.72026e-38
+  index: 2512  = 5.75734e-20 +-(REL) 1 Gy sumV2= 3.3147e-39
+  index: 2536  = 4.20399e-18 +-(REL) 1 Gy sumV2= 1.76735e-35
+  index: 2556  = 1.31753e-19 +-(REL) 1 Gy sumV2= 1.7359e-38
+  index: 2567  = 1.29542e-18 +-(REL) 1 Gy sumV2= 1.67811e-36
+  index: 2603  = 3.22399e-19 +-(REL) 1 Gy sumV2= 1.03941e-37
+  index: 2612  = 4.25621e-21 +-(REL) 1 Gy sumV2= 1.81153e-41
+  index: 2703  = 1.03642e-18 +-(REL) 1 Gy sumV2= 1.07416e-36
+  index: 2713  = 1.83404e-19 +-(REL) 1 Gy sumV2= 3.36369e-38
+  index: 2736  = 1.96132e-18 +-(REL) 1 Gy sumV2= 3.84679e-36
+  index: 2746  = 3.71603e-18 +-(REL) 1 Gy sumV2= 1.38089e-35
+  index: 2756  = 1.38205e-19 +-(REL) 1 Gy sumV2= 1.91005e-38
+  index: 2838  = 1.87996e-19 +-(REL) 1 Gy sumV2= 3.53425e-38
+  index: 2845  = 5.25143e-18 +-(REL) 1 Gy sumV2= 2.75775e-35
+  index: 2938  = 3.23429e-21 +-(REL) 1 Gy sumV2= 1.04606e-41
+  index: 3146  = 2.65252e-17 +-(REL) 1 Gy sumV2= 7.03588e-34
+  index: 3154  = 4.77147e-19 +-(REL) 1 Gy sumV2= 2.27669e-37
+  index: 3166  = 7.77738e-18 +-(REL) 1 Gy sumV2= 6.04877e-35
+  index: 3226  = 5.80343e-19 +-(REL) 1 Gy sumV2= 3.36798e-37
+  index: 3233  = 1.04746e-17 +-(REL) 1 Gy sumV2= 1.09717e-34
+  index: 3244  = 4.70369e-19 +-(REL) 1 Gy sumV2= 2.21247e-37
+  index: 3245  = 7.49084e-18 +-(REL) 1 Gy sumV2= 5.61127e-35
+  index: 3266  = 2.69809e-18 +-(REL) 1 Gy sumV2= 7.27969e-36
+  index: 3326  = 5.11456e-20 +-(REL) 1 Gy sumV2= 2.61587e-39
+  index: 3335  = 8.76362e-19 +-(REL) 1 Gy sumV2= 7.68009e-37
+  index: 3346  = 9.24279e-18 +-(REL) 1 Gy sumV2= 8.54291e-35
+  index: 3417  = 1.68969e-19 +-(REL) 1 Gy sumV2= 2.85504e-38
+  index: 3426  = 4.5591e-20 +-(REL) 1 Gy sumV2= 2.07854e-39
+  index: 3427  = 6.77614e-20 +-(REL) 1 Gy sumV2= 4.59161e-39
+  index: 3436  = 6.28239e-19 +-(REL) 1 Gy sumV2= 3.94684e-37
+  index: 3443  = 9.47198e-19 +-(REL) 1 Gy sumV2= 8.97184e-37
+  index: 3447  = 1.88589e-18 +-(REL) 1 Gy sumV2= 3.55657e-36
+  index: 3546  = 1.84545e-18 +-(REL) 1 Gy sumV2= 3.4057e-36
+  index: 3563  = 1.32974e-19 +-(REL) 1 Gy sumV2= 1.7682e-38
+  index: 3643  = 3.23215e-19 +-(REL) 1 Gy sumV2= 1.04468e-37
+  index: 3645  = 1.07501e-18 +-(REL) 1 Gy sumV2= 1.15565e-36
+  index: 3664  = 4.4672e-19 +-(REL) 1 Gy sumV2= 1.99559e-37
+  index: 3727  = 5.79178e-21 +-(REL) 1 Gy sumV2= 3.35447e-41
+  index: 3736  = 8.80751e-20 +-(REL) 1 Gy sumV2= 7.75722e-39
+  index: 3747  = 4.57376e-19 +-(REL) 1 Gy sumV2= 2.09193e-37
+  index: 3763  = 6.20791e-19 +-(REL) 1 Gy sumV2= 3.85382e-37
+  index: 3764  = 1.792e-19 +-(REL) 1 Gy sumV2= 3.21128e-38
+  index: 3766  = 2.65739e-20 +-(REL) 1 Gy sumV2= 7.06174e-40
+  index: 3827  = 4.35853e-19 +-(REL) 1 Gy sumV2= 1.89968e-37
+  index: 3833  = 5.92788e-19 +-(REL) 1 Gy sumV2= 3.51398e-37
+  index: 3843  = 2.73928e-19 +-(REL) 1 Gy sumV2= 7.50364e-38
+  index: 3847  = 1.03599e-18 +-(REL) 1 Gy sumV2= 1.07328e-36
+  index: 3854  = 1.27512e-19 +-(REL) 1 Gy sumV2= 1.62594e-38
+  index: 3856  = 6.8105e-19 +-(REL) 1 Gy sumV2= 4.63828e-37
+  index: 3864  = 1.08021e-19 +-(REL) 1 Gy sumV2= 1.16686e-38
+  index: 3927  = 6.96079e-20 +-(REL) 1 Gy sumV2= 4.84526e-39
+  index: 3933  = 1.39652e-18 +-(REL) 1 Gy sumV2= 1.95027e-36
+  index: 3943  = 4.39718e-19 +-(REL) 1 Gy sumV2= 1.93352e-37
+  index: 3944  = 4.28838e-19 +-(REL) 1 Gy sumV2= 1.83902e-37
+  index: 3946  = 2.65489e-17 +-(REL) 1 Gy sumV2= 7.04846e-34
+  index: 3947  = 1.05934e-18 +-(REL) 1 Gy sumV2= 1.12221e-36
+  index: 3954  = 2.6915e-20 +-(REL) 1 Gy sumV2= 7.24418e-40
+  index: 3955  = 1.00817e-19 +-(REL) 1 Gy sumV2= 1.0164e-38
+  index: 3956  = 7.92216e-21 +-(REL) 1 Gy sumV2= 6.27606e-41
+  index: 4023  = 4.88595e-19 +-(REL) 1 Gy sumV2= 2.38725e-37
+  index: 4043  = 3.26059e-21 +-(REL) 1 Gy sumV2= 1.06314e-41
+  index: 4044  = 2.73962e-19 +-(REL) 1 Gy sumV2= 7.50552e-38
+  index: 4046  = 9.11238e-19 +-(REL) 1 Gy sumV2= 8.30355e-37
+  index: 4053  = 5.18558e-20 +-(REL) 1 Gy sumV2= 2.68903e-39
+  index: 4054  = 9.47544e-18 +-(REL) 1 Gy sumV2= 8.9784e-35
+  index: 4056  = 3.65007e-19 +-(REL) 1 Gy sumV2= 1.3323e-37
+  index: 4142  = 1.33591e-19 +-(REL) 1 Gy sumV2= 1.78466e-38
+  index: 4143  = 1.85951e-20 +-(REL) 1 Gy sumV2= 3.45779e-40
+  index: 4144  = 1.31653e-18 +-(REL) 0.636687 Gy sumV2= 7.02623e-37
+  index: 4146  = 3.96754e-19 +-(REL) 1 Gy sumV2= 1.57414e-37
+  index: 4154  = 1.60568e-17 +-(REL) 0.636199 Gy sumV2= 1.04354e-34
+  index: 4155  = 6.11394e-18 +-(REL) 1 Gy sumV2= 3.73803e-35
+  index: 4165  = 1.30283e-18 +-(REL) 1 Gy sumV2= 1.69737e-36
+  index: 4242  = 2.52671e-20 +-(REL) 1 Gy sumV2= 6.38424e-40
+  index: 4244  = 3.03307e-18 +-(REL) 0.759501 Gy sumV2= 5.30669e-36
+  index: 4246  = 4.78856e-19 +-(REL) 0.744492 Gy sumV2= 1.27096e-37
+  index: 4253  = 3.02169e-18 +-(REL) 1 Gy sumV2= 9.13063e-36
+  index: 4254  = 5.31724e-18 +-(REL) 0.871144 Gy sumV2= 2.14562e-35
+  index: 4255  = 4.29338e-19 +-(REL) 1 Gy sumV2= 1.84331e-37
+  index: 4256  = 5.80992e-19 +-(REL) 1 Gy sumV2= 3.37551e-37
+  index: 4264  = 3.55871e-19 +-(REL) 1 Gy sumV2= 1.26644e-37
+  index: 4342  = 1.32593e-20 +-(REL) 1 Gy sumV2= 1.75809e-40
+  index: 4344  = 6.34421e-19 +-(REL) 0.718966 Gy sumV2= 2.08054e-37
+  index: 4353  = 9.91175e-19 +-(REL) 1 Gy sumV2= 9.82428e-37
+  index: 4354  = 2.95482e-18 +-(REL) 1 Gy sumV2= 8.73093e-36
+  index: 4356  = 2.82127e-18 +-(REL) 0.920937 Gy sumV2= 6.75072e-36
+  index: 4363  = 2.59769e-19 +-(REL) 1 Gy sumV2= 6.74797e-38
+  index: 4366  = 1.25892e-17 +-(REL) 1 Gy sumV2= 1.58487e-34
+  index: 4436  = 6.58156e-19 +-(REL) 1 Gy sumV2= 4.33169e-37
+  index: 4442  = 4.09762e-19 +-(REL) 1 Gy sumV2= 1.67905e-37
+  index: 4445  = 4.37953e-19 +-(REL) 1 Gy sumV2= 1.91803e-37
+  index: 4446  = 1.49334e-18 +-(REL) 0.855831 Gy sumV2= 1.63341e-36
+  index: 4454  = 2.50193e-18 +-(REL) 1 Gy sumV2= 6.25966e-36
+  index: 4456  = 3.77796e-19 +-(REL) 1 Gy sumV2= 1.4273e-37
+  index: 4463  = 1.0263e-19 +-(REL) 1 Gy sumV2= 1.0533e-38
+  index: 4473  = 2.20549e-20 +-(REL) 1 Gy sumV2= 4.86419e-40
+  index: 4475  = 2.97607e-19 +-(REL) 1 Gy sumV2= 8.85696e-38
+  index: 4543  = 9.49995e-18 +-(REL) 1 Gy sumV2= 9.0249e-35
+  index: 4544  = 2.28721e-19 +-(REL) 0.720333 Gy sumV2= 2.71446e-38
+  index: 4545  = 8.00038e-19 +-(REL) 1 Gy sumV2= 6.4006e-37
+  index: 4546  = 8.43453e-19 +-(REL) 0.643709 Gy sumV2= 2.94786e-37
+  index: 4553  = 1.20891e-18 +-(REL) 0.734176 Gy sumV2= 7.87757e-37
+  index: 4554  = 1.07301e-18 +-(REL) 1 Gy sumV2= 1.15135e-36
+  index: 4563  = 2.23419e-20 +-(REL) 1 Gy sumV2= 4.99159e-40
+  index: 4627  = 9.89317e-19 +-(REL) 1 Gy sumV2= 9.78747e-37
+  index: 4636  = 1.94701e-19 +-(REL) 0.962504 Gy sumV2= 3.51189e-38
+  index: 4644  = 6.91282e-19 +-(REL) 1 Gy sumV2= 4.77871e-37
+  index: 4645  = 4.22284e-20 +-(REL) 1 Gy sumV2= 1.78324e-39
+  index: 4654  = 7.48112e-18 +-(REL) 0.999483 Gy sumV2= 5.59093e-35
+  index: 4674  = 8.68048e-19 +-(REL) 1 Gy sumV2= 7.53507e-37
+  index: 4675  = 9.4365e-20 +-(REL) 1 Gy sumV2= 8.90476e-39
+  index: 4746  = 9.70897e-21 +-(REL) 1 Gy sumV2= 9.4264e-41
+  index: 4754  = 1.35893e-18 +-(REL) 0.9647 Gy sumV2= 1.71863e-36
+  index: 4755  = 4.38477e-19 +-(REL) 1 Gy sumV2= 1.92262e-37
+  index: 4763  = 5.89149e-19 +-(REL) 1 Gy sumV2= 3.47096e-37
+  index: 4764  = 1.36854e-19 +-(REL) 1 Gy sumV2= 1.8729e-38
+  index: 4774  = 2.13735e-19 +-(REL) 1 Gy sumV2= 4.56826e-38
+  index: 4843  = 1.91594e-18 +-(REL) 1 Gy sumV2= 3.67082e-36
+  index: 4846  = 6.00618e-18 +-(REL) 0.890519 Gy sumV2= 2.86077e-35
+  index: 4854  = 5.02114e-20 +-(REL) 1 Gy sumV2= 2.52118e-39
+  index: 4864  = 5.60151e-19 +-(REL) 1 Gy sumV2= 3.13769e-37
+  index: 4933  = 1.40137e-19 +-(REL) 1 Gy sumV2= 1.96384e-38
+  index: 4935  = 4.59959e-18 +-(REL) 1 Gy sumV2= 2.11563e-35
+  index: 4943  = 2.94478e-19 +-(REL) 1 Gy sumV2= 8.67173e-38
+  index: 4945  = 1.01293e-19 +-(REL) 1 Gy sumV2= 1.02603e-38
+  index: 4946  = 2.55004e-19 +-(REL) 1 Gy sumV2= 6.50268e-38
+  index: 4966  = 4.05339e-19 +-(REL) 1 Gy sumV2= 1.643e-37
+  index: 5005  = 1.34457e-18 +-(REL) 1 Gy sumV2= 1.80788e-36
+  index: 5025  = 4.32668e-19 +-(REL) 1 Gy sumV2= 1.87201e-37
+  index: 5035  = 2.03306e-18 +-(REL) 1 Gy sumV2= 4.13333e-36
+  index: 5044  = 3.00253e-18 +-(REL) 1 Gy sumV2= 9.01517e-36
+  index: 5046  = 7.09617e-19 +-(REL) 1 Gy sumV2= 5.03557e-37
+  index: 5053  = 8.37789e-19 +-(REL) 1 Gy sumV2= 7.0189e-37
+  index: 5065  = 1.88115e-18 +-(REL) 1 Gy sumV2= 3.53872e-36
+  index: 5074  = 1.30747e-19 +-(REL) 1 Gy sumV2= 1.70949e-38
+  index: 5105  = 7.76263e-19 +-(REL) 1 Gy sumV2= 6.02585e-37
+  index: 5125  = 3.32885e-19 +-(REL) 1 Gy sumV2= 1.10813e-37
+  index: 5133  = 8.48717e-19 +-(REL) 1 Gy sumV2= 7.2032e-37
+  index: 5143  = 1.88349e-18 +-(REL) 1 Gy sumV2= 3.54752e-36
+  index: 5144  = 6.58864e-18 +-(REL) 1 Gy sumV2= 4.34102e-35
+  index: 5145  = 2.48069e-19 +-(REL) 1 Gy sumV2= 6.1538e-38
+  index: 5154  = 6.39135e-18 +-(REL) 1 Gy sumV2= 4.08493e-35
+  index: 5156  = 5.28408e-19 +-(REL) 1 Gy sumV2= 2.79215e-37
+  index: 5157  = 3.30201e-19 +-(REL) 1 Gy sumV2= 1.09033e-37
+  index: 5166  = 3.81091e-20 +-(REL) 1 Gy sumV2= 1.45231e-39
+  index: 5172  = 5.94975e-19 +-(REL) 1 Gy sumV2= 3.53996e-37
+  index: 5234  = 1.91148e-17 +-(REL) 1 Gy sumV2= 3.65376e-34
+  index: 5243  = 1.18363e-19 +-(REL) 1 Gy sumV2= 1.40099e-38
+  index: 5244  = 1.13381e-18 +-(REL) 1 Gy sumV2= 1.28554e-36
+  index: 5245  = 1.74038e-17 +-(REL) 1 Gy sumV2= 3.02892e-34
+  index: 5246  = 7.96091e-18 +-(REL) 1 Gy sumV2= 6.33761e-35
+  index: 5247  = 6.9401e-19 +-(REL) 1 Gy sumV2= 4.8165e-37
+  index: 5248  = 2.66383e-19 +-(REL) 1 Gy sumV2= 7.09599e-38
+  index: 5253  = 1.93505e-19 +-(REL) 1 Gy sumV2= 3.74442e-38
+  index: 5255  = 5.19733e-19 +-(REL) 0.826974 Gy sumV2= 1.84734e-37
+  index: 5256  = 1.75339e-18 +-(REL) 1 Gy sumV2= 3.07439e-36
+  index: 5257  = 2.07286e-18 +-(REL) 1 Gy sumV2= 4.29675e-36
+  index: 5265  = 3.60501e-18 +-(REL) 0.631982 Gy sumV2= 5.19074e-36
+  index: 5266  = 2.7738e-19 +-(REL) 1 Gy sumV2= 7.69394e-38
+  index: 5272  = 7.53961e-20 +-(REL) 1 Gy sumV2= 5.68457e-39
+  index: 5306  = 1.25713e-17 +-(REL) 1 Gy sumV2= 1.58037e-34
+  index: 5343  = 2.29525e-19 +-(REL) 0.892504 Gy sumV2= 4.19643e-38
+  index: 5345  = 7.38863e-18 +-(REL) 0.915818 Gy sumV2= 4.57875e-35
+  index: 5346  = 1.4706e-18 +-(REL) 1 Gy sumV2= 2.16265e-36
+  index: 5353  = 2.9775e-18 +-(REL) 1 Gy sumV2= 8.86551e-36
+  index: 5354  = 2.98751e-19 +-(REL) 1 Gy sumV2= 8.92521e-38
+  index: 5355  = 6.50922e-19 +-(REL) 1 Gy sumV2= 4.23699e-37
+  index: 5356  = 3.16949e-18 +-(REL) 1 Gy sumV2= 1.00456e-35
+  index: 5366  = 4.5833e-19 +-(REL) 1 Gy sumV2= 2.10066e-37
+  index: 5367  = 5.51661e-19 +-(REL) 1 Gy sumV2= 3.04329e-37
+  index: 5374  = 5.64863e-19 +-(REL) 1 Gy sumV2= 3.1907e-37
+  index: 5384  = 1.72867e-19 +-(REL) 1 Gy sumV2= 2.98829e-38
+  index: 5443  = 7.0939e-19 +-(REL) 1 Gy sumV2= 5.03234e-37
+  index: 5445  = 1.45787e-19 +-(REL) 1 Gy sumV2= 2.12537e-38
+  index: 5446  = 4.82744e-19 +-(REL) 1 Gy sumV2= 2.33042e-37
+  index: 5447  = 1.08818e-19 +-(REL) 1 Gy sumV2= 1.18414e-38
+  index: 5453  = 7.85432e-19 +-(REL) 0.732165 Gy sumV2= 3.30703e-37
+  index: 5456  = 6.84105e-19 +-(REL) 1 Gy sumV2= 4.67999e-37
+  index: 5457  = 2.37961e-19 +-(REL) 1 Gy sumV2= 5.66257e-38
+  index: 5463  = 5.76749e-21 +-(REL) 1 Gy sumV2= 3.32639e-41
+  index: 5468  = 1.37872e-18 +-(REL) 1 Gy sumV2= 1.90086e-36
+  index: 5472  = 2.1357e-20 +-(REL) 1 Gy sumV2= 4.56123e-40
+  index: 5476  = 6.78208e-19 +-(REL) 1 Gy sumV2= 4.59966e-37
+  index: 5534  = 1.63479e-19 +-(REL) 1 Gy sumV2= 2.67253e-38
+  index: 5543  = 1.7038e-19 +-(REL) 0.884203 Gy sumV2= 2.26956e-38
+  index: 5545  = 1.29555e-18 +-(REL) 0.708785 Gy sumV2= 8.43221e-37
+  index: 5554  = 5.20116e-18 +-(REL) 1 Gy sumV2= 2.70521e-35
+  index: 5555  = 5.91453e-19 +-(REL) 1 Gy sumV2= 3.49817e-37
+  index: 5556  = 2.99903e-19 +-(REL) 1 Gy sumV2= 8.99418e-38
+  index: 5568  = 1.23062e-18 +-(REL) 1 Gy sumV2= 1.51444e-36
+  index: 5576  = 2.45513e-19 +-(REL) 1 Gy sumV2= 6.02766e-38
+  index: 5624  = 6.29793e-19 +-(REL) 1 Gy sumV2= 3.96639e-37
+  index: 5632  = 1.14699e-18 +-(REL) 1 Gy sumV2= 1.31558e-36
+  index: 5637  = 7.31465e-19 +-(REL) 1 Gy sumV2= 5.35041e-37
+  index: 5638  = 2.06337e-19 +-(REL) 1 Gy sumV2= 4.25751e-38
+  index: 5644  = 4.76165e-18 +-(REL) 0.950485 Gy sumV2= 2.04836e-35
+  index: 5645  = 8.28086e-19 +-(REL) 0.709835 Gy sumV2= 3.45517e-37
+  index: 5653  = 4.5934e-19 +-(REL) 1 Gy sumV2= 2.10994e-37
+  index: 5655  = 1.64181e-17 +-(REL) 0.812814 Gy sumV2= 1.78087e-34
+  index: 5656  = 1.90394e-18 +-(REL) 1 Gy sumV2= 3.62499e-36
+  index: 5663  = 1.18758e-20 +-(REL) 1 Gy sumV2= 1.41035e-40
+  index: 5723  = 1.77538e-19 +-(REL) 1 Gy sumV2= 3.15197e-38
+  index: 5733  = 1.5505e-18 +-(REL) 1 Gy sumV2= 2.40405e-36
+  index: 5734  = 9.52547e-20 +-(REL) 1 Gy sumV2= 9.07346e-39
+  index: 5735  = 1.24053e-17 +-(REL) 1 Gy sumV2= 1.53891e-34
+  index: 5737  = 3.4391e-19 +-(REL) 1 Gy sumV2= 1.18274e-37
+  index: 5738  = 7.13853e-20 +-(REL) 1 Gy sumV2= 5.09585e-39
+  index: 5744  = 5.73475e-18 +-(REL) 1 Gy sumV2= 3.28874e-35
+  index: 5745  = 1.17154e-18 +-(REL) 0.944025 Gy sumV2= 1.22315e-36
+  index: 5748  = 1.12175e-18 +-(REL) 1 Gy sumV2= 1.25832e-36
+  index: 5754  = 3.12686e-19 +-(REL) 0.952174 Gy sumV2= 8.86445e-38
+  index: 5755  = 4.97205e-18 +-(REL) 0.919663 Gy sumV2= 2.09088e-35
+  index: 5762  = 2.38954e-20 +-(REL) 1 Gy sumV2= 5.70991e-40
+  index: 5763  = 3.45869e-19 +-(REL) 1 Gy sumV2= 1.19625e-37
+  index: 5765  = 3.86979e-21 +-(REL) 1 Gy sumV2= 1.49753e-41
+  index: 5766  = 5.52005e-20 +-(REL) 1 Gy sumV2= 3.0471e-39
+  index: 5767  = 8.29089e-19 +-(REL) 1 Gy sumV2= 6.87388e-37
+  index: 5775  = 4.92082e-19 +-(REL) 1 Gy sumV2= 2.42145e-37
+  index: 5776  = 1.70659e-19 +-(REL) 1 Gy sumV2= 2.91246e-38
+  index: 5822  = 4.40579e-19 +-(REL) 1 Gy sumV2= 1.9411e-37
+  index: 5823  = 2.01857e-18 +-(REL) 1 Gy sumV2= 4.07461e-36
+  index: 5834  = 3.08514e-19 +-(REL) 1 Gy sumV2= 9.51808e-38
+  index: 5835  = 9.78884e-19 +-(REL) 1 Gy sumV2= 9.58215e-37
+  index: 5837  = 9.08256e-19 +-(REL) 1 Gy sumV2= 8.24929e-37
+  index: 5838  = 9.07079e-19 +-(REL) 1 Gy sumV2= 8.22793e-37
+  index: 5841  = 2.06014e-19 +-(REL) 1 Gy sumV2= 4.24417e-38
+  index: 5844  = 4.85018e-18 +-(REL) 0.848264 Gy sumV2= 1.6927e-35
+  index: 5845  = 3.16502e-19 +-(REL) 1 Gy sumV2= 1.00173e-37
+  index: 5853  = 1.31056e-18 +-(REL) 0.81661 Gy sumV2= 1.14537e-36
+  index: 5854  = 1.25608e-18 +-(REL) 0.632905 Gy sumV2= 6.32004e-37
+  index: 5855  = 7.54132e-19 +-(REL) 0.727063 Gy sumV2= 3.00637e-37
+  index: 5865  = 6.2424e-19 +-(REL) 1 Gy sumV2= 3.89676e-37
+  index: 5867  = 1.36276e-19 +-(REL) 1 Gy sumV2= 1.85711e-38
+  index: 5875  = 3.24842e-18 +-(REL) 0.84491 Gy sumV2= 7.53298e-36
+  index: 5913  = 5.8867e-19 +-(REL) 1 Gy sumV2= 3.46533e-37
+  index: 5923  = 7.28099e-20 +-(REL) 1 Gy sumV2= 5.30128e-39
+  index: 5925  = 8.16781e-19 +-(REL) 1 Gy sumV2= 6.67131e-37
+  index: 5933  = 4.60156e-19 +-(REL) 1 Gy sumV2= 2.11743e-37
+  index: 5934  = 6.95527e-18 +-(REL) 0.656715 Gy sumV2= 2.08635e-35
+  index: 5941  = 3.82443e-20 +-(REL) 1 Gy sumV2= 1.46262e-39
+  index: 5944  = 5.97562e-19 +-(REL) 0.87292 Gy sumV2= 2.72092e-37
+  index: 5945  = 1.15709e-18 +-(REL) 0.685428 Gy sumV2= 6.29014e-37
+  index: 5953  = 3.6368e-19 +-(REL) 1 Gy sumV2= 1.32263e-37
+  index: 5954  = 6.44541e-18 +-(REL) 0.916854 Gy sumV2= 3.49223e-35
+  index: 5955  = 1.40325e-18 +-(REL) 1 Gy sumV2= 1.9691e-36
+  index: 5956  = 1.09955e-18 +-(REL) 1 Gy sumV2= 1.209e-36
+  index: 5962  = 1.03736e-18 +-(REL) 1 Gy sumV2= 1.07611e-36
+  index: 5965  = 3.93602e-19 +-(REL) 1 Gy sumV2= 1.54923e-37
+  index: 5975  = 9.23802e-18 +-(REL) 0.72599 Gy sumV2= 4.49803e-35
+  index: 6013  = 2.09322e-19 +-(REL) 1 Gy sumV2= 4.38156e-38
+  index: 6025  = 1.18127e-19 +-(REL) 1 Gy sumV2= 1.3954e-38
+  index: 6032  = 7.4834e-20 +-(REL) 1 Gy sumV2= 5.60012e-39
+  index: 6034  = 5.04029e-19 +-(REL) 0.967856 Gy sumV2= 2.37975e-37
+  index: 6042  = 5.54863e-19 +-(REL) 1 Gy sumV2= 3.07873e-37
+  index: 6044  = 2.35378e-18 +-(REL) 0.766384 Gy sumV2= 3.25406e-36
+  index: 6045  = 4.63065e-19 +-(REL) 1 Gy sumV2= 2.14429e-37
+  index: 6052  = 2.03397e-19 +-(REL) 1 Gy sumV2= 4.13704e-38
+  index: 6053  = 1.76863e-18 +-(REL) 0.8951 Gy sumV2= 2.50623e-36
+  index: 6054  = 1.92575e-17 +-(REL) 0.842854 Gy sumV2= 2.63454e-34
+  index: 6055  = 4.51188e-19 +-(REL) 1 Gy sumV2= 2.03571e-37
+  index: 6063  = 7.22209e-20 +-(REL) 1 Gy sumV2= 5.21586e-39
+  index: 6112  = 2.33136e-18 +-(REL) 1 Gy sumV2= 5.43526e-36
+  index: 6123  = 5.06502e-19 +-(REL) 1 Gy sumV2= 2.56544e-37
+  index: 6134  = 3.87748e-18 +-(REL) 0.986874 Gy sumV2= 1.46427e-35
+  index: 6141  = 6.51938e-19 +-(REL) 1 Gy sumV2= 4.25023e-37
+  index: 6143  = 2.58299e-19 +-(REL) 1 Gy sumV2= 6.67183e-38
+  index: 6144  = 1.23485e-18 +-(REL) 0.812649 Gy sumV2= 1.00702e-36
+  index: 6145  = 2.29002e-17 +-(REL) 0.720157 Gy sumV2= 2.7198e-34
+  index: 6146  = 4.49742e-18 +-(REL) 0.840352 Gy sumV2= 1.4284e-35
+  index: 6150  = 2.06714e-18 +-(REL) 1 Gy sumV2= 4.27305e-36
+  index: 6153  = 4.72887e-20 +-(REL) 1 Gy sumV2= 2.23622e-39
+  index: 6155  = 1.67852e-19 +-(REL) 1 Gy sumV2= 2.81744e-38
+  index: 6156  = 1.62554e-20 +-(REL) 1 Gy sumV2= 2.64239e-40
+  index: 6164  = 3.03683e-19 +-(REL) 1 Gy sumV2= 9.22231e-38
+  index: 6212  = 3.74674e-19 +-(REL) 1 Gy sumV2= 1.40381e-37
+  index: 6234  = 2.74642e-18 +-(REL) 0.948334 Gy sumV2= 6.78356e-36
+  index: 6242  = 1.01386e-19 +-(REL) 1 Gy sumV2= 1.02791e-38
+  index: 6243  = 2.54011e-18 +-(REL) 1 Gy sumV2= 6.45217e-36
+  index: 6244  = 7.476e-19 +-(REL) 1 Gy sumV2= 5.58906e-37
+  index: 6245  = 9.92503e-19 +-(REL) 0.89834 Gy sumV2= 7.94963e-37
+  index: 6246  = 9.2493e-20 +-(REL) 1 Gy sumV2= 8.55495e-39
+  index: 6254  = 4.20517e-19 +-(REL) 1 Gy sumV2= 1.76835e-37
+  index: 6255  = 2.46159e-19 +-(REL) 1 Gy sumV2= 6.05945e-38
+  index: 6256  = 4.29317e-20 +-(REL) 1 Gy sumV2= 1.84313e-39
+  index: 6262  = 8.96963e-20 +-(REL) 1 Gy sumV2= 8.04542e-39
+  index: 6263  = 2.18019e-20 +-(REL) 1 Gy sumV2= 4.75324e-40
+  index: 6264  = 1.34186e-18 +-(REL) 1 Gy sumV2= 1.8006e-36
+  index: 6265  = 2.83857e-18 +-(REL) 1 Gy sumV2= 8.05748e-36
+  index: 6272  = 4.5247e-19 +-(REL) 1 Gy sumV2= 2.04729e-37
+  index: 6312  = 6.83929e-19 +-(REL) 1 Gy sumV2= 4.67759e-37
+  index: 6313  = 1.74591e-20 +-(REL) 1 Gy sumV2= 3.0482e-40
+  index: 6342  = 1.82565e-19 +-(REL) 0.707109 Gy sumV2= 1.66653e-38
+  index: 6344  = 5.98605e-18 +-(REL) 0.818501 Gy sumV2= 2.40061e-35
+  index: 6345  = 6.90148e-18 +-(REL) 0.718997 Gy sumV2= 2.46231e-35
+  index: 6346  = 2.03936e-19 +-(REL) 1 Gy sumV2= 4.159e-38
+  index: 6353  = 8.32983e-18 +-(REL) 0.915107 Gy sumV2= 5.81054e-35
+  index: 6354  = 6.45523e-18 +-(REL) 0.668874 Gy sumV2= 1.86431e-35
+  index: 6363  = 3.11178e-19 +-(REL) 0.707805 Gy sumV2= 4.85119e-38
+  index: 6364  = 2.00454e-19 +-(REL) 1 Gy sumV2= 4.01819e-38
+  index: 6413  = 3.17297e-19 +-(REL) 1 Gy sumV2= 1.00677e-37
+  index: 6432  = 1.72533e-18 +-(REL) 1 Gy sumV2= 2.97675e-36
+  index: 6435  = 1.06355e-17 +-(REL) 1 Gy sumV2= 1.13115e-34
+  index: 6442  = 2.85522e-19 +-(REL) 1 Gy sumV2= 8.1523e-38
+  index: 6443  = 3.29452e-19 +-(REL) 1 Gy sumV2= 1.08539e-37
+  index: 6444  = 4.06456e-19 +-(REL) 0.961029 Gy sumV2= 1.52581e-37
+  index: 6445  = 6.10924e-18 +-(REL) 0.936973 Gy sumV2= 3.27664e-35
+  index: 6446  = 6.20736e-19 +-(REL) 1 Gy sumV2= 3.85314e-37
+  index: 6453  = 9.90597e-19 +-(REL) 0.819184 Gy sumV2= 6.58504e-37
+  index: 6454  = 9.64383e-19 +-(REL) 0.637013 Gy sumV2= 3.77401e-37
+  index: 6455  = 1.55599e-17 +-(REL) 1 Gy sumV2= 2.4211e-34
+  index: 6463  = 4.2112e-19 +-(REL) 0.872963 Gy sumV2= 1.35147e-37
+  index: 6464  = 9.39277e-19 +-(REL) 1 Gy sumV2= 8.82241e-37
+  index: 6467  = 2.79264e-19 +-(REL) 1 Gy sumV2= 7.79882e-38
+  index: 6472  = 2.92913e-19 +-(REL) 1 Gy sumV2= 8.57977e-38
+  index: 6474  = 2.88375e-19 +-(REL) 1 Gy sumV2= 8.31601e-38
+  index: 6534  = 5.47825e-19 +-(REL) 0.780043 Gy sumV2= 1.82609e-37
+  index: 6542  = 4.91213e-18 +-(REL) 0.964521 Gy sumV2= 2.24473e-35
+  index: 6544  = 1.21151e-17 +-(REL) 0.680771 Gy sumV2= 6.80241e-35
+  index: 6545  = 2.95283e-19 +-(REL) 0.830901 Gy sumV2= 6.01975e-38
+  index: 6546  = 9.26081e-19 +-(REL) 0.794107 Gy sumV2= 5.40828e-37
+  index: 6552  = 7.78896e-20 +-(REL) 1 Gy sumV2= 6.06679e-39
+  index: 6553  = 7.77747e-18 +-(REL) 0.999314 Gy sumV2= 6.04061e-35
+  index: 6554  = 5.2102e-17 +-(REL) 0.646471 Gy sumV2= 1.13452e-33
+  index: 6555  = 1.64362e-17 +-(REL) 1 Gy sumV2= 2.7015e-34
+  index: 6564  = 1.39462e-19 +-(REL) 1 Gy sumV2= 1.94496e-38
+  index: 6565  = 4.143e-18 +-(REL) 0.659802 Gy sumV2= 7.47243e-36
+  index: 6572  = 8.19132e-19 +-(REL) 1 Gy sumV2= 6.70977e-37
+  index: 6631  = 6.58981e-19 +-(REL) 1 Gy sumV2= 4.34256e-37
+  index: 6632  = 2.42389e-19 +-(REL) 1 Gy sumV2= 5.87524e-38
+  index: 6635  = 1.19812e-19 +-(REL) 1 Gy sumV2= 1.4355e-38
+  index: 6642  = 2.41367e-18 +-(REL) 0.628108 Gy sumV2= 2.29842e-36
+  index: 6644  = 1.76808e-18 +-(REL) 0.701414 Gy sumV2= 1.538e-36
+  index: 6645  = 7.4063e-19 +-(REL) 0.863986 Gy sumV2= 4.09466e-37
+  index: 6646  = 1.48233e-17 +-(REL) 0.986281 Gy sumV2= 2.13743e-34
+  index: 6648  = 1.60991e-18 +-(REL) 1 Gy sumV2= 2.59182e-36
+  index: 6652  = 8.13059e-20 +-(REL) 1 Gy sumV2= 6.61065e-39
+  index: 6653  = 2.70737e-18 +-(REL) 0.889985 Gy sumV2= 5.80581e-36
+  index: 6654  = 1.50003e-17 +-(REL) 0.989208 Gy sumV2= 2.20179e-34
+  index: 6655  = 2.44968e-20 +-(REL) 1 Gy sumV2= 6.00093e-40
+  index: 6656  = 1.08396e-18 +-(REL) 1 Gy sumV2= 1.17497e-36
+  index: 6665  = 7.89381e-19 +-(REL) 1 Gy sumV2= 6.23122e-37
+  index: 6695  = 5.68019e-19 +-(REL) 1 Gy sumV2= 3.22645e-37
+  index: 6731  = 5.66215e-19 +-(REL) 1 Gy sumV2= 3.20599e-37
+  index: 6734  = 2.7738e-19 +-(REL) 1 Gy sumV2= 7.69398e-38
+  index: 6735  = 4.18886e-19 +-(REL) 1 Gy sumV2= 1.75466e-37
+  index: 6742  = 9.10242e-19 +-(REL) 0.752068 Gy sumV2= 4.68632e-37
+  index: 6744  = 9.1779e-18 +-(REL) 0.792001 Gy sumV2= 5.28373e-35
+  index: 6745  = 2.44579e-17 +-(REL) 0.904757 Gy sumV2= 4.89668e-34
+  index: 6746  = 1.70325e-19 +-(REL) 0.929497 Gy sumV2= 2.50642e-38
+  index: 6754  = 5.40254e-18 +-(REL) 0.67891 Gy sumV2= 1.34532e-35
+  index: 6755  = 1.51843e-17 +-(REL) 0.937551 Gy sumV2= 2.02666e-34
+  index: 6756  = 1.75214e-18 +-(REL) 1 Gy sumV2= 3.07e-36
+  index: 6757  = 2.03499e-20 +-(REL) 1 Gy sumV2= 4.14118e-40
+  index: 6758  = 6.53666e-19 +-(REL) 1 Gy sumV2= 4.27279e-37
+  index: 6764  = 3.97286e-19 +-(REL) 1 Gy sumV2= 1.57836e-37
+  index: 6765  = 5.81843e-19 +-(REL) 1 Gy sumV2= 3.38541e-37
+  index: 6778  = 1.20611e-18 +-(REL) 1 Gy sumV2= 1.45471e-36
+  index: 6796  = 1.96312e-19 +-(REL) 1 Gy sumV2= 3.85385e-38
+  index: 6825  = 2.55039e-18 +-(REL) 1 Gy sumV2= 6.5045e-36
+  index: 6834  = 5.65944e-19 +-(REL) 0.627363 Gy sumV2= 1.26064e-37
+  index: 6836  = 5.11028e-20 +-(REL) 1 Gy sumV2= 2.6115e-39
+  index: 6842  = 4.91314e-18 +-(REL) 0.694433 Gy sumV2= 1.16408e-35
+  index: 6843  = 1.82515e-18 +-(REL) 0.76071 Gy sumV2= 1.9277e-36
+  index: 6844  = 7.81053e-18 +-(REL) 0.781277 Gy sumV2= 3.7237e-35
+  index: 6845  = 2.84036e-18 +-(REL) 0.525289 Gy sumV2= 2.22616e-36
+  index: 6846  = 3.62361e-18 +-(REL) 0.941893 Gy sumV2= 1.16489e-35
+  index: 6854  = 2.73867e-18 +-(REL) 0.593856 Gy sumV2= 2.64515e-36
+  index: 6855  = 7.50039e-18 +-(REL) 0.991837 Gy sumV2= 5.53411e-35
+  index: 6856  = 1.11965e-18 +-(REL) 1 Gy sumV2= 1.25363e-36
+  index: 6857  = 3.8327e-19 +-(REL) 1 Gy sumV2= 1.46896e-37
+  index: 6858  = 2.63276e-19 +-(REL) 1 Gy sumV2= 6.93143e-38
+  index: 6864  = 1.18994e-19 +-(REL) 1 Gy sumV2= 1.41596e-38
+  index: 6865  = 1.19895e-19 +-(REL) 0.724381 Gy sumV2= 7.543e-39
+  index: 6866  = 3.10702e-20 +-(REL) 1 Gy sumV2= 9.65355e-40
+  index: 6877  = 3.48239e-19 +-(REL) 1 Gy sumV2= 1.2127e-37
+  index: 6923  = 7.85032e-19 +-(REL) 1 Gy sumV2= 6.16276e-37
+  index: 6925  = 5.5613e-19 +-(REL) 1 Gy sumV2= 3.0928e-37
+  index: 6934  = 1.07522e-18 +-(REL) 0.926844 Gy sumV2= 9.93139e-37
+  index: 6935  = 4.45523e-19 +-(REL) 1 Gy sumV2= 1.98491e-37
+  index: 6936  = 4.28553e-19 +-(REL) 1 Gy sumV2= 1.83657e-37
+  index: 6943  = 5.65859e-18 +-(REL) 0.833943 Gy sumV2= 2.22685e-35
+  index: 6944  = 1.50141e-17 +-(REL) 0.710625 Gy sumV2= 1.13837e-34
+  index: 6945  = 3.22733e-18 +-(REL) 0.574681 Gy sumV2= 3.43992e-36
+  index: 6946  = 5.2716e-19 +-(REL) 0.738603 Gy sumV2= 1.51604e-37
+  index: 6947  = 3.46123e-19 +-(REL) 1 Gy sumV2= 1.19801e-37
+  index: 6952  = 1.76043e-19 +-(REL) 1 Gy sumV2= 3.09913e-38
+  index: 6953  = 3.09959e-18 +-(REL) 0.706289 Gy sumV2= 4.79267e-36
+  index: 6954  = 6.06202e-18 +-(REL) 0.56262 Gy sumV2= 1.16325e-35
+  index: 6955  = 3.14692e-17 +-(REL) 0.587766 Gy sumV2= 3.42127e-34
+  index: 6957  = 1.59721e-18 +-(REL) 0.992644 Gy sumV2= 2.5137e-36
+  index: 6963  = 8.14268e-19 +-(REL) 1 Gy sumV2= 6.63032e-37
+  index: 6964  = 1.39946e-19 +-(REL) 1 Gy sumV2= 1.95849e-38
+  index: 6965  = 2.04548e-17 +-(REL) 0.66867 Gy sumV2= 1.87077e-34
+  index: 6974  = 5.91485e-19 +-(REL) 1 Gy sumV2= 3.49854e-37
+  index: 6977  = 8.54472e-19 +-(REL) 1 Gy sumV2= 7.30122e-37
+  index: 7024  = 1.43485e-18 +-(REL) 0.709182 Gy sumV2= 1.03546e-36
+  index: 7025  = 2.68231e-19 +-(REL) 1 Gy sumV2= 7.1948e-38
+  index: 7033  = 8.00466e-19 +-(REL) 0.708236 Gy sumV2= 3.21399e-37
+  index: 7042  = 2.41625e-18 +-(REL) 1 Gy sumV2= 5.83828e-36
+  index: 7043  = 1.1197e-18 +-(REL) 0.849648 Gy sumV2= 9.05068e-37
+  index: 7044  = 9.98586e-18 +-(REL) 0.700002 Gy sumV2= 4.88623e-35
+  index: 7045  = 5.08882e-18 +-(REL) 0.704213 Gy sumV2= 1.28424e-35
+  index: 7046  = 6.61422e-18 +-(REL) 0.755711 Gy sumV2= 2.49846e-35
+  index: 7047  = 5.82772e-18 +-(REL) 0.997053 Gy sumV2= 3.37625e-35
+  index: 7053  = 6.77992e-18 +-(REL) 0.988332 Gy sumV2= 4.49009e-35
+  index: 7054  = 5.47513e-18 +-(REL) 0.470569 Gy sumV2= 6.6382e-36
+  index: 7055  = 1.15443e-17 +-(REL) 0.818215 Gy sumV2= 8.92227e-35
+  index: 7063  = 1.43796e-18 +-(REL) 1 Gy sumV2= 2.06773e-36
+  index: 7064  = 1.7337e-18 +-(REL) 0.894268 Gy sumV2= 2.40373e-36
+  index: 7065  = 1.29025e-18 +-(REL) 0.7536 Gy sumV2= 9.45433e-37
+  index: 7124  = 4.70177e-19 +-(REL) 1 Gy sumV2= 2.21066e-37
+  index: 7125  = 4.26731e-19 +-(REL) 1 Gy sumV2= 1.82099e-37
+  index: 7133  = 8.45791e-19 +-(REL) 0.807935 Gy sumV2= 4.66962e-37
+  index: 7134  = 4.4718e-19 +-(REL) 0.826779 Gy sumV2= 1.36693e-37
+  index: 7136  = 6.79967e-19 +-(REL) 1 Gy sumV2= 4.62355e-37
+  index: 7137  = 1.34137e-20 +-(REL) 1 Gy sumV2= 1.79926e-40
+  index: 7143  = 4.25317e-18 +-(REL) 0.585401 Gy sumV2= 6.19928e-36
+  index: 7144  = 2.43852e-17 +-(REL) 0.432933 Gy sumV2= 1.11458e-34
+  index: 7145  = 1.61402e-17 +-(REL) 0.614479 Gy sumV2= 9.83651e-35
+  index: 7146  = 1.84409e-18 +-(REL) 0.85841 Gy sumV2= 2.50585e-36
+  index: 7153  = 5.30846e-20 +-(REL) 1 Gy sumV2= 2.81797e-39
+  index: 7154  = 1.14287e-17 +-(REL) 0.627839 Gy sumV2= 5.14872e-35
+  index: 7155  = 2.98974e-19 +-(REL) 1 Gy sumV2= 8.93854e-38
+  index: 7156  = 1.59494e-18 +-(REL) 0.764114 Gy sumV2= 1.48529e-36
+  index: 7157  = 1.59277e-19 +-(REL) 1 Gy sumV2= 2.53691e-38
+  index: 7158  = 6.50639e-19 +-(REL) 1 Gy sumV2= 4.23332e-37
+  index: 7164  = 9.36533e-20 +-(REL) 1 Gy sumV2= 8.77095e-39
+  index: 7165  = 1.73458e-18 +-(REL) 1 Gy sumV2= 3.00877e-36
+  index: 7166  = 5.68356e-19 +-(REL) 1 Gy sumV2= 3.23029e-37
+  index: 7186  = 3.6872e-18 +-(REL) 1 Gy sumV2= 1.35954e-35
+  index: 7224  = 1.61133e-19 +-(REL) 1 Gy sumV2= 2.5964e-38
+  index: 7233  = 4.2038e-19 +-(REL) 0.62497 Gy sumV2= 6.90256e-38
+  index: 7234  = 3.98399e-19 +-(REL) 1 Gy sumV2= 1.58722e-37
+  index: 7235  = 9.4217e-20 +-(REL) 1 Gy sumV2= 8.87684e-39
+  index: 7243  = 5.92347e-20 +-(REL) 1 Gy sumV2= 3.50875e-39
+  index: 7244  = 1.37771e-17 +-(REL) 0.481945 Gy sumV2= 4.40887e-35
+  index: 7245  = 1.21896e-17 +-(REL) 0.74556 Gy sumV2= 8.25938e-35
+  index: 7246  = 7.12953e-19 +-(REL) 0.872778 Gy sumV2= 3.87196e-37
+  index: 7253  = 1.16949e-18 +-(REL) 1 Gy sumV2= 1.3677e-36
+  index: 7254  = 8.80831e-18 +-(REL) 0.528181 Gy sumV2= 2.16452e-35
+  index: 7255  = 1.46332e-18 +-(REL) 0.625395 Gy sumV2= 8.37513e-37
+  index: 7256  = 4.20619e-20 +-(REL) 1 Gy sumV2= 1.7692e-39
+  index: 7257  = 3.81572e-20 +-(REL) 1 Gy sumV2= 1.45597e-39
+  index: 7264  = 6.05165e-18 +-(REL) 0.960006 Gy sumV2= 3.37517e-35
+  index: 7265  = 7.21444e-20 +-(REL) 1 Gy sumV2= 5.20482e-39
+  index: 7274  = 9.62775e-19 +-(REL) 1 Gy sumV2= 9.26935e-37
+  index: 7286  = 3.06634e-18 +-(REL) 1 Gy sumV2= 9.40246e-36
+  index: 7333  = 1.97251e-18 +-(REL) 0.957051 Gy sumV2= 3.56376e-36
+  index: 7334  = 3.8156e-18 +-(REL) 1 Gy sumV2= 1.45588e-35
+  index: 7335  = 1.35376e-18 +-(REL) 0.680831 Gy sumV2= 8.49511e-37
+  index: 7336  = 1.4788e-17 +-(REL) 0.932993 Gy sumV2= 1.9036e-34
+  index: 7343  = 3.4832e-18 +-(REL) 0.980237 Gy sumV2= 1.16578e-35
+  index: 7344  = 1.08405e-18 +-(REL) 0.752391 Gy sumV2= 6.65252e-37
+  index: 7345  = 1.15898e-17 +-(REL) 0.627086 Gy sumV2= 5.28213e-35
+  index: 7346  = 1.91785e-18 +-(REL) 0.697967 Gy sumV2= 1.79185e-36
+  index: 7353  = 1.91557e-18 +-(REL) 0.717911 Gy sumV2= 1.89122e-36
+  index: 7354  = 4.37278e-17 +-(REL) 0.644249 Gy sumV2= 7.9365e-34
+  index: 7355  = 1.56686e-17 +-(REL) 0.837784 Gy sumV2= 1.72317e-34
+  index: 7356  = 7.22306e-18 +-(REL) 0.999193 Gy sumV2= 5.20885e-35
+  index: 7357  = 4.63114e-19 +-(REL) 0.886194 Gy sumV2= 1.68436e-37
+  index: 7362  = 1.06673e-19 +-(REL) 1 Gy sumV2= 1.13791e-38
+  index: 7363  = 2.77208e-20 +-(REL) 1 Gy sumV2= 7.68441e-40
+  index: 7364  = 1.54413e-18 +-(REL) 1 Gy sumV2= 2.38433e-36
+  index: 7365  = 4.88531e-19 +-(REL) 0.998657 Gy sumV2= 2.38022e-37
+  index: 7366  = 3.96978e-19 +-(REL) 0.982391 Gy sumV2= 1.5209e-37
+  index: 7374  = 7.67723e-19 +-(REL) 1 Gy sumV2= 5.89399e-37
+  index: 7376  = 1.86812e-18 +-(REL) 1 Gy sumV2= 3.48987e-36
+  index: 7386  = 1.94078e-19 +-(REL) 1 Gy sumV2= 3.76662e-38
+  index: 7414  = 9.06326e-19 +-(REL) 1 Gy sumV2= 8.21426e-37
+  index: 7433  = 4.32267e-19 +-(REL) 1 Gy sumV2= 1.86855e-37
+  index: 7434  = 4.5399e-19 +-(REL) 1 Gy sumV2= 2.06107e-37
+  index: 7435  = 1.16439e-17 +-(REL) 0.712733 Gy sumV2= 6.88736e-35
+  index: 7436  = 1.32876e-18 +-(REL) 1 Gy sumV2= 1.7656e-36
+  index: 7437  = 2.54267e-18 +-(REL) 1 Gy sumV2= 6.46516e-36
+  index: 7438  = 4.03141e-19 +-(REL) 1 Gy sumV2= 1.62522e-37
+  index: 7443  = 1.47242e-18 +-(REL) 0.753333 Gy sumV2= 1.23039e-36
+  index: 7444  = 5.2701e-18 +-(REL) 0.585368 Gy sumV2= 9.51708e-36
+  index: 7445  = 6.71683e-18 +-(REL) 0.504298 Gy sumV2= 1.1474e-35
+  index: 7446  = 1.11357e-17 +-(REL) 0.752616 Gy sumV2= 7.02405e-35
+  index: 7453  = 1.06622e-17 +-(REL) 1 Gy sumV2= 1.13683e-34
+  index: 7454  = 2.13595e-17 +-(REL) 0.639181 Gy sumV2= 1.86396e-34
+  index: 7455  = 1.80775e-17 +-(REL) 0.784159 Gy sumV2= 2.0095e-34
+  index: 7456  = 1.53898e-18 +-(REL) 0.892975 Gy sumV2= 1.88862e-36
+  index: 7457  = 1.65535e-18 +-(REL) 0.779571 Gy sumV2= 1.66531e-36
+  index: 7462  = 2.37217e-20 +-(REL) 1 Gy sumV2= 5.62718e-40
+  index: 7464  = 8.1291e-21 +-(REL) 1 Gy sumV2= 6.60823e-41
+  index: 7466  = 7.20854e-19 +-(REL) 0.717834 Gy sumV2= 2.6776e-37
+  index: 7474  = 1.22294e-20 +-(REL) 1 Gy sumV2= 1.49559e-40
+  index: 7483  = 8.20757e-19 +-(REL) 1 Gy sumV2= 6.73642e-37
+  index: 7516  = 1.39983e-18 +-(REL) 1 Gy sumV2= 1.95953e-36
+  index: 7533  = 1.25832e-18 +-(REL) 0.67753 Gy sumV2= 7.26847e-37
+  index: 7534  = 1.01532e-18 +-(REL) 0.734021 Gy sumV2= 5.55423e-37
+  index: 7535  = 4.5423e-20 +-(REL) 1 Gy sumV2= 2.06325e-39
+  index: 7537  = 6.93359e-19 +-(REL) 1 Gy sumV2= 4.80747e-37
+  index: 7543  = 1.28209e-18 +-(REL) 0.593178 Gy sumV2= 5.78379e-37
+  index: 7544  = 9.70607e-17 +-(REL) 0.476773 Gy sumV2= 2.14153e-33
+  index: 7545  = 9.88035e-18 +-(REL) 0.943886 Gy sumV2= 8.69731e-35
+  index: 7546  = 3.458e-18 +-(REL) 0.463276 Gy sumV2= 2.56653e-36
+  index: 7553  = 6.11787e-19 +-(REL) 0.657214 Gy sumV2= 1.61666e-37
+  index: 7554  = 2.20595e-17 +-(REL) 0.381127 Gy sumV2= 7.06895e-35
+  index: 7555  = 2.12581e-17 +-(REL) 0.901455 Gy sumV2= 3.6723e-34
+  index: 7556  = 4.19064e-18 +-(REL) 0.757657 Gy sumV2= 1.00811e-35
+  index: 7558  = 2.92483e-19 +-(REL) 1 Gy sumV2= 8.55465e-38
+  index: 7562  = 6.40675e-20 +-(REL) 1 Gy sumV2= 4.10464e-39
+  index: 7563  = 4.99186e-19 +-(REL) 1 Gy sumV2= 2.49187e-37
+  index: 7564  = 2.23557e-18 +-(REL) 0.774774 Gy sumV2= 3.00006e-36
+  index: 7566  = 5.44553e-19 +-(REL) 0.865972 Gy sumV2= 2.22377e-37
+  index: 7583  = 2.68998e-19 +-(REL) 1 Gy sumV2= 7.23598e-38
+  index: 7610  = 9.11581e-19 +-(REL) 1 Gy sumV2= 8.3098e-37
+  index: 7616  = 8.24509e-19 +-(REL) 1 Gy sumV2= 6.79816e-37
+  index: 7621  = 2.93731e-19 +-(REL) 1 Gy sumV2= 8.62777e-38
+  index: 7623  = 6.21211e-19 +-(REL) 1 Gy sumV2= 3.85903e-37
+  index: 7633  = 8.25883e-19 +-(REL) 0.737467 Gy sumV2= 3.70959e-37
+  index: 7634  = 1.16753e-18 +-(REL) 1 Gy sumV2= 1.36313e-36
+  index: 7637  = 1.81112e-19 +-(REL) 0.756473 Gy sumV2= 1.87708e-38
+  index: 7638  = 7.68576e-19 +-(REL) 1 Gy sumV2= 5.90709e-37
+  index: 7642  = 4.01026e-19 +-(REL) 1 Gy sumV2= 1.60822e-37
+  index: 7643  = 1.25647e-18 +-(REL) 0.655365 Gy sumV2= 6.7807e-37
+  index: 7644  = 4.56864e-17 +-(REL) 0.420345 Gy sumV2= 3.68813e-34
+  index: 7645  = 1.1299e-18 +-(REL) 1 Gy sumV2= 1.27667e-36
+  index: 7646  = 7.21733e-19 +-(REL) 0.567877 Gy sumV2= 1.67985e-37
+  index: 7653  = 2.49061e-19 +-(REL) 0.818587 Gy sumV2= 4.15663e-38
+  index: 7654  = 4.09409e-17 +-(REL) 0.537698 Gy sumV2= 4.84622e-34
+  index: 7655  = 1.72234e-17 +-(REL) 0.548748 Gy sumV2= 8.93295e-35
+  index: 7656  = 2.54384e-18 +-(REL) 0.50409 Gy sumV2= 1.64441e-36
+  index: 7664  = 4.40393e-18 +-(REL) 0.738913 Gy sumV2= 1.05894e-35
+  index: 7666  = 6.7727e-19 +-(REL) 1 Gy sumV2= 4.58695e-37
+  index: 7667  = 2.14238e-19 +-(REL) 1 Gy sumV2= 4.58979e-38
+  index: 7683  = 7.66886e-19 +-(REL) 1 Gy sumV2= 5.88114e-37
+  index: 7713  = 2.33232e-18 +-(REL) 1 Gy sumV2= 5.4397e-36
+  index: 7723  = 3.47846e-19 +-(REL) 1 Gy sumV2= 1.20997e-37
+  index: 7724  = 4.39607e-20 +-(REL) 1 Gy sumV2= 1.93254e-39
+  index: 7733  = 4.50219e-18 +-(REL) 1 Gy sumV2= 2.02697e-35
+  index: 7734  = 1.05659e-17 +-(REL) 0.778919 Gy sumV2= 6.77335e-35
+  index: 7735  = 3.21569e-19 +-(REL) 0.581467 Gy sumV2= 3.49629e-38
+  index: 7737  = 5.03431e-19 +-(REL) 1 Gy sumV2= 2.53443e-37
+  index: 7738  = 1.02947e-18 +-(REL) 1 Gy sumV2= 1.0598e-36
+  index: 7743  = 8.1928e-20 +-(REL) 1 Gy sumV2= 6.7122e-39
+  index: 7744  = 2.67877e-17 +-(REL) 0.645494 Gy sumV2= 2.98993e-34
+  index: 7745  = 7.07811e-17 +-(REL) 0.415395 Gy sumV2= 8.64528e-34
+  index: 7746  = 1.86907e-18 +-(REL) 0.8325 Gy sumV2= 2.42116e-36
+  index: 7753  = 1.43966e-18 +-(REL) 0.582771 Gy sumV2= 7.03923e-37
+  index: 7754  = 3.3192e-17 +-(REL) 0.714528 Gy sumV2= 5.62484e-34
+  index: 7755  = 5.71171e-17 +-(REL) 0.544665 Gy sumV2= 9.67834e-34
+  index: 7756  = 8.48343e-18 +-(REL) 0.832676 Gy sumV2= 4.98996e-35
+  index: 7757  = 1.12606e-18 +-(REL) 0.748574 Gy sumV2= 7.10555e-37
+  index: 7763  = 8.40884e-20 +-(REL) 1 Gy sumV2= 7.07087e-39
+  index: 7764  = 2.91719e-18 +-(REL) 0.652377 Gy sumV2= 3.62186e-36
+  index: 7765  = 5.46877e-19 +-(REL) 1 Gy sumV2= 2.99074e-37
+  index: 7766  = 6.19857e-19 +-(REL) 1 Gy sumV2= 3.84223e-37
+  index: 7767  = 1.48742e-19 +-(REL) 1 Gy sumV2= 2.21243e-38
+  index: 7810  = 1.59992e-19 +-(REL) 1 Gy sumV2= 2.55975e-38
+  index: 7821  = 1.55198e-19 +-(REL) 1 Gy sumV2= 2.40864e-38
+  index: 7824  = 1.45552e-19 +-(REL) 1 Gy sumV2= 2.11853e-38
+  index: 7826  = 9.46951e-19 +-(REL) 1 Gy sumV2= 8.96717e-37
+  index: 7833  = 8.95675e-19 +-(REL) 0.752286 Gy sumV2= 4.54015e-37
+  index: 7834  = 5.01847e-19 +-(REL) 0.708377 Gy sumV2= 1.26379e-37
+  index: 7835  = 8.54318e-18 +-(REL) 0.908849 Gy sumV2= 6.0287e-35
+  index: 7836  = 5.7767e-19 +-(REL) 1 Gy sumV2= 3.33702e-37
+  index: 7837  = 1.5219e-18 +-(REL) 0.896901 Gy sumV2= 1.86322e-36
+  index: 7843  = 1.197e-17 +-(REL) 0.713486 Gy sumV2= 7.29395e-35
+  index: 7844  = 2.62324e-17 +-(REL) 0.561946 Gy sumV2= 2.17308e-34
+  index: 7845  = 4.11767e-17 +-(REL) 0.482697 Gy sumV2= 3.95062e-34
+  index: 7846  = 1.80975e-18 +-(REL) 0.647353 Gy sumV2= 1.37254e-36
+  index: 7853  = 5.81781e-20 +-(REL) 1 Gy sumV2= 3.38469e-39
+  index: 7854  = 1.64998e-17 +-(REL) 0.562903 Gy sumV2= 8.62645e-35
+  index: 7855  = 2.21076e-17 +-(REL) 0.623848 Gy sumV2= 1.90217e-34
+  index: 7856  = 7.57572e-20 +-(REL) 1 Gy sumV2= 5.73915e-39
+  index: 7857  = 1.18219e-18 +-(REL) 0.959481 Gy sumV2= 1.28662e-36
+  index: 7863  = 5.17084e-22 +-(REL) 1 Gy sumV2= 2.67376e-43
+  index: 7864  = 3.07021e-18 +-(REL) 0.851144 Gy sumV2= 6.82877e-36
+  index: 7865  = 9.04673e-18 +-(REL) 0.869127 Gy sumV2= 6.1823e-35
+  index: 7884  = 1.04557e-18 +-(REL) 1 Gy sumV2= 1.09323e-36
+  index: 7900  = 5.54645e-19 +-(REL) 1 Gy sumV2= 3.07631e-37
+  index: 7914  = 5.23617e-19 +-(REL) 1 Gy sumV2= 2.74175e-37
+  index: 7916  = 2.48751e-18 +-(REL) 0.712521 Gy sumV2= 3.14145e-36
+  index: 7922  = 4.07412e-19 +-(REL) 1 Gy sumV2= 1.65984e-37
+  index: 7923  = 3.20986e-19 +-(REL) 1 Gy sumV2= 1.03032e-37
+  index: 7925  = 2.9361e-18 +-(REL) 1 Gy sumV2= 8.62068e-36
+  index: 7932  = 6.73319e-19 +-(REL) 1 Gy sumV2= 4.53359e-37
+  index: 7933  = 6.11563e-19 +-(REL) 1 Gy sumV2= 3.7401e-37
+  index: 7934  = 1.21437e-18 +-(REL) 0.578588 Gy sumV2= 4.93681e-37
+  index: 7935  = 3.9435e-18 +-(REL) 0.662573 Gy sumV2= 6.82711e-36
+  index: 7936  = 1.62999e-18 +-(REL) 1 Gy sumV2= 2.65688e-36
+  index: 7938  = 2.38528e-19 +-(REL) 1 Gy sumV2= 5.68957e-38
+  index: 7943  = 7.55147e-19 +-(REL) 0.794651 Gy sumV2= 3.60096e-37
+  index: 7944  = 3.4012e-17 +-(REL) 0.598063 Gy sumV2= 4.13777e-34
+  index: 7945  = 3.46614e-17 +-(REL) 0.809143 Gy sumV2= 7.86584e-34
+  index: 7946  = 4.259e-19 +-(REL) 0.948613 Gy sumV2= 1.63228e-37
+  index: 7947  = 3.70976e-19 +-(REL) 0.934995 Gy sumV2= 1.20312e-37
+  index: 7953  = 1.38483e-19 +-(REL) 1 Gy sumV2= 1.91774e-38
+  index: 7954  = 7.86733e-18 +-(REL) 0.463531 Gy sumV2= 1.32993e-35
+  index: 7955  = 1.8405e-17 +-(REL) 0.710567 Gy sumV2= 1.71036e-34
+  index: 7959  = 3.92629e-19 +-(REL) 1 Gy sumV2= 1.54157e-37
+  index: 7963  = 6.68815e-19 +-(REL) 1 Gy sumV2= 4.47313e-37
+  index: 7965  = 1.33828e-18 +-(REL) 0.581462 Gy sumV2= 6.05542e-37
+  index: 7966  = 4.0662e-19 +-(REL) 1 Gy sumV2= 1.6534e-37
+  index: 7967  = 2.91645e-20 +-(REL) 1 Gy sumV2= 8.50566e-40
+  index: 7975  = 2.01227e-19 +-(REL) 1 Gy sumV2= 4.04922e-38
+  index: 7984  = 2.01615e-19 +-(REL) 1 Gy sumV2= 4.06486e-38
+  index: 8000  = 4.5134e-19 +-(REL) 1 Gy sumV2= 2.03708e-37
+  index: 8015  = 3.13649e-19 +-(REL) 1 Gy sumV2= 9.83758e-38
+  index: 8022  = 2.26891e-19 +-(REL) 1 Gy sumV2= 5.14795e-38
+  index: 8023  = 5.29327e-19 +-(REL) 1 Gy sumV2= 2.80187e-37
+  index: 8026  = 2.95409e-19 +-(REL) 1 Gy sumV2= 8.72667e-38
+  index: 8032  = 2.45921e-19 +-(REL) 1 Gy sumV2= 6.04772e-38
+  index: 8034  = 6.45369e-18 +-(REL) 0.98289 Gy sumV2= 4.02371e-35
+  index: 8035  = 1.73152e-17 +-(REL) 0.814432 Gy sumV2= 1.98869e-34
+  index: 8038  = 7.25127e-19 +-(REL) 1 Gy sumV2= 5.25809e-37
+  index: 8044  = 2.98579e-17 +-(REL) 0.637418 Gy sumV2= 3.62221e-34
+  index: 8045  = 2.77179e-17 +-(REL) 0.584446 Gy sumV2= 2.62432e-34
+  index: 8046  = 4.77452e-18 +-(REL) 0.650891 Gy sumV2= 9.65789e-36
+  index: 8047  = 2.89673e-19 +-(REL) 0.732728 Gy sumV2= 4.5051e-38
+  index: 8053  = 1.34321e-17 +-(REL) 0.754647 Gy sumV2= 1.0275e-34
+  index: 8054  = 1.07142e-17 +-(REL) 0.638954 Gy sumV2= 4.6867e-35
+  index: 8055  = 2.0151e-18 +-(REL) 0.4885 Gy sumV2= 9.69023e-37
+  index: 8056  = 2.56158e-19 +-(REL) 1 Gy sumV2= 6.56171e-38
+  index: 8057  = 7.41132e-19 +-(REL) 1 Gy sumV2= 5.49276e-37
+  index: 8059  = 7.99305e-19 +-(REL) 1 Gy sumV2= 6.38888e-37
+  index: 8061  = 6.41215e-19 +-(REL) 1 Gy sumV2= 4.11156e-37
+  index: 8063  = 4.18936e-18 +-(REL) 1 Gy sumV2= 1.75507e-35
+  index: 8065  = 1.51342e-18 +-(REL) 0.751714 Gy sumV2= 1.29427e-36
+  index: 8073  = 4.71489e-19 +-(REL) 1 Gy sumV2= 2.22302e-37
+  index: 8075  = 2.83992e-19 +-(REL) 1 Gy sumV2= 8.06513e-38
+  index: 8082  = 2.04443e-18 +-(REL) 1 Gy sumV2= 4.17969e-36
+  index: 8084  = 2.52959e-20 +-(REL) 1 Gy sumV2= 6.39881e-40
+  index: 8087  = 3.19144e-19 +-(REL) 1 Gy sumV2= 1.01853e-37
+  index: 8105  = 9.48024e-18 +-(REL) 1 Gy sumV2= 8.9875e-35
+  index: 8115  = 2.20784e-19 +-(REL) 1 Gy sumV2= 4.87455e-38
+  index: 8116  = 1.58817e-19 +-(REL) 1 Gy sumV2= 2.5223e-38
+  index: 8121  = 6.99163e-19 +-(REL) 1 Gy sumV2= 4.88829e-37
+  index: 8123  = 3.29672e-19 +-(REL) 1 Gy sumV2= 1.08683e-37
+  index: 8126  = 7.14225e-19 +-(REL) 1 Gy sumV2= 5.10117e-37
+  index: 8133  = 6.26787e-20 +-(REL) 1 Gy sumV2= 3.92862e-39
+  index: 8134  = 4.05348e-18 +-(REL) 0.640515 Gy sumV2= 6.74095e-36
+  index: 8135  = 4.72485e-18 +-(REL) 0.510144 Gy sumV2= 5.80998e-36
+  index: 8136  = 9.13301e-19 +-(REL) 0.967974 Gy sumV2= 7.81549e-37
+  index: 8137  = 1.09396e-18 +-(REL) 1 Gy sumV2= 1.19675e-36
+  index: 8139  = 1.47821e-18 +-(REL) 1 Gy sumV2= 2.1851e-36
+  index: 8143  = 5.26552e-18 +-(REL) 0.480606 Gy sumV2= 6.40436e-36
+  index: 8144  = 3.95889e-17 +-(REL) 0.691578 Gy sumV2= 7.49606e-34
+  index: 8145  = 2.04093e-17 +-(REL) 0.610636 Gy sumV2= 1.55321e-34
+  index: 8146  = 1.82558e-18 +-(REL) 0.488518 Gy sumV2= 7.95387e-37
+  index: 8148  = 2.03879e-19 +-(REL) 1 Gy sumV2= 4.15666e-38
+  index: 8153  = 1.41413e-18 +-(REL) 1 Gy sumV2= 1.99976e-36
+  index: 8154  = 4.04933e-17 +-(REL) 0.680596 Gy sumV2= 7.59541e-34
+  index: 8155  = 7.26218e-18 +-(REL) 0.490152 Gy sumV2= 1.26709e-35
+  index: 8163  = 7.41636e-19 +-(REL) 0.953448 Gy sumV2= 5.00007e-37
+  index: 8164  = 1.81392e-18 +-(REL) 0.887723 Gy sumV2= 2.59295e-36
+  index: 8165  = 2.41393e-18 +-(REL) 0.944841 Gy sumV2= 5.20197e-36
+  index: 8166  = 1.26544e-18 +-(REL) 1 Gy sumV2= 1.60133e-36
+  index: 8173  = 8.18404e-19 +-(REL) 0.661889 Gy sumV2= 2.93435e-37
+  index: 8175  = 3.33237e-19 +-(REL) 1 Gy sumV2= 1.11047e-37
+  index: 8179  = 1.74294e-19 +-(REL) 1 Gy sumV2= 3.03785e-38
+  index: 8184  = 3.85397e-19 +-(REL) 1 Gy sumV2= 1.48531e-37
+  index: 8215  = 4.56557e-20 +-(REL) 1 Gy sumV2= 2.08445e-39
+  index: 8216  = 1.65161e-19 +-(REL) 1 Gy sumV2= 2.72782e-38
+  index: 8223  = 7.95362e-19 +-(REL) 1 Gy sumV2= 6.32601e-37
+  index: 8233  = 1.65258e-18 +-(REL) 1 Gy sumV2= 2.73101e-36
+  index: 8234  = 8.78443e-18 +-(REL) 0.667672 Gy sumV2= 3.44e-35
+  index: 8235  = 3.0108e-18 +-(REL) 0.534097 Gy sumV2= 2.58592e-36
+  index: 8236  = 5.01803e-18 +-(REL) 0.725403 Gy sumV2= 1.32504e-35
+  index: 8238  = 7.5636e-20 +-(REL) 1 Gy sumV2= 5.7208e-39
+  index: 8242  = 3.14278e-19 +-(REL) 1 Gy sumV2= 9.8771e-38
+  index: 8243  = 6.56383e-18 +-(REL) 0.699864 Gy sumV2= 2.11031e-35
+  index: 8244  = 1.80951e-17 +-(REL) 0.417033 Gy sumV2= 5.69484e-35
+  index: 8245  = 1.72694e-17 +-(REL) 0.645881 Gy sumV2= 1.24413e-34
+  index: 8246  = 9.10638e-19 +-(REL) 0.713176 Gy sumV2= 4.21782e-37
+  index: 8248  = 7.76127e-19 +-(REL) 1 Gy sumV2= 6.02373e-37
+  index: 8253  = 1.47544e-18 +-(REL) 0.685735 Gy sumV2= 1.02367e-36
+  index: 8254  = 3.29234e-17 +-(REL) 0.66427 Gy sumV2= 4.78305e-34
+  index: 8255  = 5.77068e-17 +-(REL) 0.615404 Gy sumV2= 1.26119e-33
+  index: 8256  = 3.96897e-18 +-(REL) 0.555844 Gy sumV2= 4.8671e-36
+  index: 8261  = 4.0072e-19 +-(REL) 1 Gy sumV2= 1.60577e-37
+  index: 8264  = 8.68813e-19 +-(REL) 0.74404 Gy sumV2= 4.17877e-37
+  index: 8265  = 1.75428e-18 +-(REL) 0.683034 Gy sumV2= 1.43578e-36
+  index: 8266  = 1.70993e-20 +-(REL) 1 Gy sumV2= 2.92387e-40
+  index: 8273  = 5.76495e-19 +-(REL) 1 Gy sumV2= 3.32347e-37
+  index: 8276  = 1.09709e-18 +-(REL) 0.90342 Gy sumV2= 9.82352e-37
+  index: 8279  = 6.631e-20 +-(REL) 1 Gy sumV2= 4.39701e-39
+  index: 8284  = 2.40093e-19 +-(REL) 1 Gy sumV2= 5.76444e-38
+  index: 8297  = 1.02769e-19 +-(REL) 1 Gy sumV2= 1.05616e-38
+  index: 8312  = 2.9722e-18 +-(REL) 1 Gy sumV2= 8.83395e-36
+  index: 8316  = 6.28106e-19 +-(REL) 1 Gy sumV2= 3.94517e-37
+  index: 8321  = 5.43282e-20 +-(REL) 1 Gy sumV2= 2.95155e-39
+  index: 8333  = 1.81684e-20 +-(REL) 1 Gy sumV2= 3.30092e-40
+  index: 8334  = 1.04346e-18 +-(REL) 0.645228 Gy sumV2= 4.53294e-37
+  index: 8335  = 4.05576e-18 +-(REL) 0.689019 Gy sumV2= 7.80929e-36
+  index: 8336  = 2.0836e-19 +-(REL) 1 Gy sumV2= 4.34137e-38
+  index: 8343  = 1.09808e-17 +-(REL) 0.535282 Gy sumV2= 3.45497e-35
+  index: 8344  = 5.62905e-17 +-(REL) 0.510009 Gy sumV2= 8.24211e-34
+  index: 8345  = 2.60491e-17 +-(REL) 0.526211 Gy sumV2= 1.87896e-34
+  index: 8346  = 4.87712e-18 +-(REL) 0.601905 Gy sumV2= 8.61769e-36
+  index: 8347  = 1.0994e-19 +-(REL) 1 Gy sumV2= 1.20868e-38
+  index: 8348  = 5.05441e-20 +-(REL) 1 Gy sumV2= 2.55471e-39
+  index: 8353  = 6.16254e-19 +-(REL) 0.765434 Gy sumV2= 2.22504e-37
+  index: 8354  = 1.46451e-17 +-(REL) 0.57952 Gy sumV2= 7.2033e-35
+  index: 8355  = 2.96243e-17 +-(REL) 0.49573 Gy sumV2= 2.15675e-34
+  index: 8356  = 5.52144e-18 +-(REL) 0.509307 Gy sumV2= 7.90815e-36
+  index: 8361  = 2.05006e-19 +-(REL) 1 Gy sumV2= 4.20273e-38
+  index: 8363  = 9.11412e-19 +-(REL) 0.782814 Gy sumV2= 5.09038e-37
+  index: 8364  = 1.03401e-18 +-(REL) 0.637425 Gy sumV2= 4.34421e-37
+  index: 8365  = 4.18856e-19 +-(REL) 0.719537 Gy sumV2= 9.0832e-38
+  index: 8366  = 9.66368e-21 +-(REL) 1 Gy sumV2= 9.33867e-41
+  index: 8379  = 3.91942e-19 +-(REL) 1 Gy sumV2= 1.53619e-37
+  index: 8384  = 4.35706e-19 +-(REL) 1 Gy sumV2= 1.8984e-37
+  index: 8386  = 8.24284e-19 +-(REL) 1 Gy sumV2= 6.79443e-37
+  index: 8412  = 6.56285e-20 +-(REL) 1 Gy sumV2= 4.3071e-39
+  index: 8413  = 6.82245e-19 +-(REL) 1 Gy sumV2= 4.65458e-37
+  index: 8424  = 9.81279e-20 +-(REL) 0.73345 Gy sumV2= 5.18e-39
+  index: 8425  = 3.55399e-19 +-(REL) 1 Gy sumV2= 1.26309e-37
+  index: 8426  = 6.94377e-19 +-(REL) 1 Gy sumV2= 4.82159e-37
+  index: 8432  = 5.71407e-19 +-(REL) 0.754461 Gy sumV2= 1.85853e-37
+  index: 8433  = 5.81156e-19 +-(REL) 1 Gy sumV2= 3.37742e-37
+  index: 8434  = 5.92027e-19 +-(REL) 0.581684 Gy sumV2= 1.18595e-37
+  index: 8435  = 1.86459e-18 +-(REL) 0.498826 Gy sumV2= 8.6512e-37
+  index: 8436  = 7.91279e-20 +-(REL) 1 Gy sumV2= 6.26122e-39
+  index: 8443  = 1.50798e-18 +-(REL) 0.693076 Gy sumV2= 1.09234e-36
+  index: 8444  = 2.81469e-17 +-(REL) 0.442 Gy sumV2= 1.54783e-34
+  index: 8445  = 7.53927e-17 +-(REL) 0.407978 Gy sumV2= 9.46139e-34
+  index: 8446  = 5.44507e-18 +-(REL) 0.738933 Gy sumV2= 1.6189e-35
+  index: 8447  = 8.53786e-19 +-(REL) 1 Gy sumV2= 7.28951e-37
+  index: 8448  = 4.63671e-18 +-(REL) 0.949555 Gy sumV2= 1.93848e-35
+  index: 8453  = 2.25695e-18 +-(REL) 1 Gy sumV2= 5.09384e-36
+  index: 8454  = 4.2342e-17 +-(REL) 0.413104 Gy sumV2= 3.05972e-34
+  index: 8455  = 4.8193e-17 +-(REL) 0.519746 Gy sumV2= 6.27426e-34
+  index: 8456  = 1.52574e-19 +-(REL) 0.707343 Gy sumV2= 1.16473e-38
+  index: 8461  = 3.48906e-21 +-(REL) 1 Gy sumV2= 1.21735e-41
+  index: 8464  = 4.0956e-18 +-(REL) 0.808039 Gy sumV2= 1.09522e-35
+  index: 8465  = 7.00827e-19 +-(REL) 1 Gy sumV2= 4.91158e-37
+  index: 8466  = 1.28271e-19 +-(REL) 1 Gy sumV2= 1.64535e-38
+  index: 8469  = 8.39973e-20 +-(REL) 1 Gy sumV2= 7.05555e-39
+  index: 8478  = 2.51016e-19 +-(REL) 1 Gy sumV2= 6.30092e-38
+  index: 8479  = 1.46639e-20 +-(REL) 1 Gy sumV2= 2.15031e-40
+  index: 8484  = 1.36534e-19 +-(REL) 1 Gy sumV2= 1.86417e-38
+  index: 8516  = 1.16473e-18 +-(REL) 1 Gy sumV2= 1.3566e-36
+  index: 8525  = 4.73821e-20 +-(REL) 1 Gy sumV2= 2.24506e-39
+  index: 8532  = 4.77933e-20 +-(REL) 1 Gy sumV2= 2.2842e-39
+  index: 8533  = 2.58985e-18 +-(REL) 0.673439 Gy sumV2= 3.04193e-36
+  index: 8534  = 1.37469e-18 +-(REL) 0.748441 Gy sumV2= 1.05859e-36
+  index: 8535  = 7.30673e-18 +-(REL) 0.529496 Gy sumV2= 1.49686e-35
+  index: 8536  = 4.45144e-20 +-(REL) 1 Gy sumV2= 1.98153e-39
+  index: 8537  = 1.48804e-18 +-(REL) 1 Gy sumV2= 2.21426e-36
+  index: 8543  = 6.74579e-18 +-(REL) 0.596219 Gy sumV2= 1.61765e-35
+  index: 8544  = 4.95558e-17 +-(REL) 0.474675 Gy sumV2= 5.53348e-34
+  index: 8545  = 3.79783e-17 +-(REL) 0.40296 Gy sumV2= 2.34217e-34
+  index: 8546  = 9.39913e-19 +-(REL) 0.63947 Gy sumV2= 3.61262e-37
+  index: 8547  = 3.49775e-18 +-(REL) 1 Gy sumV2= 1.22343e-35
+  index: 8548  = 8.11224e-19 +-(REL) 1 Gy sumV2= 6.58084e-37
+  index: 8553  = 1.73526e-18 +-(REL) 0.969667 Gy sumV2= 2.83123e-36
+  index: 8554  = 3.38503e-17 +-(REL) 0.402859 Gy sumV2= 1.85975e-34
+  index: 8555  = 1.18146e-17 +-(REL) 0.704331 Gy sumV2= 6.92461e-35
+  index: 8556  = 6.6232e-18 +-(REL) 0.791674 Gy sumV2= 2.74936e-35
+  index: 8557  = 1.22388e-18 +-(REL) 0.816618 Gy sumV2= 9.98892e-37
+  index: 8560  = 1.23399e-18 +-(REL) 1 Gy sumV2= 1.52274e-36
+  index: 8564  = 1.33405e-18 +-(REL) 0.733328 Gy sumV2= 9.57071e-37
+  index: 8565  = 6.10044e-19 +-(REL) 1 Gy sumV2= 3.72154e-37
+  index: 8567  = 1.14346e-18 +-(REL) 1 Gy sumV2= 1.30751e-36
+  index: 8576  = 5.5789e-19 +-(REL) 1 Gy sumV2= 3.11242e-37
+  index: 8579  = 3.10677e-20 +-(REL) 1 Gy sumV2= 9.65201e-40
+  index: 8585  = 7.74473e-19 +-(REL) 1 Gy sumV2= 5.99808e-37
+  index: 8622  = 5.63979e-19 +-(REL) 1 Gy sumV2= 3.18073e-37
+  index: 8626  = 1.09106e-18 +-(REL) 1 Gy sumV2= 1.19041e-36
+  index: 8633  = 8.94732e-20 +-(REL) 0.89503 Gy sumV2= 6.41301e-39
+  index: 8634  = 1.43282e-18 +-(REL) 0.535053 Gy sumV2= 5.87743e-37
+  index: 8635  = 2.67329e-18 +-(REL) 0.631544 Gy sumV2= 2.8504e-36
+  index: 8636  = 1.2171e-18 +-(REL) 0.861427 Gy sumV2= 1.09924e-36
+  index: 8643  = 1.48246e-18 +-(REL) 0.589259 Gy sumV2= 7.63108e-37
+  index: 8644  = 4.30738e-17 +-(REL) 0.404805 Gy sumV2= 3.04048e-34
+  index: 8645  = 1.94431e-17 +-(REL) 0.567513 Gy sumV2= 1.21756e-34
+  index: 8646  = 1.47378e-18 +-(REL) 0.580796 Gy sumV2= 7.32689e-37
+  index: 8653  = 5.84158e-19 +-(REL) 1 Gy sumV2= 3.4124e-37
+  index: 8654  = 5.3253e-17 +-(REL) 0.501002 Gy sumV2= 7.11837e-34
+  index: 8655  = 2.01629e-17 +-(REL) 0.598917 Gy sumV2= 1.4583e-34
+  index: 8656  = 9.86936e-18 +-(REL) 0.997262 Gy sumV2= 9.68715e-35
+  index: 8657  = 6.00328e-19 +-(REL) 0.824174 Gy sumV2= 2.44803e-37
+  index: 8658  = 9.84779e-21 +-(REL) 1 Gy sumV2= 9.69789e-41
+  index: 8664  = 1.22978e-18 +-(REL) 0.760537 Gy sumV2= 8.74783e-37
+  index: 8665  = 2.51837e-20 +-(REL) 1 Gy sumV2= 6.3422e-40
+  index: 8666  = 7.13783e-19 +-(REL) 0.783435 Gy sumV2= 3.1271e-37
+  index: 8668  = 1.24759e-19 +-(REL) 1 Gy sumV2= 1.55648e-38
+  index: 8675  = 3.68341e-19 +-(REL) 0.751383 Gy sumV2= 7.65996e-38
+  index: 8679  = 2.96473e-20 +-(REL) 1 Gy sumV2= 8.78964e-40
+  index: 8683  = 2.61405e-19 +-(REL) 1 Gy sumV2= 6.83324e-38
+  index: 8687  = 1.40419e-18 +-(REL) 1 Gy sumV2= 1.97174e-36
+  index: 8706  = 5.19255e-19 +-(REL) 1 Gy sumV2= 2.69625e-37
+  index: 8732  = 9.44443e-19 +-(REL) 0.775725 Gy sumV2= 5.36747e-37
+  index: 8733  = 2.65585e-19 +-(REL) 1 Gy sumV2= 7.05352e-38
+  index: 8734  = 1.20466e-18 +-(REL) 0.506637 Gy sumV2= 3.72509e-37
+  index: 8735  = 5.56607e-18 +-(REL) 0.483824 Gy sumV2= 7.25247e-36
+  index: 8736  = 6.00415e-19 +-(REL) 0.951189 Gy sumV2= 3.26165e-37
+  index: 8737  = 7.07019e-19 +-(REL) 0.869744 Gy sumV2= 3.78134e-37
+  index: 8738  = 6.24854e-19 +-(REL) 1 Gy sumV2= 3.90443e-37
+  index: 8742  = 3.64607e-19 +-(REL) 1 Gy sumV2= 1.32938e-37
+  index: 8743  = 4.79106e-18 +-(REL) 0.549936 Gy sumV2= 6.94221e-36
+  index: 8744  = 7.20413e-17 +-(REL) 0.335033 Gy sumV2= 5.82602e-34
+  index: 8745  = 3.07312e-17 +-(REL) 0.434848 Gy sumV2= 1.78589e-34
+  index: 8746  = 4.48271e-18 +-(REL) 0.694758 Gy sumV2= 9.69959e-36
+  index: 8747  = 1.89244e-18 +-(REL) 0.724192 Gy sumV2= 1.87827e-36
+  index: 8753  = 1.2484e-18 +-(REL) 0.85338 Gy sumV2= 1.13499e-36
+  index: 8754  = 4.5198e-17 +-(REL) 0.354961 Gy sumV2= 2.57413e-34
+  index: 8755  = 3.10419e-17 +-(REL) 0.338918 Gy sumV2= 1.10693e-34
+  index: 8756  = 9.112e-19 +-(REL) 0.774514 Gy sumV2= 4.98068e-37
+  index: 8757  = 2.01139e-18 +-(REL) 0.584928 Gy sumV2= 1.38422e-36
+  index: 8758  = 6.11831e-19 +-(REL) 1 Gy sumV2= 3.74337e-37
+  index: 8764  = 7.71508e-18 +-(REL) 0.861785 Gy sumV2= 4.42059e-35
+  index: 8765  = 8.59065e-20 +-(REL) 1 Gy sumV2= 7.37993e-39
+  index: 8766  = 6.94619e-19 +-(REL) 0.633563 Gy sumV2= 1.93677e-37
+  index: 8768  = 4.20113e-19 +-(REL) 1 Gy sumV2= 1.76495e-37
+  index: 8774  = 1.25902e-19 +-(REL) 1 Gy sumV2= 1.58514e-38
+  index: 8775  = 1.2359e-19 +-(REL) 1 Gy sumV2= 1.52745e-38
+  index: 8776  = 2.86074e-19 +-(REL) 0.750587 Gy sumV2= 4.61064e-38
+  index: 8822  = 1.02908e-18 +-(REL) 1 Gy sumV2= 1.059e-36
+  index: 8833  = 1.66503e-18 +-(REL) 0.589308 Gy sumV2= 9.62807e-37
+  index: 8834  = 8.12213e-19 +-(REL) 0.619026 Gy sumV2= 2.52793e-37
+  index: 8835  = 1.88014e-18 +-(REL) 0.60644 Gy sumV2= 1.30006e-36
+  index: 8837  = 6.53936e-19 +-(REL) 1 Gy sumV2= 4.27633e-37
+  index: 8841  = 6.85958e-19 +-(REL) 1 Gy sumV2= 4.70538e-37
+  index: 8842  = 2.95503e-19 +-(REL) 1 Gy sumV2= 8.73218e-38
+  index: 8843  = 1.92956e-18 +-(REL) 0.543061 Gy sumV2= 1.09806e-36
+  index: 8844  = 1.12298e-16 +-(REL) 0.386509 Gy sumV2= 1.88403e-33
+  index: 8845  = 5.45137e-17 +-(REL) 0.4037 Gy sumV2= 4.84341e-34
+  index: 8846  = 5.24629e-18 +-(REL) 0.767084 Gy sumV2= 1.61954e-35
+  index: 8847  = 1.28606e-18 +-(REL) 0.612567 Gy sumV2= 6.20633e-37
+  index: 8848  = 9.57814e-20 +-(REL) 1 Gy sumV2= 9.17407e-39
+  index: 8853  = 6.2059e-18 +-(REL) 0.849632 Gy sumV2= 2.78019e-35
+  index: 8854  = 5.77179e-17 +-(REL) 0.398588 Gy sumV2= 5.29289e-34
+  index: 8855  = 4.51302e-17 +-(REL) 0.439405 Gy sumV2= 3.93264e-34
+  index: 8856  = 7.99097e-19 +-(REL) 0.661953 Gy sumV2= 2.79807e-37
+  index: 8857  = 4.94293e-19 +-(REL) 0.906531 Gy sumV2= 2.00787e-37
+  index: 8860  = 3.60299e-19 +-(REL) 1 Gy sumV2= 1.29816e-37
+  index: 8864  = 5.6725e-18 +-(REL) 0.957663 Gy sumV2= 2.95104e-35
+  index: 8865  = 1.96045e-20 +-(REL) 1 Gy sumV2= 3.84338e-40
+  index: 8866  = 2.65019e-18 +-(REL) 0.634755 Gy sumV2= 2.82991e-36
+  index: 8875  = 2.1842e-19 +-(REL) 0.707163 Gy sumV2= 2.38578e-38
+  index: 8905  = 2.16026e-19 +-(REL) 1 Gy sumV2= 4.66672e-38
+  index: 8911  = 6.87279e-19 +-(REL) 1 Gy sumV2= 4.72353e-37
+  index: 8915  = 9.27571e-20 +-(REL) 1 Gy sumV2= 8.60387e-39
+  index: 8916  = 3.52509e-20 +-(REL) 1 Gy sumV2= 1.24263e-39
+  index: 8926  = 3.16667e-19 +-(REL) 1 Gy sumV2= 1.00278e-37
+  index: 8933  = 1.94436e-18 +-(REL) 0.824638 Gy sumV2= 2.57089e-36
+  index: 8934  = 3.75589e-18 +-(REL) 0.845891 Gy sumV2= 1.00939e-35
+  index: 8935  = 7.01317e-19 +-(REL) 0.671807 Gy sumV2= 2.21985e-37
+  index: 8943  = 3.42079e-18 +-(REL) 0.819759 Gy sumV2= 7.8637e-36
+  index: 8944  = 7.06929e-17 +-(REL) 0.446925 Gy sumV2= 9.98248e-34
+  index: 8945  = 6.48775e-17 +-(REL) 0.423403 Gy sumV2= 7.54597e-34
+  index: 8946  = 3.04136e-18 +-(REL) 0.479893 Gy sumV2= 2.1303e-36
+  index: 8947  = 5.60725e-19 +-(REL) 1 Gy sumV2= 3.14412e-37
+  index: 8952  = 1.91875e-19 +-(REL) 1 Gy sumV2= 3.68161e-38
+  index: 8953  = 1.49336e-18 +-(REL) 0.773125 Gy sumV2= 1.33301e-36
+  index: 8954  = 2.19804e-17 +-(REL) 0.5369 Gy sumV2= 1.39273e-34
+  index: 8955  = 4.25963e-17 +-(REL) 0.443953 Gy sumV2= 3.57632e-34
+  index: 8956  = 8.34512e-18 +-(REL) 0.965468 Gy sumV2= 6.49145e-35
+  index: 8957  = 1.50498e-18 +-(REL) 0.600966 Gy sumV2= 8.18031e-37
+  index: 8958  = 8.37959e-20 +-(REL) 1 Gy sumV2= 7.02175e-39
+  index: 8961  = 1.46126e-19 +-(REL) 1 Gy sumV2= 2.13527e-38
+  index: 8962  = 1.25956e-18 +-(REL) 1 Gy sumV2= 1.5865e-36
+  index: 8964  = 1.77397e-18 +-(REL) 0.820628 Gy sumV2= 2.11928e-36
+  index: 8965  = 7.84652e-18 +-(REL) 0.770695 Gy sumV2= 3.65697e-35
+  index: 8966  = 9.82837e-19 +-(REL) 0.675671 Gy sumV2= 4.41e-37
+  index: 8975  = 4.22795e-19 +-(REL) 1 Gy sumV2= 1.78756e-37
+  index: 8976  = 5.45633e-19 +-(REL) 1 Gy sumV2= 2.97715e-37
+  index: 8983  = 7.67435e-19 +-(REL) 1 Gy sumV2= 5.88957e-37
+  index: 8986  = 4.8966e-19 +-(REL) 1 Gy sumV2= 2.39767e-37
+  index: 8999  = 3.33221e-18 +-(REL) 1 Gy sumV2= 1.11036e-35
+  index: 9005  = 2.98583e-19 +-(REL) 1 Gy sumV2= 8.91521e-38
+  index: 9015  = 4.0622e-20 +-(REL) 1 Gy sumV2= 1.65015e-39
+  index: 9016  = 5.07829e-19 +-(REL) 1 Gy sumV2= 2.57891e-37
+  index: 9021  = 7.38672e-18 +-(REL) 1 Gy sumV2= 5.45637e-35
+  index: 9032  = 1.43026e-19 +-(REL) 1 Gy sumV2= 2.04566e-38
+  index: 9034  = 3.27452e-18 +-(REL) 0.433888 Gy sumV2= 2.01869e-36
+  index: 9035  = 5.15904e-18 +-(REL) 0.851263 Gy sumV2= 1.92871e-35
+  index: 9041  = 7.58824e-21 +-(REL) 1 Gy sumV2= 5.75813e-41
+  index: 9043  = 9.78447e-19 +-(REL) 0.885525 Gy sumV2= 7.50718e-37
+  index: 9044  = 1.23829e-16 +-(REL) 0.357499 Gy sumV2= 1.95984e-33
+  index: 9045  = 1.00634e-16 +-(REL) 0.374717 Gy sumV2= 1.42207e-33
+  index: 9046  = 1.36923e-18 +-(REL) 0.723508 Gy sumV2= 9.81402e-37
+  index: 9047  = 1.1903e-18 +-(REL) 1 Gy sumV2= 1.41682e-36
+  index: 9048  = 6.95851e-20 +-(REL) 1 Gy sumV2= 4.84208e-39
+  index: 9050  = 3.08625e-19 +-(REL) 1 Gy sumV2= 9.52494e-38
+  index: 9052  = 1.0293e-18 +-(REL) 0.98158 Gy sumV2= 1.0208e-36
+  index: 9053  = 6.59044e-19 +-(REL) 0.798978 Gy sumV2= 2.77269e-37
+  index: 9054  = 7.772e-17 +-(REL) 0.432602 Gy sumV2= 1.13047e-33
+  index: 9055  = 8.01793e-17 +-(REL) 0.352078 Gy sumV2= 7.96954e-34
+  index: 9056  = 1.81327e-18 +-(REL) 0.489056 Gy sumV2= 7.86424e-37
+  index: 9057  = 1.68013e-18 +-(REL) 0.733801 Gy sumV2= 1.52e-36
+  index: 9059  = 3.13469e-19 +-(REL) 1 Gy sumV2= 9.82628e-38
+  index: 9062  = 1.14956e-19 +-(REL) 1 Gy sumV2= 1.3215e-38
+  index: 9064  = 7.19076e-18 +-(REL) 0.636573 Gy sumV2= 2.09533e-35
+  index: 9065  = 2.62422e-18 +-(REL) 0.528825 Gy sumV2= 1.9259e-36
+  index: 9066  = 4.15942e-18 +-(REL) 0.842282 Gy sumV2= 1.22739e-35
+  index: 9068  = 1.041e-17 +-(REL) 1 Gy sumV2= 1.08368e-34
+  index: 9075  = 1.27672e-18 +-(REL) 0.721972 Gy sumV2= 8.49645e-37
+  index: 9078  = 1.06031e-19 +-(REL) 1 Gy sumV2= 1.12426e-38
+  index: 9085  = 6.3508e-19 +-(REL) 1 Gy sumV2= 4.03326e-37
+  index: 9098  = 1.37693e-17 +-(REL) 1 Gy sumV2= 1.89595e-34
+  index: 9099  = 4.35506e-19 +-(REL) 1 Gy sumV2= 1.89665e-37
+  index: 9105  = 7.96668e-19 +-(REL) 0.712398 Gy sumV2= 3.2211e-37
+  index: 9115  = 8.41493e-19 +-(REL) 1 Gy sumV2= 7.0811e-37
+  index: 9132  = 1.30289e-18 +-(REL) 0.825185 Gy sumV2= 1.1559e-36
+  index: 9133  = 6.0689e-20 +-(REL) 1 Gy sumV2= 3.68316e-39
+  index: 9134  = 1.50752e-18 +-(REL) 0.588094 Gy sumV2= 7.86006e-37
+  index: 9135  = 2.44206e-18 +-(REL) 0.552269 Gy sumV2= 1.81897e-36
+  index: 9141  = 6.648e-20 +-(REL) 1 Gy sumV2= 4.41959e-39
+  index: 9142  = 7.89559e-19 +-(REL) 1 Gy sumV2= 6.23403e-37
+  index: 9143  = 3.73314e-20 +-(REL) 1 Gy sumV2= 1.39363e-39
+  index: 9144  = 1.93083e-17 +-(REL) 0.314437 Gy sumV2= 3.68634e-35
+  index: 9145  = 7.08204e-17 +-(REL) 0.405101 Gy sumV2= 8.23124e-34
+  index: 9146  = 1.01937e-18 +-(REL) 0.752078 Gy sumV2= 5.87744e-37
+  index: 9147  = 8.68288e-19 +-(REL) 1 Gy sumV2= 7.53924e-37
+  index: 9150  = 3.1784e-19 +-(REL) 1 Gy sumV2= 1.01022e-37
+  index: 9152  = 5.43131e-20 +-(REL) 1 Gy sumV2= 2.94991e-39
+  index: 9153  = 3.71198e-18 +-(REL) 0.563582 Gy sumV2= 4.37657e-36
+  index: 9154  = 7.32379e-17 +-(REL) 0.366329 Gy sumV2= 7.19851e-34
+  index: 9155  = 6.36218e-17 +-(REL) 0.444889 Gy sumV2= 8.01186e-34
+  index: 9156  = 7.59333e-19 +-(REL) 0.747827 Gy sumV2= 3.22456e-37
+  index: 9157  = 1.09448e-20 +-(REL) 1 Gy sumV2= 1.19789e-40
+  index: 9163  = 1.68595e-18 +-(REL) 1 Gy sumV2= 2.84242e-36
+  index: 9164  = 5.19373e-19 +-(REL) 0.651762 Gy sumV2= 1.14589e-37
+  index: 9165  = 5.8581e-18 +-(REL) 0.566399 Gy sumV2= 1.10095e-35
+  index: 9166  = 2.08688e-18 +-(REL) 0.96429 Gy sumV2= 4.0496e-36
+  index: 9168  = 7.65964e-20 +-(REL) 1 Gy sumV2= 5.86701e-39
+  index: 9174  = 1.53519e-18 +-(REL) 1 Gy sumV2= 2.35682e-36
+  index: 9175  = 1.20747e-19 +-(REL) 1 Gy sumV2= 1.45799e-38
+  index: 9176  = 4.46309e-19 +-(REL) 0.933005 Gy sumV2= 1.73396e-37
+  index: 9185  = 3.70061e-19 +-(REL) 1 Gy sumV2= 1.36945e-37
+  index: 9205  = 2.59808e-19 +-(REL) 1 Gy sumV2= 6.75005e-38
+  index: 9211  = 2.68978e-20 +-(REL) 1 Gy sumV2= 7.23492e-40
+  index: 9215  = 5.30212e-19 +-(REL) 1 Gy sumV2= 2.81124e-37
+  index: 9223  = 1.31663e-18 +-(REL) 1 Gy sumV2= 1.7335e-36
+  index: 9224  = 5.9838e-19 +-(REL) 1 Gy sumV2= 3.58058e-37
+  index: 9225  = 1.07916e-18 +-(REL) 1 Gy sumV2= 1.1646e-36
+  index: 9232  = 8.7519e-19 +-(REL) 0.840727 Gy sumV2= 5.41398e-37
+  index: 9233  = 3.06496e-19 +-(REL) 0.955531 Gy sumV2= 8.57709e-38
+  index: 9234  = 2.36755e-18 +-(REL) 0.530574 Gy sumV2= 1.57797e-36
+  index: 9235  = 2.08427e-18 +-(REL) 0.599262 Gy sumV2= 1.56008e-36
+  index: 9236  = 1.44821e-18 +-(REL) 1 Gy sumV2= 2.0973e-36
+  index: 9237  = 8.87352e-19 +-(REL) 1 Gy sumV2= 7.87393e-37
+  index: 9239  = 1.19771e-20 +-(REL) 1 Gy sumV2= 1.4345e-40
+  index: 9242  = 1.69857e-18 +-(REL) 0.588482 Gy sumV2= 9.99178e-37
+  index: 9243  = 1.58941e-18 +-(REL) 0.560296 Gy sumV2= 7.9308e-37
+  index: 9244  = 4.89877e-17 +-(REL) 0.250187 Gy sumV2= 1.50235e-34
+  index: 9245  = 8.15306e-17 +-(REL) 0.320783 Gy sumV2= 6.84074e-34
+  index: 9246  = 1.52311e-18 +-(REL) 0.726507 Gy sumV2= 1.22447e-36
+  index: 9252  = 1.02734e-18 +-(REL) 0.932856 Gy sumV2= 9.18461e-37
+  index: 9253  = 1.36385e-18 +-(REL) 0.616942 Gy sumV2= 7.07994e-37
+  index: 9254  = 8.13385e-17 +-(REL) 0.477375 Gy sumV2= 1.50774e-33
+  index: 9255  = 6.85304e-17 +-(REL) 0.359409 Gy sumV2= 6.06702e-34
+  index: 9256  = 2.47656e-18 +-(REL) 0.585394 Gy sumV2= 2.10185e-36
+  index: 9261  = 1.08713e-17 +-(REL) 1 Gy sumV2= 1.18185e-34
+  index: 9264  = 2.55958e-18 +-(REL) 0.4632 Gy sumV2= 1.4057e-36
+  index: 9265  = 3.31586e-18 +-(REL) 0.521275 Gy sumV2= 2.98771e-36
+  index: 9266  = 5.74372e-18 +-(REL) 0.473195 Gy sumV2= 7.38722e-36
+  index: 9267  = 7.18557e-18 +-(REL) 0.90296 Gy sumV2= 4.20979e-35
+  index: 9268  = 6.3569e-19 +-(REL) 1 Gy sumV2= 4.04101e-37
+  index: 9270  = 4.5372e-19 +-(REL) 1 Gy sumV2= 2.05862e-37
+  index: 9274  = 1.48872e-18 +-(REL) 1 Gy sumV2= 2.21627e-36
+  index: 9275  = 5.63312e-20 +-(REL) 1 Gy sumV2= 3.17321e-39
+  index: 9321  = 6.54063e-19 +-(REL) 1 Gy sumV2= 4.27798e-37
+  index: 9331  = 3.77397e-19 +-(REL) 1 Gy sumV2= 1.42428e-37
+  index: 9333  = 1.05131e-19 +-(REL) 1 Gy sumV2= 1.10524e-38
+  index: 9334  = 4.45976e-18 +-(REL) 0.597426 Gy sumV2= 7.09904e-36
+  index: 9335  = 2.85624e-18 +-(REL) 0.508253 Gy sumV2= 2.10747e-36
+  index: 9342  = 1.94648e-19 +-(REL) 1 Gy sumV2= 3.78879e-38
+  index: 9343  = 1.1541e-17 +-(REL) 0.975061 Gy sumV2= 1.26634e-34
+  index: 9344  = 8.64368e-17 +-(REL) 0.354237 Gy sumV2= 9.37594e-34
+  index: 9345  = 8.40035e-17 +-(REL) 0.334194 Gy sumV2= 7.88184e-34
+  index: 9352  = 5.50012e-19 +-(REL) 1 Gy sumV2= 3.02513e-37
+  index: 9353  = 3.69652e-18 +-(REL) 0.48777 Gy sumV2= 3.2511e-36
+  index: 9354  = 6.73872e-17 +-(REL) 0.513222 Gy sumV2= 1.19613e-33
+  index: 9355  = 1.13051e-16 +-(REL) 0.315972 Gy sumV2= 1.27611e-33
+  index: 9356  = 8.20784e-18 +-(REL) 0.668884 Gy sumV2= 3.01415e-35
+  index: 9357  = 3.22772e-19 +-(REL) 1 Gy sumV2= 1.04182e-37
+  index: 9361  = 1.80037e-19 +-(REL) 1 Gy sumV2= 3.24135e-38
+  index: 9364  = 6.37542e-19 +-(REL) 0.607626 Gy sumV2= 1.50072e-37
+  index: 9365  = 2.28272e-18 +-(REL) 0.506586 Gy sumV2= 1.33729e-36
+  index: 9366  = 9.98622e-19 +-(REL) 1 Gy sumV2= 9.97246e-37
+  index: 9367  = 1.74493e-18 +-(REL) 1 Gy sumV2= 3.04477e-36
+  index: 9370  = 1.51117e-18 +-(REL) 1 Gy sumV2= 2.28364e-36
+  index: 9374  = 2.37101e-18 +-(REL) 1 Gy sumV2= 5.62167e-36
+  index: 9376  = 1.22832e-19 +-(REL) 1 Gy sumV2= 1.50877e-38
+  index: 9384  = 2.18558e-19 +-(REL) 1 Gy sumV2= 4.77677e-38
+  index: 9398  = 1.73067e-18 +-(REL) 1 Gy sumV2= 2.99521e-36
+  index: 9411  = 1.23611e-19 +-(REL) 1 Gy sumV2= 1.52797e-38
+  index: 9423  = 3.68514e-18 +-(REL) 1 Gy sumV2= 1.35803e-35
+  index: 9429  = 3.14503e-19 +-(REL) 1 Gy sumV2= 9.89122e-38
+  index: 9432  = 3.86962e-19 +-(REL) 1 Gy sumV2= 1.4974e-37
+  index: 9433  = 1.92725e-18 +-(REL) 0.591996 Gy sumV2= 1.30173e-36
+  index: 9434  = 6.20665e-18 +-(REL) 0.549452 Gy sumV2= 1.16301e-35
+  index: 9435  = 2.99221e-18 +-(REL) 0.51582 Gy sumV2= 2.38227e-36
+  index: 9436  = 9.42623e-19 +-(REL) 1 Gy sumV2= 8.88539e-37
+  index: 9437  = 5.83627e-18 +-(REL) 0.738428 Gy sumV2= 1.85734e-35
+  index: 9439  = 5.20741e-20 +-(REL) 1 Gy sumV2= 2.71171e-39
+  index: 9441  = 1.73904e-18 +-(REL) 1 Gy sumV2= 3.02425e-36
+  index: 9442  = 1.08123e-19 +-(REL) 1 Gy sumV2= 1.16906e-38
+  index: 9443  = 7.8162e-19 +-(REL) 0.848932 Gy sumV2= 4.4029e-37
+  index: 9444  = 6.50844e-17 +-(REL) 0.311605 Gy sumV2= 4.11341e-34
+  index: 9445  = 6.54395e-17 +-(REL) 0.340725 Gy sumV2= 4.97189e-34
+  index: 9446  = 3.88872e-18 +-(REL) 0.901626 Gy sumV2= 1.22933e-35
+  index: 9447  = 2.15907e-18 +-(REL) 1 Gy sumV2= 4.6616e-36
+  index: 9448  = 1.64176e-20 +-(REL) 1 Gy sumV2= 2.69538e-40
+  index: 9449  = 1.76968e-19 +-(REL) 1 Gy sumV2= 3.13176e-38
+  index: 9453  = 1.72402e-18 +-(REL) 0.610692 Gy sumV2= 1.10851e-36
+  index: 9454  = 7.05412e-17 +-(REL) 0.32021 Gy sumV2= 5.10262e-34
+  index: 9455  = 9.07741e-17 +-(REL) 0.287462 Gy sumV2= 6.8098e-34
+  index: 9456  = 1.61514e-18 +-(REL) 0.645397 Gy sumV2= 1.08663e-36
+  index: 9459  = 2.79059e-20 +-(REL) 1 Gy sumV2= 7.78737e-40
+  index: 9461  = 5.72784e-20 +-(REL) 1 Gy sumV2= 3.28082e-39
+  index: 9462  = 6.83805e-19 +-(REL) 0.712036 Gy sumV2= 2.37068e-37
+  index: 9463  = 1.23215e-18 +-(REL) 1 Gy sumV2= 1.51819e-36
+  index: 9464  = 3.99949e-18 +-(REL) 0.593535 Gy sumV2= 5.63522e-36
+  index: 9465  = 2.81158e-18 +-(REL) 0.472838 Gy sumV2= 1.76743e-36
+  index: 9466  = 3.32647e-18 +-(REL) 0.935409 Gy sumV2= 9.68212e-36
+  index: 9468  = 1.44262e-19 +-(REL) 1 Gy sumV2= 2.08116e-38
+  index: 9474  = 8.13201e-19 +-(REL) 1 Gy sumV2= 6.61296e-37
+  index: 9475  = 7.09956e-19 +-(REL) 0.979979 Gy sumV2= 4.84058e-37
+  index: 9498  = 1.1636e-18 +-(REL) 1 Gy sumV2= 1.35397e-36
+  index: 9505  = 4.67658e-19 +-(REL) 1 Gy sumV2= 2.18704e-37
+  index: 9511  = 1.87963e-19 +-(REL) 1 Gy sumV2= 3.53301e-38
+  index: 9532  = 1.92688e-19 +-(REL) 1 Gy sumV2= 3.71286e-38
+  index: 9533  = 6.35089e-19 +-(REL) 0.714634 Gy sumV2= 2.05987e-37
+  index: 9534  = 2.6871e-18 +-(REL) 0.660856 Gy sumV2= 3.15346e-36
+  index: 9535  = 1.83038e-18 +-(REL) 0.545053 Gy sumV2= 9.95331e-37
+  index: 9536  = 3.1111e-18 +-(REL) 0.578724 Gy sumV2= 3.24175e-36
+  index: 9539  = 8.29975e-20 +-(REL) 1 Gy sumV2= 6.88858e-39
+  index: 9541  = 1.27195e-18 +-(REL) 1 Gy sumV2= 1.61785e-36
+  index: 9543  = 1.08924e-18 +-(REL) 0.74159 Gy sumV2= 6.52501e-37
+  index: 9544  = 6.48516e-17 +-(REL) 0.411766 Gy sumV2= 7.13122e-34
+  index: 9545  = 1.11368e-16 +-(REL) 0.330439 Gy sumV2= 1.35438e-33
+  index: 9546  = 1.11374e-18 +-(REL) 0.599695 Gy sumV2= 4.46101e-37
+  index: 9551  = 1.61171e-20 +-(REL) 1 Gy sumV2= 2.5976e-40
+  index: 9552  = 3.19816e-18 +-(REL) 0.986426 Gy sumV2= 9.95246e-36
+  index: 9553  = 9.91532e-19 +-(REL) 0.829906 Gy sumV2= 6.77132e-37
+  index: 9554  = 6.05844e-17 +-(REL) 0.392 Gy sumV2= 5.64051e-34
+  index: 9555  = 5.84578e-17 +-(REL) 0.350304 Gy sumV2= 4.1938e-34
+  index: 9556  = 1.04408e-18 +-(REL) 0.874398 Gy sumV2= 8.33457e-37
+  index: 9557  = 4.21087e-19 +-(REL) 1 Gy sumV2= 1.77314e-37
+  index: 9559  = 1.94997e-18 +-(REL) 0.760533 Gy sumV2= 2.19935e-36
+  index: 9561  = 1.41683e-18 +-(REL) 1 Gy sumV2= 2.00741e-36
+  index: 9562  = 1.0047e-18 +-(REL) 1 Gy sumV2= 1.00941e-36
+  index: 9563  = 1.53939e-19 +-(REL) 1 Gy sumV2= 2.36972e-38
+  index: 9564  = 6.08452e-19 +-(REL) 0.733232 Gy sumV2= 1.99039e-37
+  index: 9565  = 2.35206e-18 +-(REL) 0.690296 Gy sumV2= 2.63616e-36
+  index: 9567  = 8.97252e-18 +-(REL) 0.709787 Gy sumV2= 4.05592e-35
+  index: 9573  = 1.49458e-19 +-(REL) 1 Gy sumV2= 2.23378e-38
+  index: 9574  = 8.19322e-19 +-(REL) 0.762352 Gy sumV2= 3.90142e-37
+  index: 9575  = 2.38838e-18 +-(REL) 0.734693 Gy sumV2= 3.07909e-36
+  index: 9576  = 3.32248e-18 +-(REL) 1 Gy sumV2= 1.10389e-35
+  index: 9584  = 4.74912e-19 +-(REL) 1 Gy sumV2= 2.25541e-37
+  index: 9593  = 8.08673e-19 +-(REL) 1 Gy sumV2= 6.53952e-37
+  index: 9598  = 3.1504e-18 +-(REL) 1 Gy sumV2= 9.92502e-36
+  index: 9621  = 6.04209e-18 +-(REL) 1 Gy sumV2= 3.65068e-35
+  index: 9626  = 2.23274e-19 +-(REL) 1 Gy sumV2= 4.98514e-38
+  index: 9632  = 7.37146e-20 +-(REL) 1 Gy sumV2= 5.43385e-39
+  index: 9633  = 1.23923e-18 +-(REL) 0.594838 Gy sumV2= 5.43385e-37
+  index: 9634  = 1.89638e-18 +-(REL) 0.542443 Gy sumV2= 1.0582e-36
+  index: 9635  = 8.93793e-19 +-(REL) 0.892983 Gy sumV2= 6.37032e-37
+  index: 9636  = 6.82541e-18 +-(REL) 1 Gy sumV2= 4.65862e-35
+  index: 9637  = 1.68223e-19 +-(REL) 1 Gy sumV2= 2.8299e-38
+  index: 9639  = 2.57796e-19 +-(REL) 1 Gy sumV2= 6.64587e-38
+  index: 9642  = 7.08072e-19 +-(REL) 1 Gy sumV2= 5.01365e-37
+  index: 9643  = 9.54009e-19 +-(REL) 0.552339 Gy sumV2= 2.77668e-37
+  index: 9644  = 5.89478e-17 +-(REL) 0.368661 Gy sumV2= 4.72298e-34
+  index: 9645  = 8.19272e-17 +-(REL) 0.319729 Gy sumV2= 6.86212e-34
+  index: 9646  = 1.90984e-18 +-(REL) 0.540471 Gy sumV2= 1.0655e-36
+  index: 9648  = 2.42285e-19 +-(REL) 1 Gy sumV2= 5.8702e-38
+  index: 9651  = 7.76069e-19 +-(REL) 0.709086 Gy sumV2= 3.02833e-37
+  index: 9652  = 6.21899e-19 +-(REL) 1 Gy sumV2= 3.86759e-37
+  index: 9653  = 2.11648e-18 +-(REL) 0.556872 Gy sumV2= 1.38915e-36
+  index: 9654  = 8.88558e-17 +-(REL) 0.34151 Gy sumV2= 9.20897e-34
+  index: 9655  = 8.11133e-17 +-(REL) 0.279957 Gy sumV2= 5.15726e-34
+  index: 9656  = 8.00143e-19 +-(REL) 0.84889 Gy sumV2= 4.61359e-37
+  index: 9657  = 1.84731e-18 +-(REL) 0.699027 Gy sumV2= 1.66752e-36
+  index: 9662  = 7.54922e-20 +-(REL) 1 Gy sumV2= 5.69907e-39
+  index: 9663  = 2.00371e-19 +-(REL) 1 Gy sumV2= 4.01486e-38
+  index: 9664  = 4.11733e-18 +-(REL) 0.466457 Gy sumV2= 3.68867e-36
+  index: 9665  = 9.25452e-18 +-(REL) 0.904855 Gy sumV2= 7.0124e-35
+  index: 9666  = 9.83134e-19 +-(REL) 0.849883 Gy sumV2= 6.98145e-37
+  index: 9673  = 4.72486e-18 +-(REL) 1 Gy sumV2= 2.23243e-35
+  index: 9674  = 4.2792e-19 +-(REL) 0.945183 Gy sumV2= 1.6359e-37
+  index: 9675  = 4.73295e-19 +-(REL) 1 Gy sumV2= 2.24009e-37
+  index: 9707  = 8.18585e-19 +-(REL) 1 Gy sumV2= 6.70082e-37
+  index: 9709  = 2.2938e-18 +-(REL) 1 Gy sumV2= 5.26151e-36
+  index: 9721  = 3.05606e-19 +-(REL) 1 Gy sumV2= 9.33949e-38
+  index: 9725  = 9.01868e-19 +-(REL) 1 Gy sumV2= 8.13366e-37
+  index: 9726  = 1.29259e-19 +-(REL) 1 Gy sumV2= 1.67079e-38
+  index: 9730  = 2.83241e-18 +-(REL) 1 Gy sumV2= 8.02253e-36
+  index: 9732  = 3.84568e-19 +-(REL) 1 Gy sumV2= 1.47892e-37
+  index: 9733  = 5.63076e-19 +-(REL) 0.841066 Gy sumV2= 2.24283e-37
+  index: 9734  = 6.44071e-19 +-(REL) 0.713259 Gy sumV2= 2.11041e-37
+  index: 9735  = 1.75214e-18 +-(REL) 0.564759 Gy sumV2= 9.79202e-37
+  index: 9736  = 4.99431e-19 +-(REL) 0.58219 Gy sumV2= 8.4545e-38
+  index: 9737  = 6.23335e-19 +-(REL) 0.846835 Gy sumV2= 2.78639e-37
+  index: 9738  = 5.66055e-18 +-(REL) 1 Gy sumV2= 3.20418e-35
+  index: 9742  = 1.81829e-18 +-(REL) 1 Gy sumV2= 3.30619e-36
+  index: 9743  = 6.11594e-19 +-(REL) 0.708488 Gy sumV2= 1.87757e-37
+  index: 9744  = 7.85946e-17 +-(REL) 0.427672 Gy sumV2= 1.12987e-33
+  index: 9745  = 1.21586e-16 +-(REL) 0.249399 Gy sumV2= 9.19652e-34
+  index: 9746  = 1.13125e-18 +-(REL) 0.586806 Gy sumV2= 4.40668e-37
+  index: 9747  = 1.68687e-18 +-(REL) 1 Gy sumV2= 2.84555e-36
+  index: 9748  = 2.20361e-18 +-(REL) 1 Gy sumV2= 4.85591e-36
+  index: 9750  = 2.14987e-18 +-(REL) 1 Gy sumV2= 4.62192e-36
+  index: 9751  = 1.10163e-18 +-(REL) 1 Gy sumV2= 1.21358e-36
+  index: 9752  = 1.05978e-18 +-(REL) 1 Gy sumV2= 1.12314e-36
+  index: 9753  = 6.66196e-19 +-(REL) 0.748217 Gy sumV2= 2.48463e-37
+  index: 9754  = 8.74962e-17 +-(REL) 0.335256 Gy sumV2= 8.60529e-34
+  index: 9755  = 8.74032e-17 +-(REL) 0.250906 Gy sumV2= 4.80997e-34
+  index: 9756  = 6.3121e-19 +-(REL) 0.728566 Gy sumV2= 2.11489e-37
+  index: 9763  = 4.63639e-18 +-(REL) 0.77466 Gy sumV2= 1.28999e-35
+  index: 9764  = 6.62243e-19 +-(REL) 0.844413 Gy sumV2= 3.12713e-37
+  index: 9765  = 6.41272e-18 +-(REL) 0.530318 Gy sumV2= 1.15656e-35
+  index: 9767  = 3.73817e-18 +-(REL) 1 Gy sumV2= 1.39739e-35
+  index: 9771  = 4.58845e-18 +-(REL) 1 Gy sumV2= 2.10539e-35
+  index: 9773  = 1.51116e-18 +-(REL) 1 Gy sumV2= 2.2836e-36
+  index: 9775  = 5.42284e-19 +-(REL) 1 Gy sumV2= 2.94072e-37
+  index: 9777  = 9.35963e-19 +-(REL) 1 Gy sumV2= 8.76027e-37
+  index: 9778  = 6.19955e-18 +-(REL) 1 Gy sumV2= 3.84344e-35
+  index: 9779  = 4.52063e-18 +-(REL) 1 Gy sumV2= 2.04361e-35
+  index: 9780  = 2.83229e-19 +-(REL) 1 Gy sumV2= 8.02187e-38
+  index: 9783  = 1.64179e-18 +-(REL) 1 Gy sumV2= 2.69547e-36
+  index: 9800  = 2.27776e-20 +-(REL) 1 Gy sumV2= 5.18818e-40
+  index: 9801  = 2.41825e-19 +-(REL) 1 Gy sumV2= 5.84794e-38
+  index: 9809  = 5.67653e-20 +-(REL) 1 Gy sumV2= 3.2223e-39
+  index: 9812  = 1.57559e-19 +-(REL) 1 Gy sumV2= 2.48249e-38
+  index: 9815  = 8.46062e-19 +-(REL) 1 Gy sumV2= 7.15821e-37
+  index: 9823  = 5.26411e-19 +-(REL) 1 Gy sumV2= 2.77108e-37
+  index: 9826  = 7.80876e-20 +-(REL) 1 Gy sumV2= 6.09767e-39
+  index: 9833  = 2.05438e-18 +-(REL) 0.825614 Gy sumV2= 2.87685e-36
+  index: 9834  = 4.12392e-18 +-(REL) 0.814912 Gy sumV2= 1.12939e-35
+  index: 9835  = 1.23549e-18 +-(REL) 0.641255 Gy sumV2= 6.2769e-37
+  index: 9836  = 1.31889e-18 +-(REL) 1 Gy sumV2= 1.73946e-36
+  index: 9837  = 6.79525e-19 +-(REL) 0.752164 Gy sumV2= 2.6124e-37
+  index: 9842  = 2.07402e-18 +-(REL) 1 Gy sumV2= 4.30157e-36
+  index: 9843  = 5.12695e-19 +-(REL) 0.647447 Gy sumV2= 1.10188e-37
+  index: 9844  = 9.69164e-17 +-(REL) 0.38822 Gy sumV2= 1.41571e-33
+  index: 9845  = 1.91839e-16 +-(REL) 0.281942 Gy sumV2= 2.92579e-33
+  index: 9846  = 8.07863e-19 +-(REL) 0.525379 Gy sumV2= 1.80149e-37
+  index: 9847  = 2.31541e-18 +-(REL) 0.607415 Gy sumV2= 1.97804e-36
+  index: 9848  = 4.44553e-20 +-(REL) 1 Gy sumV2= 1.97627e-39
+  index: 9850  = 7.64738e-18 +-(REL) 1 Gy sumV2= 5.84824e-35
+  index: 9853  = 5.03459e-19 +-(REL) 0.776894 Gy sumV2= 1.52987e-37
+  index: 9854  = 4.60213e-17 +-(REL) 0.518503 Gy sumV2= 5.69421e-34
+  index: 9855  = 1.65494e-16 +-(REL) 0.268684 Gy sumV2= 1.97746e-33
+  index: 9856  = 5.44072e-18 +-(REL) 0.965804 Gy sumV2= 2.76116e-35
+  index: 9862  = 4.70231e-18 +-(REL) 1 Gy sumV2= 2.21117e-35
+  index: 9863  = 1.96149e-18 +-(REL) 0.672097 Gy sumV2= 1.73796e-36
+  index: 9864  = 4.06097e-19 +-(REL) 0.668068 Gy sumV2= 7.36049e-38
+  index: 9865  = 1.17998e-18 +-(REL) 0.708541 Gy sumV2= 6.99014e-37
+  index: 9866  = 6.46703e-19 +-(REL) 1 Gy sumV2= 4.18224e-37
+  index: 9867  = 1.54582e-18 +-(REL) 0.78168 Gy sumV2= 1.46008e-36
+  index: 9893  = 4.07453e-18 +-(REL) 1 Gy sumV2= 1.66018e-35
+  index: 9898  = 1.22999e-18 +-(REL) 1 Gy sumV2= 1.51289e-36
+  index: 9905  = 1.43253e-19 +-(REL) 1 Gy sumV2= 2.05213e-38
+  index: 9907  = 6.95531e-19 +-(REL) 1 Gy sumV2= 4.83763e-37
+  index: 9912  = 1.30263e-20 +-(REL) 1 Gy sumV2= 1.69685e-40
+  index: 9922  = 5.57838e-19 +-(REL) 1 Gy sumV2= 3.11183e-37
+  index: 9925  = 1.19195e-18 +-(REL) 1 Gy sumV2= 1.42076e-36
+  index: 9926  = 5.00574e-19 +-(REL) 1 Gy sumV2= 2.50574e-37
+  index: 9930  = 1.25744e-20 +-(REL) 1 Gy sumV2= 1.58114e-40
+  index: 9934  = 2.09573e-18 +-(REL) 1 Gy sumV2= 4.39209e-36
+  index: 9937  = 4.63496e-19 +-(REL) 0.745955 Gy sumV2= 1.19542e-37
+  index: 9942  = 2.38613e-19 +-(REL) 1 Gy sumV2= 5.69362e-38
+  index: 9943  = 3.42124e-18 +-(REL) 0.767931 Gy sumV2= 6.90264e-36
+  index: 9944  = 5.87379e-17 +-(REL) 0.348578 Gy sumV2= 4.19244e-34
+  index: 9945  = 8.64675e-17 +-(REL) 0.401243 Gy sumV2= 1.20377e-33
+  index: 9946  = 2.41173e-18 +-(REL) 0.548278 Gy sumV2= 1.74852e-36
+  index: 9951  = 3.05889e-18 +-(REL) 0.897554 Gy sumV2= 7.5379e-36
+  index: 9952  = 3.65957e-18 +-(REL) 1 Gy sumV2= 1.33925e-35
+  index: 9953  = 6.08646e-18 +-(REL) 0.879536 Gy sumV2= 2.86575e-35
+  index: 9954  = 4.67178e-17 +-(REL) 0.362875 Gy sumV2= 2.87414e-34
+  index: 9955  = 1.01597e-16 +-(REL) 0.299745 Gy sumV2= 9.27483e-34
+  index: 9956  = 2.31924e-19 +-(REL) 0.711302 Gy sumV2= 2.72147e-38
+  index: 9962  = 3.42532e-18 +-(REL) 1 Gy sumV2= 1.17328e-35
+  index: 9964  = 4.03735e-19 +-(REL) 0.931971 Gy sumV2= 1.41579e-37
+  index: 9965  = 7.3928e-18 +-(REL) 0.696611 Gy sumV2= 2.65218e-35
+  index: 9966  = 1.08215e-17 +-(REL) 1 Gy sumV2= 1.17105e-34
+  index: 9967  = 2.40281e-19 +-(REL) 1 Gy sumV2= 5.77348e-38
+  index: 9969  = 5.69424e-19 +-(REL) 1 Gy sumV2= 3.24244e-37
+  index: 9974  = 4.12895e-19 +-(REL) 1 Gy sumV2= 1.70482e-37
+  index: 9977  = 4.4145e-19 +-(REL) 1 Gy sumV2= 1.94878e-37
+  index: 9978  = 2.26793e-18 +-(REL) 0.916178 Gy sumV2= 4.31737e-36
+  index: 9985  = 4.9882e-18 +-(REL) 1 Gy sumV2= 2.48821e-35
+  index: 9987  = 6.7803e-18 +-(REL) 1 Gy sumV2= 4.59724e-35
+  index: 9996  = 1.1439e-19 +-(REL) 1 Gy sumV2= 1.30851e-38
+  index: 9998  = 2.75484e-18 +-(REL) 1 Gy sumV2= 7.58913e-36
+doseScorer SUM_ALL: 7.91924e-15 +-(REL) 0.0351698 Gy
+SetUnit GmPSPrinterSqdose 1e-12 Name Gy
+ HEADER NEvent 100000 Nvoxels 10 10 100
+ TYPE 0
+@@@@ GmCountProcessesUA
+ PART_COUNT: e+ = 1447
+ PART_COUNT: e- = 352233
+ PART_COUNT: gamma = 102488
+ PROC_COUNT e+ : Transportation = 50
+ PROC_COUNT e+ : annihil = 1445
+ PROC_COUNT e+ : eBrem = 11
+ PROC_COUNT e+ : eBrem_NoSeco = 2
+ PROC_COUNT e+ : eIoni = 8
+ PROC_COUNT e+ : eIoni_NoSeco = 1501
+ PROC_COUNT e+ : msc = 1322
+ PROC_COUNT e+ : ALL = 4339
+ PROC_COUNT e- : RTReuseAtZPlane = 76
+ PROC_COUNT e- : Transportation = 15821
+ PROC_COUNT e- : eBrem = 99401
+ PROC_COUNT e- : eBrem_NoSeco = 6425
+ PROC_COUNT e- : eIoni = 86725
+ PROC_COUNT e- : eIoni_NoSeco = 1003824
+ PROC_COUNT e- : msc = 1479665
+ PROC_COUNT e- : ALL = 2.69194e+06
+ PROC_COUNT gamma : RTReuseAtZPlane = 19
+ PROC_COUNT gamma : Rayl = 10973
+ PROC_COUNT gamma : Transportation = 199419
+ PROC_COUNT gamma : compt = 85083
+ PROC_COUNT gamma : conv = 1447
+ PROC_COUNT gamma : phot = 78210
+PROC_COUNT gamma : ALL = 375151
+PROC_CREATOR_COUNT e+ : conv = 1447
+PROC_CREATOR_COUNT e- : Primary = 100000
+PROC_CREATOR_COUNT e- : RTReuseAtZPlane = 760
+PROC_CREATOR_COUNT e- : compt = 85083
+PROC_CREATOR_COUNT e- : conv = 1447
+PROC_CREATOR_COUNT e- : eIoni = 86733
+PROC_CREATOR_COUNT e- : phot = 78210
+PROC_CREATOR_COUNT gamma : RTReuseAtZPlane = 190
+PROC_CREATOR_COUNT gamma : annihil = 2886
+PROC_CREATOR_COUNT gamma : eBrem = 99412
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 dose_RTPSPDoseHistos.exercise3d:NormalizeToNEvents
+=== saving histograms in file === dose_RTPSPDoseHistos.exercise3d.root

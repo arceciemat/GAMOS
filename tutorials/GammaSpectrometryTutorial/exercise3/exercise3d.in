@@ -1,0 +1,45 @@
+### Set the suffix of output files
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise3d
+
+### Set geometry, physics and generator
+/gamos/setParam GmGeometryFromText:FileName detector.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMExtendedPhysics
+/gamos/generator GmGenerator
+
+### Initialize Geant4 geometry and physics
+/run/initialize
+
+### Set generator particle distributions
+/gamos/generator/addSingleParticleSource source Co60[0.0] 0.
+/gamos/generator/positionDist source GmGenerDistPositionPoint 0. 0. -1*cm
+/gamos/generator/timeDist source GmGenerDistTimeDecay 1E6*Bq
+/gamos/userAction GmNoUseG4RadDecayTimeUA
+
+### Set the crystal as sensitive detector
+/gamos/analysis/histo1Max *Energy* 10000
+/gamos/analysis/histo1NBins *Energy* 300
+
+/gamos/setParam SD:EnergyResol:Detector 0.03
+/gamos/SD/assocSD2LogVol GmSDSeparateByTime Detector crystal
+### Set hit efficiency
+/gamos/setParam efficD:Data InitialKineticEnergy
+/gamos/setParam efficD:FileName efficiency.lis
+/gamos/distribution efficD GmNumericDistributionLinLin 
+/gamos/setParam GmRecHitBuilderByBlock_Detector:EfficiencyDistribution efficD
+/gamos/SD/recHitBuilder GmRecHitBuilderByBlock Detector
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmRecHitsHistosUA
+
+### Print a message each 1000 events
+/gamos/userAction GmCountTracksUA
+
+### Plot the time of each particle
+/gamos/analysis/histo1Max *Time* 0.02
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter_GmClassifierByParticle:DataList InitialTime/second 
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter GmClassifierByParticle
+
+/gamos/userAction GmCountProcessesUA
+
+### Run events
+/run/beamOn 1000

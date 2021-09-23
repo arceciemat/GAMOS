@@ -1,0 +1,11 @@
+..\run1.win.bat exercise1 exercise1a
+..\run1.win.bat exercise1 exercise1b
+..\run1.win.bat exercise2 exercise2a
+..\run1.win.bat exercise2 exercise2b
+..\run1.win.bat exercise2 exercise2c
+..\run1.win.bat exercise3 exercise3a
+..\run1.win.bat exercise3 exercise3b
+..\run1.win.bat exercise3 exercise3c
+..\run1.win.bat exercise4 exercise4a
+..\run1.win.bat exercise4 exercise4b
+..\run1.win.bat exercise4 exercise4c

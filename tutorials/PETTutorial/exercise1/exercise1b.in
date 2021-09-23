@@ -1,0 +1,22 @@
+/tracking/verbose 1
+
+/gamos/verbosity GmGenerVerbosity debug
+
+/gamos/setParam GmGeometryFromText:FileName pet.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addIsotopeSource source F18 1.E-3*curie
+
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+
+#/control/execute ../../../examples/visOGLIX.in
+/control/execute ../../../examples/visVRML2FILE.in
+#/control/execute ../../../examples/visDAWNFILE.in
+
+/run/beamOn 10
+

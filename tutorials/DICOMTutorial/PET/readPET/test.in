@@ -1,0 +1,51 @@
+/gamos/verbosity GmFilterVerbosity debug
+/gamos/verbosity GmDataVerbosity debug
+/gamos/setParam GmReadPhantomGeometry:SurfaceTolerance 1.e-6
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName world.geom
+/gamos/geometry GmGeometryFromText
+
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source geantino 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionNMImage ../testNM.g4dcm
+
+#-343.844 340.391
+#-484.258 199.977
+#-133.5 -118.5
+/gamos/analysis/histo1Min *PosX -400
+/gamos/analysis/histo1Max *PosX 400
+/gamos/analysis/histo1Min *PosY -500
+/gamos/analysis/histo1Max *PosY 300
+/gamos/analysis/histo1Min *PosZ -140
+/gamos/analysis/histo1Max *PosZ -110
+/gamos/analysis/histo2MinX *PosX.vs.InitialPosY -400
+/gamos/analysis/histo2MaxX *PosX.vs.InitialPosY 400
+/gamos/analysis/histo2MinY *PosX.vs.InitialPosY -500
+/gamos/analysis/histo2MaxY *PosX.vs.InitialPosY 300
+
+
+/gamos/classifier PosZC GmClassifierByNumericData InitialPosZ 3 -133.5 -118.5
+/gamos/setParam GmTrackDataHistosUA_PosZC:DataList InitialPosX InitialPosY InitialPosZ InitialPosX.vs.InitialPosY InitialPosX.vs.InitialPosZ InitialPosY.vs.InitialPosZ
+/gamos/userAction GmTrackDataHistosUA PosZC
+
+/gamos/userAction GmCountTracksUA
+
+/gamos/userAction GmKillAtSteppingActionUA
+
+/gamos/filter XF GmNumericDataFilter InitialPosX -30*mm  30*mm
+/gamos/filter YF GmNumericDataFilter InitialPosY -30*mm  30*mm
+/gamos/filter ZF GmNumericDataFilter InitialPosZ  18*mm  20.5*mm
+
+/gamos/filter XYF GmANDFilter XF YF
+/gamos/filter XYZF GmANDFilter XYF ZF
+
+#/gamos/userAction GmKillAtStackingActionUA XYZF
+/gamos/userAction GmKillAtStackingActionUA XF
+
+/run/beamOn 100

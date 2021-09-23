@@ -1,0 +1,18 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName linac.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+
+#/control/execute ../../../examples/visOGLIX.in
+/control/execute ../../../examples/visVRML2FILE.in
+#/control/execute ../../../examples/visDAWNFILE.in
+
+/run/beamOn 100
+

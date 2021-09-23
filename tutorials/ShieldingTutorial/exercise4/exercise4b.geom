@@ -1,0 +1,12 @@
+:ROTM RM0 0. 0. 0.
+
+:VOLU world BOX 100 100 100 G4_AIR
+
+:P DET_DIM 60.
+:P DET_THICK 10.
+:VOLU detector BOX $DET_DIM+$DET_THICK $DET_DIM+$DET_THICK $DET_DIM+$DET_THICK G4_Pb
+:PLACE detector 1 world RM0 0. 0. 0.
+:VOLU detectorHole BOX $DET_DIM $DET_DIM $DET_DIM G4_AIR
+:PLACE detectorHole 1 detector RM0 0. 0. 0.
+
+

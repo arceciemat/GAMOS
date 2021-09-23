@@ -1,0 +1,41 @@
+#!/bin/bash
+#TO USE THIS SCRIPT, TYPE, FOR EXAMPLE: sh sendjobs 6. 1111 10000 10
+
+### set the variables read from the command line
+ENERGY=$1
+SEED=$2
+NEV=$3
+NJOBS=$4
+
+### start the loop of jobs
+nj=0
+while 
+test $nj -lt $NJOBS
+do
+
+### set the suffix of the output files
+  SUFFIX=$1"."$2"."$3"."$nj
+  echo " SUFFIX = $SUFFIX "
+
+### copy the input file into a new one (so that you can keep a track of the different files that are run)
+  new_inputfile="exercise2."$SUFFIX
+  log_inputfile=zz"_"$new_inputfile
+  echo " The new input file = " $new_inputfile
+
+### substitute in the input file the variables from the command line  
+  awk -v ENERGY=$ENERGY -v SEED=$SEED -v NEV=$NEV -v nj=$nj -v SUFFIX=$SUFFIX '{
+    if($1=="/run/beamOn") {printf("%s %s \n",$1, NEV) }      
+    else if ($1=="/gamos/random/setSeeds") {printf("%s %s %s\n",$1, SEED, SEED+nj) }
+    else if($2=="RTPhaseSpaceUA:FileName") {printf("%s %s %s\n",$1, $2, "test."SUFFIX) }
+    else if($1=="/gamos/generator/addSingleParticleSource") {printf("%s %s %s %s\n",$1,$2,$3,ENERGY"*MeV") }
+    else { print $0 }
+  }' "exercise2b.in" > $new_inputfile".inn"
+
+### run job in background 
+  gamos $new_inputfile".inn" 2>&1 | tee $log_inputfile &
+### run job in foreground 
+#  gamos $new_inputfile".inn" 2>&1 | tee $log_inputfile 
+
+nj=$(($nj + 1))
+
+done

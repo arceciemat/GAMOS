@@ -1,0 +1,24 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise5
+
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/exercise1.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+
+/gamos/setParam GmStepDataBinFileUA_GmPrimaryFilter_noTransportFilter:DataList Particle InitialProcess InitialKineticEnergy AccumulatedEnergyLost
+/gamos/filter transportFilter GmProcessFilter Transportation
+/gamos/filter noTransportFilter GmInverseFilter transportFilter
+/gamos/userAction GmStepDataBinFileUA GmPrimaryFilter noTransportFilter
+
+/gamos/setParam GmTrackDataBinFileUA:DataList Particle AccumulatedEnergyLost
+/gamos/userAction GmTrackDataBinFileUA 
+
+/run/beamOn 100
+

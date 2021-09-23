@@ -1,0 +1,60 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise3a
+/gamos/setParam GmGeometryFromText:FileName exercise3.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+
+/gamos/generator GmGenerator
+
+/geometry/textInput/verbose 0
+
+/gamos/setParam GmCountTracksUA:EachNEvent 100
+/gamos/userAction GmCountTracksUA
+/gamos/userAction GmCountProcessesUA
+
+/run/setCut 10. mm
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source neutron 1.*MeV
+/gamos/generator/energyDist source GmGenerDistEnergyFromFile Cf.energy.lis interpolate_log
+/gamos/generator/timeDist source GmGenerDistTimeDecay 1.E-2*Ci
+
+### PDS neutrons
+/gamos/setParam GmPDS:ScoreNeutrons 1
+/gamos/setParam GmPDS:ScoreGammas 0
+/gamos/setParam GmPDS:DetectorName PDS_detector
+/gamos/setParam GmPDS:AngleDeviationFileName angleDeviation.neutronALL.root
+/gamos/setParam GmPDS:ExclusionRadius 5*mm
+#/gamos/setParam GmPDS:ScoreSeparatelyTrueAndGeantino 1
+#/gamos/setParam GmPDS:Flux2DoseFileName  Flux2Dose.neutron.ICRU57.lis
+#/gamos/setParam GmPDS:EnergiesFileName   Flux2Dose.neutrons.ICRU57.lis
+#/gamos/setParam GmPDS:ResultsFileName
+#/gamos/setParam GmPDS:EnergyBinsFileName energy_bins.lis
+
+/gamos/setParam GmPDS:UseVRMaximumDistance    0
+/gamos/setParam GmPDS:MaximumDistance    1000.
+/gamos/setParam GmPDS:MaximumDistanceRRFactor    100
+
+/gamos/setParam GmPDS:UseVRSplitting  0
+/gamos/setParam GmPDS:MinimumGeantinoWeight  1.E-100
+/gamos/setParam GmPDS:MinimumGeantinoWeightRRFactor  100.
+
+/gamos/setParam GmPDS:UseVRMinimumGeantinoWeight  0
+/gamos/setParam GmPDS:MinimumWeightForSplitting  1.E-30
+/gamos/setParam GmPDS:MaximumWeightForSplitting  1.E-5
+/gamos/setParam GmPDS:MaximumSplitting   100.
+
+/gamos/setParam GmPDS:PrintHstar 1
+/gamos/setParam GmPDS:PrintHp0 1
+/gamos/setParam GmPDS:PrintHp15 0
+/gamos/setParam GmPDS:PrintHp30 0
+/gamos/setParam GmPDS:PrintHp45 0
+/gamos/setParam GmPDS:PrintHp60 0
+/gamos/setParam GmPDS:PrintHp75 0
+/gamos/setParam GmPDS:HistosFileName   pds
+
+/gamos/userAction GmPDSUA 
+
+/gamos/random/setSeeds 1111 1212 
+
+/run/beamOn 1000

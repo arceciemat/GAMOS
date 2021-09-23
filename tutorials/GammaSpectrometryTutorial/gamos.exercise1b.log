@@ -1,0 +1,265 @@
+/control/execute exercise1b.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise1b
+/gamos/setParam GmGeometryFromText:FileName detector.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/generator GmGenerator
+/run/initialize
+GmPhysicsGammaLowEner::ConstructProcess 
+/gamos/generator/addSingleParticleSource source1 gamma 1173*keV
+/gamos/generator/positionDist source1 GmGenerDistPositionPoint 0. 0. -5*cm
+/gamos/generator/directionDist source1 GmGenerDistDirectionCone 0. 0. 1. atan(3*2.54*cm/(5.024*cm))
+/gamos/generator/addSingleParticleSource source2 gamma 1333*keV
+/gamos/generator/positionDist source2 GmGenerDistPositionPoint 0. 0. -5*cm
+/gamos/generator/directionDist source2 GmGenerDistDirectionCone 0. 0. 1. atan(3*2.54*cm/(5.024*cm))
+/gamos/analysis/histo1Max *Energy* 3000
+/gamos/analysis/histo1NBins *Energy* 300
+/gamos/SD/assocSD2LogVol GmSDSimple Calor crystal
+ DeadTimeDUListByBlock: NShift 100
+ GmDetUnitIDBuilderFromAncestors sdType Calor
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmCountTracksUA
+/run/beamOn 100000
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : G4_Al
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  2.3478 keV    e-  131.031 keV    e+  128.416 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : NaI
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  7.28493 keV    e-  133.699 keV    e+  130.153 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+ CreateHisto1D Hits: SD ALL:Nhits = 201001
+ CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+ CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+ CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+ CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+ CreateHisto1D Hits: SD ALL:N E depos = 201006
+ CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+ CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+ CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+ CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+ CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+ CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+ CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+ CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+ CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+ CreateHisto1D Hits: SD Calor: Nhits = 201101
+ CreateHisto1D Hits: SD Calor: Energy (MeV) = 201102
+ CreateHisto1D Hits: SD Calor: Width R3 (mm) = 201103
+ CreateHisto1D Hits: SD Calor: Width Z (mm) = 201104
+ CreateHisto1D Hits: SD Calor: Width phi (deg) = 201105
+ CreateHisto1D Hits: SD Calor: N E depos = 201106
+ CreateHisto1D Hits: SD Calor: Time span (ns) = 201107
+ CreateHisto1D Hits: SD Calor: Distance between hits (mm) = 201108
+ CreateHisto1D Hits: SD Calor: X hit (mm) = 201111
+ CreateHisto1D Hits: SD Calor: Y hit (mm) = 201112
+ CreateHisto1D Hits: SD Calor: Z hit (mm) = 201113
+ CreateHisto1D Hits: SD Calor: R2 hit (mm) = 201114
+ CreateHisto1D Hits: SD Calor: PHI hit (deg) = 201115
+ CreateHisto1D Hits: SD Calor: THETA hit (deg) = 201116
+ CreateHisto1D Hits: SD Calor: R3 hit (mm) = 201117
+ %%% EVENT 0 NTRACKS 4 TOTAL NTRACKS 4
+ %%% EVENT 1000 NTRACKS 2 TOTAL NTRACKS 3338
+ %%% EVENT 2000 NTRACKS 4 TOTAL NTRACKS 6799
+ %%% EVENT 3000 NTRACKS 2 TOTAL NTRACKS 10243
+ %%% EVENT 4000 NTRACKS 5 TOTAL NTRACKS 13638
+ %%% EVENT 5000 NTRACKS 2 TOTAL NTRACKS 17131
+ %%% EVENT 6000 NTRACKS 2 TOTAL NTRACKS 20618
+ %%% EVENT 7000 NTRACKS 2 TOTAL NTRACKS 24050
+ %%% EVENT 8000 NTRACKS 4 TOTAL NTRACKS 27396
+ %%% EVENT 9000 NTRACKS 3 TOTAL NTRACKS 30769
+ %%% EVENT 10000 NTRACKS 8 TOTAL NTRACKS 34242
+ %%% EVENT 11000 NTRACKS 6 TOTAL NTRACKS 37848
+ %%% EVENT 12000 NTRACKS 2 TOTAL NTRACKS 41195
+ %%% EVENT 13000 NTRACKS 2 TOTAL NTRACKS 44767
+ %%% EVENT 14000 NTRACKS 2 TOTAL NTRACKS 48241
+ %%% EVENT 15000 NTRACKS 3 TOTAL NTRACKS 51776
+ %%% EVENT 16000 NTRACKS 2 TOTAL NTRACKS 55298
+ %%% EVENT 17000 NTRACKS 7 TOTAL NTRACKS 58756
+ %%% EVENT 18000 NTRACKS 2 TOTAL NTRACKS 62203
+ %%% EVENT 19000 NTRACKS 5 TOTAL NTRACKS 65673
+ %%% EVENT 20000 NTRACKS 2 TOTAL NTRACKS 68997
+ %%% EVENT 21000 NTRACKS 3 TOTAL NTRACKS 72324
+ %%% EVENT 22000 NTRACKS 2 TOTAL NTRACKS 75883
+ %%% EVENT 23000 NTRACKS 3 TOTAL NTRACKS 79232
+ %%% EVENT 24000 NTRACKS 8 TOTAL NTRACKS 82744
+ %%% EVENT 25000 NTRACKS 2 TOTAL NTRACKS 86158
+ %%% EVENT 26000 NTRACKS 6 TOTAL NTRACKS 89542
+ %%% EVENT 27000 NTRACKS 2 TOTAL NTRACKS 92970
+ %%% EVENT 28000 NTRACKS 2 TOTAL NTRACKS 96367
+ %%% EVENT 29000 NTRACKS 2 TOTAL NTRACKS 99799
+ %%% EVENT 30000 NTRACKS 2 TOTAL NTRACKS 103304
+ %%% EVENT 31000 NTRACKS 8 TOTAL NTRACKS 106724
+ %%% EVENT 32000 NTRACKS 2 TOTAL NTRACKS 110266
+ %%% EVENT 33000 NTRACKS 2 TOTAL NTRACKS 113588
+ %%% EVENT 34000 NTRACKS 2 TOTAL NTRACKS 117113
+ %%% EVENT 35000 NTRACKS 2 TOTAL NTRACKS 120546
+ %%% EVENT 36000 NTRACKS 2 TOTAL NTRACKS 123973
+ %%% EVENT 37000 NTRACKS 2 TOTAL NTRACKS 127410
+ %%% EVENT 38000 NTRACKS 2 TOTAL NTRACKS 130841
+ %%% EVENT 39000 NTRACKS 2 TOTAL NTRACKS 134243
+ %%% EVENT 40000 NTRACKS 8 TOTAL NTRACKS 137656
+ %%% EVENT 41000 NTRACKS 3 TOTAL NTRACKS 141046
+ %%% EVENT 42000 NTRACKS 2 TOTAL NTRACKS 144518
+ %%% EVENT 43000 NTRACKS 11 TOTAL NTRACKS 147982
+ %%% EVENT 44000 NTRACKS 2 TOTAL NTRACKS 151497
+ %%% EVENT 45000 NTRACKS 2 TOTAL NTRACKS 154971
+ %%% EVENT 46000 NTRACKS 7 TOTAL NTRACKS 158308
+ %%% EVENT 47000 NTRACKS 2 TOTAL NTRACKS 161802
+ %%% EVENT 48000 NTRACKS 7 TOTAL NTRACKS 165225
+ %%% EVENT 49000 NTRACKS 3 TOTAL NTRACKS 168548
+ %%% EVENT 50000 NTRACKS 2 TOTAL NTRACKS 172073
+ %%% EVENT 51000 NTRACKS 8 TOTAL NTRACKS 175558
+ %%% EVENT 52000 NTRACKS 3 TOTAL NTRACKS 179032
+ %%% EVENT 53000 NTRACKS 5 TOTAL NTRACKS 182491
+ %%% EVENT 54000 NTRACKS 3 TOTAL NTRACKS 186011
+ %%% EVENT 55000 NTRACKS 2 TOTAL NTRACKS 189293
+ %%% EVENT 56000 NTRACKS 2 TOTAL NTRACKS 192877
+ %%% EVENT 57000 NTRACKS 2 TOTAL NTRACKS 196504
+ %%% EVENT 58000 NTRACKS 2 TOTAL NTRACKS 199931
+ %%% EVENT 59000 NTRACKS 4 TOTAL NTRACKS 203304
+ %%% EVENT 60000 NTRACKS 2 TOTAL NTRACKS 206744
+ %%% EVENT 61000 NTRACKS 2 TOTAL NTRACKS 210216
+ %%% EVENT 62000 NTRACKS 2 TOTAL NTRACKS 213834
+ %%% EVENT 63000 NTRACKS 2 TOTAL NTRACKS 217321
+ %%% EVENT 64000 NTRACKS 2 TOTAL NTRACKS 220807
+ %%% EVENT 65000 NTRACKS 6 TOTAL NTRACKS 224372
+ %%% EVENT 66000 NTRACKS 2 TOTAL NTRACKS 227749
+ %%% EVENT 67000 NTRACKS 2 TOTAL NTRACKS 231282
+ %%% EVENT 68000 NTRACKS 2 TOTAL NTRACKS 234705
+ %%% EVENT 69000 NTRACKS 3 TOTAL NTRACKS 238149
+ %%% EVENT 70000 NTRACKS 2 TOTAL NTRACKS 241567
+ %%% EVENT 71000 NTRACKS 11 TOTAL NTRACKS 245029
+ %%% EVENT 72000 NTRACKS 3 TOTAL NTRACKS 248551
+ %%% EVENT 73000 NTRACKS 8 TOTAL NTRACKS 252117
+ %%% EVENT 74000 NTRACKS 2 TOTAL NTRACKS 255659
+ %%% EVENT 75000 NTRACKS 2 TOTAL NTRACKS 258918
+ %%% EVENT 76000 NTRACKS 2 TOTAL NTRACKS 262453
+ %%% EVENT 77000 NTRACKS 2 TOTAL NTRACKS 265890
+ %%% EVENT 78000 NTRACKS 5 TOTAL NTRACKS 269347
+ %%% EVENT 79000 NTRACKS 2 TOTAL NTRACKS 272826
+ %%% EVENT 80000 NTRACKS 13 TOTAL NTRACKS 276322
+ %%% EVENT 81000 NTRACKS 2 TOTAL NTRACKS 279858
+ %%% EVENT 82000 NTRACKS 3 TOTAL NTRACKS 283271
+ %%% EVENT 83000 NTRACKS 3 TOTAL NTRACKS 286813
+ %%% EVENT 84000 NTRACKS 2 TOTAL NTRACKS 290179
+ %%% EVENT 85000 NTRACKS 2 TOTAL NTRACKS 293718
+ %%% EVENT 86000 NTRACKS 2 TOTAL NTRACKS 297256
+ %%% EVENT 87000 NTRACKS 3 TOTAL NTRACKS 300865
+ %%% EVENT 88000 NTRACKS 3 TOTAL NTRACKS 304351
+ %%% EVENT 89000 NTRACKS 2 TOTAL NTRACKS 307764
+ %%% EVENT 90000 NTRACKS 2 TOTAL NTRACKS 311239
+ %%% EVENT 91000 NTRACKS 2 TOTAL NTRACKS 314725
+ %%% EVENT 92000 NTRACKS 2 TOTAL NTRACKS 318033
+ %%% EVENT 93000 NTRACKS 2 TOTAL NTRACKS 321451
+ %%% EVENT 94000 NTRACKS 3 TOTAL NTRACKS 325088
+ %%% EVENT 95000 NTRACKS 2 TOTAL NTRACKS 328488
+ %%% EVENT 96000 NTRACKS 2 TOTAL NTRACKS 331991
+ %%% EVENT 97000 NTRACKS 9 TOTAL NTRACKS 335347
+ %%% EVENT 98000 NTRACKS 2 TOTAL NTRACKS 338759
+ %%% EVENT 99000 NTRACKS 2 TOTAL NTRACKS 342153
+ Run terminated.
+Run Summary
+  Number of events processed : 100000
+  User=13.740000s Real=13.734345s Sys=0.010000s
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 hits.exercise1b:NormalizeToNEvents
+=== saving histograms in file === hits.exercise1b.root

@@ -1,0 +1,47 @@
+#/gamos/verbosity GmGeomVerbosity debug
+/tracking/verbose 0
+
+/gamos/setParam GmAnalysisMgr:FileNameSuffix test
+/gamos/setParam GmGeometryFromText:FileName linac.geom
+/gamos/geometry GmGeometryFromText
+
+/gamos/physicsList GmDummyPhysics
+
+/gamos/setParam GmGeneratorScanVis:MarkerStyle 1
+/gamos/setParam GmGeneratorScanVis:MarkerSize 0.25
+/gamos/setParam GmGeneratorScanVis:NPixels 1000
+## XZ
+/gamos/setParam GmGeneratorScanVis:ScanWorldMinX -250
+/gamos/setParam GmGeneratorScanVis:ScanWorldMaxX 250
+/gamos/setParam GmGeneratorScanVis:ScanWorldMinY 0
+/gamos/setParam GmGeneratorScanVis:ScanWorldMaxY 1
+/gamos/setParam GmGeneratorScanVis:ScanWorldMinZ -10
+/gamos/setParam GmGeneratorScanVis:ScanWorldMaxZ 500
+/gamos/setParam GmGeneratorScanVis:ScanParams XZ 2. 0.001 10.*deg 75.*deg
+## YZ
+#/gamos/setParam GmGeneratorScanVis:ScanWorldMinX 0
+#/gamos/setParam GmGeneratorScanVis:ScanWorldMaxX 1
+#/gamos/setParam GmGeneratorScanVis:ScanWorldMinY -100
+#/gamos/setParam GmGeneratorScanVis:ScanWorldMaxY 100
+#/gamos/setParam GmGeneratorScanVis:ScanWorldMinZ 178
+#/gamos/setParam GmGeneratorScanVis:ScanWorldMaxZ 300
+#/gamos/setParam GmGeneratorScanVis:ScanParams YZ 2. 0.001 10.*deg 90.*deg
+
+#/gamos/setParam GmGeneratorScanVis:DrawBorderNames 1
+/gamos/generator GmGeneratorScanVis
+
+/run/initialize
+
+/gamos/random/restoreSeeds 1111 1111
+
+/gamos/userAction GmCountTracksUA
+
+#/gamos/setParam GmStepDataCoutUA:DataList EventID StepNumber InitialLogicalVolume FinalLogicalVolume InitialPosX InitialPosY InitialPosZ InitialDirX InitialDirY InitialDirZ  FinalPosX FinalPosZ
+#/gamos/userAction GmStepDataCoutUA
+
+#/gamos/geometry/printVolumeTree 99
+#/gamos/geometry/printMaterials 3
+#/gamos/geometry/printTouchables *
+
+/run/beamOn 10
+

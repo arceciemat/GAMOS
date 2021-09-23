@@ -1,0 +1,45 @@
+# VERBOSITY 
+/tracking/verbose 0
+
+# GEOMETRY
+/gamos/setParam GmReadPhantomGeometry:FileName ./world.geom
+/gamos/setParam GmSimplePhantomGeometry:MaterialNames PMMA
+/gamos/setParam GmSimplePhantomGeometry:MaterialZVoxels 300
+/gamos/setParam GmSimplePhantomGeometry:MaterialDensities 1.19
+/gamos/setParam GmSimplePhantomGeometry:NVoxels 400 400 300
+/gamos/setParam GmSimplePhantomGeometry:PhantomDims -200 200 -200 200 -150 150
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. 0.
+/gamos/setParam GmReadPhantomGeometry:InitialRotAngles 0*deg 0. 0.
+/gamos/geometry GmSimplePhantomGeometry
+
+# PHYSICS
+/gamos/physicsList G4QGSP_BIC_AllHP
+
+# PRIMARY GENERATOR
+/gamos/generator GmGenerator
+
+# GEANT4 INITIALISATION
+/run/initialize
+
+# ACTIVATE DECAYS
+/gamos/physics/addPhysics radioactiveDecay
+
+# SOURCE
+/control/execute ../exercise0/pbsSource.in
+
+# STATISTICS
+/gamos/userAction GmCountTracksUA
+
+#---------- exercise 3b ----------
+# SCORE DOSE IN THE VOXELIZED PHANTOM
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+
+# DOSE HISTOGRAMS
+/gamos/setParam RTPSPDoseHistos:FileName doseHistos.b
+/gamos/setParam RTPSPDoseHistos:HistosFileName ./doseHistos.lis
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorer
+
+# RUN SIMULATION
+/run/beamOn 10000
+#---------------------------------

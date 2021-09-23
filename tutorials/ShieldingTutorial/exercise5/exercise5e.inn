@@ -1,0 +1,22 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise5e
+/gamos/setParam GmGeometryUseMaterials:Materials G4_Fe
+/gamos/setParam GmGeometryUseMaterials:FileName isotopes.geom
+/gamos/geometry GmGeometryUseMaterials
+/gamos/physicsList G4QGSP_BIC_AllHP
+#/gamos/physicsList GmEMExtendedPhysics
+
+/gamos/setParam SHPrintEMDataUA:minE 1.*MeV
+/gamos/setParam SHPrintEMDataUA:maxE 10.*MeV
+/gamos/setParam SHPrintEMDataUA:nStepsE 10
+/gamos/setParam SHPrintEMDataUA:logE 0
+/gamos/generator GmGenerator
+
+/run/initialize
+
+
+/gamos/generator/addSingleParticleSource source proton 1.*MeV
+
+/gamos/userAction SHPrintEMDataUA
+
+/gamos/random/restoreSeeds  1201 1201
+/run/beamOn 1

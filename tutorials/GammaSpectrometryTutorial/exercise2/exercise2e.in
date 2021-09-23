@@ -1,0 +1,43 @@
+### Set the suffix of output files
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise2e
+
+### Set geometry, physics and generator
+/gamos/setParam GmGeometryFromText:FileName marinelli_beaker.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMExtendedPhysics
+/gamos/generator GmGenerator
+
+### Initialize Geant4 geometry and physics
+/run/initialize
+
+### Set generator particle distributions
+/gamos/generator/addSingleParticleSource source1 Co57[0.0] 0*MeV
+/gamos/generator/positionDist source1 GmGenerDistPositionInG4Volumes SOLUTION_*
+/gamos/generator/timeDist source1 GmGenerDistTimeDecay 1E6*Bq
+/gamos/generator/addSingleParticleSource source2 Cs137[0.0] 0*MeV
+/gamos/generator/positionDist source2 GmGenerDistPositionInG4Volumes SOLUTION_*
+/gamos/generator/timeDist source2 GmGenerDistTimeDecay 2E6*Bq
+/gamos/generator/addSingleParticleSource source3 Cd109[0.0] 0*MeV
+/gamos/generator/positionDist source3 GmGenerDistPositionInG4Volumes SOLUTION_*
+/gamos/generator/timeDist source3 GmGenerDistTimeDecay 3E6*Bq
+
+/gamos/userAction GmNoUseG4RadDecayTimeUA
+
+### Set the Ge as sensitive detector
+/gamos/analysis/histo1Max *Energy* 750
+/gamos/analysis/histo1NBins *Energy* 300
+/gamos/SD/assocSD2LogVol GmSDSeparateByTime Detector DETECTOR_Ge
+/gamos/userAction GmHitsHistosUA
+
+### Print a message each 1000 events
+/gamos/userAction GmCountTracksUA
+
+### Plot the time of each particle
+/gamos/analysis/histo1Max *Time* 0.02
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter_GmClassifierByParticle:DataList InitialTime/second 
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter GmClassifierByParticle
+
+/gamos/userAction GmCountProcessesUA
+
+### Run events
+/run/beamOn 100000

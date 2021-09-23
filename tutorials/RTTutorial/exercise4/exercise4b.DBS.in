@@ -1,0 +1,40 @@
+/gamos/setParam GmReadPhantomGeometry:FileName ../exercise2/linac.geom
+/gamos/setParam GmSimplePhantomGeometry:MaterialNames G4_WATER G4_LUNG_ICRP G4_BONE_COMPACT_ICRU
+/gamos/setParam GmSimplePhantomGeometry:MaterialZVoxels 10 10 80
+/gamos/setParam GmSimplePhantomGeometry:MaterialDensities 1. 0.3 1.85
+/gamos/setParam GmSimplePhantomGeometry:NVoxels 10 10 100
+/gamos/setParam GmSimplePhantomGeometry:PhantomDims -500 500 -500 500 -500 500
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. -1400.
+/gamos/setParam GmReadPhantomGeometry:InitialRotAngles 0*deg 0. 0.
+/gamos/geometry GmSimplePhantomGeometry
+
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/gamos/setParam GmAnalysisMgr:FileNameSuffix DBS
+/gamos/setParam RTPhaseSpaceUA:FileName testDBS
+/gamos/setParam RTPhaseSpaceUA:ZStops -899
+/gamos/setParam RTPhaseSpaceUA:KillAfterLastZStop 1
+/gamos/userAction RTPhaseSpaceUA 
+
+/gamos/userAction GmCountTracksUA
+
+/gamos/setParam boper:NSplit 100
+/gamos/setParam boper:BiasPrimaryOnly 0
+/gamos/setParam boper:BiasOnlyOnce 1
+/gamos/setParam boper:NKill 100
+/gamos/setParam boper:XDim 5.*cm
+/gamos/setParam boper:YDim 5.*cm
+/gamos/setParam boper:ZPos 100.*cm
+/gamos/physics/biasing/createOperator boper DirBremsSplitting
+/gamos/physics/biasing/addParticleProcesses2Oper e- eBrem boper
+
+/run/initialize
+
+/gamos/physics/biasing/associateOper2LogVol target boper
+
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+
+/run/beamOn 1000000

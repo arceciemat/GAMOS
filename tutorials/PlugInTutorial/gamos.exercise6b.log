@@ -1,0 +1,79 @@
+/control/execute exercise6b.in
+/tracking/verbose 1
+/gamos/setParam GmGeometryFromText:FileName ../exercise3/exercise3.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+<<< Geant4 Physics List simulation engine: QGSP_BIC_HP
+
+/gamos/verbosity GmSDVerbosity debug
+/gamos/generator GmGenerator
+/gamos/userAction GmCountProcessesUA
+/run/initialize
+/home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5
+@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic
+@@@ G4ParticleHPInelasticData instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Elastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Inelastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Elastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Inelastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+/gamos/generator/addIsotopeSource source F18 1.E-3*curie
+/gamos/generator/positionDist source Exer2GenerDistPosition 1.*cm
+/gamos/generator/directionDist source GmGenerDistDirectionConst 1. 0. 0.
+/gamos/setParam SD:DeadTimeParalizable:CalorSD 0
+/gamos/setParam SD:DetUnitID:NAncestors 2
+/gamos/setParam SD:EnergyResol:CalorSD 0.2
+/gamos/setParam SD:EnergyResol:TrackerSD 0.02
+/gamos/setParam SD:MeasuringTime:CalorSD 1.*ms
+/gamos/setParam SD:DeadTime:CalorSD 100.
+/gamos/setParam SD:MeasuringTime:TrackerSD 1.*ms
+/gamos/setParam SD:DeadTime:TrackerSD 1.*ms
+/gamos/SD/assocSD2LogVol GmSDSimple CalorSD Crystal
+ GmSDMessenger::AssociateSD2LogVol: associat sdclass GmSDSimple
+GmVSD CalorSD/Crystal path name /CalorSD/ SensitiveDetectorName: Crystal
+GmHitsEventMgr::CreateHitList of type /CalorSD/
+ DeadTimeDUListByBlock: NShift 100
+GmHitList sdtype CalorSD theMeasuringTime 1e+06
+GmHitList sdtype CalorSD theDeadTime 100
+GmHitList sdtype CalorSD Paralyzable 0
+CalorSD/CrystalGmSDSimple: SD type ->CalorSD SD name Crystal
+ GmDetUnitIDBuilderFromAncestors sdType CalorSD
+GmDetUnitIDFromAncestors theNAncestors= 2 theNShift100
+ adding new SD CalorSD/Crystal
+/gamos/SD/assocSD2LogVol GmSDSimple TrackerSD Tracker
+ GmSDMessenger::AssociateSD2LogVol: associat sdclass GmSDSimple
+GmVSD TrackerSD/Tracker path name /TrackerSD/ SensitiveDetectorName: Tracker
+GmHitsEventMgr::CreateHitList of type /TrackerSD/
+ DeadTimeDUListByBlock: NShift 100
+GmHitList sdtype TrackerSD theMeasuringTime 1e+06
+GmHitList sdtype TrackerSD theDeadTime 1e+06
+GmHitList sdtype TrackerSD Paralyzable 1
+TrackerSD/TrackerGmSDSimple: SD type ->TrackerSD SD name Tracker
+ GmDetUnitIDBuilderFromAncestors sdType TrackerSD
+GmDetUnitIDFromAncestors theNAncestors= 2 theNShift100
+ adding new SD TrackerSD/Tracker
+/gamos/SD/recHitBuilder GmRecHitBuilder1to1 CalorSD
+ GmHitsEventMgr::AddRecHitBuilder name= GmRecHitBuilder1to1 type= /CalorSD/
+ GmVRecHitBuilder::SetSDType SD:RecHit:MinimumEnergyBehaviour:CalorSD
+GmVRecHitBuilder:: SD:EnergyResol:CalorSD Energy resolution 0.2 resolution Fluctuations 0 resolution Instrument 0
+/gamos/SD/recHitBuilder GmRecHitBuilder1to1 TrackerSD
+ GmHitsEventMgr::AddRecHitBuilder name= GmRecHitBuilder1to1 type= /TrackerSD/
+ GmVRecHitBuilder::SetSDType SD:RecHit:MinimumEnergyBehaviour:TrackerSD
+GmVRecHitBuilder:: SD:EnergyResol:TrackerSD Energy resolution 0.02 resolution Fluctuations 0 resolution Instrument 0
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmRecHitsHistosUA
+/gamos/setParam hits.bin:FileName myhits.out
+/gamos/userAction GmHitsWriteUA

@@ -1,0 +1,2033 @@
+@@@@@ Running GAMOS with script: exercise4b.in
+
+**************************************************************
+ Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+ Using Random Engine: MixMaxRng
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+"/vis/list" to see available colours.
+/control/execute exercise4b.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4b
+/gamos/setParam GmReadPhantomGeometry:FileName exercise4.geom
+/gamos/setParam GmReadPhantomGeometry:Phantom:FileName ../exercise3/test_64x64x39.g4dcm
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. -1100
+/gamos/geometry GmReadPhantomG4Geometry
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/generator GmGenerator
+/run/initialize
+Checking overlaps for volume Shield (G4Tubs) ... OK! 
+Checking overlaps for volume XRayTube (G4Tubs) ... OK! 
+Checking overlaps for volume XRayTube_In (G4Tubs) ... OK! 
+Checking overlaps for volume Anode (G4Tubs) ... OK! 
+Checking overlaps for volume Source (G4Tubs) ... OK! 
+Checking overlaps for volume WindowHole_Glass1 (G4Tubs) ... OK! 
+Checking overlaps for volume WindowHole_Glass2 (G4Tubs) ... OK! 
+Checking overlaps for volume WindowHole_Shield (G4Tubs) ... OK! 
+GmReadPhantomG4Geometry::ReadPhantomData nVoxel X/Y/Z 64 64 39
+GmReadPhantomG4Geometry::ReadPhantomData voxelDimX 7.8125 offsetX -250
+GmReadPhantomG4Geometry::ReadPhantomData voxelDimY 7.8125 offsetY -250
+GmReadPhantomG4Geometry::ReadPhantomData voxelDimZ 5 offsetZ -95
+ ReadVoxelDensities 
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : 
+      issued by : GmReadPhantomGeometry::BuildMaterialChangingDensity
+Material G4_LUNG_ICRP HAS 0 DENSITY, it is changed to 1e-25 g/cm3
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+0x55cd780f0d50 thePhantomParam->SetMaterials( 220
+GmPhysicsGammaLowEner::ConstructProcess 
+/gamos/generator/addSingleParticleSource mySource e- 150.*keV
+/gamos/generator/positionDist mySource GmGenerDistPositionInG4Volumes Source
+/gamos/generator/directionDist mySource GmGenerDistDirectionConst 0. 1. 0.
+/process/msc/StepLimit Minimal
+/run/physicsModified
+/gamos/setParam GmPDS:ScoreNeutrons 0
+/gamos/setParam GmPDS:ScoreGammas 1
+/gamos/setParam GmPDS:DetectorName PDS_detector
+/gamos/setParam GmPDS:AngleDeviationFileName angleDeviation.gammaALL.root
+/gamos/setParam GmPDS:PrintHstar 1
+/gamos/setParam GmPDS:HistosFileName pds
+/gamos/userAction GmPDSUA
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmCountTracksUA
+/gamos/random/setSeeds 2142 22211
+Gamos Random: initializing seeds from table at position 2142 and throwing 22211+1 numbers
+ GamosRandom: seeds before nTries 4588164 -1171504500
+Gamos Random: First random number is 0.934424
+
+/run/beamOn 100000
+G4RunManagerKernel -- G4ScoreSplittingProcess is appended to all particles.
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : G4_Pb
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : G4_Pyrex_Glass
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 3     used in the geometry : Yes
+ Material : G4_Galactic
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 4     used in the geometry : Yes
+ Material : WRe
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 5     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 6     used in the geometry : Yes
+ Material : G4_AIR_0.00146
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 7     used in the geometry : Yes
+ Material : G4_AIR_0.01389
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 8     used in the geometry : Yes
+ Material : G4_AIR_0.02389
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  1.01887 keV    e+  1.01887 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 9     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.12806
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  20.8507 keV    e+  20.5245 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 10     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.53524
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  59.6913 keV    e+  58.5 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 11     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.73788
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  71.0873 keV    e+  70.1382 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 12     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.72045
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  70.1382 keV    e+  69.6685 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 13     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.28075
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  40.971 keV    e+  40.6965 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 14     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.18837
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  32.8221 keV    e+  32.167 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 15     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.99084
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.07314 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 16     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.07521
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.1173 keV    e-  88.7364 keV    e+  87.5518 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 17     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.8212
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  76.0286 keV    e+  75.0136 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 18     used in the geometry : Yes
+ Material : G4_AIR_0.03645
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  2.17876 keV    e+  2.13547 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 19     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.11715
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  18.022 keV    e+  17.7489 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 20     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.32415
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  44.4118 keV    e+  44.1143 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 21     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.42594
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  52.1845 keV    e+  51.4878 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 22     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.34171
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  45.9294 keV    e+  45.6217 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 23     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.05534
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  5.14331 keV    e+  5.14331 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 24     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.49374
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  56.567 keV    e+  56.1882 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 25     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.08369
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.1173 keV    e-  89.3347 keV    e+  88.1421 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 26     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.8888
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.03073 keV    e-  79.1567 keV    e+  78.0999 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 27     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.21883
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  35.5785 keV    e+  35.3402 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 28     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.65404
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  66.4671 keV    e+  66.022 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 29     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.92391
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.0482 keV    e-  81.0405 keV    e+  80.2277 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 30     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.94
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.05172 keV    e-  82.4135 keV    e+  80.7687 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 31     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.5861
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  62.5663 keV    e+  61.7311 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 32     used in the geometry : Yes
+ Material : G4_AIR_0.04255
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  2.8432 keV    e+  2.81367 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 33     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.14752
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  26.2788 keV    e+  25.4241 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 34     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.316
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  43.8188 keV    e+  43.5254 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 35     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.44231
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  53.2472 keV    e+  52.5364 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 36     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.48422
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  56.1882 keV    e+  55.438 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 37     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.41734
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  51.4878 keV    e+  50.8005 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 38     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.25054
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  38.5665 keV    e+  38.0516 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 39     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.25911
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  39.3519 keV    e+  38.8265 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 40     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.93201
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.05172 keV    e-  81.8616 keV    e+  80.2277 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 41     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.85652
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.0034 keV    e-  78.0999 keV    e+  76.5412 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 42     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.69564
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  68.7384 keV    e+  68.278 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 43     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.51059
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  58.1082 keV    e+  57.3324 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 44     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.10688
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  15.6466 keV    e+  15.3025 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 45     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.04123
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.095 keV    e-  86.9654 keV    e+  86.3829 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 46     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.09149
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.1173 keV    e-  89.3347 keV    e+  88.1421 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 47     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.0581
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.10981 keV    e-  88.1421 keV    e+  86.9654 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 48     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.99897
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.08038 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 49     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.06668
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.10981 keV    e-  88.1421 keV    e+  86.9654 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 50     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.60295
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  63.8405 keV    e+  62.9882 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 51     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.04867
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  4.1809 keV    e+  4.08603 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 52     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.2297
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  36.5478 keV    e+  36.0599 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 53     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.50175
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  57.3324 keV    e+  56.567 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 54     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.76295
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  72.535 keV    e+  72.0491 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 55     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.91526
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.03768 keV    e-  80.7687 keV    e+  79.6904 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 56     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.88053
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.01697 keV    e-  79.1567 keV    e+  78.0999 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 57     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.06566
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  6.98996 keV    e+  6.81592 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 58     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.94827
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.05881 keV    e-  82.4135 keV    e+  81.587 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 59     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.01994
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.08766 keV    e-  86.3829 keV    e+  84.6589 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 60     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.98224
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.07314 keV    e-  84.0919 keV    e+  82.9692 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 61     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.97355
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.07314 keV    e-  83.5287 keV    e+  82.4135 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 62     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.96541
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.06595 keV    e-  83.5287 keV    e+  82.4135 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 63     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.8988
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.03073 keV    e-  80.2277 keV    e+  79.1567 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 64     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.3582
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  47.1807 keV    e+  46.8647 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 65     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.90641
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.03768 keV    e-  80.2277 keV    e+  79.1567 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 66     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.0497
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.10609 keV    e-  86.9654 keV    e+  86.3829 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 67     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.03284
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.095 keV    e-  86.9654 keV    e+  85.2297 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 68     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.19922
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  33.7163 keV    e+  33.4905 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 69     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.57695
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  61.7311 keV    e+  61.3176 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 70     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.83007
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  996.675 eV     e-  76.0286 keV    e+  75.0136 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 71     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.02428
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.08766 keV    e-  86.3829 keV    e+  84.6589 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 72     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.95687
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.05881 keV    e-  82.9692 keV    e+  81.8616 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 73     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.81347
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  75.5193 keV    e+  74.5111 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 74     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.33334
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  45.3162 keV    e+  44.7112 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 75     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.09948
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.12483 keV    e-  89.3347 keV    e+  88.1421 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 76     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.47599
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  55.438 keV    e+  55.0667 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 77     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.00753
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.08766 keV    e-  85.2297 keV    e+  84.6589 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 78     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.84771
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.0034 keV    e-  77.5769 keV    e+  76.0286 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 79     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.10766
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.12483 keV    e-  89.9371 keV    e+  89.3347 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 80     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.11636
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.13241 keV    e-  91.154 keV    e+  89.3347 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 81     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.29089
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  41.8053 keV    e+  41.5253 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 82     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.12493
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.13241 keV    e-  91.154 keV    e+  89.3347 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 83     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.23237
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.49164 keV    e-  88.1421 keV    e+  86.9654 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 84     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.16759
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.45207 keV    e-  86.0932 keV    e+  84.6589 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 85     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.13391
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.14005 keV    e-  91.7686 keV    e+  89.9371 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 86     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.22547
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.48165 keV    e-  88.1421 keV    e+  86.9654 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 87     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.355
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.55301 keV    e-  93.6375 keV    e+  91.7686 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 88     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.16084
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.45207 keV    e-  85.2297 keV    e+  84.6589 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 89     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.57726
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.67216 keV    e-  102.186 keV    e+  100.483 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 90     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.70024
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.7293 keV    e-  107.107 keV    e+  104.97 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 91     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.62741
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.6891 keV    e-  104.267 keV    e+  102.186 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 92     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.70413
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  69.6685 keV    e+  68.278 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 93     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.19651
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.47172 keV    e-  86.9654 keV    e+  86.0932 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 94     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.73802
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.74096 keV    e-  107.83 keV    e+  107.107 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 95     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.62098
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.68343 keV    e-  103.568 keV    e+  102.186 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 96     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.65792
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.70621 keV    e-  104.97 keV    e+  103.568 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 97     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.29881
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  42.371 keV    e+  42.0872 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 98     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.17507
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.46187 keV    e-  86.3829 keV    e+  84.6589 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 99     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.57125
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.67216 keV    e-  102.186 keV    e+  100.146 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 100     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.36866
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.56348 keV    e-  94.2689 keV    e+  93.0104 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 101     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.48475
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.62781 keV    e-  98.8093 keV    e+  96.8372 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 102     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.54681
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.64983 keV    e-  101.501 keV    e+  99.4755 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 103     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.66465
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.70621 keV    e-  105.677 keV    e+  103.568 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 104     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.24031
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.49164 keV    e-  89.3347 keV    e+  88.1421 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 105     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.4261
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.59532 keV    e-  96.8372 keV    e+  94.9045 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 106     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.49717
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.62781 keV    e-  99.4755 keV    e+  98.1475 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 107     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.83854
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  996.675 eV     e-  76.5412 keV    e+  76.0286 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 108     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.38331
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.56348 keV    e-  94.2689 keV    e+  93.0104 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 109     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.64265
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.70621 keV    e-  104.97 keV    e+  103.568 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 110     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.7143
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.7293 keV    e-  107.83 keV    e+  105.677 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 111     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.18954
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.46187 keV    e-  86.9654 keV    e+  85.2297 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 112     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.70859
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.7293 keV    e-  107.83 keV    e+  105.677 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 113     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.31205
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.53228 keV    e-  91.7686 keV    e+  90.8483 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 114     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.58979
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.67216 keV    e-  102.875 keV    e+  101.501 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 115     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.26135
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.50169 keV    e-  89.3347 keV    e+  88.1421 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 116     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.54136
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.64983 keV    e-  101.501 keV    e+  99.4755 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 117     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.6811
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.71771 keV    e-  106.033 keV    e+  104.97 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 118     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.59438
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  62.9882 keV    e+  62.5663 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 119     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.59997
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.67216 keV    e-  103.568 keV    e+  102.186 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 120     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.34725
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.55301 keV    e-  93.0104 keV    e+  91.7686 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 121     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.18203
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.46187 keV    e-  86.9654 keV    e+  85.2297 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 122     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.17891
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  31.7376 keV    e+  31.3139 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 123     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.09602
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  13.0843 keV    e+  13.0843 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 124     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.43434
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  52.5364 keV    e+  52.1845 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 125     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.08631
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  11.1514 keV    e+  10.8466 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 126     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.13779
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  23.6263 keV    e+  22.8746 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 127     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.55226
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  60.499 keV    e+  59.6913 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 128     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.75405
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  72.0491 keV    e+  71.0873 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 129     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.87242
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.01697 keV    e-  78.6265 keV    e+  77.5769 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 130     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.71288
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  70.1382 keV    e+  68.7384 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 131     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.86438
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.01697 keV    e-  78.0999 keV    e+  77.5769 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 132     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.4681
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  55.0667 keV    e+  54.3316 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 133     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.24036
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  37.2921 keV    e+  37.2921 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 134     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.61154
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  63.8405 keV    e+  62.9882 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 135     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.77162
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  73.5164 keV    e+  72.0491 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 136     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.80502
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  75.0136 keV    e+  74.0121 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 137     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.30803
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  43.2339 keV    e+  42.9443 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 138     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.628
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  64.7043 keV    e+  64.2709 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 139     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.39169
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  49.4531 keV    e+  49.1219 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 140     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.7965
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  74.5111 keV    e+  74.0121 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 141     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.67852
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  68.278 keV    e+  67.3665 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 142     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.78839
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  74.0121 keV    e+  73.5164 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 143     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.15829
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  29.1755 keV    e+  28.4447 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 144     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.16763
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  30.4834 keV    e+  30.2792 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 145     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.07677
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  9.17236 keV    e+  8.93119 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 146     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.20907
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  34.6349 keV    e+  34.1725 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 147     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.66143
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  67.3665 keV    e+  66.4671 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 148     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.52699
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  58.6969 keV    e+  58.1082 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 149     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.34983
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  46.5508 keV    e+  46.239 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 150     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.74581
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  72.0491 keV    e+  71.0873 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 151     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.38371
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  49.1219 keV    e+  48.7929 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 152     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.40904
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  50.8005 keV    e+  50.4602 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 153     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.30294
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  42.9443 keV    e+  42.371 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 154     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_0.26981
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  39.8843 keV    e+  39.6172 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 155     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.54387
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  59.6913 keV    e+  59.2915 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 156     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.459
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  54.3316 keV    e+  53.6063 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 157     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.66969
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  67.3665 keV    e+  66.4671 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 158     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.56851
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  61.3176 keV    e+  60.499 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 159     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.62001
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  64.7043 keV    e+  63.8405 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 160     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.56017
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  60.9069 keV    e+  60.499 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 161     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.51784
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  58.1082 keV    e+  57.3324 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 162     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.7798
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  74.0121 keV    e+  72.535 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 163     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.37523
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  48.4661 keV    e+  48.1415 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 164     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.68712
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  68.278 keV    e+  67.3665 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 165     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.15354
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.4472 keV    e-  85.2297 keV    e+  84.0919 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 166     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.36221
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.56348 keV    e-  94.2689 keV    e+  93.0104 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 167     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.46293
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.61691 keV    e-  98.1475 keV    e+  96.8372 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 168     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.25404
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.50169 keV    e-  89.3347 keV    e+  88.1421 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 169     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.39075
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.57402 keV    e-  94.9045 keV    e+  93.6375 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 170     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.48938
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.62781 keV    e-  99.4755 keV    e+  97.4901 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 171     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.51962
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.63878 keV    e-  100.146 keV    e+  98.1475 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 172     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.68997
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.71771 keV    e-  107.107 keV    e+  104.97 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 173     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.21064
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.48165 keV    e-  88.1421 keV    e+  86.3829 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 174     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.52665
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.64983 keV    e-  100.146 keV    e+  98.8093 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 175     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.30428
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.53228 keV    e-  91.7686 keV    e+  89.9371 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 176     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.63254
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.6891 keV    e-  104.97 keV    e+  102.875 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 177     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.5535
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.64983 keV    e-  101.501 keV    e+  99.4755 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 178     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.40542
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.58463 keV    e-  96.1886 keV    e+  94.2689 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 179     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.71954
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.74096 keV    e-  107.83 keV    e+  105.677 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 180     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.45123
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  53.6063 keV    e+  53.2472 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 181     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.60648
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.68343 keV    e-  103.568 keV    e+  102.186 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 182     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.50524
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.62781 keV    e-  99.4755 keV    e+  98.1475 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 183     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.58566
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.67216 keV    e-  102.186 keV    e+  101.501 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 184     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.34015
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.54261 keV    e-  93.0104 keV    e+  91.7686 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 185     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.20387
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.47172 keV    e-  86.9654 keV    e+  86.3829 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 186     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.29002
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.51691 keV    e-  91.154 keV    e+  89.3347 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 187     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.64513
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  66.022 keV    e+  65.1406 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 188     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.36689
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  47.8191 keV    e+  47.1807 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 189     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.63626
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  65.3598 keV    e+  64.7043 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 190     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.53435
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.64983 keV    e-  100.483 keV    e+  99.4755 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 191     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.41258
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.58463 keV    e-  96.1886 keV    e+  94.2689 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 192     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_1.14177
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.14005 keV    e-  91.7686 keV    e+  90.8483 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 193     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.61293
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.68343 keV    e-  103.568 keV    e+  102.186 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 194     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.37651
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.56348 keV    e-  94.2689 keV    e+  93.0104 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 195     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.32618
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.54261 keV    e-  93.0104 keV    e+  91.154 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 196     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.14748
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.43751 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 197     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.29748
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.52714 keV    e-  91.7686 keV    e+  89.9371 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 198     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.28256
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.51182 keV    e-  91.154 keV    e+  89.3347 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 199     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.21812
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.48165 keV    e-  88.1421 keV    e+  86.9654 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 200     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.40055
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  50.4602 keV    e+  49.7866 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 201     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.4476
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.60069 keV    e-  96.8372 keV    e+  96.1886 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 202     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.44112
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.59532 keV    e-  96.8372 keV    e+  96.1886 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 203     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.39745
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.58463 keV    e-  94.9045 keV    e+  94.2689 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 204     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.26843
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.51182 keV    e-  89.9371 keV    e+  88.7364 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 205     used in the geometry : Yes
+ Material : G4_TISSUE_SOFT_ICRP_0.73013
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  71.0873 keV    e+  70.1382 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 206     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.45541
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.61148 keV    e-  98.1475 keV    e+  96.1886 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 207     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.46993
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.61691 keV    e-  98.1475 keV    e+  96.8372 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 208     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.3192
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.54261 keV    e-  91.7686 keV    e+  91.154 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 209     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.43384
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.59532 keV    e-  96.8372 keV    e+  94.9045 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 210     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.27613
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.51182 keV    e-  89.9371 keV    e+  89.3347 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 211     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.33325
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.54261 keV    e-  93.0104 keV    e+  91.7686 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 212     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.24684
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.50169 keV    e-  89.3347 keV    e+  88.1421 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 213     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.47837
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.61691 keV    e-  98.1475 keV    e+  96.8372 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 214     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.51331
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.63878 keV    e-  99.4755 keV    e+  98.1475 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 215     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.65278
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.70621 keV    e-  104.97 keV    e+  103.568 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 216     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.56309
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.66096 keV    e-  102.186 keV    e+  100.146 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 217     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.41922
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.58463 keV    e-  96.1886 keV    e+  94.2689 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 218     used in the geometry : Yes
+ Material : G4_BONE_CORTICAL_ICRP_1.02004
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.36227 keV    e-  79.1567 keV    e+  78.0999 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 219     used in the geometry : Yes
+ Material : G4_AIR_1.02004
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.13241 keV    e-  79.1567 keV    e+  78.0999 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 220     used in the geometry : Yes
+ Material : G4_LUNG_ICRP_1.02004
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.1173 keV    e-  85.5166 keV    e+  84.6589 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+GmPDSProcessHelper::BookHistos -1 1
+ CreateHisto1D ALL: gamma:  interaction log Energy (MeV) = 910900090
+ CreateHisto1D ALL: gamma:  PD1: interaction dist to detector (mm) = 910900191
+ CreateHisto2D ALL: gamma:  PD1: interaction dist to detector (mm) vs weight = 910900192
+ CreateHisto2D ALL: gamma:  PD1: interaction dist to detector (mm) weighted by Hstar = 910900193
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : geantino : Energy (MeV) = 910900001
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : geantino : Energy no weighted (MeV) = 910900002
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : geantino : Energy weighted by Hstar = 910900003
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : geantino : log10(energy) (MeV) = 910900011
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : geantino : log10(energy) no weighted (MeV) = 910900012
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : geantino : log10(energy) weighted by Hstar = 910900013
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : geantino : log10(weight) = 910900021
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : geantino : log10(weight) weighted by Hstar = 910900022
+ CreateHisto2D ALL: ALL: gamma: PD1: ALL: At detector : geantino : log10(energy) vs log10(weight) = 910900031
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : gamma : Energy (MeV) = 910950001
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : gamma : Energy no weighted (MeV) = 910950002
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : gamma : Energy weighted by Hstar = 910950003
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : gamma : log10(energy) (MeV) = 910950011
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : gamma : log10(energy) no weighted (MeV) = 910950012
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : gamma : log10(energy) weighted by Hstar = 910950013
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : gamma : log10(weight) = 910950021
+ CreateHisto1D ALL: ALL: gamma: PD1: ALL: At detector : gamma : log10(weight) weighted by Hstar = 910950022
+ CreateHisto2D ALL: ALL: gamma: PD1: ALL: At detector : gamma : log10(energy) vs log10(weight) = 910950031
+ CreateHisto1D ALL: gamma:  PD2: interaction dist to detector (mm) = 910900291
+ CreateHisto2D ALL: gamma:  PD2: interaction dist to detector (mm) vs weight = 910900292
+ CreateHisto2D ALL: gamma:  PD2: interaction dist to detector (mm) weighted by Hstar = 910900293
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : geantino : Energy (MeV) = 910900101
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : geantino : Energy no weighted (MeV) = 910900102
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : geantino : Energy weighted by Hstar = 910900103
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : geantino : log10(energy) (MeV) = 910900111
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : geantino : log10(energy) no weighted (MeV) = 910900112
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : geantino : log10(energy) weighted by Hstar = 910900113
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : geantino : log10(weight) = 910900121
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : geantino : log10(weight) weighted by Hstar = 910900122
+ CreateHisto2D ALL: ALL: gamma: PD2: ALL: At detector : geantino : log10(energy) vs log10(weight) = 910900131
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : gamma : Energy (MeV) = 910950101
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : gamma : Energy no weighted (MeV) = 910950102
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : gamma : Energy weighted by Hstar = 910950103
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : gamma : log10(energy) (MeV) = 910950111
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : gamma : log10(energy) no weighted (MeV) = 910950112
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : gamma : log10(energy) weighted by Hstar = 910950113
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : gamma : log10(weight) = 910950121
+ CreateHisto1D ALL: ALL: gamma: PD2: ALL: At detector : gamma : log10(weight) weighted by Hstar = 910950122
+ CreateHisto2D ALL: ALL: gamma: PD2: ALL: At detector : gamma : log10(energy) vs log10(weight) = 910950131
+ CreateHisto1D ALL: gamma:  PD3: interaction dist to detector (mm) = 910900391
+ CreateHisto2D ALL: gamma:  PD3: interaction dist to detector (mm) vs weight = 910900392
+ CreateHisto2D ALL: gamma:  PD3: interaction dist to detector (mm) weighted by Hstar = 910900393
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : geantino : Energy (MeV) = 910900201
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : geantino : Energy no weighted (MeV) = 910900202
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : geantino : Energy weighted by Hstar = 910900203
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : geantino : log10(energy) (MeV) = 910900211
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : geantino : log10(energy) no weighted (MeV) = 910900212
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : geantino : log10(energy) weighted by Hstar = 910900213
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : geantino : log10(weight) = 910900221
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : geantino : log10(weight) weighted by Hstar = 910900222
+ CreateHisto2D ALL: ALL: gamma: PD3: ALL: At detector : geantino : log10(energy) vs log10(weight) = 910900231
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : gamma : Energy (MeV) = 910950201
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : gamma : Energy no weighted (MeV) = 910950202
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : gamma : Energy weighted by Hstar = 910950203
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : gamma : log10(energy) (MeV) = 910950211
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : gamma : log10(energy) no weighted (MeV) = 910950212
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : gamma : log10(energy) weighted by Hstar = 910950213
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : gamma : log10(weight) = 910950221
+ CreateHisto1D ALL: ALL: gamma: PD3: ALL: At detector : gamma : log10(weight) weighted by Hstar = 910950222
+ CreateHisto2D ALL: ALL: gamma: PD3: ALL: At detector : gamma : log10(energy) vs log10(weight) = 910950231
+ %%% EVENT 0 NTRACKS 1 TOTAL NTRACKS 1
+ %%% EVENT 1000 NTRACKS 1 TOTAL NTRACKS 1160
+ %%% EVENT 2000 NTRACKS 1 TOTAL NTRACKS 2308
+ %%% EVENT 3000 NTRACKS 1 TOTAL NTRACKS 3460
+ %%% EVENT 4000 NTRACKS 1 TOTAL NTRACKS 4663
+ %%% EVENT 5000 NTRACKS 1 TOTAL NTRACKS 5876
+ %%% EVENT 6000 NTRACKS 1 TOTAL NTRACKS 7034
+ %%% EVENT 7000 NTRACKS 1 TOTAL NTRACKS 8183
+ %%% EVENT 8000 NTRACKS 1 TOTAL NTRACKS 9456
+ %%% EVENT 9000 NTRACKS 1 TOTAL NTRACKS 10705
+ %%% EVENT 10000 NTRACKS 1 TOTAL NTRACKS 11875
+ %%% EVENT 11000 NTRACKS 11 TOTAL NTRACKS 13097
+ %%% EVENT 12000 NTRACKS 1 TOTAL NTRACKS 14299
+ %%% EVENT 13000 NTRACKS 1 TOTAL NTRACKS 15490
+ %%% EVENT 14000 NTRACKS 1 TOTAL NTRACKS 16695
+ %%% EVENT 15000 NTRACKS 1 TOTAL NTRACKS 17828
+ %%% EVENT 16000 NTRACKS 1 TOTAL NTRACKS 19009
+ %%% EVENT 17000 NTRACKS 1 TOTAL NTRACKS 20181
+ %%% EVENT 18000 NTRACKS 1 TOTAL NTRACKS 21399
+ %%% EVENT 19000 NTRACKS 1 TOTAL NTRACKS 22641
+ %%% EVENT 20000 NTRACKS 1 TOTAL NTRACKS 23858
+ %%% EVENT 21000 NTRACKS 1 TOTAL NTRACKS 24998
+ %%% EVENT 22000 NTRACKS 1 TOTAL NTRACKS 26189
+ %%% EVENT 23000 NTRACKS 1 TOTAL NTRACKS 27389
+ %%% EVENT 24000 NTRACKS 1 TOTAL NTRACKS 28568
+ %%% EVENT 25000 NTRACKS 1 TOTAL NTRACKS 29749
+ %%% EVENT 26000 NTRACKS 1 TOTAL NTRACKS 30916
+ %%% EVENT 27000 NTRACKS 6 TOTAL NTRACKS 32050
+ %%% EVENT 28000 NTRACKS 1 TOTAL NTRACKS 33144
+ %%% EVENT 29000 NTRACKS 1 TOTAL NTRACKS 34315
+ %%% EVENT 30000 NTRACKS 1 TOTAL NTRACKS 35515
+ %%% EVENT 31000 NTRACKS 1 TOTAL NTRACKS 36668
+ %%% EVENT 32000 NTRACKS 1 TOTAL NTRACKS 37806
+ %%% EVENT 33000 NTRACKS 1 TOTAL NTRACKS 38978
+ %%% EVENT 34000 NTRACKS 1 TOTAL NTRACKS 40170
+ %%% EVENT 35000 NTRACKS 1 TOTAL NTRACKS 41299
+ %%% EVENT 36000 NTRACKS 1 TOTAL NTRACKS 42503
+ %%% EVENT 37000 NTRACKS 1 TOTAL NTRACKS 43641
+ %%% EVENT 38000 NTRACKS 1 TOTAL NTRACKS 44832
+ %%% EVENT 39000 NTRACKS 1 TOTAL NTRACKS 46027
+ %%% EVENT 40000 NTRACKS 1 TOTAL NTRACKS 47219
+ %%% EVENT 41000 NTRACKS 1 TOTAL NTRACKS 48430
+ %%% EVENT 42000 NTRACKS 1 TOTAL NTRACKS 49605
+ %%% EVENT 43000 NTRACKS 1 TOTAL NTRACKS 50765
+ %%% EVENT 44000 NTRACKS 1 TOTAL NTRACKS 51987
+ %%% EVENT 45000 NTRACKS 1 TOTAL NTRACKS 53152
+ %%% EVENT 46000 NTRACKS 1 TOTAL NTRACKS 54321
+ %%% EVENT 47000 NTRACKS 1 TOTAL NTRACKS 55500
+ %%% EVENT 48000 NTRACKS 1 TOTAL NTRACKS 56702
+ %%% EVENT 49000 NTRACKS 1 TOTAL NTRACKS 57909
+ %%% EVENT 50000 NTRACKS 1 TOTAL NTRACKS 59124
+ %%% EVENT 51000 NTRACKS 1 TOTAL NTRACKS 60389
+ %%% EVENT 52000 NTRACKS 1 TOTAL NTRACKS 61580
+ %%% EVENT 53000 NTRACKS 1 TOTAL NTRACKS 62831
+ %%% EVENT 54000 NTRACKS 1 TOTAL NTRACKS 64008
+ %%% EVENT 55000 NTRACKS 1 TOTAL NTRACKS 65216
+ %%% EVENT 56000 NTRACKS 1 TOTAL NTRACKS 66384
+ %%% EVENT 57000 NTRACKS 1 TOTAL NTRACKS 67605
+ %%% EVENT 58000 NTRACKS 1 TOTAL NTRACKS 68785
+ %%% EVENT 59000 NTRACKS 1 TOTAL NTRACKS 69987
+ %%% EVENT 60000 NTRACKS 1 TOTAL NTRACKS 71195
+ %%% EVENT 61000 NTRACKS 1 TOTAL NTRACKS 72370
+ %%% EVENT 62000 NTRACKS 1 TOTAL NTRACKS 73590
+ %%% EVENT 63000 NTRACKS 1 TOTAL NTRACKS 74775
+ %%% EVENT 64000 NTRACKS 1 TOTAL NTRACKS 76040
+ %%% EVENT 65000 NTRACKS 1 TOTAL NTRACKS 77223
+ %%% EVENT 66000 NTRACKS 1 TOTAL NTRACKS 78333
+ %%% EVENT 67000 NTRACKS 1 TOTAL NTRACKS 79545
+ %%% EVENT 68000 NTRACKS 1 TOTAL NTRACKS 80702
+ %%% EVENT 69000 NTRACKS 1 TOTAL NTRACKS 81934
+ %%% EVENT 70000 NTRACKS 1 TOTAL NTRACKS 83166
+ %%% EVENT 71000 NTRACKS 1 TOTAL NTRACKS 84329
+ %%% EVENT 72000 NTRACKS 1 TOTAL NTRACKS 85513
+ %%% EVENT 73000 NTRACKS 1 TOTAL NTRACKS 86670
+ %%% EVENT 74000 NTRACKS 1 TOTAL NTRACKS 87849
+ %%% EVENT 75000 NTRACKS 1 TOTAL NTRACKS 89011
+ %%% EVENT 76000 NTRACKS 1 TOTAL NTRACKS 90200
+ %%% EVENT 77000 NTRACKS 1 TOTAL NTRACKS 91369
+ %%% EVENT 78000 NTRACKS 11 TOTAL NTRACKS 92605
+ %%% EVENT 79000 NTRACKS 1 TOTAL NTRACKS 93744
+ %%% EVENT 80000 NTRACKS 1 TOTAL NTRACKS 94926
+ %%% EVENT 81000 NTRACKS 1 TOTAL NTRACKS 96095
+ %%% EVENT 82000 NTRACKS 1 TOTAL NTRACKS 97334
+ %%% EVENT 83000 NTRACKS 1 TOTAL NTRACKS 98544
+ %%% EVENT 84000 NTRACKS 1 TOTAL NTRACKS 99701
+ %%% EVENT 85000 NTRACKS 1 TOTAL NTRACKS 100902
+ %%% EVENT 86000 NTRACKS 1 TOTAL NTRACKS 102138
+ %%% EVENT 87000 NTRACKS 1 TOTAL NTRACKS 103368
+ %%% EVENT 88000 NTRACKS 1 TOTAL NTRACKS 104544
+ %%% EVENT 89000 NTRACKS 1 TOTAL NTRACKS 105705
+ %%% EVENT 90000 NTRACKS 1 TOTAL NTRACKS 106861
+ %%% EVENT 91000 NTRACKS 1 TOTAL NTRACKS 108052
+ %%% EVENT 92000 NTRACKS 1 TOTAL NTRACKS 109223
+ %%% EVENT 93000 NTRACKS 1 TOTAL NTRACKS 110411
+ %%% EVENT 94000 NTRACKS 1 TOTAL NTRACKS 111600
+ %%% EVENT 95000 NTRACKS 1 TOTAL NTRACKS 112764
+ %%% EVENT 96000 NTRACKS 1 TOTAL NTRACKS 113908
+ %%% EVENT 97000 NTRACKS 1 TOTAL NTRACKS 115118
+ %%% EVENT 98000 NTRACKS 1 TOTAL NTRACKS 116291
+ %%% EVENT 99000 NTRACKS 1 TOTAL NTRACKS 117530
+ Run terminated.
+Run Summary
+  Number of events processed : 100000
+  User=30.300000s Real=30.331501s Sys=0.030000s
+%%%%%% SCORE IN POINT DETECTOR FOR set ALL: ALL: gamma: PD1: ALL: at (0,251,0) NEVENTS= 100000
+ MultiFunctionalDet: PDS_detector
+ PrimitiveScorer: PointDetector ALL: ALL: gamma: PD1: ALL:
+ Number of entries= 25
+ index:  0-0.0122474 = 8.09124e-10 +-(REL) 0.974608 sumW2 6.21856e-09 sumW3 4.89879e-13 sumW4 3.86166e-17  N 273
+ index: 0.0122474-0.0173205 = 5.77703e-10 +-(REL) 1 sumW2 3.33741e-09 sumW3 1.92804e-13 sumW4 1.11383e-17  N 33
+ index: 0.0173205-0.0244949 = 1.22279e-197 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 38
+ index: 0.0244949-0.034641 = 5.20718e-116 +-(REL) 0.777237 sumW2 1.638e-221 sumW3 0 sumW4 0  N 83
+ index: 0.034641-0.0447214 = 1.45219e-10 +-(REL) 0.614234 sumW2 7.95651e-11 sumW3 4.78045e-16 sumW4 3.05445e-21  N 480
+ index: 0.0447214-0.0547723 = 5.50264e-11 +-(REL) 1 sumW2 3.02791e-11 sumW3 1.66615e-16 sumW4 9.16823e-22  N 304
+ index: 0.0547723-0.069282 = 2.49997e-11 +-(REL) 1 sumW2 6.24986e-12 sumW3 1.56245e-17 sumW4 3.90607e-23  N 533
+ index: 0.069282-0.0894427 = 8.73692e-20 +-(REL) 0.401142 sumW2 1.22839e-29 sumW3 2.03183e-44 sumW4 3.50987e-59  N 346
+ index: 0.0894427-0.122474 = 2.77415e-30 +-(REL) 0.883156 sumW2 6.00256e-50 sumW3 1.43097e-74 sumW4 3.46209e-99  N 201
+ index: 0.122474-0.173205 = 5.25902e-25 +-(REL) 0.953494 sumW2 2.51447e-39 sumW3 1.25629e-58 sumW4 6.29097e-78  N 47
+ index: 0.173205-0.244949 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.244949-0.34641 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.34641-0.447214 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.447214-0.547723 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.547723-0.69282 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.69282-0.894427 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.894427-1.07238 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 1.07238-1.51658 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 1.51658-2.44949 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 2.44949-3.4641 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 3.4641-4.47214 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 4.47214-5.47723 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 5.47723-6.9282 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 6.9282-8.94427 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 8.94427-10 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ALL: ALL: gamma: PD1: ALL: SUM_ALL: 1.61207e-09 +-(REL) 0.610063 cm-2   N 2338
+ALL: ALL: gamma: PD1: ALL: Hstar= 6.58954e-10 pSv/particle 
+%%%%%% SCORE IN POINT DETECTOR FOR set ALL: ALL: gamma: PD2: ALL: at (0,251,1000) NEVENTS= 100000
+ MultiFunctionalDet: PDS_detector
+ PrimitiveScorer: PointDetector ALL: ALL: gamma: PD2: ALL:
+ Number of entries= 25
+ index:  0-0.0122474 = 8.80838e-12 +-(REL) 0.999993 sumW2 7.75865e-13 sumW3 6.83407e-19 sumW4 6.01967e-25  N 273
+ index: 0.0122474-0.0173205 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 33
+ index: 0.0173205-0.0244949 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 38
+ index: 0.0244949-0.034641 = 3.01693e-119 +-(REL) 0.998213 sumW2 9.06939e-228 sumW3 0 sumW4 0  N 83
+ index: 0.034641-0.0447214 = 3.18144e-11 +-(REL) 0.695742 sumW2 4.89947e-12 sumW3 7.85912e-18 sumW4 1.28242e-23  N 480
+ index: 0.0447214-0.0547723 = 1.61126e-11 +-(REL) 1 sumW2 2.59617e-12 sumW3 4.18312e-18 sumW4 6.74012e-24  N 304
+ index: 0.0547723-0.069282 = 3.72907e-29 +-(REL) 0.983586 sumW2 1.34532e-47 sumW3 4.93246e-71 sumW4 1.8089e-94  N 533
+ index: 0.069282-0.0894427 = 1.2401e-20 +-(REL) 0.868962 sumW2 1.16122e-30 sumW3 1.22919e-45 sumW4 1.31477e-60  N 346
+ index: 0.0894427-0.122474 = 2.49159e-32 +-(REL) 0.999669 sumW2 6.20392e-54 sumW3 1.54525e-80 sumW4 3.84887e-107  N 201
+ index: 0.122474-0.173205 = 1.96028e-30 +-(REL) 1 sumW2 3.84269e-50 sumW3 7.53273e-75 sumW4 1.47662e-99  N 46
+ index: 0.173205-0.244949 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.244949-0.34641 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.34641-0.447214 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.447214-0.547723 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.547723-0.69282 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.69282-0.894427 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.894427-1.07238 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 1.07238-1.51658 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 1.51658-2.44949 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 2.44949-3.4641 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 3.4641-4.47214 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 4.47214-5.47723 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 5.47723-6.9282 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 6.9282-8.94427 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 8.94427-10 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ALL: ALL: gamma: PD2: ALL: SUM_ALL: 5.67354e-11 +-(REL) 0.506917 cm-2   N 2337
+ALL: ALL: gamma: PD2: ALL: Hstar= 2.79109e-11 pSv/particle 
+%%%%%% SCORE IN POINT DETECTOR FOR set ALL: ALL: gamma: PD3: ALL: at (0,251,-1000) NEVENTS= 100000
+ MultiFunctionalDet: PDS_detector
+ PrimitiveScorer: PointDetector ALL: ALL: gamma: PD3: ALL:
+ Number of entries= 25
+ index:  0-0.0122474 = 1.46014e-10 +-(REL) 0.501646 sumW2 5.36537e-11 sumW3 2.47469e-16 sumW4 1.28608e-21  N 272
+ index: 0.0122474-0.0173205 = 1.57806e-10 +-(REL) 0.713211 sumW2 1.26674e-10 sumW3 1.03359e-15 sumW4 8.56117e-21  N 33
+ index: 0.0173205-0.0244949 = 1.41058e-10 +-(REL) 0.725564 sumW2 1.0475e-10 sumW3 8.13019e-16 sumW4 6.5333e-21  N 38
+ index: 0.0244949-0.034641 = 2.17392e-10 +-(REL) 0.580761 sumW2 1.594e-10 sumW3 1.18301e-15 sumW4 8.8871e-21  N 83
+ index: 0.034641-0.0447214 = 3.81873e-10 +-(REL) 0.597888 sumW2 5.21297e-10 sumW3 8.90326e-15 sumW4 1.65068e-19  N 480
+ index: 0.0447214-0.0547723 = 5.82943e-16 +-(REL) 1 sumW2 3.39822e-21 sumW3 1.98097e-31 sumW4 1.15479e-41  N 304
+ index: 0.0547723-0.069282 = 3.4636e-13 +-(REL) 1 sumW2 1.19965e-15 sumW3 4.15512e-23 sumW4 1.43917e-30  N 533
+ index: 0.069282-0.0894427 = 1.33459e-10 +-(REL) 0.603307 sumW2 6.48303e-11 sumW3 3.4469e-16 sumW4 1.89019e-21  N 346
+ index: 0.0894427-0.122474 = 3.14224e-32 +-(REL) 0.998029 sumW2 9.8348e-54 sumW3 3.08422e-80 sumW4 9.67226e-107  N 201
+ index: 0.122474-0.173205 = 1.61755e-30 +-(REL) 0.769751 sumW2 1.55031e-50 sumW3 1.64547e-75 sumW4 1.83523e-100  N 47
+ index: 0.173205-0.244949 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.244949-0.34641 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.34641-0.447214 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.447214-0.547723 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.547723-0.69282 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.69282-0.894427 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 0.894427-1.07238 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 1.07238-1.51658 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 1.51658-2.44949 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 2.44949-3.4641 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 3.4641-4.47214 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 4.47214-5.47723 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 5.47723-6.9282 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 6.9282-8.94427 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ index: 8.94427-10 = 0 +-(REL) 0 sumW2 0 sumW3 0 sumW4 0  N 0
+ALL: ALL: gamma: PD3: ALL: SUM_ALL: 1.17795e-09 +-(REL) 0.272531 cm-2   N 2337
+ALL: ALL: gamma: PD3: ALL: Hstar= 7.67116e-10 pSv/particle 
+@@@@ GmCountProcessesUA
+ PART_COUNT: e- = 109623
+ PART_COUNT: gamma = 2049
+ PART_COUNT: geantino = 7012
+ PROC_COUNT e- : GmPDSGammaProcess = 109623
+ PROC_COUNT e- : Transportation = 346076
+ PROC_COUNT e- : eBrem = 1770
+ PROC_COUNT e- : eBrem_NoSeco = 182
+ PROC_COUNT e- : eIoni = 7450
+ PROC_COUNT e- : eIoni_NoSeco = 127797
+ PROC_COUNT e- : msc = 2475778
+ PROC_COUNT e- : ALL = 3.06868e+06
+ PROC_COUNT gamma : Rayl = 155
+ PROC_COUNT gamma : Transportation = 2431
+ PROC_COUNT gamma : compt = 134
+ PROC_COUNT gamma : phot = 2039
+ PROC_COUNT gamma : ALL = 4759
+ PROC_COUNT geantino : Transportation = 42897
+PROC_COUNT geantino : ALL = 42897
+PROC_CREATOR_COUNT e- : Primary = 100000
+PROC_CREATOR_COUNT e- : compt = 134
+PROC_CREATOR_COUNT e- : eIoni = 7450
+PROC_CREATOR_COUNT e- : phot = 2039
+PROC_CREATOR_COUNT gamma : eBrem = 1770
+PROC_CREATOR_COUNT gamma : phot = 279
+PROC_CREATOR_COUNT geantino : GmPDSGammaProcess = 7012
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 pds.exercise4b:NormalizeToNEvents
+=== saving histograms in file === pds.exercise4b.root

@@ -1,0 +1,36 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise2
+
+/gamos/setParam GmGeometryFromText:FileName exercise2.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+#/gamos/verbosity GmBaseVerbosity debug
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+
+### Make histogram of energy deposits in container 1 and container 2
+# process can be called compt, LowEnCompton, PenCompton 
+/gamos/filter containerInFilter GmInLogicalVolumeFilter container
+/gamos/setParam GmStepDataHistosUA_containerInFilter_GmClassifierByPhysicalVolume:DataList AccumulatedEnergyDeposited 
+/gamos/userAction GmStepDataHistosUA containerInFilter GmClassifierByPhysicalVolume
+
+### Make histogram of energy deposits in detector 1 and detector 2
+/gamos/filter detectorInFilter GmInLogicalVolumeFilter detector
+/gamos/classifier ancestorsClassifier GmClassifierByAncestors 2 10 
+/gamos/setParam GmStepDataHistosUA_detectorInFilter_ancestorsClassifier:DataList AccumulatedEnergyDeposited
+/gamos/userAction GmStepDataHistosUA detectorInFilter ancestorsClassifier
+
+### Make kinetic energy histogram only for primary gammas that enter detector 2
+/gamos/filter detector2EnterFilter GmEnterTouchableFilter container:2/detector
+/gamos/setParam GmStepDataHistosUA_detector2EnterFilter_GmPrimaryFilter:DataList log10(FinalKineticEnergy)
+/gamos/analysis/histo1Min GmStepDataHistosUA_detector2EnterFilter_GmPrimaryFilter:log10(FinalKineticEnergy) -2
+/gamos/analysis/histo1Max GmStepDataHistosUA_detector2EnterFilter_GmPrimaryFilter:log10(FinalKineticEnergy) 1
+/gamos/userAction GmStepDataHistosUA detector2EnterFilter GmPrimaryFilter
+
+/control/execute ../../../examples/visVRML2FILE.in
+
+/run/beamOn 10000
+

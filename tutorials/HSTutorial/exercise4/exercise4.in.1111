@@ -1,0 +1,32 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4
+
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/exercise1.geom
+/gamos/setParam GmGeometryFromText:FileNameParallel parallelMesh.geom 1
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+#/gamos/verbosity GmBaseVerbosity debug
+#/gamos/verbosity GmScoringVerbosity debug
+
+/run/initialize
+
+/gamos/physics/addParallelProcess 
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+
+### Define mesh 1x1x1 mm covering detector 1 and score dose deposition in each voxel, only if voxel is in detector
+/gamos/scoring/createMFDetector doseDet mesh
+/gamos/setParam doseScorer:ConvergenceTester DOSE_SCORER_TESTER
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+/gamos/filter inDetectorFilter GmInMassLogicalVolumeFilter detector
+/gamos/scoring/addFilter2Scorer inDetectorFilter doseScorer
+### Make dose histograms one and bidimensional and dose-volume histograms
+/gamos/analysis/histo1Min *Dose -18
+/gamos/analysis/histo1Max *Dose -9
+/gamos/analysis/histo1Min *volume -18
+/gamos/analysis/histo1Max *volume -9
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorer
+/gamos/scoring/addPrinter2Scorer GmPSPrinterCout doseScorer
+
+/gamos/random/restoreSeeds 1111 1111
+/run/beamOn 100000

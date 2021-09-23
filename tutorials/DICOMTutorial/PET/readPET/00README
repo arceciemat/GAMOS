@@ -1,0 +1,22 @@
+// PRODUCTION OF PET FILE IN GAMOS FORMAT
+
+DICOM2G4 Data.PET.dat
+
+File testPET.g4dcm  will be created
+
+// VISUALITATION OF PET IMAGE
+
+drawG4dcm -fDCMPET testPET.g4dcm -bDrawXZ 0 -bDrawYZ 0
+
+
+// USE OF PET FILE AS INPUT FOR GAMOS JOB (IT WILL BE USED TO CREATE MORE PRIMARY EVENTS IN VOXELS WHERE INTENSITY IS BIGGER)
+
+The following line has to be added (see petPos.in)
+
+/gamos/generator/positionDist source GmGenerDistPositionPETImage testPET.g4dcm
+
+If you run
+
+gamos petPos.in
+
+a file will be created GmTrackDataHistosUA_PosZC.root containing two dimensional histograms of the position of the primary track vertices in the XY plane, one histogram per each image slice. These histograms are very similar to the PET slice images, demonstrating that the PET image was correctly used.

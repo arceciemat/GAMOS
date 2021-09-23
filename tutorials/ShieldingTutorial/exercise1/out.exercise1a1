@@ -1,0 +1,335 @@
+@@@@@ Running GAMOS with script: exercise1a1.in
+
+**************************************************************
+ Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+ Using Random Engine: MixMaxRng
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+"/vis/list" to see available colours.
+/control/execute exercise1a1.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise1a1
+/gamos/setParam GmGeometryFromText:FileName exercise1a1.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/generator GmGenerator
+/run/initialize
+GmPhysicsGammaLowEner::ConstructProcess 
+/gamos/generator/addSingleParticleSource source gamma 0.1405*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. 1.
+/gamos/generator/positionDist source GmGenerDistPositionPoint 0. 0. 0.
+/gamos/userAction GmKillAllUA GmSecondaryFilter
+/gamos/classifier ancesC GmClassifierByAncestors 1 1000
+/gamos/filter exitshieldF GmExitLogicalVolumeFilter shield
+/gamos/setParam SHNthValueLayerUA_exitshieldF_ancesC:LayerWidth 0.1
+/gamos/setParam SHNthValueLayerUA_exitshieldF_ancesC:Reductions 10.
+/gamos/userAction SHNthValueLayerUA exitshieldF ancesC
+/gamos/setParam GmCountTracksUA:EachNEvent 1000
+/gamos/userAction GmCountTracksUA
+/run/beamOn 100000
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : G4_Pb
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+ %%% EVENT 0 NTRACKS 1 TOTAL NTRACKS 1
+ %%% EVENT 1000 NTRACKS 1 TOTAL NTRACKS 1001
+ %%% EVENT 2000 NTRACKS 1 TOTAL NTRACKS 2001
+ %%% EVENT 3000 NTRACKS 1 TOTAL NTRACKS 3001
+ %%% EVENT 4000 NTRACKS 1 TOTAL NTRACKS 4001
+ %%% EVENT 5000 NTRACKS 1 TOTAL NTRACKS 5001
+ %%% EVENT 6000 NTRACKS 1 TOTAL NTRACKS 6001
+ %%% EVENT 7000 NTRACKS 1 TOTAL NTRACKS 7001
+ %%% EVENT 8000 NTRACKS 1 TOTAL NTRACKS 8001
+ %%% EVENT 9000 NTRACKS 1 TOTAL NTRACKS 9001
+ %%% EVENT 10000 NTRACKS 1 TOTAL NTRACKS 10001
+ %%% EVENT 11000 NTRACKS 1 TOTAL NTRACKS 11001
+ %%% EVENT 12000 NTRACKS 1 TOTAL NTRACKS 12001
+ %%% EVENT 13000 NTRACKS 1 TOTAL NTRACKS 13001
+ %%% EVENT 14000 NTRACKS 1 TOTAL NTRACKS 14001
+ %%% EVENT 15000 NTRACKS 1 TOTAL NTRACKS 15001
+ %%% EVENT 16000 NTRACKS 1 TOTAL NTRACKS 16001
+ %%% EVENT 17000 NTRACKS 1 TOTAL NTRACKS 17001
+ %%% EVENT 18000 NTRACKS 1 TOTAL NTRACKS 18001
+ %%% EVENT 19000 NTRACKS 1 TOTAL NTRACKS 19001
+ %%% EVENT 20000 NTRACKS 1 TOTAL NTRACKS 20001
+ %%% EVENT 21000 NTRACKS 1 TOTAL NTRACKS 21001
+ %%% EVENT 22000 NTRACKS 1 TOTAL NTRACKS 22001
+ %%% EVENT 23000 NTRACKS 1 TOTAL NTRACKS 23001
+ %%% EVENT 24000 NTRACKS 1 TOTAL NTRACKS 24001
+ %%% EVENT 25000 NTRACKS 1 TOTAL NTRACKS 25001
+ %%% EVENT 26000 NTRACKS 1 TOTAL NTRACKS 26001
+ %%% EVENT 27000 NTRACKS 1 TOTAL NTRACKS 27001
+ %%% EVENT 28000 NTRACKS 1 TOTAL NTRACKS 28001
+ %%% EVENT 29000 NTRACKS 1 TOTAL NTRACKS 29001
+ %%% EVENT 30000 NTRACKS 1 TOTAL NTRACKS 30001
+ %%% EVENT 31000 NTRACKS 1 TOTAL NTRACKS 31001
+ %%% EVENT 32000 NTRACKS 1 TOTAL NTRACKS 32001
+ %%% EVENT 33000 NTRACKS 1 TOTAL NTRACKS 33001
+ %%% EVENT 34000 NTRACKS 1 TOTAL NTRACKS 34001
+ %%% EVENT 35000 NTRACKS 1 TOTAL NTRACKS 35001
+ %%% EVENT 36000 NTRACKS 1 TOTAL NTRACKS 36001
+ %%% EVENT 37000 NTRACKS 1 TOTAL NTRACKS 37001
+ %%% EVENT 38000 NTRACKS 1 TOTAL NTRACKS 38001
+ %%% EVENT 39000 NTRACKS 1 TOTAL NTRACKS 39001
+ %%% EVENT 40000 NTRACKS 1 TOTAL NTRACKS 40001
+ %%% EVENT 41000 NTRACKS 1 TOTAL NTRACKS 41001
+ %%% EVENT 42000 NTRACKS 1 TOTAL NTRACKS 42001
+ %%% EVENT 43000 NTRACKS 1 TOTAL NTRACKS 43001
+ %%% EVENT 44000 NTRACKS 1 TOTAL NTRACKS 44001
+ %%% EVENT 45000 NTRACKS 1 TOTAL NTRACKS 45001
+ %%% EVENT 46000 NTRACKS 1 TOTAL NTRACKS 46001
+ %%% EVENT 47000 NTRACKS 1 TOTAL NTRACKS 47001
+ %%% EVENT 48000 NTRACKS 1 TOTAL NTRACKS 48001
+ %%% EVENT 49000 NTRACKS 1 TOTAL NTRACKS 49001
+ %%% EVENT 50000 NTRACKS 1 TOTAL NTRACKS 50001
+ %%% EVENT 51000 NTRACKS 1 TOTAL NTRACKS 51001
+ %%% EVENT 52000 NTRACKS 1 TOTAL NTRACKS 52001
+ %%% EVENT 53000 NTRACKS 1 TOTAL NTRACKS 53001
+ %%% EVENT 54000 NTRACKS 1 TOTAL NTRACKS 54001
+ %%% EVENT 55000 NTRACKS 1 TOTAL NTRACKS 55001
+ %%% EVENT 56000 NTRACKS 1 TOTAL NTRACKS 56001
+ %%% EVENT 57000 NTRACKS 1 TOTAL NTRACKS 57001
+ %%% EVENT 58000 NTRACKS 1 TOTAL NTRACKS 58001
+ %%% EVENT 59000 NTRACKS 1 TOTAL NTRACKS 59001
+ %%% EVENT 60000 NTRACKS 1 TOTAL NTRACKS 60001
+ %%% EVENT 61000 NTRACKS 1 TOTAL NTRACKS 61001
+ %%% EVENT 62000 NTRACKS 1 TOTAL NTRACKS 62001
+ %%% EVENT 63000 NTRACKS 1 TOTAL NTRACKS 63001
+ %%% EVENT 64000 NTRACKS 1 TOTAL NTRACKS 64001
+ %%% EVENT 65000 NTRACKS 1 TOTAL NTRACKS 65001
+ %%% EVENT 66000 NTRACKS 1 TOTAL NTRACKS 66001
+ %%% EVENT 67000 NTRACKS 1 TOTAL NTRACKS 67001
+ %%% EVENT 68000 NTRACKS 1 TOTAL NTRACKS 68001
+ %%% EVENT 69000 NTRACKS 1 TOTAL NTRACKS 69001
+ %%% EVENT 70000 NTRACKS 1 TOTAL NTRACKS 70001
+ %%% EVENT 71000 NTRACKS 1 TOTAL NTRACKS 71001
+ %%% EVENT 72000 NTRACKS 1 TOTAL NTRACKS 72001
+ %%% EVENT 73000 NTRACKS 1 TOTAL NTRACKS 73001
+ %%% EVENT 74000 NTRACKS 1 TOTAL NTRACKS 74001
+ %%% EVENT 75000 NTRACKS 1 TOTAL NTRACKS 75001
+ %%% EVENT 76000 NTRACKS 1 TOTAL NTRACKS 76001
+ %%% EVENT 77000 NTRACKS 1 TOTAL NTRACKS 77001
+ %%% EVENT 78000 NTRACKS 1 TOTAL NTRACKS 78001
+ %%% EVENT 79000 NTRACKS 1 TOTAL NTRACKS 79001
+ %%% EVENT 80000 NTRACKS 1 TOTAL NTRACKS 80001
+ %%% EVENT 81000 NTRACKS 1 TOTAL NTRACKS 81001
+ %%% EVENT 82000 NTRACKS 1 TOTAL NTRACKS 82001
+ %%% EVENT 83000 NTRACKS 1 TOTAL NTRACKS 83001
+ %%% EVENT 84000 NTRACKS 1 TOTAL NTRACKS 84001
+ %%% EVENT 85000 NTRACKS 1 TOTAL NTRACKS 85001
+ %%% EVENT 86000 NTRACKS 1 TOTAL NTRACKS 86001
+ %%% EVENT 87000 NTRACKS 1 TOTAL NTRACKS 87001
+ %%% EVENT 88000 NTRACKS 1 TOTAL NTRACKS 88001
+ %%% EVENT 89000 NTRACKS 1 TOTAL NTRACKS 89001
+ %%% EVENT 90000 NTRACKS 1 TOTAL NTRACKS 90001
+ %%% EVENT 91000 NTRACKS 1 TOTAL NTRACKS 91001
+ %%% EVENT 92000 NTRACKS 1 TOTAL NTRACKS 92001
+ %%% EVENT 93000 NTRACKS 1 TOTAL NTRACKS 93001
+ %%% EVENT 94000 NTRACKS 1 TOTAL NTRACKS 94001
+ %%% EVENT 95000 NTRACKS 1 TOTAL NTRACKS 95001
+ %%% EVENT 96000 NTRACKS 1 TOTAL NTRACKS 96001
+ %%% EVENT 97000 NTRACKS 1 TOTAL NTRACKS 97001
+ %%% EVENT 98000 NTRACKS 1 TOTAL NTRACKS 98001
+ %%% EVENT 99000 NTRACKS 1 TOTAL NTRACKS 99001
+ Run terminated.
+Run Summary
+  Number of events processed : 100000
+  User=6.830000s Real=6.830421s Sys=0.000000s
+ CreateHisto1D %%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV = 37468094
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:0 = 0.78118
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:1 = 0.60619
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:2 = 0.47093
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:3 = 0.36605
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:4 = 0.28291
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:5 = 0.21817
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:6 = 0.1681
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:7 = 0.13038
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:8 = 0.10063
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:9 = 0.0783
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:10 = 0.06064
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:11 = 0.04705
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:12 = 0.0365
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:13 = 0.02764
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:14 = 0.02158
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:15 = 0.01685
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:16 = 0.01291
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:17 = 0.00997
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:18 = 0.00786
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:19 = 0.00628
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:20 = 0.00475
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:21 = 0.00359
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:22 = 0.00273
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:23 = 0.00208
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:24 = 0.00152
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:25 = 0.00119
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:26 = 0.00085
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:27 = 0.00062
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:28 = 0.00044
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:29 = 0.0004
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:30 = 0.00034
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:31 = 0.00023
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:32 = 0.00018
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:33 = 0.00015
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:34 = 8e-05
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:35 = 6e-05
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:36 = 3e-05
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:37 = 2e-05
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:38 = 2e-05
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:39 = 2e-05
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:40 = 2e-05
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:41 = 1e-05
+ FCN=62.9521 FROM MIGRAD    STATUS=CONVERGED      54 CALLS          55 TOTAL
+                     EDM=6.20464e-07    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  Constant     1.17753e+01   2.24006e-03   5.84105e-06   3.46072e-01
+   2  Slope       -2.49923e+00   3.68747e-03   9.61500e-06  -1.11008e-01
+%%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV : FIT chi2= 62.9521 nDoF 38
+%%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV : REDUCTION FROM FIT= 10 reached at depth= 0.921319 +- 0.00135936 mm 
+%%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV : REDUCTION FROM SCORES= 10 reached at depth= 0.802503 mm
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 reduction.exercise1a1:NormalizeToNEvents
+=== saving histograms in file === reduction.exercise1a1.root

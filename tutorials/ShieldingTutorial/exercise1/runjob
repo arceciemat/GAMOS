@@ -1,0 +1,59 @@
+#!/bin/sh
+#runjob gamma 1. G4_Pb 1. 10000 11111
+
+PARTICLE=$1
+ENERGY=$2
+MATERIAL=$3
+
+inputfile="exercise1a1"
+if [ X$3 == "X" ] ; then 
+ echo "!!ERROR, AT LEAST FIRST THREE ARGUMENTS MUST BE SUPPLIED : PARTICLE ENERGY MATERIAL WIDTH NEV SEED"
+ exit
+fi
+ SUFFIX=$1"."$2"."$3
+if [ X$4 == "X" ] ; then 
+ WIDTH=1.
+else 
+ WIDTH=$4
+ SUFFIX=$SUFFIX"."$WIDTH
+fi
+
+if [ X$5 == "X" ] ; then 
+ NEV=10000
+else 
+ NEV=$5
+ SUFFIX=$SUFFIX"."$NEV
+fi
+if [ X$6 == "X" ] ; then 
+ SEED=1111
+else 
+ SEED=$6
+ SUFFIX=$SUFFIX"."$SEED
+fi
+
+echo " SUFFIX = $SUFFIX "
+
+new_inputfile=$inputfile"."$SUFFIX".inn"
+log_inputfile="reduction."$SUFFIX".out"
+
+echo " The new input file is = " $new_inputfile
+
+gawk -v PARTICLE=$PARTICLE -v ENERGY=$ENERGY -v WIDTH=$WIDTH -v NEV=$NEV -v SUFFIX=$SUFFIX -v SEED=$SEED '{
+    if($1=="/run/beamOn") {printf("%s %s \n",$1, NEV) }
+    else if($2=="GmAnalysisMgr:FileNameSuffix") {printf("%s %s %s\n",$1, $2, SUFFIX) }
+    else if($1=="/gamos/generator/addSingleParticleSource") {printf("%s %s %s %s\n",$1, $2, PARTICLE, ENERGY) }
+    else if($2=="SHNthValueLayerUA:LayerWidth") {printf("%s %s %s\n",$1, $2, WIDTH) }
+    else if($1=="/run/beamOn") {printf("%s %s\n",$1, NEV) }
+    else if($1=="/gamos/random/setSeeds") {printf("%s %s %s\n",$1, SEED, SEED) }
+    else { print $0 }
+}' $inputfile.in > $new_inputfile
+
+gawk -v WIDTH=$WIDTH -v MATERIAL=$MATERIAL '{
+    if($2=="WIDTH") {printf("%s %s %s\n",$1, $2, WIDTH) }
+    else if($1==":VOLU" && $2=="shield") {printf("%s %s %s %s %s %s %s\n",$1, $2, $3, $4, $5, $6, MATERIAL) }
+    else { print $0 }
+}' exercise1a.geom > kk
+mv kk exercise1a.geom 
+
+gamos $new_inputfile | tee $log_inputfile
+

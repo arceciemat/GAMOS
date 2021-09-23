@@ -1,0 +1,19 @@
+
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName exercise2.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 10.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionPoint -200. 0. 0. 
+/gamos/generator/directionDist source GmGenerDistDirectionConst 1. 0. 0.
+
+/run/beamOn 10
+

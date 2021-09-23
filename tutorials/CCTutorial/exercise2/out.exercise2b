@@ -1,0 +1,566 @@
+@@@@@ Running GAMOS with script: exercise2b.in
+
+*************************************************************
+ Geant4 version Name: geant4-10-03-patch-03    (20-October-2017)
+                      Copyright : Geant4 Collaboration
+                      Reference : NIM A 506 (2003), 250-303
+                            WWW : http://cern.ch/geant4
+*************************************************************
+
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+Available colours:
+  black, blue, brown, cyan, gray, green, grey, magenta, red, white, yellow
+
+/control/execute exercise2b.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise2b
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/CCGeometryRingEx1Water.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-lowener is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-lowener is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/GmPhysics/addPhysics gamma-lowener
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : WARNING
+      issued by : GmPhysicsMessenger::SetNewValue
+You are using a deprecated command /gamos/GmPhysics/addPhysics , please use /gamos/GmPhysics/replacePhysics
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+GmEMPhysics::Replaceing PhysicsList component gamma-lowener
+GmEMPhysics::ReplacePhysicsList: gamma-lowener is registered
+G4VModularPhysicsList::ReplacePhysics: gamma-lowenerwith type : 22  is replaces with gamma-lowener
+/gamos/GmPhysics/addPhysics electron-lowener
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : WARNING
+      issued by : GmPhysicsMessenger::SetNewValue
+You are using a deprecated command /gamos/GmPhysics/addPhysics , please use /gamos/GmPhysics/replacePhysics
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+GmEMPhysics::Replaceing PhysicsList component electron-lowener
+GmEMPhysics::ReplacePhysicsList: electron-lowener is registered
+G4VModularPhysicsList::ReplacePhysics: electron-lowenerwith type : 11  is replaces with electron-lowener
+/gamos/generator GmGenerator
+/gamos/setParam GmCountTracksUA:EachNEvent 1000
+/gamos/userAction GmCountTracksUA
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmHistosGammaAtSD
+ CreateHisto1D Gamma At SD: ALL: Event Type = 103001
+ CreateHisto1D Gamma At SD: ALL: N interactions = 103002
+ CreateHisto1D Gamma At SD: ALL: N PhotoElec = 103003
+ CreateHisto1D Gamma At SD: ALL: N Compton = 103004
+ CreateHisto1D Gamma At SD: ALL: N Rayleigh = 103005
+ CreateHisto1D Gamma At SD: ALL: N Conversion = 103006
+ CreateHisto2D Gamma At SD: ALL: N PhotoElec vs Compton+Rayleigh = 103007
+ CreateHisto1D Gamma At SD: ALL: Energy at entering SD (keV) = 103008
+ CreateHisto2D Gamma At SD: ALL: Energy at entering SD vs energy initial (keV) = 103099
+ CreateHisto1D Gamma At SD: ALL: Energy lost PhotoElec (keV) = 103011
+ CreateHisto1D Gamma At SD: ALL: Distance to 1st when Compton (mm) = 103012
+ CreateHisto1D Gamma At SD: ALL: Distance to 1st when PhotoElec (mm) = 103013
+ CreateHisto1D Gamma At SD: ALL: Diff ang when PhotoElec (mrad) = 103014
+ CreateHisto1D Gamma At SD: ALL: Diff energy when PhotoElec (keV) = 103015
+ CreateHisto1D Gamma At SD: ALL: Energy lost Compton (keV) = 103021
+ CreateHisto1D Gamma At SD: ALL: Angle variation Compton (mrad) = 103022
+ CreateHisto1D Gamma At SD: ALL: Energy lost Rayleigh (keV) = 103031
+ CreateHisto1D Gamma At SD: ALL: Angle variation Rayleigh (mrad) = 103032
+ CreateHisto1D Gamma At SD: ALL: Energy lost Conversion (keV) = 103041
+ CreateHisto1D Gamma At SD: ALL: Angle variation Conversion (mrad) = 103042
+ CreateHisto1D Gamma At SD: ALL: Distance between interactions (mm) = 103051
+ CreateHisto1D Gamma At SD: ALL: Distance between 1st and other interactions (mm) = 103052
+ CreateHisto1D Gamma At SD: ALL: Distance between Compton-Compton interactions (mm) = 103053
+ CreateHisto1D Gamma At SD: ALL: Distance between Compton-PhotElec interactions (mm) = 103054
+ CreateHisto1D Gamma At SD: No PE: Event Type = 103101
+ CreateHisto1D Gamma At SD: No PE: N interactions = 103102
+ CreateHisto1D Gamma At SD: No PE: N PhotoElec = 103103
+ CreateHisto1D Gamma At SD: No PE: N Compton = 103104
+ CreateHisto1D Gamma At SD: No PE: N Rayleigh = 103105
+ CreateHisto1D Gamma At SD: No PE: N Conversion = 103106
+ CreateHisto2D Gamma At SD: No PE: N PhotoElec vs Compton+Rayleigh = 103107
+ CreateHisto1D Gamma At SD: No PE: Energy at entering SD (keV) = 103108
+ CreateHisto2D Gamma At SD: No PE: Energy at entering SD vs energy initial (keV) = 103199
+ CreateHisto1D Gamma At SD: No PE: Energy lost PhotoElec (keV) = 103111
+ CreateHisto1D Gamma At SD: No PE: Distance to 1st when Compton (mm) = 103112
+ CreateHisto1D Gamma At SD: No PE: Distance to 1st when PhotoElec (mm) = 103113
+ CreateHisto1D Gamma At SD: No PE: Diff ang when PhotoElec (mrad) = 103114
+ CreateHisto1D Gamma At SD: No PE: Diff energy when PhotoElec (keV) = 103115
+ CreateHisto1D Gamma At SD: No PE: Energy lost Compton (keV) = 103121
+ CreateHisto1D Gamma At SD: No PE: Angle variation Compton (mrad) = 103122
+ CreateHisto1D Gamma At SD: No PE: Energy lost Rayleigh (keV) = 103131
+ CreateHisto1D Gamma At SD: No PE: Angle variation Rayleigh (mrad) = 103132
+ CreateHisto1D Gamma At SD: No PE: Energy lost Conversion (keV) = 103141
+ CreateHisto1D Gamma At SD: No PE: Angle variation Conversion (mrad) = 103142
+ CreateHisto1D Gamma At SD: No PE: Distance between interactions (mm) = 103151
+ CreateHisto1D Gamma At SD: No PE: Distance between 1st and other interactions (mm) = 103152
+ CreateHisto1D Gamma At SD: No PE: Distance between Compton-Compton interactions (mm) = 103153
+ CreateHisto1D Gamma At SD: No PE: Distance between Compton-PhotElec interactions (mm) = 103154
+ CreateHisto1D Gamma At SD: Only PE: Event Type = 103201
+ CreateHisto1D Gamma At SD: Only PE: N interactions = 103202
+ CreateHisto1D Gamma At SD: Only PE: N PhotoElec = 103203
+ CreateHisto1D Gamma At SD: Only PE: N Compton = 103204
+ CreateHisto1D Gamma At SD: Only PE: N Rayleigh = 103205
+ CreateHisto1D Gamma At SD: Only PE: N Conversion = 103206
+ CreateHisto2D Gamma At SD: Only PE: N PhotoElec vs Compton+Rayleigh = 103207
+ CreateHisto1D Gamma At SD: Only PE: Energy at entering SD (keV) = 103208
+ CreateHisto2D Gamma At SD: Only PE: Energy at entering SD vs energy initial (keV) = 103299
+ CreateHisto1D Gamma At SD: Only PE: Energy lost PhotoElec (keV) = 103211
+ CreateHisto1D Gamma At SD: Only PE: Distance to 1st when Compton (mm) = 103212
+ CreateHisto1D Gamma At SD: Only PE: Distance to 1st when PhotoElec (mm) = 103213
+ CreateHisto1D Gamma At SD: Only PE: Diff ang when PhotoElec (mrad) = 103214
+ CreateHisto1D Gamma At SD: Only PE: Diff energy when PhotoElec (keV) = 103215
+ CreateHisto1D Gamma At SD: Only PE: Energy lost Compton (keV) = 103221
+ CreateHisto1D Gamma At SD: Only PE: Angle variation Compton (mrad) = 103222
+ CreateHisto1D Gamma At SD: Only PE: Energy lost Rayleigh (keV) = 103231
+ CreateHisto1D Gamma At SD: Only PE: Angle variation Rayleigh (mrad) = 103232
+ CreateHisto1D Gamma At SD: Only PE: Energy lost Conversion (keV) = 103241
+ CreateHisto1D Gamma At SD: Only PE: Angle variation Conversion (mrad) = 103242
+ CreateHisto1D Gamma At SD: Only PE: Distance between interactions (mm) = 103251
+ CreateHisto1D Gamma At SD: Only PE: Distance between 1st and other interactions (mm) = 103252
+ CreateHisto1D Gamma At SD: Only PE: Distance between Compton-Compton interactions (mm) = 103253
+ CreateHisto1D Gamma At SD: Only PE: Distance between Compton-PhotElec interactions (mm) = 103254
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Event Type = 103301
+ CreateHisto1D Gamma At SD: PE + 1 Compt: N interactions = 103302
+ CreateHisto1D Gamma At SD: PE + 1 Compt: N PhotoElec = 103303
+ CreateHisto1D Gamma At SD: PE + 1 Compt: N Compton = 103304
+ CreateHisto1D Gamma At SD: PE + 1 Compt: N Rayleigh = 103305
+ CreateHisto1D Gamma At SD: PE + 1 Compt: N Conversion = 103306
+ CreateHisto2D Gamma At SD: PE + 1 Compt: N PhotoElec vs Compton+Rayleigh = 103307
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Energy at entering SD (keV) = 103308
+ CreateHisto2D Gamma At SD: PE + 1 Compt: Energy at entering SD vs energy initial (keV) = 103399
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Energy lost PhotoElec (keV) = 103311
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance to 1st when Compton (mm) = 103312
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance to 1st when PhotoElec (mm) = 103313
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Diff ang when PhotoElec (mrad) = 103314
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Diff energy when PhotoElec (keV) = 103315
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Energy lost Compton (keV) = 103321
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Angle variation Compton (mrad) = 103322
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Energy lost Rayleigh (keV) = 103331
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Angle variation Rayleigh (mrad) = 103332
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Energy lost Conversion (keV) = 103341
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Angle variation Conversion (mrad) = 103342
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance between interactions (mm) = 103351
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance between 1st and other interactions (mm) = 103352
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance between Compton-Compton interactions (mm) = 103353
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance between Compton-PhotElec interactions (mm) = 103354
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Event Type = 103401
+ CreateHisto1D Gamma At SD: PE + 2 Compt: N interactions = 103402
+ CreateHisto1D Gamma At SD: PE + 2 Compt: N PhotoElec = 103403
+ CreateHisto1D Gamma At SD: PE + 2 Compt: N Compton = 103404
+ CreateHisto1D Gamma At SD: PE + 2 Compt: N Rayleigh = 103405
+ CreateHisto1D Gamma At SD: PE + 2 Compt: N Conversion = 103406
+ CreateHisto2D Gamma At SD: PE + 2 Compt: N PhotoElec vs Compton+Rayleigh = 103407
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Energy at entering SD (keV) = 103408
+ CreateHisto2D Gamma At SD: PE + 2 Compt: Energy at entering SD vs energy initial (keV) = 103499
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Energy lost PhotoElec (keV) = 103411
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance to 1st when Compton (mm) = 103412
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance to 1st when PhotoElec (mm) = 103413
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Diff ang when PhotoElec (mrad) = 103414
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Diff energy when PhotoElec (keV) = 103415
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Energy lost Compton (keV) = 103421
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Angle variation Compton (mrad) = 103422
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Energy lost Rayleigh (keV) = 103431
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Angle variation Rayleigh (mrad) = 103432
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Energy lost Conversion (keV) = 103441
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Angle variation Conversion (mrad) = 103442
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance between interactions (mm) = 103451
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance between 1st and other interactions (mm) = 103452
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance between Compton-Compton interactions (mm) = 103453
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance between Compton-PhotElec interactions (mm) = 103454
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Event Type = 103501
+ CreateHisto1D Gamma At SD: PE + >2 Compt: N interactions = 103502
+ CreateHisto1D Gamma At SD: PE + >2 Compt: N PhotoElec = 103503
+ CreateHisto1D Gamma At SD: PE + >2 Compt: N Compton = 103504
+ CreateHisto1D Gamma At SD: PE + >2 Compt: N Rayleigh = 103505
+ CreateHisto1D Gamma At SD: PE + >2 Compt: N Conversion = 103506
+ CreateHisto2D Gamma At SD: PE + >2 Compt: N PhotoElec vs Compton+Rayleigh = 103507
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Energy at entering SD (keV) = 103508
+ CreateHisto2D Gamma At SD: PE + >2 Compt: Energy at entering SD vs energy initial (keV) = 103599
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Energy lost PhotoElec (keV) = 103511
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance to 1st when Compton (mm) = 103512
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance to 1st when PhotoElec (mm) = 103513
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Diff ang when PhotoElec (mrad) = 103514
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Diff energy when PhotoElec (keV) = 103515
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Energy lost Compton (keV) = 103521
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Angle variation Compton (mrad) = 103522
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Energy lost Rayleigh (keV) = 103531
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Angle variation Rayleigh (mrad) = 103532
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Energy lost Conversion (keV) = 103541
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Angle variation Conversion (mrad) = 103542
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance between interactions (mm) = 103551
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance between 1st and other interactions (mm) = 103552
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance between Compton-Compton interactions (mm) = 103553
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance between Compton-PhotElec interactions (mm) = 103554
+ CreateHisto1D Gamma At SD: Number of entering gammas = 103061
+ CreateHisto2D Gamma At SD: Energy of entering gamma 1 vs gamma 2 = 103062
+/gamos/userAction GmHitsHistosUA
+/run/initialize
+GmPhysicsGammaLowEner::ConstructProcess 
+  SelectBremssAngularDist 
+/gamos/SD/assocSD2LogVol GmSDSimple Scatterer scatcrystal
+ DeadTimeDUListByBlock: NShift 100
+ GmDetUnitIDBuilderFromAncestors sdType Scatterer
+/gamos/SD/assocSD2LogVol GmSDSimple Absorber abscrystal
+ DeadTimeDUListByBlock: NShift 100
+ GmDetUnitIDBuilderFromAncestors sdType Absorber
+/gamos/generator/addSingleParticleSource source gamma 141.*keV
+/gamos/generator/timeDist source GmGenerDistTimeDecay 1.e-3*curie
+    theTimeDistribution->SetParticleSource( this ) 0x1325900 0x101c1f0
+/gamos/generator/directionDist source GmGenerDistDirectionRandom
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+/run/beamOn 100000
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:   for  gamma    SubType= 12  BuildTable= 0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric :  Emin=        0 eV    Emax=        1 GeV   AngularGenSauterGavrila  FluoActive
+       PhotoElectric :  Emin=        1 GeV   Emax=      100 TeV   AngularGenSauterGavrila  FluoActive
+
+compt:   for  gamma    SubType= 13  BuildTable= 1
+      Lambda table from 100 eV  to 1 MeV, 7 bins per decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton :  Emin=        0 eV    Emax=        1 GeV  FluoActive
+       Klein-Nishina :  Emin=        1 GeV   Emax=      100 TeV
+
+conv:   for  gamma    SubType= 14  BuildTable= 1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins per decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion :  Emin=        0 eV    Emax=        1 GeV
+        BetheHeitler :  Emin=        1 GeV   Emax=       80 GeV
+     BetheHeitlerLPM :  Emin=       80 GeV   Emax=      100 TeV
+
+Rayl:   for  gamma    SubType= 11  BuildTable= 1
+      Lambda table from 100 eV  to 100 keV, 7 bins per decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh :  Emin=        0 eV    Emax=        1 GeV   CullenGenerator
+   LivermoreRayleigh :  Emin=        1 GeV   Emax=      100 TeV   CullenGenerator
+
+msc:   for e-    SubType= 10
+      RangeFactor= 0.04, step limit type: 3, lateralDisplacement: 1, skin= 1, geomFactor= 2.5
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+eIoni:   for  e-    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 0.1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni :  Emin=        0 eV    Emax=        1 GeV   deltaVI
+        MollerBhabha :  Emin=        1 GeV   Emax=      100 TeV
+
+eBrem:   for  e-    SubType= 3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem :  Emin=        0 eV    Emax=        1 GeV   AngularGen2BS
+            eBremLPM :  Emin=        1 GeV   Emax=      100 TeV   DipBustGen
+
+msc:   for e+    SubType= 10
+      RangeFactor= 0.04, step limit type: 3, lateralDisplacement: 1, skin= 1, geomFactor= 2.5
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+eIoni:   for  e+    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha :  Emin=        0 eV    Emax=      100 TeV
+
+eBrem:   for  e+    SubType= 3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB :  Emin=        0 eV    Emax=        1 GeV   DipBustGen
+            eBremLPM :  Emin=        1 GeV   Emax=      100 TeV   DipBustGen
+
+annihil:   for  e+, integral: 1     SubType= 5  BuildTable= 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg :  Emin=        0 eV    Emax=      100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : CZT
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  9.72569 keV    e-  170.292 keV    e+  165.776 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : G4_Si
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  2.32425 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 3     used in the geometry : Yes
+ Material : G4_WATER
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.10981 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+### Run 0 starts.
+ CreateHisto1D Hits: SD ALL:Nhits = 201001
+ CreateHisto1D Hits: SD ALL:Energy (keV) = 201002
+ CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+ CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+ CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+ CreateHisto1D Hits: SD ALL:N E depos = 201006
+ CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+ CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+ CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+ CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+ CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+ CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+ CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+ CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+ CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+ CreateHisto1D Hits: SD Absorber: Nhits = 201101
+ CreateHisto1D Hits: SD Absorber: Energy (keV) = 201102
+ CreateHisto1D Hits: SD Absorber: Width R3 (mm) = 201103
+ CreateHisto1D Hits: SD Absorber: Width Z (mm) = 201104
+ CreateHisto1D Hits: SD Absorber: Width phi (deg) = 201105
+ CreateHisto1D Hits: SD Absorber: N E depos = 201106
+ CreateHisto1D Hits: SD Absorber: Time span (ns) = 201107
+ CreateHisto1D Hits: SD Absorber: Distance between hits (mm) = 201108
+ CreateHisto1D Hits: SD Absorber: X hit (mm) = 201111
+ CreateHisto1D Hits: SD Absorber: Y hit (mm) = 201112
+ CreateHisto1D Hits: SD Absorber: Z hit (mm) = 201113
+ CreateHisto1D Hits: SD Absorber: R2 hit (mm) = 201114
+ CreateHisto1D Hits: SD Absorber: PHI hit (deg) = 201115
+ CreateHisto1D Hits: SD Absorber: THETA hit (deg) = 201116
+ CreateHisto1D Hits: SD Absorber: R3 hit (mm) = 201117
+ CreateHisto1D Hits: SD Scatterer: Nhits = 201201
+ CreateHisto1D Hits: SD Scatterer: Energy (keV) = 201202
+ CreateHisto1D Hits: SD Scatterer: Width R3 (mm) = 201203
+ CreateHisto1D Hits: SD Scatterer: Width Z (mm) = 201204
+ CreateHisto1D Hits: SD Scatterer: Width phi (deg) = 201205
+ CreateHisto1D Hits: SD Scatterer: N E depos = 201206
+ CreateHisto1D Hits: SD Scatterer: Time span (ns) = 201207
+ CreateHisto1D Hits: SD Scatterer: Distance between hits (mm) = 201208
+ CreateHisto1D Hits: SD Scatterer: X hit (mm) = 201211
+ CreateHisto1D Hits: SD Scatterer: Y hit (mm) = 201212
+ CreateHisto1D Hits: SD Scatterer: Z hit (mm) = 201213
+ CreateHisto1D Hits: SD Scatterer: R2 hit (mm) = 201214
+ CreateHisto1D Hits: SD Scatterer: PHI hit (deg) = 201215
+ CreateHisto1D Hits: SD Scatterer: THETA hit (deg) = 201216
+ CreateHisto1D Hits: SD Scatterer: R3 hit (mm) = 201217
+ %%% EVENT 0 NTRACKS 1 TOTAL NTRACKS 1
+ %%% EVENT 1000 NTRACKS 1 TOTAL NTRACKS 1390
+ %%% EVENT 2000 NTRACKS 1 TOTAL NTRACKS 2762
+ %%% EVENT 3000 NTRACKS 1 TOTAL NTRACKS 4144
+ %%% EVENT 4000 NTRACKS 1 TOTAL NTRACKS 5531
+ %%% EVENT 5000 NTRACKS 1 TOTAL NTRACKS 6966
+ %%% EVENT 6000 NTRACKS 1 TOTAL NTRACKS 8392
+ %%% EVENT 7000 NTRACKS 1 TOTAL NTRACKS 9744
+ %%% EVENT 8000 NTRACKS 1 TOTAL NTRACKS 11121
+ %%% EVENT 9000 NTRACKS 1 TOTAL NTRACKS 12511
+ %%% EVENT 10000 NTRACKS 1 TOTAL NTRACKS 13877
+ %%% EVENT 11000 NTRACKS 2 TOTAL NTRACKS 15261
+ %%% EVENT 12000 NTRACKS 1 TOTAL NTRACKS 16641
+ %%% EVENT 13000 NTRACKS 1 TOTAL NTRACKS 17996
+ %%% EVENT 14000 NTRACKS 1 TOTAL NTRACKS 19367
+ %%% EVENT 15000 NTRACKS 1 TOTAL NTRACKS 20766
+ %%% EVENT 16000 NTRACKS 1 TOTAL NTRACKS 22153
+ %%% EVENT 17000 NTRACKS 1 TOTAL NTRACKS 23548
+ %%% EVENT 18000 NTRACKS 1 TOTAL NTRACKS 24948
+ %%% EVENT 19000 NTRACKS 1 TOTAL NTRACKS 26342
+ %%% EVENT 20000 NTRACKS 1 TOTAL NTRACKS 27710
+ %%% EVENT 21000 NTRACKS 1 TOTAL NTRACKS 29064
+ %%% EVENT 22000 NTRACKS 1 TOTAL NTRACKS 30449
+ %%% EVENT 23000 NTRACKS 2 TOTAL NTRACKS 31834
+ %%% EVENT 24000 NTRACKS 1 TOTAL NTRACKS 33252
+ %%% EVENT 25000 NTRACKS 1 TOTAL NTRACKS 34679
+ %%% EVENT 26000 NTRACKS 3 TOTAL NTRACKS 36097
+ %%% EVENT 27000 NTRACKS 1 TOTAL NTRACKS 37514
+ %%% EVENT 28000 NTRACKS 1 TOTAL NTRACKS 38858
+ %%% EVENT 29000 NTRACKS 1 TOTAL NTRACKS 40241
+ %%% EVENT 30000 NTRACKS 1 TOTAL NTRACKS 41669
+ %%% EVENT 31000 NTRACKS 1 TOTAL NTRACKS 43088
+ %%% EVENT 32000 NTRACKS 4 TOTAL NTRACKS 44465
+ %%% EVENT 33000 NTRACKS 1 TOTAL NTRACKS 45834
+ %%% EVENT 34000 NTRACKS 1 TOTAL NTRACKS 47238
+ %%% EVENT 35000 NTRACKS 1 TOTAL NTRACKS 48639
+ %%% EVENT 36000 NTRACKS 2 TOTAL NTRACKS 50015
+ %%% EVENT 37000 NTRACKS 1 TOTAL NTRACKS 51444
+ %%% EVENT 38000 NTRACKS 1 TOTAL NTRACKS 52783
+ %%% EVENT 39000 NTRACKS 4 TOTAL NTRACKS 54160
+ %%% EVENT 40000 NTRACKS 1 TOTAL NTRACKS 55531
+ %%% EVENT 41000 NTRACKS 4 TOTAL NTRACKS 56911
+ %%% EVENT 42000 NTRACKS 1 TOTAL NTRACKS 58239
+ %%% EVENT 43000 NTRACKS 2 TOTAL NTRACKS 59635
+ %%% EVENT 44000 NTRACKS 1 TOTAL NTRACKS 61018
+ %%% EVENT 45000 NTRACKS 2 TOTAL NTRACKS 62418
+ %%% EVENT 46000 NTRACKS 1 TOTAL NTRACKS 63850
+ %%% EVENT 47000 NTRACKS 1 TOTAL NTRACKS 65280
+ %%% EVENT 48000 NTRACKS 1 TOTAL NTRACKS 66673
+ %%% EVENT 49000 NTRACKS 1 TOTAL NTRACKS 68070
+ %%% EVENT 50000 NTRACKS 1 TOTAL NTRACKS 69467
+ %%% EVENT 51000 NTRACKS 2 TOTAL NTRACKS 70820
+ %%% EVENT 52000 NTRACKS 6 TOTAL NTRACKS 72197
+ %%% EVENT 53000 NTRACKS 1 TOTAL NTRACKS 73575
+ %%% EVENT 54000 NTRACKS 2 TOTAL NTRACKS 74970
+ %%% EVENT 55000 NTRACKS 1 TOTAL NTRACKS 76385
+ %%% EVENT 56000 NTRACKS 1 TOTAL NTRACKS 77839
+ %%% EVENT 57000 NTRACKS 1 TOTAL NTRACKS 79254
+ %%% EVENT 58000 NTRACKS 1 TOTAL NTRACKS 80632
+ %%% EVENT 59000 NTRACKS 2 TOTAL NTRACKS 82025
+ %%% EVENT 60000 NTRACKS 2 TOTAL NTRACKS 83402
+ %%% EVENT 61000 NTRACKS 1 TOTAL NTRACKS 84825
+ %%% EVENT 62000 NTRACKS 2 TOTAL NTRACKS 86180
+ %%% EVENT 63000 NTRACKS 1 TOTAL NTRACKS 87539
+ %%% EVENT 64000 NTRACKS 2 TOTAL NTRACKS 88901
+ %%% EVENT 65000 NTRACKS 6 TOTAL NTRACKS 90267
+ %%% EVENT 66000 NTRACKS 1 TOTAL NTRACKS 91592
+ %%% EVENT 67000 NTRACKS 1 TOTAL NTRACKS 92971
+ %%% EVENT 68000 NTRACKS 1 TOTAL NTRACKS 94368
+ %%% EVENT 69000 NTRACKS 1 TOTAL NTRACKS 95694
+ %%% EVENT 70000 NTRACKS 1 TOTAL NTRACKS 97084
+ %%% EVENT 71000 NTRACKS 1 TOTAL NTRACKS 98507
+ %%% EVENT 72000 NTRACKS 1 TOTAL NTRACKS 99857
+ %%% EVENT 73000 NTRACKS 2 TOTAL NTRACKS 101280
+ %%% EVENT 74000 NTRACKS 1 TOTAL NTRACKS 102665
+ %%% EVENT 75000 NTRACKS 2 TOTAL NTRACKS 104067
+ %%% EVENT 76000 NTRACKS 1 TOTAL NTRACKS 105457
+ %%% EVENT 77000 NTRACKS 1 TOTAL NTRACKS 106851
+ %%% EVENT 78000 NTRACKS 2 TOTAL NTRACKS 108263
+ %%% EVENT 79000 NTRACKS 2 TOTAL NTRACKS 109661
+ %%% EVENT 80000 NTRACKS 1 TOTAL NTRACKS 111031
+ %%% EVENT 81000 NTRACKS 2 TOTAL NTRACKS 112410
+ %%% EVENT 82000 NTRACKS 1 TOTAL NTRACKS 113812
+ %%% EVENT 83000 NTRACKS 1 TOTAL NTRACKS 115254
+ %%% EVENT 84000 NTRACKS 1 TOTAL NTRACKS 116638
+ %%% EVENT 85000 NTRACKS 3 TOTAL NTRACKS 118033
+ %%% EVENT 86000 NTRACKS 2 TOTAL NTRACKS 119385
+ %%% EVENT 87000 NTRACKS 1 TOTAL NTRACKS 120770
+ %%% EVENT 88000 NTRACKS 4 TOTAL NTRACKS 122151
+ %%% EVENT 89000 NTRACKS 1 TOTAL NTRACKS 123539
+ %%% EVENT 90000 NTRACKS 2 TOTAL NTRACKS 124916
+ %%% EVENT 91000 NTRACKS 1 TOTAL NTRACKS 126305
+ %%% EVENT 92000 NTRACKS 2 TOTAL NTRACKS 127692
+ %%% EVENT 93000 NTRACKS 1 TOTAL NTRACKS 129032
+ %%% EVENT 94000 NTRACKS 1 TOTAL NTRACKS 130422
+ %%% EVENT 95000 NTRACKS 2 TOTAL NTRACKS 131771
+ %%% EVENT 96000 NTRACKS 1 TOTAL NTRACKS 133120
+ %%% EVENT 97000 NTRACKS 1 TOTAL NTRACKS 134541
+ %%% EVENT 98000 NTRACKS 1 TOTAL NTRACKS 135908
+ %%% EVENT 99000 NTRACKS 1 TOTAL NTRACKS 137323
+ Run terminated.
+Run Summary
+  Number of events processed : 100000
+  User=27.96s Real=28.06s Sys=0.01s
+@@@@ GmCountProcessesUA
+ PART_COUNT: e- = 35619
+ PART_COUNT: gamma = 103098
+ PROC_COUNT e- : Transportation = 118
+ PROC_COUNT e- : eBrem = 94
+ PROC_COUNT e- : eBrem_NoSeco = 2
+ PROC_COUNT e- : eIoni = 769
+ PROC_COUNT e- : eIoni_NoSeco = 39780
+ PROC_COUNT e- : msc = 5972
+ PROC_COUNT e- : ALL = 46735
+ PROC_COUNT gamma : Rayl = 1168
+ PROC_COUNT gamma : Transportation = 390248
+ PROC_COUNT gamma : compt = 28279
+ PROC_COUNT gamma : phot = 6571
+PROC_COUNT gamma : ALL = 426266
+PROC_CREATOR_COUNT e- : compt = 28279
+PROC_CREATOR_COUNT e- : eIoni = 769
+PROC_CREATOR_COUNT e- : phot = 6571
+PROC_CREATOR_COUNT gamma : Primary = 100000
+PROC_CREATOR_COUNT gamma : compt = 3
+PROC_CREATOR_COUNT gamma : eBrem = 94
+PROC_CREATOR_COUNT gamma : phot = 3001
+
+ $$$$$$$$$$ Classification of Gamma Interactions in SD $$$$$$$$ 
+ $$GSD: n Events      : 100000
+ $$GSD: n gamma in SD : 8589 : 4.2945 % 
+ $$GSD:  n PE         : 3310 : 38.5377 % 
+ $$GSD:    PE 0 COMP    : 2352 : 71.0574 % 
+ $$GSD:    PE 1 COMP    : 718 : 21.6918 % 
+ $$GSD:    PE 2 COMP    : 168 : 5.07553 % 
+ $$GSD:    PE >2 COMP   : 52 : 1.571 % 
+ $$GSD: No PE 0 COMP    : 3662 : 69.3692 % 
+ $$GSD: No PE 1 COMP    : 1216 : 23.0347 % 
+ $$GSD: No PE 2 COMP    : 317 : 6.00493 % 
+ $$GSD: No PE >2 COMP   : 84 : 1.59121 % 
+ $$GSD:  n COMP       : 2555 : 29.7474 % 
+ $$GSD:    1 COMP       : 1934 : 75.6947 % 
+ $$GSD:    2 COMP       : 485 : 18.9824 % 
+ $$GSD:    >2 COMP      : 136 : 5.3229 % 
+ $$GSD: nCOMP/gamma     : 0.391431
+ $$GSD: n RAYL        : 467 : 5.43719 % 
+ $$GSD: n CONV        : 0 : 0 % 
+ $$GSD:  0 Gamma in event : 91411 : 91.411 % 
+ $$GSD:  1 Gamma in event : 8589 : 8.589 % 
+ $$GSD:  2 Gamma in event : 0 : 0 % 
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 gammaSD.exercise2b:NormalizeToNEvents
+=== saving histograms in file === gammaSD.exercise2b.root
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 hits.exercise2b:NormalizeToNEvents
+=== saving histograms in file === hits.exercise2b.root

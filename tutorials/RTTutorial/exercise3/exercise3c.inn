@@ -1,0 +1,41 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise3c
+/gamos/setParam GmReadPhantomGeometry:FileName world.geom
+/gamos/setParam GmReadPhantomGeometry:Phantom:FileName exercise3_64x64x39.g4dcm
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. -995.
+/gamos/setParam GmReadPhantomGeometry:InitialRotAngles 0*deg 0. 0.
+
+/gamos/geometry GmReadPhantomG4Geometry
+
+/gamos/physicsList GmEMPhysics
+
+/gamos/setParam RTGeneratorPhaseSpace:FileName test_-450
+/gamos/setParam RTGeneratorPhaseSpace:InitialDisplacement 0. 0. 0.
+/gamos/setParam RTGeneratorPhaseSpace:InitialRotAngles 0. 0. 0.*deg 
+#t/gamos/setParam RTGeneratorPhaseSpace:MaxNReuse 50
+/gamos/setParam RTGeneratorPhaseSpace:MirrorWhenReuse X
+#/gamos/setParam RTGeneratorPhaseSpace:MaxNRecycle 1
+
+/gamos/generator RTGeneratorPhaseSpace
+
+/run/initialize
+
+
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+/gamos/analysis/histo1Min *Dose -18
+/gamos/analysis/histo1Max *Dose -9
+/gamos/analysis/histo1Min *volume -18
+/gamos/analysis/histo1Max *volume -9
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorer
+/gamos/scoring/addPrinter2Scorer GmPSPrinterCout doseScorer
+/gamos/scoring/addPrinter2Scorer GmPSPrinter3ddose doseScorer
+
+#/gamos/magneticField/setField 1.*tesla 0. 0.
+
+#/tracking/verbose 1
+/gamos/userAction GmCountTracksUA
+/gamos/userAction GmCountProcessesUA 
+/gamos/userAction GmCountProcessesUA GmClassifierByLogicalVolume
+
+/gamos/random/restoreSeeds  1201 1201
+/run/beamOn 100000

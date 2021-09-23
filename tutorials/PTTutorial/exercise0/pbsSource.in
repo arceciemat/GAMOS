@@ -1,0 +1,29 @@
+# INPUT PARAMETERS
+# Proton spot scanning / pencil beam:
+# 1. Monoenergetic beam with kinetic E = 226.62 MeV
+# 2. Beam is circular with diameter of 3 mm
+# 3. Beam divergence = 3.6 mrad
+# 4. Beam is continuous
+# 5. Beam current = 5 nA. Therefore, beam intensity = 1 proton each 32 ps
+# 6. Position of the beam origin: x=0, y=0, z=-40 cm
+# 7. Beam goes along Z in +Z direction
+
+#----- P R O T O N  P E N C I L  B E A M -----#
+
+# PARTICLE SOURCE
+/gamos/generator/addSingleParticleSource source proton 226.62*MeV
+
+#  ENERGY DISTRIBUTION (MONOENERGETIC)
+/gamos/generator/energyDist source GmGenerDistEnergyConstant 226.62*MeV
+
+# TIME DISTRIBUTION (BEAM CURRENT)
+/gamos/generator/timeDist source GmGenerDistTimeConstantChange 32.*ps
+
+# POSITION DISTRIBUTION AND BEAM DIAMETER 
+/gamos/generator/positionDist source GmGenerDistPositionDisc 1.5*mm 0. 0. -400.*mm
+
+# DIRECTION DISTRIBUTION AND BEAM DIVERGENCE
+/gamos/generator/directionDist source GmGenerDistDirectionCone 0. 0. 1. 3.6*mrad
+
+
+

@@ -1,0 +1,34 @@
+#/gamos/verbosity RTVerbosity debug
+#/tracking/verbose 1
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise2b
+
+/gamos/setParam GmGeometryFromText:FileName linac.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/gamos/setParam RTPhaseSpaceUA:FileName test
+# after target=6, after primary_collimator=78, after flattening_filter=110, after monitor=170, after jaws=450
+/gamos/setParam RTPhaseSpaceUA:ZStops -6 -78 -110 -170 -450 -899
+/gamos/setParam RTPhaseSpaceUA:KillAfterLastZStop 1
+/gamos/setParam RTPhaseSpaceUA:StoreZ 0
+/gamos/userAction RTPhaseSpaceUA 
+
+/gamos/userAction GmCountTracksUA 
+
+#/gamos/geometry/createRegion targetReg target
+#/gamos/geometry/createRegion collimatorReg "primary collimator_0"
+#/gamos/geometry/createRegion filterReg "flattening filter"
+#/gamos/geometry/createRegion monitorReg monitor
+#/gamos/geometry/createRegion jawsReg jaws_X jaws_Y
+#/gamos/physics/setCuts targetReg 10. 0.1
+#/run/setCut 100.
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+
+/gamos/random/restoreSeeds 1111 1111
+/run/beamOn 10000
+

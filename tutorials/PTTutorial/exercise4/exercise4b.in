@@ -1,0 +1,34 @@
+# VERBOSITY 
+/tracking/verbose 0
+
+#---------- exercise 4b ----------
+# GEOMETRY
+/gamos/setParam GmGeometryFromText:FileName ./detector.geom
+/gamos/geometry GmGeometryFromText
+#---------------------------------
+
+# PHYSICS
+/gamos/physicsList G4QGSP_BIC_AllHP
+
+# PRIMARY GENERATOR
+/gamos/generator GmGenerator
+
+# GEANT4 INITIALISATION
+/run/initialize
+
+# ACTIVATE  DECAYS
+/gamos/physics/addPhysics radioactiveDecay
+
+# SOURCE
+/control/execute ../exercise0/pbsSource.in
+
+# STATISTICS
+/gamos/userAction GmCountTracksUA
+
+#---------- exercise 4b ----------
+# VISUALIZATION
+/control/execute ./visVRML2FILE.in
+#---------------------------------
+
+# RUN  SIMULATION
+/run/beamOn 10

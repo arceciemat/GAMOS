@@ -1,0 +1,34 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4a.NoCuts
+
+/gamos/setParam GmGeometryFromText:FileName ../exercise2/linac.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/gamos/geometry/createRegion targetReg target
+/gamos/geometry/createRegion collimatorReg "primary collimator_0"
+/gamos/geometry/createRegion filterReg "flattening filter"
+/gamos/geometry/createRegion monitorReg monitor
+/gamos/geometry/createRegion jawsReg jaws_X jaws_Y   
+#/gamos/physics/setCuts targetReg 10. 0.1 
+
+/gamos/setParam RTPhaseSpaceUA:FileName testNoOpt
+/gamos/setParam RTPhaseSpaceUA:ZStops -900
+/gamos/setParam RTPhaseSpaceUA:KillAfterLastZStop 1
+/gamos/userAction RTPhaseSpaceUA 
+
+/gamos/userAction GmCountTracksUA
+
+/run/initialize
+
+/gamos/userAction GmTimeStudyUA GmClassifierByRegion
+/gamos/classifier energyClassifier GmClassifierByKineticEnergy  1.E-8 1.E1 10.
+/gamos/classifier particleAndEnergyClassifier GmCompoundClassifier GmClassifierByLogicalVolume  energyClassifier
+/gamos/userAction GmTimeStudyUA particleAndEnergyClassifier
+
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+
+/run/beamOn 100000
+
+

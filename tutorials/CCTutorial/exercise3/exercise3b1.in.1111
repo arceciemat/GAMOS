@@ -1,0 +1,30 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise3b1
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/CCGeometryRingEx1Water.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmHistosGammaAtSD
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmRecHitsHistosUA
+/gamos/setParam CC:EvtClass:GammaEnergy 141.*keV
+/gamos/setParam CC:EvtClass:PhotopeakEPrec 0.01
+/gamos/userAction CCEventClassifierUA
+
+/run/initialize
+
+/gamos/SD/assocSD2LogVol GmSDSimple Scatterer scatcrystal
+/gamos/SD/recHitBuilder GmRecHitBuilder1to1 Scatterer 
+/gamos/SD/assocSD2LogVol GmSDSimple Absorber abscrystal
+/gamos/SD/recHitBuilder GmRecHitBuilder1to1 Absorber 
+
+/gamos/generator/addSingleParticleSource source gamma 141.*keV
+/gamos/generator/timeDist source GmGenerDistTimeDecay 1.e-3*curie
+/gamos/generator/directionDist source GmGenerDistDirectionRandom
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+
+/gamos/random/restoreSeeds 1111 1111
+/run/beamOn 100000
+

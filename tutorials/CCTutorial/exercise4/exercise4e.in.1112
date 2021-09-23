@@ -1,0 +1,38 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4e
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/CCGeometryRingEx1Water.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmHistosGammaAtSD
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmRecHitsHistosUA
+/gamos/setParam CC:EvtClass:GammaEnergy 141.*keV
+/gamos/setParam CC:EvtClass:PhotopeakEPrec 0.01
+/gamos/setParam CC:EvtClass:ComptonRecHitDistScat 6.*mm
+/gamos/setParam CC:EvtClass:ComptonRecHitDistAbs 0.*mm
+/gamos/setParam CC:EvtClass:DumpEvent TRUE
+/gamos/setParam CC:EvtClass:DumpSingles 0
+/gamos/setParam CC:EvtClass:DumpMultiples 1
+/gamos/setParam CC:EvtClass:1stHitAlgorithm Det1stHitByXYZPos
+/gamos/setParam CC:EvtClass:1stHitAlgorithmFirst Det1stHitByXYZPos
+/gamos/setParam CC:EvtClass:1stHitAlgorithmSecond Det1stHitByXYZPos
+/gamos/userAction CCEventClassifierUA
+
+/run/initialize
+
+/gamos/SD/assocSD2LogVol GmSDSimple Scatterer scatcrystal
+/gamos/SD/recHitBuilder GmRecHitBuilder1to1 Scatterer 
+/gamos/SD/assocSD2LogVol GmSDSimple Absorber abscrystal
+/gamos/SD/recHitBuilder GmRecHitBuilder1to1 Absorber 
+
+
+/gamos/generator/addSingleParticleSource source gamma 141.*keV
+/gamos/generator/timeDist source GmGenerDistTimeDecay 1.e-3*curie
+/gamos/generator/directionDist source GmGenerDistDirectionRandom
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+
+/gamos/random/restoreSeeds 1112 1112
+/run/beamOn 1000000

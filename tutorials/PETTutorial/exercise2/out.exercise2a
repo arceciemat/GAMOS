@@ -1,0 +1,1449 @@
+@@@@@ Running GAMOS with script: exercise2a.in
+
+**************************************************************
+ Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+ Using Random Engine: MixMaxRng
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+"/vis/list" to see available colours.
+/control/execute exercise2a.in
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/pet.geom
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise2a
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/generator GmGenerator
+/gamos/setParam GmCountTracksUA:EachNEvent 1000
+/gamos/userAction GmCountTracksUA
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmHistosGammaAtSD
+ CreateHisto1D Energy lost ALL (MeV) = 103091
+ CreateHisto1D Gamma At SD: ALL: Event Type = 103001
+ CreateHisto1D Gamma At SD: ALL: N interactions = 103002
+ CreateHisto1D Gamma At SD: ALL: N PhotoElec = 103003
+ CreateHisto1D Gamma At SD: ALL: N Compton = 103004
+ CreateHisto1D Gamma At SD: ALL: N Rayleigh = 103005
+ CreateHisto1D Gamma At SD: ALL: N Conversion = 103006
+ CreateHisto2D Gamma At SD: ALL: N PhotoElec vs Compton+Rayleigh = 103007
+ CreateHisto1D Gamma At SD: ALL: Energy at entering SD (MeV) = 103008
+ CreateHisto2D Gamma At SD: ALL: Energy at entering SD vs energy initial (MeV) = 103099
+ CreateHisto1D Gamma At SD: ALL: Energy lost PhotoElec (MeV) = 103011
+ CreateHisto1D Gamma At SD: ALL: Distance to 1st when Compton (mm) = 103012
+ CreateHisto1D Gamma At SD: ALL: Distance to 1st when PhotoElec (mm) = 103013
+ CreateHisto1D Gamma At SD: ALL: Diff ang when PhotoElec (mrad) = 103014
+ CreateHisto1D Gamma At SD: ALL: Diff energy when PhotoElec (MeV) = 103015
+ CreateHisto1D Gamma At SD: ALL: Energy lost Compton (MeV) = 103021
+ CreateHisto1D Gamma At SD: ALL: Angle variation Compton (mrad) = 103022
+ CreateHisto1D Gamma At SD: ALL: Energy lost Rayleigh (MeV) = 103031
+ CreateHisto1D Gamma At SD: ALL: Angle variation Rayleigh (mrad) = 103032
+ CreateHisto1D Gamma At SD: ALL: Energy lost Conversion (MeV) = 103041
+ CreateHisto1D Gamma At SD: ALL: Angle variation Conversion (mrad) = 103042
+ CreateHisto1D Gamma At SD: ALL: Distance between interactions (mm) = 103051
+ CreateHisto1D Gamma At SD: ALL: Distance between 1st and other interactions (mm) = 103052
+ CreateHisto1D Gamma At SD: ALL: Distance between Compton-Compton interactions (mm) = 103053
+ CreateHisto1D Gamma At SD: ALL: Distance between Compton-PhotElec interactions (mm) = 103054
+ CreateHisto1D Gamma At SD: No PE: Event Type = 103101
+ CreateHisto1D Gamma At SD: No PE: N interactions = 103102
+ CreateHisto1D Gamma At SD: No PE: N PhotoElec = 103103
+ CreateHisto1D Gamma At SD: No PE: N Compton = 103104
+ CreateHisto1D Gamma At SD: No PE: N Rayleigh = 103105
+ CreateHisto1D Gamma At SD: No PE: N Conversion = 103106
+ CreateHisto2D Gamma At SD: No PE: N PhotoElec vs Compton+Rayleigh = 103107
+ CreateHisto1D Gamma At SD: No PE: Energy at entering SD (MeV) = 103108
+ CreateHisto2D Gamma At SD: No PE: Energy at entering SD vs energy initial (MeV) = 103199
+ CreateHisto1D Gamma At SD: No PE: Energy lost PhotoElec (MeV) = 103111
+ CreateHisto1D Gamma At SD: No PE: Distance to 1st when Compton (mm) = 103112
+ CreateHisto1D Gamma At SD: No PE: Distance to 1st when PhotoElec (mm) = 103113
+ CreateHisto1D Gamma At SD: No PE: Diff ang when PhotoElec (mrad) = 103114
+ CreateHisto1D Gamma At SD: No PE: Diff energy when PhotoElec (MeV) = 103115
+ CreateHisto1D Gamma At SD: No PE: Energy lost Compton (MeV) = 103121
+ CreateHisto1D Gamma At SD: No PE: Angle variation Compton (mrad) = 103122
+ CreateHisto1D Gamma At SD: No PE: Energy lost Rayleigh (MeV) = 103131
+ CreateHisto1D Gamma At SD: No PE: Angle variation Rayleigh (mrad) = 103132
+ CreateHisto1D Gamma At SD: No PE: Energy lost Conversion (MeV) = 103141
+ CreateHisto1D Gamma At SD: No PE: Angle variation Conversion (mrad) = 103142
+ CreateHisto1D Gamma At SD: No PE: Distance between interactions (mm) = 103151
+ CreateHisto1D Gamma At SD: No PE: Distance between 1st and other interactions (mm) = 103152
+ CreateHisto1D Gamma At SD: No PE: Distance between Compton-Compton interactions (mm) = 103153
+ CreateHisto1D Gamma At SD: No PE: Distance between Compton-PhotElec interactions (mm) = 103154
+ CreateHisto1D Gamma At SD: Only PE: Event Type = 103201
+ CreateHisto1D Gamma At SD: Only PE: N interactions = 103202
+ CreateHisto1D Gamma At SD: Only PE: N PhotoElec = 103203
+ CreateHisto1D Gamma At SD: Only PE: N Compton = 103204
+ CreateHisto1D Gamma At SD: Only PE: N Rayleigh = 103205
+ CreateHisto1D Gamma At SD: Only PE: N Conversion = 103206
+ CreateHisto2D Gamma At SD: Only PE: N PhotoElec vs Compton+Rayleigh = 103207
+ CreateHisto1D Gamma At SD: Only PE: Energy at entering SD (MeV) = 103208
+ CreateHisto2D Gamma At SD: Only PE: Energy at entering SD vs energy initial (MeV) = 103299
+ CreateHisto1D Gamma At SD: Only PE: Energy lost PhotoElec (MeV) = 103211
+ CreateHisto1D Gamma At SD: Only PE: Distance to 1st when Compton (mm) = 103212
+ CreateHisto1D Gamma At SD: Only PE: Distance to 1st when PhotoElec (mm) = 103213
+ CreateHisto1D Gamma At SD: Only PE: Diff ang when PhotoElec (mrad) = 103214
+ CreateHisto1D Gamma At SD: Only PE: Diff energy when PhotoElec (MeV) = 103215
+ CreateHisto1D Gamma At SD: Only PE: Energy lost Compton (MeV) = 103221
+ CreateHisto1D Gamma At SD: Only PE: Angle variation Compton (mrad) = 103222
+ CreateHisto1D Gamma At SD: Only PE: Energy lost Rayleigh (MeV) = 103231
+ CreateHisto1D Gamma At SD: Only PE: Angle variation Rayleigh (mrad) = 103232
+ CreateHisto1D Gamma At SD: Only PE: Energy lost Conversion (MeV) = 103241
+ CreateHisto1D Gamma At SD: Only PE: Angle variation Conversion (mrad) = 103242
+ CreateHisto1D Gamma At SD: Only PE: Distance between interactions (mm) = 103251
+ CreateHisto1D Gamma At SD: Only PE: Distance between 1st and other interactions (mm) = 103252
+ CreateHisto1D Gamma At SD: Only PE: Distance between Compton-Compton interactions (mm) = 103253
+ CreateHisto1D Gamma At SD: Only PE: Distance between Compton-PhotElec interactions (mm) = 103254
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Event Type = 103301
+ CreateHisto1D Gamma At SD: PE + 1 Compt: N interactions = 103302
+ CreateHisto1D Gamma At SD: PE + 1 Compt: N PhotoElec = 103303
+ CreateHisto1D Gamma At SD: PE + 1 Compt: N Compton = 103304
+ CreateHisto1D Gamma At SD: PE + 1 Compt: N Rayleigh = 103305
+ CreateHisto1D Gamma At SD: PE + 1 Compt: N Conversion = 103306
+ CreateHisto2D Gamma At SD: PE + 1 Compt: N PhotoElec vs Compton+Rayleigh = 103307
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Energy at entering SD (MeV) = 103308
+ CreateHisto2D Gamma At SD: PE + 1 Compt: Energy at entering SD vs energy initial (MeV) = 103399
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Energy lost PhotoElec (MeV) = 103311
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance to 1st when Compton (mm) = 103312
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance to 1st when PhotoElec (mm) = 103313
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Diff ang when PhotoElec (mrad) = 103314
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Diff energy when PhotoElec (MeV) = 103315
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Energy lost Compton (MeV) = 103321
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Angle variation Compton (mrad) = 103322
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Energy lost Rayleigh (MeV) = 103331
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Angle variation Rayleigh (mrad) = 103332
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Energy lost Conversion (MeV) = 103341
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Angle variation Conversion (mrad) = 103342
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance between interactions (mm) = 103351
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance between 1st and other interactions (mm) = 103352
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance between Compton-Compton interactions (mm) = 103353
+ CreateHisto1D Gamma At SD: PE + 1 Compt: Distance between Compton-PhotElec interactions (mm) = 103354
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Event Type = 103401
+ CreateHisto1D Gamma At SD: PE + 2 Compt: N interactions = 103402
+ CreateHisto1D Gamma At SD: PE + 2 Compt: N PhotoElec = 103403
+ CreateHisto1D Gamma At SD: PE + 2 Compt: N Compton = 103404
+ CreateHisto1D Gamma At SD: PE + 2 Compt: N Rayleigh = 103405
+ CreateHisto1D Gamma At SD: PE + 2 Compt: N Conversion = 103406
+ CreateHisto2D Gamma At SD: PE + 2 Compt: N PhotoElec vs Compton+Rayleigh = 103407
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Energy at entering SD (MeV) = 103408
+ CreateHisto2D Gamma At SD: PE + 2 Compt: Energy at entering SD vs energy initial (MeV) = 103499
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Energy lost PhotoElec (MeV) = 103411
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance to 1st when Compton (mm) = 103412
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance to 1st when PhotoElec (mm) = 103413
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Diff ang when PhotoElec (mrad) = 103414
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Diff energy when PhotoElec (MeV) = 103415
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Energy lost Compton (MeV) = 103421
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Angle variation Compton (mrad) = 103422
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Energy lost Rayleigh (MeV) = 103431
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Angle variation Rayleigh (mrad) = 103432
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Energy lost Conversion (MeV) = 103441
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Angle variation Conversion (mrad) = 103442
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance between interactions (mm) = 103451
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance between 1st and other interactions (mm) = 103452
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance between Compton-Compton interactions (mm) = 103453
+ CreateHisto1D Gamma At SD: PE + 2 Compt: Distance between Compton-PhotElec interactions (mm) = 103454
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Event Type = 103501
+ CreateHisto1D Gamma At SD: PE + >2 Compt: N interactions = 103502
+ CreateHisto1D Gamma At SD: PE + >2 Compt: N PhotoElec = 103503
+ CreateHisto1D Gamma At SD: PE + >2 Compt: N Compton = 103504
+ CreateHisto1D Gamma At SD: PE + >2 Compt: N Rayleigh = 103505
+ CreateHisto1D Gamma At SD: PE + >2 Compt: N Conversion = 103506
+ CreateHisto2D Gamma At SD: PE + >2 Compt: N PhotoElec vs Compton+Rayleigh = 103507
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Energy at entering SD (MeV) = 103508
+ CreateHisto2D Gamma At SD: PE + >2 Compt: Energy at entering SD vs energy initial (MeV) = 103599
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Energy lost PhotoElec (MeV) = 103511
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance to 1st when Compton (mm) = 103512
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance to 1st when PhotoElec (mm) = 103513
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Diff ang when PhotoElec (mrad) = 103514
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Diff energy when PhotoElec (MeV) = 103515
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Energy lost Compton (MeV) = 103521
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Angle variation Compton (mrad) = 103522
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Energy lost Rayleigh (MeV) = 103531
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Angle variation Rayleigh (mrad) = 103532
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Energy lost Conversion (MeV) = 103541
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Angle variation Conversion (mrad) = 103542
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance between interactions (mm) = 103551
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance between 1st and other interactions (mm) = 103552
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance between Compton-Compton interactions (mm) = 103553
+ CreateHisto1D Gamma At SD: PE + >2 Compt: Distance between Compton-PhotElec interactions (mm) = 103554
+ CreateHisto1D Gamma At SD: Number of entering gammas = 103061
+ CreateHisto2D Gamma At SD: Energy of entering gamma 1 vs gamma 2 = 103062
+/gamos/analysis/histo1Max *Energy* 1*MeV
+/gamos/analysis/histo1Max *Pos* 200*mm
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
+/run/initialize
+GmPhysicsGammaLowEner::ConstructProcess 
+/gamos/SD/assocSD2LogVol GmSDSimple Calor Crystal
+ DeadTimeDUListByBlock: NShift 100
+ GmDetUnitIDBuilderFromAncestors sdType Calor
+/gamos/generator/addIsotopeSource source Na22 1.E-3*curie
+/gamos/generator/energyDist source GmGenerDistEnergyBetaDecay
+/run/beamOn 1000000
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : G4_Al
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  2.3478 keV    e-  131.031 keV    e+  128.416 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : LSO
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  15.1545 keV    e-  205.548 keV    e+  200.096 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 3     used in the geometry : Yes
+ Material : G4_WATER
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.10981 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+ CreateHisto1D Hits: SD ALL:Nhits = 201001
+ CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+ CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+ CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+ CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+ CreateHisto1D Hits: SD ALL:N E depos = 201006
+ CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+ CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+ CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+ CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+ CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+ CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+ CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+ CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+ CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+ CreateHisto1D Hits: SD Calor: Nhits = 201101
+ CreateHisto1D Hits: SD Calor: Energy (MeV) = 201102
+ CreateHisto1D Hits: SD Calor: Width R3 (mm) = 201103
+ CreateHisto1D Hits: SD Calor: Width Z (mm) = 201104
+ CreateHisto1D Hits: SD Calor: Width phi (deg) = 201105
+ CreateHisto1D Hits: SD Calor: N E depos = 201106
+ CreateHisto1D Hits: SD Calor: Time span (ns) = 201107
+ CreateHisto1D Hits: SD Calor: Distance between hits (mm) = 201108
+ CreateHisto1D Hits: SD Calor: X hit (mm) = 201111
+ CreateHisto1D Hits: SD Calor: Y hit (mm) = 201112
+ CreateHisto1D Hits: SD Calor: Z hit (mm) = 201113
+ CreateHisto1D Hits: SD Calor: R2 hit (mm) = 201114
+ CreateHisto1D Hits: SD Calor: PHI hit (deg) = 201115
+ CreateHisto1D Hits: SD Calor: THETA hit (deg) = 201116
+ CreateHisto1D Hits: SD Calor: R3 hit (mm) = 201117
+ CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:FinalPosX = 130000001
+ CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:FinalPosY = 130000002
+ CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:FinalPosZ = 130000003
+ CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:FinalMomX = 130000004
+ CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:FinalMomY = 130000005
+ CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:FinalMomZ = 130000006
+ CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 130000007
+ CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyDeposited = 130000008
+ %%% EVENT 0 NTRACKS 2 TOTAL NTRACKS 2
+ %%% EVENT 1000 NTRACKS 10 TOTAL NTRACKS 19820
+ %%% EVENT 2000 NTRACKS 20 TOTAL NTRACKS 38965
+ %%% EVENT 3000 NTRACKS 29 TOTAL NTRACKS 58358
+ %%% EVENT 4000 NTRACKS 31 TOTAL NTRACKS 77945
+ %%% EVENT 5000 NTRACKS 18 TOTAL NTRACKS 97622
+ %%% EVENT 6000 NTRACKS 14 TOTAL NTRACKS 117673
+ %%% EVENT 7000 NTRACKS 18 TOTAL NTRACKS 137422
+ %%% EVENT 8000 NTRACKS 17 TOTAL NTRACKS 157090
+ %%% EVENT 9000 NTRACKS 9 TOTAL NTRACKS 176824
+ %%% EVENT 10000 NTRACKS 23 TOTAL NTRACKS 196470
+ %%% EVENT 11000 NTRACKS 31 TOTAL NTRACKS 216189
+ %%% EVENT 12000 NTRACKS 20 TOTAL NTRACKS 235775
+ %%% EVENT 13000 NTRACKS 29 TOTAL NTRACKS 255594
+ %%% EVENT 14000 NTRACKS 12 TOTAL NTRACKS 275535
+ %%% EVENT 15000 NTRACKS 17 TOTAL NTRACKS 295228
+ %%% EVENT 16000 NTRACKS 6 TOTAL NTRACKS 314672
+ %%% EVENT 17000 NTRACKS 10 TOTAL NTRACKS 334786
+ %%% EVENT 18000 NTRACKS 18 TOTAL NTRACKS 353922
+ %%% EVENT 19000 NTRACKS 33 TOTAL NTRACKS 373739
+ %%% EVENT 20000 NTRACKS 20 TOTAL NTRACKS 393790
+ %%% EVENT 21000 NTRACKS 22 TOTAL NTRACKS 413248
+ %%% EVENT 22000 NTRACKS 17 TOTAL NTRACKS 432785
+ %%% EVENT 23000 NTRACKS 19 TOTAL NTRACKS 452687
+ %%% EVENT 24000 NTRACKS 22 TOTAL NTRACKS 472374
+ %%% EVENT 25000 NTRACKS 13 TOTAL NTRACKS 492480
+ %%% EVENT 26000 NTRACKS 19 TOTAL NTRACKS 512305
+ %%% EVENT 27000 NTRACKS 30 TOTAL NTRACKS 531925
+ %%% EVENT 28000 NTRACKS 24 TOTAL NTRACKS 551424
+ %%% EVENT 29000 NTRACKS 24 TOTAL NTRACKS 570875
+ %%% EVENT 30000 NTRACKS 19 TOTAL NTRACKS 590537
+ %%% EVENT 31000 NTRACKS 21 TOTAL NTRACKS 610415
+ %%% EVENT 32000 NTRACKS 25 TOTAL NTRACKS 630557
+ %%% EVENT 33000 NTRACKS 40 TOTAL NTRACKS 650145
+ %%% EVENT 34000 NTRACKS 14 TOTAL NTRACKS 669910
+ %%% EVENT 35000 NTRACKS 20 TOTAL NTRACKS 689905
+ %%% EVENT 36000 NTRACKS 27 TOTAL NTRACKS 709689
+ %%% EVENT 37000 NTRACKS 25 TOTAL NTRACKS 729643
+ %%% EVENT 38000 NTRACKS 24 TOTAL NTRACKS 749361
+ %%% EVENT 39000 NTRACKS 25 TOTAL NTRACKS 769411
+ %%% EVENT 40000 NTRACKS 16 TOTAL NTRACKS 789510
+ %%% EVENT 41000 NTRACKS 11 TOTAL NTRACKS 808833
+ %%% EVENT 42000 NTRACKS 3 TOTAL NTRACKS 828283
+ %%% EVENT 43000 NTRACKS 27 TOTAL NTRACKS 848137
+ %%% EVENT 44000 NTRACKS 12 TOTAL NTRACKS 867678
+ %%% EVENT 45000 NTRACKS 14 TOTAL NTRACKS 887767
+ %%% EVENT 46000 NTRACKS 22 TOTAL NTRACKS 907451
+ %%% EVENT 47000 NTRACKS 5 TOTAL NTRACKS 927522
+ %%% EVENT 48000 NTRACKS 22 TOTAL NTRACKS 947290
+ %%% EVENT 49000 NTRACKS 38 TOTAL NTRACKS 967443
+ %%% EVENT 50000 NTRACKS 28 TOTAL NTRACKS 987570
+ %%% EVENT 51000 NTRACKS 22 TOTAL NTRACKS 1.00753e+06
+ %%% EVENT 52000 NTRACKS 18 TOTAL NTRACKS 1.0275e+06
+ %%% EVENT 53000 NTRACKS 20 TOTAL NTRACKS 1.0472e+06
+ %%% EVENT 54000 NTRACKS 27 TOTAL NTRACKS 1.06724e+06
+ %%% EVENT 55000 NTRACKS 27 TOTAL NTRACKS 1.08698e+06
+ %%% EVENT 56000 NTRACKS 16 TOTAL NTRACKS 1.10638e+06
+ %%% EVENT 57000 NTRACKS 21 TOTAL NTRACKS 1.12592e+06
+ %%% EVENT 58000 NTRACKS 13 TOTAL NTRACKS 1.14593e+06
+ %%% EVENT 59000 NTRACKS 12 TOTAL NTRACKS 1.16563e+06
+ %%% EVENT 60000 NTRACKS 32 TOTAL NTRACKS 1.1855e+06
+ %%% EVENT 61000 NTRACKS 22 TOTAL NTRACKS 1.20514e+06
+ %%% EVENT 62000 NTRACKS 22 TOTAL NTRACKS 1.22509e+06
+ %%% EVENT 63000 NTRACKS 21 TOTAL NTRACKS 1.24493e+06
+ %%% EVENT 64000 NTRACKS 25 TOTAL NTRACKS 1.26429e+06
+ %%% EVENT 65000 NTRACKS 9 TOTAL NTRACKS 1.28388e+06
+ %%% EVENT 66000 NTRACKS 22 TOTAL NTRACKS 1.30409e+06
+ %%% EVENT 67000 NTRACKS 37 TOTAL NTRACKS 1.324e+06
+ %%% EVENT 68000 NTRACKS 16 TOTAL NTRACKS 1.34377e+06
+ %%% EVENT 69000 NTRACKS 20 TOTAL NTRACKS 1.3637e+06
+ %%% EVENT 70000 NTRACKS 37 TOTAL NTRACKS 1.38367e+06
+ %%% EVENT 71000 NTRACKS 14 TOTAL NTRACKS 1.40356e+06
+ %%% EVENT 72000 NTRACKS 14 TOTAL NTRACKS 1.42353e+06
+ %%% EVENT 73000 NTRACKS 1 TOTAL NTRACKS 1.44321e+06
+ %%% EVENT 74000 NTRACKS 20 TOTAL NTRACKS 1.46297e+06
+ %%% EVENT 75000 NTRACKS 19 TOTAL NTRACKS 1.48277e+06
+ %%% EVENT 76000 NTRACKS 9 TOTAL NTRACKS 1.50277e+06
+ %%% EVENT 77000 NTRACKS 7 TOTAL NTRACKS 1.52238e+06
+ %%% EVENT 78000 NTRACKS 33 TOTAL NTRACKS 1.54242e+06
+ %%% EVENT 79000 NTRACKS 31 TOTAL NTRACKS 1.56176e+06
+ %%% EVENT 80000 NTRACKS 28 TOTAL NTRACKS 1.58131e+06
+ %%% EVENT 81000 NTRACKS 12 TOTAL NTRACKS 1.60123e+06
+ %%% EVENT 82000 NTRACKS 25 TOTAL NTRACKS 1.62119e+06
+ %%% EVENT 83000 NTRACKS 7 TOTAL NTRACKS 1.64097e+06
+ %%% EVENT 84000 NTRACKS 10 TOTAL NTRACKS 1.66066e+06
+ %%% EVENT 85000 NTRACKS 7 TOTAL NTRACKS 1.68014e+06
+ %%% EVENT 86000 NTRACKS 26 TOTAL NTRACKS 1.70012e+06
+ %%% EVENT 87000 NTRACKS 27 TOTAL NTRACKS 1.71976e+06
+ %%% EVENT 88000 NTRACKS 39 TOTAL NTRACKS 1.73926e+06
+ %%% EVENT 89000 NTRACKS 1 TOTAL NTRACKS 1.75862e+06
+ %%% EVENT 90000 NTRACKS 15 TOTAL NTRACKS 1.77814e+06
+ %%% EVENT 91000 NTRACKS 11 TOTAL NTRACKS 1.79737e+06
+ %%% EVENT 92000 NTRACKS 22 TOTAL NTRACKS 1.81656e+06
+ %%% EVENT 93000 NTRACKS 14 TOTAL NTRACKS 1.83592e+06
+ %%% EVENT 94000 NTRACKS 27 TOTAL NTRACKS 1.85581e+06
+ %%% EVENT 95000 NTRACKS 21 TOTAL NTRACKS 1.87518e+06
+ %%% EVENT 96000 NTRACKS 14 TOTAL NTRACKS 1.89493e+06
+ %%% EVENT 97000 NTRACKS 30 TOTAL NTRACKS 1.91479e+06
+ %%% EVENT 98000 NTRACKS 20 TOTAL NTRACKS 1.93439e+06
+ %%% EVENT 99000 NTRACKS 31 TOTAL NTRACKS 1.95403e+06
+ %%% EVENT 100000 NTRACKS 29 TOTAL NTRACKS 1.97379e+06
+ %%% EVENT 101000 NTRACKS 38 TOTAL NTRACKS 1.99322e+06
+ %%% EVENT 102000 NTRACKS 20 TOTAL NTRACKS 2.01358e+06
+ %%% EVENT 103000 NTRACKS 22 TOTAL NTRACKS 2.03348e+06
+ %%% EVENT 104000 NTRACKS 18 TOTAL NTRACKS 2.05284e+06
+ %%% EVENT 105000 NTRACKS 45 TOTAL NTRACKS 2.07253e+06
+ %%% EVENT 106000 NTRACKS 16 TOTAL NTRACKS 2.09214e+06
+ %%% EVENT 107000 NTRACKS 5 TOTAL NTRACKS 2.11222e+06
+ %%% EVENT 108000 NTRACKS 10 TOTAL NTRACKS 2.13231e+06
+ %%% EVENT 109000 NTRACKS 10 TOTAL NTRACKS 2.15219e+06
+ %%% EVENT 110000 NTRACKS 9 TOTAL NTRACKS 2.17213e+06
+ %%% EVENT 111000 NTRACKS 5 TOTAL NTRACKS 2.1919e+06
+ %%% EVENT 112000 NTRACKS 21 TOTAL NTRACKS 2.21229e+06
+ %%% EVENT 113000 NTRACKS 19 TOTAL NTRACKS 2.23197e+06
+ %%% EVENT 114000 NTRACKS 6 TOTAL NTRACKS 2.2519e+06
+ %%% EVENT 115000 NTRACKS 12 TOTAL NTRACKS 2.27138e+06
+ %%% EVENT 116000 NTRACKS 6 TOTAL NTRACKS 2.29114e+06
+ %%% EVENT 117000 NTRACKS 29 TOTAL NTRACKS 2.31088e+06
+ %%% EVENT 118000 NTRACKS 35 TOTAL NTRACKS 2.3304e+06
+ %%% EVENT 119000 NTRACKS 12 TOTAL NTRACKS 2.34999e+06
+ %%% EVENT 120000 NTRACKS 15 TOTAL NTRACKS 2.36984e+06
+ %%% EVENT 121000 NTRACKS 12 TOTAL NTRACKS 2.3896e+06
+ %%% EVENT 122000 NTRACKS 13 TOTAL NTRACKS 2.40946e+06
+ %%% EVENT 123000 NTRACKS 19 TOTAL NTRACKS 2.42942e+06
+ %%% EVENT 124000 NTRACKS 20 TOTAL NTRACKS 2.44935e+06
+ %%% EVENT 125000 NTRACKS 23 TOTAL NTRACKS 2.46938e+06
+ %%% EVENT 126000 NTRACKS 1 TOTAL NTRACKS 2.4894e+06
+ %%% EVENT 127000 NTRACKS 17 TOTAL NTRACKS 2.50902e+06
+ %%% EVENT 128000 NTRACKS 10 TOTAL NTRACKS 2.52864e+06
+ %%% EVENT 129000 NTRACKS 12 TOTAL NTRACKS 2.54846e+06
+ %%% EVENT 130000 NTRACKS 17 TOTAL NTRACKS 2.56821e+06
+ %%% EVENT 131000 NTRACKS 17 TOTAL NTRACKS 2.58773e+06
+ %%% EVENT 132000 NTRACKS 29 TOTAL NTRACKS 2.60789e+06
+ %%% EVENT 133000 NTRACKS 22 TOTAL NTRACKS 2.62765e+06
+ %%% EVENT 134000 NTRACKS 20 TOTAL NTRACKS 2.64751e+06
+ %%% EVENT 135000 NTRACKS 19 TOTAL NTRACKS 2.6673e+06
+ %%% EVENT 136000 NTRACKS 36 TOTAL NTRACKS 2.68712e+06
+ %%% EVENT 137000 NTRACKS 27 TOTAL NTRACKS 2.70684e+06
+ %%% EVENT 138000 NTRACKS 24 TOTAL NTRACKS 2.72647e+06
+ %%% EVENT 139000 NTRACKS 19 TOTAL NTRACKS 2.74645e+06
+ %%% EVENT 140000 NTRACKS 21 TOTAL NTRACKS 2.76626e+06
+ %%% EVENT 141000 NTRACKS 21 TOTAL NTRACKS 2.78608e+06
+ %%% EVENT 142000 NTRACKS 15 TOTAL NTRACKS 2.80587e+06
+ %%% EVENT 143000 NTRACKS 27 TOTAL NTRACKS 2.82606e+06
+ %%% EVENT 144000 NTRACKS 23 TOTAL NTRACKS 2.84555e+06
+ %%% EVENT 145000 NTRACKS 34 TOTAL NTRACKS 2.86498e+06
+ %%% EVENT 146000 NTRACKS 7 TOTAL NTRACKS 2.88456e+06
+ %%% EVENT 147000 NTRACKS 28 TOTAL NTRACKS 2.90419e+06
+ %%% EVENT 148000 NTRACKS 18 TOTAL NTRACKS 2.92376e+06
+ %%% EVENT 149000 NTRACKS 20 TOTAL NTRACKS 2.94363e+06
+ %%% EVENT 150000 NTRACKS 24 TOTAL NTRACKS 2.96313e+06
+ %%% EVENT 151000 NTRACKS 14 TOTAL NTRACKS 2.98293e+06
+ %%% EVENT 152000 NTRACKS 19 TOTAL NTRACKS 3.00325e+06
+ %%% EVENT 153000 NTRACKS 17 TOTAL NTRACKS 3.02251e+06
+ %%% EVENT 154000 NTRACKS 23 TOTAL NTRACKS 3.04221e+06
+ %%% EVENT 155000 NTRACKS 1 TOTAL NTRACKS 3.06184e+06
+ %%% EVENT 156000 NTRACKS 29 TOTAL NTRACKS 3.08126e+06
+ %%% EVENT 157000 NTRACKS 19 TOTAL NTRACKS 3.10125e+06
+ %%% EVENT 158000 NTRACKS 28 TOTAL NTRACKS 3.12066e+06
+ %%% EVENT 159000 NTRACKS 12 TOTAL NTRACKS 3.13982e+06
+ %%% EVENT 160000 NTRACKS 18 TOTAL NTRACKS 3.15982e+06
+ %%% EVENT 161000 NTRACKS 25 TOTAL NTRACKS 3.17966e+06
+ %%% EVENT 162000 NTRACKS 20 TOTAL NTRACKS 3.19934e+06
+ %%% EVENT 163000 NTRACKS 20 TOTAL NTRACKS 3.21944e+06
+ %%% EVENT 164000 NTRACKS 4 TOTAL NTRACKS 3.23888e+06
+ %%% EVENT 165000 NTRACKS 17 TOTAL NTRACKS 3.25839e+06
+ %%% EVENT 166000 NTRACKS 22 TOTAL NTRACKS 3.27835e+06
+ %%% EVENT 167000 NTRACKS 8 TOTAL NTRACKS 3.2981e+06
+ %%% EVENT 168000 NTRACKS 30 TOTAL NTRACKS 3.31742e+06
+ %%% EVENT 169000 NTRACKS 16 TOTAL NTRACKS 3.33696e+06
+ %%% EVENT 170000 NTRACKS 24 TOTAL NTRACKS 3.35639e+06
+ %%% EVENT 171000 NTRACKS 12 TOTAL NTRACKS 3.37644e+06
+ %%% EVENT 172000 NTRACKS 19 TOTAL NTRACKS 3.39627e+06
+ %%% EVENT 173000 NTRACKS 34 TOTAL NTRACKS 3.41648e+06
+ %%% EVENT 174000 NTRACKS 6 TOTAL NTRACKS 3.43625e+06
+ %%% EVENT 175000 NTRACKS 20 TOTAL NTRACKS 3.45563e+06
+ %%% EVENT 176000 NTRACKS 37 TOTAL NTRACKS 3.47569e+06
+ %%% EVENT 177000 NTRACKS 10 TOTAL NTRACKS 3.49544e+06
+ %%% EVENT 178000 NTRACKS 8 TOTAL NTRACKS 3.51524e+06
+ %%% EVENT 179000 NTRACKS 21 TOTAL NTRACKS 3.53487e+06
+ %%% EVENT 180000 NTRACKS 10 TOTAL NTRACKS 3.55495e+06
+ %%% EVENT 181000 NTRACKS 17 TOTAL NTRACKS 3.57442e+06
+ %%% EVENT 182000 NTRACKS 21 TOTAL NTRACKS 3.59436e+06
+ %%% EVENT 183000 NTRACKS 28 TOTAL NTRACKS 3.61429e+06
+ %%% EVENT 184000 NTRACKS 22 TOTAL NTRACKS 3.63413e+06
+ %%% EVENT 185000 NTRACKS 6 TOTAL NTRACKS 3.65396e+06
+ %%% EVENT 186000 NTRACKS 23 TOTAL NTRACKS 3.67367e+06
+ %%% EVENT 187000 NTRACKS 22 TOTAL NTRACKS 3.69306e+06
+ %%% EVENT 188000 NTRACKS 13 TOTAL NTRACKS 3.71284e+06
+ %%% EVENT 189000 NTRACKS 25 TOTAL NTRACKS 3.73282e+06
+ %%% EVENT 190000 NTRACKS 9 TOTAL NTRACKS 3.75224e+06
+ %%% EVENT 191000 NTRACKS 20 TOTAL NTRACKS 3.77228e+06
+ %%% EVENT 192000 NTRACKS 17 TOTAL NTRACKS 3.79215e+06
+ %%% EVENT 193000 NTRACKS 29 TOTAL NTRACKS 3.81184e+06
+ %%% EVENT 194000 NTRACKS 41 TOTAL NTRACKS 3.83172e+06
+ %%% EVENT 195000 NTRACKS 4 TOTAL NTRACKS 3.85181e+06
+ %%% EVENT 196000 NTRACKS 24 TOTAL NTRACKS 3.87145e+06
+ %%% EVENT 197000 NTRACKS 30 TOTAL NTRACKS 3.89153e+06
+ %%% EVENT 198000 NTRACKS 16 TOTAL NTRACKS 3.91142e+06
+ %%% EVENT 199000 NTRACKS 25 TOTAL NTRACKS 3.93123e+06
+ %%% EVENT 200000 NTRACKS 14 TOTAL NTRACKS 3.95113e+06
+ %%% EVENT 201000 NTRACKS 1 TOTAL NTRACKS 3.9708e+06
+ %%% EVENT 202000 NTRACKS 11 TOTAL NTRACKS 3.99022e+06
+ %%% EVENT 203000 NTRACKS 22 TOTAL NTRACKS 4.0103e+06
+ %%% EVENT 204000 NTRACKS 22 TOTAL NTRACKS 4.03006e+06
+ %%% EVENT 205000 NTRACKS 26 TOTAL NTRACKS 4.04973e+06
+ %%% EVENT 206000 NTRACKS 37 TOTAL NTRACKS 4.0695e+06
+ %%% EVENT 207000 NTRACKS 32 TOTAL NTRACKS 4.08935e+06
+ %%% EVENT 208000 NTRACKS 13 TOTAL NTRACKS 4.10871e+06
+ %%% EVENT 209000 NTRACKS 14 TOTAL NTRACKS 4.12875e+06
+ %%% EVENT 210000 NTRACKS 16 TOTAL NTRACKS 4.14838e+06
+ %%% EVENT 211000 NTRACKS 5 TOTAL NTRACKS 4.16847e+06
+ %%% EVENT 212000 NTRACKS 26 TOTAL NTRACKS 4.18818e+06
+ %%% EVENT 213000 NTRACKS 16 TOTAL NTRACKS 4.20836e+06
+ %%% EVENT 214000 NTRACKS 23 TOTAL NTRACKS 4.22738e+06
+ %%% EVENT 215000 NTRACKS 17 TOTAL NTRACKS 4.2475e+06
+ %%% EVENT 216000 NTRACKS 22 TOTAL NTRACKS 4.26725e+06
+ %%% EVENT 217000 NTRACKS 19 TOTAL NTRACKS 4.2872e+06
+ %%% EVENT 218000 NTRACKS 28 TOTAL NTRACKS 4.30685e+06
+ %%% EVENT 219000 NTRACKS 46 TOTAL NTRACKS 4.32648e+06
+ %%% EVENT 220000 NTRACKS 28 TOTAL NTRACKS 4.34657e+06
+ %%% EVENT 221000 NTRACKS 32 TOTAL NTRACKS 4.36598e+06
+ %%% EVENT 222000 NTRACKS 24 TOTAL NTRACKS 4.38539e+06
+ %%% EVENT 223000 NTRACKS 18 TOTAL NTRACKS 4.40506e+06
+ %%% EVENT 224000 NTRACKS 35 TOTAL NTRACKS 4.42462e+06
+ %%% EVENT 225000 NTRACKS 6 TOTAL NTRACKS 4.44428e+06
+ %%% EVENT 226000 NTRACKS 17 TOTAL NTRACKS 4.46382e+06
+ %%% EVENT 227000 NTRACKS 7 TOTAL NTRACKS 4.48399e+06
+ %%% EVENT 228000 NTRACKS 27 TOTAL NTRACKS 4.50409e+06
+ %%% EVENT 229000 NTRACKS 23 TOTAL NTRACKS 4.52438e+06
+ %%% EVENT 230000 NTRACKS 15 TOTAL NTRACKS 4.54416e+06
+ %%% EVENT 231000 NTRACKS 7 TOTAL NTRACKS 4.56405e+06
+ %%% EVENT 232000 NTRACKS 16 TOTAL NTRACKS 4.58393e+06
+ %%% EVENT 233000 NTRACKS 32 TOTAL NTRACKS 4.60365e+06
+ %%% EVENT 234000 NTRACKS 16 TOTAL NTRACKS 4.62329e+06
+ %%% EVENT 235000 NTRACKS 22 TOTAL NTRACKS 4.64323e+06
+ %%% EVENT 236000 NTRACKS 11 TOTAL NTRACKS 4.6629e+06
+ %%% EVENT 237000 NTRACKS 17 TOTAL NTRACKS 4.68249e+06
+ %%% EVENT 238000 NTRACKS 19 TOTAL NTRACKS 4.70217e+06
+ %%% EVENT 239000 NTRACKS 9 TOTAL NTRACKS 4.72151e+06
+ %%% EVENT 240000 NTRACKS 22 TOTAL NTRACKS 4.74134e+06
+ %%% EVENT 241000 NTRACKS 23 TOTAL NTRACKS 4.76104e+06
+ %%% EVENT 242000 NTRACKS 23 TOTAL NTRACKS 4.7807e+06
+ %%% EVENT 243000 NTRACKS 18 TOTAL NTRACKS 4.80071e+06
+ %%% EVENT 244000 NTRACKS 19 TOTAL NTRACKS 4.82046e+06
+ %%% EVENT 245000 NTRACKS 22 TOTAL NTRACKS 4.84007e+06
+ %%% EVENT 246000 NTRACKS 23 TOTAL NTRACKS 4.8598e+06
+ %%% EVENT 247000 NTRACKS 10 TOTAL NTRACKS 4.87963e+06
+ %%% EVENT 248000 NTRACKS 23 TOTAL NTRACKS 4.89971e+06
+ %%% EVENT 249000 NTRACKS 27 TOTAL NTRACKS 4.9196e+06
+ %%% EVENT 250000 NTRACKS 15 TOTAL NTRACKS 4.93961e+06
+ %%% EVENT 251000 NTRACKS 23 TOTAL NTRACKS 4.95919e+06
+ %%% EVENT 252000 NTRACKS 21 TOTAL NTRACKS 4.97873e+06
+ %%% EVENT 253000 NTRACKS 14 TOTAL NTRACKS 4.9983e+06
+ %%% EVENT 254000 NTRACKS 35 TOTAL NTRACKS 5.01775e+06
+ %%% EVENT 255000 NTRACKS 17 TOTAL NTRACKS 5.03766e+06
+ %%% EVENT 256000 NTRACKS 24 TOTAL NTRACKS 5.0574e+06
+ %%% EVENT 257000 NTRACKS 11 TOTAL NTRACKS 5.07678e+06
+ %%% EVENT 258000 NTRACKS 18 TOTAL NTRACKS 5.09669e+06
+ %%% EVENT 259000 NTRACKS 22 TOTAL NTRACKS 5.11678e+06
+ %%% EVENT 260000 NTRACKS 32 TOTAL NTRACKS 5.13679e+06
+ %%% EVENT 261000 NTRACKS 21 TOTAL NTRACKS 5.15654e+06
+ %%% EVENT 262000 NTRACKS 13 TOTAL NTRACKS 5.1762e+06
+ %%% EVENT 263000 NTRACKS 21 TOTAL NTRACKS 5.19622e+06
+ %%% EVENT 264000 NTRACKS 21 TOTAL NTRACKS 5.21597e+06
+ %%% EVENT 265000 NTRACKS 23 TOTAL NTRACKS 5.23572e+06
+ %%% EVENT 266000 NTRACKS 13 TOTAL NTRACKS 5.2553e+06
+ %%% EVENT 267000 NTRACKS 8 TOTAL NTRACKS 5.27506e+06
+ %%% EVENT 268000 NTRACKS 13 TOTAL NTRACKS 5.29445e+06
+ %%% EVENT 269000 NTRACKS 25 TOTAL NTRACKS 5.31416e+06
+ %%% EVENT 270000 NTRACKS 26 TOTAL NTRACKS 5.33396e+06
+ %%% EVENT 271000 NTRACKS 30 TOTAL NTRACKS 5.35365e+06
+ %%% EVENT 272000 NTRACKS 16 TOTAL NTRACKS 5.37348e+06
+ %%% EVENT 273000 NTRACKS 1 TOTAL NTRACKS 5.39327e+06
+ %%% EVENT 274000 NTRACKS 27 TOTAL NTRACKS 5.41328e+06
+ %%% EVENT 275000 NTRACKS 19 TOTAL NTRACKS 5.43266e+06
+ %%% EVENT 276000 NTRACKS 32 TOTAL NTRACKS 5.45268e+06
+ %%% EVENT 277000 NTRACKS 11 TOTAL NTRACKS 5.47262e+06
+ %%% EVENT 278000 NTRACKS 10 TOTAL NTRACKS 5.49217e+06
+ %%% EVENT 279000 NTRACKS 8 TOTAL NTRACKS 5.51229e+06
+ %%% EVENT 280000 NTRACKS 19 TOTAL NTRACKS 5.53224e+06
+ %%% EVENT 281000 NTRACKS 16 TOTAL NTRACKS 5.5521e+06
+ %%% EVENT 282000 NTRACKS 29 TOTAL NTRACKS 5.57183e+06
+ %%% EVENT 283000 NTRACKS 32 TOTAL NTRACKS 5.59175e+06
+ %%% EVENT 284000 NTRACKS 19 TOTAL NTRACKS 5.61166e+06
+ %%% EVENT 285000 NTRACKS 25 TOTAL NTRACKS 5.63171e+06
+ %%% EVENT 286000 NTRACKS 18 TOTAL NTRACKS 5.6513e+06
+ %%% EVENT 287000 NTRACKS 23 TOTAL NTRACKS 5.67039e+06
+ %%% EVENT 288000 NTRACKS 31 TOTAL NTRACKS 5.69046e+06
+ %%% EVENT 289000 NTRACKS 20 TOTAL NTRACKS 5.71052e+06
+ %%% EVENT 290000 NTRACKS 12 TOTAL NTRACKS 5.73006e+06
+ %%% EVENT 291000 NTRACKS 18 TOTAL NTRACKS 5.74972e+06
+ %%% EVENT 292000 NTRACKS 11 TOTAL NTRACKS 5.76887e+06
+ %%% EVENT 293000 NTRACKS 15 TOTAL NTRACKS 5.78882e+06
+ %%% EVENT 294000 NTRACKS 20 TOTAL NTRACKS 5.80832e+06
+ %%% EVENT 295000 NTRACKS 31 TOTAL NTRACKS 5.82765e+06
+ %%% EVENT 296000 NTRACKS 25 TOTAL NTRACKS 5.84719e+06
+ %%% EVENT 297000 NTRACKS 26 TOTAL NTRACKS 5.86634e+06
+ %%% EVENT 298000 NTRACKS 22 TOTAL NTRACKS 5.88591e+06
+ %%% EVENT 299000 NTRACKS 20 TOTAL NTRACKS 5.90518e+06
+ %%% EVENT 300000 NTRACKS 16 TOTAL NTRACKS 5.92499e+06
+ %%% EVENT 301000 NTRACKS 11 TOTAL NTRACKS 5.94504e+06
+ %%% EVENT 302000 NTRACKS 13 TOTAL NTRACKS 5.96467e+06
+ %%% EVENT 303000 NTRACKS 13 TOTAL NTRACKS 5.98452e+06
+ %%% EVENT 304000 NTRACKS 17 TOTAL NTRACKS 6.00414e+06
+ %%% EVENT 305000 NTRACKS 10 TOTAL NTRACKS 6.02398e+06
+ %%% EVENT 306000 NTRACKS 22 TOTAL NTRACKS 6.04356e+06
+ %%% EVENT 307000 NTRACKS 26 TOTAL NTRACKS 6.06308e+06
+ %%% EVENT 308000 NTRACKS 27 TOTAL NTRACKS 6.08283e+06
+ %%% EVENT 309000 NTRACKS 25 TOTAL NTRACKS 6.1026e+06
+ %%% EVENT 310000 NTRACKS 29 TOTAL NTRACKS 6.12233e+06
+ %%% EVENT 311000 NTRACKS 6 TOTAL NTRACKS 6.14231e+06
+ %%% EVENT 312000 NTRACKS 9 TOTAL NTRACKS 6.16161e+06
+ %%% EVENT 313000 NTRACKS 20 TOTAL NTRACKS 6.1815e+06
+ %%% EVENT 314000 NTRACKS 15 TOTAL NTRACKS 6.2016e+06
+ %%% EVENT 315000 NTRACKS 27 TOTAL NTRACKS 6.22151e+06
+ %%% EVENT 316000 NTRACKS 26 TOTAL NTRACKS 6.24093e+06
+ %%% EVENT 317000 NTRACKS 10 TOTAL NTRACKS 6.2604e+06
+ %%% EVENT 318000 NTRACKS 20 TOTAL NTRACKS 6.28068e+06
+ %%% EVENT 319000 NTRACKS 41 TOTAL NTRACKS 6.30015e+06
+ %%% EVENT 320000 NTRACKS 23 TOTAL NTRACKS 6.31983e+06
+ %%% EVENT 321000 NTRACKS 19 TOTAL NTRACKS 6.33916e+06
+ %%% EVENT 322000 NTRACKS 25 TOTAL NTRACKS 6.35889e+06
+ %%% EVENT 323000 NTRACKS 30 TOTAL NTRACKS 6.37865e+06
+ %%% EVENT 324000 NTRACKS 6 TOTAL NTRACKS 6.39825e+06
+ %%% EVENT 325000 NTRACKS 20 TOTAL NTRACKS 6.41836e+06
+ %%% EVENT 326000 NTRACKS 17 TOTAL NTRACKS 6.43804e+06
+ %%% EVENT 327000 NTRACKS 14 TOTAL NTRACKS 6.4576e+06
+ %%% EVENT 328000 NTRACKS 20 TOTAL NTRACKS 6.47736e+06
+ %%% EVENT 329000 NTRACKS 17 TOTAL NTRACKS 6.49705e+06
+ %%% EVENT 330000 NTRACKS 4 TOTAL NTRACKS 6.51674e+06
+ %%% EVENT 331000 NTRACKS 25 TOTAL NTRACKS 6.536e+06
+ %%% EVENT 332000 NTRACKS 34 TOTAL NTRACKS 6.55525e+06
+ %%% EVENT 333000 NTRACKS 14 TOTAL NTRACKS 6.57526e+06
+ %%% EVENT 334000 NTRACKS 29 TOTAL NTRACKS 6.59528e+06
+ %%% EVENT 335000 NTRACKS 26 TOTAL NTRACKS 6.61556e+06
+ %%% EVENT 336000 NTRACKS 16 TOTAL NTRACKS 6.63542e+06
+ %%% EVENT 337000 NTRACKS 24 TOTAL NTRACKS 6.65517e+06
+ %%% EVENT 338000 NTRACKS 28 TOTAL NTRACKS 6.67508e+06
+ %%% EVENT 339000 NTRACKS 20 TOTAL NTRACKS 6.69479e+06
+ %%% EVENT 340000 NTRACKS 15 TOTAL NTRACKS 6.71455e+06
+ %%% EVENT 341000 NTRACKS 10 TOTAL NTRACKS 6.73424e+06
+ %%% EVENT 342000 NTRACKS 22 TOTAL NTRACKS 6.75382e+06
+ %%% EVENT 343000 NTRACKS 24 TOTAL NTRACKS 6.77352e+06
+ %%% EVENT 344000 NTRACKS 10 TOTAL NTRACKS 6.79345e+06
+ %%% EVENT 345000 NTRACKS 29 TOTAL NTRACKS 6.81298e+06
+ %%% EVENT 346000 NTRACKS 12 TOTAL NTRACKS 6.83259e+06
+ %%% EVENT 347000 NTRACKS 19 TOTAL NTRACKS 6.8525e+06
+ %%% EVENT 348000 NTRACKS 1 TOTAL NTRACKS 6.87232e+06
+ %%% EVENT 349000 NTRACKS 13 TOTAL NTRACKS 6.89181e+06
+ %%% EVENT 350000 NTRACKS 22 TOTAL NTRACKS 6.91144e+06
+ %%% EVENT 351000 NTRACKS 23 TOTAL NTRACKS 6.93171e+06
+ %%% EVENT 352000 NTRACKS 9 TOTAL NTRACKS 6.95127e+06
+ %%% EVENT 353000 NTRACKS 36 TOTAL NTRACKS 6.97127e+06
+ %%% EVENT 354000 NTRACKS 22 TOTAL NTRACKS 6.99086e+06
+ %%% EVENT 355000 NTRACKS 24 TOTAL NTRACKS 7.0103e+06
+ %%% EVENT 356000 NTRACKS 26 TOTAL NTRACKS 7.02972e+06
+ %%% EVENT 357000 NTRACKS 14 TOTAL NTRACKS 7.04938e+06
+ %%% EVENT 358000 NTRACKS 22 TOTAL NTRACKS 7.06903e+06
+ %%% EVENT 359000 NTRACKS 29 TOTAL NTRACKS 7.08851e+06
+ %%% EVENT 360000 NTRACKS 17 TOTAL NTRACKS 7.10866e+06
+ %%% EVENT 361000 NTRACKS 29 TOTAL NTRACKS 7.12829e+06
+ %%% EVENT 362000 NTRACKS 17 TOTAL NTRACKS 7.14836e+06
+ %%% EVENT 363000 NTRACKS 16 TOTAL NTRACKS 7.16803e+06
+ %%% EVENT 364000 NTRACKS 10 TOTAL NTRACKS 7.18779e+06
+ %%% EVENT 365000 NTRACKS 29 TOTAL NTRACKS 7.20765e+06
+ %%% EVENT 366000 NTRACKS 18 TOTAL NTRACKS 7.22771e+06
+ %%% EVENT 367000 NTRACKS 14 TOTAL NTRACKS 7.24793e+06
+ %%% EVENT 368000 NTRACKS 24 TOTAL NTRACKS 7.26756e+06
+ %%% EVENT 369000 NTRACKS 15 TOTAL NTRACKS 7.28762e+06
+ %%% EVENT 370000 NTRACKS 10 TOTAL NTRACKS 7.30699e+06
+ %%% EVENT 371000 NTRACKS 30 TOTAL NTRACKS 7.32659e+06
+ %%% EVENT 372000 NTRACKS 25 TOTAL NTRACKS 7.34615e+06
+ %%% EVENT 373000 NTRACKS 17 TOTAL NTRACKS 7.36555e+06
+ %%% EVENT 374000 NTRACKS 31 TOTAL NTRACKS 7.38536e+06
+ %%% EVENT 375000 NTRACKS 7 TOTAL NTRACKS 7.40531e+06
+ %%% EVENT 376000 NTRACKS 26 TOTAL NTRACKS 7.425e+06
+ %%% EVENT 377000 NTRACKS 8 TOTAL NTRACKS 7.4445e+06
+ %%% EVENT 378000 NTRACKS 3 TOTAL NTRACKS 7.4645e+06
+ %%% EVENT 379000 NTRACKS 9 TOTAL NTRACKS 7.48395e+06
+ %%% EVENT 380000 NTRACKS 19 TOTAL NTRACKS 7.50332e+06
+ %%% EVENT 381000 NTRACKS 32 TOTAL NTRACKS 7.52338e+06
+ %%% EVENT 382000 NTRACKS 29 TOTAL NTRACKS 7.54324e+06
+ %%% EVENT 383000 NTRACKS 40 TOTAL NTRACKS 7.56344e+06
+ %%% EVENT 384000 NTRACKS 3 TOTAL NTRACKS 7.5831e+06
+ %%% EVENT 385000 NTRACKS 17 TOTAL NTRACKS 7.60299e+06
+ %%% EVENT 386000 NTRACKS 26 TOTAL NTRACKS 7.62254e+06
+ %%% EVENT 387000 NTRACKS 10 TOTAL NTRACKS 7.64233e+06
+ %%% EVENT 388000 NTRACKS 23 TOTAL NTRACKS 7.66258e+06
+ %%% EVENT 389000 NTRACKS 17 TOTAL NTRACKS 7.68227e+06
+ %%% EVENT 390000 NTRACKS 24 TOTAL NTRACKS 7.70211e+06
+ %%% EVENT 391000 NTRACKS 14 TOTAL NTRACKS 7.72171e+06
+ %%% EVENT 392000 NTRACKS 19 TOTAL NTRACKS 7.742e+06
+ %%% EVENT 393000 NTRACKS 16 TOTAL NTRACKS 7.76192e+06
+ %%% EVENT 394000 NTRACKS 9 TOTAL NTRACKS 7.78179e+06
+ %%% EVENT 395000 NTRACKS 31 TOTAL NTRACKS 7.80185e+06
+ %%% EVENT 396000 NTRACKS 33 TOTAL NTRACKS 7.82166e+06
+ %%% EVENT 397000 NTRACKS 33 TOTAL NTRACKS 7.84164e+06
+ %%% EVENT 398000 NTRACKS 12 TOTAL NTRACKS 7.86111e+06
+ %%% EVENT 399000 NTRACKS 19 TOTAL NTRACKS 7.88126e+06
+ %%% EVENT 400000 NTRACKS 34 TOTAL NTRACKS 7.90125e+06
+ %%% EVENT 401000 NTRACKS 23 TOTAL NTRACKS 7.92071e+06
+ %%% EVENT 402000 NTRACKS 6 TOTAL NTRACKS 7.9401e+06
+ %%% EVENT 403000 NTRACKS 26 TOTAL NTRACKS 7.96003e+06
+ %%% EVENT 404000 NTRACKS 27 TOTAL NTRACKS 7.97994e+06
+ %%% EVENT 405000 NTRACKS 18 TOTAL NTRACKS 8.00002e+06
+ %%% EVENT 406000 NTRACKS 29 TOTAL NTRACKS 8.02012e+06
+ %%% EVENT 407000 NTRACKS 29 TOTAL NTRACKS 8.0399e+06
+ %%% EVENT 408000 NTRACKS 21 TOTAL NTRACKS 8.05961e+06
+ %%% EVENT 409000 NTRACKS 13 TOTAL NTRACKS 8.07899e+06
+ %%% EVENT 410000 NTRACKS 23 TOTAL NTRACKS 8.09878e+06
+ %%% EVENT 411000 NTRACKS 25 TOTAL NTRACKS 8.11855e+06
+ %%% EVENT 412000 NTRACKS 11 TOTAL NTRACKS 8.13824e+06
+ %%% EVENT 413000 NTRACKS 21 TOTAL NTRACKS 8.15823e+06
+ %%% EVENT 414000 NTRACKS 14 TOTAL NTRACKS 8.1774e+06
+ %%% EVENT 415000 NTRACKS 30 TOTAL NTRACKS 8.19678e+06
+ %%% EVENT 416000 NTRACKS 12 TOTAL NTRACKS 8.21629e+06
+ %%% EVENT 417000 NTRACKS 27 TOTAL NTRACKS 8.23598e+06
+ %%% EVENT 418000 NTRACKS 22 TOTAL NTRACKS 8.25576e+06
+ %%% EVENT 419000 NTRACKS 35 TOTAL NTRACKS 8.27528e+06
+ %%% EVENT 420000 NTRACKS 15 TOTAL NTRACKS 8.29514e+06
+ %%% EVENT 421000 NTRACKS 20 TOTAL NTRACKS 8.31475e+06
+ %%% EVENT 422000 NTRACKS 19 TOTAL NTRACKS 8.33451e+06
+ %%% EVENT 423000 NTRACKS 29 TOTAL NTRACKS 8.3544e+06
+ %%% EVENT 424000 NTRACKS 15 TOTAL NTRACKS 8.37438e+06
+ %%% EVENT 425000 NTRACKS 30 TOTAL NTRACKS 8.39406e+06
+ %%% EVENT 426000 NTRACKS 40 TOTAL NTRACKS 8.41387e+06
+ %%% EVENT 427000 NTRACKS 13 TOTAL NTRACKS 8.4336e+06
+ %%% EVENT 428000 NTRACKS 20 TOTAL NTRACKS 8.45323e+06
+ %%% EVENT 429000 NTRACKS 27 TOTAL NTRACKS 8.47301e+06
+ %%% EVENT 430000 NTRACKS 30 TOTAL NTRACKS 8.49272e+06
+ %%% EVENT 431000 NTRACKS 10 TOTAL NTRACKS 8.51248e+06
+ %%% EVENT 432000 NTRACKS 14 TOTAL NTRACKS 8.53247e+06
+ %%% EVENT 433000 NTRACKS 14 TOTAL NTRACKS 8.55273e+06
+ %%% EVENT 434000 NTRACKS 15 TOTAL NTRACKS 8.57239e+06
+ %%% EVENT 435000 NTRACKS 25 TOTAL NTRACKS 8.59185e+06
+ %%% EVENT 436000 NTRACKS 17 TOTAL NTRACKS 8.61182e+06
+ %%% EVENT 437000 NTRACKS 21 TOTAL NTRACKS 8.63156e+06
+ %%% EVENT 438000 NTRACKS 24 TOTAL NTRACKS 8.65098e+06
+ %%% EVENT 439000 NTRACKS 17 TOTAL NTRACKS 8.67103e+06
+ %%% EVENT 440000 NTRACKS 27 TOTAL NTRACKS 8.6909e+06
+ %%% EVENT 441000 NTRACKS 16 TOTAL NTRACKS 8.71028e+06
+ %%% EVENT 442000 NTRACKS 20 TOTAL NTRACKS 8.73016e+06
+ %%% EVENT 443000 NTRACKS 19 TOTAL NTRACKS 8.74953e+06
+ %%% EVENT 444000 NTRACKS 30 TOTAL NTRACKS 8.76912e+06
+ %%% EVENT 445000 NTRACKS 27 TOTAL NTRACKS 8.78859e+06
+ %%% EVENT 446000 NTRACKS 23 TOTAL NTRACKS 8.80887e+06
+ %%% EVENT 447000 NTRACKS 8 TOTAL NTRACKS 8.82879e+06
+ %%% EVENT 448000 NTRACKS 8 TOTAL NTRACKS 8.84846e+06
+ %%% EVENT 449000 NTRACKS 26 TOTAL NTRACKS 8.86828e+06
+ %%% EVENT 450000 NTRACKS 23 TOTAL NTRACKS 8.8879e+06
+ %%% EVENT 451000 NTRACKS 25 TOTAL NTRACKS 8.90769e+06
+ %%% EVENT 452000 NTRACKS 10 TOTAL NTRACKS 8.92749e+06
+ %%% EVENT 453000 NTRACKS 22 TOTAL NTRACKS 8.94752e+06
+ %%% EVENT 454000 NTRACKS 27 TOTAL NTRACKS 8.96724e+06
+ %%% EVENT 455000 NTRACKS 24 TOTAL NTRACKS 8.98693e+06
+ %%% EVENT 456000 NTRACKS 14 TOTAL NTRACKS 9.00687e+06
+ %%% EVENT 457000 NTRACKS 15 TOTAL NTRACKS 9.02603e+06
+ %%% EVENT 458000 NTRACKS 23 TOTAL NTRACKS 9.04564e+06
+ %%% EVENT 459000 NTRACKS 33 TOTAL NTRACKS 9.06532e+06
+ %%% EVENT 460000 NTRACKS 16 TOTAL NTRACKS 9.0854e+06
+ %%% EVENT 461000 NTRACKS 30 TOTAL NTRACKS 9.10553e+06
+ %%% EVENT 462000 NTRACKS 20 TOTAL NTRACKS 9.12543e+06
+ %%% EVENT 463000 NTRACKS 16 TOTAL NTRACKS 9.14494e+06
+ %%% EVENT 464000 NTRACKS 30 TOTAL NTRACKS 9.1647e+06
+ %%% EVENT 465000 NTRACKS 29 TOTAL NTRACKS 9.18485e+06
+ %%% EVENT 466000 NTRACKS 20 TOTAL NTRACKS 9.20493e+06
+ %%% EVENT 467000 NTRACKS 8 TOTAL NTRACKS 9.22458e+06
+ %%% EVENT 468000 NTRACKS 24 TOTAL NTRACKS 9.24415e+06
+ %%% EVENT 469000 NTRACKS 25 TOTAL NTRACKS 9.26405e+06
+ %%% EVENT 470000 NTRACKS 13 TOTAL NTRACKS 9.2839e+06
+ %%% EVENT 471000 NTRACKS 29 TOTAL NTRACKS 9.30406e+06
+ %%% EVENT 472000 NTRACKS 21 TOTAL NTRACKS 9.32373e+06
+ %%% EVENT 473000 NTRACKS 18 TOTAL NTRACKS 9.34332e+06
+ %%% EVENT 474000 NTRACKS 20 TOTAL NTRACKS 9.36267e+06
+ %%% EVENT 475000 NTRACKS 10 TOTAL NTRACKS 9.38265e+06
+ %%% EVENT 476000 NTRACKS 22 TOTAL NTRACKS 9.40232e+06
+ %%% EVENT 477000 NTRACKS 28 TOTAL NTRACKS 9.4222e+06
+ %%% EVENT 478000 NTRACKS 4 TOTAL NTRACKS 9.44227e+06
+ %%% EVENT 479000 NTRACKS 12 TOTAL NTRACKS 9.4626e+06
+ %%% EVENT 480000 NTRACKS 30 TOTAL NTRACKS 9.48246e+06
+ %%% EVENT 481000 NTRACKS 19 TOTAL NTRACKS 9.5015e+06
+ %%% EVENT 482000 NTRACKS 21 TOTAL NTRACKS 9.52153e+06
+ %%% EVENT 483000 NTRACKS 15 TOTAL NTRACKS 9.54123e+06
+ %%% EVENT 484000 NTRACKS 6 TOTAL NTRACKS 9.56123e+06
+ %%% EVENT 485000 NTRACKS 23 TOTAL NTRACKS 9.58052e+06
+ %%% EVENT 486000 NTRACKS 18 TOTAL NTRACKS 9.6001e+06
+ %%% EVENT 487000 NTRACKS 24 TOTAL NTRACKS 9.6196e+06
+ %%% EVENT 488000 NTRACKS 24 TOTAL NTRACKS 9.63983e+06
+ %%% EVENT 489000 NTRACKS 20 TOTAL NTRACKS 9.66e+06
+ %%% EVENT 490000 NTRACKS 13 TOTAL NTRACKS 9.67978e+06
+ %%% EVENT 491000 NTRACKS 19 TOTAL NTRACKS 9.69918e+06
+ %%% EVENT 492000 NTRACKS 30 TOTAL NTRACKS 9.71897e+06
+ %%% EVENT 493000 NTRACKS 33 TOTAL NTRACKS 9.73904e+06
+ %%% EVENT 494000 NTRACKS 13 TOTAL NTRACKS 9.75862e+06
+ %%% EVENT 495000 NTRACKS 14 TOTAL NTRACKS 9.77823e+06
+ %%% EVENT 496000 NTRACKS 19 TOTAL NTRACKS 9.7983e+06
+ %%% EVENT 497000 NTRACKS 21 TOTAL NTRACKS 9.81777e+06
+ %%% EVENT 498000 NTRACKS 4 TOTAL NTRACKS 9.8373e+06
+ %%% EVENT 499000 NTRACKS 25 TOTAL NTRACKS 9.85694e+06
+ %%% EVENT 500000 NTRACKS 13 TOTAL NTRACKS 9.87676e+06
+ %%% EVENT 501000 NTRACKS 25 TOTAL NTRACKS 9.89639e+06
+ %%% EVENT 502000 NTRACKS 14 TOTAL NTRACKS 9.9157e+06
+ %%% EVENT 503000 NTRACKS 10 TOTAL NTRACKS 9.93509e+06
+ %%% EVENT 504000 NTRACKS 15 TOTAL NTRACKS 9.95402e+06
+ %%% EVENT 505000 NTRACKS 22 TOTAL NTRACKS 9.97394e+06
+ %%% EVENT 506000 NTRACKS 25 TOTAL NTRACKS 9.9935e+06
+ %%% EVENT 507000 NTRACKS 15 TOTAL NTRACKS 1.00132e+07
+ %%% EVENT 508000 NTRACKS 17 TOTAL NTRACKS 1.00328e+07
+ %%% EVENT 509000 NTRACKS 21 TOTAL NTRACKS 1.00519e+07
+ %%% EVENT 510000 NTRACKS 25 TOTAL NTRACKS 1.00718e+07
+ %%% EVENT 511000 NTRACKS 1 TOTAL NTRACKS 1.00913e+07
+ %%% EVENT 512000 NTRACKS 28 TOTAL NTRACKS 1.01109e+07
+ %%% EVENT 513000 NTRACKS 28 TOTAL NTRACKS 1.01308e+07
+ %%% EVENT 514000 NTRACKS 18 TOTAL NTRACKS 1.01504e+07
+ %%% EVENT 515000 NTRACKS 15 TOTAL NTRACKS 1.01705e+07
+ %%% EVENT 516000 NTRACKS 16 TOTAL NTRACKS 1.01903e+07
+ %%% EVENT 517000 NTRACKS 21 TOTAL NTRACKS 1.021e+07
+ %%% EVENT 518000 NTRACKS 31 TOTAL NTRACKS 1.02295e+07
+ %%% EVENT 519000 NTRACKS 17 TOTAL NTRACKS 1.02488e+07
+ %%% EVENT 520000 NTRACKS 35 TOTAL NTRACKS 1.02686e+07
+ %%% EVENT 521000 NTRACKS 1 TOTAL NTRACKS 1.02885e+07
+ %%% EVENT 522000 NTRACKS 5 TOTAL NTRACKS 1.03083e+07
+ %%% EVENT 523000 NTRACKS 15 TOTAL NTRACKS 1.03278e+07
+ %%% EVENT 524000 NTRACKS 38 TOTAL NTRACKS 1.03475e+07
+ %%% EVENT 525000 NTRACKS 2 TOTAL NTRACKS 1.03669e+07
+ %%% EVENT 526000 NTRACKS 18 TOTAL NTRACKS 1.03867e+07
+ %%% EVENT 527000 NTRACKS 23 TOTAL NTRACKS 1.04064e+07
+ %%% EVENT 528000 NTRACKS 28 TOTAL NTRACKS 1.04262e+07
+ %%% EVENT 529000 NTRACKS 17 TOTAL NTRACKS 1.04457e+07
+ %%% EVENT 530000 NTRACKS 22 TOTAL NTRACKS 1.04657e+07
+ %%% EVENT 531000 NTRACKS 10 TOTAL NTRACKS 1.04851e+07
+ %%% EVENT 532000 NTRACKS 28 TOTAL NTRACKS 1.05044e+07
+ %%% EVENT 533000 NTRACKS 35 TOTAL NTRACKS 1.05241e+07
+ %%% EVENT 534000 NTRACKS 21 TOTAL NTRACKS 1.05439e+07
+ %%% EVENT 535000 NTRACKS 11 TOTAL NTRACKS 1.0564e+07
+ %%% EVENT 536000 NTRACKS 27 TOTAL NTRACKS 1.05835e+07
+ %%% EVENT 537000 NTRACKS 30 TOTAL NTRACKS 1.06033e+07
+ %%% EVENT 538000 NTRACKS 18 TOTAL NTRACKS 1.06231e+07
+ %%% EVENT 539000 NTRACKS 22 TOTAL NTRACKS 1.06432e+07
+ %%% EVENT 540000 NTRACKS 10 TOTAL NTRACKS 1.06629e+07
+ %%% EVENT 541000 NTRACKS 15 TOTAL NTRACKS 1.0683e+07
+ %%% EVENT 542000 NTRACKS 22 TOTAL NTRACKS 1.0703e+07
+ %%% EVENT 543000 NTRACKS 26 TOTAL NTRACKS 1.07231e+07
+ %%% EVENT 544000 NTRACKS 20 TOTAL NTRACKS 1.07425e+07
+ %%% EVENT 545000 NTRACKS 20 TOTAL NTRACKS 1.07621e+07
+ %%% EVENT 546000 NTRACKS 33 TOTAL NTRACKS 1.07818e+07
+ %%% EVENT 547000 NTRACKS 20 TOTAL NTRACKS 1.08016e+07
+ %%% EVENT 548000 NTRACKS 22 TOTAL NTRACKS 1.08211e+07
+ %%% EVENT 549000 NTRACKS 19 TOTAL NTRACKS 1.08408e+07
+ %%% EVENT 550000 NTRACKS 21 TOTAL NTRACKS 1.08607e+07
+ %%% EVENT 551000 NTRACKS 27 TOTAL NTRACKS 1.08805e+07
+ %%% EVENT 552000 NTRACKS 15 TOTAL NTRACKS 1.09e+07
+ %%% EVENT 553000 NTRACKS 20 TOTAL NTRACKS 1.09195e+07
+ %%% EVENT 554000 NTRACKS 8 TOTAL NTRACKS 1.09394e+07
+ %%% EVENT 555000 NTRACKS 13 TOTAL NTRACKS 1.09594e+07
+ %%% EVENT 556000 NTRACKS 9 TOTAL NTRACKS 1.09793e+07
+ %%% EVENT 557000 NTRACKS 21 TOTAL NTRACKS 1.09986e+07
+ %%% EVENT 558000 NTRACKS 25 TOTAL NTRACKS 1.10188e+07
+ %%% EVENT 559000 NTRACKS 16 TOTAL NTRACKS 1.1039e+07
+ %%% EVENT 560000 NTRACKS 18 TOTAL NTRACKS 1.10584e+07
+ %%% EVENT 561000 NTRACKS 25 TOTAL NTRACKS 1.10781e+07
+ %%% EVENT 562000 NTRACKS 35 TOTAL NTRACKS 1.10981e+07
+ %%% EVENT 563000 NTRACKS 8 TOTAL NTRACKS 1.11179e+07
+ %%% EVENT 564000 NTRACKS 19 TOTAL NTRACKS 1.11379e+07
+ %%% EVENT 565000 NTRACKS 24 TOTAL NTRACKS 1.11576e+07
+ %%% EVENT 566000 NTRACKS 28 TOTAL NTRACKS 1.1177e+07
+ %%% EVENT 567000 NTRACKS 34 TOTAL NTRACKS 1.11966e+07
+ %%% EVENT 568000 NTRACKS 32 TOTAL NTRACKS 1.12167e+07
+ %%% EVENT 569000 NTRACKS 24 TOTAL NTRACKS 1.12365e+07
+ %%% EVENT 570000 NTRACKS 20 TOTAL NTRACKS 1.12559e+07
+ %%% EVENT 571000 NTRACKS 28 TOTAL NTRACKS 1.12759e+07
+ %%% EVENT 572000 NTRACKS 24 TOTAL NTRACKS 1.12954e+07
+ %%% EVENT 573000 NTRACKS 27 TOTAL NTRACKS 1.1315e+07
+ %%% EVENT 574000 NTRACKS 18 TOTAL NTRACKS 1.13349e+07
+ %%% EVENT 575000 NTRACKS 11 TOTAL NTRACKS 1.13541e+07
+ %%% EVENT 576000 NTRACKS 19 TOTAL NTRACKS 1.13739e+07
+ %%% EVENT 577000 NTRACKS 18 TOTAL NTRACKS 1.13936e+07
+ %%% EVENT 578000 NTRACKS 23 TOTAL NTRACKS 1.1413e+07
+ %%% EVENT 579000 NTRACKS 29 TOTAL NTRACKS 1.14326e+07
+ %%% EVENT 580000 NTRACKS 25 TOTAL NTRACKS 1.14525e+07
+ %%% EVENT 581000 NTRACKS 31 TOTAL NTRACKS 1.14723e+07
+ %%% EVENT 582000 NTRACKS 26 TOTAL NTRACKS 1.14926e+07
+ %%% EVENT 583000 NTRACKS 33 TOTAL NTRACKS 1.15123e+07
+ %%% EVENT 584000 NTRACKS 29 TOTAL NTRACKS 1.15321e+07
+ %%% EVENT 585000 NTRACKS 47 TOTAL NTRACKS 1.15521e+07
+ %%% EVENT 586000 NTRACKS 14 TOTAL NTRACKS 1.15717e+07
+ %%% EVENT 587000 NTRACKS 5 TOTAL NTRACKS 1.15912e+07
+ %%% EVENT 588000 NTRACKS 8 TOTAL NTRACKS 1.16108e+07
+ %%% EVENT 589000 NTRACKS 11 TOTAL NTRACKS 1.16305e+07
+ %%% EVENT 590000 NTRACKS 27 TOTAL NTRACKS 1.16503e+07
+ %%% EVENT 591000 NTRACKS 12 TOTAL NTRACKS 1.16704e+07
+ %%% EVENT 592000 NTRACKS 20 TOTAL NTRACKS 1.16905e+07
+ %%% EVENT 593000 NTRACKS 15 TOTAL NTRACKS 1.17101e+07
+ %%% EVENT 594000 NTRACKS 8 TOTAL NTRACKS 1.17292e+07
+ %%% EVENT 595000 NTRACKS 30 TOTAL NTRACKS 1.17483e+07
+ %%% EVENT 596000 NTRACKS 27 TOTAL NTRACKS 1.1768e+07
+ %%% EVENT 597000 NTRACKS 2 TOTAL NTRACKS 1.17882e+07
+ %%% EVENT 598000 NTRACKS 29 TOTAL NTRACKS 1.18082e+07
+ %%% EVENT 599000 NTRACKS 18 TOTAL NTRACKS 1.18281e+07
+ %%% EVENT 600000 NTRACKS 25 TOTAL NTRACKS 1.18483e+07
+ %%% EVENT 601000 NTRACKS 12 TOTAL NTRACKS 1.18679e+07
+ %%% EVENT 602000 NTRACKS 28 TOTAL NTRACKS 1.18878e+07
+ %%% EVENT 603000 NTRACKS 26 TOTAL NTRACKS 1.19076e+07
+ %%% EVENT 604000 NTRACKS 8 TOTAL NTRACKS 1.19271e+07
+ %%% EVENT 605000 NTRACKS 35 TOTAL NTRACKS 1.19469e+07
+ %%% EVENT 606000 NTRACKS 13 TOTAL NTRACKS 1.19667e+07
+ %%% EVENT 607000 NTRACKS 24 TOTAL NTRACKS 1.19864e+07
+ %%% EVENT 608000 NTRACKS 24 TOTAL NTRACKS 1.2006e+07
+ %%% EVENT 609000 NTRACKS 15 TOTAL NTRACKS 1.20254e+07
+ %%% EVENT 610000 NTRACKS 24 TOTAL NTRACKS 1.20457e+07
+ %%% EVENT 611000 NTRACKS 18 TOTAL NTRACKS 1.20654e+07
+ %%% EVENT 612000 NTRACKS 25 TOTAL NTRACKS 1.20852e+07
+ %%% EVENT 613000 NTRACKS 20 TOTAL NTRACKS 1.21052e+07
+ %%% EVENT 614000 NTRACKS 22 TOTAL NTRACKS 1.21248e+07
+ %%% EVENT 615000 NTRACKS 28 TOTAL NTRACKS 1.21443e+07
+ %%% EVENT 616000 NTRACKS 27 TOTAL NTRACKS 1.21645e+07
+ %%% EVENT 617000 NTRACKS 15 TOTAL NTRACKS 1.21841e+07
+ %%% EVENT 618000 NTRACKS 20 TOTAL NTRACKS 1.22037e+07
+ %%% EVENT 619000 NTRACKS 20 TOTAL NTRACKS 1.22237e+07
+ %%% EVENT 620000 NTRACKS 21 TOTAL NTRACKS 1.22438e+07
+ %%% EVENT 621000 NTRACKS 5 TOTAL NTRACKS 1.22636e+07
+ %%% EVENT 622000 NTRACKS 22 TOTAL NTRACKS 1.22833e+07
+ %%% EVENT 623000 NTRACKS 7 TOTAL NTRACKS 1.23027e+07
+ %%% EVENT 624000 NTRACKS 22 TOTAL NTRACKS 1.23223e+07
+ %%% EVENT 625000 NTRACKS 16 TOTAL NTRACKS 1.23413e+07
+ %%% EVENT 626000 NTRACKS 18 TOTAL NTRACKS 1.23608e+07
+ %%% EVENT 627000 NTRACKS 28 TOTAL NTRACKS 1.23801e+07
+ %%% EVENT 628000 NTRACKS 31 TOTAL NTRACKS 1.24001e+07
+ %%% EVENT 629000 NTRACKS 21 TOTAL NTRACKS 1.24202e+07
+ %%% EVENT 630000 NTRACKS 23 TOTAL NTRACKS 1.24397e+07
+ %%% EVENT 631000 NTRACKS 19 TOTAL NTRACKS 1.24597e+07
+ %%% EVENT 632000 NTRACKS 17 TOTAL NTRACKS 1.24792e+07
+ %%% EVENT 633000 NTRACKS 15 TOTAL NTRACKS 1.2499e+07
+ %%% EVENT 634000 NTRACKS 29 TOTAL NTRACKS 1.25186e+07
+ %%% EVENT 635000 NTRACKS 1 TOTAL NTRACKS 1.25382e+07
+ %%% EVENT 636000 NTRACKS 19 TOTAL NTRACKS 1.25581e+07
+ %%% EVENT 637000 NTRACKS 27 TOTAL NTRACKS 1.25778e+07
+ %%% EVENT 638000 NTRACKS 29 TOTAL NTRACKS 1.25976e+07
+ %%% EVENT 639000 NTRACKS 26 TOTAL NTRACKS 1.26172e+07
+ %%% EVENT 640000 NTRACKS 18 TOTAL NTRACKS 1.26372e+07
+ %%% EVENT 641000 NTRACKS 39 TOTAL NTRACKS 1.26571e+07
+ %%% EVENT 642000 NTRACKS 16 TOTAL NTRACKS 1.26765e+07
+ %%% EVENT 643000 NTRACKS 25 TOTAL NTRACKS 1.26967e+07
+ %%% EVENT 644000 NTRACKS 19 TOTAL NTRACKS 1.27165e+07
+ %%% EVENT 645000 NTRACKS 25 TOTAL NTRACKS 1.2736e+07
+ %%% EVENT 646000 NTRACKS 26 TOTAL NTRACKS 1.27555e+07
+ %%% EVENT 647000 NTRACKS 38 TOTAL NTRACKS 1.27751e+07
+ %%% EVENT 648000 NTRACKS 22 TOTAL NTRACKS 1.27953e+07
+ %%% EVENT 649000 NTRACKS 15 TOTAL NTRACKS 1.28144e+07
+ %%% EVENT 650000 NTRACKS 20 TOTAL NTRACKS 1.28345e+07
+ %%% EVENT 651000 NTRACKS 6 TOTAL NTRACKS 1.28545e+07
+ %%% EVENT 652000 NTRACKS 18 TOTAL NTRACKS 1.28744e+07
+ %%% EVENT 653000 NTRACKS 20 TOTAL NTRACKS 1.2894e+07
+ %%% EVENT 654000 NTRACKS 29 TOTAL NTRACKS 1.29135e+07
+ %%% EVENT 655000 NTRACKS 18 TOTAL NTRACKS 1.29331e+07
+ %%% EVENT 656000 NTRACKS 28 TOTAL NTRACKS 1.29529e+07
+ %%% EVENT 657000 NTRACKS 22 TOTAL NTRACKS 1.29728e+07
+ %%% EVENT 658000 NTRACKS 21 TOTAL NTRACKS 1.29924e+07
+ %%% EVENT 659000 NTRACKS 10 TOTAL NTRACKS 1.30117e+07
+ %%% EVENT 660000 NTRACKS 9 TOTAL NTRACKS 1.30316e+07
+ %%% EVENT 661000 NTRACKS 19 TOTAL NTRACKS 1.30514e+07
+ %%% EVENT 662000 NTRACKS 17 TOTAL NTRACKS 1.30712e+07
+ %%% EVENT 663000 NTRACKS 16 TOTAL NTRACKS 1.30908e+07
+ %%% EVENT 664000 NTRACKS 22 TOTAL NTRACKS 1.31104e+07
+ %%% EVENT 665000 NTRACKS 28 TOTAL NTRACKS 1.31302e+07
+ %%% EVENT 666000 NTRACKS 20 TOTAL NTRACKS 1.31499e+07
+ %%% EVENT 667000 NTRACKS 31 TOTAL NTRACKS 1.31697e+07
+ %%% EVENT 668000 NTRACKS 26 TOTAL NTRACKS 1.31898e+07
+ %%% EVENT 669000 NTRACKS 19 TOTAL NTRACKS 1.32091e+07
+ %%% EVENT 670000 NTRACKS 30 TOTAL NTRACKS 1.32288e+07
+ %%% EVENT 671000 NTRACKS 23 TOTAL NTRACKS 1.32485e+07
+ %%% EVENT 672000 NTRACKS 11 TOTAL NTRACKS 1.32684e+07
+ %%% EVENT 673000 NTRACKS 22 TOTAL NTRACKS 1.32883e+07
+ %%% EVENT 674000 NTRACKS 26 TOTAL NTRACKS 1.3308e+07
+ %%% EVENT 675000 NTRACKS 24 TOTAL NTRACKS 1.33276e+07
+ %%% EVENT 676000 NTRACKS 14 TOTAL NTRACKS 1.33473e+07
+ %%% EVENT 677000 NTRACKS 22 TOTAL NTRACKS 1.33668e+07
+ %%% EVENT 678000 NTRACKS 9 TOTAL NTRACKS 1.33865e+07
+ %%% EVENT 679000 NTRACKS 29 TOTAL NTRACKS 1.34061e+07
+ %%% EVENT 680000 NTRACKS 9 TOTAL NTRACKS 1.34255e+07
+ %%% EVENT 681000 NTRACKS 20 TOTAL NTRACKS 1.34454e+07
+ %%% EVENT 682000 NTRACKS 14 TOTAL NTRACKS 1.34646e+07
+ %%% EVENT 683000 NTRACKS 27 TOTAL NTRACKS 1.34844e+07
+ %%% EVENT 684000 NTRACKS 27 TOTAL NTRACKS 1.35038e+07
+ %%% EVENT 685000 NTRACKS 10 TOTAL NTRACKS 1.3524e+07
+ %%% EVENT 686000 NTRACKS 23 TOTAL NTRACKS 1.35435e+07
+ %%% EVENT 687000 NTRACKS 18 TOTAL NTRACKS 1.35638e+07
+ %%% EVENT 688000 NTRACKS 11 TOTAL NTRACKS 1.35841e+07
+ %%% EVENT 689000 NTRACKS 20 TOTAL NTRACKS 1.36038e+07
+ %%% EVENT 690000 NTRACKS 21 TOTAL NTRACKS 1.36237e+07
+ %%% EVENT 691000 NTRACKS 23 TOTAL NTRACKS 1.36432e+07
+ %%% EVENT 692000 NTRACKS 23 TOTAL NTRACKS 1.36627e+07
+ %%% EVENT 693000 NTRACKS 19 TOTAL NTRACKS 1.36828e+07
+ %%% EVENT 694000 NTRACKS 11 TOTAL NTRACKS 1.37025e+07
+ %%% EVENT 695000 NTRACKS 20 TOTAL NTRACKS 1.37225e+07
+ %%% EVENT 696000 NTRACKS 26 TOTAL NTRACKS 1.37422e+07
+ %%% EVENT 697000 NTRACKS 34 TOTAL NTRACKS 1.37616e+07
+ %%% EVENT 698000 NTRACKS 22 TOTAL NTRACKS 1.37812e+07
+ %%% EVENT 699000 NTRACKS 36 TOTAL NTRACKS 1.3801e+07
+ %%% EVENT 700000 NTRACKS 17 TOTAL NTRACKS 1.38208e+07
+ %%% EVENT 701000 NTRACKS 20 TOTAL NTRACKS 1.38404e+07
+ %%% EVENT 702000 NTRACKS 29 TOTAL NTRACKS 1.38598e+07
+ %%% EVENT 703000 NTRACKS 20 TOTAL NTRACKS 1.38799e+07
+ %%% EVENT 704000 NTRACKS 15 TOTAL NTRACKS 1.38998e+07
+ %%% EVENT 705000 NTRACKS 17 TOTAL NTRACKS 1.39197e+07
+ %%% EVENT 706000 NTRACKS 3 TOTAL NTRACKS 1.39397e+07
+ %%% EVENT 707000 NTRACKS 25 TOTAL NTRACKS 1.39599e+07
+ %%% EVENT 708000 NTRACKS 27 TOTAL NTRACKS 1.39801e+07
+ %%% EVENT 709000 NTRACKS 19 TOTAL NTRACKS 1.40002e+07
+ %%% EVENT 710000 NTRACKS 26 TOTAL NTRACKS 1.40203e+07
+ %%% EVENT 711000 NTRACKS 24 TOTAL NTRACKS 1.40399e+07
+ %%% EVENT 712000 NTRACKS 29 TOTAL NTRACKS 1.40597e+07
+ %%% EVENT 713000 NTRACKS 23 TOTAL NTRACKS 1.40794e+07
+ %%% EVENT 714000 NTRACKS 16 TOTAL NTRACKS 1.40993e+07
+ %%% EVENT 715000 NTRACKS 21 TOTAL NTRACKS 1.4119e+07
+ %%% EVENT 716000 NTRACKS 9 TOTAL NTRACKS 1.41392e+07
+ %%% EVENT 717000 NTRACKS 23 TOTAL NTRACKS 1.41588e+07
+ %%% EVENT 718000 NTRACKS 17 TOTAL NTRACKS 1.41783e+07
+ %%% EVENT 719000 NTRACKS 17 TOTAL NTRACKS 1.41984e+07
+ %%% EVENT 720000 NTRACKS 17 TOTAL NTRACKS 1.42178e+07
+ %%% EVENT 721000 NTRACKS 30 TOTAL NTRACKS 1.42374e+07
+ %%% EVENT 722000 NTRACKS 15 TOTAL NTRACKS 1.4257e+07
+ %%% EVENT 723000 NTRACKS 20 TOTAL NTRACKS 1.42766e+07
+ %%% EVENT 724000 NTRACKS 8 TOTAL NTRACKS 1.42969e+07
+ %%% EVENT 725000 NTRACKS 26 TOTAL NTRACKS 1.43168e+07
+ %%% EVENT 726000 NTRACKS 22 TOTAL NTRACKS 1.4337e+07
+ %%% EVENT 727000 NTRACKS 29 TOTAL NTRACKS 1.43569e+07
+ %%% EVENT 728000 NTRACKS 34 TOTAL NTRACKS 1.43765e+07
+ %%% EVENT 729000 NTRACKS 25 TOTAL NTRACKS 1.43962e+07
+ %%% EVENT 730000 NTRACKS 24 TOTAL NTRACKS 1.44166e+07
+ %%% EVENT 731000 NTRACKS 15 TOTAL NTRACKS 1.44367e+07
+ %%% EVENT 732000 NTRACKS 27 TOTAL NTRACKS 1.44562e+07
+ %%% EVENT 733000 NTRACKS 26 TOTAL NTRACKS 1.44755e+07
+ %%% EVENT 734000 NTRACKS 3 TOTAL NTRACKS 1.44954e+07
+ %%% EVENT 735000 NTRACKS 15 TOTAL NTRACKS 1.45157e+07
+ %%% EVENT 736000 NTRACKS 16 TOTAL NTRACKS 1.45352e+07
+ %%% EVENT 737000 NTRACKS 17 TOTAL NTRACKS 1.4555e+07
+ %%% EVENT 738000 NTRACKS 24 TOTAL NTRACKS 1.45746e+07
+ %%% EVENT 739000 NTRACKS 30 TOTAL NTRACKS 1.45947e+07
+ %%% EVENT 740000 NTRACKS 18 TOTAL NTRACKS 1.46145e+07
+ %%% EVENT 741000 NTRACKS 15 TOTAL NTRACKS 1.46343e+07
+ %%% EVENT 742000 NTRACKS 15 TOTAL NTRACKS 1.46541e+07
+ %%% EVENT 743000 NTRACKS 23 TOTAL NTRACKS 1.46741e+07
+ %%% EVENT 744000 NTRACKS 5 TOTAL NTRACKS 1.46934e+07
+ %%% EVENT 745000 NTRACKS 32 TOTAL NTRACKS 1.47138e+07
+ %%% EVENT 746000 NTRACKS 13 TOTAL NTRACKS 1.47336e+07
+ %%% EVENT 747000 NTRACKS 14 TOTAL NTRACKS 1.47532e+07
+ %%% EVENT 748000 NTRACKS 19 TOTAL NTRACKS 1.47728e+07
+ %%% EVENT 749000 NTRACKS 15 TOTAL NTRACKS 1.47926e+07
+ %%% EVENT 750000 NTRACKS 23 TOTAL NTRACKS 1.48125e+07
+ %%% EVENT 751000 NTRACKS 15 TOTAL NTRACKS 1.48324e+07
+ %%% EVENT 752000 NTRACKS 37 TOTAL NTRACKS 1.48522e+07
+ %%% EVENT 753000 NTRACKS 17 TOTAL NTRACKS 1.48722e+07
+ %%% EVENT 754000 NTRACKS 14 TOTAL NTRACKS 1.48924e+07
+ %%% EVENT 755000 NTRACKS 25 TOTAL NTRACKS 1.4912e+07
+ %%% EVENT 756000 NTRACKS 17 TOTAL NTRACKS 1.49316e+07
+ %%% EVENT 757000 NTRACKS 16 TOTAL NTRACKS 1.49513e+07
+ %%% EVENT 758000 NTRACKS 28 TOTAL NTRACKS 1.4971e+07
+ %%% EVENT 759000 NTRACKS 29 TOTAL NTRACKS 1.49913e+07
+ %%% EVENT 760000 NTRACKS 29 TOTAL NTRACKS 1.50107e+07
+ %%% EVENT 761000 NTRACKS 8 TOTAL NTRACKS 1.50304e+07
+ %%% EVENT 762000 NTRACKS 27 TOTAL NTRACKS 1.50501e+07
+ %%% EVENT 763000 NTRACKS 24 TOTAL NTRACKS 1.50702e+07
+ %%% EVENT 764000 NTRACKS 28 TOTAL NTRACKS 1.50901e+07
+ %%% EVENT 765000 NTRACKS 34 TOTAL NTRACKS 1.51098e+07
+ %%% EVENT 766000 NTRACKS 23 TOTAL NTRACKS 1.51294e+07
+ %%% EVENT 767000 NTRACKS 19 TOTAL NTRACKS 1.51492e+07
+ %%% EVENT 768000 NTRACKS 26 TOTAL NTRACKS 1.5169e+07
+ %%% EVENT 769000 NTRACKS 15 TOTAL NTRACKS 1.51892e+07
+ %%% EVENT 770000 NTRACKS 23 TOTAL NTRACKS 1.52089e+07
+ %%% EVENT 771000 NTRACKS 8 TOTAL NTRACKS 1.52286e+07
+ %%% EVENT 772000 NTRACKS 41 TOTAL NTRACKS 1.52483e+07
+ %%% EVENT 773000 NTRACKS 18 TOTAL NTRACKS 1.52682e+07
+ %%% EVENT 774000 NTRACKS 25 TOTAL NTRACKS 1.52881e+07
+ %%% EVENT 775000 NTRACKS 22 TOTAL NTRACKS 1.53074e+07
+ %%% EVENT 776000 NTRACKS 13 TOTAL NTRACKS 1.53272e+07
+ %%% EVENT 777000 NTRACKS 34 TOTAL NTRACKS 1.5347e+07
+ %%% EVENT 778000 NTRACKS 25 TOTAL NTRACKS 1.53674e+07
+ %%% EVENT 779000 NTRACKS 12 TOTAL NTRACKS 1.53864e+07
+ %%% EVENT 780000 NTRACKS 9 TOTAL NTRACKS 1.54058e+07
+ %%% EVENT 781000 NTRACKS 12 TOTAL NTRACKS 1.54255e+07
+ %%% EVENT 782000 NTRACKS 21 TOTAL NTRACKS 1.54456e+07
+ %%% EVENT 783000 NTRACKS 13 TOTAL NTRACKS 1.54656e+07
+ %%% EVENT 784000 NTRACKS 19 TOTAL NTRACKS 1.54855e+07
+ %%% EVENT 785000 NTRACKS 22 TOTAL NTRACKS 1.55052e+07
+ %%% EVENT 786000 NTRACKS 18 TOTAL NTRACKS 1.55251e+07
+ %%% EVENT 787000 NTRACKS 21 TOTAL NTRACKS 1.55449e+07
+ %%% EVENT 788000 NTRACKS 13 TOTAL NTRACKS 1.55647e+07
+ %%% EVENT 789000 NTRACKS 29 TOTAL NTRACKS 1.55842e+07
+ %%% EVENT 790000 NTRACKS 11 TOTAL NTRACKS 1.56044e+07
+ %%% EVENT 791000 NTRACKS 11 TOTAL NTRACKS 1.56244e+07
+ %%% EVENT 792000 NTRACKS 23 TOTAL NTRACKS 1.56443e+07
+ %%% EVENT 793000 NTRACKS 34 TOTAL NTRACKS 1.56643e+07
+ %%% EVENT 794000 NTRACKS 27 TOTAL NTRACKS 1.56841e+07
+ %%% EVENT 795000 NTRACKS 4 TOTAL NTRACKS 1.57034e+07
+ %%% EVENT 796000 NTRACKS 25 TOTAL NTRACKS 1.57233e+07
+ %%% EVENT 797000 NTRACKS 11 TOTAL NTRACKS 1.57432e+07
+ %%% EVENT 798000 NTRACKS 21 TOTAL NTRACKS 1.57629e+07
+ %%% EVENT 799000 NTRACKS 24 TOTAL NTRACKS 1.57822e+07
+ %%% EVENT 800000 NTRACKS 30 TOTAL NTRACKS 1.58021e+07
+ %%% EVENT 801000 NTRACKS 27 TOTAL NTRACKS 1.58218e+07
+ %%% EVENT 802000 NTRACKS 12 TOTAL NTRACKS 1.58417e+07
+ %%% EVENT 803000 NTRACKS 8 TOTAL NTRACKS 1.58611e+07
+ %%% EVENT 804000 NTRACKS 17 TOTAL NTRACKS 1.58805e+07
+ %%% EVENT 805000 NTRACKS 18 TOTAL NTRACKS 1.58999e+07
+ %%% EVENT 806000 NTRACKS 19 TOTAL NTRACKS 1.59195e+07
+ %%% EVENT 807000 NTRACKS 11 TOTAL NTRACKS 1.59394e+07
+ %%% EVENT 808000 NTRACKS 8 TOTAL NTRACKS 1.59587e+07
+ %%% EVENT 809000 NTRACKS 5 TOTAL NTRACKS 1.59785e+07
+ %%% EVENT 810000 NTRACKS 17 TOTAL NTRACKS 1.59983e+07
+ %%% EVENT 811000 NTRACKS 13 TOTAL NTRACKS 1.60182e+07
+ %%% EVENT 812000 NTRACKS 17 TOTAL NTRACKS 1.60383e+07
+ %%% EVENT 813000 NTRACKS 22 TOTAL NTRACKS 1.60581e+07
+ %%% EVENT 814000 NTRACKS 20 TOTAL NTRACKS 1.60782e+07
+ %%% EVENT 815000 NTRACKS 21 TOTAL NTRACKS 1.60984e+07
+ %%% EVENT 816000 NTRACKS 25 TOTAL NTRACKS 1.61186e+07
+ %%% EVENT 817000 NTRACKS 23 TOTAL NTRACKS 1.6138e+07
+ %%% EVENT 818000 NTRACKS 10 TOTAL NTRACKS 1.61575e+07
+ %%% EVENT 819000 NTRACKS 32 TOTAL NTRACKS 1.61774e+07
+ %%% EVENT 820000 NTRACKS 21 TOTAL NTRACKS 1.61972e+07
+ %%% EVENT 821000 NTRACKS 15 TOTAL NTRACKS 1.62168e+07
+ %%% EVENT 822000 NTRACKS 21 TOTAL NTRACKS 1.62369e+07
+ %%% EVENT 823000 NTRACKS 24 TOTAL NTRACKS 1.62566e+07
+ %%% EVENT 824000 NTRACKS 8 TOTAL NTRACKS 1.62765e+07
+ %%% EVENT 825000 NTRACKS 33 TOTAL NTRACKS 1.62964e+07
+ %%% EVENT 826000 NTRACKS 18 TOTAL NTRACKS 1.63161e+07
+ %%% EVENT 827000 NTRACKS 25 TOTAL NTRACKS 1.63359e+07
+ %%% EVENT 828000 NTRACKS 28 TOTAL NTRACKS 1.63555e+07
+ %%% EVENT 829000 NTRACKS 27 TOTAL NTRACKS 1.63754e+07
+ %%% EVENT 830000 NTRACKS 18 TOTAL NTRACKS 1.63953e+07
+ %%% EVENT 831000 NTRACKS 26 TOTAL NTRACKS 1.64151e+07
+ %%% EVENT 832000 NTRACKS 9 TOTAL NTRACKS 1.64346e+07
+ %%% EVENT 833000 NTRACKS 24 TOTAL NTRACKS 1.64544e+07
+ %%% EVENT 834000 NTRACKS 16 TOTAL NTRACKS 1.64746e+07
+ %%% EVENT 835000 NTRACKS 18 TOTAL NTRACKS 1.64938e+07
+ %%% EVENT 836000 NTRACKS 8 TOTAL NTRACKS 1.65131e+07
+ %%% EVENT 837000 NTRACKS 5 TOTAL NTRACKS 1.65325e+07
+ %%% EVENT 838000 NTRACKS 26 TOTAL NTRACKS 1.65522e+07
+ %%% EVENT 839000 NTRACKS 30 TOTAL NTRACKS 1.65721e+07
+ %%% EVENT 840000 NTRACKS 18 TOTAL NTRACKS 1.65917e+07
+ %%% EVENT 841000 NTRACKS 31 TOTAL NTRACKS 1.66116e+07
+ %%% EVENT 842000 NTRACKS 23 TOTAL NTRACKS 1.66313e+07
+ %%% EVENT 843000 NTRACKS 25 TOTAL NTRACKS 1.66505e+07
+ %%% EVENT 844000 NTRACKS 15 TOTAL NTRACKS 1.66702e+07
+ %%% EVENT 845000 NTRACKS 22 TOTAL NTRACKS 1.66902e+07
+ %%% EVENT 846000 NTRACKS 10 TOTAL NTRACKS 1.67104e+07
+ %%% EVENT 847000 NTRACKS 13 TOTAL NTRACKS 1.67303e+07
+ %%% EVENT 848000 NTRACKS 19 TOTAL NTRACKS 1.67502e+07
+ %%% EVENT 849000 NTRACKS 20 TOTAL NTRACKS 1.67695e+07
+ %%% EVENT 850000 NTRACKS 20 TOTAL NTRACKS 1.67895e+07
+ %%% EVENT 851000 NTRACKS 28 TOTAL NTRACKS 1.68089e+07
+ %%% EVENT 852000 NTRACKS 22 TOTAL NTRACKS 1.68288e+07
+ %%% EVENT 853000 NTRACKS 13 TOTAL NTRACKS 1.68488e+07
+ %%% EVENT 854000 NTRACKS 14 TOTAL NTRACKS 1.68683e+07
+ %%% EVENT 855000 NTRACKS 19 TOTAL NTRACKS 1.68876e+07
+ %%% EVENT 856000 NTRACKS 6 TOTAL NTRACKS 1.69075e+07
+ %%% EVENT 857000 NTRACKS 31 TOTAL NTRACKS 1.69272e+07
+ %%% EVENT 858000 NTRACKS 16 TOTAL NTRACKS 1.69471e+07
+ %%% EVENT 859000 NTRACKS 16 TOTAL NTRACKS 1.69668e+07
+ %%% EVENT 860000 NTRACKS 27 TOTAL NTRACKS 1.69866e+07
+ %%% EVENT 861000 NTRACKS 18 TOTAL NTRACKS 1.70062e+07
+ %%% EVENT 862000 NTRACKS 27 TOTAL NTRACKS 1.70259e+07
+ %%% EVENT 863000 NTRACKS 25 TOTAL NTRACKS 1.70456e+07
+ %%% EVENT 864000 NTRACKS 8 TOTAL NTRACKS 1.70655e+07
+ %%% EVENT 865000 NTRACKS 2 TOTAL NTRACKS 1.70851e+07
+ %%% EVENT 866000 NTRACKS 19 TOTAL NTRACKS 1.71053e+07
+ %%% EVENT 867000 NTRACKS 29 TOTAL NTRACKS 1.71251e+07
+ %%% EVENT 868000 NTRACKS 20 TOTAL NTRACKS 1.71447e+07
+ %%% EVENT 869000 NTRACKS 22 TOTAL NTRACKS 1.71644e+07
+ %%% EVENT 870000 NTRACKS 11 TOTAL NTRACKS 1.7184e+07
+ %%% EVENT 871000 NTRACKS 23 TOTAL NTRACKS 1.7204e+07
+ %%% EVENT 872000 NTRACKS 10 TOTAL NTRACKS 1.72242e+07
+ %%% EVENT 873000 NTRACKS 29 TOTAL NTRACKS 1.72441e+07
+ %%% EVENT 874000 NTRACKS 13 TOTAL NTRACKS 1.72639e+07
+ %%% EVENT 875000 NTRACKS 15 TOTAL NTRACKS 1.72839e+07
+ %%% EVENT 876000 NTRACKS 3 TOTAL NTRACKS 1.7303e+07
+ %%% EVENT 877000 NTRACKS 9 TOTAL NTRACKS 1.7323e+07
+ %%% EVENT 878000 NTRACKS 27 TOTAL NTRACKS 1.73428e+07
+ %%% EVENT 879000 NTRACKS 29 TOTAL NTRACKS 1.7362e+07
+ %%% EVENT 880000 NTRACKS 4 TOTAL NTRACKS 1.73816e+07
+ %%% EVENT 881000 NTRACKS 24 TOTAL NTRACKS 1.74014e+07
+ %%% EVENT 882000 NTRACKS 21 TOTAL NTRACKS 1.74212e+07
+ %%% EVENT 883000 NTRACKS 34 TOTAL NTRACKS 1.74411e+07
+ %%% EVENT 884000 NTRACKS 6 TOTAL NTRACKS 1.74607e+07
+ %%% EVENT 885000 NTRACKS 5 TOTAL NTRACKS 1.74808e+07
+ %%% EVENT 886000 NTRACKS 13 TOTAL NTRACKS 1.75003e+07
+ %%% EVENT 887000 NTRACKS 15 TOTAL NTRACKS 1.75203e+07
+ %%% EVENT 888000 NTRACKS 12 TOTAL NTRACKS 1.754e+07
+ %%% EVENT 889000 NTRACKS 20 TOTAL NTRACKS 1.75595e+07
+ %%% EVENT 890000 NTRACKS 18 TOTAL NTRACKS 1.75791e+07
+ %%% EVENT 891000 NTRACKS 26 TOTAL NTRACKS 1.75986e+07
+ %%% EVENT 892000 NTRACKS 23 TOTAL NTRACKS 1.76187e+07
+ %%% EVENT 893000 NTRACKS 18 TOTAL NTRACKS 1.76386e+07
+ %%% EVENT 894000 NTRACKS 22 TOTAL NTRACKS 1.76585e+07
+ %%% EVENT 895000 NTRACKS 6 TOTAL NTRACKS 1.7678e+07
+ %%% EVENT 896000 NTRACKS 26 TOTAL NTRACKS 1.76975e+07
+ %%% EVENT 897000 NTRACKS 4 TOTAL NTRACKS 1.77173e+07
+ %%% EVENT 898000 NTRACKS 19 TOTAL NTRACKS 1.77377e+07
+ %%% EVENT 899000 NTRACKS 24 TOTAL NTRACKS 1.7757e+07
+ %%% EVENT 900000 NTRACKS 26 TOTAL NTRACKS 1.77769e+07
+ %%% EVENT 901000 NTRACKS 8 TOTAL NTRACKS 1.77967e+07
+ %%% EVENT 902000 NTRACKS 11 TOTAL NTRACKS 1.78163e+07
+ %%% EVENT 903000 NTRACKS 15 TOTAL NTRACKS 1.78363e+07
+ %%% EVENT 904000 NTRACKS 21 TOTAL NTRACKS 1.78557e+07
+ %%% EVENT 905000 NTRACKS 15 TOTAL NTRACKS 1.78758e+07
+ %%% EVENT 906000 NTRACKS 7 TOTAL NTRACKS 1.78958e+07
+ %%% EVENT 907000 NTRACKS 19 TOTAL NTRACKS 1.79157e+07
+ %%% EVENT 908000 NTRACKS 20 TOTAL NTRACKS 1.79352e+07
+ %%% EVENT 909000 NTRACKS 17 TOTAL NTRACKS 1.7955e+07
+ %%% EVENT 910000 NTRACKS 21 TOTAL NTRACKS 1.79741e+07
+ %%% EVENT 911000 NTRACKS 21 TOTAL NTRACKS 1.79941e+07
+ %%% EVENT 912000 NTRACKS 28 TOTAL NTRACKS 1.80138e+07
+ %%% EVENT 913000 NTRACKS 9 TOTAL NTRACKS 1.80337e+07
+ %%% EVENT 914000 NTRACKS 13 TOTAL NTRACKS 1.80535e+07
+ %%% EVENT 915000 NTRACKS 18 TOTAL NTRACKS 1.80731e+07
+ %%% EVENT 916000 NTRACKS 22 TOTAL NTRACKS 1.80929e+07
+ %%% EVENT 917000 NTRACKS 32 TOTAL NTRACKS 1.81125e+07
+ %%% EVENT 918000 NTRACKS 23 TOTAL NTRACKS 1.81323e+07
+ %%% EVENT 919000 NTRACKS 20 TOTAL NTRACKS 1.81514e+07
+ %%% EVENT 920000 NTRACKS 22 TOTAL NTRACKS 1.81711e+07
+ %%% EVENT 921000 NTRACKS 6 TOTAL NTRACKS 1.81907e+07
+ %%% EVENT 922000 NTRACKS 24 TOTAL NTRACKS 1.8211e+07
+ %%% EVENT 923000 NTRACKS 14 TOTAL NTRACKS 1.82307e+07
+ %%% EVENT 924000 NTRACKS 10 TOTAL NTRACKS 1.82504e+07
+ %%% EVENT 925000 NTRACKS 16 TOTAL NTRACKS 1.82704e+07
+ %%% EVENT 926000 NTRACKS 4 TOTAL NTRACKS 1.82903e+07
+ %%% EVENT 927000 NTRACKS 26 TOTAL NTRACKS 1.83094e+07
+ %%% EVENT 928000 NTRACKS 32 TOTAL NTRACKS 1.83292e+07
+ %%% EVENT 929000 NTRACKS 13 TOTAL NTRACKS 1.8349e+07
+ %%% EVENT 930000 NTRACKS 18 TOTAL NTRACKS 1.83692e+07
+ %%% EVENT 931000 NTRACKS 23 TOTAL NTRACKS 1.83886e+07
+ %%% EVENT 932000 NTRACKS 26 TOTAL NTRACKS 1.84088e+07
+ %%% EVENT 933000 NTRACKS 17 TOTAL NTRACKS 1.84288e+07
+ %%% EVENT 934000 NTRACKS 21 TOTAL NTRACKS 1.84483e+07
+ %%% EVENT 935000 NTRACKS 17 TOTAL NTRACKS 1.84677e+07
+ %%% EVENT 936000 NTRACKS 21 TOTAL NTRACKS 1.84874e+07
+ %%% EVENT 937000 NTRACKS 27 TOTAL NTRACKS 1.85075e+07
+ %%% EVENT 938000 NTRACKS 27 TOTAL NTRACKS 1.8527e+07
+ %%% EVENT 939000 NTRACKS 17 TOTAL NTRACKS 1.85463e+07
+ %%% EVENT 940000 NTRACKS 11 TOTAL NTRACKS 1.85658e+07
+ %%% EVENT 941000 NTRACKS 5 TOTAL NTRACKS 1.85854e+07
+ %%% EVENT 942000 NTRACKS 19 TOTAL NTRACKS 1.8605e+07
+ %%% EVENT 943000 NTRACKS 20 TOTAL NTRACKS 1.86247e+07
+ %%% EVENT 944000 NTRACKS 21 TOTAL NTRACKS 1.86448e+07
+ %%% EVENT 945000 NTRACKS 14 TOTAL NTRACKS 1.86649e+07
+ %%% EVENT 946000 NTRACKS 22 TOTAL NTRACKS 1.86848e+07
+ %%% EVENT 947000 NTRACKS 7 TOTAL NTRACKS 1.87047e+07
+ %%% EVENT 948000 NTRACKS 25 TOTAL NTRACKS 1.87247e+07
+ %%% EVENT 949000 NTRACKS 31 TOTAL NTRACKS 1.87442e+07
+ %%% EVENT 950000 NTRACKS 4 TOTAL NTRACKS 1.87636e+07
+ %%% EVENT 951000 NTRACKS 20 TOTAL NTRACKS 1.87832e+07
+ %%% EVENT 952000 NTRACKS 10 TOTAL NTRACKS 1.88029e+07
+ %%% EVENT 953000 NTRACKS 28 TOTAL NTRACKS 1.88226e+07
+ %%% EVENT 954000 NTRACKS 22 TOTAL NTRACKS 1.88428e+07
+ %%% EVENT 955000 NTRACKS 22 TOTAL NTRACKS 1.88629e+07
+ %%% EVENT 956000 NTRACKS 13 TOTAL NTRACKS 1.88828e+07
+ %%% EVENT 957000 NTRACKS 22 TOTAL NTRACKS 1.89022e+07
+ %%% EVENT 958000 NTRACKS 20 TOTAL NTRACKS 1.89214e+07
+ %%% EVENT 959000 NTRACKS 14 TOTAL NTRACKS 1.8941e+07
+ %%% EVENT 960000 NTRACKS 13 TOTAL NTRACKS 1.89609e+07
+ %%% EVENT 961000 NTRACKS 23 TOTAL NTRACKS 1.89805e+07
+ %%% EVENT 962000 NTRACKS 30 TOTAL NTRACKS 1.90005e+07
+ %%% EVENT 963000 NTRACKS 16 TOTAL NTRACKS 1.90204e+07
+ %%% EVENT 964000 NTRACKS 9 TOTAL NTRACKS 1.90398e+07
+ %%% EVENT 965000 NTRACKS 29 TOTAL NTRACKS 1.90593e+07
+ %%% EVENT 966000 NTRACKS 26 TOTAL NTRACKS 1.90792e+07
+ %%% EVENT 967000 NTRACKS 18 TOTAL NTRACKS 1.90993e+07
+ %%% EVENT 968000 NTRACKS 14 TOTAL NTRACKS 1.91189e+07
+ %%% EVENT 969000 NTRACKS 18 TOTAL NTRACKS 1.91389e+07
+ %%% EVENT 970000 NTRACKS 21 TOTAL NTRACKS 1.91583e+07
+ %%% EVENT 971000 NTRACKS 20 TOTAL NTRACKS 1.91783e+07
+ %%% EVENT 972000 NTRACKS 24 TOTAL NTRACKS 1.91981e+07
+ %%% EVENT 973000 NTRACKS 6 TOTAL NTRACKS 1.92177e+07
+ %%% EVENT 974000 NTRACKS 19 TOTAL NTRACKS 1.92373e+07
+ %%% EVENT 975000 NTRACKS 27 TOTAL NTRACKS 1.9257e+07
+ %%% EVENT 976000 NTRACKS 14 TOTAL NTRACKS 1.9277e+07
+ %%% EVENT 977000 NTRACKS 17 TOTAL NTRACKS 1.9297e+07
+ %%% EVENT 978000 NTRACKS 19 TOTAL NTRACKS 1.9317e+07
+ %%% EVENT 979000 NTRACKS 23 TOTAL NTRACKS 1.93365e+07
+ %%% EVENT 980000 NTRACKS 29 TOTAL NTRACKS 1.93558e+07
+ %%% EVENT 981000 NTRACKS 14 TOTAL NTRACKS 1.93753e+07
+ %%% EVENT 982000 NTRACKS 26 TOTAL NTRACKS 1.93951e+07
+ %%% EVENT 983000 NTRACKS 42 TOTAL NTRACKS 1.94143e+07
+ %%% EVENT 984000 NTRACKS 37 TOTAL NTRACKS 1.94339e+07
+ %%% EVENT 985000 NTRACKS 34 TOTAL NTRACKS 1.94534e+07
+ %%% EVENT 986000 NTRACKS 27 TOTAL NTRACKS 1.94731e+07
+ %%% EVENT 987000 NTRACKS 5 TOTAL NTRACKS 1.94927e+07
+ %%% EVENT 988000 NTRACKS 11 TOTAL NTRACKS 1.95125e+07
+ %%% EVENT 989000 NTRACKS 19 TOTAL NTRACKS 1.95322e+07
+ %%% EVENT 990000 NTRACKS 18 TOTAL NTRACKS 1.95519e+07
+ %%% EVENT 991000 NTRACKS 15 TOTAL NTRACKS 1.95717e+07
+ %%% EVENT 992000 NTRACKS 20 TOTAL NTRACKS 1.95917e+07
+ %%% EVENT 993000 NTRACKS 27 TOTAL NTRACKS 1.96112e+07
+ %%% EVENT 994000 NTRACKS 20 TOTAL NTRACKS 1.96312e+07
+ %%% EVENT 995000 NTRACKS 37 TOTAL NTRACKS 1.9651e+07
+ %%% EVENT 996000 NTRACKS 28 TOTAL NTRACKS 1.96706e+07
+ %%% EVENT 997000 NTRACKS 9 TOTAL NTRACKS 1.96899e+07
+ %%% EVENT 998000 NTRACKS 21 TOTAL NTRACKS 1.97094e+07
+ %%% EVENT 999000 NTRACKS 18 TOTAL NTRACKS 1.9729e+07
+ Run terminated.
+Run Summary
+  Number of events processed : 1000000
+  User=915.030000s Real=915.141709s Sys=0.080000s
+@@@@ GmCountProcessesUA
+ PART_COUNT: e+ = 905957
+ PART_COUNT: e- = 14828219
+ PART_COUNT: gamma = 4014609
+ PROC_COUNT e+ : Transportation = 3
+ PROC_COUNT e+ : annihil = 906127
+ PROC_COUNT e+ : eBrem = 10393
+ PROC_COUNT e+ : eBrem_NoSeco = 295
+ PROC_COUNT e+ : eIoni = 24128
+ PROC_COUNT e+ : eIoni_NoSeco = 1020960
+ PROC_COUNT e+ : msc = 148
+ PROC_COUNT e+ : ALL = 1.96205e+06
+ PROC_COUNT e- : Transportation = 51090
+ PROC_COUNT e- : eBrem = 206633
+ PROC_COUNT e- : eBrem_NoSeco = 7929
+ PROC_COUNT e- : eIoni = 342739
+ PROC_COUNT e- : eIoni_NoSeco = 25832590
+ PROC_COUNT e- : msc = 1935222
+ PROC_COUNT e- : ALL = 2.83762e+07
+ PROC_COUNT gamma : Rayl = 582082
+ PROC_COUNT gamma : Transportation = 9497128
+ PROC_COUNT gamma : compt = 11644818
+ PROC_COUNT gamma : conv = 1232
+ PROC_COUNT gamma : phot = 2815110
+PROC_COUNT gamma : ALL = 2.45404e+07
+PROC_CREATOR_COUNT e+ : Primary = 904725
+PROC_CREATOR_COUNT e+ : conv = 1232
+PROC_CREATOR_COUNT e- : compt = 11644843
+PROC_CREATOR_COUNT e- : conv = 1232
+PROC_CREATOR_COUNT e- : eIoni = 366867
+PROC_CREATOR_COUNT e- : phot = 2815277
+PROC_CREATOR_COUNT gamma : Primary = 999608
+PROC_CREATOR_COUNT gamma : annihil = 1811912
+PROC_CREATOR_COUNT gamma : compt = 12072
+PROC_CREATOR_COUNT gamma : eBrem = 217026
+PROC_CREATOR_COUNT gamma : phot = 973991
+
+ $$$$$$$$$$ Classification of Gamma Interactions in SD $$$$$$$$ 
+ $$GSD: n Events      : 1e+06
+ $$GSD: n gamma in SD : 1351240 : 67.562 % 
+ $$GSD:  n PE         : 1286436 : 95.2041 % 
+ $$GSD:    PE 0 COMP    : 784564 : 60.9874 % 
+ $$GSD:    PE 1 COMP    : 281941 : 21.9164 % 
+ $$GSD:    PE 2 COMP    : 133766 : 10.3982 % 
+ $$GSD:    PE >2 COMP   : 78968 : 6.13851 % 
+ $$GSD: No PE 0 COMP    : 28378 : 43.7905 % 
+ $$GSD: No PE 1 COMP    : 25376 : 39.1581 % 
+ $$GSD: No PE 2 COMP    : 8518 : 13.1443 % 
+ $$GSD: No PE >2 COMP   : 2532 : 3.90717 % 
+ $$GSD:  n COMP       : 531101 : 39.3047 % 
+ $$GSD:    1 COMP       : 307317 : 57.8641 % 
+ $$GSD:    2 COMP       : 142284 : 26.7904 % 
+ $$GSD:    >2 COMP      : 81500 : 15.3455 % 
+ $$GSD: nCOMP/gamma     : 0.644794
+ $$GSD: n RAYL        : 112117 : 8.29734 % 
+ $$GSD: n CONV        : 946 : 0.0700098 % 
+ $$GSD:  0 Gamma in event : 179267 : 17.9267 % 
+ $$GSD:  1 Gamma in event : 395229 : 39.5229 % 
+ $$GSD:  2 Gamma in event : 320501 : 32.0501 % 
+ $$GSD:  >2 Gamma in event : 105003 : 10.5003 % 
+     0 Gamma 105003 : 10.5003 % 
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 GmTrackDataHistosUA_GmPrimaryFilter.exercise2a:NormalizeToNEvents
+=== saving histograms in file === GmTrackDataHistosUA_GmPrimaryFilter.exercise2a.root
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 gammaSD.exercise2a:NormalizeToNEvents
+=== saving histograms in file === gammaSD.exercise2a.root
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 hits.exercise2a:NormalizeToNEvents
+=== saving histograms in file === hits.exercise2a.root

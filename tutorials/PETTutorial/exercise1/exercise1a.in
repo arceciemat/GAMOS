@@ -1,0 +1,23 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName pet.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+#/geometry/textInput/verbose 3
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 511*keV
+
+/gamos/generator/directionDist source GmGenerDistDirectionConst 1. 0. 0.
+
+
+#/control/execute ../../../examples/visOGLIX.in
+/control/execute ../../../examples/visVRML2FILE.in
+#/control/execute ../../../examples/visDAWNFILE.in
+
+/run/beamOn 10
+

@@ -1,0 +1,54 @@
+/gamos/setParam GmReadPhantomGeometry:FileName ../exercise3/world.geom
+/gamos/setParam GmSimplePhantomGeometry:MaterialNames G4_WATER G4_LUNG_ICRP G4_BONE_COMPACT_ICRU
+/gamos/setParam GmSimplePhantomGeometry:MaterialZVoxels 10 10 80
+/gamos/setParam GmSimplePhantomGeometry:MaterialDensities 1. 0.3 1.85
+/gamos/setParam GmSimplePhantomGeometry:NVoxels 100 100 100
+/gamos/setParam GmSimplePhantomGeometry:PhantomDims -500 500 -500 500 -500 500
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. -1400.
+/gamos/setParam GmReadPhantomGeometry:InitialRotAngles 0*deg 0. 0.
+
+/gamos/geometry GmSimplePhantomGeometry
+
+/gamos/physicsList GmEMPhysics
+
+/gamos/setParam RTGeneratorPhaseSpace:FileName ../exercise3/test_-450
+/gamos/setParam RTGeneratorPhaseSpace:InitialDisplacement 0. 0. 0.
+/gamos/setParam RTGeneratorPhaseSpace:InitialRotAngles 0. 0. 0.*deg 
+
+/gamos/generator RTGeneratorPhaseSpace
+
+/gamos/userAction GmCountProcessesUA
+
+/run/initialize
+
+/gamos/userAction GmTimeStudyUA GmClassifierByRegion
+/gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-7 1.E1 10.
+/gamos/classifier ClassifierParticleAndKinEnergy GmCompoundClassifier GmClassifierByParticle energyClassifier
+/gamos/userAction GmTimeStudyUA  ClassifierParticleAndKinEnergy 
+
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorerTotal GmG4PSDoseDeposit doseDet
+/gamos/analysis/histo1Min *Dose -18
+/gamos/analysis/histo1Max *Dose -9
+/gamos/analysis/histo1Min *volume -18
+/gamos/analysis/histo1Max *volume -9
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorerTotal
+/gamos/scoring/addPrinter2Scorer GmPSPrinterCout doseScorerTotal
+
+/gamos/scoring/addScorer2MFD doseScorer1. GmG4PSDoseDeposit doseDet
+/gamos/filter MinRangeCutFilter1. GmMinRangeCutOutsideVoxelFilter 1.*mm 1.*mm
+/gamos/scoring/addFilter2Scorer MinRangeCutFilter1. doseScorer1.
+/gamos/scoring/printer 	RTPSPDoseHistos1. RTPSPDoseHistos		
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos1. doseScorer1.
+/gamos/scoring/addPrinter2Scorer GmPSPrinterCout doseScorer1.
+
+/gamos/scoring/addScorer2MFD doseScorer10. GmG4PSDoseDeposit doseDet
+/gamos/filter MinRangeCutFilter10. GmMinRangeCutOutsideVoxelFilter 10.*mm 10.*mm
+/gamos/scoring/addFilter2Scorer MinRangeCutFilter10. doseScorer10.
+/gamos/scoring/printer 	RTPSPDoseHistos10. RTPSPDoseHistos		
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos10. doseScorer10.
+/gamos/scoring/addPrinter2Scorer GmPSPrinterCout doseScorer10.
+
+/gamos/random/restoreSeeds 1111 1111
+/run/beamOn 1000
+

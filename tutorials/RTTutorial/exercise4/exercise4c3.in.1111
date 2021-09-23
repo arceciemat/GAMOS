@@ -1,0 +1,36 @@
+/gamos/setParam GmReadPhantomGeometry:FileName ../exercise3/world.geom
+/gamos/setParam GmSimplePhantomGeometry:MaterialNames G4_WATER G4_LUNG_ICRP G4_BONE_COMPACT_ICRU
+/gamos/setParam GmSimplePhantomGeometry:MaterialZVoxels 10 10 80
+/gamos/setParam GmSimplePhantomGeometry:MaterialDensities 1. 0.3 1.85
+/gamos/setParam GmSimplePhantomGeometry:NVoxels 100 100 100
+/gamos/setParam GmSimplePhantomGeometry:PhantomDims -500 500 -500 500 -500 500
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. -1400.
+/gamos/setParam GmReadPhantomGeometry:InitialRotAngles 0*deg 0. 0.
+
+/gamos/geometry GmSimplePhantomGeometry
+
+/gamos/physicsList GmEMPhysics
+
+/gamos/setParam RTGeneratorPhaseSpace:FileName ../exercise3/test_-450
+/gamos/setParam RTGeneratorPhaseSpace:InitialDisplacement 0. 0. 0.
+/gamos/setParam RTGeneratorPhaseSpace:InitialRotAngles 0. 0. 0.*deg 
+
+/gamos/generator RTGeneratorPhaseSpace
+
+/run/initialize
+
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+/gamos/analysis/histo1Min *Dose -18
+/gamos/analysis/histo1Max *Dose -9
+/gamos/analysis/histo1Min *volume -18
+/gamos/analysis/histo1Max *volume -9
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorer
+/gamos/scoring/addPrinter2Scorer GmPSPrinterCout doseScorer
+/gamos/scoring/addPrinter2Scorer GmPSPrinterSqdose doseScorer
+
+/gamos/physics/userLimits/setMinRange UL1 phantom e- 10*mm
+#/gamos/physics/userLimits/setMinEKin UL1 phantom e- 10.*keV
+
+/gamos/random/restoreSeeds 1111 1111
+/run/beamOn 10000

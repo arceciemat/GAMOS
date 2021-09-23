@@ -1,0 +1,28 @@
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/exercise1.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nEventsPerRun 500000
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:minE 0.01
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:maxE 0.15
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nStepsE 15
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:logE 0
+/gamos/generator GmGeneratorChangeEnergyAndMaterial
+
+/gamos/setParam GmCountTracksUA:EachNEvent 10000
+/gamos/userAction GmCountTracksUA
+#/gamos/userAction GmCountProcessesUA
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source e- 1.*MeV
+
+/gamos/setParam GmPDSCreateAngleTablesUA:SecondaryParticleName gamma
+/gamos/setParam GmPDSCreateAngleTablesUA:HistoFileName angleDeviation.e-.gamma
+/gamos/userAction GmPDSCreateAngleTablesUA
+
+/gamos/userAction GmKillAtStackingActionUA GmSecondaryFilter
+
+/process/msc/StepLimit Minimal
+
+/run/beamOn 100000000

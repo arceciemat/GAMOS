@@ -1,0 +1,472 @@
+@@@@@ Running GAMOS with script: exercise4a.NoCuts.in
+
+**************************************************************
+ Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+ Using Random Engine: MixMaxRng
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+"/vis/list" to see available colours.
+/control/execute exercise4a.NoCuts.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4a.NoCuts
+/gamos/setParam GmGeometryFromText:FileName ../exercise2/linac.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/generator GmGenerator
+/gamos/geometry/createRegion targetReg target
+/gamos/geometry/createRegion collimatorReg "primary collimator_0"
+/gamos/geometry/createRegion filterReg "flattening filter"
+/gamos/geometry/createRegion monitorReg monitor
+/gamos/geometry/createRegion jawsReg jaws_X jaws_Y
+/gamos/setParam RTPhaseSpaceUA:FileName testNoOpt
+/gamos/setParam RTPhaseSpaceUA:ZStops -900
+/gamos/setParam RTPhaseSpaceUA:KillAfterLastZStop 1
+/gamos/userAction RTPhaseSpaceUA
+/gamos/userAction GmCountTracksUA
+/run/initialize
+100 ANGLEN_ROT 0.333412 0: -0.233743 N: 0.0996687   -100 141.295
+GmPhysicsGammaLowEner::ConstructProcess 
+Warning : Region <targetReg> does not have specific production cuts,
+even though it appears in the current tracking world.
+Default cuts are used for this region.
+Warning : Region <collimatorReg> does not have specific production cuts,
+even though it appears in the current tracking world.
+Default cuts are used for this region.
+Warning : Region <filterReg> does not have specific production cuts,
+even though it appears in the current tracking world.
+Default cuts are used for this region.
+Warning : Region <monitorReg> does not have specific production cuts,
+even though it appears in the current tracking world.
+Default cuts are used for this region.
+Warning : Region <jawsReg> does not have specific production cuts,
+even though it appears in the current tracking world.
+Default cuts are used for this region.
+/gamos/userAction GmTimeStudyUA GmClassifierByRegion
+/gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-8 1.E1 10.
+/gamos/classifier particleAndEnergyClassifier GmCompoundClassifier GmClassifierByLogicalVolume energyClassifier
+/gamos/userAction GmTimeStudyUA particleAndEnergyClassifier
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+/run/beamOn 100000
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 6 regions:
+          DefaultRegionForTheWorld  1  1  0
+          targetReg  1  1  0
+          collimatorReg  1  1  0
+          filterReg  1  1  0
+          monitorReg  1  1  0
+          jawsReg  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+    collimatorReg
+    monitorReg
+
+Index : 1     used in the geometry : Yes
+ Material : G4_Cu
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  7.33405 keV    e-  249.775 keV    e+  243.15 keV proton -1 MeV
+ Region(s) which use this couple : 
+    targetReg
+
+Index : 2     used in the geometry : Yes
+ Material : G4_W
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  36.0599 keV    e-  351.877 keV    e+  337.972 keV proton -1 MeV
+ Region(s) which use this couple : 
+    collimatorReg
+    jawsReg
+
+Index : 3     used in the geometry : Yes
+ Material : SiFeMn
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  5.56783 keV    e-  244.79 keV    e+  239.904 keV proton -1 MeV
+ Region(s) which use this couple : 
+    filterReg
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+ %%% EVENT 0 NTRACKS 5 TOTAL NTRACKS 5
+ CreateHisto1D PhaseSpace: -900: :ALL: X at Zstop = 760001
+ CreateHisto1D PhaseSpace: -900: :ALL: X*10 at Zstop = 760101
+ CreateHisto1D PhaseSpace: -900: :ALL: Y at Zstop = 760002
+ CreateHisto1D PhaseSpace: -900: :ALL: Y*10 at Zstop = 760102
+ CreateHisto2D PhaseSpace: -900: :ALL: XY at Zstop = 760009
+ CreateHisto1D PhaseSpace: -900: :ALL: R at Zstop = 760003
+ CreateHisto1D PhaseSpace: -900: :ALL: Direction Theta at Zstop = 760004
+ CreateHisto1D PhaseSpace: -900: :ALL: Direction Phi at Zstop = 760005
+ CreateHisto1D PhaseSpace: -900: :ALL: Energy at Zstop = 760006
+ CreateHisto1D PhaseSpace: -900: :ALL: Energy*10 at Zstop = 760106
+ CreateHisto1D PhaseSpace: -900: :ALL: Vx at Zstop = 760007
+ CreateHisto1D PhaseSpace: -900: :ALL: Vy at Zstop = 760008
+ CreateHisto1D PhaseSpace: -900: :ALL: Vz at Zstop = 760009
+ CreateHisto2D PhaseSpace: -900: :ALL: R vs Direction Theta at Zstop = 760011
+ CreateHisto2D PhaseSpace: -900: :ALL: R vs Energy at Zstop = 760012
+ CreateHisto2D PhaseSpace: -900: :ALL: Direction Theta vs Energy at Zstop = 760013
+ CreateHisto1D PhaseSpace: -900: :ALL: Weight at Zstop = 760014
+ CreateHisto2D PhaseSpace: -900: :ALL: X vs Energy at Zstop = 760021
+ CreateHisto2D PhaseSpace: -900: :ALL: X vs Vx at Zstop = 760022
+ CreateHistoProfile1D PhaseSpace: -900: :ALL: X prof weight = 760030
+ CreateHisto2D PhaseSpace: -900: :ALL: X vs log10(Weight) = 760091
+ CreateHisto1D PhaseSpace: -900: :gamma: X at Zstop = 761001
+ CreateHisto1D PhaseSpace: -900: :gamma: X*10 at Zstop = 761101
+ CreateHisto1D PhaseSpace: -900: :gamma: Y at Zstop = 761002
+ CreateHisto1D PhaseSpace: -900: :gamma: Y*10 at Zstop = 761102
+ CreateHisto2D PhaseSpace: -900: :gamma: XY at Zstop = 761009
+ CreateHisto1D PhaseSpace: -900: :gamma: R at Zstop = 761003
+ CreateHisto1D PhaseSpace: -900: :gamma: Direction Theta at Zstop = 761004
+ CreateHisto1D PhaseSpace: -900: :gamma: Direction Phi at Zstop = 761005
+ CreateHisto1D PhaseSpace: -900: :gamma: Energy at Zstop = 761006
+ CreateHisto1D PhaseSpace: -900: :gamma: Energy*10 at Zstop = 761106
+ CreateHisto1D PhaseSpace: -900: :gamma: Vx at Zstop = 761007
+ CreateHisto1D PhaseSpace: -900: :gamma: Vy at Zstop = 761008
+ CreateHisto1D PhaseSpace: -900: :gamma: Vz at Zstop = 761009
+ CreateHisto2D PhaseSpace: -900: :gamma: R vs Direction Theta at Zstop = 761011
+ CreateHisto2D PhaseSpace: -900: :gamma: R vs Energy at Zstop = 761012
+ CreateHisto2D PhaseSpace: -900: :gamma: Direction Theta vs Energy at Zstop = 761013
+ CreateHisto1D PhaseSpace: -900: :gamma: Weight at Zstop = 761014
+ CreateHisto2D PhaseSpace: -900: :gamma: X vs Energy at Zstop = 761021
+ CreateHisto2D PhaseSpace: -900: :gamma: X vs Vx at Zstop = 761022
+ CreateHistoProfile1D PhaseSpace: -900: :gamma: X prof weight = 761030
+ CreateHisto2D PhaseSpace: -900: :gamma: X vs log10(Weight) = 761091
+ CreateHisto1D PhaseSpace: -900: :e-: X at Zstop = 762001
+ CreateHisto1D PhaseSpace: -900: :e-: X*10 at Zstop = 762101
+ CreateHisto1D PhaseSpace: -900: :e-: Y at Zstop = 762002
+ CreateHisto1D PhaseSpace: -900: :e-: Y*10 at Zstop = 762102
+ CreateHisto2D PhaseSpace: -900: :e-: XY at Zstop = 762009
+ CreateHisto1D PhaseSpace: -900: :e-: R at Zstop = 762003
+ CreateHisto1D PhaseSpace: -900: :e-: Direction Theta at Zstop = 762004
+ CreateHisto1D PhaseSpace: -900: :e-: Direction Phi at Zstop = 762005
+ CreateHisto1D PhaseSpace: -900: :e-: Energy at Zstop = 762006
+ CreateHisto1D PhaseSpace: -900: :e-: Energy*10 at Zstop = 762106
+ CreateHisto1D PhaseSpace: -900: :e-: Vx at Zstop = 762007
+ CreateHisto1D PhaseSpace: -900: :e-: Vy at Zstop = 762008
+ CreateHisto1D PhaseSpace: -900: :e-: Vz at Zstop = 762009
+ CreateHisto2D PhaseSpace: -900: :e-: R vs Direction Theta at Zstop = 762011
+ CreateHisto2D PhaseSpace: -900: :e-: R vs Energy at Zstop = 762012
+ CreateHisto2D PhaseSpace: -900: :e-: Direction Theta vs Energy at Zstop = 762013
+ CreateHisto1D PhaseSpace: -900: :e-: Weight at Zstop = 762014
+ CreateHisto2D PhaseSpace: -900: :e-: X vs Energy at Zstop = 762021
+ CreateHisto2D PhaseSpace: -900: :e-: X vs Vx at Zstop = 762022
+ CreateHistoProfile1D PhaseSpace: -900: :e-: X prof weight = 762030
+ CreateHisto2D PhaseSpace: -900: :e-: X vs log10(Weight) = 762091
+ CreateHisto1D PhaseSpace: -900: :e+: X at Zstop = 763001
+ CreateHisto1D PhaseSpace: -900: :e+: X*10 at Zstop = 763101
+ CreateHisto1D PhaseSpace: -900: :e+: Y at Zstop = 763002
+ CreateHisto1D PhaseSpace: -900: :e+: Y*10 at Zstop = 763102
+ CreateHisto2D PhaseSpace: -900: :e+: XY at Zstop = 763009
+ CreateHisto1D PhaseSpace: -900: :e+: R at Zstop = 763003
+ CreateHisto1D PhaseSpace: -900: :e+: Direction Theta at Zstop = 763004
+ CreateHisto1D PhaseSpace: -900: :e+: Direction Phi at Zstop = 763005
+ CreateHisto1D PhaseSpace: -900: :e+: Energy at Zstop = 763006
+ CreateHisto1D PhaseSpace: -900: :e+: Energy*10 at Zstop = 763106
+ CreateHisto1D PhaseSpace: -900: :e+: Vx at Zstop = 763007
+ CreateHisto1D PhaseSpace: -900: :e+: Vy at Zstop = 763008
+ CreateHisto1D PhaseSpace: -900: :e+: Vz at Zstop = 763009
+ CreateHisto2D PhaseSpace: -900: :e+: R vs Direction Theta at Zstop = 763011
+ CreateHisto2D PhaseSpace: -900: :e+: R vs Energy at Zstop = 763012
+ CreateHisto2D PhaseSpace: -900: :e+: Direction Theta vs Energy at Zstop = 763013
+ CreateHisto1D PhaseSpace: -900: :e+: Weight at Zstop = 763014
+ CreateHisto2D PhaseSpace: -900: :e+: X vs Energy at Zstop = 763021
+ CreateHisto2D PhaseSpace: -900: :e+: X vs Vx at Zstop = 763022
+ CreateHistoProfile1D PhaseSpace: -900: :e+: X prof weight = 763030
+ CreateHisto2D PhaseSpace: -900: :e+: X vs log10(Weight) = 763091
+ %%% EVENT 1000 NTRACKS 5 TOTAL NTRACKS 10574
+ %%% EVENT 2000 NTRACKS 2 TOTAL NTRACKS 21365
+ %%% EVENT 3000 NTRACKS 16 TOTAL NTRACKS 31997
+ %%% EVENT 4000 NTRACKS 19 TOTAL NTRACKS 42517
+ %%% EVENT 5000 NTRACKS 10 TOTAL NTRACKS 53335
+ %%% EVENT 6000 NTRACKS 8 TOTAL NTRACKS 63911
+ %%% EVENT 7000 NTRACKS 18 TOTAL NTRACKS 74531
+ %%% EVENT 8000 NTRACKS 14 TOTAL NTRACKS 84936
+ %%% EVENT 9000 NTRACKS 6 TOTAL NTRACKS 95406
+ %%% EVENT 10000 NTRACKS 14 TOTAL NTRACKS 106215
+ %%% EVENT 11000 NTRACKS 22 TOTAL NTRACKS 116691
+ %%% EVENT 12000 NTRACKS 8 TOTAL NTRACKS 126982
+ %%% EVENT 13000 NTRACKS 11 TOTAL NTRACKS 137410
+ %%% EVENT 14000 NTRACKS 3 TOTAL NTRACKS 147366
+ %%% EVENT 15000 NTRACKS 11 TOTAL NTRACKS 158145
+ %%% EVENT 16000 NTRACKS 11 TOTAL NTRACKS 168557
+ %%% EVENT 17000 NTRACKS 1 TOTAL NTRACKS 178999
+ %%% EVENT 18000 NTRACKS 8 TOTAL NTRACKS 189845
+ %%% EVENT 19000 NTRACKS 60 TOTAL NTRACKS 200169
+ %%% EVENT 20000 NTRACKS 8 TOTAL NTRACKS 210490
+ %%% EVENT 21000 NTRACKS 12 TOTAL NTRACKS 220233
+ %%% EVENT 22000 NTRACKS 7 TOTAL NTRACKS 230757
+ %%% EVENT 23000 NTRACKS 6 TOTAL NTRACKS 241449
+ %%% EVENT 24000 NTRACKS 5 TOTAL NTRACKS 252236
+ %%% EVENT 25000 NTRACKS 18 TOTAL NTRACKS 262759
+ %%% EVENT 26000 NTRACKS 13 TOTAL NTRACKS 273075
+ %%% EVENT 27000 NTRACKS 10 TOTAL NTRACKS 283069
+ %%% EVENT 28000 NTRACKS 15 TOTAL NTRACKS 293509
+ %%% EVENT 29000 NTRACKS 4 TOTAL NTRACKS 303793
+ %%% EVENT 30000 NTRACKS 12 TOTAL NTRACKS 314063
+ %%% EVENT 31000 NTRACKS 7 TOTAL NTRACKS 324391
+ %%% EVENT 32000 NTRACKS 3 TOTAL NTRACKS 335020
+ %%% EVENT 33000 NTRACKS 17 TOTAL NTRACKS 345759
+ %%% EVENT 34000 NTRACKS 4 TOTAL NTRACKS 356266
+ %%% EVENT 35000 NTRACKS 3 TOTAL NTRACKS 366699
+ %%% EVENT 36000 NTRACKS 9 TOTAL NTRACKS 376859
+ %%% EVENT 37000 NTRACKS 7 TOTAL NTRACKS 387535
+ %%% EVENT 38000 NTRACKS 12 TOTAL NTRACKS 397951
+ %%% EVENT 39000 NTRACKS 12 TOTAL NTRACKS 408404
+ %%% EVENT 40000 NTRACKS 10 TOTAL NTRACKS 419196
+ %%% EVENT 41000 NTRACKS 26 TOTAL NTRACKS 430032
+ %%% EVENT 42000 NTRACKS 2 TOTAL NTRACKS 440106
+ %%% EVENT 43000 NTRACKS 6 TOTAL NTRACKS 450994
+ %%% EVENT 44000 NTRACKS 10 TOTAL NTRACKS 461450
+ %%% EVENT 45000 NTRACKS 21 TOTAL NTRACKS 471812
+ %%% EVENT 46000 NTRACKS 5 TOTAL NTRACKS 481908
+ %%% EVENT 47000 NTRACKS 6 TOTAL NTRACKS 492710
+ %%% EVENT 48000 NTRACKS 4 TOTAL NTRACKS 503123
+ %%% EVENT 49000 NTRACKS 3 TOTAL NTRACKS 513216
+ %%% EVENT 50000 NTRACKS 11 TOTAL NTRACKS 523568
+ %%% EVENT 51000 NTRACKS 13 TOTAL NTRACKS 534343
+ %%% EVENT 52000 NTRACKS 5 TOTAL NTRACKS 544852
+ %%% EVENT 53000 NTRACKS 18 TOTAL NTRACKS 555407
+ %%% EVENT 54000 NTRACKS 10 TOTAL NTRACKS 565730
+ %%% EVENT 55000 NTRACKS 14 TOTAL NTRACKS 575937
+ %%% EVENT 56000 NTRACKS 4 TOTAL NTRACKS 586495
+ %%% EVENT 57000 NTRACKS 9 TOTAL NTRACKS 596986
+ %%% EVENT 58000 NTRACKS 11 TOTAL NTRACKS 607570
+ %%% EVENT 59000 NTRACKS 12 TOTAL NTRACKS 618108
+ %%% EVENT 60000 NTRACKS 6 TOTAL NTRACKS 627949
+ %%% EVENT 61000 NTRACKS 7 TOTAL NTRACKS 638652
+ %%% EVENT 62000 NTRACKS 10 TOTAL NTRACKS 649339
+ %%% EVENT 63000 NTRACKS 12 TOTAL NTRACKS 660337
+ %%% EVENT 64000 NTRACKS 15 TOTAL NTRACKS 670537
+ %%% EVENT 65000 NTRACKS 5 TOTAL NTRACKS 680851
+ %%% EVENT 66000 NTRACKS 2 TOTAL NTRACKS 691258
+ %%% EVENT 67000 NTRACKS 11 TOTAL NTRACKS 702133
+ %%% EVENT 68000 NTRACKS 6 TOTAL NTRACKS 712627
+ %%% EVENT 69000 NTRACKS 9 TOTAL NTRACKS 722731
+ %%% EVENT 70000 NTRACKS 5 TOTAL NTRACKS 733120
+ %%% EVENT 71000 NTRACKS 2 TOTAL NTRACKS 743378
+ %%% EVENT 72000 NTRACKS 13 TOTAL NTRACKS 753878
+ %%% EVENT 73000 NTRACKS 5 TOTAL NTRACKS 764583
+ %%% EVENT 74000 NTRACKS 8 TOTAL NTRACKS 775312
+ %%% EVENT 75000 NTRACKS 1 TOTAL NTRACKS 786001
+ %%% EVENT 76000 NTRACKS 9 TOTAL NTRACKS 796473
+ %%% EVENT 77000 NTRACKS 27 TOTAL NTRACKS 807142
+ %%% EVENT 78000 NTRACKS 5 TOTAL NTRACKS 817704
+ %%% EVENT 79000 NTRACKS 15 TOTAL NTRACKS 827802
+ %%% EVENT 80000 NTRACKS 11 TOTAL NTRACKS 838652
+ %%% EVENT 81000 NTRACKS 6 TOTAL NTRACKS 848923
+ %%% EVENT 82000 NTRACKS 9 TOTAL NTRACKS 859619
+ %%% EVENT 83000 NTRACKS 29 TOTAL NTRACKS 870135
+ %%% EVENT 84000 NTRACKS 3 TOTAL NTRACKS 880470
+ %%% EVENT 85000 NTRACKS 7 TOTAL NTRACKS 891233
+ %%% EVENT 86000 NTRACKS 11 TOTAL NTRACKS 901554
+ %%% EVENT 87000 NTRACKS 11 TOTAL NTRACKS 911595
+ %%% EVENT 88000 NTRACKS 6 TOTAL NTRACKS 922099
+ %%% EVENT 89000 NTRACKS 2 TOTAL NTRACKS 932738
+ %%% EVENT 90000 NTRACKS 16 TOTAL NTRACKS 943165
+ %%% EVENT 91000 NTRACKS 9 TOTAL NTRACKS 953632
+ %%% EVENT 92000 NTRACKS 7 TOTAL NTRACKS 964418
+ %%% EVENT 93000 NTRACKS 2 TOTAL NTRACKS 974611
+ %%% EVENT 94000 NTRACKS 9 TOTAL NTRACKS 985569
+ %%% EVENT 95000 NTRACKS 14 TOTAL NTRACKS 996487
+ %%% EVENT 96000 NTRACKS 11 TOTAL NTRACKS 1.0075e+06
+ %%% EVENT 97000 NTRACKS 3 TOTAL NTRACKS 1.01817e+06
+ %%% EVENT 98000 NTRACKS 11 TOTAL NTRACKS 1.02882e+06
+ %%% EVENT 99000 NTRACKS 4 TOTAL NTRACKS 1.03879e+06
+ Run terminated.
+Run Summary
+  Number of events processed : 100000
+  User=48.170000s Real=54.785563s Sys=6.610000s
+
+%%%%% TIMING RESULTS for timer GmTimeStudyUA_GmClassifierByRegion
+DefaultRegionForTheWorld:   User=8.11  Real=9.06  Sys=1.01
+collimatorReg:   User=1.75  Real=1.97  Sys=0.21
+filterReg:   User=0.09  Real=0.03  Sys=0.03
+jawsReg:   User=0.34  Real=0.25  Sys=0.04
+monitorReg:   User=0.11  Real=0.12  Sys=0.01
+targetReg:   User=20.75  Real=24.06  Sys=3.02
+
+
+%%%%% TIMING RESULTS for timer GmTimeStudyUA_particleAndEnergyClassifier
+"expHall 0.0001:0.001":   User=0.06  Real=0.02  Sys=0
+"expHall 0.001:0.01":   User=2.14  Real=2.51  Sys=0.2
+"expHall 0.01:0.1":   User=1.1  Real=1.26  Sys=0.21
+"expHall 0.1:1":   User=1.88  Real=1.97  Sys=0.21
+"expHall 1:10":   User=2.56  Real=2.57  Sys=0.35
+"expHall 1e-05:0.0001":   User=0  Real=0  Sys=0
+"flattening filter 0.0001:0.001":   User=0  Real=0  Sys=0
+"flattening filter 0.001:0.01":   User=0  Real=0  Sys=0
+"flattening filter 0.01:0.1":   User=0.01  Real=0  Sys=0
+"flattening filter 0.1:1":   User=0.05  Real=0.01  Sys=0.03
+"flattening filter 1:10":   User=0.01  Real=0  Sys=0
+"flattening filter 1e-05:0.0001":   User=0  Real=0  Sys=0
+"flattening filter 1e-06:1e-05":   User=0  Real=0  Sys=0
+"jaws_X 0.0001:0.001":   User=0  Real=0  Sys=0
+"jaws_X 0.001:0.01":   User=0  Real=0  Sys=0
+"jaws_X 0.01:0.1":   User=0.1  Real=0.07  Sys=0.01
+"jaws_X 0.1:1":   User=0.13  Real=0.05  Sys=0.01
+"jaws_X 1:10":   User=0.03  Real=0.01  Sys=0
+"jaws_X 1e-05:0.0001":   User=0  Real=0  Sys=0
+"jaws_Y 0.0001:0.001":   User=0  Real=0  Sys=0
+"jaws_Y 0.001:0.01":   User=0  Real=0  Sys=0
+"jaws_Y 0.01:0.1":   User=0.04  Real=0.02  Sys=0.01
+"jaws_Y 0.1:1":   User=0.03  Real=0.04  Sys=0.01
+"jaws_Y 1:10":   User=0.01  Real=0.02  Sys=0
+"jaws_Y 1e-05:0.0001":   User=0  Real=0  Sys=0
+"monitor 0.001:0.01":   User=0  Real=0  Sys=0
+"monitor 0.01:0.1":   User=0  Real=0  Sys=0
+"monitor 0.1:1":   User=0.07  Real=0.08  Sys=0
+"monitor 1:10":   User=0.05  Real=0.03  Sys=0.01
+"primary collimator_0 0.0001:0.001":   User=0  Real=0  Sys=0
+"primary collimator_0 0.001:0.01":   User=0.01  Real=0.01  Sys=0
+"primary collimator_0 0.01:0.1":   User=0.54  Real=0.7  Sys=0.05
+"primary collimator_0 0.1:1":   User=0.78  Real=0.91  Sys=0.08
+"primary collimator_0 1:10":   User=0.17  Real=0.17  Sys=0.02
+"primary collimator_0 1e-05:0.0001":   User=0  Real=0  Sys=0
+"primary collimator_0 1e-06:1e-05":   User=0  Real=0  Sys=0
+"primary collimator_1 0.0001:0.001":   User=0  Real=0  Sys=0
+"primary collimator_1 0.001:0.01":   User=0  Real=0  Sys=0
+"primary collimator_1 0.01:0.1":   User=0.02  Real=0  Sys=0
+"primary collimator_1 0.1:1":   User=0.01  Real=0.06  Sys=0.01
+"primary collimator_1 1:10":   User=0  Real=0  Sys=0
+"target 0.0001:0.001":   User=0.03  Real=0.02  Sys=0.02
+"target 0.001:0.01":   User=0.81  Real=0.93  Sys=0.23
+"target 0.01:0.1":   User=1.26  Real=1.41  Sys=0.14
+"target 0.1:1":   User=3.68  Real=4.65  Sys=0.63
+"target 1:10":   User=12.78  Real=15.04  Sys=1.91
+"target 1e-05:0.0001":   User=0  Real=0  Sys=0
+"target 1e-06:1e-05":   User=0  Real=0  Sys=0
+"target 1e-07:1e-06":   User=0  Real=0  Sys=0
+
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 phaseSpace.exercise4a.NoCuts:NormalizeToNEvents
+=== saving histograms in file === phaseSpace.exercise4a.NoCuts.root
+%%%%% Compound classifier using indices from 2

@@ -1,0 +1,725 @@
+@@@@@ Running GAMOS with script: exercise5b.in
+
+**************************************************************
+ Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+ Using Random Engine: MixMaxRng
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+"/vis/list" to see available colours.
+/control/execute exercise5b.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise5b
+/gamos/setParam GmGeometryUseMaterials:FileName exercise5.geom
+/gamos/setParam GmGeometryUseMaterials:Materials G4_Cr
+/gamos/geometry GmGeometryUseMaterials
+/gamos/physicsList G4QGSP_BIC_HP
+<<< Geant4 Physics List simulation engine: QGSP_BIC_HP
+
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nEventsPerRun 10000
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:minE 1.E-9*MeV
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:maxE 10.*MeV
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nStepsE 11
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:logE 1
+/gamos/generator GmGeneratorChangeEnergyAndMaterial
+/run/initialize
+/home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5
+@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic
+@@@ G4ParticleHPInelasticData instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5
+/gamos/physics/removeProcessesByType Electromagnetic
+/gamos/physics/removeProcessesByName hadElastic
+/gamos/generator/addSingleParticleSource source neutron 1.*MeV
+/gamos/setParam SHGetHadronicChannelXSUA:ParticleYields 1
+/gamos/userAction SHGetHadronicChannelXSUA
+/gamos/userAction GmKillAtStackingActionUA GmSecondaryFilter
+/run/beamOn 100000000
+======================================================================
+======          Radioactive Decay Physics Parameters           =======
+======================================================================
+Max life time                                     1.4427e+06 ps
+Internal e- conversion flag                       1
+Stored internal conversion coefficients           1
+Enable correlated gamma emission                  0
+Max 2J for sampling of angular correlations       10
+Atomic de-excitation enabled                      1
+Auger electron emission enabled                   1
+Auger cascade enabled                             1
+Check EM cuts disabled for atomic de-excitation   1
+Use Bearden atomic level energies                 0
+======================================================================
+@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic
+
+====================================================================
+                  HADRONIC PROCESSES SUMMARY (verbose level 1)
+
+---------------------------------------------------
+                           Hadronic Processes for GenericIon
+
+  Process: ionElastic
+        Model:          NNDiffuseElastic: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: ionInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: RadioactiveDecayBase
+
+---------------------------------------------------
+                           Hadronic Processes for He3
+
+  Process: He3Inelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for alpha
+
+  Process: alphaInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for anti_He3
+
+  Process: anti_He3Inelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_alpha
+
+  Process: anti_alphaInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_deuteron
+
+  Process: anti_deuteronInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_neutron
+
+  Process: anti_neutronInelastic
+        Model:                      FTFP: 0 eV  ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_proton
+
+  Process: anti_protonInelastic
+        Model:                      FTFP: 0 eV  ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_triton
+
+  Process: anti_tritonInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for deuteron
+
+  Process: dInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for e+
+
+  Process: electronNuclear
+        Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for e-
+
+  Process: electronNuclear
+        Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for gamma
+
+  Process: photonNuclear
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+        Model:           TheoFSGenerator: 3 GeV ---> 100 TeV
+     Cr_sctns:            PhotoNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for kaon+
+
+  Process: kaon+Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for kaon-
+
+  Process: kaon-Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: hBertiniCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for lambda
+
+  Process: lambdaInelastic
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+        Model:                      FTFP: 3 GeV ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for mu+
+
+  Process: muonNuclear
+        Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for mu-
+
+  Process: muonNuclear
+        Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
+
+  Process: muMinusCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for neutron
+
+  Process: neutronInelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            Binary Cascade: 19.9 MeV ---> 6 GeV
+        Model:        NeutronHPInelastic: 0 eV  ---> 20 MeV
+     Cr_sctns:      NeutronHPInelasticXS: 0 eV  ---> 20 MeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: nCapture
+        Model:          NeutronHPCapture: 0 eV  ---> 20 MeV
+        Model:               nRadCapture: 19.9 MeV ---> 100 TeV
+     Cr_sctns:        NeutronHPCaptureXS: 0 eV  ---> 20 MeV
+     Cr_sctns:        G4NeutronCaptureXS: 0 eV  ---> 100 TeV
+
+  Process: nFission
+        Model:          NeutronHPFission: 0 eV  ---> 20 MeV
+        Model:                G4LFission: 19.9 MeV ---> 100 TeV
+     Cr_sctns:        NeutronHPFissionXS: 0 eV  ---> 20 MeV
+     Cr_sctns:          GheishaFissionXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for pi+
+
+  Process: pi+Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for pi-
+
+  Process: pi-Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: hBertiniCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for proton
+
+  Process: protonInelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            Binary Cascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for triton
+
+  Process: tInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+================================================================
+=======================================================================
+======       Pre-compound/De-excitation Physics Parameters     ========
+=======================================================================
+Type of pre-compound inverse x-section              3
+Pre-compound model active                           1
+Pre-compound excitation low energy (MeV)            0.1
+Pre-compound excitation high energy (MeV)           30
+Type of de-excitation inverse x-section             3
+Type of de-excitation factory                       Evaporation+GEM
+Number of de-excitation channels                    68
+Min excitation energy (keV)                         0.01
+Min energy per nucleon for multifragmentation (MeV) 2e+05
+Limit excitation energy for Fermi BreakUp (MeV)     20
+Level density (1/MeV)                               0.075
+Use simple level density model                      1
+Use discrete excitation energy of the residual      0
+Time limit for long lived isomeres (ns)             1442.7
+Internal e- conversion flag                         1
+Store e- internal conversion data                   1
+Electron internal conversion ID                     0
+Correlated gamma emission flag                      0
+Max 2J for sampling of angular correlations         10
+Upload data before 1st event for                Z < 9
+=======================================================================
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_Al
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.85564 keV    e-  460.395 keV    e+  442.201 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+1 MINE -9.5 1e-09 10 -9 step= 1
+ MAXE 1.5 10 10
+ NSTEPE 11
+0x5587ecef4e10 GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromGe 1
+G4GeometryManager::ReportVoxelStats -- Voxel Statistics
+
+    Total memory consumed for geometry optimisation:   0 kByte
+    Total CPU time elapsed for geometry optimisation: 0 seconds
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_Al
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.85564 keV    e-  460.395 keV    e+  442.201 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_Al
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.85564 keV    e-  460.395 keV    e+  442.201 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+NMATES 1 NPROC 3
+ CreateHisto1D G4_Al_neutronInelastic_XSmicro = 130000001
+ CreateHisto1D G4_Al_neutronInelastic_XSmacro = 130000002
+ CreateHisto1D G4_Al_nCapture_XSmicro = 130010001
+ CreateHisto1D G4_Al_nCapture_XSmacro = 130010002
+ CreateHisto1D G4_Al_nFission_XSmicro = 130020001
+ CreateHisto1D G4_Al_nFission_XSmacro = 130020002
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV neutronInelastic TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture TOTAL_XS(macro)= 0.00714791 mm-1 TOTAL_XS(micro)= 1.18656 barn
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL [Al27 1 Al28 1  = 764
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL gamma 1 [Al27 1 Al28 1  = 1564
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL gamma 2 [Al27 1 Al28 1  = 1604
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL gamma 3 [Al27 1 Al28 1  = 1057
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL gamma 4 [Al27 1 Al28 1  = 571
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL gamma 5 [Al27 1 Al28 1  = 190
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL gamma 6 [Al27 1 Al28 1  = 87
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL gamma 7 [Al27 1 Al28 1  = 27
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL gamma 8 [Al27 1 Al28 1  = 6
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL gamma 9 [Al27 1 Al28 1  = 2
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 5872/10000 = 0.5872*XS(micro)= 0.69675 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+ CreateHisto1D nCapture_G4_Al_#-1(n,)[Al27+Al28_NPART = 130000013
+ CreateHisto1D nCapture_G4_Al_#-1(n,)[Al27+Al28_XSmicro = 130000014
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture Al27 PARTICLE_YIELD Al28 = 5872/10000 = 0.5872 *XS(micro)= 0.69675
+ CreateHisto1D nCapture_G4_Al_Al27_Al28_YIELD = 130050015
+ CreateHisto1D nCapture_G4_Al_Al27_Al28_YIELD_XSmicro = 130050016
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture Al27 PARTICLE_YIELD gamma = 11954/10000 = 1.1954 *XS(micro)= 1.41842
+ CreateHisto1D nCapture_G4_Al_Al27_gamma_YIELD = 130051015
+ CreateHisto1D nCapture_G4_Al_Al27_gamma_YIELD_XSmicro = 130051016
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 5872/10000 = 0.5872 *XS(micro)= 0.69675
+ CreateHisto1D nCapture_G4_Al_Al28_TOTAL_YIELD = 130000015
+ CreateHisto1D nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro = 130000016
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich -9= 0.69675 5872 * 1.18656 /10000
+@@SHGetHadronicChannelXSUA G4_Al 9.99989e-10 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 11954/10000 = 1.1954 *XS(micro)= 1.41842
+ CreateHisto1D nCapture_G4_Al_gamma_TOTAL_YIELD = 130001015
+ CreateHisto1D nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro = 130001016
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich -9= 1.41842 11954 * 1.18656 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV neutronInelastic TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture TOTAL_XS(macro)= 0.00226796 mm-1 TOTAL_XS(micro)= 0.376484 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL [Al27 1 Al28 1  = 309
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL gamma 1 [Al27 1 Al28 1  = 677
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL gamma 2 [Al27 1 Al28 1  = 634
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL gamma 3 [Al27 1 Al28 1  = 409
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL gamma 4 [Al27 1 Al28 1  = 201
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL gamma 5 [Al27 1 Al28 1  = 93
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL gamma 6 [Al27 1 Al28 1  = 27
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL gamma 7 [Al27 1 Al28 1  = 4
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL gamma 8 [Al27 1 Al28 1  = 2
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL gamma 9 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 2357/10000 = 0.2357*XS(micro)= 0.0887374 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture Al27 PARTICLE_YIELD Al28 = 2357/10000 = 0.2357 *XS(micro)= 0.0887374
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture Al27 PARTICLE_YIELD gamma = 4656/10000 = 0.4656 *XS(micro)= 0.175291
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 2357/10000 = 0.2357 *XS(micro)= 0.0887374
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich -8= 0.0887374 2357 * 0.376484 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1e-08 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 4656/10000 = 0.4656 *XS(micro)= 0.175291
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich -8= 0.175291 4656 * 0.376484 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV neutronInelastic TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture TOTAL_XS(macro)= 0.000718493 mm-1 TOTAL_XS(micro)= 0.119271 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture CHANNEL [Al27 1 Al28 1  = 105
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture CHANNEL gamma 1 [Al27 1 Al28 1  = 210
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture CHANNEL gamma 2 [Al27 1 Al28 1  = 223
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture CHANNEL gamma 3 [Al27 1 Al28 1  = 128
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture CHANNEL gamma 4 [Al27 1 Al28 1  = 90
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture CHANNEL gamma 5 [Al27 1 Al28 1  = 24
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture CHANNEL gamma 6 [Al27 1 Al28 1  = 12
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture CHANNEL gamma 7 [Al27 1 Al28 1  = 4
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture CHANNEL gamma 8 [Al27 1 Al28 1  = 2
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 798/10000 = 0.0798*XS(micro)= 0.00951782 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture Al27 PARTICLE_YIELD Al28 = 798/10000 = 0.0798 *XS(micro)= 0.00951782
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture Al27 PARTICLE_YIELD gamma = 1636/10000 = 0.1636 *XS(micro)= 0.0195127
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 798/10000 = 0.0798 *XS(micro)= 0.00951782
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich -7= 0.00951782 798 * 0.119271 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1e-07 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 1636/10000 = 0.1636 *XS(micro)= 0.0195127
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich -7= 0.0195127 1636 * 0.119271 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV neutronInelastic TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture TOTAL_XS(macro)= 0.000227748 mm-1 TOTAL_XS(micro)= 0.0378064 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture CHANNEL [Al27 1 Al28 1  = 38
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture CHANNEL gamma 1 [Al27 1 Al28 1  = 73
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture CHANNEL gamma 2 [Al27 1 Al28 1  = 69
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture CHANNEL gamma 3 [Al27 1 Al28 1  = 51
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture CHANNEL gamma 4 [Al27 1 Al28 1  = 16
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture CHANNEL gamma 5 [Al27 1 Al28 1  = 9
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture CHANNEL gamma 6 [Al27 1 Al28 1  = 5
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 261/10000 = 0.0261*XS(micro)= 0.000986748 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture Al27 PARTICLE_YIELD Al28 = 261/10000 = 0.0261 *XS(micro)= 0.000986748
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture Al27 PARTICLE_YIELD gamma = 503/10000 = 0.0503 *XS(micro)= 0.00190166
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 261/10000 = 0.0261 *XS(micro)= 0.000986748
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich -6= 0.000986748 261 * 0.0378064 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1e-06 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 503/10000 = 0.0503 *XS(micro)= 0.00190166
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich -6= 0.00190166 503 * 0.0378064 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV neutronInelastic TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture TOTAL_XS(macro)= 7.16757e-05 mm-1 TOTAL_XS(micro)= 0.0118983 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture CHANNEL [Al27 1 Al28 1  = 16
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture CHANNEL gamma 1 [Al27 1 Al28 1  = 25
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture CHANNEL gamma 2 [Al27 1 Al28 1  = 23
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture CHANNEL gamma 3 [Al27 1 Al28 1  = 12
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture CHANNEL gamma 4 [Al27 1 Al28 1  = 5
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture CHANNEL gamma 5 [Al27 1 Al28 1  = 3
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture CHANNEL gamma 6 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 85/10000 = 0.0085*XS(micro)= 0.000101135 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture Al27 PARTICLE_YIELD Al28 = 85/10000 = 0.0085 *XS(micro)= 0.000101135
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture Al27 PARTICLE_YIELD gamma = 148/10000 = 0.0148 *XS(micro)= 0.000176095
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 85/10000 = 0.0085 *XS(micro)= 0.000101135
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich -5= 0.000101135 85 * 0.0118983 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1e-05 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 148/10000 = 0.0148 *XS(micro)= 0.000176095
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich -5= 0.000176095 148 * 0.0118983 /10000
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV neutronInelastic TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture TOTAL_XS(macro)= 2.18938e-05 mm-1 TOTAL_XS(micro)= 0.0036344 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture CHANNEL [Al27 1 Al28 1  = 2
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture CHANNEL gamma 1 [Al27 1 Al28 1  = 5
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture CHANNEL gamma 2 [Al27 1 Al28 1  = 7
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture CHANNEL gamma 3 [Al27 1 Al28 1  = 8
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture CHANNEL gamma 4 [Al27 1 Al28 1  = 3
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture CHANNEL gamma 6 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 26/10000 = 0.0026*XS(micro)= 9.44944e-06 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture Al27 PARTICLE_YIELD Al28 = 26/10000 = 0.0026 *XS(micro)= 9.44944e-06
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture Al27 PARTICLE_YIELD gamma = 61/10000 = 0.0061 *XS(micro)= 2.21698e-05
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 26/10000 = 0.0026 *XS(micro)= 9.44944e-06
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich -4= 9.44944e-06 26 * 0.0036344 /10000
+@@SHGetHadronicChannelXSUA G4_Al 0.0001 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 61/10000 = 0.0061 *XS(micro)= 2.21698e-05
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich -4= 2.21698e-05 61 * 0.0036344 /10000
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV neutronInelastic TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture TOTAL_XS(macro)= 6.1715e-06 mm-1 TOTAL_XS(micro)= 0.00102448 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture CHANNEL gamma 1 [Al27 1 Al28 1  = 3
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture CHANNEL gamma 2 [Al27 1 Al28 1  = 3
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture CHANNEL gamma 3 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture CHANNEL gamma 4 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture CHANNEL gamma 5 [Al27 1 Al28 1  = 2
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 10/10000 = 0.001*XS(micro)= 1.02448e-06 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture Al27 PARTICLE_YIELD Al28 = 10/10000 = 0.001 *XS(micro)= 1.02448e-06
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture Al27 PARTICLE_YIELD gamma = 26/10000 = 0.0026 *XS(micro)= 2.66365e-06
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 10/10000 = 0.001 *XS(micro)= 1.02448e-06
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich -3= 1.02448e-06 10 * 0.00102448 /10000
+@@SHGetHadronicChannelXSUA G4_Al 0.001 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 26/10000 = 0.0026 *XS(micro)= 2.66365e-06
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich -3= 2.66365e-06 26 * 0.00102448 /10000
+@@SHGetHadronicChannelXSUA G4_Al 0.01 MeV neutronInelastic TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.01 MeV nCapture TOTAL_XS(macro)= 2.3351e-06 mm-1 TOTAL_XS(micro)= 0.000387631 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.01 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.01 MeV nCapture CHANNEL gamma 4 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 0.01 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 1/10000 = 0.0001*XS(micro)= 3.87631e-08 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 0.01 MeV nCapture Al27 PARTICLE_YIELD Al28 = 1/10000 = 0.0001 *XS(micro)= 3.87631e-08
+@@SHGetHadronicChannelXSUA G4_Al 0.01 MeV nCapture Al27 PARTICLE_YIELD gamma = 4/10000 = 0.0004 *XS(micro)= 1.55052e-07
+@@SHGetHadronicChannelXSUA G4_Al 0.01 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 1/10000 = 0.0001 *XS(micro)= 3.87631e-08
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich -2= 3.87631e-08 1 * 0.000387631 /10000
+@@SHGetHadronicChannelXSUA G4_Al 0.01 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 4/10000 = 0.0004 *XS(micro)= 1.55052e-07
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich -2= 1.55052e-07 4 * 0.000387631 /10000
+@@SHGetHadronicChannelXSUA G4_Al 0.1 MeV neutronInelastic TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.1 MeV nCapture TOTAL_XS(macro)= 5.3257e-06 mm-1 TOTAL_XS(micro)= 0.000884075 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.1 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 0.1 MeV nCapture CHANNEL gamma 1 [Al27 1 Al28 1  = 2
+@@SHGetHadronicChannelXSUA G4_Al 0.1 MeV nCapture CHANNEL gamma 3 [Al27 1 Al28 1  = 2
+@@SHGetHadronicChannelXSUA G4_Al 0.1 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 4/10000 = 0.0004*XS(micro)= 3.5363e-07 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 0.1 MeV nCapture Al27 PARTICLE_YIELD Al28 = 4/10000 = 0.0004 *XS(micro)= 3.5363e-07
+@@SHGetHadronicChannelXSUA G4_Al 0.1 MeV nCapture Al27 PARTICLE_YIELD gamma = 8/10000 = 0.0008 *XS(micro)= 7.0726e-07
+@@SHGetHadronicChannelXSUA G4_Al 0.1 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 4/10000 = 0.0004 *XS(micro)= 3.5363e-07
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich -1= 3.5363e-07 4 * 0.000884075 /10000
+@@SHGetHadronicChannelXSUA G4_Al 0.1 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 8/10000 = 0.0008 *XS(micro)= 7.0726e-07
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich -1= 7.0726e-07 8 * 0.000884075 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV neutronInelastic TOTAL_XS(macro)= 0.000284473 mm-1 TOTAL_XS(micro)= 0.047223 barn
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture TOTAL_XS(macro)= 4.08237e-06 mm-1 TOTAL_XS(micro)= 0.000677681 barn
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV neutronInelastic CHANNEL neutron 1 gamma 1 [Al27 1 Al27 1  = 315
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV neutronInelastic CHANNEL_ALL= #-1(n,n)[Al27+Al27 = 315/10000 = 0.0315*XS(micro)= 0.00148753 barn 
+130002000 130000000 LOOPING neutronInelastic : 0  #-1(n,n)[Al27+Al27 : 1  G4_Al : 0
+ CreateHisto1D neutronInelastic_G4_Al_#-1(n,n)[Al27+Al27_NPART = 130002003
+ CreateHisto1D neutronInelastic_G4_Al_#-1(n,n)[Al27+Al27_XSmicro = 130002004
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV neutronInelastic Al27 PARTICLE_YIELD Al27 = 315/10000 = 0.0315 *XS(micro)= 0.00148753
+ CreateHisto1D neutronInelastic_G4_Al_Al27_Al27_YIELD = 130052005
+ CreateHisto1D neutronInelastic_G4_Al_Al27_Al27_YIELD_XSmicro = 130052006
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV neutronInelastic Al27 PARTICLE_YIELD gamma = 315/10000 = 0.0315 *XS(micro)= 0.00148753
+ CreateHisto1D neutronInelastic_G4_Al_Al27_gamma_YIELD = 130051005
+ CreateHisto1D neutronInelastic_G4_Al_Al27_gamma_YIELD_XSmicro = 130051006
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV neutronInelastic Al27 PARTICLE_YIELD neutron = 315/10000 = 0.0315 *XS(micro)= 0.00148753
+ CreateHisto1D neutronInelastic_G4_Al_Al27_neutron_YIELD = 130053005
+ CreateHisto1D neutronInelastic_G4_Al_Al27_neutron_YIELD_XSmicro = 130053006
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV neutronInelastic TOTAL_PARTICLE_YIELD Al27 = 315/10000 = 0.0315 *XS(micro)= 0.00148753
+ CreateHisto1D neutronInelastic_G4_Al_Al27_TOTAL_YIELD = 130002005
+ CreateHisto1D neutronInelastic_G4_Al_Al27_TOTAL_YIELD_XSmicro = 130002006
+neutronInelastic_G4_Al_Al27_TOTAL_YIELD_XSmicro FILL TYXSmich 0= 0.00148753 315 * 0.047223 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV neutronInelastic TOTAL_PARTICLE_YIELD gamma = 315/10000 = 0.0315 *XS(micro)= 0.00148753
+ CreateHisto1D neutronInelastic_G4_Al_gamma_TOTAL_YIELD = 130001005
+ CreateHisto1D neutronInelastic_G4_Al_gamma_TOTAL_YIELD_XSmicro = 130001006
+neutronInelastic_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich 0= 0.00148753 315 * 0.047223 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV neutronInelastic TOTAL_PARTICLE_YIELD neutron = 315/10000 = 0.0315 *XS(micro)= 0.00148753
+ CreateHisto1D neutronInelastic_G4_Al_neutron_TOTAL_YIELD = 130003005
+ CreateHisto1D neutronInelastic_G4_Al_neutron_TOTAL_YIELD_XSmicro = 130003006
+neutronInelastic_G4_Al_neutron_TOTAL_YIELD_XSmicro FILL TYXSmich 0= 0.00148753 315 * 0.047223 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture CHANNEL gamma 1 [Al27 1 Al28 1  = 3
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture CHANNEL gamma 2 [Al27 1 Al28 1  = 3
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture CHANNEL gamma 3 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture CHANNEL gamma 4 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture CHANNEL gamma 5 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 9/10000 = 0.0009*XS(micro)= 6.09912e-07 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture Al27 PARTICLE_YIELD Al28 = 9/10000 = 0.0009 *XS(micro)= 6.09912e-07
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture Al27 PARTICLE_YIELD gamma = 21/10000 = 0.0021 *XS(micro)= 1.42313e-06
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 9/10000 = 0.0009 *XS(micro)= 6.09912e-07
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich 0= 6.09912e-07 9 * 0.000677681 /10000
+@@SHGetHadronicChannelXSUA G4_Al 1 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 21/10000 = 0.0021 *XS(micro)= 1.42313e-06
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich 0= 1.42313e-06 21 * 0.000677681 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic TOTAL_XS(macro)= 0.00578487 mm-1 TOTAL_XS(micro)= 0.960297 barn
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV nCapture TOTAL_XS(macro)= 2.63271e-06 mm-1 TOTAL_XS(micro)= 0.000437034 barn
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV nFission TOTAL_XS(macro)= 0 mm-1 TOTAL_XS(micro)= 0 barn
+GmGeneratorChangeEnergyAndMaterial::ChangeMaterialOrSource()  maximum number of worlds reached and still some events not produced, please diminish the number of events to be at most 110000
+ Run terminated.
+Run Summary
+  Run Aborted after 110000 events processed.
+  User=3.520000s Real=3.534359s Sys=0.000000s
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL neutron 1 gamma 1 [Al27 1 Al27 1  = 1291
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL neutron 1 gamma 2 [Al27 1 Al27 1  = 938
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL neutron 1 gamma 3 [Al27 1 Al27 1  = 579
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL neutron 1 gamma 4 [Al27 1 Al27 1  = 252
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL neutron 1 gamma 5 [Al27 1 Al27 1  = 109
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL neutron 1 gamma 6 [Al27 1 Al27 1  = 34
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL neutron 1 gamma 7 [Al27 1 Al27 1  = 9
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL neutron 1 gamma 8 [Al27 1 Al27 1  = 7
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL neutron 1 gamma 9 [Al27 1 Al27 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL neutron 1 [Al27 1 Al27 1  = 754
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL deuteron 1 [Al27 1 Mg26 1  = 4
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL proton 1 neutron 1 [Al27 1 Mg26 1  = 62
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL proton 1 gamma 1 [Al27 1 Mg27 1  = 159
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL proton 1 gamma 2 [Al27 1 Mg27 1  = 111
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL proton 1 gamma 3 [Al27 1 Mg27 1  = 55
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL proton 1 gamma 4 [Al27 1 Mg27 1  = 41
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL proton 1 gamma 5 [Al27 1 Mg27 1  = 18
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL proton 1 gamma 6 [Al27 1 Mg27 1  = 5
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL proton 1 gamma 7 [Al27 1 Mg27 1  = 3
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL proton 1 [Al27 1 Mg27 1  = 71
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL alpha 1 [Al27 1 Na24 1  = 140
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL gamma 1 alpha 1 [Al27 1 Na24 1  = 143
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL gamma 2 alpha 1 [Al27 1 Na24 1  = 83
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL gamma 3 alpha 1 [Al27 1 Na24 1  = 56
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL gamma 4 alpha 1 [Al27 1 Na24 1  = 25
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL gamma 5 alpha 1 [Al27 1 Na24 1  = 10
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL gamma 6 alpha 1 [Al27 1 Na24 1  = 6
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL gamma 7 alpha 1 [Al27 1 Na24 1  = 2
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL_ALL= #-1(n,a)[Al27+Na24 = 465/10000 = 0.0465*XS(micro)= 0.0446538 barn 
+130004000 130000000 LOOPING neutronInelastic : 0  #-1(n,a)[Al27+Na24 : 2  G4_Al : 0
+ CreateHisto1D neutronInelastic_G4_Al_#-1(n,a)[Al27+Na24_NPART = 130004003
+ CreateHisto1D neutronInelastic_G4_Al_#-1(n,a)[Al27+Na24_XSmicro = 130004004
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL_ALL= #-1(n,d)[Al27+Mg26 = 4/10000 = 0.0004*XS(micro)= 0.000384119 barn 
+130006000 130000000 LOOPING neutronInelastic : 0  #-1(n,d)[Al27+Mg26 : 3  G4_Al : 0
+ CreateHisto1D neutronInelastic_G4_Al_#-1(n,d)[Al27+Mg26_NPART = 130006003
+ CreateHisto1D neutronInelastic_G4_Al_#-1(n,d)[Al27+Mg26_XSmicro = 130006004
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL_ALL= #-1(n,n)[Al27+Al27 = 3974/10000 = 0.3974*XS(micro)= 0.381622 barn 
+130002000 130000000 LOOPING neutronInelastic : 0  #-1(n,n)[Al27+Al27 : 1  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL_ALL= #-1(n,np)[Al27+Mg26 = 62/10000 = 0.0062*XS(micro)= 0.00595384 barn 
+130008000 130000000 LOOPING neutronInelastic : 0  #-1(n,np)[Al27+Mg26 : 4  G4_Al : 0
+ CreateHisto1D neutronInelastic_G4_Al_#-1(n,np)[Al27+Mg26_NPART = 130008003
+ CreateHisto1D neutronInelastic_G4_Al_#-1(n,np)[Al27+Mg26_XSmicro = 130008004
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic CHANNEL_ALL= #-1(n,p)[Al27+Mg27 = 463/10000 = 0.0463*XS(micro)= 0.0444618 barn 
+130010000 130000000 LOOPING neutronInelastic : 0  #-1(n,p)[Al27+Mg27 : 5  G4_Al : 0
+ CreateHisto1D neutronInelastic_G4_Al_#-1(n,p)[Al27+Mg27_NPART = 130010003
+ CreateHisto1D neutronInelastic_G4_Al_#-1(n,p)[Al27+Mg27_XSmicro = 130010004
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic Al27 PARTICLE_YIELD Al27 = 3974/10000 = 0.3974 *XS(micro)= 0.381622
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic Al27 PARTICLE_YIELD Mg26 = 66/10000 = 0.0066 *XS(micro)= 0.00633796
+ CreateHisto1D neutronInelastic_G4_Al_Al27_Mg26_YIELD = 130054005
+ CreateHisto1D neutronInelastic_G4_Al_Al27_Mg26_YIELD_XSmicro = 130054006
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic Al27 PARTICLE_YIELD Mg27 = 463/10000 = 0.0463 *XS(micro)= 0.0444618
+ CreateHisto1D neutronInelastic_G4_Al_Al27_Mg27_YIELD = 130055005
+ CreateHisto1D neutronInelastic_G4_Al_Al27_Mg27_YIELD_XSmicro = 130055006
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic Al27 PARTICLE_YIELD Na24 = 465/10000 = 0.0465 *XS(micro)= 0.0446538
+ CreateHisto1D neutronInelastic_G4_Al_Al27_Na24_YIELD = 130056005
+ CreateHisto1D neutronInelastic_G4_Al_Al27_Na24_YIELD_XSmicro = 130056006
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic Al27 PARTICLE_YIELD alpha = 465/10000 = 0.0465 *XS(micro)= 0.0446538
+ CreateHisto1D neutronInelastic_G4_Al_Al27_alpha_YIELD = 130057005
+ CreateHisto1D neutronInelastic_G4_Al_Al27_alpha_YIELD_XSmicro = 130057006
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic Al27 PARTICLE_YIELD deuteron = 4/10000 = 0.0004 *XS(micro)= 0.000384119
+ CreateHisto1D neutronInelastic_G4_Al_Al27_deuteron_YIELD = 130058005
+ CreateHisto1D neutronInelastic_G4_Al_Al27_deuteron_YIELD_XSmicro = 130058006
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic Al27 PARTICLE_YIELD gamma = 8317/10000 = 0.8317 *XS(micro)= 0.798679
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic Al27 PARTICLE_YIELD neutron = 4036/10000 = 0.4036 *XS(micro)= 0.387576
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic Al27 PARTICLE_YIELD proton = 525/10000 = 0.0525 *XS(micro)= 0.0504156
+ CreateHisto1D neutronInelastic_G4_Al_Al27_proton_YIELD = 130059005
+ CreateHisto1D neutronInelastic_G4_Al_Al27_proton_YIELD_XSmicro = 130059006
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic TOTAL_PARTICLE_YIELD Al27 = 3974/10000 = 0.3974 *XS(micro)= 0.381622
+neutronInelastic_G4_Al_Al27_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 0.381622 3974 * 0.960297 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic TOTAL_PARTICLE_YIELD Mg26 = 66/10000 = 0.0066 *XS(micro)= 0.00633796
+ CreateHisto1D neutronInelastic_G4_Al_Mg26_TOTAL_YIELD = 130004005
+ CreateHisto1D neutronInelastic_G4_Al_Mg26_TOTAL_YIELD_XSmicro = 130004006
+neutronInelastic_G4_Al_Mg26_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 0.00633796 66 * 0.960297 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic TOTAL_PARTICLE_YIELD Mg27 = 463/10000 = 0.0463 *XS(micro)= 0.0444618
+ CreateHisto1D neutronInelastic_G4_Al_Mg27_TOTAL_YIELD = 130005005
+ CreateHisto1D neutronInelastic_G4_Al_Mg27_TOTAL_YIELD_XSmicro = 130005006
+neutronInelastic_G4_Al_Mg27_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 0.0444618 463 * 0.960297 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic TOTAL_PARTICLE_YIELD Na24 = 465/10000 = 0.0465 *XS(micro)= 0.0446538
+ CreateHisto1D neutronInelastic_G4_Al_Na24_TOTAL_YIELD = 130006005
+ CreateHisto1D neutronInelastic_G4_Al_Na24_TOTAL_YIELD_XSmicro = 130006006
+neutronInelastic_G4_Al_Na24_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 0.0446538 465 * 0.960297 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic TOTAL_PARTICLE_YIELD alpha = 465/10000 = 0.0465 *XS(micro)= 0.0446538
+ CreateHisto1D neutronInelastic_G4_Al_alpha_TOTAL_YIELD = 130007005
+ CreateHisto1D neutronInelastic_G4_Al_alpha_TOTAL_YIELD_XSmicro = 130007006
+neutronInelastic_G4_Al_alpha_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 0.0446538 465 * 0.960297 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic TOTAL_PARTICLE_YIELD deuteron = 4/10000 = 0.0004 *XS(micro)= 0.000384119
+ CreateHisto1D neutronInelastic_G4_Al_deuteron_TOTAL_YIELD = 130008005
+ CreateHisto1D neutronInelastic_G4_Al_deuteron_TOTAL_YIELD_XSmicro = 130008006
+neutronInelastic_G4_Al_deuteron_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 0.000384119 4 * 0.960297 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic TOTAL_PARTICLE_YIELD gamma = 8317/10000 = 0.8317 *XS(micro)= 0.798679
+neutronInelastic_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 0.798679 8317 * 0.960297 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic TOTAL_PARTICLE_YIELD neutron = 4036/10000 = 0.4036 *XS(micro)= 0.387576
+neutronInelastic_G4_Al_neutron_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 0.387576 4036 * 0.960297 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV neutronInelastic TOTAL_PARTICLE_YIELD proton = 525/10000 = 0.0525 *XS(micro)= 0.0504156
+ CreateHisto1D neutronInelastic_G4_Al_proton_TOTAL_YIELD = 130009005
+ CreateHisto1D neutronInelastic_G4_Al_proton_TOTAL_YIELD_XSmicro = 130009006
+neutronInelastic_G4_Al_proton_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 0.0504156 525 * 0.960297 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV nCapture CHANNEL gamma 4 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV nCapture CHANNEL gamma 6 [Al27 1 Al28 1  = 1
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV nCapture CHANNEL_ALL= #-1(n,)[Al27+Al28 = 2/10000 = 0.0002*XS(micro)= 8.74068e-08 barn 
+130000010 130000000 LOOPING nCapture : 1  #-1(n,)[Al27+Al28 : 0  G4_Al : 0
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV nCapture Al27 PARTICLE_YIELD Al28 = 2/10000 = 0.0002 *XS(micro)= 8.74068e-08
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV nCapture Al27 PARTICLE_YIELD gamma = 10/10000 = 0.001 *XS(micro)= 4.37034e-07
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV nCapture TOTAL_PARTICLE_YIELD Al28 = 2/10000 = 0.0002 *XS(micro)= 8.74068e-08
+nCapture_G4_Al_Al28_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 8.74068e-08 2 * 0.000437034 /10000
+@@SHGetHadronicChannelXSUA G4_Al 10 MeV nCapture TOTAL_PARTICLE_YIELD gamma = 10/10000 = 0.001 *XS(micro)= 4.37034e-07
+nCapture_G4_Al_gamma_TOTAL_YIELD_XSmicro FILL TYXSmich 1= 4.37034e-07 10 * 0.000437034 /10000
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 SHGetHadronicChannelXSUA.exercise5b:NormalizeToNEvents
+=== saving histograms in file === SHGetHadronicChannelXSUA.exercise5b.root

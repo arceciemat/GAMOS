@@ -1,0 +1,21 @@
+
+// ROTATION MATRIX
+:ROTM RM0 0. 0. 0.
+
+// MATERIALS
+:MIXT NIST_PMMA 1.19 3
+   G4_H 0.080541
+   G4_C 0.599846
+   G4_O 0.319613
+
+// WORLD
+:VOLU world BOX 2.*m 2.*m 2.*m G4_AIR
+:VIS world OFF
+
+// PHANTOM
+:VOLU phantom TUBE 0. 200. 400./2. NIST_PMMA
+:PLACE phantom 1 world RM0 0. 0. 0.
+:COLOR phantom 0.7 0.7 0.7
+:VIS phantom ON
+
+:CHECK_OVERLAPS * ON

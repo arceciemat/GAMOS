@@ -1,0 +1,30 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise1a2
+/gamos/setParam GmGeometryFromText:FileName exercise1a2.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+ 
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source neutron 1*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst  0. 0. 1.
+/gamos/generator/positionDist source GmGenerDistPositionPoint 0. 0. 0. 
+
+/gamos/userAction GmKillAllUA GmSecondaryFilter
+
+#####  Use user action SHNthValueLayerUA
+### SHNthValueLayerUA needs GmClassifierByAncestors (see User's Guide)
+/gamos/classifier ancesC GmClassifierByAncestors 1 1000 
+### SHNthValueLayerUA needs GmExitLogicalVolumeFilter (see User's Guide) 
+/gamos/filter exitShieldF GmExitLogicalVolumeFilter shield
+
+### layer width must be the same as geometry
+/gamos/setParam SHNthValueLayerUA_exitShieldF_ancesC:LayerWidth 1.
+/gamos/setParam SHNthValueLayerUA_exitShieldF_ancesC:Reductions 10.
+/gamos/userAction SHNthValueLayerUA exitShieldF ancesC
+
+/gamos/setParam GmCountTracksUA:EachNEvent 1000
+/gamos/userAction GmCountTracksUA
+
+/run/beamOn 10000

@@ -1,0 +1,21 @@
+/gamos/setParam GmGeometryFromText:FileName ../exercise2/exercise2.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+#/gamos/verbosity GmBaseVerbosity debug
+#/gamos/verbosity GmScoringVerbosity debug
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+
+### Score average number of collisions of primary gammas for each collision type, in each type of volume
+/gamos/scoring/createMFDetector collisionDet * 
+/gamos/scoring/addScorer2MFD collisionScorer GmG4PSNofCollision collisionDet
+/gamos/classifier processAndVolumeClassifier GmCompoundClassifier GmClassifierByLogicalVolume GmClassifierByProcess
+/gamos/scoring/assignClassifier2Scorer processAndVolumeClassifier collisionScorer
+
+
+/gamos/random/restoreSeeds  1201 1201
+/run/beamOn 10000

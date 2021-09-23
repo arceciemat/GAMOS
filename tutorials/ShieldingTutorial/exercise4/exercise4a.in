@@ -1,0 +1,42 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4a
+/gamos/setParam GmGeometryFromText:FileName exercise4a.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+/gamos/generator GmGenerator
+
+/run/initialize
+
+### Activate radioactive decay
+/gamos/physics/addPhysics radioactiveDecay
+
+### primary generator
+/gamos/generator/addSingleParticleSource source neutron 1.*MeV
+/gamos/generator/energyDist source GmGenerDistEnergyIsolethargical 1.E-8 10. 
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. 1.
+# flux 1E8/second => time between events 10 nanosecond
+/gamos/generator/timeDist source GmGenerDistTimeConstantChange 10.
+
+### count activation produced in target
+/gamos/filter inTargetF GmInLogicalVolumeFilter target*
+/gamos/setParam SHActivationUA_inTargetF:Times 300.*second 900.*second
+/gamos/setParam SHActivationUA_inTargetF:Periods 300.*second 1
+/gamos/userAction SHActivationUA inTargetF
+
+### print in a file all unstable nuclei
+/gamos/filter nucleusF GmStringDataFilter ParticleType nucleus
+/gamos/filter instableF GmNumericDataFilter ParticleStable 0 0
+/gamos/filter instableNucleusF GmANDFilter nucleusF instableF
+/gamos/setParam GmTrackDataTextFileUA_inTargetF_instableNucleusF:WriteHeaderData 0
+/gamos/setParam GmTrackDataTextFileUA_inTargetF_instableNucleusF:DataList EventID Particle InitialPosX InitialPosY InitialPosZ InitialMomX InitialMomY InitialMomZ InitialTime InitialWeight
+/gamos/userAction GmTrackDataTextFileUA inTargetF instableNucleusF
+
+### but kill the particles from its decay: if not ions will be counted twice in the text file
+/gamos/filter nucleusF GmStringDataFilter ParticleType nucleus
+/gamos/filter parentNucleusF GmParentFilter nucleusF
+/gamos/userAction GmKillAtStackingActionUA parentNucleusF
+
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmCountTracksUA 
+ 
+/run/beamOn 10000
+

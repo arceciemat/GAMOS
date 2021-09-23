@@ -1,0 +1,22 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise3a
+/gamos/setParam GmReadPhantomGeometry:FileName world.geom
+/gamos/setParam GmReadPhantomGeometry:Phantom:FileName test_64x64x39.g4dcm
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. -1100.
+/gamos/geometry GmReadPhantomG4Geometry
+/gamos/physicsList GmEMPhysics
+/gamos/setParam RTGeneratorPhaseSpace:FileName ../exercise2/xrayZBS
+/gamos/generator RTGeneratorPhaseSpace
+
+/run/initialize
+
+# calculate the dose in the voxelised phantom
+/gamos/scoring/createMFDetector PDDdet phantom
+/gamos/scoring/addScorer2MFD PDDscorer GmG4PSDoseDeposit PDDdet
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos PDDscorer
+/gamos/scoring/addPrinter2Scorer GmPSPrinterCout PDDscorer
+/gamos/scoring/addPrinter2Scorer GmPSPrinterSqdose PDDscorer
+
+/gamos/userAction GmCountTracksUA
+
+/gamos/random/restoreSeeds 1111 1111
+/run/beamOn 100000

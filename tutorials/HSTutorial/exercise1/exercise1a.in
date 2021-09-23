@@ -1,0 +1,19 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise1a
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName exercise1.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+
+/gamos/analysis/histo1Min *Pos* -2.5
+/gamos/analysis/histo1Max *Pos* 2.5
+/gamos/userAction GmGenerHistosUA
+
+/run/beamOn 1000
+

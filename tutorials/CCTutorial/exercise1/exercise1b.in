@@ -1,0 +1,23 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName CCGeometryRingEx1Water.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+#/geometry/textInput/verbose 3
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 141.*keV
+/gamos/generator/timeDist source GmGenerDistTimeDecay 1.e-3*curie
+/gamos/generator/directionDist source GmGenerDistDirectionRandom
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+
+#/control/execute ../../../examples/visOGLIX.in
+/control/execute ../../../examples/visVRML2FILE.in
+#/control/execute ../../../examples/visDAWNFILE.in
+
+/run/beamOn 10
+

@@ -1,0 +1,28 @@
+#/tracking/verbose 1
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .readCT
+
+/gamos/setParam GmReadPhantomGeometry:FileName world.geom
+/gamos/setParam GmReadPhantomGeometry:Phantom:FileName ../testCT.c2.g4dcm
+
+/gamos/geometry GmReadPhantomG4Geometry
+
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+/gamos/generator/positionDist source GmGenerDistPositionDisc 100. 0. -264 -1000.
+
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+/gamos/setParam GmPSPrinterSqdose_doseScorer:FileName sqdose.out
+/gamos/scoring/addPrinter2Scorer GmPSPrinterSqdose doseScorer
+/gamos/scoring/addPrinter2Scorer GmPSPrinterCout doseScorer
+
+/gamos/userAction GmCountTracksUA
+
+/run/beamOn 100000

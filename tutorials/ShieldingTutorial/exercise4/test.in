@@ -1,0 +1,29 @@
+/gamos/verbosity GmDistributionVerbosity test
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4b
+/gamos/setParam GmGeometryFromText:FileName exercise4b.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+/gamos/generator GmGenerator
+
+/run/initialize
+/gamos/generator/addSingleParticleSource source neutron 1.*MeV
+
+/gamos/setParam weightByParticleD:FileName activity.weights.lis 
+/gamos/setParam weightByParticleD:Data InitialKineticEnergy
+/gamos/distribution weightByParticleD GmNumericDistributionLinLin
+/gamos/setParam GmChangeWeightUA_GmPrimaryFilter:Distribution weightByParticleD
+/gamos/userAction GmChangeWeightUA GmPrimaryFilter 
+# GEANT4 does not copy weights to secondary particles if process is RadioactiveDecay
+/gamos/userAction GmCopyWeightToSecondaryUA
+
+/gamos/physics/addPhysics radioactiveDecay
+
+
+/gamos/filter exitDetectorF GmExitLogicalVolumeFilter detector
+/gamos/setParam GmStepDataHistosUA_GmGammaFilter_exitDetectorF:DataList AccumulatedEnergyDeposited
+/gamos/userAction GmStepDataHistosUA GmGammaFilter exitDetectorF
+
+/gamos/userAction GmCountProcessesUA 
+
+/run/beamOn 1000
+

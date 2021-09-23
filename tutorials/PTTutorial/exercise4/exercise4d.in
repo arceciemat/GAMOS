@@ -1,0 +1,48 @@
+# VERBOSITY 
+/tracking/verbose 0
+
+# GEOMETRY
+/gamos/setParam GmGeometryFromText:FileName ./detector.geom
+/gamos/geometry GmGeometryFromText
+
+# PHYSICS
+/gamos/physicsList G4QGSP_BIC_AllHP
+
+# PRIMARY GENERATOR
+/gamos/generator GmGenerator
+
+# GEANT4 INITIALISATION
+/run/initialize
+
+# ACTIVATE  DECAYS
+/gamos/physics/addPhysics radioactiveDecay
+
+# SOURCE
+/control/execute ../exercise0/pbsSource.in
+
+# STATISTICS
+/gamos/userAction GmCountTracksUA
+
+#---------- exercise 4d ----------
+# FILTERS
+/gamos/filter enterDetectorFilter GmEnterLogicalVolumeFilter detector
+/gamos/filter inDetectorFilter GmInLogicalVolumeFilter detector
+/gamos/filter noInteractFilter GmInverseFilter GmInteractionFilter
+/gamos/filter NoInteractDetectorFilter GmANDFilter inDetectorFilter noInteractFilter
+
+# COUNT PROCESSES AND PARTICLES
+/gamos/userAction GmCountTracksAndStepsUA enterDetectorFilter GmClassifierByParticle
+/gamos/userAction GmCountTracksAndStepsUA NoInteractDetectorFilter GmClassifierByParticle
+
+# RUN  SIMULATION
+/run/beamOn 100000
+#---------------------------------
+
+#---------- PARTICLE RATE CALCULATION ----------
+# We simulate 1 proton each 32 ps -> 100,000 protons correspond to 3.2 μsec time.
+# 1 sec = 312 500 * 3.2 μsec
+# Simulation result: 21 particles enter the detector and 18 tracks (particles) don’t interact in the detector.
+# Therefore, 21 - 18 = 3 particles (per 3.2 μsec) enter and interact in the detector.
+# Therefore, the rate of the particles in the detector per 1 sec is 3 * 312500 = 937 500 particles per second.
+# It is better to simulate 1,000,000 events for more accurate rate estimation.
+#-----------------------------------------------

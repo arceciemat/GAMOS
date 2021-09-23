@@ -1,0 +1,4 @@
+:MIXT WRe 19.3*0.9+2.02*0.1 2
+ G4_W 0.9
+ G4_Re 0.1
+:VOLU world BOX 1100. 1100. 1100. WRe

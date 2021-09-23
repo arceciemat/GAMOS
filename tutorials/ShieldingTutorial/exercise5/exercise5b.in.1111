@@ -1,0 +1,27 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise5b
+/gamos/setParam GmGeometryUseMaterials:FileName exercise5.geom
+/gamos/setParam GmGeometryUseMaterials:Materials G4_Cr
+/gamos/geometry GmGeometryUseMaterials
+/gamos/physicsList G4QGSP_BIC_HP
+
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nEventsPerRun 10000
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:minE 1.E-9*MeV
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:maxE 10.*MeV
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nStepsE 11
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:logE 1
+/gamos/generator GmGeneratorChangeEnergyAndMaterial
+
+/run/initialize
+
+/gamos/physics/removeProcessesByType Electromagnetic
+/gamos/physics/removeProcessesByName hadElastic
+
+/gamos/generator/addSingleParticleSource source neutron 1.*MeV
+
+/gamos/setParam SHGetHadronicChannelXSUA:ParticleYields 1
+/gamos/userAction SHGetHadronicChannelXSUA
+
+/gamos/userAction GmKillAtStackingActionUA GmSecondaryFilter
+
+/gamos/random/restoreSeeds 1111 1111
+/run/beamOn 100000000

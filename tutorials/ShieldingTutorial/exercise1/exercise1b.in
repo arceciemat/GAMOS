@@ -1,0 +1,39 @@
+/gamos/setParam GmGeometryFromText:FileName exercise1b.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+ 
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst  0. 0. 1.
+/gamos/generator/positionDist source GmGenerDistPositionPoint 0. 0. 0. 
+
+#@@@ Make an histogram of the energy spectrum of neutrons and other types of particles that traverse the plate, i.e. exit the plate by the positive Z face
+### filter steps exiting shield
+/gamos/filter exitShieldF GmExitLogicalVolumeFilter shield
+### filter steps exiting at positive Z face
+/gamos/filter positiveFaceF GmNumericDataFilter FinalPosZ 36. 36.
+### select what to plot
+/gamos/setParam GmStepDataHistosUA_exitShieldF_positiveFaceF_GmClassifierByParticle:DataList FinalKineticEnergy
+### Instantiate user action, with classification by particle type
+/gamos/userAction GmStepDataHistosUA exitShieldF positiveFaceF GmClassifierByParticle 
+
+#@@@ Store in a file the information of the particles that exit the shield by the positive Z face: Event ID, track ID, particle name, energy, position X, Y & Z, direction theta & phi
+### select what to store
+/gamos/setParam GmStepDataTextFileUA_exitShieldF_positiveFaceF:DataList EventID TrackID Particle FinalKineticEnergy FinalPosX FinalPosY FinalPosZ FinalDirTheta FinalDirPhi
+/gamos/setParam GmStepDataTextFileUA_exitShieldF_positiveFaceF:WriteHeaderData 1
+### Instantiate user action
+/gamos/userAction GmStepDataTextFileUA exitShieldF positiveFaceF
+
+/gamos/userAction GmStepDataTextFileUA exitShieldF positiveFaceF
+
+/gamos/setParam GmCountTracksUA:EachNEvent 1000
+/gamos/userAction GmCountTracksUA
+/gamos/userAction GmCountProcessesUA
+
+/gamos/setParam GmStepDataHistosUA_GmClassifierByParticle:DataList FinalPosX FinalPosY FinalPosZ
+/gamos/userAction GmStepDataHistosUA GmClassifierByParticle
+
+/run/beamOn 10000

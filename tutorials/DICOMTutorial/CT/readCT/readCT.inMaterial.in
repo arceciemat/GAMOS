@@ -1,0 +1,44 @@
+#/gamos/verbosity GmReadDICOMVerbosity debug
+#/tracking/verbose 1
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .readCT
+
+/gamos/setParam GmReadPhantomGeometry:FileName world.geom
+/gamos/setParam GmReadPhantomGeometry:Phantom:FileName ../testCT.c2.g4dcm
+
+/gamos/geometry GmReadPhantomG4Geometry
+
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+/gamos/generator/positionDist source GmGenerDistPositionInMaterialPhantomVoxels G4_LUNG_ICRP*
+
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+/gamos/setParam GmPSPrinterSqdose_doseScorer:FileName sqdose.out
+/gamos/scoring/addPrinter2Scorer GmPSPrinterSqdose doseScorer
+/gamos/scoring/addPrinter2Scorer GmPSPrinterCout doseScorer
+
+/gamos/analysis/histo2MinX *InitialPosX.vs.* -249.512
+/gamos/analysis/histo2MaxX *InitialPosX.vs.* 250.488
+/gamos/analysis/histo2NBinsX *InitialPosX.vs.* 256
+/gamos/analysis/histo2MinX *InitialPosY.vs.* -514.512
+/gamos/analysis/histo2MaxX *InitialPosY.vs.* -14.5117
+/gamos/analysis/histo2NBinsX *InitialPosY.vs.* 256
+/gamos/analysis/histo2MinY *.vs.InitialPosY* -514.512
+/gamos/analysis/histo2MaxY *.vs.InitialPosY* -14.5117
+/gamos/analysis/histo2NBinsY *.vs.InitialPosY* 256
+/gamos/analysis/histo2MinY *.vs.InitialPosZ* -1087.2
+/gamos/analysis/histo2MaxY *.vs.InitialPosZ* -1057.2
+/gamos/analysis/histo2NBinsY *.vs.InitialPosZ* 10
+
+/P GmTrackDataHistosUA_GmPrimaryFilter:DataList InitialPosX.vs.InitialPosY InitialPosX.vs.InitialPosZ InitialPosY.vs.InitialPosZ
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
+/gamos/userAction GmCountTracksUA
+
+/run/beamOn 10000

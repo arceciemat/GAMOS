@@ -1,0 +1,25 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise5a
+/gamos/setParam GmGeometryUseMaterials:Materials G4_POLYETHYLENE G4_Pb G4_CONCRETE 
+/gamos/setParam GmGeometryUseMaterials:FileName exercise5.geom
+/gamos/geometry GmGeometryUseMaterials
+/gamos/physicsList G4QGSP_BIC_HP
+
+/gamos/setParam SHPrintPHPChannelXSUA:minE 1.e-8*MeV
+/gamos/setParam SHPrintPHPChannelXSUA:maxE 10.*MeV
+/gamos/setParam SHPrintPHPChannelXSUA:nStepsE 91
+/gamos/setParam SHPrintPHPChannelXSUA:logE 1
+/gamos/setParam SHPrintPHPChannelXSUA:ParticleYields 1
+/gamos/generator GmGenerator
+
+/run/initialize
+
+#/gamos/physics/removeProcessesByType Electromagnetic
+#/gamos/physics/removeProcessesByName hadElastic
+/gamos/physics/removeProcessesByName NeutronInelastic
+
+/gamos/generator/addSingleParticleSource source neutron 1.*MeV
+
+/gamos/userAction SHPrintPHPChannelXSUA
+
+/gamos/random/restoreSeeds  1201 1201
+/run/beamOn 1

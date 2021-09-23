@@ -1,0 +1,24 @@
+/gamos/setParam GmGeometryFromText:FileName pet.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/GmPhysics/replacePhysics gamma-lowener
+/gamos/GmPhysics/replacePhysics electron-lowener
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmHistosGammaAtSD
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmRecHitsHistosUA
+/gamos/userAction PETEventClassifierUA
+
+/run/initialize
+
+/gamos/SD/assocSD2LogVol GmSDSimple Calor Crystal
+/gamos/SD/recHitBuilder GmRecHitBuilderByBlock Calor 
+
+/gamos/generator/addIsotopeSource source F18 1.E-3*curie
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+
+/run/beamOn 10000
+

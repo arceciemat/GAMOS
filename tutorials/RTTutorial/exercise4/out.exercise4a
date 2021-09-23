@@ -1,0 +1,270 @@
+@@@@@ Running GAMOS with script: exercise4a.in
+
+**************************************************************
+ Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+ Using Random Engine: MixMaxRng
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+"/vis/list" to see available colours.
+/control/execute exercise4a.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4a
+/gamos/setParam GmGeometryFromText:FileName ../exercise2/linac.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/generator GmGenerator
+/gamos/setParam RTCutsStudyFilter:PlaneZ 90.*cm
+/gamos/setParam RTCutsStudyFilter:PlaneXDim 100.*cm
+/gamos/setParam RTCutsStudyFilter:PlaneYDim 100.*cm
+/gamos/userAction RTProdCutsStudyUA
+/gamos/geometry/createRegion targetReg target
+/gamos/geometry/createRegion collimatorReg "primary collimator_0"
+/gamos/geometry/createRegion filterReg "flattening filter"
+/gamos/geometry/createRegion monitorReg monitor
+/gamos/geometry/createRegion jawsReg jaws_X jaws_Y
+/run/setCut 0.01
+/gamos/userAction GmCountTracksUA
+/run/initialize
+100 ANGLEN_ROT 0.333412 0: -0.233743 N: 0.0996687   -100 141.295
+GmPhysicsGammaLowEner::ConstructProcess 
+Warning : Region <targetReg> does not have specific production cuts,
+even though it appears in the current tracking world.
+Default cuts are used for this region.
+Warning : Region <collimatorReg> does not have specific production cuts,
+even though it appears in the current tracking world.
+Default cuts are used for this region.
+Warning : Region <filterReg> does not have specific production cuts,
+even though it appears in the current tracking world.
+Default cuts are used for this region.
+Warning : Region <monitorReg> does not have specific production cuts,
+even though it appears in the current tracking world.
+Default cuts are used for this region.
+Warning : Region <jawsReg> does not have specific production cuts,
+even though it appears in the current tracking world.
+Default cuts are used for this region.
+/gamos/userAction GmTimeStudyUA GmClassifierByRegion
+/gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-7 1.E1 10.
+/gamos/classifier ClassifierParticleAndKinEnergy GmCompoundClassifier GmClassifierByParticle energyClassifier
+/gamos/userAction GmTimeStudyUA ClassifierParticleAndKinEnergy
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+/run/beamOn 200
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 6 regions:
+          DefaultRegionForTheWorld  1  1  0
+          targetReg  1  1  0
+          collimatorReg  1  1  0
+          filterReg  1  1  0
+          monitorReg  1  1  0
+          jawsReg  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  10 um     e-  10 um     e+  10 um  proton 10 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+    collimatorReg
+    monitorReg
+
+Index : 1     used in the geometry : Yes
+ Material : G4_Cu
+ Range cuts        :  gamma  10 um     e-  10 um     e+  10 um  proton 10 um 
+ Energy thresholds :  gamma  2.15864 keV    e-  61.3176 keV    e+  60.499 keV proton -1 MeV
+ Region(s) which use this couple : 
+    targetReg
+
+Index : 2     used in the geometry : Yes
+ Material : G4_W
+ Range cuts        :  gamma  10 um     e-  10 um     e+  10 um  proton 10 um 
+ Energy thresholds :  gamma  7.73912 keV    e-  81.8616 keV    e+  80.2277 keV proton -1 MeV
+ Region(s) which use this couple : 
+    collimatorReg
+    jawsReg
+
+Index : 3     used in the geometry : Yes
+ Material : SiFeMn
+ Range cuts        :  gamma  10 um     e-  10 um     e+  10 um  proton 10 um 
+ Energy thresholds :  gamma  1.7293 keV    e-  60.9069 keV    e+  60.0938 keV proton -1 MeV
+ Region(s) which use this couple : 
+    filterReg
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+ CreateHisto1D N trackInfos per Track in target = 980091
+ CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+ %%% EVENT 0 NTRACKS 12 TOTAL NTRACKS 12
+ CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Range) = 1020011
+ CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Energy) = 1020012
+ CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: eBrem:  Safety-Range vs Range) = 1020013
+ Run terminated.
+Run Summary
+  Number of events processed : 200
+  User=0.150000s Real=0.166427s Sys=0.020000s
+ CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020021
+ CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020022
+ CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020023
+
+ %%%%% PRODUCTION CUTS STUDY RESULTS 
+GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 48.957
+GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 48.957
+
+ %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
+RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
+NUMBER OF TRACKS ACCEPTED 14 N ANCESTORS 2
+
+%%%%% TIMING RESULTS for timer GmTimeStudyUA_GmClassifierByRegion
+DefaultRegionForTheWorld:   User=0.01  Real=0.04  Sys=0
+collimatorReg:   User=0.02  Real=0  Sys=0
+filterReg:   User=0  Real=0  Sys=0
+jawsReg:   User=0  Real=0  Sys=0
+monitorReg:   User=0.01  Real=0  Sys=0
+targetReg:   User=0.05  Real=0.05  Sys=0
+
+
+%%%%% TIMING RESULTS for timer GmTimeStudyUA_ClassifierParticleAndKinEnergy
+"e+ 0.01:0.1":   User=0  Real=0  Sys=0
+"e+ 0.1:1":   User=0  Real=0  Sys=0
+"e- 0.0001:0.001":   User=0  Real=0  Sys=0
+"e- 0.001:0.01":   User=0.01  Real=0.01  Sys=0
+"e- 0.01:0.1":   User=0  Real=0.01  Sys=0
+"e- 0.1:1":   User=0.01  Real=0.02  Sys=0
+"e- 1:10":   User=0.04  Real=0.04  Sys=0
+"e- 1e-05:0.0001":   User=0  Real=0  Sys=0
+"gamma 0.001:0.01":   User=0  Real=0  Sys=0
+"gamma 0.01:0.1":   User=0  Real=0  Sys=0
+"gamma 0.1:1":   User=0.02  Real=0.01  Sys=0
+"gamma 1:10":   User=0  Real=0  Sys=0
+
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 prodcuts.exercise4a:NormalizeToNEvents
+=== saving histograms in file === prodcuts.exercise4a.root
+%%%%% Compound classifier using indices from 2

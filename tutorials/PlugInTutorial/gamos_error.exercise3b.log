@@ -1,0 +1,19 @@
+!!ERROR: physics list eScatteringPhysicsList does not exist, program will crash if another physics list is not selected 
+
+-------- EEEE ------- G4Exception-START -------- EEEE -------
+*** G4Exception : Run0041
+      issued by : G4UserRunAction::G4UserRunAction()
+ You are instantiating G4UserRunAction BEFORE your G4VUserPhysicsList is
+instantiated and assigned to G4RunManager.
+ Such an instantiation is prohibited by Geant4 version 8.0. To fix this problem,
+please make sure that your main() instantiates G4VUserPhysicsList AND
+set it to G4RunManager before instantiating other user action classes
+such as G4UserRunAction.
+*** Fatal Exception *** core dump ***
+ **** Track information is not available at this moment
+ **** Step information is not available at this moment
+
+-------- EEEE -------- G4Exception-END --------- EEEE -------
+
+
+*** G4Exception: Aborting execution ***

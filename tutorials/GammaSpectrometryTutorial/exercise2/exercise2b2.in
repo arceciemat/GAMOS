@@ -1,0 +1,36 @@
+### Set the suffix of output files
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise2b2
+
+### Set geometry, physics and generator
+/gamos/setParam GmGeometryFromText:FileName marinelli_beaker.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMExtendedPhysics
+/gamos/generator GmGenerator
+
+### Initialize Geant4 geometry and physics
+/run/initialize
+
+### Set generator particle distributions
+/gamos/generator/addSingleParticleSource source Co60[0.0] 0*MeV
+## place source inside the water solution
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes SOLUTION_*
+/gamos/generator/timeDist source GmGenerDistTimeDecay 1E5*Bq
+/gamos/userAction GmNoUseG4RadDecayTimeUA
+
+### Set the crystal as sensitive detector
+/gamos/analysis/histo1Max *Energy* 3000
+/gamos/analysis/histo1NBins *Energy* 300
+/gamos/SD/assocSD2LogVol GmSDSeparateByTime Detector DETECTOR_Ge
+/gamos/userAction GmHitsHistosUA
+
+### Print a message each 1000 events
+/gamos/userAction GmCountTracksUA
+
+### Plot the time of each particle
+/gamos/filter radF GmCreatorProcessFilter RadioactiveDecay 
+/gamos/analysis/histo1Max *Time* 1.1
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter:DataList InitialTime/second 
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
+
+### Run events
+/run/beamOn 100000

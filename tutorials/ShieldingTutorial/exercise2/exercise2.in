@@ -1,0 +1,26 @@
+/gamos/setParam GmGeometryFromText:FileName exercise2.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source neutron 1.*MeV
+/gamos/generator/energyDist source GmGenerDistEnergyFromFile AmBe.energy.lis interpolate_log
+
+#  Get the flux of neutrons and gammas that exit the sphere by the outer surface
+/gamos/scoring/createMFDetector FluxDet AmBeShield
+/gamos/setParam FluxScorer:Surfaces OUTER
+/gamos/setParam FluxScorer:Direction Out
+/gamos/scoring/createScorer FluxScorer GmPSSurfaceFlux FluxDet Out
+/gamos/scoring/addScorer2MFD FluxScorer FluxDet
+/gamos/scoring/assignClassifier2Scorer GmClassifierByParticle FluxScorer 
+
+# Get the number of each type of interaction of the neutrons from the Am-Be source in the lead sphere
+/gamos/filter neutronF GmParticleFilter neutron
+/gamos/filter inShieldF GmInLogicalVolumeFilter AmBeShield
+
+/gamos/userAction GmCountProcessesUA neutronF inShieldF
+
+/run/beamOn 10000
+

@@ -1,0 +1,45 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise1c
+
+/gamos/setParam GmGeometryFromText:FileName exercise1.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+#/gamos/verbosity GmBaseVerbosity debug
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+
+### Make histogram of total energy lost by primary gammas 
+/gamos/analysis/histo1Max GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost 1.1 
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter:DataList AccumulatedEnergyLost
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
+
+### Make histogram of energy when a primary gamma enters the detector if it has suffered a Compton interaction previously
+/gamos/filter comptonFilter GmProcessFilter compt 
+/gamos/filter comptonInHistoryFilter GmHistoryFilter comptonFilter
+/gamos/filter detectorEnterFilter GmEnterLogicalVolumeFilter detector
+/gamos/setParam GmStepDataHistosUA_comptonInHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy 
+# serves for the two histograms 
+/gamos/analysis/histo1Max GmStepDataHistosUA_*HistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy 1.1 
+/gamos/userAction GmStepDataHistosUA comptonInHistoryFilter detectorEnterFilter  GmPrimaryFilter  
+
+### Make histogram of energy when a primary gamma enters the detector if it has not suffered a Compton interaction previously
+/gamos/filter noComptonInHistoryFilter GmInverseFilter comptonInHistoryFilter 
+/gamos/setParam  GmStepDataHistosUA_noComptonInHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy 
+/gamos/userAction GmStepDataHistosUA noComptonInHistoryFilter detectorEnterFilter GmPrimaryFilter 
+
+/gamos/userAction GmCountProcessesUA
+
+### Make histogram of the angle between primary and secondary particles when the primary gammas are deviated by Compton interactions
+/gamos/setParam GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:DataList InitialPrimSecoAngle
+/gamos/userAction GmSecondaryTrackDataHistosUA comptonFilter GmPrimaryFilter
+
+### Make histogram of how much the primary gammas are deviated by Compton interactions
+/gamos/setParam GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:DataList AngleChange
+/gamos/userAction GmStepDataHistosUA comptonFilter GmPrimaryFilter
+
+/run/beamOn 10000
+

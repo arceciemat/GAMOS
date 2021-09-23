@@ -1,0 +1,285 @@
+/control/execute exercise4b.DoseDBS.in
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4b.Dose
+/gamos/setParam GmReadPhantomGeometry:FileName ../exercise3/world.geom
+/gamos/setParam GmSimplePhantomGeometry:MaterialNames G4_WATER G4_LUNG_ICRP G4_BONE_COMPACT_ICRU
+/gamos/setParam GmSimplePhantomGeometry:MaterialZVoxels 10 10 80
+/gamos/setParam GmSimplePhantomGeometry:MaterialDensities 1. 0.3 1.85
+/gamos/setParam GmSimplePhantomGeometry:NVoxels 100 100 100
+/gamos/setParam GmSimplePhantomGeometry:PhantomDims -500 500 -500 500 -500 500
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. -1400.
+/gamos/setParam GmReadPhantomGeometry:InitialRotAngles 0*deg 0. 0.
+/gamos/geometry GmSimplePhantomGeometry
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/setParam RTGeneratorPhaseSpace:FileName testDBS
+/gamos/setParam RTGeneratorPhaseSpace:InitialDisplacement 0. 0. 0.
+/gamos/setParam RTGeneratorPhaseSpace:InitialRotAngles 0. 0. 0.*deg
+/gamos/setParam RTGeneratorPhaseSpace:MaxNReuse 10
+/gamos/generator RTGeneratorPhaseSpace
+/run/initialize
+0x5604eb4149f0 thePhantomParam->SetMaterials( 3
+GmPhysicsGammaLowEner::ConstructProcess 
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+ GmVPrimitiveScorer::SetParameters: no parameters 
+/gamos/analysis/histo1Min *Dose -18
+/gamos/analysis/histo1Max *Dose -9
+/gamos/analysis/histo1Min *volume -18
+/gamos/analysis/histo1Max *volume -9
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorer
+phantomContainer GmRegularParamUtils::GetPhantomMotherTranslation (0,0,-1400) global (0,0,-1400)
+phantomContainer GmRegularParamUtils::GetPhantomMotherRotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+ global 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+ RTPSPDoseHistos nvoxel 100 100 100
+ RTPSPDoseHistos half dim 5 5 5
+ RTPSPDoseHistos translation (0,0,-1400)
+ RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+/gamos/setParam GmPSPrinterSqdose_doseScorer:FileName sqdose_899.out
+/gamos/scoring/addPrinter2Scorer GmPSPrinterSqdose doseScorer
+/gamos/userAction GmCountTracksUA
+/run/beamOn 1000000
+G4RunManagerKernel -- G4ScoreSplittingProcess is appended to all particles.
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : G4_WATER1
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.10981 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : G4_LUNG_ICRP0.3
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  42.371 keV    e+  42.0872 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 3     used in the geometry : Yes
+ Material : G4_BONE_COMPACT_ICRU1.85
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.63878 keV    e-  116.885 keV    e+  115.325 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+ %%% EVENT 0 NTRACKS 3 TOTAL NTRACKS 3
+ %%% EVENT 1000 NTRACKS 13 TOTAL NTRACKS 8106
+ %%% EVENT 2000 NTRACKS 6 TOTAL NTRACKS 16001
+ %%% EVENT 3000 NTRACKS 12 TOTAL NTRACKS 24035
+ %%% EVENT 4000 NTRACKS 12 TOTAL NTRACKS 32235
+ %%% EVENT 5000 NTRACKS 1 TOTAL NTRACKS 39861
+ %%% EVENT 6000 NTRACKS 5 TOTAL NTRACKS 47710
+ %%% EVENT 7000 NTRACKS 11 TOTAL NTRACKS 55671
+ %%% EVENT 8000 NTRACKS 1 TOTAL NTRACKS 63294
+ %%% EVENT 9000 NTRACKS 22 TOTAL NTRACKS 70671
+ %%% EVENT 10000 NTRACKS 3 TOTAL NTRACKS 79165
+ %%% EVENT 11000 NTRACKS 4 TOTAL NTRACKS 87257
+ %%% EVENT 12000 NTRACKS 15 TOTAL NTRACKS 95418
+ %%% EVENT 13000 NTRACKS 10 TOTAL NTRACKS 103522
+ %%% EVENT 14000 NTRACKS 5 TOTAL NTRACKS 112101
+ %%% EVENT 15000 NTRACKS 1 TOTAL NTRACKS 120817
+ %%% EVENT 16000 NTRACKS 1 TOTAL NTRACKS 128691
+ %%% EVENT 17000 NTRACKS 3 TOTAL NTRACKS 136374
+ %%% EVENT 18000 NTRACKS 3 TOTAL NTRACKS 143681
+ %%% EVENT 19000 NTRACKS 12 TOTAL NTRACKS 152028
+ %%% EVENT 20000 NTRACKS 2 TOTAL NTRACKS 159926
+ %%% EVENT 21000 NTRACKS 1 TOTAL NTRACKS 168034
+ %%% EVENT 22000 NTRACKS 10 TOTAL NTRACKS 176068
+ %%% EVENT 23000 NTRACKS 10 TOTAL NTRACKS 183786
+ %%% EVENT 24000 NTRACKS 2 TOTAL NTRACKS 190990
+ %%% EVENT 25000 NTRACKS 1 TOTAL NTRACKS 199166
+ %%% EVENT 26000 NTRACKS 10 TOTAL NTRACKS 207506
+ %%% EVENT 27000 NTRACKS 23 TOTAL NTRACKS 215767
+ %%% EVENT 28000 NTRACKS 17 TOTAL NTRACKS 223736
+ %%% EVENT 29000 NTRACKS 10 TOTAL NTRACKS 232197
+ %%% EVENT 30000 NTRACKS 8 TOTAL NTRACKS 240841
+ %%% EVENT 31000 NTRACKS 18 TOTAL NTRACKS 248512
+ %%% EVENT 32000 NTRACKS 16 TOTAL NTRACKS 256159
+ %%% EVENT 33000 NTRACKS 12 TOTAL NTRACKS 264144
+ %%% EVENT 34000 NTRACKS 8 TOTAL NTRACKS 272118
+ %%% EVENT 35000 NTRACKS 21 TOTAL NTRACKS 280016
+ %%% EVENT 36000 NTRACKS 7 TOTAL NTRACKS 288446
+ %%% EVENT 37000 NTRACKS 12 TOTAL NTRACKS 296251
+ %%% EVENT 38000 NTRACKS 4 TOTAL NTRACKS 304865
+ %%% EVENT 39000 NTRACKS 12 TOTAL NTRACKS 312843
+ %%% EVENT 40000 NTRACKS 1 TOTAL NTRACKS 321179
+ %%% EVENT 41000 NTRACKS 12 TOTAL NTRACKS 329258
+ %%% EVENT 42000 NTRACKS 7 TOTAL NTRACKS 337450
+ %%% EVENT 43000 NTRACKS 1 TOTAL NTRACKS 346054
+ %%% EVENT 44000 NTRACKS 1 TOTAL NTRACKS 353409
+ %%% EVENT 45000 NTRACKS 11 TOTAL NTRACKS 361556
+ %%% EVENT 46000 NTRACKS 8 TOTAL NTRACKS 370053
+ %%% EVENT 47000 NTRACKS 8 TOTAL NTRACKS 377983
+ %%% EVENT 48000 NTRACKS 6 TOTAL NTRACKS 386310
+ %%% EVENT 49000 NTRACKS 1 TOTAL NTRACKS 394710
+ %%% EVENT 50000 NTRACKS 1 TOTAL NTRACKS 402705
+ %%% EVENT 51000 NTRACKS 3 TOTAL NTRACKS 410932
+ %%% EVENT 52000 NTRACKS 14 TOTAL NTRACKS 419076
+ %%% EVENT 53000 NTRACKS 8 TOTAL NTRACKS 427704
+ %%% EVENT 54000 NTRACKS 14 TOTAL NTRACKS 436451
+ %%% EVENT 55000 NTRACKS 9 TOTAL NTRACKS 444417
+ %%% EVENT 56000 NTRACKS 5 TOTAL NTRACKS 452691
+ %%% EVENT 57000 NTRACKS 11 TOTAL NTRACKS 461048
+ %%% EVENT 58000 NTRACKS 19 TOTAL NTRACKS 469441
+ %%% EVENT 59000 NTRACKS 5 TOTAL NTRACKS 476965
+ %%% EVENT 60000 NTRACKS 8 TOTAL NTRACKS 485493
+ %%% EVENT 61000 NTRACKS 10 TOTAL NTRACKS 493451
+ %%% EVENT 62000 NTRACKS 12 TOTAL NTRACKS 501951
+ %%% EVENT 63000 NTRACKS 8 TOTAL NTRACKS 510041
+ %%% EVENT 64000 NTRACKS 1 TOTAL NTRACKS 517992
+ %%% EVENT 65000 NTRACKS 13 TOTAL NTRACKS 526828
+ %%% EVENT 66000 NTRACKS 12 TOTAL NTRACKS 534286
+ %%% EVENT 67000 NTRACKS 10 TOTAL NTRACKS 542172
+ %%% EVENT 68000 NTRACKS 25 TOTAL NTRACKS 550781
+ %%% EVENT 69000 NTRACKS 11 TOTAL NTRACKS 559176
+ %%% EVENT 70000 NTRACKS 12 TOTAL NTRACKS 566762
+ %%% EVENT 71000 NTRACKS 14 TOTAL NTRACKS 574857
+ %%% EVENT 72000 NTRACKS 11 TOTAL NTRACKS 582834
+ %%% EVENT 73000 NTRACKS 10 TOTAL NTRACKS 591617
+ %%% EVENT 74000 NTRACKS 1 TOTAL NTRACKS 599542
+ %%% EVENT 75000 NTRACKS 1 TOTAL NTRACKS 607749
+ %%% EVENT 76000 NTRACKS 13 TOTAL NTRACKS 616035
+ %%% EVENT 77000 NTRACKS 2 TOTAL NTRACKS 623948
+ %%% EVENT 78000 NTRACKS 11 TOTAL NTRACKS 631933
+ %%% EVENT 79000 NTRACKS 11 TOTAL NTRACKS 640143
+ %%% EVENT 80000 NTRACKS 11 TOTAL NTRACKS 648457
+ %%% EVENT 81000 NTRACKS 6 TOTAL NTRACKS 656792
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Too many events demanded
+      issued by : RTGeneratorPhaseSpace::GeneratePrimaries
+FAILED reading event  81490
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+ Run terminated.
+Run Summary
+  Run Aborted after 81491 events processed.
+  User=22.340000s Real=22.380487s Sys=0.040000s
+SetUnit RTPSPDoseHistos 1e-12 Name Gy
+ CreateHisto1D RTPSPDoseHistos: Dose = 36201
+ CreateHisto1D RTPSPDoseHistos: Dose-volume = 36202
+ CreateHisto1D RTPSPDoseHistos: Dose Error REL = 36203
+ CreateHisto1D RTPSPDoseHistos: log10(Dose Error REL) = 36204
+ CreateHisto1D RTPSPDoseHistos: Dose Error = 36205
+ CreateHisto1D RTPSPDoseHistos: log10(Dose Error) = 36206
+ CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error) = 36207
+ CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error REL) = 36208
+RTPSPDoseHistos MINIMUM DOSE 3.1817e-23 Gy 
+RTPSPDoseHistos MAXIMUM DOSE 2.63655e-16 Gy 
+RTPSPDoseHistos AVERAGE ERROR 20% = 0.33218
+RTPSPDoseHistos AVERAGE ERROR 50% = 0.260503
+RTPSPDoseHistos AVERAGE ERROR 90% = 0.226763
+RTPSPDoseHistos TOTAL DOSE = 7.2294e-13 +-(REL) 0.00342804
+ CreateHisto1D RTPSPDoseHistos: Dose Profile X_merged = 66301
+ CreateHisto1D RTPSPDoseHistos: Dose Profile Y_merged = 66302
+ CreateHisto1D RTPSPDoseHistos: Dose Profile Z_merged = 66303
+ CreateHisto2D RTPSPDoseHistos: Dose XY_merged = 66304
+ CreateHisto2D RTPSPDoseHistos: Dose XZ_merged = 66305
+ CreateHisto2D RTPSPDoseHistos: Dose YZ_merged = 66306
+SetUnit GmPSPrinterSqdose 1e-12 Name Gy
+ HEADER NEvent 1.00001e+06 Nvoxels 100 100 100
+ TYPE 0
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 dose_RTPSPDoseHistos.exercise4b.Dose:NormalizeToNEvents
+=== saving histograms in file === dose_RTPSPDoseHistos.exercise4b.Dose.root

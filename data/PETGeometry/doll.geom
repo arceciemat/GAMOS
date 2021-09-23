@@ -1,0 +1,11 @@
+:VOLU head ORB 12.5 G4_WATER
+:ROTM RM0 0 0 0
+:PLACE head 1 world RM0 0 0 -87.5
+:VOLU body BOX 12.5 25 37.5 G4_WATER
+:PLACE body 1 world RM0 0 0 -37.5
+:VOLU leg TUBS 0 12.5 50 0 360 G4_WATER
+:PLACE leg 1 world RM0 0 12.5 50
+:PLACE leg 2 world RM0 0 -12.5 50
+:VOLU arm TUBS 0 10 43.75 0 360 G4_WATER
+:PLACE arm 1 world RM0 0 35 -31.25
+:PLACE arm 2 world RM0 0 -35 -31.25

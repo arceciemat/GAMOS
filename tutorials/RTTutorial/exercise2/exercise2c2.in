@@ -1,0 +1,18 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName linac.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+/gamos/setParam RTGeneratorPhaseSpace:FileName test_-450
+/gamos/setParam RTGeneratorPhaseSpace:InitialDisplacement 0. 0. 0.
+/gamos/setParam RTGeneratorPhaseSpace:InitialRotAngles 0. 0. 0.*deg 
+/gamos/setParam RTGeneratorPhaseSpace:MaxNReuse 1
+/gamos/setParam RTGeneratorPhaseSpace:MaxNRecycle 3
+
+/gamos/generator RTGeneratorPhaseSpace
+
+/run/initialize
+
+/run/beamOn 100
+

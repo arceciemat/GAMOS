@@ -1,0 +1,33 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise5b
+/gamos/setParam GmGeometryUseMaterials:FileName tt.geom
+/gamos/setParam GmGeometryUseMaterials:Materials Cu64
+#G4_Cr G4_Mo G4_Fe G4_Ni 
+/gamos/geometry GmGeometryUseMaterials
+/gamos/physicsList G4QGSP_BIC_AllHP
+
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nEventsPerRun 10000
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:minE 1.
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:maxE 30.
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nStepsE 30
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:logE 0
+/gamos/generator GmGeneratorChangeEnergyAndMaterial
+
+/run/initialize
+
+/gamos/physics/removeProcessesByType Electromagnetic
+/gamos/physics/removeProcessesByName hadElastic
+
+/gamos/generator/addSingleParticleSource source proton 1.*MeV
+
+/gamos/setParam SHGetHadronicChannelXSUA:ParticleYields 1
+/gamos/userAction SHGetHadronicChannelXSUA
+
+/gamos/userAction GmKillAtStackingActionUA GmSecondaryFilter
+
+/gamos/userAction GmCountProcessesUA
+/P SHGetHadronicChannelXSUA.exercise5b:NormalizeToNEvents 0
+
+#/gamos/userAction GmKillAtStackingActionUA GmEMParticleFilter 
+
+/tracking/verbose 0
+/run/beamOn 10000000

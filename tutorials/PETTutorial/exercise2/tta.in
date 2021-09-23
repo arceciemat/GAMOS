@@ -1,0 +1,27 @@
+/gamos/verbosity GmSDVerbosity debug
+/gamos/setParam GmGeometryFromText:FileName ../exercise1/pet.geom
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise2a
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/gamos/setParam GmCountTracksUA:EachNEvent 1000
+/gamos/userAction GmCountTracksUA
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmHistosGammaAtSD
+/gamos/analysis/histo1Max *Energy* 1*MeV
+/gamos/analysis/histo1Max *Pos* 200*mm
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
+
+/run/initialize
+
+/gamos/SD/assocSD2LogVol GmSDSimpleExactPos Calor Crystal
+
+/gamos/generator/addIsotopeSource source Na22 1.E-3*curie
+#/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+/gamos/generator/energyDist source GmGenerDistEnergyBetaDecay
+
+/run/beamOn 1000
+

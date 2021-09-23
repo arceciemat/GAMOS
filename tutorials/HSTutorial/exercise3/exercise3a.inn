@@ -1,0 +1,29 @@
+/gamos/setParam GmGeometryFromText:FileName ../exercise2/exercise2.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+#/gamos/verbosity GmBaseVerbosity debug
+#/gamos/verbosity GmScoringVerbosity debug
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+
+### Score flux entering containers 1 and 2
+/gamos/scoring/createMFDetector fluxDet container
+/gamos/setParam fluxScorer:Direction In
+/gamos/setParam fluxScorer:Surfaces X+ X- Y+ Y- Z+ Z-
+/gamos/scoring/addScorer2MFD fluxScorer GmPSSurfaceFlux fluxDet
+
+### Score energy and dose deposition in detectors 1 and 2
+/gamos/scoring/createMFDetector doseEnergyDet detector
+/gamos/scoring/addScorer2MFD energyScorer GmG4PSEnergyDeposit doseEnergyDet
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseEnergyDet
+/gamos/classifier classifierAncestors  GmClassifierByAncestors 2 10
+/gamos/scoring/assignClassifier2Scorer classifierAncestors doseScorer
+/gamos/scoring/assignClassifier2Scorer classifierAncestors energyScorer 
+
+
+/gamos/random/restoreSeeds  1201 1201
+/run/beamOn 10000

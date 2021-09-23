@@ -1,0 +1,24 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise5d
+/gamos/setParam GmGeometryFromText:FileName exercise5.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/physics/removeProcessesByType Electromagnetic
+/gamos/physics/removeProcessesByName hadElastic
+
+/gamos/generator/addSingleParticleSource source neutron 1.*MeV
+
+/gamos/userAction GmKillAtSteppingActionUA 
+#/gamos/userAction GmKillAtStackingActionUA GmSecondaryFilter
+
+/gamos/setParam secoParticleC:OnSecondary 1
+/gamos/classifier secoParticleC GmClassifierByParticle
+/gamos/setParam GmSecondaryTrackDataHistosUA_secoParticleC:DataList log10(SecoKineticEnergy) 
+/gamos/userAction GmSecondaryTrackDataHistosUA secoParticleC
+
+/run/beamOn 100000
+

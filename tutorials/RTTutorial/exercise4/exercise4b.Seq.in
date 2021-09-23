@@ -1,0 +1,40 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise4b.Seq
+
+/gamos/setParam GmGeometryFromText:FileName ../exercise2/linac.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/gamos/geometry/createRegion targetReg target
+/gamos/geometry/createRegion collimatorReg "primary collimator_0"
+/gamos/geometry/createRegion filterReg "flattening filter"
+/gamos/geometry/createRegion monitorReg monitor
+/gamos/geometry/createRegion jawsReg jaws_X jaws_Y   
+/gamos/physics/setCuts targetReg 10. 0.1 
+/run/setCut 100.
+
+/gamos/setParam GmAnalysisMgr:FileNameSuffix _Seq
+/gamos/setParam RTPhaseSpaceUA:FileName testSeq
+/gamos/setParam RTPhaseSpaceUA:ZStops -900
+/gamos/setParam RTPhaseSpaceUA:KillAfterLastZStop 1
+/gamos/userAction RTPhaseSpaceUA 
+
+/gamos/userAction GmCountTracksUA
+
+/run/initialize
+
+/gamos/userAction GmTimeStudyUA GmClassifierByRegion
+/gamos/classifier ClassifierParticleAndKinEnergy GmCompoundClassifier GmClassifierByParticle GmClassifierByKineticEnergy
+/gamos/userAction GmTimeStudyUA  ClassifierParticleAndKinEnergy 
+
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+
+/gamos/setParam GmBSZPlaneDirChecker:XDim 20.*cm
+/gamos/setParam GmBSZPlaneDirChecker:YDim 20.*cm
+/gamos/setParam GmBSZPlaneDirChecker:ZPos 90.*cm
+/gamos/setParam GmBremsSplittingProcess:NSplit 100
+/gamos/physics/varianceReduction/splitting equalWeight
+
+/run/beamOn 10000
+

@@ -1,0 +1,22 @@
+/gamos/setParam GmGeometryFromText:FileName pet.geom
+/gamos/setParam GmAnalysisMgr:FileNameSuffix exercise2d
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/GmPhysics/replacePhysics gamma-lowener
+/gamos/GmPhysics/replacePhysics electron-lowener
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmHistosGammaAtSD
+/gamos/userAction GmHitsHistosUA
+
+/run/initialize
+
+/gamos/SD/assocSD2LogVol GmSDSimple Calor Crystal
+
+/gamos/generator/addIsotopeSource source F18 1.E-3*curie
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+
+/run/beamOn 10000
+

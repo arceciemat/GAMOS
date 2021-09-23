@@ -1,0 +1,23 @@
+GO TO A DIRECTORY: PETTutorial/exercise2/exercise2b
+
+1. Prepare reference files merging N jobs
+1.1. Select what to merge: build qa file 
+cd GAMOS_OLD
+sh buildQA.exercise2b.sh std
+=> exercise2b.qa
+1.2. Run N jobs producing reference text and histo files
+cd GAMOS_OLD
+../runN.sh exercise2 exercise2b
+=> ref.out.exercise2b
+=> ref.gammaSD.exercise2b.root
+=> ref.hits.exercise2b.root
+
+2. Compare current release with reference files
+2.1. Select what to merge: build qa file 
+cd GAMOS_OLD
+sh buildQA.exercise2b.sh ref
+=> exercise2b.qaref
+cp GAMOS_OLD/exercise2b.qaref GAMOS_NEW
+2.2. Run jobs to check if it passes. If not run it again (10 times) and see if same test fail, until there is no test that always fails
+cd GAMOS_NEW
+sh run1qa.sh PETTutorial exercise2 exercise2b

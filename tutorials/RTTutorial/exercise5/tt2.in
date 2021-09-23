@@ -1,0 +1,54 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise5b
+
+/tracking/verbose 1
+
+/gamos/setParam GmPhysicsParallel:LayeredMaterial 0
+/gamos/setParam GmReadPhantomGeometry:FileName world.geom
+/gamos/setParam GmReadPhantomGeometry:FileNameParallel brachy_source.geom 1
+/gamos/setParam GmReadPhantomGeometry:Phantom:FileName ../exercise3/exercise3_64x64x39.g4dcm
+/gamos/geometry GmReadPhantomG4Geometry
+
+/gamos/physicsList GmEMExtendedPhysics
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/P GmReadPhantomGeometry:Phantom:SkipEqualMaterials 1
+
+/gamos/physics/addParallelProcess
+
+
+/gamos/filter f10 GmExitParallelLogicalVolumeFilter I-125_SOURCE
+/gamos/userAction GmStepDataCoutUA f10
+/gamos/setParam GmStepDataCoutUA_f10:DataList Particle EventID InitialPosX FinalPosX InitialPosY FinalPosY InitialPosZ FinalPosZ 
+
+/gamos/physics/addPhysics radioactiveDecay
+
+#  I125 source
+/gamos/generator/addSingleParticleSource I125_source I125[0.0] 0.*keV
+/gamos/generator/positionDist  I125_source GmGenerDistPositionInG4Volumes I-125_SOURCE
+# copy it to the parallel world to navigate in both geometries (seed and phantom) at the same time
+#/gamos/geometry/copyParallelToMassGeom BRACHY_SOURCE 0. 0. 200.
+
+# kill neutrinos to spare some time
+/gamos/filter  nu_eF GmParticleFilter nu_e 
+/gamos/userAction GmKillAtStackingActionUA nu_eF
+
+# calculate the dose in the voxelised phantom
+/gamos/scoring/createMFDetector PDDdet phantom
+/gamos/scoring/addScorer2MFD PDDscorer GmG4PSDoseDeposit PDDdet
+/gamos/analysis/histo1Min *Dose -18
+/gamos/analysis/histo1Max *Dose -9
+/gamos/analysis/histo1Max *volume -9
+#/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos PDDscorer
+
+# Make histograms of the initial energies of the particles from I125 decay, one per particle type
+/gamos/filter I125F GmParticleFilter I125[0.0] 
+/gamos/filter fromI125F GmParentFilter I125F
+/gamos/setParam GmTrackDataHistosUA_fromI125F_GmClassifierByParticle:DataList InitialKineticEnergy
+/gamos/analysis/histo1Max *fromI125* 0.1*MeV
+/gamos/userAction GmTrackDataHistosUA fromI125F GmClassifierByParticle 
+
+/run/beamOn 100
+

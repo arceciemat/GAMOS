@@ -1,0 +1,3065 @@
+@@@@@ Running GAMOS with script: exercise3.angle.nn.in
+
+**************************************************************
+ Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+ Using Random Engine: MixMaxRng
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+"/vis/list" to see available colours.
+/control/execute exercise3.angle.nn.in
+/gamos/setParam GmGeometryFromText:FileName exercise3.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+<<< Geant4 Physics List simulation engine: QGSP_BIC_HP
+
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nEventsPerRun 100000
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:minE 1.E-9*MeV
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:maxE 1.E+1*MeV
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nStepsE 31
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:logE 1
+/gamos/generator GmGeneratorChangeEnergyAndMaterial
+/gamos/setParam GmCountTracksUA:EachNEvent 100000
+/gamos/userAction GmCountTracksUA
+/run/initialize
+/home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5
+@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic
+@@@ G4ParticleHPInelasticData instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Elastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Inelastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+/gamos/generator/addSingleParticleSource source neutron 1.*MeV
+/gamos/setParam GmPDSCreateAngleTablesUA:SecondaryParticleName neutron
+/gamos/setParam GmPDSCreateAngleTablesUA:HistoFileName angleDeviation.neutron.neutron
+/gamos/userAction GmPDSCreateAngleTablesUA
+/gamos/userAction GmKillAtStackingActionUA GmSecondaryFilter
+/run/beamOn 100000000
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 1
+### ===  Ignore cuts flag:   1
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 174 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 20 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 160 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LowEPComptonModel : Emin=    0 eV  Emax=   20 MeV Fluo
+        KleinNishina : Emin=   20 MeV Emax=  100 TeV Fluo
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+      BetheHeitler5D : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 20 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 180 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=  100 keV  deltaVI
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e-, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for e+  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             PenIoni : Emin=    0 eV  Emax=  100 keV
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e+, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for GenericIon  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV
+
+ionIoni:  for GenericIon  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.001 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+         ParamICRU73 : Emin=    0 eV  Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for GenericIon SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+======================================================================
+======          Radioactive Decay Physics Parameters           =======
+======================================================================
+Max life time                                     1.4427e+06 ps
+Internal e- conversion flag                       1
+Stored internal conversion coefficients           1
+Enable correlated gamma emission                  0
+Max 2J for sampling of angular correlations       10
+Atomic de-excitation enabled                      1
+Auger electron emission enabled                   1
+Auger cascade enabled                             1
+Check EM cuts disabled for atomic de-excitation   1
+Use Bearden atomic level energies                 0
+======================================================================
+
+msc:  for alpha  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+ionIoni:  for alpha  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            BraggIon : Emin=    0 eV  Emax=7.9452 MeV  deltaVI
+          BetheBloch : Emin=7.9452 MeV Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for alpha SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for anti_proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for anti_proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for anti_proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for anti_proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for anti_proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of kaon+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of mu+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Elastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Inelastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 8, A = 18 is not found and CrossSection set to 0.
+@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Inelastic
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 6, A = 13 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.10.06.p02.gamos/../data/G4NDL4.5/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 8, A = 18 is not found and CrossSection set to 0.
+
+msc:  for pi+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of pi+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+====================================================================
+                  HADRONIC PROCESSES SUMMARY (verbose level 1)
+
+---------------------------------------------------
+                           Hadronic Processes for GenericIon
+
+  Process: ionElastic
+        Model:          NNDiffuseElastic: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: ionInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: RadioactiveDecayBase
+
+---------------------------------------------------
+                           Hadronic Processes for He3
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: He3Inelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for alpha
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: alphaInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for anti_He3
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_He3Inelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_alpha
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_alphaInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_deuteron
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_deuteronInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_neutron
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100.1 MeV
+        Model:              AntiAElastic: 100 MeV ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_neutronInelastic
+        Model:                      FTFP: 0 eV  ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_proton
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100.1 MeV
+        Model:              AntiAElastic: 100 MeV ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_protonInelastic
+        Model:                      FTFP: 0 eV  ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_triton
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: anti_tritonInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for deuteron
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: dInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for e+
+
+  Process: electronNuclear
+        Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for e-
+
+  Process: electronNuclear
+        Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for gamma
+
+  Process: photonNuclear
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+        Model:           TheoFSGenerator: 3 GeV ---> 100 TeV
+     Cr_sctns:            PhotoNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for kaon+
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: kaon+Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for kaon-
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: kaon-Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: hBertiniCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for lambda
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: lambdaInelastic
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+        Model:                      FTFP: 3 GeV ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for mu+
+
+  Process: muonNuclear
+        Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for mu-
+
+  Process: muonNuclear
+        Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
+
+  Process: muMinusCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for neutron
+
+  Process: hadElastic
+        Model:             hElasticCHIPS: 19.5 MeV ---> 100 TeV
+        Model:          NeutronHPElastic: 0 eV  ---> 20 MeV
+     Cr_sctns:        NeutronHPElasticXS: 0 eV  ---> 20 MeV
+     Cr_sctns:        G4NeutronElasticXS: 0 eV  ---> 100 TeV
+
+  Process: neutronInelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            Binary Cascade: 19.9 MeV ---> 6 GeV
+        Model:        NeutronHPInelastic: 0 eV  ---> 20 MeV
+     Cr_sctns:      NeutronHPInelasticXS: 0 eV  ---> 20 MeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: nCapture
+        Model:          NeutronHPCapture: 0 eV  ---> 20 MeV
+        Model:               nRadCapture: 19.9 MeV ---> 100 TeV
+     Cr_sctns:        NeutronHPCaptureXS: 0 eV  ---> 20 MeV
+     Cr_sctns:        G4NeutronCaptureXS: 0 eV  ---> 100 TeV
+
+  Process: nFission
+        Model:          NeutronHPFission: 0 eV  ---> 20 MeV
+        Model:                G4LFission: 19.9 MeV ---> 100 TeV
+     Cr_sctns:        NeutronHPFissionXS: 0 eV  ---> 20 MeV
+     Cr_sctns:          GheishaFissionXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for pi+
+
+  Process: hadElastic
+        Model:           hElasticGlauber: 0 eV  ---> 100 TeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: pi+Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for pi-
+
+  Process: hadElastic
+        Model:           hElasticGlauber: 0 eV  ---> 100 TeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: pi-Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: hBertiniCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for proton
+
+  Process: hadElastic
+        Model:             hElasticCHIPS: 0 eV  ---> 100 TeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: protonInelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            Binary Cascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for triton
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+  Process: tInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 100 TeV
+
+================================================================
+=======================================================================
+======       Pre-compound/De-excitation Physics Parameters     ========
+=======================================================================
+Type of pre-compound inverse x-section              3
+Pre-compound model active                           1
+Pre-compound excitation low energy (MeV)            0.1
+Pre-compound excitation high energy (MeV)           30
+Type of de-excitation inverse x-section             3
+Type of de-excitation factory                       Evaporation+GEM
+Number of de-excitation channels                    68
+Min excitation energy (keV)                         0.01
+Min energy per nucleon for multifragmentation (MeV) 2e+05
+Limit excitation energy for Fermi BreakUp (MeV)     20
+Level density (1/MeV)                               0.075
+Use simple level density model                      1
+Use discrete excitation energy of the residual      0
+Time limit for long lived isomeres (ns)             1442.7
+Internal e- conversion flag                         1
+Store e- internal conversion data                   1
+Electron internal conversion ID                     0
+Correlated gamma emission flag                      0
+Max 2J for sampling of angular correlations         10
+Upload data before 1st event for                Z < 9
+=======================================================================
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+0x55c00fb050f0 GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromGe 3
+G4GeometryManager::ReportVoxelStats -- Voxel Statistics
+
+    Total memory consumed for geometry optimisation:   0 kByte
+    Total CPU time elapsed for geometry optimisation: 0 seconds
+
+    Voxelisation: top CPU users:
+    Percent   Total CPU    System CPU       Memory  Volume
+    -------   ----------   ----------     --------  ----------
+       0.00         0.00         0.00            0k world
+
+    Voxelisation: top memory users:
+    Percent     Memory      Heads    Nodes   Pointers    Total CPU    Volume
+    -------   --------     ------   ------   --------   ----------    ----------
+     100.00          0k         1        2          4         0.00    world
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 1
+### ===  Ignore cuts flag:   1
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 174 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 20 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 160 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LowEPComptonModel : Emin=    0 eV  Emax=   20 MeV Fluo
+        KleinNishina : Emin=   20 MeV Emax=  100 TeV Fluo
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+      BetheHeitler5D : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 20 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 180 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=  100 keV  deltaVI
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e-, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for e+  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             PenIoni : Emin=    0 eV  Emax=  100 keV
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e+, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for GenericIon  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV
+
+ionIoni:  for GenericIon  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.001 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+         ParamICRU73 : Emin=    0 eV  Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for GenericIon SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for alpha  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+ionIoni:  for alpha  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            BraggIon : Emin=    0 eV  Emax=7.9452 MeV  deltaVI
+          BetheBloch : Emin=7.9452 MeV Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for alpha SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for anti_proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for anti_proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for anti_proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for anti_proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for anti_proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of kaon+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of mu+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of pi+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : No 
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+
+Index : 2     used in the geometry : No 
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+
+====================================================================
+
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : No 
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+
+Index : 2     used in the geometry : No 
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+
+====================================================================
+
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 9.9999E-10 : cos Deviation Angle = 5200001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 9.9999E-10 : log10 Interaction Distance (cm) = 5200002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 9.9999E-10 : cos Deviation Angle = 5300001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 9.9999E-10 : log10 Interaction Distance (cm) = 5300002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 9.9999E-10 : cos Deviation Angle = 5400001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 9.9999E-10 : log10 Interaction Distance (cm) = 5400002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 9.9999E-10 : cos Deviation Angle = 5500001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 9.9999E-10 : log10 Interaction Distance (cm) = 5500002
+ %%% EVENT 0 NTRACKS 1 TOTAL NTRACKS 1
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-9 : cos Deviation Angle = 5201001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-9 : log10 Interaction Distance (cm) = 5201002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-9 : cos Deviation Angle = 5301001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-9 : log10 Interaction Distance (cm) = 5301002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-9 : cos Deviation Angle = 5401001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-9 : log10 Interaction Distance (cm) = 5401002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-9 : cos Deviation Angle = 5501001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-9 : log10 Interaction Distance (cm) = 5501002
+ %%% EVENT 100000 NTRACKS 1 TOTAL NTRACKS 100001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6416E-9 : cos Deviation Angle = 5202001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6416E-9 : log10 Interaction Distance (cm) = 5202002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6416E-9 : cos Deviation Angle = 5302001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6416E-9 : log10 Interaction Distance (cm) = 5302002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6416E-9 : cos Deviation Angle = 5402001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6416E-9 : log10 Interaction Distance (cm) = 5402002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6416E-9 : cos Deviation Angle = 5502001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6416E-9 : log10 Interaction Distance (cm) = 5502002
+ %%% EVENT 200000 NTRACKS 1 TOTAL NTRACKS 200001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-8 : cos Deviation Angle = 5203001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-8 : log10 Interaction Distance (cm) = 5203002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-8 : cos Deviation Angle = 5303001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-8 : log10 Interaction Distance (cm) = 5303002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-8 : cos Deviation Angle = 5403001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-8 : log10 Interaction Distance (cm) = 5403002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-8 : cos Deviation Angle = 5503001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-8 : log10 Interaction Distance (cm) = 5503002
+ %%% EVENT 300000 NTRACKS 1 TOTAL NTRACKS 300001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-8 : cos Deviation Angle = 5204001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-8 : log10 Interaction Distance (cm) = 5204002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-8 : cos Deviation Angle = 5304001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-8 : log10 Interaction Distance (cm) = 5304002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-8 : cos Deviation Angle = 5404001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-8 : log10 Interaction Distance (cm) = 5404002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-8 : cos Deviation Angle = 5504001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-8 : log10 Interaction Distance (cm) = 5504002
+ %%% EVENT 400000 NTRACKS 1 TOTAL NTRACKS 400001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-8 : cos Deviation Angle = 5205001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-8 : log10 Interaction Distance (cm) = 5205002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-8 : cos Deviation Angle = 5305001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-8 : log10 Interaction Distance (cm) = 5305002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-8 : cos Deviation Angle = 5405001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-8 : log10 Interaction Distance (cm) = 5405002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-8 : cos Deviation Angle = 5505001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-8 : log10 Interaction Distance (cm) = 5505002
+ %%% EVENT 500000 NTRACKS 1 TOTAL NTRACKS 500001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-7 : cos Deviation Angle = 5206001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-7 : log10 Interaction Distance (cm) = 5206002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-7 : cos Deviation Angle = 5306001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-7 : log10 Interaction Distance (cm) = 5306002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-7 : cos Deviation Angle = 5406001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-7 : log10 Interaction Distance (cm) = 5406002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-7 : cos Deviation Angle = 5506001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-7 : log10 Interaction Distance (cm) = 5506002
+ %%% EVENT 600000 NTRACKS 1 TOTAL NTRACKS 600001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-7 : cos Deviation Angle = 5207001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-7 : log10 Interaction Distance (cm) = 5207002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-7 : cos Deviation Angle = 5307001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-7 : log10 Interaction Distance (cm) = 5307002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-7 : cos Deviation Angle = 5407001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-7 : log10 Interaction Distance (cm) = 5407002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-7 : cos Deviation Angle = 5507001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-7 : log10 Interaction Distance (cm) = 5507002
+ %%% EVENT 700000 NTRACKS 1 TOTAL NTRACKS 700001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-7 : cos Deviation Angle = 5208001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-7 : log10 Interaction Distance (cm) = 5208002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-7 : cos Deviation Angle = 5308001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-7 : log10 Interaction Distance (cm) = 5308002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-7 : cos Deviation Angle = 5408001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-7 : log10 Interaction Distance (cm) = 5408002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-7 : cos Deviation Angle = 5508001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-7 : log10 Interaction Distance (cm) = 5508002
+ %%% EVENT 800000 NTRACKS 1 TOTAL NTRACKS 800001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-6 : cos Deviation Angle = 5209001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-6 : log10 Interaction Distance (cm) = 5209002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-6 : cos Deviation Angle = 5309001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-6 : log10 Interaction Distance (cm) = 5309002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-6 : cos Deviation Angle = 5409001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-6 : log10 Interaction Distance (cm) = 5409002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-6 : cos Deviation Angle = 5509001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-6 : log10 Interaction Distance (cm) = 5509002
+ %%% EVENT 900000 NTRACKS 1 TOTAL NTRACKS 900001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-6 : cos Deviation Angle = 5210001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-6 : log10 Interaction Distance (cm) = 5210002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-6 : cos Deviation Angle = 5310001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-6 : log10 Interaction Distance (cm) = 5310002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-6 : cos Deviation Angle = 5410001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-6 : log10 Interaction Distance (cm) = 5410002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-6 : cos Deviation Angle = 5510001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-6 : log10 Interaction Distance (cm) = 5510002
+ %%% EVENT 1000000 NTRACKS 1 TOTAL NTRACKS 1e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-6 : cos Deviation Angle = 5211001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-6 : log10 Interaction Distance (cm) = 5211002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-6 : cos Deviation Angle = 5311001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-6 : log10 Interaction Distance (cm) = 5311002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-6 : cos Deviation Angle = 5411001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-6 : log10 Interaction Distance (cm) = 5411002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-6 : cos Deviation Angle = 5511001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-6 : log10 Interaction Distance (cm) = 5511002
+ %%% EVENT 1100000 NTRACKS 1 TOTAL NTRACKS 1.1e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-5 : cos Deviation Angle = 5212001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-5 : log10 Interaction Distance (cm) = 5212002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-5 : cos Deviation Angle = 5312001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-5 : log10 Interaction Distance (cm) = 5312002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-5 : cos Deviation Angle = 5412001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-5 : log10 Interaction Distance (cm) = 5412002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-5 : cos Deviation Angle = 5512001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-5 : log10 Interaction Distance (cm) = 5512002
+ %%% EVENT 1200000 NTRACKS 1 TOTAL NTRACKS 1.2e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-5 : cos Deviation Angle = 5213001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-5 : log10 Interaction Distance (cm) = 5213002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-5 : cos Deviation Angle = 5313001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-5 : log10 Interaction Distance (cm) = 5313002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-5 : cos Deviation Angle = 5413001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-5 : log10 Interaction Distance (cm) = 5413002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-5 : cos Deviation Angle = 5513001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-5 : log10 Interaction Distance (cm) = 5513002
+ %%% EVENT 1300000 NTRACKS 1 TOTAL NTRACKS 1.3e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-5 : cos Deviation Angle = 5214001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-5 : log10 Interaction Distance (cm) = 5214002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-5 : cos Deviation Angle = 5314001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-5 : log10 Interaction Distance (cm) = 5314002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-5 : cos Deviation Angle = 5414001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-5 : log10 Interaction Distance (cm) = 5414002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-5 : cos Deviation Angle = 5514001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-5 : log10 Interaction Distance (cm) = 5514002
+ %%% EVENT 1400000 NTRACKS 1 TOTAL NTRACKS 1.4e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-4 : cos Deviation Angle = 5215001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-4 : log10 Interaction Distance (cm) = 5215002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-4 : cos Deviation Angle = 5315001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-4 : log10 Interaction Distance (cm) = 5315002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-4 : cos Deviation Angle = 5415001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-4 : log10 Interaction Distance (cm) = 5415002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-4 : cos Deviation Angle = 5515001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-4 : log10 Interaction Distance (cm) = 5515002
+ %%% EVENT 1500000 NTRACKS 1 TOTAL NTRACKS 1.5e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-4 : cos Deviation Angle = 5216001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-4 : log10 Interaction Distance (cm) = 5216002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-4 : cos Deviation Angle = 5316001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-4 : log10 Interaction Distance (cm) = 5316002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-4 : cos Deviation Angle = 5416001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-4 : log10 Interaction Distance (cm) = 5416002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-4 : cos Deviation Angle = 5516001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-4 : log10 Interaction Distance (cm) = 5516002
+ %%% EVENT 1600000 NTRACKS 1 TOTAL NTRACKS 1.6e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-4 : cos Deviation Angle = 5217001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-4 : log10 Interaction Distance (cm) = 5217002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-4 : cos Deviation Angle = 5317001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-4 : log10 Interaction Distance (cm) = 5317002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-4 : cos Deviation Angle = 5417001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-4 : log10 Interaction Distance (cm) = 5417002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-4 : cos Deviation Angle = 5517001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-4 : log10 Interaction Distance (cm) = 5517002
+ %%% EVENT 1700000 NTRACKS 1 TOTAL NTRACKS 1.7e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-3 : cos Deviation Angle = 5218001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-3 : log10 Interaction Distance (cm) = 5218002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-3 : cos Deviation Angle = 5318001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-3 : log10 Interaction Distance (cm) = 5318002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-3 : cos Deviation Angle = 5418001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-3 : log10 Interaction Distance (cm) = 5418002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-3 : cos Deviation Angle = 5518001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-3 : log10 Interaction Distance (cm) = 5518002
+ %%% EVENT 1800000 NTRACKS 1 TOTAL NTRACKS 1.8e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-3 : cos Deviation Angle = 5219001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-3 : log10 Interaction Distance (cm) = 5219002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-3 : cos Deviation Angle = 5319001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-3 : log10 Interaction Distance (cm) = 5319002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-3 : cos Deviation Angle = 5419001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-3 : log10 Interaction Distance (cm) = 5419002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-3 : cos Deviation Angle = 5519001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-3 : log10 Interaction Distance (cm) = 5519002
+ %%% EVENT 1900000 NTRACKS 1 TOTAL NTRACKS 1.9e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-3 : cos Deviation Angle = 5220001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-3 : log10 Interaction Distance (cm) = 5220002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-3 : cos Deviation Angle = 5320001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-3 : log10 Interaction Distance (cm) = 5320002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-3 : cos Deviation Angle = 5420001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-3 : log10 Interaction Distance (cm) = 5420002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-3 : cos Deviation Angle = 5520001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-3 : log10 Interaction Distance (cm) = 5520002
+ %%% EVENT 2000000 NTRACKS 1 TOTAL NTRACKS 2e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-2 : cos Deviation Angle = 5221001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E-2 : log10 Interaction Distance (cm) = 5221002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-2 : cos Deviation Angle = 5321001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E-2 : log10 Interaction Distance (cm) = 5321002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-2 : cos Deviation Angle = 5421001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E-2 : log10 Interaction Distance (cm) = 5421002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-2 : cos Deviation Angle = 5521001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E-2 : log10 Interaction Distance (cm) = 5521002
+ %%% EVENT 2100000 NTRACKS 1 TOTAL NTRACKS 2.1e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-2 : cos Deviation Angle = 5222001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E-2 : log10 Interaction Distance (cm) = 5222002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-2 : cos Deviation Angle = 5322001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E-2 : log10 Interaction Distance (cm) = 5322002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-2 : cos Deviation Angle = 5422001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E-2 : log10 Interaction Distance (cm) = 5422002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-2 : cos Deviation Angle = 5522001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E-2 : log10 Interaction Distance (cm) = 5522002
+ %%% EVENT 2200000 NTRACKS 1 TOTAL NTRACKS 2.2e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-2 : cos Deviation Angle = 5223001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E-2 : log10 Interaction Distance (cm) = 5223002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-2 : cos Deviation Angle = 5323001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E-2 : log10 Interaction Distance (cm) = 5323002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-2 : cos Deviation Angle = 5423001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E-2 : log10 Interaction Distance (cm) = 5423002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-2 : cos Deviation Angle = 5523001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E-2 : log10 Interaction Distance (cm) = 5523002
+ %%% EVENT 2300000 NTRACKS 1 TOTAL NTRACKS 2.3e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 0.1E0 : cos Deviation Angle = 5224001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 0.1E0 : log10 Interaction Distance (cm) = 5224002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 0.1E0 : cos Deviation Angle = 5324001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 0.1E0 : log10 Interaction Distance (cm) = 5324002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 0.1E0 : cos Deviation Angle = 5424001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 0.1E0 : log10 Interaction Distance (cm) = 5424002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 0.1E0 : cos Deviation Angle = 5524001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 0.1E0 : log10 Interaction Distance (cm) = 5524002
+ %%% EVENT 2400000 NTRACKS 1 TOTAL NTRACKS 2.4e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 0.2154E0 : cos Deviation Angle = 5225001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 0.2154E0 : log10 Interaction Distance (cm) = 5225002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 0.2154E0 : cos Deviation Angle = 5325001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 0.2154E0 : log10 Interaction Distance (cm) = 5325002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 0.2154E0 : cos Deviation Angle = 5425001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 0.2154E0 : log10 Interaction Distance (cm) = 5425002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 0.2154E0 : cos Deviation Angle = 5525001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 0.2154E0 : log10 Interaction Distance (cm) = 5525002
+ %%% EVENT 2500000 NTRACKS 1 TOTAL NTRACKS 2.5e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 0.4641E0 : cos Deviation Angle = 5226001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 0.4641E0 : log10 Interaction Distance (cm) = 5226002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 0.4641E0 : cos Deviation Angle = 5326001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 0.4641E0 : log10 Interaction Distance (cm) = 5326002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 0.4641E0 : cos Deviation Angle = 5426001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 0.4641E0 : log10 Interaction Distance (cm) = 5426002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 0.4641E0 : cos Deviation Angle = 5526001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 0.4641E0 : log10 Interaction Distance (cm) = 5526002
+ %%% EVENT 2600000 NTRACKS 1 TOTAL NTRACKS 2.6e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E0 : cos Deviation Angle = 5227001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E0 : log10 Interaction Distance (cm) = 5227002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E0 : cos Deviation Angle = 5327001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E0 : log10 Interaction Distance (cm) = 5327002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E0 : cos Deviation Angle = 5427001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E0 : log10 Interaction Distance (cm) = 5427002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E0 : cos Deviation Angle = 5527001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E0 : log10 Interaction Distance (cm) = 5527002
+ %%% EVENT 2700000 NTRACKS 1 TOTAL NTRACKS 2.7e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E0 : cos Deviation Angle = 5228001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 2.1544E0 : log10 Interaction Distance (cm) = 5228002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E0 : cos Deviation Angle = 5328001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 2.1544E0 : log10 Interaction Distance (cm) = 5328002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E0 : cos Deviation Angle = 5428001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 2.1544E0 : log10 Interaction Distance (cm) = 5428002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E0 : cos Deviation Angle = 5528001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 2.1544E0 : log10 Interaction Distance (cm) = 5528002
+ %%% EVENT 2800000 NTRACKS 1 TOTAL NTRACKS 2.8e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E0 : cos Deviation Angle = 5229001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 4.6415E0 : log10 Interaction Distance (cm) = 5229002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E0 : cos Deviation Angle = 5329001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 4.6415E0 : log10 Interaction Distance (cm) = 5329002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E0 : cos Deviation Angle = 5429001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 4.6415E0 : log10 Interaction Distance (cm) = 5429002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E0 : cos Deviation Angle = 5529001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 4.6415E0 : log10 Interaction Distance (cm) = 5529002
+ %%% EVENT 2900000 NTRACKS 1 TOTAL NTRACKS 2.9e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E1 : cos Deviation Angle = 5230001
+ CreateHisto1D neutron - neutron : hadElastic : G4_AIR : 1E1 : log10 Interaction Distance (cm) = 5230002
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E1 : cos Deviation Angle = 5330001
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_AIR : 1E1 : log10 Interaction Distance (cm) = 5330002
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E1 : cos Deviation Angle = 5430001
+ CreateHisto1D neutron - neutron : nCapture : G4_AIR : 1E1 : log10 Interaction Distance (cm) = 5430002
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E1 : cos Deviation Angle = 5530001
+ CreateHisto1D neutron - neutron : nFission : G4_AIR : 1E1 : log10 Interaction Distance (cm) = 5530002
+ %%% EVENT 3000000 NTRACKS 1 TOTAL NTRACKS 3e+06
+G4GeometryManager::ReportVoxelStats -- Voxel Statistics
+
+    Total memory consumed for geometry optimisation:   0 kByte
+    Total CPU time elapsed for geometry optimisation: 0 seconds
+
+    Voxelisation: top CPU users:
+    Percent   Total CPU    System CPU       Memory  Volume
+    -------   ----------   ----------     --------  ----------
+       0.00         0.00         0.00            0k world
+
+    Voxelisation: top memory users:
+    Percent     Memory      Heads    Nodes   Pointers    Total CPU    Volume
+    -------   --------     ------   ------   --------   ----------    ----------
+     100.00          0k         1        2          4         0.00    world
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 1
+### ===  Ignore cuts flag:   1
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 174 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 20 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 160 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LowEPComptonModel : Emin=    0 eV  Emax=   20 MeV Fluo
+        KleinNishina : Emin=   20 MeV Emax=  100 TeV Fluo
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+      BetheHeitler5D : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 20 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 180 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=  100 keV  deltaVI
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e-, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for e+  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             PenIoni : Emin=    0 eV  Emax=  100 keV
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e+, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for GenericIon  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV
+
+ionIoni:  for GenericIon  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.001 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+         ParamICRU73 : Emin=    0 eV  Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for GenericIon SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for alpha  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+ionIoni:  for alpha  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            BraggIon : Emin=    0 eV  Emax=7.9452 MeV  deltaVI
+          BetheBloch : Emin=7.9452 MeV Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for alpha SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for anti_proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for anti_proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for anti_proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for anti_proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for anti_proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of kaon+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of mu+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of pi+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : No 
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+
+Index : 1     used in the geometry : Yes
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : No 
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+
+====================================================================
+
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : No 
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+
+Index : 1     used in the geometry : Yes
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : No 
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+
+====================================================================
+
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 9.9999E-10 : cos Deviation Angle = 5200011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 9.9999E-10 : log10 Interaction Distance (cm) = 5200012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 9.9999E-10 : cos Deviation Angle = 5300011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 9.9999E-10 : log10 Interaction Distance (cm) = 5300012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 9.9999E-10 : cos Deviation Angle = 5400011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 9.9999E-10 : log10 Interaction Distance (cm) = 5400012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 9.9999E-10 : cos Deviation Angle = 5500011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 9.9999E-10 : log10 Interaction Distance (cm) = 5500012
+ %%% EVENT 3100000 NTRACKS 1 TOTAL NTRACKS 3.1e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-9 : cos Deviation Angle = 5201011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-9 : log10 Interaction Distance (cm) = 5201012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-9 : cos Deviation Angle = 5301011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-9 : log10 Interaction Distance (cm) = 5301012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-9 : cos Deviation Angle = 5401011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-9 : log10 Interaction Distance (cm) = 5401012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-9 : cos Deviation Angle = 5501011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-9 : log10 Interaction Distance (cm) = 5501012
+ %%% EVENT 3200000 NTRACKS 1 TOTAL NTRACKS 3.2e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6416E-9 : cos Deviation Angle = 5202011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6416E-9 : log10 Interaction Distance (cm) = 5202012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6416E-9 : cos Deviation Angle = 5302011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6416E-9 : log10 Interaction Distance (cm) = 5302012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6416E-9 : cos Deviation Angle = 5402011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6416E-9 : log10 Interaction Distance (cm) = 5402012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6416E-9 : cos Deviation Angle = 5502011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6416E-9 : log10 Interaction Distance (cm) = 5502012
+ %%% EVENT 3300000 NTRACKS 1 TOTAL NTRACKS 3.3e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-8 : cos Deviation Angle = 5203011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-8 : log10 Interaction Distance (cm) = 5203012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-8 : cos Deviation Angle = 5303011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-8 : log10 Interaction Distance (cm) = 5303012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-8 : cos Deviation Angle = 5403011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-8 : log10 Interaction Distance (cm) = 5403012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-8 : cos Deviation Angle = 5503011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-8 : log10 Interaction Distance (cm) = 5503012
+ %%% EVENT 3400000 NTRACKS 1 TOTAL NTRACKS 3.4e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-8 : cos Deviation Angle = 5204011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-8 : log10 Interaction Distance (cm) = 5204012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-8 : cos Deviation Angle = 5304011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-8 : log10 Interaction Distance (cm) = 5304012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-8 : cos Deviation Angle = 5404011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-8 : log10 Interaction Distance (cm) = 5404012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-8 : cos Deviation Angle = 5504011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-8 : log10 Interaction Distance (cm) = 5504012
+ %%% EVENT 3500000 NTRACKS 1 TOTAL NTRACKS 3.5e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-8 : cos Deviation Angle = 5205011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-8 : log10 Interaction Distance (cm) = 5205012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-8 : cos Deviation Angle = 5305011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-8 : log10 Interaction Distance (cm) = 5305012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-8 : cos Deviation Angle = 5405011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-8 : log10 Interaction Distance (cm) = 5405012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-8 : cos Deviation Angle = 5505011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-8 : log10 Interaction Distance (cm) = 5505012
+ %%% EVENT 3600000 NTRACKS 1 TOTAL NTRACKS 3.6e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-7 : cos Deviation Angle = 5206011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-7 : log10 Interaction Distance (cm) = 5206012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-7 : cos Deviation Angle = 5306011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-7 : log10 Interaction Distance (cm) = 5306012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-7 : cos Deviation Angle = 5406011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-7 : log10 Interaction Distance (cm) = 5406012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-7 : cos Deviation Angle = 5506011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-7 : log10 Interaction Distance (cm) = 5506012
+ %%% EVENT 3700000 NTRACKS 1 TOTAL NTRACKS 3.7e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-7 : cos Deviation Angle = 5207011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-7 : log10 Interaction Distance (cm) = 5207012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-7 : cos Deviation Angle = 5307011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-7 : log10 Interaction Distance (cm) = 5307012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-7 : cos Deviation Angle = 5407011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-7 : log10 Interaction Distance (cm) = 5407012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-7 : cos Deviation Angle = 5507011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-7 : log10 Interaction Distance (cm) = 5507012
+ %%% EVENT 3800000 NTRACKS 1 TOTAL NTRACKS 3.8e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-7 : cos Deviation Angle = 5208011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-7 : log10 Interaction Distance (cm) = 5208012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-7 : cos Deviation Angle = 5308011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-7 : log10 Interaction Distance (cm) = 5308012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-7 : cos Deviation Angle = 5408011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-7 : log10 Interaction Distance (cm) = 5408012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-7 : cos Deviation Angle = 5508011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-7 : log10 Interaction Distance (cm) = 5508012
+ %%% EVENT 3900000 NTRACKS 1 TOTAL NTRACKS 3.9e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-6 : cos Deviation Angle = 5209011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-6 : log10 Interaction Distance (cm) = 5209012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-6 : cos Deviation Angle = 5309011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-6 : log10 Interaction Distance (cm) = 5309012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-6 : cos Deviation Angle = 5409011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-6 : log10 Interaction Distance (cm) = 5409012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-6 : cos Deviation Angle = 5509011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-6 : log10 Interaction Distance (cm) = 5509012
+ %%% EVENT 4000000 NTRACKS 1 TOTAL NTRACKS 4e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-6 : cos Deviation Angle = 5210011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-6 : log10 Interaction Distance (cm) = 5210012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-6 : cos Deviation Angle = 5310011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-6 : log10 Interaction Distance (cm) = 5310012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-6 : cos Deviation Angle = 5410011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-6 : log10 Interaction Distance (cm) = 5410012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-6 : cos Deviation Angle = 5510011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-6 : log10 Interaction Distance (cm) = 5510012
+ %%% EVENT 4100000 NTRACKS 1 TOTAL NTRACKS 4.1e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-6 : cos Deviation Angle = 5211011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-6 : log10 Interaction Distance (cm) = 5211012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-6 : cos Deviation Angle = 5311011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-6 : log10 Interaction Distance (cm) = 5311012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-6 : cos Deviation Angle = 5411011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-6 : log10 Interaction Distance (cm) = 5411012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-6 : cos Deviation Angle = 5511011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-6 : log10 Interaction Distance (cm) = 5511012
+ %%% EVENT 4200000 NTRACKS 1 TOTAL NTRACKS 4.2e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-5 : cos Deviation Angle = 5212011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-5 : log10 Interaction Distance (cm) = 5212012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-5 : cos Deviation Angle = 5312011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-5 : log10 Interaction Distance (cm) = 5312012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-5 : cos Deviation Angle = 5412011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-5 : log10 Interaction Distance (cm) = 5412012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-5 : cos Deviation Angle = 5512011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-5 : log10 Interaction Distance (cm) = 5512012
+ %%% EVENT 4300000 NTRACKS 1 TOTAL NTRACKS 4.3e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-5 : cos Deviation Angle = 5213011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-5 : log10 Interaction Distance (cm) = 5213012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-5 : cos Deviation Angle = 5313011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-5 : log10 Interaction Distance (cm) = 5313012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-5 : cos Deviation Angle = 5413011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-5 : log10 Interaction Distance (cm) = 5413012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-5 : cos Deviation Angle = 5513011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-5 : log10 Interaction Distance (cm) = 5513012
+ %%% EVENT 4400000 NTRACKS 1 TOTAL NTRACKS 4.4e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-5 : cos Deviation Angle = 5214011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-5 : log10 Interaction Distance (cm) = 5214012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-5 : cos Deviation Angle = 5314011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-5 : log10 Interaction Distance (cm) = 5314012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-5 : cos Deviation Angle = 5414011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-5 : log10 Interaction Distance (cm) = 5414012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-5 : cos Deviation Angle = 5514011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-5 : log10 Interaction Distance (cm) = 5514012
+ %%% EVENT 4500000 NTRACKS 1 TOTAL NTRACKS 4.5e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-4 : cos Deviation Angle = 5215011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-4 : log10 Interaction Distance (cm) = 5215012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-4 : cos Deviation Angle = 5315011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-4 : log10 Interaction Distance (cm) = 5315012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-4 : cos Deviation Angle = 5415011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-4 : log10 Interaction Distance (cm) = 5415012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-4 : cos Deviation Angle = 5515011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-4 : log10 Interaction Distance (cm) = 5515012
+ %%% EVENT 4600000 NTRACKS 1 TOTAL NTRACKS 4.6e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-4 : cos Deviation Angle = 5216011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-4 : log10 Interaction Distance (cm) = 5216012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-4 : cos Deviation Angle = 5316011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-4 : log10 Interaction Distance (cm) = 5316012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-4 : cos Deviation Angle = 5416011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-4 : log10 Interaction Distance (cm) = 5416012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-4 : cos Deviation Angle = 5516011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-4 : log10 Interaction Distance (cm) = 5516012
+ %%% EVENT 4700000 NTRACKS 1 TOTAL NTRACKS 4.7e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-4 : cos Deviation Angle = 5217011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-4 : log10 Interaction Distance (cm) = 5217012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-4 : cos Deviation Angle = 5317011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-4 : log10 Interaction Distance (cm) = 5317012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-4 : cos Deviation Angle = 5417011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-4 : log10 Interaction Distance (cm) = 5417012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-4 : cos Deviation Angle = 5517011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-4 : log10 Interaction Distance (cm) = 5517012
+ %%% EVENT 4800000 NTRACKS 1 TOTAL NTRACKS 4.8e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-3 : cos Deviation Angle = 5218011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-3 : log10 Interaction Distance (cm) = 5218012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-3 : cos Deviation Angle = 5318011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-3 : log10 Interaction Distance (cm) = 5318012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-3 : cos Deviation Angle = 5418011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-3 : log10 Interaction Distance (cm) = 5418012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-3 : cos Deviation Angle = 5518011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-3 : log10 Interaction Distance (cm) = 5518012
+ %%% EVENT 4900000 NTRACKS 1 TOTAL NTRACKS 4.9e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-3 : cos Deviation Angle = 5219011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-3 : log10 Interaction Distance (cm) = 5219012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-3 : cos Deviation Angle = 5319011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-3 : log10 Interaction Distance (cm) = 5319012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-3 : cos Deviation Angle = 5419011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-3 : log10 Interaction Distance (cm) = 5419012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-3 : cos Deviation Angle = 5519011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-3 : log10 Interaction Distance (cm) = 5519012
+ %%% EVENT 5000000 NTRACKS 1 TOTAL NTRACKS 5e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-3 : cos Deviation Angle = 5220011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-3 : log10 Interaction Distance (cm) = 5220012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-3 : cos Deviation Angle = 5320011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-3 : log10 Interaction Distance (cm) = 5320012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-3 : cos Deviation Angle = 5420011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-3 : log10 Interaction Distance (cm) = 5420012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-3 : cos Deviation Angle = 5520011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-3 : log10 Interaction Distance (cm) = 5520012
+ %%% EVENT 5100000 NTRACKS 1 TOTAL NTRACKS 5.1e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-2 : cos Deviation Angle = 5221011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E-2 : log10 Interaction Distance (cm) = 5221012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-2 : cos Deviation Angle = 5321011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E-2 : log10 Interaction Distance (cm) = 5321012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-2 : cos Deviation Angle = 5421011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E-2 : log10 Interaction Distance (cm) = 5421012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-2 : cos Deviation Angle = 5521011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E-2 : log10 Interaction Distance (cm) = 5521012
+ %%% EVENT 5200000 NTRACKS 1 TOTAL NTRACKS 5.2e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-2 : cos Deviation Angle = 5222011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E-2 : log10 Interaction Distance (cm) = 5222012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-2 : cos Deviation Angle = 5322011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E-2 : log10 Interaction Distance (cm) = 5322012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-2 : cos Deviation Angle = 5422011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E-2 : log10 Interaction Distance (cm) = 5422012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-2 : cos Deviation Angle = 5522011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E-2 : log10 Interaction Distance (cm) = 5522012
+ %%% EVENT 5300000 NTRACKS 1 TOTAL NTRACKS 5.3e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-2 : cos Deviation Angle = 5223011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E-2 : log10 Interaction Distance (cm) = 5223012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-2 : cos Deviation Angle = 5323011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E-2 : log10 Interaction Distance (cm) = 5323012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-2 : cos Deviation Angle = 5423011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E-2 : log10 Interaction Distance (cm) = 5423012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-2 : cos Deviation Angle = 5523011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E-2 : log10 Interaction Distance (cm) = 5523012
+ %%% EVENT 5400000 NTRACKS 1 TOTAL NTRACKS 5.4e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 0.1E0 : cos Deviation Angle = 5224011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 0.1E0 : log10 Interaction Distance (cm) = 5224012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 0.1E0 : cos Deviation Angle = 5324011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 0.1E0 : log10 Interaction Distance (cm) = 5324012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 0.1E0 : cos Deviation Angle = 5424011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 0.1E0 : log10 Interaction Distance (cm) = 5424012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 0.1E0 : cos Deviation Angle = 5524011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 0.1E0 : log10 Interaction Distance (cm) = 5524012
+ %%% EVENT 5500000 NTRACKS 1 TOTAL NTRACKS 5.5e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 0.2154E0 : cos Deviation Angle = 5225011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 0.2154E0 : log10 Interaction Distance (cm) = 5225012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 0.2154E0 : cos Deviation Angle = 5325011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 0.2154E0 : log10 Interaction Distance (cm) = 5325012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 0.2154E0 : cos Deviation Angle = 5425011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 0.2154E0 : log10 Interaction Distance (cm) = 5425012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 0.2154E0 : cos Deviation Angle = 5525011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 0.2154E0 : log10 Interaction Distance (cm) = 5525012
+ %%% EVENT 5600000 NTRACKS 1 TOTAL NTRACKS 5.6e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 0.4641E0 : cos Deviation Angle = 5226011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 0.4641E0 : log10 Interaction Distance (cm) = 5226012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 0.4641E0 : cos Deviation Angle = 5326011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 0.4641E0 : log10 Interaction Distance (cm) = 5326012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 0.4641E0 : cos Deviation Angle = 5426011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 0.4641E0 : log10 Interaction Distance (cm) = 5426012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 0.4641E0 : cos Deviation Angle = 5526011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 0.4641E0 : log10 Interaction Distance (cm) = 5526012
+ %%% EVENT 5700000 NTRACKS 1 TOTAL NTRACKS 5.7e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E0 : cos Deviation Angle = 5227011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E0 : log10 Interaction Distance (cm) = 5227012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E0 : cos Deviation Angle = 5327011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E0 : log10 Interaction Distance (cm) = 5327012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E0 : cos Deviation Angle = 5427011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E0 : log10 Interaction Distance (cm) = 5427012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E0 : cos Deviation Angle = 5527011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E0 : log10 Interaction Distance (cm) = 5527012
+ %%% EVENT 5800000 NTRACKS 1 TOTAL NTRACKS 5.8e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E0 : cos Deviation Angle = 5228011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 2.1544E0 : log10 Interaction Distance (cm) = 5228012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E0 : cos Deviation Angle = 5328011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 2.1544E0 : log10 Interaction Distance (cm) = 5328012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E0 : cos Deviation Angle = 5428011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 2.1544E0 : log10 Interaction Distance (cm) = 5428012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E0 : cos Deviation Angle = 5528011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 2.1544E0 : log10 Interaction Distance (cm) = 5528012
+ %%% EVENT 5900000 NTRACKS 1 TOTAL NTRACKS 5.9e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E0 : cos Deviation Angle = 5229011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 4.6415E0 : log10 Interaction Distance (cm) = 5229012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E0 : cos Deviation Angle = 5329011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 4.6415E0 : log10 Interaction Distance (cm) = 5329012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E0 : cos Deviation Angle = 5429011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 4.6415E0 : log10 Interaction Distance (cm) = 5429012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E0 : cos Deviation Angle = 5529011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 4.6415E0 : log10 Interaction Distance (cm) = 5529012
+ %%% EVENT 6000000 NTRACKS 1 TOTAL NTRACKS 6e+06
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E1 : cos Deviation Angle = 5230011
+ CreateHisto1D neutron - neutron : hadElastic : CONCRETE : 1E1 : log10 Interaction Distance (cm) = 5230012
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E1 : cos Deviation Angle = 5330011
+ CreateHisto1D neutron - neutron : neutronInelastic : CONCRETE : 1E1 : log10 Interaction Distance (cm) = 5330012
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E1 : cos Deviation Angle = 5430011
+ CreateHisto1D neutron - neutron : nCapture : CONCRETE : 1E1 : log10 Interaction Distance (cm) = 5430012
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E1 : cos Deviation Angle = 5530011
+ CreateHisto1D neutron - neutron : nFission : CONCRETE : 1E1 : log10 Interaction Distance (cm) = 5530012
+ %%% EVENT 6100000 NTRACKS 1 TOTAL NTRACKS 6.1e+06
+G4GeometryManager::ReportVoxelStats -- Voxel Statistics
+
+    Total memory consumed for geometry optimisation:   0 kByte
+    Total CPU time elapsed for geometry optimisation: 0 seconds
+
+    Voxelisation: top CPU users:
+    Percent   Total CPU    System CPU       Memory  Volume
+    -------   ----------   ----------     --------  ----------
+       0.00         0.00         0.00            0k world
+
+    Voxelisation: top memory users:
+    Percent     Memory      Heads    Nodes   Pointers    Total CPU    Volume
+    -------   --------     ------   ------   --------   ----------    ----------
+     100.00          0k         1        2          4         0.00    world
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 1
+### ===  Ignore cuts flag:   1
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 174 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 20 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 160 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LowEPComptonModel : Emin=    0 eV  Emax=   20 MeV Fluo
+        KleinNishina : Emin=   20 MeV Emax=  100 TeV Fluo
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+      BetheHeitler5D : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 20 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 180 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=  100 keV  deltaVI
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e-, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for e+  SubType= 10
+      RangeFactor= 0.08, stepLimType: 2, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  GoudsmitSaunderson : Emin=    0 eV  Emax=  100 MeV Nbins=120 100 eV  - 100 MeV
+        WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=120 100 MeV - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.2, 0.01 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             PenIoni : Emin=    0 eV  Emax=  100 keV
+        MollerBhabha : Emin=  100 keV Emax=  100 TeV  deltaVI
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  AngularGen2BS
+
+ePairProd:  for e+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 25x1001; from 0.1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           ePairProd : Emin=    0 eV  Emax=  100 TeV
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for e+, integral:1  SubType=1 BuildTable=1
+      Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
+
+msc:  for proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for GenericIon  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV
+
+ionIoni:  for GenericIon  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.001 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+         ParamICRU73 : Emin=    0 eV  Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for GenericIon SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for alpha  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+ionIoni:  for alpha  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            BraggIon : Emin=    0 eV  Emax=7.9452 MeV  deltaVI
+          BetheBloch : Emin=7.9452 MeV Emax=  100 TeV  deltaVI
+
+nuclearStopping:  for alpha SubType=8 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
+
+msc:  for anti_proton  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for anti_proton  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=    2 MeV  deltaVI
+          BetheBloch : Emin=    2 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for anti_proton  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for anti_proton  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for anti_proton, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for kaon-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for kaon-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV  deltaVI
+          BetheBloch : Emin=1.05231 MeV Emax=  100 TeV  deltaVI
+
+hBrems:  for kaon-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for kaon-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for kaon-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of kaon+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for mu-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1, polarAngLim(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+muIoni:  for mu-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=  200 keV  deltaVI
+          BetheBloch : Emin=  200 keV Emax=    1 GeV  deltaVI
+        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+
+muBrems:  for mu-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem : Emin=    0 eV  Emax=  100 TeV
+
+muPairProd:  for mu-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for mu-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of mu+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi+  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi+  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi+, integral:1  SubType=1 BuildTable=1
+      Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 1
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+msc:  for pi-  SubType= 10
+      RangeFactor= 0.2, stepLimType: 0, latDisp: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=240 100 eV  - 100 TeV
+
+hIoni:  for pi-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      StepFunction=(0.1, 0.02 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO : Emin=    0 eV  Emax=297.505 keV  deltaVI
+          BetheBloch : Emin=297.505 keV Emax=  100 TeV  deltaVI
+
+hBrems:  for pi-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               hBrem : Emin=    0 eV  Emax=  100 TeV
+
+hPairProd:  for pi-  SubType=4
+      dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
+      Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
+      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           hPairProd : Emin=    0 eV  Emax=  100 TeV
+
+CoulombScat:  for pi-, integral:1  SubType=1 BuildTable=1
+      Used Lambda table of pi+
+      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+  eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : No 
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+
+Index : 1     used in the geometry : No 
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+
+Index : 2     used in the geometry : Yes
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : No 
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+
+Index : 1     used in the geometry : No 
+ Material : CONCRETE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  5.13646 keV    e-  427.59 keV    e+  413.461 keV proton 0 eV 
+
+Index : 2     used in the geometry : Yes
+ Material : G4_POLYETHYLENE
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  1.97806 keV    e-  276.265 keV    e+  272.577 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 9.9999E-10 : cos Deviation Angle = 5200021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 9.9999E-10 : log10 Interaction Distance (cm) = 5200022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 9.9999E-10 : cos Deviation Angle = 5300021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 9.9999E-10 : log10 Interaction Distance (cm) = 5300022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 9.9999E-10 : cos Deviation Angle = 5400021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 9.9999E-10 : log10 Interaction Distance (cm) = 5400022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 9.9999E-10 : cos Deviation Angle = 5500021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 9.9999E-10 : log10 Interaction Distance (cm) = 5500022
+ %%% EVENT 6200000 NTRACKS 1 TOTAL NTRACKS 6.2e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-9 : cos Deviation Angle = 5201021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-9 : log10 Interaction Distance (cm) = 5201022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-9 : cos Deviation Angle = 5301021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-9 : log10 Interaction Distance (cm) = 5301022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-9 : cos Deviation Angle = 5401021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-9 : log10 Interaction Distance (cm) = 5401022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-9 : cos Deviation Angle = 5501021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-9 : log10 Interaction Distance (cm) = 5501022
+ %%% EVENT 6300000 NTRACKS 1 TOTAL NTRACKS 6.3e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6416E-9 : cos Deviation Angle = 5202021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6416E-9 : log10 Interaction Distance (cm) = 5202022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6416E-9 : cos Deviation Angle = 5302021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6416E-9 : log10 Interaction Distance (cm) = 5302022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6416E-9 : cos Deviation Angle = 5402021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6416E-9 : log10 Interaction Distance (cm) = 5402022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6416E-9 : cos Deviation Angle = 5502021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6416E-9 : log10 Interaction Distance (cm) = 5502022
+ %%% EVENT 6400000 NTRACKS 1 TOTAL NTRACKS 6.4e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-8 : cos Deviation Angle = 5203021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-8 : log10 Interaction Distance (cm) = 5203022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-8 : cos Deviation Angle = 5303021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-8 : log10 Interaction Distance (cm) = 5303022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-8 : cos Deviation Angle = 5403021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-8 : log10 Interaction Distance (cm) = 5403022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-8 : cos Deviation Angle = 5503021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-8 : log10 Interaction Distance (cm) = 5503022
+ %%% EVENT 6500000 NTRACKS 1 TOTAL NTRACKS 6.5e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-8 : cos Deviation Angle = 5204021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-8 : log10 Interaction Distance (cm) = 5204022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-8 : cos Deviation Angle = 5304021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-8 : log10 Interaction Distance (cm) = 5304022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-8 : cos Deviation Angle = 5404021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-8 : log10 Interaction Distance (cm) = 5404022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-8 : cos Deviation Angle = 5504021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-8 : log10 Interaction Distance (cm) = 5504022
+ %%% EVENT 6600000 NTRACKS 1 TOTAL NTRACKS 6.6e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-8 : cos Deviation Angle = 5205021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-8 : log10 Interaction Distance (cm) = 5205022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-8 : cos Deviation Angle = 5305021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-8 : log10 Interaction Distance (cm) = 5305022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-8 : cos Deviation Angle = 5405021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-8 : log10 Interaction Distance (cm) = 5405022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-8 : cos Deviation Angle = 5505021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-8 : log10 Interaction Distance (cm) = 5505022
+ %%% EVENT 6700000 NTRACKS 1 TOTAL NTRACKS 6.7e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-7 : cos Deviation Angle = 5206021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-7 : log10 Interaction Distance (cm) = 5206022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-7 : cos Deviation Angle = 5306021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-7 : log10 Interaction Distance (cm) = 5306022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-7 : cos Deviation Angle = 5406021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-7 : log10 Interaction Distance (cm) = 5406022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-7 : cos Deviation Angle = 5506021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-7 : log10 Interaction Distance (cm) = 5506022
+ %%% EVENT 6800000 NTRACKS 1 TOTAL NTRACKS 6.8e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-7 : cos Deviation Angle = 5207021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-7 : log10 Interaction Distance (cm) = 5207022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-7 : cos Deviation Angle = 5307021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-7 : log10 Interaction Distance (cm) = 5307022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-7 : cos Deviation Angle = 5407021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-7 : log10 Interaction Distance (cm) = 5407022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-7 : cos Deviation Angle = 5507021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-7 : log10 Interaction Distance (cm) = 5507022
+ %%% EVENT 6900000 NTRACKS 1 TOTAL NTRACKS 6.9e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-7 : cos Deviation Angle = 5208021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-7 : log10 Interaction Distance (cm) = 5208022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-7 : cos Deviation Angle = 5308021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-7 : log10 Interaction Distance (cm) = 5308022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-7 : cos Deviation Angle = 5408021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-7 : log10 Interaction Distance (cm) = 5408022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-7 : cos Deviation Angle = 5508021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-7 : log10 Interaction Distance (cm) = 5508022
+ %%% EVENT 7000000 NTRACKS 1 TOTAL NTRACKS 7e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-6 : cos Deviation Angle = 5209021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-6 : log10 Interaction Distance (cm) = 5209022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-6 : cos Deviation Angle = 5309021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-6 : log10 Interaction Distance (cm) = 5309022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-6 : cos Deviation Angle = 5409021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-6 : log10 Interaction Distance (cm) = 5409022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-6 : cos Deviation Angle = 5509021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-6 : log10 Interaction Distance (cm) = 5509022
+ %%% EVENT 7100000 NTRACKS 1 TOTAL NTRACKS 7.1e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-6 : cos Deviation Angle = 5210021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-6 : log10 Interaction Distance (cm) = 5210022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-6 : cos Deviation Angle = 5310021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-6 : log10 Interaction Distance (cm) = 5310022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-6 : cos Deviation Angle = 5410021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-6 : log10 Interaction Distance (cm) = 5410022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-6 : cos Deviation Angle = 5510021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-6 : log10 Interaction Distance (cm) = 5510022
+ %%% EVENT 7200000 NTRACKS 1 TOTAL NTRACKS 7.2e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-6 : cos Deviation Angle = 5211021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-6 : log10 Interaction Distance (cm) = 5211022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-6 : cos Deviation Angle = 5311021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-6 : log10 Interaction Distance (cm) = 5311022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-6 : cos Deviation Angle = 5411021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-6 : log10 Interaction Distance (cm) = 5411022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-6 : cos Deviation Angle = 5511021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-6 : log10 Interaction Distance (cm) = 5511022
+ %%% EVENT 7300000 NTRACKS 1 TOTAL NTRACKS 7.3e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-5 : cos Deviation Angle = 5212021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-5 : log10 Interaction Distance (cm) = 5212022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-5 : cos Deviation Angle = 5312021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-5 : log10 Interaction Distance (cm) = 5312022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-5 : cos Deviation Angle = 5412021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-5 : log10 Interaction Distance (cm) = 5412022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-5 : cos Deviation Angle = 5512021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-5 : log10 Interaction Distance (cm) = 5512022
+ %%% EVENT 7400000 NTRACKS 1 TOTAL NTRACKS 7.4e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-5 : cos Deviation Angle = 5213021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-5 : log10 Interaction Distance (cm) = 5213022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-5 : cos Deviation Angle = 5313021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-5 : log10 Interaction Distance (cm) = 5313022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-5 : cos Deviation Angle = 5413021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-5 : log10 Interaction Distance (cm) = 5413022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-5 : cos Deviation Angle = 5513021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-5 : log10 Interaction Distance (cm) = 5513022
+ %%% EVENT 7500000 NTRACKS 1 TOTAL NTRACKS 7.5e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-5 : cos Deviation Angle = 5214021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-5 : log10 Interaction Distance (cm) = 5214022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-5 : cos Deviation Angle = 5314021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-5 : log10 Interaction Distance (cm) = 5314022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-5 : cos Deviation Angle = 5414021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-5 : log10 Interaction Distance (cm) = 5414022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-5 : cos Deviation Angle = 5514021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-5 : log10 Interaction Distance (cm) = 5514022
+ %%% EVENT 7600000 NTRACKS 1 TOTAL NTRACKS 7.6e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-4 : cos Deviation Angle = 5215021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-4 : log10 Interaction Distance (cm) = 5215022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-4 : cos Deviation Angle = 5315021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-4 : log10 Interaction Distance (cm) = 5315022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-4 : cos Deviation Angle = 5415021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-4 : log10 Interaction Distance (cm) = 5415022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-4 : cos Deviation Angle = 5515021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-4 : log10 Interaction Distance (cm) = 5515022
+ %%% EVENT 7700000 NTRACKS 1 TOTAL NTRACKS 7.7e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-4 : cos Deviation Angle = 5216021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-4 : log10 Interaction Distance (cm) = 5216022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-4 : cos Deviation Angle = 5316021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-4 : log10 Interaction Distance (cm) = 5316022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-4 : cos Deviation Angle = 5416021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-4 : log10 Interaction Distance (cm) = 5416022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-4 : cos Deviation Angle = 5516021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-4 : log10 Interaction Distance (cm) = 5516022
+ %%% EVENT 7800000 NTRACKS 1 TOTAL NTRACKS 7.8e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-4 : cos Deviation Angle = 5217021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-4 : log10 Interaction Distance (cm) = 5217022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-4 : cos Deviation Angle = 5317021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-4 : log10 Interaction Distance (cm) = 5317022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-4 : cos Deviation Angle = 5417021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-4 : log10 Interaction Distance (cm) = 5417022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-4 : cos Deviation Angle = 5517021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-4 : log10 Interaction Distance (cm) = 5517022
+ %%% EVENT 7900000 NTRACKS 1 TOTAL NTRACKS 7.9e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-3 : cos Deviation Angle = 5218021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-3 : log10 Interaction Distance (cm) = 5218022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-3 : cos Deviation Angle = 5318021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-3 : log10 Interaction Distance (cm) = 5318022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-3 : cos Deviation Angle = 5418021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-3 : log10 Interaction Distance (cm) = 5418022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-3 : cos Deviation Angle = 5518021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-3 : log10 Interaction Distance (cm) = 5518022
+ %%% EVENT 8000000 NTRACKS 1 TOTAL NTRACKS 8e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-3 : cos Deviation Angle = 5219021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-3 : log10 Interaction Distance (cm) = 5219022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-3 : cos Deviation Angle = 5319021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-3 : log10 Interaction Distance (cm) = 5319022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-3 : cos Deviation Angle = 5419021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-3 : log10 Interaction Distance (cm) = 5419022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-3 : cos Deviation Angle = 5519021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-3 : log10 Interaction Distance (cm) = 5519022
+ %%% EVENT 8100000 NTRACKS 1 TOTAL NTRACKS 8.1e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-3 : cos Deviation Angle = 5220021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-3 : log10 Interaction Distance (cm) = 5220022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-3 : cos Deviation Angle = 5320021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-3 : log10 Interaction Distance (cm) = 5320022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-3 : cos Deviation Angle = 5420021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-3 : log10 Interaction Distance (cm) = 5420022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-3 : cos Deviation Angle = 5520021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-3 : log10 Interaction Distance (cm) = 5520022
+ %%% EVENT 8200000 NTRACKS 1 TOTAL NTRACKS 8.2e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-2 : cos Deviation Angle = 5221021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E-2 : log10 Interaction Distance (cm) = 5221022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-2 : cos Deviation Angle = 5321021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E-2 : log10 Interaction Distance (cm) = 5321022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-2 : cos Deviation Angle = 5421021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E-2 : log10 Interaction Distance (cm) = 5421022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-2 : cos Deviation Angle = 5521021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E-2 : log10 Interaction Distance (cm) = 5521022
+ %%% EVENT 8300000 NTRACKS 1 TOTAL NTRACKS 8.3e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-2 : cos Deviation Angle = 5222021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E-2 : log10 Interaction Distance (cm) = 5222022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-2 : cos Deviation Angle = 5322021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E-2 : log10 Interaction Distance (cm) = 5322022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-2 : cos Deviation Angle = 5422021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E-2 : log10 Interaction Distance (cm) = 5422022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-2 : cos Deviation Angle = 5522021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E-2 : log10 Interaction Distance (cm) = 5522022
+ %%% EVENT 8400000 NTRACKS 1 TOTAL NTRACKS 8.4e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-2 : cos Deviation Angle = 5223021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E-2 : log10 Interaction Distance (cm) = 5223022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-2 : cos Deviation Angle = 5323021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E-2 : log10 Interaction Distance (cm) = 5323022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-2 : cos Deviation Angle = 5423021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E-2 : log10 Interaction Distance (cm) = 5423022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-2 : cos Deviation Angle = 5523021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E-2 : log10 Interaction Distance (cm) = 5523022
+ %%% EVENT 8500000 NTRACKS 1 TOTAL NTRACKS 8.5e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 0.1E0 : cos Deviation Angle = 5224021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 0.1E0 : log10 Interaction Distance (cm) = 5224022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 0.1E0 : cos Deviation Angle = 5324021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 0.1E0 : log10 Interaction Distance (cm) = 5324022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 0.1E0 : cos Deviation Angle = 5424021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 0.1E0 : log10 Interaction Distance (cm) = 5424022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 0.1E0 : cos Deviation Angle = 5524021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 0.1E0 : log10 Interaction Distance (cm) = 5524022
+ %%% EVENT 8600000 NTRACKS 1 TOTAL NTRACKS 8.6e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 0.2154E0 : cos Deviation Angle = 5225021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 0.2154E0 : log10 Interaction Distance (cm) = 5225022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 0.2154E0 : cos Deviation Angle = 5325021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 0.2154E0 : log10 Interaction Distance (cm) = 5325022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 0.2154E0 : cos Deviation Angle = 5425021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 0.2154E0 : log10 Interaction Distance (cm) = 5425022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 0.2154E0 : cos Deviation Angle = 5525021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 0.2154E0 : log10 Interaction Distance (cm) = 5525022
+ %%% EVENT 8700000 NTRACKS 1 TOTAL NTRACKS 8.7e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 0.4641E0 : cos Deviation Angle = 5226021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 0.4641E0 : log10 Interaction Distance (cm) = 5226022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 0.4641E0 : cos Deviation Angle = 5326021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 0.4641E0 : log10 Interaction Distance (cm) = 5326022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 0.4641E0 : cos Deviation Angle = 5426021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 0.4641E0 : log10 Interaction Distance (cm) = 5426022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 0.4641E0 : cos Deviation Angle = 5526021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 0.4641E0 : log10 Interaction Distance (cm) = 5526022
+ %%% EVENT 8800000 NTRACKS 1 TOTAL NTRACKS 8.8e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E0 : cos Deviation Angle = 5227021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E0 : log10 Interaction Distance (cm) = 5227022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E0 : cos Deviation Angle = 5327021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E0 : log10 Interaction Distance (cm) = 5327022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E0 : cos Deviation Angle = 5427021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E0 : log10 Interaction Distance (cm) = 5427022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E0 : cos Deviation Angle = 5527021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E0 : log10 Interaction Distance (cm) = 5527022
+ %%% EVENT 8900000 NTRACKS 1 TOTAL NTRACKS 8.9e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E0 : cos Deviation Angle = 5228021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 2.1544E0 : log10 Interaction Distance (cm) = 5228022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E0 : cos Deviation Angle = 5328021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 2.1544E0 : log10 Interaction Distance (cm) = 5328022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E0 : cos Deviation Angle = 5428021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 2.1544E0 : log10 Interaction Distance (cm) = 5428022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E0 : cos Deviation Angle = 5528021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 2.1544E0 : log10 Interaction Distance (cm) = 5528022
+ %%% EVENT 9000000 NTRACKS 1 TOTAL NTRACKS 9e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E0 : cos Deviation Angle = 5229021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 4.6415E0 : log10 Interaction Distance (cm) = 5229022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E0 : cos Deviation Angle = 5329021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 4.6415E0 : log10 Interaction Distance (cm) = 5329022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E0 : cos Deviation Angle = 5429021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 4.6415E0 : log10 Interaction Distance (cm) = 5429022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E0 : cos Deviation Angle = 5529021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 4.6415E0 : log10 Interaction Distance (cm) = 5529022
+ %%% EVENT 9100000 NTRACKS 1 TOTAL NTRACKS 9.1e+06
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E1 : cos Deviation Angle = 5230021
+ CreateHisto1D neutron - neutron : hadElastic : G4_POLYETHYLENE : 1E1 : log10 Interaction Distance (cm) = 5230022
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E1 : cos Deviation Angle = 5330021
+ CreateHisto1D neutron - neutron : neutronInelastic : G4_POLYETHYLENE : 1E1 : log10 Interaction Distance (cm) = 5330022
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E1 : cos Deviation Angle = 5430021
+ CreateHisto1D neutron - neutron : nCapture : G4_POLYETHYLENE : 1E1 : log10 Interaction Distance (cm) = 5430022
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E1 : cos Deviation Angle = 5530021
+ CreateHisto1D neutron - neutron : nFission : G4_POLYETHYLENE : 1E1 : log10 Interaction Distance (cm) = 5530022
+ %%% EVENT 9200000 NTRACKS 1 TOTAL NTRACKS 9.2e+06
+GmGeneratorChangeEnergyAndMaterial::ChangeMaterialOrSource()  maximum number of worlds reached and still some events not produced, please diminish the number of events to be at most 9300000
+ Run terminated.
+Run Summary
+  Run Aborted after 9300000 events processed.
+  User=584.170000s Real=584.219177s Sys=0.010000s
+Graphics systems deleted.
+Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 angleDeviation.neutron.neutron:NormalizeToNEvents
+=== saving histograms in file === angleDeviation.neutron.neutron.root

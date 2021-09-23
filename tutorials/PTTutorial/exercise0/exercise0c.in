@@ -1,0 +1,36 @@
+# VERBOSITY 
+/tracking/verbose 0
+
+# GEOMETRY
+/gamos/setParam GmGeometryFromText:FileName ./phantom.geom
+/gamos/geometry GmGeometryFromText
+
+# PHYSICS
+/gamos/physicsList G4QGSP_BIC_HP
+
+# PRIMARY GENERATOR
+/gamos/generator GmGenerator
+
+# GEANT4 INITIALISATION
+/run/initialize
+
+# ACTIVATE DECAYS
+/gamos/physics/addPhysics decay
+/gamos/physics/addPhysics radioactiveDecay
+
+# SOURCE
+/control/execute ./pbsSource.in
+
+# STATISTICS
+/gamos/userAction GmCountTracksUA
+
+#---------- exercise 0c ----------
+# FILTER "EXIT PHANTOM"
+/gamos/filter exitPhantomFilter GmExitLogicalVolumeFilter phantom
+
+# COUNT PARTICLES WHICH EXIT THE PHANTOM
+/gamos/userAction GmCountProcessesUA exitPhantomFilter
+#---------------------------------
+
+# RUN SIMULATION
+/run/beamOn 1000

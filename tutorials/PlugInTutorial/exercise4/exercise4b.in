@@ -1,0 +1,20 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName ../exercise3/exercise3.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList G4QGSP_BIC_HP
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source neutron 10.*MeV
+/gamos/generator/positionDist source Exer2GenerDistPosition  1.*cm
+/gamos/generator/directionDist source GmGenerDistDirectionConst 1. 0. 0.
+
+/gamos/userAction Exer4UserActionB
+
+/run/beamOn 10
+

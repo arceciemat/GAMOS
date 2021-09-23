@@ -1,0 +1,32 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise5a
+
+/gamos/setParam GmReadPhantomGeometry:FileName ../exercise3/world.geom
+/gamos/setParam GmSimplePhantomGeometry:MaterialNames G4_WATER
+/gamos/setParam GmSimplePhantomGeometry:MaterialZVoxels 100 
+/gamos/setParam GmSimplePhantomGeometry:MaterialDensities 1. 
+/gamos/setParam GmSimplePhantomGeometry:NVoxels 100 100 100
+/gamos/setParam GmSimplePhantomGeometry:PhantomDims -50 50 -50 50 -50 50
+
+/gamos/geometry GmSimplePhantomGeometry
+
+/gamos/physicsList GmEMExtendedPhysics
+#/gamos/physicsList HadrontherapyPhysicsList
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/physics/addPhysics radioactiveDecay
+
+/gamos/filter  nu_eF GmParticleFilter nu_e 
+/gamos/userAction GmKillAtStackingActionUA nu_eF
+
+/gamos/generator/addSingleParticleSource I125_source I125[0.0] 0.1*keV
+
+/gamos/scoring/createMFDetector PDDdet phantom
+/gamos/scoring/addScorer2MFD PDDscorer GmG4PSDoseDeposit PDDdet
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos PDDscorer
+
+/gamos/userAction GmCountProcessesUA
+/run/beamOn 10000
+

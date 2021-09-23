@@ -1,0 +1,53 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise1
+/gamos/setParam GmGeometryFromText:FileName exercise1.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/run/initialize
+
+### Generator distributions 
+/gamos/generator/addSingleParticleSource mySource e- 150.*keV
+/gamos/generator/positionDist mySource GmGenerDistPositionInG4Volumes Source
+/gamos/generator/directionDist mySource GmGenerDistDirectionConst 0. 1. 0.
+
+#/control/execute ../../../examples/visVRML2FILE.in
+ 
+### Faster multiple scattering
+/process/msc/StepLimit Minimal
+
+### Plot information
+## Gammas created
+/gamos/analysis/histo1Max *Energy* 0.15
+/gamos/setParam GmTrackDataHistosUA_GmGammaFilter:DataList InitialKineticEnergy InitialDirTheta
+/gamos/setParam GmTrackDataHistosUA_GmGammaFilter:FileName xray
+/gamos/userAction GmTrackDataHistosUA GmGammaFilter
+
+## Gammas reaching tube 
+/gamos/filter exitTubeF GmEnterLogicalVolumeFilter XRayTube_In WindowHole_Glass1
+/gamos/setParam GmStepDataHistosUA_GmGammaFilter_exitTubeF:FileName xray
+/gamos/setParam GmStepDataHistosUA_GmGammaFilter_exitTubeF:DataList FinalKineticEnergy FinalDirTheta
+/gamos/userAction GmStepDataHistosUA GmGammaFilter exitTubeF
+
+## Gammas exiting tube shield
+/gamos/filter exitShieldF GmEnterLogicalVolumeFilter world
+/gamos/setParam GmStepDataHistosUA_GmGammaFilter_exitShieldF:FileName xray
+/gamos/setParam GmStepDataHistosUA_GmGammaFilter_exitShieldF:DataList FinalKineticEnergy FinalDirTheta
+/gamos/userAction GmStepDataHistosUA GmGammaFilter exitShieldF
+
+## Primary electrons
+/gamos/analysis/histo1Max *AccumulatedLength 0.1 
+/gamos/filter inTargetF GmInLogicalVolumeFilter Anode
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter_inTargetF:DataList AccumulatedLength
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter_inTargetF:FileName xray
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter_inTargetF:ApplyFiltersToPreTracking 0
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter inTargetF
+
+### Print some info
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmCountTracksUA
+
+/gamos/random/setSeeds 1120 1120
+
+/run/beamOn 1000000
+

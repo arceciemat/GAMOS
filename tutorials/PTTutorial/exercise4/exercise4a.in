@@ -1,0 +1,41 @@
+# VERBOSITY 
+/tracking/verbose 0
+
+# GEOMETRY
+/gamos/setParam GmGeometryFromText:FileName ../exercise0/phantom.geom
+/gamos/geometry GmGeometryFromText
+
+# PHYSICS
+/gamos/physicsList G4QGSP_BIC_AllHP
+
+# PRIMARY GENERATOR
+/gamos/generator GmGenerator
+
+# GEANT4 INITIALISATION
+/run/initialize
+
+# ACTIVATE  DECAYS
+/gamos/physics/addPhysics radioactiveDecay
+
+# SOURCE
+/control/execute ../exercise0/pbsSource.in
+
+# STATISTICS
+/gamos/userAction GmCountTracksUA
+
+#---------- exercise 4a ----------
+# FILTERS
+/gamos/filter inPhantomFilter GmInLogicalVolumeFilter phantom
+/gamos/filter ProtonsInPhantomFilter GmANDFilter inPhantomFilter GmPrimaryFilter
+
+# HISTOGRAMMING
+/gamos/setParam GmTrackDataHistosUA_ProtonsInPhantomFilter:FileName ProtonsFinalPos
+/gamos/analysis/histo1Min GmTrackDataHistosUA_ProtonsInPhantomFilter:FinalPosZ -200
+/gamos/analysis/histo1Max GmTrackDataHistosUA_ProtonsInPhantomFilter:FinalPosZ 200
+/gamos/analysis/histo1NBins GmTrackDataHistosUA_ProtonsInPhantomFilter:FinalPosZ 1200
+/gamos/setParam GmTrackDataHistosUA_ProtonsInPhantomFilter:DataList FinalPosZ
+/gamos/userAction GmTrackDataHistosUA ProtonsInPhantomFilter
+#---------------------------------
+
+# RUN  SIMULATION
+/run/beamOn 10000

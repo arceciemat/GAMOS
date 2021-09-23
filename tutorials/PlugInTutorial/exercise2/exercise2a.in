@@ -1,0 +1,22 @@
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName exercise2.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+
+#/geometry/textInput/verbose 3
+
+/gamos/generator GmGenerator
+
+/gamos/userAction GmCountProcessesUA
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 10.*MeV
+
+#/control/execute ../../../examples/visOGLIX.in
+/control/execute ../../../examples/visVRML2FILE.in
+#/control/execute ../../../examples/visDAWNFILE.in
+
+/run/beamOn 10
+

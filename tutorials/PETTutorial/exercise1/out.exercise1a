@@ -1,0 +1,1077 @@
+@@@@@ Running GAMOS with script: exercise1a.in
+
+**************************************************************
+ Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+ Using Random Engine: MixMaxRng
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+ASCIITree (ATree)
+DAWNFILE (DAWNFILE)
+G4HepRep (HepRepXML)
+G4HepRepFile (HepRepFile)
+RayTracer (RayTracer)
+VRML1FILE (VRML1FILE)
+VRML2FILE (VRML2FILE)
+gMocrenFile (gMocrenFile)
+FukuiRenderer (DAWN)
+VRML1 (VRML1)
+VRML2 (VRML2)
+OpenGLImmediateX (OGLIX, OGLI)
+OpenGLStoredX (OGLSX, OGL, OGLS)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByAttribute
+  drawByCharge
+  drawByOriginVolume
+  drawByParticleID
+  drawByEncounteredVolume
+
+Registered filter factories:
+  attributeFilter
+  chargeFilter
+  originVolumeFilter
+  particleFilter
+  encounteredVolumeFilter
+
+You have successfully registered the following user vis actions.
+Run Duration User Vis Actions: none
+End of Event User Vis Actions: none
+End of Run User Vis Actions: none
+
+Some /vis commands (optionally) take a string to specify colour.
+"/vis/list" to see available colours.
+/control/execute exercise1a.in
+/tracking/verbose 1
+/gamos/setParam GmGeometryFromText:FileName pet.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/generator GmGenerator
+/run/initialize
+GmPhysicsGammaLowEner::ConstructProcess 
+/gamos/generator/addSingleParticleSource source gamma 511*keV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 1. 0. 0.
+/control/execute ../../../examples/visVRML2FILE.in
+/vis/scene/create
+/vis/open VRML2FILE
+Issue /vis/viewer/refresh or flush to see effect.
+/vis/viewer/flush
+G4Scene::AddWorldIfEmpty: The scene was empty of run-duration models.
+  "world" has been added.
+/vis/viewer/set/viewpointThetaPhi 10 120 deg
+Issue /vis/viewer/refresh or flush to see effect.
+/vis/viewer/zoom 1
+Issue /vis/viewer/refresh or flush to see effect.
+/vis/scene/add/trajectories
+/tracking/storeTrajectory 1
+Attributes available for modeling and filtering with
+  "/vis/modeling/trajectories/create/drawByAttribute" and
+  "/vis/filtering/trajectories/create/attributeFilter" commands:
+G4TrajectoriesModel:
+  Event ID (EventID): G4int
+  Run ID (RunID): G4int
+G4Trajectory:
+  Charge (Ch): unit: e+ (G4double)
+  Track ID (ID): G4int
+  Initial kinetic energy (IKE): G4BestUnit (G4double)
+  Initial momentum magnitude (IMag): G4BestUnit (G4double)
+  Initial momentum (IMom): G4BestUnit (G4ThreeVector)
+  No. of points (NTP): G4int
+  PDG Encoding (PDG): G4int
+  Parent ID (PID): G4int
+  Particle Name (PN): G4String
+G4TrajectoryPoint:
+  Position (Pos): G4BestUnit (G4ThreeVector)
+WARNING: Trajectory storing has been requested.  This action may be
+  reversed with "/tracking/storeTrajectory 0".
+/vis/scene/notifyHandlers
+/vis/scene/endOfEventAction accumulate
+WARNING: The vis manager will keep up to 100 events.
+  This may use a lot of memory.
+  It may be changed with, e.g., "/vis/scene/endOfEventAction accumulate 10".
+/vis/viewer/update
+/vis/viewer/flush
+===========================================
+Output VRML 2.0 file: g4_14.wrl
+Maximum number of files in the destination directory: 100
+  (Customizable with the environment variable: G4VRMLFILE_MAX_FILE_NUM) 
+===========================================
+*** VRML 2.0 File  g4_14.wrl  is generated.
+MESSAGE from VRML2FILE driver:
+    Set an environmental variable  G4VRMLFILE_VIEWER
+    if you want to visualize the generated VRML file
+    automatically.  For example, 
+    setenv  G4VRMLFILE_VIEWER  vrwave 
+/run/beamOn 10
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger cascade flag: 0
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
+       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e-  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
+        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
+
+eBrem:  for e-  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+
+eIoni:  for e+  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e+  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+annihil:  for e+, integral:1  SubType=5 BuildTable=0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ==============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : G4_Al
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  2.3478 keV    e-  131.031 keV    e+  128.416 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : LSO
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  15.1545 keV    e-  205.548 keV    e+  200.096 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 3     used in the geometry : Yes
+ Material : G4_WATER
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.10981 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+====================================================================
+
+/vis/scene/notifyHandlers scene-0
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.511        0        0         0 water sphere initStep
+    1     50.4        0        0     0.375 2.92e-05     50.4      50.4 water sphere compt
+    2      153     -110    -67.2     0.375        0      165       215       world Transportation
+    3      368     -338     -208     0.375        0      344       559 CrystalRing Transportation
+    4      405     -378     -232     0.375        0     59.2       618 CrystalBlock Transportation
+    5      405     -378     -232     0.375        0    0.279       618     Crystal Transportation
+    6      405     -378     -232         0  0.00924   0.0532       618     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      405     -378     -232    0.0542        0        0         0     Crystal initStep
+    1      405     -378     -232         0  0.00924   0.0776    0.0776     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      405     -378     -232     0.045        0        0         0     Crystal initStep
+    1      405     -378     -232         0    0.045  0.00884   0.00884     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      405     -378     -232     0.312        0        0         0     Crystal initStep
+    1      405     -378     -232     0.305  0.00645  0.00765   0.00765     Crystal msc
+    2      405     -378     -232       0.3  0.00488  0.00723    0.0149     Crystal msc
+    3      405     -378     -232     0.291  0.00948  0.00807     0.023     Crystal msc
+    4      405     -378     -232     0.287  0.00355  0.00716    0.0301     Crystal msc
+    5      405     -378     -232     0.284  0.00336  0.00811    0.0382     Crystal msc
+    6      405     -378     -232     0.278  0.00633  0.00785    0.0461     Crystal msc
+    7      405     -378     -232     0.265   0.0125  0.00737    0.0534     Crystal msc
+    8      405     -378     -232     0.247   0.0183  0.00719    0.0606     Crystal msc
+    9      405     -378     -232     0.242  0.00477  0.00723    0.0679     Crystal msc
+   10      405     -378     -232     0.233  0.00925  0.00794    0.0758     Crystal msc
+   11      405     -378     -232     0.225  0.00773  0.00931    0.0851     Crystal msc
+   12      405     -378     -232     0.204   0.0214  0.00702    0.0921     Crystal msc
+   13      405     -378     -232     0.196  0.00797  0.00913     0.101     Crystal msc
+   14      405     -378     -232     0.191  0.00475   0.0087      0.11     Crystal msc
+   15      405     -378     -232     0.181  0.00997  0.00816     0.118     Crystal msc
+   16      405     -378     -232     0.172  0.00903  0.00877     0.127     Crystal msc
+   17      405     -378     -232     0.168  0.00393  0.00712     0.134     Crystal msc
+   18      405     -378     -232     0.153   0.0147  0.00938     0.143     Crystal msc
+   19      405     -378     -232     0.145  0.00829  0.00813     0.152     Crystal msc
+   20      405     -378     -232      0.13   0.0148  0.00859      0.16     Crystal msc
+   21      405     -378     -232         0     0.13   0.0523     0.212     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     50.4        0        0     0.136        0        0         0 water sphere initStep
+    1     50.5   0.0701    0.043    0.0686   0.0672    0.174     0.174 water sphere eIoni
+    2     50.5    0.106   0.0484         0   0.0686   0.0738     0.247 water sphere eIoni
+===========================================
+Output VRML 2.0 file: g4_15.wrl
+Maximum number of files in the destination directory: 100
+  (Customizable with the environment variable: G4VRMLFILE_MAX_FILE_NUM) 
+===========================================
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.511        0        0         0 water sphere initStep
+    1     8.54        0        0      0.23 1.36e-05     8.54      8.54 water sphere compt
+    2     1.16     21.4    -22.1     0.192 2.92e-05     31.6      40.2 water sphere compt
+    3     22.2     43.7    -34.5     0.136 2.92e-05     33.1      73.3 water sphere compt
+    4     21.4     47.9    -26.8     0.124 1.42e-05     8.79        82 water sphere compt
+    5     15.5       80    -22.6     0.119 1.42e-05     32.9       115 water sphere compt
+    6    -26.2      140       20    0.0878 1.42e-05     84.6       199 water sphere compt
+    7     16.9      133     24.5    0.0673 0.000537     43.9       243 water sphere compt
+    8    -2.16      124     17.8         0 0.000537     22.3       266 water sphere phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -2.16      124     17.8    0.0668        0        0         0 water sphere initStep
+    1    -2.18      124     17.8         0   0.0668   0.0704    0.0704 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     16.9      133     24.5      0.02        0        0         0 water sphere initStep
+    1     16.9      133     24.5         0     0.02  0.00838   0.00838 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -26.2      140       20    0.0314        0        0         0 water sphere initStep
+    1    -26.2      140       20         0   0.0314   0.0187    0.0187 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     15.5       80    -22.6   0.00441        0        0         0 water sphere initStep
+    1     15.5       80    -22.6         0  0.00441 0.000594  0.000594 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     21.4     47.9    -26.8    0.0123        0        0         0 water sphere initStep
+    1     21.4     47.9    -26.8         0   0.0123  0.00358   0.00358 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     22.2     43.7    -34.5    0.0565        0        0         0 water sphere initStep
+    1     22.2     43.7    -34.5         0   0.0565   0.0525    0.0525 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.16     21.4    -22.1    0.0371        0        0         0 water sphere initStep
+    1     1.15     21.4    -22.1         0   0.0371   0.0251    0.0251 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     8.54        0        0     0.281        0        0         0 water sphere initStep
+    1     8.78  -0.0638    0.066     0.141    0.141    0.304     0.304 water sphere eIoni
+    2     8.87   -0.135   0.0526    0.0579   0.0828    0.179     0.483 water sphere eIoni
+    3     8.86    -0.16   0.0523         0   0.0579   0.0549     0.538 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.511        0        0         0 water sphere initStep
+    1     32.1        0        0     0.488 1.42e-05     32.1      32.1 water sphere compt
+    2      193     45.7     28.3     0.488        0      169       201       world Transportation
+    3      483      128     79.5     0.488        0      306       508 CrystalRing Transportation
+    4      486      129       80     0.488        0     2.69       511       world Transportation
+    5      514      137       85     0.488        0     29.9       540 CrystalRing Transportation
+    6      532      142     88.1     0.488        0     18.7       559 CrystalBlock Transportation
+    7      532      142     88.2     0.488        0    0.254       559     Crystal Transportation
+    8      552      148     91.7     0.471 2.92e-05     21.3       581     Crystal compt
+    9      562      150       91         0  0.00924     10.3       591     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 5,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      562      150       91    0.0542        0        0         0     Crystal initStep
+    1      562      150     91.2         0   0.0104    0.985     0.985     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      562      150     91.2    0.0438        0        0         0     Crystal initStep
+    1      562      150     91.2         0   0.0438  0.00847   0.00847     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      562      150       91     0.407        0        0         0     Crystal initStep
+    1      563      150       91     0.107   0.0269   0.0348    0.0348     Crystal eBrem
+    2      563      150       91         0    0.107   0.0382     0.073     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 7,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      563      150       91     0.273        0        0         0     Crystal initStep
+    1      565      147       93         0   0.0104     4.49      4.49     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 9,   Parent ID = 7
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      565      147       93    0.0531        0        0         0     Crystal initStep
+    1      565      147     92.9         0   0.0104    0.252     0.252     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 9
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      565      147     92.9    0.0427        0        0         0     Crystal initStep
+    1      565      147     92.9         0   0.0427   0.0081    0.0081     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 7
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      565      147       93     0.209        0        0         0     Crystal initStep
+    1      565      147       93    0.0584    0.151     0.11      0.11     Crystal eIoni
+    2      565      147       93         0   0.0584   0.0138     0.124     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      552      148     91.7    0.0174        0        0         0     Crystal initStep
+    1      552      148     91.7         0   0.0174  0.00178   0.00178     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     32.1        0        0     0.023        0        0         0 water sphere initStep
+    1     32.1 -0.00438 -0.00271         0    0.023   0.0107    0.0107 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.511        0        0         0 water sphere initStep
+    1      104        0        0     0.181 1.42e-05      104       104 water sphere compt
+    2     56.5     33.2    -8.33     0.112 1.36e-05     58.9       163 water sphere compt
+    3      160       52    -7.66     0.111 1.36e-05      105       269 water sphere compt
+    4      180     55.6    -14.1     0.111 1.36e-05     21.5       290 water sphere compt
+    5      191     55.6    -18.9     0.111        0     11.9       302       world Transportation
+    6      497     55.3     -154     0.111        0      334       636 CrystalRing Transportation
+    7      550     55.3     -177     0.111        0     57.7       694 CrystalBlock Transportation
+    8      550     55.3     -177     0.111        0    0.273       694     Crystal Transportation
+    9      550     55.3     -177         0  0.00924   0.0513       694     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 7,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      550     55.3     -177    0.0542        0        0         0     Crystal initStep
+    1      550     55.3     -177    0.0542        0   0.0647    0.0647 CrystalBlock Transportation
+    2      550     55.2     -177    0.0542        0    0.344     0.409 CrystalRing Transportation
+    3      498     43.4     -225    0.0542        0     71.1      71.5       world Transportation
+    4     -345     -150   -1e+03    0.0542        0 1.16e+03  1.23e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      550     55.3     -177    0.0471        0        0         0     Crystal initStep
+    1      550     55.3     -177         0   0.0471  0.00957   0.00957     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      180     55.6    -14.1  0.000497        0        0         0 water sphere initStep
+    1      180     55.6    -14.1         0 0.000497 2.03e-05  2.03e-05 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      160       52    -7.66   0.00127        0        0         0 water sphere initStep
+    1      160       52    -7.66         0  0.00127 7.57e-05  7.57e-05 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     56.5     33.2    -8.33    0.0682        0        0         0 water sphere initStep
+    1     56.4     33.2    -8.34         0   0.0682   0.0731    0.0731 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      104        0        0      0.33        0        0         0 water sphere initStep
+    1      105  -0.0453   0.0114     0.211     0.12     0.35      0.35 water sphere eIoni
+    2      105   -0.113  -0.0357     0.148   0.0631    0.241     0.591 water sphere eIoni
+    3      105  -0.0847   0.0551    0.0972   0.0504    0.185     0.776 water sphere eIoni
+    4      105   -0.122  0.00415    0.0346   0.0626    0.128     0.904 water sphere eIoni
+    5      105   -0.117   0.0135         0   0.0346   0.0222     0.926 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.511        0        0         0 water sphere initStep
+    1      200        0        0     0.511        0      200       200       world Transportation
+    2      500        0        0     0.511        0      300       500 CrystalRing Transportation
+    3      550        0        0     0.511        0     49.8       550 CrystalBlock Transportation
+    4      569        0        0      0.28 8.12e-05     19.1       569 CrystalBlock compt
+    5      569        0        0      0.28        0        0       569     Crystal Transportation
+    6      569  -0.0405  -0.0591         0   0.0634   0.0723       569     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      569  -0.0405  -0.0591     0.216        0        0         0     Crystal initStep
+    1      569  -0.0389  -0.0615     0.213  0.00371  0.00417   0.00417     Crystal msc
+    2      569  -0.0346  -0.0637     0.208   0.0043  0.00529   0.00946     Crystal msc
+    3      569  -0.0313  -0.0615     0.203  0.00523  0.00495    0.0144     Crystal msc
+    4      569  -0.0278  -0.0622     0.199  0.00439  0.00465    0.0191     Crystal msc
+    5      569  -0.0245  -0.0612     0.197  0.00123  0.00456    0.0236     Crystal msc
+    6      569  -0.0203    -0.06     0.192  0.00503  0.00477    0.0284     Crystal msc
+    7      569  -0.0182  -0.0577     0.184  0.00824  0.00443    0.0328     Crystal msc
+    8      569  -0.0195  -0.0593     0.182  0.00218   0.0043    0.0371     Crystal msc
+    9      569  -0.0216   -0.059     0.181  0.00088  0.00431    0.0414     Crystal msc
+   10      569  -0.0224  -0.0566     0.177  0.00451   0.0045    0.0459     Crystal msc
+   11      569  -0.0179  -0.0543     0.169   0.0072  0.00567    0.0516     Crystal msc
+   12      569  -0.0138  -0.0535     0.164  0.00503  0.00501    0.0566     Crystal msc
+   13      569  -0.0106  -0.0504      0.16  0.00409  0.00499    0.0616     Crystal msc
+   14      569 -0.00624  -0.0493     0.153  0.00736  0.00512    0.0667     Crystal msc
+   15      569 -0.00431  -0.0503     0.149  0.00367  0.00501    0.0717     Crystal msc
+   16      569 -0.00176  -0.0529     0.146  0.00326  0.00447    0.0762     Crystal msc
+   17      569 -0.000127  -0.0536     0.143  0.00262  0.00204    0.0782     Crystal msc
+   18      569 -2.73e-05  -0.0537     0.143 1.14e-05  0.00016    0.0784     Crystal msc
+   19      569 1.77e-16  -0.0538     0.143        0 4.38e-05    0.0785     Crystal Transportation
+   20      569 6.95e-06  -0.0538     0.143        0 1.15e-05    0.0785     Crystal msc
+   21      569  0.00127   -0.055     0.141  0.00212   0.0021    0.0806     Crystal msc
+   22      569  0.00266  -0.0567     0.139  0.00176  0.00273    0.0833     Crystal msc
+   23      569  0.00228  -0.0581     0.136  0.00317  0.00206    0.0853     Crystal msc
+   24      569  0.00243  -0.0594     0.119   0.0171  0.00194    0.0873     Crystal msc
+   25      569  0.00193  -0.0598     0.117  0.00218   0.0023    0.0896     Crystal msc
+   26      569 0.000725  -0.0605     0.114  0.00291  0.00293    0.0925     Crystal msc
+   27      569 3.18e-05   -0.061     0.112   0.0025  0.00284    0.0954     Crystal msc
+   28      569 3.79e-06   -0.061     0.111 0.000469 6.52e-05    0.0954     Crystal msc
+   29      569 4.99e-16   -0.061     0.111        0 9.22e-06    0.0954     Crystal Transportation
+   30      569 -3.97e-06   -0.061     0.111        0    1e-05    0.0955     Crystal msc
+   31      569 -0.000514   -0.062     0.108  0.00289  0.00174    0.0972     Crystal msc
+   32      569 -0.00104  -0.0636     0.108 0.000621  0.00195    0.0991     Crystal msc
+   33      569 -0.000939  -0.0638     0.107 0.000715  0.00148     0.101     Crystal msc
+   34      569 -0.000287  -0.0642     0.104  0.00261  0.00146     0.102     Crystal msc
+   35      569 -1.63e-05  -0.0643     0.104  0.00016 0.000413     0.102     Crystal msc
+   36      569 1.06e-16  -0.0643     0.104        0 2.23e-05     0.103     Crystal Transportation
+   37      569 7.18e-06  -0.0643     0.104        0 9.66e-06     0.103     Crystal msc
+   38      569 0.000655  -0.0646     0.103 0.000924  0.00134     0.104     Crystal msc
+   39      569  0.00126  -0.0644    0.0979  0.00539  0.00121     0.105     Crystal msc
+   40      569  0.00203  -0.0634    0.0961  0.00182  0.00153     0.107     Crystal msc
+   41      569  0.00233  -0.0622    0.0938  0.00228  0.00136     0.108     Crystal msc
+   42      569  0.00171   -0.061    0.0929 0.000834  0.00141     0.109     Crystal msc
+   43      569 0.000436  -0.0614    0.0889  0.00406  0.00144     0.111     Crystal msc
+   44      569 2.88e-05  -0.0617    0.0887 0.000168 0.000552     0.111     Crystal msc
+   45      569 0.000129  -0.0625    0.0874  0.00133  0.00144     0.113     Crystal msc
+   46      569 0.000393  -0.0625    0.0863  0.00111  0.00143     0.114     Crystal msc
+   47      569  0.00126  -0.0624    0.0808  0.00546  0.00151     0.116     Crystal msc
+   48      569   0.0018  -0.0618    0.0792  0.00167  0.00135     0.117     Crystal msc
+   49      569  0.00192  -0.0616     0.077   0.0022  0.00158     0.119     Crystal msc
+   50      569  0.00132  -0.0614    0.0752  0.00171  0.00125      0.12     Crystal msc
+   51      569 0.000656  -0.0616    0.0735   0.0017  0.00124     0.121     Crystal msc
+   52      569 3.14e-05  -0.0615    0.0702  0.00336  0.00107     0.122     Crystal msc
+   53      569 3.69e-06  -0.0615    0.0702 1.99e-05 3.35e-05     0.122     Crystal msc
+   54      569  8.1e-17  -0.0615    0.0702 9.62e-06 4.34e-06     0.122     Crystal Transportation
+   55      569 -6.52e-06  -0.0615    0.0702        0 7.77e-06     0.122     Crystal msc
+   56      569 -0.000386  -0.0615      0.07 0.000201 0.000707     0.123     Crystal msc
+   57      569 -0.000646  -0.0618    0.0698 0.000134 0.000721     0.124     Crystal msc
+   58      569 -0.00119  -0.0619    0.0678  0.00206 0.000792     0.125     Crystal msc
+   59      569 -0.00162  -0.0619    0.0657  0.00205 0.000798     0.125     Crystal msc
+   60      569 -0.00212  -0.0614    0.0643  0.00142 0.000793     0.126     Crystal msc
+   61      569 -0.00243   -0.061    0.0605  0.00381 0.000835     0.127     Crystal msc
+   62      569 -0.00192  -0.0605    0.0601 0.000339 0.000819     0.128     Crystal msc
+   63      569  -0.0017  -0.0598    0.0593 0.000848 0.000795     0.129     Crystal msc
+   64      569 -0.00127  -0.0592    0.0574  0.00188 0.000831     0.129     Crystal msc
+   65      569 -0.00059  -0.0592    0.0558  0.00158 0.000786      0.13     Crystal msc
+   66      569 -2.54e-05  -0.0593    0.0537  0.00209 0.000699     0.131     Crystal msc
+   67      569 -0.000365  -0.0595    0.0537  9.5e-05 0.000687     0.132     Crystal msc
+   68      569 -0.000673    -0.06    0.0517   0.0019 0.000656     0.132     Crystal msc
+   69      569 -0.000704  -0.0604     0.051 0.000718 0.000706     0.133     Crystal msc
+   70      569 -0.000989  -0.0605    0.0483  0.00271 0.000683     0.134     Crystal msc
+   71      569 -0.000768  -0.0605     0.047  0.00137 0.000803     0.134     Crystal msc
+   72      569 -0.00076  -0.0607    0.0449  0.00207 0.000688     0.135     Crystal msc
+   73      569 -0.00139  -0.0607     0.043   0.0019 0.000749     0.136     Crystal msc
+   74      569   -0.002  -0.0609    0.0408  0.00222 0.000719     0.137     Crystal msc
+   75      569 -0.00215  -0.0612    0.0391  0.00165 0.000744     0.137     Crystal msc
+   76      569 -0.00215   -0.061    0.0378  0.00131 0.000645     0.138     Crystal msc
+   77      569 -0.00152  -0.0611    0.0352  0.00263 0.000804     0.139     Crystal msc
+   78      569 -0.000821   -0.061    0.0317  0.00343 0.000848      0.14     Crystal msc
+   79      569 -0.00103  -0.0604    0.0294  0.00234 0.000781      0.14     Crystal msc
+   80      569 -0.00164  -0.0601     0.027  0.00238 0.000927     0.141     Crystal msc
+   81      569 -0.00178  -0.0606     0.023  0.00404 0.000708     0.142     Crystal msc
+   82      569  -0.0015  -0.0605    0.0185  0.00452 0.000688     0.143     Crystal msc
+   83      569 -0.00192  -0.0601    0.0168  0.00163 0.000757     0.143     Crystal msc
+   84      569 -0.00205  -0.0601         0   0.0168  0.00168     0.145     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      569        0        0     0.231        0        0         0     Crystal initStep
+    1      569  0.00227  0.00221     0.224  0.00698  0.00523   0.00523     Crystal msc
+    2      569  0.00628  0.00164     0.222  0.00175  0.00567    0.0109     Crystal msc
+    3      569   0.0107  0.00297     0.214  0.00866  0.00515    0.0161     Crystal msc
+    4      569   0.0154  0.00267      0.21   0.0037  0.00515    0.0212     Crystal msc
+    5      569   0.0191 0.000318     0.208  0.00217  0.00532    0.0265     Crystal msc
+    6      569   0.0195 -4.44e-16     0.208 2.91e-05 0.000635    0.0272     Crystal Transportation
+    7      569   0.0195 -6.95e-06     0.208        0 1.38e-05    0.0272     Crystal msc
+    8      569   0.0239 -0.000847     0.204  0.00415   0.0052    0.0324     Crystal msc
+    9      569    0.025 -0.00435     0.202  0.00197  0.00397    0.0363     Crystal msc
+   10      569   0.0274 -0.00318     0.197  0.00433  0.00432    0.0406     Crystal msc
+   11      569   0.0274 -0.000152     0.186   0.0112  0.00412    0.0448     Crystal msc
+   12      569   0.0274 -1.51e-05     0.186 4.03e-05 0.000146    0.0449     Crystal msc
+   13      569   0.0274 -5.46e-16     0.186        0 1.62e-05    0.0449     Crystal Transportation
+   14      569   0.0274 1.21e-05     0.186        0 1.31e-05    0.0449     Crystal msc
+   15      569   0.0292  0.00276     0.183  0.00341  0.00353    0.0485     Crystal msc
+   16      569   0.0317  0.00161      0.18  0.00282  0.00306    0.0515     Crystal msc
+   17      569   0.0345  4.3e-05     0.172  0.00824    0.004    0.0555     Crystal msc
+   18      569   0.0345 1.04e-06     0.171  0.00048 4.53e-05    0.0556     Crystal msc
+   19      569   0.0345 -7.48e-16     0.171 1.53e-06 1.15e-06    0.0556     Crystal Transportation
+   20      569   0.0345 -1.14e-05     0.171        0 1.26e-05    0.0556     Crystal msc
+   21      569   0.0359 -0.00309     0.167  0.00398  0.00371    0.0593     Crystal msc
+   22      569   0.0362 -0.00179     0.163  0.00461  0.00365     0.063     Crystal msc
+   23      569   0.0361 -0.000915      0.16  0.00299  0.00303     0.066     Crystal msc
+   24      569   0.0353 -0.00117     0.157  0.00268  0.00258    0.0686     Crystal msc
+   25      569   0.0349 -0.00241     0.155  0.00167  0.00301    0.0716     Crystal msc
+   26      569   0.0329  -0.0038     0.153  0.00237  0.00306    0.0746     Crystal msc
+   27      569   0.0332 -0.00597     0.148  0.00522  0.00339     0.078     Crystal msc
+   28      569   0.0331 -0.00808     0.145  0.00263  0.00365    0.0817     Crystal msc
+   29      569   0.0322  -0.0111     0.141  0.00363  0.00354    0.0852     Crystal msc
+   30      569   0.0305  -0.0137     0.137  0.00468  0.00341    0.0886     Crystal msc
+   31      569   0.0307  -0.0158     0.134  0.00314  0.00268    0.0913     Crystal msc
+   32      569   0.0309  -0.0173     0.128  0.00558  0.00324    0.0945     Crystal msc
+   33      569   0.0309  -0.0204     0.124  0.00431  0.00353    0.0981     Crystal msc
+   34      569   0.0296  -0.0228      0.12  0.00375   0.0032     0.101     Crystal msc
+   35      569   0.0274  -0.0248     0.116  0.00372  0.00347     0.105     Crystal msc
+   36      569   0.0255  -0.0239     0.115  0.00142  0.00273     0.107     Crystal msc
+   37      569   0.0234  -0.0223     0.112  0.00315  0.00317     0.111     Crystal msc
+   38      569   0.0214  -0.0238     0.105  0.00638  0.00379     0.114     Crystal msc
+   39      569   0.0206  -0.0244    0.0977  0.00766   0.0032     0.118     Crystal msc
+   40      569   0.0226  -0.0235    0.0931  0.00456  0.00292     0.121     Crystal msc
+   41      569   0.0239  -0.0238    0.0898  0.00328  0.00272     0.123     Crystal msc
+   42      569   0.0255  -0.0228    0.0842  0.00562   0.0032     0.126     Crystal msc
+   43      569   0.0276  -0.0222         0   0.0842   0.0255     0.152     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.511        0        0         0 water sphere initStep
+    1      166        0        0      0.26 0.000537      166       166 water sphere compt
+    2      166     12.3    -15.4     0.257 0.000537     19.7       186 water sphere compt
+    3      164     83.8    -78.9     0.257        0     95.6       281       world Transportation
+    4      131    1e+03     -893     0.257        0 1.23e+03  1.51e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      166     12.3    -15.4   0.00214        0        0         0 water sphere initStep
+    1      166     12.3    -15.4         0  0.00214 0.000175  0.000175 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      166        0        0     0.251        0        0         0 water sphere initStep
+    1      166  -0.0622   0.0782     0.164   0.0869    0.276     0.276 water sphere eIoni
+    2      166   -0.183    0.153    0.0637      0.1      0.2     0.476 water sphere eIoni
+    3      166   -0.182    0.182         0   0.0637   0.0649     0.541 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.511        0        0         0 water sphere initStep
+    1     90.3        0        0     0.183 1.36e-05     90.3      90.3 water sphere compt
+    2     85.6    -2.61     2.65     0.142 1.36e-05     5.93      96.2 water sphere compt
+    3     87.2    -14.7    -1.18     0.131 2.92e-05     12.8       109 water sphere compt
+    4     97.4    -71.9     27.2     0.128 1.42e-05     64.7       174 water sphere compt
+    5       85     -109     47.7     0.119 1.36e-05     44.3       218 water sphere compt
+    6     88.1     -114     55.9     0.117 2.92e-05     9.88       228 water sphere compt
+    7     89.5     -120     60.9     0.107 1.42e-05     7.97       236 water sphere compt
+    8     87.7     -121     64.9     0.103 1.42e-05     4.48       240 water sphere compt
+    9       85     -120     67.4     0.094 0.000537     3.62       244 water sphere compt
+   10     84.5     -118     70.6    0.0728 1.36e-05      4.2       248 water sphere compt
+   11     49.9    -97.9    -25.3    0.0622 1.36e-05      104       352 water sphere compt
+   12    -16.1    -82.6       20    0.0586 1.42e-05     81.5       433 water sphere compt
+   13    -63.6     6.46     0.16    0.0523 0.000537      103       536 water sphere compt
+   14    -44.4    -4.19    -8.69    0.0455 2.92e-05     23.7       560 water sphere compt
+   15    -2.97     76.6     18.2     0.041 1.36e-05     94.7       655 water sphere compt
+   16    -32.7     77.7     35.5    0.0392 2.92e-05     34.4       689 water sphere compt
+   17     26.8     55.9     38.6    0.0344 2.92e-05     63.5       753 water sphere compt
+   18     24.6     58.1       42    0.0344        0     4.64       757 water sphere Rayl
+   19     22.7     54.1     44.4    0.0344        0     5.07       762 water sphere Rayl
+   20     20.2     21.1     30.5    0.0329 2.92e-05     35.9       798 water sphere compt
+   21     19.8     7.33     2.04    0.0318 1.36e-05     31.7       830 water sphere compt
+   22     12.9    -6.73    0.564         0 0.000537     15.7       846 water sphere phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 21,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     12.9    -6.73    0.564    0.0313        0        0         0 water sphere initStep
+    1     12.9    -6.74    0.568         0   0.0313   0.0185    0.0185 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 20,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     19.8     7.33     2.04   0.00105        0        0         0 water sphere initStep
+    1     19.8     7.33     2.04         0  0.00105 5.72e-05  5.72e-05 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 19,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     20.2     21.1     30.5   0.00152        0        0         0 water sphere initStep
+    1     20.2     21.1     30.5         0  0.00152   0.0001    0.0001 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 18,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.8     55.9     38.6   0.00479        0        0         0 water sphere initStep
+    1     26.8     55.9     38.6         0  0.00479 0.000684  0.000684 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 17,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -32.7     77.7     35.5   0.00179        0        0         0 water sphere initStep
+    1    -32.7     77.7     35.5         0  0.00179  0.00013   0.00013 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 16,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -2.97     76.6     18.2   0.00446        0        0         0 water sphere initStep
+    1    -2.97     76.6     18.2         0  0.00446 0.000607  0.000607 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 15,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -44.4    -4.19    -8.69   0.00671        0        0         0 water sphere initStep
+    1    -44.4    -4.19    -8.69         0  0.00671  0.00123   0.00123 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 14,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -63.6     6.46     0.16   0.00577        0        0         0 water sphere initStep
+    1    -63.6     6.46     0.16         0  0.00577 0.000944  0.000944 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 13,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -16.1    -82.6       20   0.00359        0        0         0 water sphere initStep
+    1    -16.1    -82.6       20         0  0.00359 0.000418  0.000418 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 12,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     49.9    -97.9    -25.3    0.0106        0        0         0 water sphere initStep
+    1     49.9    -97.9    -25.3         0   0.0106  0.00275   0.00275 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     84.5     -118     70.6    0.0212        0        0         0 water sphere initStep
+    1     84.5     -118     70.6         0   0.0212  0.00925   0.00925 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       85     -120     67.4   0.00802        0        0         0 water sphere initStep
+    1       85     -120     67.4         0  0.00802  0.00168   0.00168 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     87.7     -121     64.9   0.00442        0        0         0 water sphere initStep
+    1     87.7     -121     64.9         0  0.00442 0.000595  0.000595 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     89.5     -120     60.9   0.00963        0        0         0 water sphere initStep
+    1     89.5     -120     60.9         0  0.00963  0.00232   0.00232 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     88.1     -114     55.9   0.00217        0        0         0 water sphere initStep
+    1     88.1     -114     55.9         0  0.00217 0.000179  0.000179 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       85     -109     47.7   0.00955        0        0         0 water sphere initStep
+    1       85     -109     47.7         0  0.00955  0.00229   0.00229 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     97.4    -71.9     27.2   0.00289        0        0         0 water sphere initStep
+    1     97.4    -71.9     27.2         0  0.00289 0.000288  0.000288 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     87.2    -14.7    -1.18    0.0102        0        0         0 water sphere initStep
+    1     87.2    -14.7    -1.18         0   0.0102  0.00259   0.00259 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     85.6    -2.61     2.65    0.0415        0        0         0 water sphere initStep
+    1     85.6     -2.6     2.66         0   0.0415   0.0306    0.0306 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     90.3        0        0     0.328        0        0         0 water sphere initStep
+    1     90.6   0.0356  -0.0362     0.265   0.0632    0.347     0.347 water sphere eIoni
+    2     90.7   -0.068   0.0649     0.208   0.0565    0.289     0.636 water sphere eIoni
+    3     90.8   -0.199    0.157     0.138   0.0703    0.239     0.875 water sphere eIoni
+    4     90.9   -0.279    0.172    0.0785   0.0594    0.176      1.05 water sphere eIoni
+    5       91   -0.297    0.197         0   0.0785   0.0934      1.14 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.511        0        0         0 water sphere initStep
+    1       15        0        0     0.413 1.42e-05       15        15 water sphere compt
+    2      158    -9.31      123     0.413        0      188       203       world Transportation
+    3    1e+03    -64.3      848     0.413        0 1.11e+03  1.32e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       15        0        0    0.0984        0        0         0 water sphere initStep
+    1     15.1  0.00433  -0.0571         0   0.0984     0.13      0.13 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.511        0        0         0 water sphere initStep
+    1      151        0        0     0.449 1.42e-05      151       151 water sphere compt
+    2      198     17.6    -21.2     0.449        0     54.2       206       world Transportation
+    3      484      126     -151     0.449        0      332       538 CrystalRing Transportation
+    4      531      144     -172     0.449        0     55.1       593 CrystalBlock Transportation
+    5      532      144     -172     0.449        0    0.272       593     Crystal Transportation
+    6      559      154     -185     0.449        0       32       625     Crystal Transportation
+    7      572      159     -191         0   0.0104     14.5       639     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      572      159     -191    0.0531        0        0         0     Crystal initStep
+    1      572      159     -191    0.0531        0     0.16      0.16     Crystal Rayl
+    2      572      159     -191         0  0.00247    0.142     0.301     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      572      159     -191    0.0506        0        0         0     Crystal initStep
+    1      572      159     -191         0   0.0506   0.0108    0.0108     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      572      159     -191     0.385        0        0         0     Crystal initStep
+    1      572      159     -191    0.0743    0.311    0.186     0.186     Crystal eIoni
+    2      572      159     -191         0   0.0743   0.0206     0.207     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      151        0        0    0.0622        0        0         0 water sphere initStep
+    1      151   -0.018   0.0217         0   0.0622   0.0622    0.0622 water sphere eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.511        0        0         0 water sphere initStep
+    1      109        0        0     0.455 1.36e-05      109       109 water sphere compt
+    2      195     27.3     36.5     0.455        0     96.7       206       world Transportation
+    3      485      120      161     0.455        0      329       536 CrystalRing Transportation
+    4      534      136      182     0.455        0     55.1       591 CrystalBlock Transportation
+    5      534      136      182     0.455        0     0.27       591     Crystal Transportation
+    6      538      137      183     0.455        0     4.06       595     Crystal Rayl
+    7      542      138      185     0.455        0     4.89       600     Crystal Transportation
+    8      544      139      186     0.324  0.00226     2.08       602     Crystal compt
+    9      544      141      185         0  0.00924     2.34       604     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 6,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      544      141      185    0.0542        0        0         0     Crystal initStep
+    1      544      141      186    0.0542        0    0.247     0.247     Crystal Rayl
+    2      545      141      186         0   0.0108    0.745     0.991     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 6
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      545      141      186    0.0434        0        0         0     Crystal initStep
+    1      545      141      186         0   0.0434  0.00831   0.00831     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      544      141      185     0.261        0        0         0     Crystal initStep
+    1      544      141      185    0.0593    0.202     0.14      0.14     Crystal eIoni
+    2      544      141      185         0   0.0593   0.0141     0.154     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      544      139      186    0.0612        0        0         0     Crystal initStep
+    1      544      139      186         0   0.0108    0.673     0.673     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      544      139      186    0.0503        0        0         0     Crystal initStep
+    1      544      139      186         0   0.0503   0.0107    0.0107     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      544      139      186    0.0676        0        0         0     Crystal initStep
+    1      544      139      186         0   0.0676   0.0176    0.0176     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      109        0        0    0.0556        0        0         0 water sphere initStep
+    1      109  -0.0141  -0.0188         0   0.0556   0.0511    0.0511 water sphere eIoni
+ Run terminated.
+Run Summary
+  Number of events processed : 10
+  User=0.160000s Real=0.177525s Sys=0.010000s
+10 events have been kept for refreshing and/or reviewing.
+
+  "/vis/reviewKeptEvents" to review them one by one.
+  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+*** VRML 2.0 File  g4_15.wrl  is generated.
+MESSAGE from VRML2FILE driver:
+    Set an environmental variable  G4VRMLFILE_VIEWER
+    if you want to visualize the generated VRML file
+    automatically.  For example, 
+    setenv  G4VRMLFILE_VIEWER  vrwave 
+Graphics systems deleted.
+Visualization Manager deleting...

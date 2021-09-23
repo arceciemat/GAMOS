@@ -1,0 +1,43 @@
+# VERBOSITY 
+/tracking/verbose 0
+
+# GEOMETRY
+/gamos/setParam GmGeometryFromText:FileName ../exercise0/phantom.geom
+/gamos/geometry GmGeometryFromText
+
+# PHYSICS
+/gamos/physicsList G4QGSP_BIC_AllHP
+
+# PRIMARY GENERATOR
+/gamos/generator GmGenerator
+
+# GEANT4 INITIALISATION
+/run/initialize
+
+# ACTIVATE  DECAYS
+/gamos/physics/addPhysics radioactiveDecay
+
+# SOURCE
+/control/execute ../exercise0/pbsSource.in
+
+# STATISTICS
+/gamos/userAction GmCountTracksUA
+
+#---------- exercise 2c ----------
+# FILTER
+/gamos/filter exitPhantomFilter GmExitLogicalVolumeFilter phantom
+
+# HISTOGRAMMING
+#/gamos/analysis/histo1Max * 20
+#/gamos/analysis/histo1NBins * 200
+#/gamos/analysis/histo2NBinsX * 120
+#/gamos/analysis/histo2MinX * -9
+#/gamos/analysis/histo2MaxX * 3
+#/gamos/analysis/histo2MaxY * 20
+/gamos/setParam GmStepDataHistosUA_exitPhantomFilter_GmClassifierByParticle:FileName Direction_exitPhantom
+/gamos/setParam GmStepDataHistosUA_exitPhantomFilter_GmClassifierByParticle:DataList FinalDirTheta log10(1e-12+FinalKineticEnergy).vs.FinalDirTheta
+/gamos/userAction GmStepDataHistosUA exitPhantomFilter GmClassifierByParticle
+#---------------------------------
+
+# RUN  SIMULATION
+/run/beamOn 100000
