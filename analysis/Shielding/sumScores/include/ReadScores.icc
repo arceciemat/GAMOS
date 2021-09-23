@@ -1,0 +1,50 @@
+#include "GAMOSFileData.hh"
+#include "MCNPFileData.hh"
+#include "TextFileData.hh"
+
+//-------------------------------------------------------------------
+void ReadScoresGAMOS( G4String fileName ) 
+{
+  GAMOSFileData* fileData = new GAMOSFileData(fileName);
+  theFileData.push_back( fileData ); 
+
+}
+
+//-------------------------------------------------------------------
+void ReadScoresMCNP( G4String fileName ) 
+{
+  MCNPFileData* fileData = new MCNPFileData(fileName);
+  theFileData.push_back( fileData ); 
+
+}
+
+//-------------------------------------------------------------------
+void ReadScoresText( G4String fileName ) 
+{
+G4cout << " ReadScoresText " << fileName << G4endl; //GDEB 
+  TextFileData* fileData = new TextFileData(fileName);
+  theFileData.push_back( fileData ); 
+
+}
+
+//-------------------------------------------------------------------
+void ReadScores( G4String fileName, G4String fileType ) 
+{
+
+  if( fileType == "GAMOS" ) {
+    ReadScoresGAMOS( fileName );
+  } else if( fileType == "MCNP" ) {
+    ReadScoresMCNP( fileName );
+  } else if( fileType == "text" ||
+ 	 fileType == "TEXT" ) {
+G4cout << " TFN " << fileName << G4endl; //GDEB
+    ReadScoresText( fileName );
+  } else {
+    G4Exception("ReadScores",
+		"",
+		FatalException,
+		(G4String("Wrong file type=" + fileType + " Options are: GAMOS / MCNP ")).c_str());
+  }
+
+}
+

@@ -1,0 +1,37 @@
+#include "ROOTFileData.hh"
+#include "TextFileData.hh"
+
+//-------------------------------------------------------------------
+void ReadDosesROOT( G4String fileName ) 
+{
+  ROOTFileData* fileData = new ROOTFileData(fileName, bInvertX);
+  theFileData.push_back( fileData ); 
+
+}
+
+//-------------------------------------------------------------------
+void ReadDosesText( G4String fileName ) 
+{
+  TextFileData* fileData = new TextFileData(fileName, bInvertX);
+  theFileData.push_back( fileData ); 
+
+}
+
+//-------------------------------------------------------------------
+void ReadDoses( G4String fileName, G4String fileType ) 
+{
+
+  if( fileType == "ROOT")  {
+    ReadDosesROOT( fileName );
+  } else if( fileType == "TEXT" ) {	
+//    G4cout << " TFN " << fileName << G4endl; //GDEB
+    ReadDosesText( fileName );
+  } else {
+    G4Exception("ReadDoses",
+		"",
+		FatalException,
+		(G4String("Wrong file type=" + fileType + " Options are: ROOT / TEXT ")).c_str());
+  }
+
+}
+

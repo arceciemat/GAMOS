@@ -1,0 +1,19 @@
+/run/verbose 1
+/tracking/verbose 0
+
+/gamos/setParam GmReadPhantomGeometry:FileName world.geom
+/gamos/setParam GmReadPhantomGeometry:Phantom:FileName exercise3_64x64x39.g4dcm
+
+/gamos/geometry GmReadPhantomG4Geometry
+
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source e- 6*MeV
+
+/gamos/geometry/DICOM/intersectWithG4Volume my_cone
+
+/run/beamOn 1
+

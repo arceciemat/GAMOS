@@ -1,0 +1,27 @@
+/control/verbose 1
+/run/verbose 1
+/tracking/verbose 0
+
+/gamos/setParam GmCountTracksUA:EachNEvent 10000
+
+/gamos/setParam GmGeometryFromText:FileName dummy.geom
+
+/gamos/geometry GmGeometryFromText
+
+/gamos/physicsList GmEMPhysics
+/gamos/setParam RTGeneratorPhaseSpace:Histos 1
+/gamos/setParam RTGeneratorPhaseSpace:FileName ps.lowener
+
+/gamos/setParam RTPhaseSpaceHistos:Nbins 100
+/gamos/setParam RTPhaseSpaceHistos:HisRMax 2000.
+/gamos/setParam RTPhaseSpaceHistos:HisEMax 6.
+/gamos/setParam RTGeneratorPhaseSpace:MaxNReuse 1
+/gamos/generator RTGeneratorPhaseSpace
+
+/gamos/userAction GmKillAllUA
+/gamos/userAction GmCountTracksUA 
+
+/run/initialize
+
+/run/beamOn 100000000
+

@@ -1,0 +1,23 @@
+/tracking/verbose 0
+#/gamos/verbosity GmReadDICOMVerbosity debug
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .test.c16
+
+/gamos/setParam GmReadPhantomGeometry:FileName world.geom
+/gamos/setParam GmReadPhantomGeometry:Phantom:FileName test.c16.g4dcm
+/gamos/geometry GmReadPhantomG4withPSGeometry
+
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionDisc 250. 0.5 -264.5 -900.
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+
+
+
+/gamos/userAction GmCountTracksUA
+
+/run/beamOn 10000000
