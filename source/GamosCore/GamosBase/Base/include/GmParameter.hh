@@ -17,7 +17,7 @@ private:
   typedef GmParameter<TYP> par;  
 public:
   GmParameter() {} //?? NEEDED??
-  GmParameter(const TYP& par) : theValue(par) {
+  GmParameter(const TYP& par2) : theValue(par2) {
     //  G4cout << " new GmParameter " << theValue << G4endl; 
   }
 

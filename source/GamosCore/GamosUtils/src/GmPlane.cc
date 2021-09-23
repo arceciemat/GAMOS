@@ -2,6 +2,7 @@
 
 #include "G4Point3D.hh"
 #include "G4ThreeVector.hh"
+#include "CLHEP/Geometry/BasicVector3D.h"
 
 //---------------------------------------------------------------------
 GmPlane::GmPlane(G4double a, G4double b, G4double c, G4double d)

@@ -38,6 +38,9 @@ public:
   virtual G4String GetStringValueFromStep( const G4Step* aStep );
   virtual G4String GetStringValueFromTrack( const G4Track* aTrack );
   virtual G4String GetStringValueFromSecoTrack( const G4Track* aTrack1, const G4Track* aTrack2 );
+  virtual G4String GetStringValueFromStackedTrack( const G4Track* aTrack ) {
+    return GetStringValueFromTrack( aTrack );
+  }
   virtual G4String GetStringValueFromEvent( const G4Event* anEvent );
   virtual G4String GetStringValueFromRun( const G4Run* aRun );
 

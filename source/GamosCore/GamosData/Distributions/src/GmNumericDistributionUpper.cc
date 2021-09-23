@@ -23,3 +23,8 @@ G4double GmNumericDistributionUpper::InterpolateValue(const G4double& , const G4
 
 }
 
+//---------------------------------------------------------------------
+G4double GmNumericDistributionUpper::GetMinimum(TH1F*)
+{
+  return 0.;
+}

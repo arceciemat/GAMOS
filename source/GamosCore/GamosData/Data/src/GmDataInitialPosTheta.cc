@@ -43,3 +43,9 @@ G4double GmDataInitialPosTheta::GetValueFromEvent( const G4Event* aEvent, G4int 
 {
   return aEvent->GetPrimaryVertex(0)->GetPosition().theta();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialPosTheta::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  return aTrack->GetPosition().theta();
+}

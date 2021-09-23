@@ -13,3 +13,4 @@ G4bool GmChargedFilter::AcceptTrack(const G4Track* aTrack)
   if (aTrack->GetDefinition()->GetPDGCharge() != 0. ) return TRUE;
   return FALSE;
 }
+

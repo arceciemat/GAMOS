@@ -3,6 +3,7 @@
 
 #include "G4RunManager.hh"
 #include <map>
+#include <vector>
 class GmVClassifier;
 // FindOrBuildClassifier : first looks if a classifier with same name already exists (using GetClassifierFromList)
 // if it dose not exists creates a new one (using CreateClassifier)

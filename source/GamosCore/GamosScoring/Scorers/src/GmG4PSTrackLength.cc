@@ -12,6 +12,7 @@
 GmG4PSTrackLength::GmG4PSTrackLength(G4String name)
   :GmVPrimitiveScorer(name),multiplyKinE(false),divideByVelocity(false)
 {
+  theUnitName = "mm";
 }
 
 
@@ -34,11 +35,11 @@ G4bool GmG4PSTrackLength::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   } else {
     std::vector< std::pair<G4int,G4double> >::const_iterator ite;
     for( ite = G4RegularNavigationHelper::Instance()->theStepLengths.begin(); ite != G4RegularNavigationHelper::Instance()->theStepLengths.end(); ite++ ){
-      G4double trklength  = (*ite).second;
-      if(multiplyKinE) trklength *= aStep->GetPreStepPoint()->GetKineticEnergy();
-      if(divideByVelocity) trklength /= aStep->GetPreStepPoint()->GetVelocity();
+      G4double trklength2  = (*ite).second;
+      if(multiplyKinE) trklength2 *= aStep->GetPreStepPoint()->GetKineticEnergy();
+      if(divideByVelocity) trklength2 /= aStep->GetPreStepPoint()->GetVelocity();
       
-      FillScorer( aStep, trklength, aStep->GetPreStepPoint()->GetWeight());
+      FillScorer( aStep, trklength2, aStep->GetPreStepPoint()->GetWeight());
     }
   }
   
@@ -46,49 +47,29 @@ G4bool GmG4PSTrackLength::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   
 }
 
-void GmG4PSTrackLength::EndOfEvent(G4HCofThisEvent*)
-{;}
-
-
-void GmG4PSTrackLength::DrawAll()
-{;}
-
-void GmG4PSTrackLength::PrintAll()
-{
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first << "  track length: " ;
-    if ( multiplyKinE && !divideByVelocity ){
-      G4cout << *(itr->second)/(CLHEP::mm*CLHEP::MeV) <<" CLHEP::mm*CLHEP::MeV";
-    } else if ( !multiplyKinE && divideByVelocity ){
-      G4cout << *(itr->second)*CLHEP::second <<" /second";
-    } else if ( multiplyKinE && divideByVelocity) {
-      G4cout << *(itr->second)/CLHEP::MeV*CLHEP::second <<" CLHEP::MeV/second";
-    } else {
-      G4cout  << G4BestUnit(*(itr->second),"Length");
-    }
-    G4cout << G4endl;
-  }
-}
-
 void GmG4PSTrackLength::SetParameters( const std::vector<G4String>& params)
 {
-  if( params.size() != 2 ){
+  /*  if( params.size() != 2 ){
     G4String parastr;
     for( unsigned int ii = 0; ii < params.size(); ii++ ){
       parastr += params[ii] + " ";
     }
-    G4Exception("GmPSWithDirection::SetParameters",
+       G4Exception("GmG4PSTrackLength::SetParameters",
 		"There should be two parameters: multiplyKinE divideByVelocity ",
 		FatalErrorInArgument,
 		G4String("They are: "+parastr).c_str());
+    
+		} */
+
+  if( params.size() >= 2 ){
+    divideByVelocity = GmGenUtils::GetBoolean( params[1] );
+  } else if( params.size() >= 1 ){
+    divideByVelocity = 0;
+    multiplyKinE = GmGenUtils::GetBoolean( params[0] );
+  } else {
+    divideByVelocity = 0;
+    multiplyKinE = 1;
   }
-  
-  multiplyKinE = GmGenUtils::GetBoolean( params[0] );
-  divideByVelocity = GmGenUtils::GetBoolean( params[1] );
 }
 
 
@@ -118,8 +99,3 @@ G4String GmG4PSTrackLength::GetUnitName() const
   }
 }
 
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSTrackLength::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

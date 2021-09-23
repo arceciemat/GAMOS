@@ -51,14 +51,6 @@ class GmG4PSPassageCellCurrent : public GmVPrimitiveScorer
 
       virtual G4bool IsPassed(G4Step*);
 
-  public: 
-      virtual void EndOfEvent(G4HCofThisEvent*);
-
-  public:
-      virtual void DrawAll();
-      virtual void PrintAll();
-  virtual G4int GetIndex(G4Step*);
-
   private:
       G4int fCurrentTrkID;
       G4double fCurrent;

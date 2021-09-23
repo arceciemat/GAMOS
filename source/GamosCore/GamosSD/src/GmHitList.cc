@@ -1,5 +1,3 @@
-#define protected public 
-
 #include "GamosCore/GamosSD/include/GmHitList.hh"
 #include "GamosCore/GamosSD/include/GmHitsEventMgr.hh"
 #include "GamosCore/GamosSD/include/GmSDVerbosity.hh"
@@ -43,9 +41,9 @@ if( SDVerb(infoVerb) ) G4cout << "GmHitList sdtype " << sdtype << " theDeadTime 
   //----- When hits are written to be read back, if the measuring time is smaller than the dead time, at normal run a previous event may have deleted one hit because a hit was created and the SD is dead, while when reading hits, if this previous event is not written, the hit has not been deleted. 
   //  if( theDeadTime > theMeasuringTime ) theMeasuringTime = theDeadTime;
 
-  bParalizable= G4bool(parmgr->GetNumericValue("SD:DeadTimeParalizable:"+sdtype, 1)); 
+  bParalyzable= G4bool(parmgr->GetNumericValue("SD:DeadTimeParalyzable:"+sdtype, 0)); 
 #ifndef GAMOS_NO_VERBOSE
-  if( SDVerb(infoVerb) ) G4cout << "GmHitList sdtype " << sdtype << " Paralizable " << bParalizable << G4endl;
+  if( SDVerb(infoVerb) ) G4cout << "GmHitList sdtype " << sdtype << " Paralyzable " << bParalyzable << G4endl;
 #endif
 
 
@@ -110,12 +108,12 @@ void GmHitList::AddHitToDeadTimeDetUnitList()
   for( iteh = begin(); iteh != end(); iteh++ ){
 #ifndef GAMOS_NO_VERBOSE
     if( SDVerb(infoVerb) ) G4cout << " GmHitList::AddHitToDeadTimeDetUnitList " 
-	   << " bParalizable= " << bParalizable 
+	   << " bParalyzable= " << bParalyzable 
 	   << " DeadTimeFound= " << (*iteh)->DeadTimeFound() 
 	   << " SDTYPE= " <<(*iteh)->GetSDType() 
 	   << " DU= " << (*iteh)->GetDetUnitID() << G4endl;
 #endif
-    if( bParalizable || !(*iteh)->DeadTimeFound() ) theDeadTimeDetUnitList->AddDetUnit( *iteh );
+    if( bParalyzable || !(*iteh)->DeadTimeFound() ) theDeadTimeDetUnitList->AddDetUnit( *iteh );
 
   }
 }
@@ -160,7 +158,7 @@ void GmHitList::CleanHitsBefore( G4double tim )
   for( iteh = begin(); iteh != end(); iteh++ ){
     if( (*iteh)->GetTime() < tim ){
 #ifndef GAMOS_NO_VERBOSE
-      if( SDVerb(infoVerb) ) G4cout << "GmHitList::CleanHits  yes deleting hit " << (*iteh)->GetTime() << " is < " << tim << " theMeasuringTime "<< theMeasuringTime << G4endl;
+      if( SDVerb(infoVerb) ) G4cout << "GmHitList::CleanHits  yes deleting hit, time= " << (*iteh)->GetTime() << " is < " << tim << " theMeasuringTime "<< theMeasuringTime << G4endl;
 #endif
       
       //	delete *iteh;
@@ -238,7 +236,7 @@ void GmHitList::CleanDeadTimeDetUnitList(G4double time)
 void GmHitList::BuildHitsCompatibleInTime( G4double currentTime )
 {
   if( currentTime == -1. || currentTime == 0. || theMeasuringTime == 0. ) {
-    BuildHitsAll();
+    BuildHitsAll( currentTime );
     return;
   }
 
@@ -255,15 +253,29 @@ void GmHitList::BuildHitsCompatibleInTime( G4double currentTime )
 }
 
 //----------------------------------------------------------------------
-void GmHitList::BuildHitsAll()
+void GmHitList::BuildHitsAll( G4double currentTime )
 {
   iterator ite;
   for( ite = begin(); ite != end(); ite++ ){
-    theHitsCompatibleInTime.push_back( *ite );
+    G4bool bOK = true;
     G4double hitTime = (*ite)->GetTime();
+    G4double lowestTime = currentTime - theMeasuringTime;
+    G4bool bDeadDU = theDeadTimeDetUnitList->FindDetUnit(*ite,theDeadTime); 
+    if( bDeadDU ) {
+      bOK = false;
+      (*ite)->SetDeadTimeFound(true);
+    }
+    if( hitTime < lowestTime ) {
+      bOK = false;
+    }
+    
+    if( bOK == true) {
+      theHitsCompatibleInTime.push_back( *ite );
+    }
 #ifndef GAMOS_NO_VERBOSE
     if( SDVerb(infoVerb) ) G4cout << "GmHitList::BuildHitsCompatibleInTime added hit, because all are added " << hitTime << G4endl;
 #endif
+    
   }
 }
 

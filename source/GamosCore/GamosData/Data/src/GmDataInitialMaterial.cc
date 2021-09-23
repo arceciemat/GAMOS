@@ -8,6 +8,7 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4TouchableHistory.hh"
 #include "G4TransportationManager.hh"
+#include "G4PVParameterised.hh"
 
 //----------------------------------------------------------------
 GmDataInitialMaterial::GmDataInitialMaterial()
@@ -32,25 +33,32 @@ G4String GmDataInitialMaterial::GetStringValueFromStep( const G4Step* aStep )
 
 //----------------------------------------------------------------
 G4String GmDataInitialMaterial::GetStringValueFromTrack( const G4Track* aTrack )
-{ 
-  return aTrack->GetLogicalVolumeAtVertex()->GetMaterial()->GetName();
+{
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetVertexPosition()) );
+  return mate->GetName();
 }
 
 //----------------------------------------------------------------
 G4String GmDataInitialMaterial::GetStringValueFromSecoTrack( const G4Track* aTrack1, const G4Track* )
 {
-  return aTrack1->GetMaterial()->GetName();
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack1->GetPosition()) );
+  return mate->GetName();
 }
 
 //----------------------------------------------------------------
 G4String GmDataInitialMaterial::GetStringValueFromEvent( const G4Event* anEvent )
-{ 
-  G4TouchableHistory* touch = new G4TouchableHistory;
-  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( anEvent->GetPrimaryVertex(0)->GetPosition(), touch, false ); 
+{
+  G4Material* mate = GetMateFromPV( GetPVFromPos(anEvent->GetPrimaryVertex(0)->GetPosition()) );
+  return mate->GetName();
 
-  G4String name = touch->GetVolume()->GetLogicalVolume()->GetMaterial()->GetName();
- 
-  delete touch;
-
-  return name;
 }
+
+//----------------------------------------------------------------
+G4String GmDataInitialMaterial::GetStringValueFromStackedTrack( const G4Track* aTrack )
+{
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetPosition()) );
+  return mate->GetName();
+}
+
+
+

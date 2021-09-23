@@ -29,7 +29,6 @@ public:
     return theG4RunManager;
   }
 
-
 protected:
   void InitialiseFactories();
 
@@ -47,7 +46,7 @@ protected:
 
   G4double theNSeedsInFile;
   G4bool bRestoreSeedsUsed;
-
+  
 };
 
 

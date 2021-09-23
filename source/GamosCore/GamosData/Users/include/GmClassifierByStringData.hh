@@ -16,19 +16,19 @@ public: // with description
   GmClassifierByStringData(G4String);
   virtual ~GmClassifierByStringData();
   
-  virtual G4int GetIndexFromStep(const G4Step*);
-  virtual G4int GetIndexFromTrack(const G4Track*);
-  virtual G4int GetIndexFromSecoTrack(const G4Track* aTrack1, const G4Track* aTrack2);
- G4int GetIndexFromValue(const G4String val );
+  virtual int64_t GetIndexFromStep(const G4Step*);
+  virtual int64_t GetIndexFromTrack(const G4Track*);
+  virtual int64_t GetIndexFromSecoTrack(const G4Track* aTrack1, const G4Track* aTrack2);
+ int64_t GetIndexFromValue(const G4String val );
 
   virtual void SetParameters( std::vector<G4String>& param );
 
-  virtual G4String GetIndexName(G4int);
+  virtual G4String GetIndexName(int64_t);
 
   virtual void SetIndices( std::vector<G4String> wl );
 
 private:
-  std::map<G4String,G4int> theIndexMap;
+  std::map<G4String,int64_t> theIndexMap;
 };
 
 #endif

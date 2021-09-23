@@ -11,7 +11,13 @@
 
 #include "G4Event.hh"
 
+#ifdef ROOT5
 #include "Reflex/PluginService.h"
+#else
+#include "GmDigitizerFactory.hh"
+#include "GmRecHitBuilderFactory.hh"
+#include "GamosCore/GamosUserActionMgr/include/GmUserActionFactory.hh"
+#endif
 
 //------------------------------------------------------------------------
 GmHitsEventMgr* GmHitsEventMgr::theInstance = 0;
@@ -32,7 +38,17 @@ GmHitsEventMgr::GmHitsEventMgr()
 {
   theEventTime = -1.; // if it is not reset, time is not taken into account (only hits of current event are considered)
   
-  GmUserAction* chk = Reflex::PluginService::Create<GmUserAction*>("GmCheckOriginalGamma");
+#ifdef ROOT5
+  Reflex::PluginService::Create<GmUserAction*>("GmCheckOriginalGamma");
+#else
+	GmUserAction* userAction = GmUserActionFactory::get()->create("GmCheckOriginalGamma");
+	if (userAction == 0) {
+		G4Exception("GmHitsEventMgr::GmHitsEventMgr",
+			"user action does not exist",
+			FatalErrorInArgument,
+			G4String(" User action GmCheckOriginalGamma").c_str());
+	}
+#endif
   //  G4cout << this << " theEventTimeExtractor " << theEventTimeExtractor << G4endl;
   theEventTimeExtractor = new GmEventTimeExtractorFromFirstTrack();
 
@@ -49,6 +65,7 @@ GmHitsEventMgr::GmHitsEventMgr()
 		G4String("It can only be min/MIN, max/MAX, it is "+tt).c_str());
   }
 
+  bInitialEventTime = false;
 }
 
 
@@ -70,7 +87,17 @@ void GmHitsEventMgr::AddDigitizer( G4String& name, G4String& sdtype )
     G4cerr << "!!! WARNING at GmHitsEventMgr:::AddDigitizer  no sensitive detector of type " << sdtype << " is defined, no hits will be created (and then no hits will be digitized). Please check your input command " << G4endl;
   }
   
+#ifdef ROOT5
   GmVDigitizer* digi = Reflex::PluginService::Create<GmVDigitizer*>(name);
+#else
+  GmVDigitizer* digi = GmDigitizerFactory::get()->create(name);
+#endif
+  if( ! digi ) {
+    G4Exception("GmHitsEventMgr::AddDigitizer",
+		"",
+		FatalException,
+		("Digitizer class does not exist: "+name).c_str());
+  }
   digi->SetName( name + "_" + sdtype );
   digi->SetParams();
   digi->SetSDType( sdtyp );
@@ -96,7 +123,17 @@ void GmHitsEventMgr::AddRecHitBuilder( G4String& name, G4String& sdtype )
     G4cerr << "!!! WARNING at GmHitsEventMgr::AddRecHitBuilder:  no sensitive detector of type " << sdtype << " is defined, no hits will be created (and then no hits will be reconstructed). Please check your input command " << G4endl;
   }
 
+#ifdef ROOT5
   GmVRecHitBuilder* rhB = Reflex::PluginService::Create<GmVRecHitBuilder*>(name);
+#else
+  GmVRecHitBuilder* rhB = GmRecHitBuilderFactory::get()->create(name);
+#endif
+  if( ! rhB ) {
+    G4Exception("GmHitsEventMgr::AddRecHitBuilder",
+		"",
+		FatalException,
+		("Rec hit builder class does not exist: "+name).c_str());
+  }
   rhB->SetName( name + "_" + sdtype );
   rhB->SetParams();
   rhB->SetSDType( sdtyp );
@@ -185,9 +222,12 @@ void GmHitsEventMgr::DigitizeAndReconstructHits()
       iterh = theRecHitBuilders.find( (*iteh).first );
       if( iterh != theRecHitBuilders.end() ) {
 	GmVRecHitBuilderFromDigits* rhitBuilder = dynamic_cast<GmVRecHitBuilderFromDigits*>((*iterh).second);
-	theRecHits[ (*iteh).first] = rhitBuilder->ReconstructDigits( &(theDigits[(*iteh).first]) );
-	rhitBuilder->SmearRecHitsEnergy();
-	rhitBuilder->SmearRecHitsTime();
+	std::vector<GmRecHit*> recHits = rhitBuilder->ReconstructDigits(&(theDigits[(*iteh).first]) );
+	rhitBuilder->CheckRecHitsMinEnergy(recHits);
+	rhitBuilder->SmearRecHitsEnergy(recHits);
+	rhitBuilder->SmearRecHitsTime(recHits);
+	rhitBuilder->CheckEnergyEfficiency(recHits);
+	theRecHits[ (*iteh).first] = recHits;
       }
       
       //----- If no digitizer found, reconstruct hits
@@ -200,12 +240,13 @@ void GmHitsEventMgr::DigitizeAndReconstructHits()
 	GmVRecHitBuilderFromHits* rhitBuilder = dynamic_cast<GmVRecHitBuilderFromHits*>((*iterh).second);
 	const std::vector<GmHit*>* hitsCompatible = hitlist->GetHitsCompatibleInTime();
 	if( hitsCompatible->size() != 0 ) {
-	  theRecHits[ (*iteh).first] = rhitBuilder->ReconstructHits( hitsCompatible );
+	  std::vector<GmRecHit*> recHits = rhitBuilder->ReconstructHits( hitsCompatible );
+	  rhitBuilder->CheckRecHitsMinEnergy(recHits);
+	  rhitBuilder->SmearRecHitsEnergy(recHits);
+	  rhitBuilder->SmearRecHitsTime(recHits);
+	  rhitBuilder->CheckEnergyEfficiency(recHits);
+	  theRecHits[ (*iteh).first] = recHits;
 	}
-	rhitBuilder->CheckRecHitsMinEnergy();
-	rhitBuilder->SmearRecHitsEnergy();
-	rhitBuilder->SmearRecHitsTime();
-	rhitBuilder->CheckEnergyEfficiency();
       }
     }
 
@@ -378,13 +419,20 @@ void GmHitsEventMgr::CleanDigitsAndRecHits()
   for( itedig = theDigitizers.begin(); itedig != theDigitizers.end(); itedig++ ){
     ((*itedig).second)->CleanDigits();
   }
-  theDigits.clear();
-  
-  std::map< G4String, GmVRecHitBuilder* >::const_iterator iterh; 
-  for( iterh = theRecHitBuilders.begin(); iterh != theRecHitBuilders.end(); iterh++ ){
-    ((*iterh).second)->CleanRecHits();
+  for( gamosSDDigitMap::iterator ite = theDigits.begin(); ite != theDigits.end(); ite++ ) {
+    std::vector<GmDigit*> dv = ite->second;
+    for( std::vector<GmDigit*>::iterator itev = dv.begin(); itev != dv.end(); itev++) {
+      delete *itev;
+    }
   }
+  theDigits.clear();
 
+  for( gamosSDRecHitMap::iterator ite = theRecHits.begin(); ite != theRecHits.end(); ite++ ) {
+    std::vector<GmRecHit*> rhv = ite->second;
+    for( std::vector<GmRecHit*>::iterator itev = rhv.begin(); itev != rhv.end(); itev++) {
+      delete *itev;
+    }
+  }
   theRecHits.clear();
 }
 
@@ -434,8 +482,6 @@ void GmHitsEventMgr::DeleteHits( GmRecHit* rhit )
     theRecHits.erase( iterhToDelete[ii] );
   }
   
-  std::map< G4String, GmVRecHitBuilder* >::iterator iterhb = theRecHitBuilders.find( rhit->GetSDType() );
-  (*iterhb).second->DeleteHit( rhit );
 }
 
 
@@ -468,6 +514,10 @@ void GmHitsEventMgr::BuildEventTime( const G4Event* evt )
 #ifndef GAMOS_NO_VERBOSE
   if( SDVerb(infoVerb) ) G4cout << " GmHitsEventMgr::BuildEventTime = " << theEventTime << G4endl;
 #endif
+  if( !bInitialEventTime ) {
+    theInitialEventTime = theEventTime;
+    bInitialEventTime = true;
+  }
 
 }
 

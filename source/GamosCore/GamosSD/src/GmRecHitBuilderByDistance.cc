@@ -20,6 +20,7 @@ std::vector<GmRecHit*> GmRecHitBuilderByDistance::ReconstructHits(const std::vec
   if( SDVerb(infoVerb) ) G4cout << " GmRecHitBuilderByDistance::ReconstructHits " << G4endl;
 #endif
 
+  std::vector<GmRecHit*> recHits;
   std::vector<GmRecHit*>::const_iterator itec;
   hitVector::const_iterator iteh;
   //assume hits are ordered by energy
@@ -27,7 +28,7 @@ std::vector<GmRecHit*> GmRecHitBuilderByDistance::ReconstructHits(const std::vec
     if( (*iteh)->GetEnergy() < theMinHitEnergy ) continue;
     G4bool rhitFound = false;
     //--- Check if hit belongs to one of the existing rechits
-    for( itec = theRecHits.begin(); itec != theRecHits.end(); itec++ ){
+    for( itec = recHits.begin(); itec != recHits.end(); itec++ ){
       if( CheckHitInRecHit (*itec, *iteh ) ) {
 	rhitFound = true;
 	(*itec)->AddHit( *iteh );
@@ -35,11 +36,11 @@ std::vector<GmRecHit*> GmRecHitBuilderByDistance::ReconstructHits(const std::vec
       }
     }
     if( !rhitFound ) {
-      theRecHits.push_back( new GmRecHit( *iteh ) );
+      recHits.push_back( new GmRecHit( *iteh ) );
     }
   }
 
-  return theRecHits;
+  return recHits;
 }
 
 

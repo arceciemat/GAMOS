@@ -1,5 +1,5 @@
 #include "GmCompoundClassifier.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Classifiers/include/GmClassifierVerbosity.hh"
 
 #include "GamosCore/GamosBase/Base/include/GmClassifierMgr.hh"
 #include "G4Step.hh"
@@ -45,20 +45,20 @@ void GmCompoundClassifier::SetParameters( std::vector<G4String>& params )
 }
 
 //------------------------------------------------------------------
-G4int GmCompoundClassifier::GetIndexFromStep(const G4Step* aStep)
+int64_t GmCompoundClassifier::GetIndexFromStep(const G4Step* aStep)
 {
-  G4int index = 0;
+  int64_t index = 0;
   for( unsigned int ii = 0; ii < theClassifiers.size(); ii++ ) {
-    G4int indexii = theClassifiers[ii]->GetIndexFromStep(aStep);
+    int64_t indexii = theClassifiers[ii]->GetIndexFromStep(aStep);
     if( indexii >= theNShift ) {
       G4Exception("GmCompoundClassifier::GetIndexFromStep",
 		  "Error",
 		  FatalException,
 		  (theName + " index of classifier " + GmGenUtils::itoa(indexii) + " is bigger than allowed : " + GmGenUtils::itoa(theNShift) + " Change it with ' /gamos/setParam " + theName + ":NShift  VALUE").c_str());
     }
-    index += G4int(pow(double(theNShift),int(ii)))*indexii;
+    index += int64_t(pow(double(theNShift),int(ii)))*indexii;
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmCompoundClassifier::GetIndexFromStep index= " << index 
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmCompoundClassifier::GetIndexFromStep index= " << index 
 				   << " " << ii
 				   << " : " <<  theClassifiers[ii]->GetName()
 				   << " = " << indexii << G4endl;
@@ -69,22 +69,22 @@ G4int GmCompoundClassifier::GetIndexFromStep(const G4Step* aStep)
 }
 
 //------------------------------------------------------------------
-G4int GmCompoundClassifier::GetIndexFromTrack(const G4Track* aTrack)
+int64_t GmCompoundClassifier::GetIndexFromTrack(const G4Track* aTrack)
 {
-  G4int index = 0;
+  int64_t index = 0;
   for( unsigned int ii = 0; ii < theClassifiers.size(); ii++ ) {
-    G4int indexii = theClassifiers[ii]->GetIndexFromTrack(aTrack);
+    int64_t indexii = theClassifiers[ii]->GetIndexFromTrack(aTrack);
     if( indexii >= theNShift ) {
       G4Exception("GmCompoundClassifier::GetIndexFromStep",
 		  "Error",
 		  FatalException,
 		  (theName + " index of classifier " + GmGenUtils::itoa(indexii) + " is bigger than allowed : " + GmGenUtils::itoa(theNShift) + " Change it with ' /gamos/setParam " + theName + ":NShift  VALUE").c_str());
     }
-    index += G4int(pow(double(theNShift),int(ii)))*indexii;
+    index += int64_t(pow(double(theNShift),int(ii)))*indexii;
   }
   
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmCompoundClassifier::GetIndexFromTrack " << index 
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmCompoundClassifier::GetIndexFromTrack " << index 
 				   << " " << theClassifiers[0]->GetName() 
 				   << " " << theClassifiers[1]->GetName()
 				   << " NShift= " << theNShift << G4endl;
@@ -94,22 +94,22 @@ G4int GmCompoundClassifier::GetIndexFromTrack(const G4Track* aTrack)
 }
 
 //------------------------------------------------------------------
-G4int GmCompoundClassifier::GetIndexFromSecoTrack(const G4Track* aTrack1, const G4Track* aTrack2)
+int64_t GmCompoundClassifier::GetIndexFromSecoTrack(const G4Track* aTrack1, const G4Track* aTrack2)
 {
-  G4int index = 0;
+  int64_t index = 0;
   for( unsigned int ii = 0; ii < theClassifiers.size(); ii++ ) {
-    G4int indexii = theClassifiers[ii]->GetIndexFromSecoTrack(aTrack1,aTrack2);
+    int64_t indexii = theClassifiers[ii]->GetIndexFromSecoTrack(aTrack1,aTrack2);
     if( indexii >= theNShift ) {
       G4Exception("GmCompoundClassifier::GetIndexFromStep",
 		  "Error",
 		  FatalException,
 		  (theName + " index of classifier " + GmGenUtils::itoa(indexii) + " is bigger than allowed : " + GmGenUtils::itoa(theNShift) + " Change it with ' /gamos/setParam " + theName + ":NShift  VALUE").c_str());
     }
-    index += G4int(pow(double(theNShift),int(ii)))*indexii;
+    index += int64_t(pow(double(theNShift),int(ii)))*indexii;
   }
   
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmCompoundClassifier::GetIndexFromSecoTrack " << index 
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmCompoundClassifier::GetIndexFromSecoTrack " << index 
 				   << " " << theClassifiers[0]->GetName() 
 				   << " " << theClassifiers[1]->GetName()
 				   << " NShift= " << theNShift << G4endl;
@@ -119,23 +119,23 @@ G4int GmCompoundClassifier::GetIndexFromSecoTrack(const G4Track* aTrack1, const 
 }
 
 //--------------------------------------------------------------
-G4String GmCompoundClassifier::GetIndexName(G4int index)
+G4String GmCompoundClassifier::GetIndexName(int64_t index)
 {
-  G4String name = "";
-  G4int index1; 
+  G4String name = "\"";
+  int64_t index1; 
   for( unsigned int ii = 0; ii < theClassifiers.size(); ii++ ) {
-    index1 = (index/G4int(pow(float(theNShift),int(ii))))%theNShift;
+    index1 = (index/int64_t(pow(float(theNShift),int(ii))))%theNShift;
     name += theClassifiers[ii]->GetIndexName(index1);
-    if( ii != theClassifiers.size()-1 ) name+= "_";
+    if( ii != theClassifiers.size()-1 ) name+= " ";
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) )  G4cout << " GmCompoundClassifier::GetIndexName " << theName
+    if( ClassifierVerb(debugVerb) )  G4cout << " GmCompoundClassifier::GetIndexName " << theName
 				      << " index " << index 
 				      << " ii " << ii 
 				      << " index1 " << index1 
 				      << " name " << name << G4endl;
 #endif
-
   }
+  name += "\"";
 
   return name;
 }

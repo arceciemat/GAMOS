@@ -28,7 +28,7 @@ const G4tgrVolume* GmGeomTextDetectorBuilder::ReadDetector()
 
 
 //---------------------------------------------------------------------
-G4VPhysicalVolume* GmGeomTextDetectorBuilder::ConstructDetectorGAMOS( const G4tgrVolume* tgrVoltop, G4int , G4bool bBuildRegionCuts )
+G4VPhysicalVolume* GmGeomTextDetectorBuilder::ConstructDetectorGAMOS( const G4tgrVolume* tgrVoltop, G4int , G4bool bBuildRegionCuts, G4bool bCallOpticalPropertiesMgr )
 {
   G4VPhysicalVolume* topPV = G4tgbDetectorBuilder::ConstructDetector( tgrVoltop );
 
@@ -40,7 +40,7 @@ G4VPhysicalVolume* GmGeomTextDetectorBuilder::ConstructDetectorGAMOS( const G4tg
     GmRegionCutsMgr::GetInstance()->BuildProductionCuts();
   }
 
-  GmOpticalPropertiesMgr::GetInstance()->BuildG4();
+  if( bCallOpticalPropertiesMgr ) GmOpticalPropertiesMgr::GetInstance()->BuildG4();
 
   return topPV;
 }

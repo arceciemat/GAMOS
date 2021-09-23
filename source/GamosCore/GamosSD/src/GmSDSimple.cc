@@ -36,7 +36,7 @@ GmSDSimple::GmSDSimple(G4String sdtype): GmVSD( sdtype )
 		FatalErrorInArgument,
 		(G4String("Error in parameter SD:SimplePosType") + theSDType +  " it must be 'centre', 'upper' or 'lower', while it is " + posType).c_str());
   }
-
+  
 }
 
 //-------------------------------------------------------------------
@@ -59,7 +59,8 @@ void GmSDSimple::CalculateAndSetPosition( GmHit* hit, G4Step* aStep )
 
   const G4VTouchable*  touch= aStep->GetPreStepPoint()->GetTouchable();
   G4AffineTransform trans = touch->GetHistory()->GetTopTransform().Inverse();
-
+  
+  G4ThreeVector centreGlobal;
   G4ThreeVector localPos;
   if( theSDPosType == SDPOS_Centre ) {
     localPos = G4ThreeVector(0.,0.,0.);
@@ -118,9 +119,9 @@ void GmSDSimple::CalculateAndSetPosition( GmHit* hit, G4Step* aStep )
 		  (G4String("Type of solid: ")+solid->GetName() + " is not G4Box, G4Tubs, G4Cons, G4Trd, G4Trap, G4Para, but: " + solid->GetEntityType()).c_str());
     }
   }
-
-  G4ThreeVector centreGlobal = trans.TransformPoint( localPos );
-
+    
+  centreGlobal = trans.TransformPoint( localPos );
+  
   hit->SetPosition( centreGlobal );
   //  G4cout << " GmSDSimple::CalculateAndSetPosition pos " << 
 } 

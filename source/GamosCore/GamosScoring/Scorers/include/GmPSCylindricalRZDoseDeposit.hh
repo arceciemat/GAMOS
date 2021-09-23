@@ -30,12 +30,7 @@ protected: // with description
 
   void SetParameters( const std::vector<G4String>& params);
 
-  public: 
-      virtual void EndOfEvent(G4HCofThisEvent*);
-      virtual void DrawAll();
-      virtual void PrintAll();
-  virtual G4int GetIndex(G4Step*);
-
+public: 
   virtual G4double GetUnit() const {
     return 1.E12; }
 

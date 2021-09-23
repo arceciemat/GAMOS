@@ -8,7 +8,7 @@ class GmVFilter;
 //#include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
 class GmVPSPrinter;
 class GmVClassifier;
-class       G4PhantomParameterisation;
+class G4PhantomParameterisation;
 #include "GamosCore/GamosScoring/Management/include/GmVPrimitiveScorer.hh"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,10 +36,6 @@ protected: // with description
   G4double GetGeom2TrueStepLength( G4double kinEnergy ) ;
 
   public: 
-      virtual void EndOfEvent(G4HCofThisEvent*);
-      virtual void DrawAll();
-      virtual void PrintAll();
-  virtual G4int GetIndex(G4Step*);
 
   virtual G4double GetUnit() const {
     return 1.E12; }

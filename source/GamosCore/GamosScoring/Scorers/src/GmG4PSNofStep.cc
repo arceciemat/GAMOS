@@ -26,6 +26,7 @@
 // GmG4PSNofStep
 #include "GmG4PSNofStep.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 
 // (Description)
 //   This is a primitive scorer class for scoring number of steps in the
@@ -53,7 +54,7 @@ G4bool GmG4PSNofStep::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   if( bUseClassifierIndex ||
       !bSkipEqualMaterials ||
       G4RegularNavigationHelper::Instance()->theStepLengths.size() <= 1 ||
-      !GmRegularParamUtils::GetInstance()->IsPhantomVolume( aStep->GetPreStepPoint()->GetPhysicalVolume() ) ) {
+      !GmGeometryUtils::GetInstance()->IsPhantomVolume( aStep->GetPreStepPoint()->GetPhysicalVolume() ) ) {
     FillScorer( aStep, 1., aStep->GetPreStepPoint()->GetWeight() );
   } else { // use the last voxel traversed
     std::vector< std::pair<G4int,G4double> >::const_iterator ite;
@@ -65,44 +66,18 @@ G4bool GmG4PSNofStep::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   return TRUE;
 }
 
-void GmG4PSNofStep::EndOfEvent(G4HCofThisEvent*)
-{;}
-
-void GmG4PSNofStep::DrawAll()
-{;}
-
-void GmG4PSNofStep::PrintAll()
-{
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  num of step: " << *(itr->second)
-	   << G4endl;
-  }
-}
-
-
 void GmG4PSNofStep::SetParameters( const std::vector<G4String>& params)
 {
- if( params.size() != 1 ){
+  if( params.size() != 1 ){
     G4String parastr;
     for( unsigned int ii = 0; ii < params.size(); ii++ ){
       parastr += params[ii] + " ";
     }
     G4Exception("GmG4PSNofStep::SetParameters",
 		"There should be one parameter: boundaryFlag",
-		FatalErrorInArgument,
+		JustWarning,
 		G4String("They are: "+parastr).c_str());
- }
-
- boundaryFlag = G4bool( GmGenUtils::GetInteger( params[0] ) );
-
+  } else {
+    boundaryFlag = G4bool( GmGenUtils::GetInteger( params[0] ) );
+  }
 }
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSNofStep::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

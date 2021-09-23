@@ -5,10 +5,7 @@
 ClassName:   GmParameterMgr    
 Author:      P. Arce
 Changes:     10/01: creation  
----------------------------------------------------------------------------*/ 
-// Description  
-//----------------------------------------------- 
-/*! Class to manage the G4UserAction's and allow load on demand of any UserAction  */ 
+//----------------------------------------------- */
 
 #include <vector>
 #include <map>
@@ -23,19 +20,22 @@ enum paramType { PTdouble, PTstring, PTVdouble, PTVstring, PTundef };
 //------------------------------------------------------------------------
 class GmParameterMgr 
 { 
- private:
+ protected:
   GmParameterMgr(){ };
 
  public:
-  ~GmParameterMgr();
+  ~GmParameterMgr(){};
 
   //! Get the only instance 
   static GmParameterMgr* GetInstance();
   G4bool AddParam( const G4String& parstr, paramType typ = PTundef );
 
   G4double GetNumericValue( const G4String& parstr, const G4double def, G4bool mustExist = FALSE  );
+  G4int GetIntegerValue( const G4String& parstr, const G4int def, G4bool mustExist = FALSE  );
+  G4bool GetBooleanValue( const G4String& parstr, const G4bool def, G4bool mustExist = FALSE  );
   G4String GetStringValue( const G4String& parstr, const G4String& def, G4bool mustExist = FALSE  );
   std::vector<G4double> GetVNumericValue( const G4String& parstr, const std::vector<G4double> def, G4bool mustExist = FALSE );
+  std::vector<G4int> GetVIntegerValue( const G4String& parstr, const std::vector<G4int> def, G4bool mustExist = FALSE );
   std::vector<G4String> GetVStringValue( const G4String& parstr, const std::vector<G4String>& defs, G4bool mustExist = FALSE );
 
   G4bool IsParameterInScript( const G4String& param );  
@@ -43,8 +43,10 @@ class GmParameterMgr
   void CheckParametersUsage();
   void PrintParametersUsage(G4int iPrint, std::ostream& out = G4cout, std::ostream& err = G4cerr);
 
-private:
+public:
   G4bool AddParamOfDefinedType( const G4String& name, const std::vector<G4String>& valstr, paramType typ );
+
+private:
   paramType SetParamType( G4bool noNumber, G4int nwords );
 
 private:

@@ -51,14 +51,6 @@ class GmG4PSTrackCounter : public GmVPrimitiveScorer, public GmPSWithDirection
   public:
       virtual ~GmG4PSTrackCounter();
 
-  public: 
-      virtual void EndOfEvent(G4HCofThisEvent*);
-
-  public:
-      virtual void DrawAll();
-      virtual void PrintAll();
-  virtual G4int GetIndex(G4Step*);
-
 };
 
 

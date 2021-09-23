@@ -43,3 +43,9 @@ G4double GmDataInitialPosPhi::GetValueFromEvent( const G4Event* aEvent, G4int )
 {
   return aEvent->GetPrimaryVertex(0)->GetPosition().phi();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialPosPhi::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  return aTrack->GetPosition().phi();
+}

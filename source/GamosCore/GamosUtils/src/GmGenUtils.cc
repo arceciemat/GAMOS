@@ -6,8 +6,15 @@
 
 #include <fstream>
 #include <sstream>
-G4bool GmGenUtils::bCheckTimeUnits = true;
 std::set<G4String> GmGenUtils::theUnits;
+#ifdef WIN32
+ #if defined GmUtils_ALLOC_EXPORT 
+  G4bool GmGenUtils::bCheckTimeUnits = true;
+ #endif
+#else
+ G4bool GmGenUtils::bCheckTimeUnits = true;
+  G4double GmGenUtils::thePrecision = 1.e-6;
+#endif
 
 //------------------------------------------------------------------------
 G4bool GmGenUtils::IsNumber( const G4String& str)
@@ -42,7 +49,7 @@ G4bool GmGenUtils::IsNumber( const G4String& str)
 //------------------------------------------------------------------------
 G4bool GmGenUtils::IsNumberWithUnit( const G4String& str)
 {
-  //-  G4cout << " GmGenUtils::IsNumberWithUnit( " << str << G4endl;
+  //  G4cout << " GmGenUtils::IsNumberWithUnit( " << str << G4endl; //GDEB
   if( str == "false" || str == "FALSE" ) return 1;
   if( str == "true" || str == "TRUE" ) return 1;
 
@@ -59,10 +66,11 @@ G4bool GmGenUtils::IsNumberWithUnit( const G4String& str)
 
   symbolPositions.insert( -1 );
   for( il = 0; il < str.length(); il++ ) {
-    char chara = str.at(il);
+    //    char chara = str.at(il);
     if( symbols.find(str.at(il)) != symbols.end() ) {
+      if( il != 0 && (str.at(il) == '-' || str.at(il) == '+' ) && (str.at(il-1) == 'e' || str.at(il-1) == 'E' ) ) continue;
       symbolPositions.insert(il);
-      //      G4cout << " symbolPositions " << il << " = " << str[il] << G4endl;
+      //           G4cout << " symbolPositions " << il << " = " << str[il] << G4endl; //GDEB
     }
   }
   symbolPositions.insert(il);
@@ -73,13 +81,16 @@ G4bool GmGenUtils::IsNumberWithUnit( const G4String& str)
   for( ;; ite1++, ite2++ ){
     int ipos1 = *ite1;
     int ipos2 = *ite2;
-    //-    G4cout << " IPOS  " << ipos1 << " " << ipos2 << G4endl;
+    //    G4cout << " IPOS  " << ipos1 << " " << ipos2 << G4endl; //GDEB
     if( ipos2-ipos1 != 1 ) { ; //not contiguous 
       G4String word = str.substr(ipos1+1, ipos2-ipos1-1);
-      //-      G4cout << " WORD " << word << " " << ipos1 << " " << ipos2 << G4endl;
-      if( !IsNumber(word) && !IsUnit(word) && !G4tgrUtils::WordIsFunction(word) ) return 0;
+      //      G4cout << " WORD " << word << " " << ipos1 << " " << ipos2 << G4endl; //GDEB
+      if( !IsNumber(word) && !IsUnit(word) && !G4tgrUtils::WordIsFunction(word) ) {
+	//	G4cout << " return 0 " << word << " IsNumber(word) " << IsNumber(word) << " IsUnit(word) " << IsUnit(word) << " G4tgrUtils::WordIsFunction(word) " << G4tgrUtils::WordIsFunction(word) << G4endl; //GDEB
+	return 0;
+      }
     }
-    if( ipos2 == il ) break;
+    if( ipos2 == int(il) ) break;
   }
 
   return 1;
@@ -124,15 +135,22 @@ G4bool GmGenUtils::IsNumberWithUnit( const G4String& str)
 
 
 //------------------------------------------------------------------------
-G4int GmGenUtils::GetInteger( const G4String& str )
-{
-  return G4tgrUtils::GetInt(str);
-} 
-
-//------------------------------------------------------------------------
 G4int GmGenUtils::GetInt( const G4String& str )
 {
-  return G4tgrUtils::GetInt(str);
+  return GetInteger(str);
+} 
+
+
+//------------------------------------------------------------------------
+G4int GmGenUtils::GetInteger( const G4String& str )
+{
+  G4String strnew = str;
+#ifndef WIN32
+  if( strnew[strnew.length()-1] == '\r' ) {
+    strnew = strnew.substr(0,strnew.length()-1);
+  }
+#endif
+  return G4tgrUtils::GetInt(strnew);
 } 
 
 
@@ -145,12 +163,18 @@ G4double GmGenUtils::GetVal( const G4String& str )
 //------------------------------------------------------------------------
 G4double GmGenUtils::GetValue( const G4String& str )
 {
+  G4String strnew = str;
+
+#ifndef WIN32
+  if( strnew[strnew.length()-1] == '\r' ) {
+    strnew = strnew.substr(0,strnew.length()-1);
+  }
+#endif
+  
   if( str == "false" || str == "FALSE" ) return 0;
   if( str == "true" || str == "TRUE" ) return 1;
 
   if( GmGenUtils::bCheckTimeUnits ) {
-    G4String strnew = str;
-
     strnew = GmGenUtils::CorrectByTime( strnew, "second", "1.E9" ); 
     strnew = GmGenUtils::CorrectByTime( strnew, "sec", "1.E9" ); 
     strnew = GmGenUtils::CorrectByTime( strnew, "minute", "60.E9" ); 
@@ -199,9 +223,10 @@ G4bool GmGenUtils::IsFloat( const G4String& str )
   G4int ch = str.find('.');
   unsigned int ii = 0;
   if(ch != -1 ) {
-    for( ii = ch+1; ii < str.size(); ii++) {
+    isFloat = TRUE;
+    /*-    for( ii = ch+1; ii < str.size(); ii++) {
       if( str[ii] != '0' ) isFloat = TRUE;
-    }
+      } */
   }
   
   ch = str.find('E');
@@ -228,6 +253,11 @@ G4bool GmGenUtils::IsInt( const G4String& str )
     return FALSE;
   }
 
+  G4String str2 = "100";
+  if(GmGenUtils::IsFloat(str2) ) {
+  G4Exception("","",FatalException,"");
+  }
+  
   if(GmGenUtils::IsFloat(str) ) {
     return FALSE;
   }
@@ -329,7 +359,7 @@ std::vector<G4String> GmGenUtils::GetWordsInString( const G4String& stemp)
 }
 
 //------------------------------------------------------------------------
-G4String GmGenUtils::itoa(int val)
+G4String GmGenUtils::itoa(int val, int nChars )
 {
   const char theDigits[11] = "0123456789";
   G4String result;
@@ -344,6 +374,12 @@ G4String GmGenUtils::itoa(int val)
   while(valAbs!=0);
   if( val < 0 ) result = "-" + result;
 
+  if( nChars != -1 && G4int(result.length()) < nChars ) {
+    for( size_t ii = 0; ii < nChars-result.length(); ii++ ) {
+      result = "0" + result;
+    }
+  }
+  
   return result;
 }
 
@@ -357,13 +393,22 @@ G4String GmGenUtils::ftoa(float flo)
 }
 
 //-----------------------------------------------------------------------
-G4String GmGenUtils::FileInPath( const G4String& fileName )
+G4String GmGenUtils::FileInPath( G4String fileName )
 {
+  std::ifstream* in = new std::ifstream(fileName);
+  if (in->is_open()) return fileName;
+  
+  char* pathc = getenv( "GAMOS_SEARCH_PATH" );
+  if( !pathc ) G4Exception("GmGenUtils::FileInPath",
+			   "",
+			   FatalErrorInArgument,
+			   "No GAMOS_SEARCH_PATH variable defined, please define it as in config/confgamos.sh or config/confgamos.csh");
   G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
+
   return GmGenUtils::FileInPath( path, fileName );
 }
 //-----------------------------------------------------------------------
-G4String GmGenUtils::FileInPath( const G4String& filepath, const G4String& fileName )
+G4String GmGenUtils::FileInPath( G4String& filepath, const G4String fileName )
 {
   if( fileName == "" ) return "";
 
@@ -374,14 +419,19 @@ G4String GmGenUtils::FileInPath( const G4String& filepath, const G4String& fileN
   G4String realpath;
   std::ifstream* in;
   G4String file;
+#ifdef WIN32
+  filepath += ";/"; // include absolute path
+#else
+  filepath += ":/"; // include absolute path
+#endif
 
   do {
 #ifdef WIN32
     scfound2 = filepath.find(";",scfound1+1);
 #else
-	scfound2 = filepath.find(":",scfound1+1);
+    scfound2 = filepath.find(":",scfound1+1);
 #endif
-	//	G4cout << filepath << " scfound1 " <<  scfound1 << " scfound2 " << scfound2 << G4endl;
+    //    G4cout << filepath << " scfound1 " <<  scfound1 << " scfound2 " << scfound2 << G4endl; //GDEB
     if( scfound2 == -1 ) {
       realpath = filepath.substr(scfound1+1, slen );
     } else {
@@ -390,23 +440,26 @@ G4String GmGenUtils::FileInPath( const G4String& filepath, const G4String& fileN
 #ifdef WIN32
     file = realpath + "\\" + fileName;
 #else
-	file = realpath + "/" + fileName;
+    file = realpath + "/" + fileName;
 #endif
+//file="g:\gamoswin\GAMOS.6.1.0\data: / \deprecatedCommands.lis
     in = new std::ifstream(file);
+    // G4cout << file << " open? " << in->is_open() << G4endl; //GDEB
     if (in->is_open() ) break;
     delete in;
     scfound1 = scfound2;
   } while(scfound2 != -1 );
 
-  if (!in->is_open() )  { 
-    G4Exception("GmFileIn:GmGenUtils::FileInPath",
+  //  G4cout << file << " openFINAL " << in->is_open() << G4endl; //GDEB
+  if (!in->is_open() )  {
+    G4Exception("GmGenUtils::FileInPath",
 		"Wrong argument",
 		FatalErrorInArgument,
 		("file " + fileName + " not found in path " + filepath ).c_str());
   }
   in->close();
 //PWIN  delete in;
-
+  
   return file;
 
 }
@@ -434,11 +487,10 @@ G4bool GmGenUtils::CheckNWords( const G4String& line, G4int nWords, const G4Stri
 //-----------------------------------------------------------------------
 G4bool GmGenUtils::AreWordsEquivalent( const G4String& word1, const G4String& word2 )
 {
-//---- Looks if word1 and word2 are equivalent, considering that word1 may have '*', meaning 'any character'
+  //---- Looks if word1 and word2 are equivalent, considering that word1 may have '*', meaning 'any character'
   G4bool bEqual = TRUE;
   std::vector< std::pair< std::string::size_type, std::string::size_type> > stringPairs; //start of substring, number of characters
-
-  //  G4cout << " GmGenUtils::AreWordsEquivalent " << word1 << " =?= " << word2 << G4endl;
+  //  G4cout << "START GmGenUtils::AreWordsEquivalent " << word1 << " =?= " << word2 << G4endl; //GDEB
 
   //--- Get string limits between asterisks in word1
   std::string::size_type cStart = 0;
@@ -458,7 +510,7 @@ G4bool GmGenUtils::AreWordsEquivalent( const G4String& word1, const G4String& wo
 	}
       }     
       if( cAster!= cStart ) stringPairs.push_back( std::pair<G4int,G4int>(cStart, cAster-cStart) );
-      //      G4cout << " GmGenUtils::AreWordsEquivalent stringPair " << cStart << " to " << cAster << " " <<  G4endl;
+      //      G4cout << " GmGenUtils::AreWordsEquivalent string limits between asterisks stringPair " << cStart << " to " << cAster << " " <<  G4endl; //GDEB
       cStart = cAster+1;
     } else {
       if( cStart == 0 ){
@@ -473,7 +525,7 @@ G4bool GmGenUtils::AreWordsEquivalent( const G4String& word1, const G4String& wo
   //---- Add characters after last asterisk as string pair 
   if( cStart <= word1.length() ) {
     if( word1.length() != cStart ) stringPairs.push_back( std::pair<G4int,G4int>(cStart, word1.length()-cStart) );
-    //    G4cout << " GmGenUtils::AreWordsEquivalent stringPair " << word1.length() << " " << cStart << " " <<  G4endl;
+    //    G4cout << " GmGenUtils::AreWordsEquivalent characters after last asterisk stringPair " << cStart << " " << word1.length()-cStart << " " << G4endl; //GDEB
   }
 
   //--- If there are not asterisk, simple comparison
@@ -503,25 +555,32 @@ G4bool GmGenUtils::AreWordsEquivalent( const G4String& word1, const G4String& wo
   for( unsigned int ii = 0; ii < stringPairs.size(); ii++ ){
     std::pair< std::string::size_type, std::string::size_type> spair = stringPairs[ii];
     std::string::size_type sFound = word2.find(word1.substr(spair.first, spair.second),cStart);
-    //    G4cout << " GmGenUtils::AreWordsEquivalent word  Found:  " << word1.substr(spair.first, spair.second) << " at pos " << sFound << " in " << word2 << G4endl;
-    if( sFound  == std::string::npos ) {
+    //    G4cout << ii << " GmGenUtils::AreWordsEquivalent word  Found:  " << spair.first << ":" <<spair.second << ":" << cStart << " " << word1.substr(spair.first, spair.second) << " at pos " << sFound << " in " << word2 << G4endl; //GDEB
+    if( sFound == std::string::npos ) {
       bEqual = FALSE;
       break;
     } else {
-      //---- If there is no asterisk before first character, the fisrt string pair found has to start at the first character
-      //      G4cout << " GmGenUtils::AreWordsEquivalent chk end " <<  spair.first << " " << spair.second  << " " << spair.first+spair.second << " " << word1.length() << " " << sFound+spair.second << " " << word2.length()<< G4endl;
+      bEqual = TRUE;
+      //---- If there is no asterisk before first character, the first string pair found has to start at the first character
+      //      G4cout << " GmGenUtils::AreWordsEquivalent chk end " << spair.first << " " << spair.second  << " " << spair.first+spair.second << " " << word1.length() << " " << sFound+spair.second << " " << word2.length()<< G4endl; //GDEB
       if( spair.first == 0 && sFound != 0 ) {
 	bEqual = FALSE;
 	break;
 	//---- If there is no asterisk after last character, the last string pair found has to end at the last character
-      } else if( spair.first+spair.second-1 == word1.length() && 
-		 sFound+spair.second-1 != word2.length() ) {
+      } else if( spair.first+spair.second == word1.length() && 
+		 sFound+spair.second != word2.length() ) {
+	//	G4cout << " GmGenUtils::AreWordsEquivalent word1 end, word2 not end " << spair.second  << " " << sFound+spair.second << " " << word2.length()<< G4endl; //GDEB	
 	bEqual = FALSE;
-	break;
+	//---- Check next occurence
+	ii--;
+	cStart += sFound-spair.second+1; // look after bFound
+	//	break;
       }
       cStart += spair.second;
     } 
   }
+
+  //  G4cout << " GmGenUtils::AreWordsEquivalent RETURN " << bEqual << G4endl; //GDEB
 
   return bEqual;
 }
@@ -661,7 +720,7 @@ void GmGenUtils::ReadUnits()
     wl =  GmGenUtils::GetWordsInString( G4String(ltemp) );
     if( wl.size() >= 7 ) {
       // wl[0] is blank because line start with blank! 
-      if( wl[1] == "static" && wl[2] == "const"){
+      if( wl[1] == "static" && wl[2] == "constexpr"){
 	//	G4cout << "UNIT inserted " << wl[4] << " " << theUnits.size() << G4endl;
 	    theUnits.insert( wl[4] );
       }
@@ -694,6 +753,9 @@ G4bool GmGenUtils::IsUnit( const G4String str )
   if( theUnits.find(str) != theUnits.end() ) {
     return true;
   } else {
+    /*    for( std::set<G4String>::const_iterator ite = theUnits.begin(); ite != theUnits.end(); ite++ ) {
+      G4cout << " UNIT " << *ite << G4endl; //GDEB
+      } */
     return false;
   }
 }
@@ -838,4 +900,117 @@ std::vector<G4String> GmGenUtils::StringSplit( const G4String& theString, const 
   }
 
   return theStringVector;
+}
+
+//----------------------------------------------------------------
+std::string::size_type GmGenUtils::GetNextSeparator( G4int iSeparator, G4String dataName )
+{
+  if( iSeparator >= G4int(dataName.length()) ) return std::string::npos;
+
+  const char* separators("+-*/()");
+  std::string::size_type isepF = std::string::npos;
+  for( G4int ii = 0; ii < 6; ii++ ){
+    std::string::size_type isepFt = dataName.find(separators[ii],iSeparator);
+    //-    G4cout  << " separator " << separators[ii] << " " << isepFt << G4endl;
+    // check for case of exponential
+    if( ii < 2 && G4int(isepFt) >= 2 ) {
+      if( ( dataName[isepFt-1] == 'e' || dataName[isepFt-1] == 'E' )
+	  && ( GmGenUtils::IsNumber( dataName[isepFt-2] ) || dataName[isepFt-2] == '.' )
+	  && ( GmGenUtils::IsNumber( dataName[isepFt+1] ) ) ){
+	 isepFt = dataName.find(isepFt+1,iSeparator);
+      }
+    }
+
+    if( isepFt != std::string::npos ) {
+      isepF = std::min( isepF, isepFt );
+    }
+  }
+
+  //  G4cout << " GmVDataUser::GetNextSeparator( " <<  G4int(isepF) << " " << dataName << " " << iSeparator << " LEN " << dataName.length() << G4endl;
+  return isepF;
+}
+
+
+//----------------------------------------------------------------
+G4bool GmGenUtils::IsSeparator( const G4String word )
+{
+  
+  if( G4tgrUtils::WordIsFunction( word ) || GmGenUtils::IsNumber( word ) || GmGenUtils::IsUnit(word) ){
+    return true;
+  } else {	
+    return false;
+  }
+}
+
+//----------------------------------------------------------------
+void GmGenUtils::WriteStringToBinaryFile(std::ofstream& fout, G4String dat, size_t nChars )
+{
+  if( dat.length() > nChars ) {
+    G4Exception("GmGenUtils::WriteStringToBinaryFile",
+		"",
+		JustWarning,
+		("String length is " + itoa(dat.length()) + " only " + itoa(nChars) + " will be written : " + dat).c_str());
+  }
+
+  fout.write((char*)&dat,sizeof(char)*nChars );
+}
+
+#include <ctime>
+#include <chrono>
+
+//----------------------------------------------------------------
+void GmGenUtils::DateAndTimeNow( G4String& date, G4String& time )
+{
+  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+  time_t tt = std::chrono::system_clock::to_time_t(now);
+  //  tm utc_tm = *gmtime(&tt);
+  tm local_tm = *localtime(&tt);
+  date = itoa(local_tm.tm_year+1900,2) + itoa(local_tm.tm_mon,2) + itoa(local_tm.tm_mday,2);
+  time = itoa(local_tm.tm_hour,2) + itoa(local_tm.tm_min,2) + itoa(local_tm.tm_sec,2);
+}
+
+//------------------------------------------------------------------------
+G4int GmGenUtils::GetAboveInt( G4double val, G4double precision )
+{
+  //  G4cout << " GetAboveInt " << val << " - " << precision << " " << val - precision << " " << G4int( val - 10*precision )+1*(val>0) << G4endl; //GDEB
+  return G4int( val - precision )+1*(val-precision>0); // return integer above (if val is not already an integer)
+} 
+
+//------------------------------------------------------------------------
+G4int GmGenUtils::GetBelowInt( G4double val, G4double precision )
+{
+  // G4cout << " GetBelowInt " << G4int( val + precision )-1*(val+precision<0) << " : " << val + precision << " - " << 1*(val<0) << " : " << val << " + " << precision << " " << (val<0) << G4endl; //GDEB
+  return G4int( val + precision )-1*(val+precision<0); // return integer below (if val is not already an integer)
+} 
+
+//------------------------------------------------------------------------
+G4String GmGenUtils::GetEnv(const G4String& var, bool bExists )
+{
+  G4String varValue = "";
+  char* varc = getenv(var);
+  if (!varc) {
+	  if (bExists) {
+		  G4Exception("GmGenUtils::GetEnv",
+			  "",
+			  FatalErrorInArgument,
+			  ("No VARIABLE " + var + " defined, please define it with 'set " + var + "= XXX'").c_str());
+	  }
+  }
+  else {
+	  varValue = getenv(var);
+  }
+
+  return varValue;
+}
+
+//------------------------------------------------------------------------
+void GmGenUtils::SetCheckTimeUnits(G4bool bctu) {
+	bCheckTimeUnits = bctu;
+}
+
+//------------------------------------------------------------------------
+std::string GmGenUtils::rtrim(const std::string &s)
+{
+    size_t end = s.find_last_not_of(" \n\r\t\f\v");
+    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
 }

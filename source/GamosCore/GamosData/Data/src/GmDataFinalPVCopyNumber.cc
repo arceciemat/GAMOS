@@ -4,12 +4,14 @@
 #include "G4Track.hh"
 #include "G4EventManager.hh"
 #include "G4Event.hh"
+#include "G4TouchableHistory.hh"
+#include "G4TransportationManager.hh"
 
 //----------------------------------------------------------------
 GmDataFinalPVCopyNumber::GmDataFinalPVCopyNumber()
 {
   bInitial = false;
-  theExcludedTypes.clear(); // delete DTRun
+  theExcludedTypes.insert(DTEvent);
 }
 
 //----------------------------------------------------------------
@@ -22,21 +24,19 @@ GmDataFinalPVCopyNumber::~GmDataFinalPVCopyNumber()
 G4double GmDataFinalPVCopyNumber::GetValueFromStep( const G4Step* aStep, G4int )
 {
 
-  return aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
+  return aStep->GetPostStepPoint()->GetTouchable()->GetReplicaNumber();
 
 }
 
 //----------------------------------------------------------------
 G4double GmDataFinalPVCopyNumber::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
-
-  return aTrack->GetVolume()->GetCopyNo();
-
+  return aTrack->GetTouchable()->GetReplicaNumber();
 }
 
 //----------------------------------------------------------------
-G4double GmDataFinalPVCopyNumber::GetValueFromSecoTrack(const G4Track* , const G4Track* aTrack2, G4int )
+G4double GmDataFinalPVCopyNumber::GetValueFromSecoTrack(const G4Track* aTrack, const G4Track*, G4int )
 {
+  return aTrack->GetTouchable()->GetReplicaNumber();
 
-  return aTrack2->GetVolume()->GetCopyNo();
 }

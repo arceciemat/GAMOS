@@ -46,3 +46,10 @@ G4double GmDataInitialDirZ::GetValueFromEvent( const G4Event* aEvent, G4int )
 
   return mom.z();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialDirZ::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  return aTrack->GetMomentumDirection().z();
+}
+

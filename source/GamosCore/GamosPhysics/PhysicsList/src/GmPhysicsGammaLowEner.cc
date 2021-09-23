@@ -14,13 +14,12 @@
 #include "G4LivermoreGammaConversionModel.hh"
 
 #include "G4RayleighScattering.hh" 
-#include "G4LivermoreRayleighModel.hh"
 
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "G4RegionStore.hh"
 
-GmPhysicsGammaLowEner::GmPhysicsGammaLowEner(const G4String& name): GmVPhysicsGamma(name)
+GmPhysicsGammaLowEner::GmPhysicsGammaLowEner(const G4String& name, G4int type): GmVPhysicsGamma(name,type)
 { }
 
 GmPhysicsGammaLowEner::~GmPhysicsGammaLowEner()
@@ -65,9 +64,6 @@ void GmPhysicsGammaLowEner::ConstructProcess()
       pmanager->AddDiscreteProcess(theGammaConversion);
 
       G4RayleighScattering* theRayleigh = new G4RayleighScattering();
-      G4LivermoreRayleighModel* theRayleighModel = new G4LivermoreRayleighModel();
-      theRayleighModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
-      theRayleigh->AddEmModel(0, theRayleighModel);
       pmanager->AddDiscreteProcess(theRayleigh);
       
     }

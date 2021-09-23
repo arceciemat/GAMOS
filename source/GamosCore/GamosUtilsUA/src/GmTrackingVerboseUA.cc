@@ -20,6 +20,7 @@ GmTrackingVerboseUA::GmTrackingVerboseUA()
 }
 
 
+//---------------------------------------------------------------------------
 void GmTrackingVerboseUA::BeginOfRunAction( const G4Run* )
 {
   //----- Set which events are verbose
@@ -39,14 +40,13 @@ void GmTrackingVerboseUA::BeginOfRunAction( const G4Run* )
   if( UtilsUAVerb(debugVerb) ) G4cout << "TV: fTVTrackMin " <<  fTVTrackMin << " fTVTrackMax " <<  fTVTrackMax <<  " fTVTrackStep " << fTVTrackStep << " fTVEventMin " << fTVEventMin << " fTVEventMax " << fTVEventMax << " fTVEventStep " << fTVEventStep << " fVerboseLevel " << fVerboseLevel << G4endl;
 #endif
 
-  G4UserTrackingAction * ta = 
-    dynamic_cast<G4UserTrackingAction*>(G4EventManager::GetEventManager()->GetUserTrackingAction());
+  //  G4UserTrackingAction * ta = dynamic_cast<G4UserTrackingAction*>(G4EventManager::GetEventManager()->GetUserTrackingAction());
   theTrackingManager = G4EventManager::GetEventManager()->GetTrackingManager();
 	 //ta->fpTrackingManager;
 }
 
 //----------------------------------------------------------------
-void GmTrackingVerboseUA::EndOfEventAction( const G4Event* anEvent )
+void GmTrackingVerboseUA::BeginOfEventAction( const G4Event* anEvent )
 {
   //----------- Set /tracking/verbose for this event 
   G4int eventNo = anEvent->GetEventID();

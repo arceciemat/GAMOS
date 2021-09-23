@@ -1,5 +1,5 @@
 #include "GmClassifierBySecondariesList.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Classifiers/include/GmClassifierVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 
@@ -28,9 +28,9 @@ void GmClassifierBySecondariesList::SetParameters( std::vector<G4String>& params
 }
 
 //------------------------------------------------------------------
-G4int GmClassifierBySecondariesList::GetIndexFromStep(const G4Step* )
+int64_t GmClassifierBySecondariesList::GetIndexFromStep(const G4Step* )
 {
-  G4int index;
+  int64_t index;
   std::vector<G4Track*> secoTracks = GmG4Utils::GetSecondariesOfCurrentStep();
   std::vector<G4Track*>::const_iterator itet;
   std::multiset<G4String> secoNames;
@@ -44,7 +44,7 @@ G4int GmClassifierBySecondariesList::GetIndexFromStep(const G4Step* )
     name += (*ites);
   }
 
-  std::map<const G4String,G4int>::const_iterator ite = theIndexMap.find(name);
+  std::map<const G4String,int64_t>::const_iterator ite = theIndexMap.find(name);
   if( ite == theIndexMap.end() ){
     index = theIndexMap.size()+1;
     theIndexMap[name] = index;
@@ -53,28 +53,28 @@ G4int GmClassifierBySecondariesList::GetIndexFromStep(const G4Step* )
   }
   
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmClassifierBySecondariesList::GetIndexFromStep " << index << " Secondary_names " << name << G4endl;
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierBySecondariesList::GetIndexFromStep " << index << " Secondary_names " << name << G4endl;
 #endif
   
   return index;
 }
 
 //------------------------------------------------------------------
-G4int GmClassifierBySecondariesList::GetIndexFromTrack(const G4Track* )
+int64_t GmClassifierBySecondariesList::GetIndexFromTrack(const G4Track* )
 {
   return 0;
   
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmClassifierBySecondariesList::GetIndex  0 " << G4endl;
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierBySecondariesList::GetIndex  0 " << G4endl;
 #endif
-
+  
 }
 
 //--------------------------------------------------------------
-G4String GmClassifierBySecondariesList::GetIndexName(G4int index)
+G4String GmClassifierBySecondariesList::GetIndexName(int64_t index)
 {
   G4String name = "NOT_FOUND";
-  std::map<const G4String,G4int>::const_iterator ite;
+  std::map<const G4String,int64_t>::const_iterator ite;
   for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
     if((*ite).second == index ){
       return (*ite).first;
@@ -88,10 +88,14 @@ G4String GmClassifierBySecondariesList::GetIndexName(G4int index)
 GmClassifierBySecondariesList::~GmClassifierBySecondariesList()
 {
   //print names of each index 
-  G4cout << "%%%%% Table of indices for GmClassifierBySecondariesList " << theName << G4endl;
-  std::map<const G4String,G4int>::const_iterator ite;
-  for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
-    G4cout << (*ite).first << " = " << (*ite).second << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+  if( ClassifierVerb(debugVerb) ) {
+    G4cout << "%%%%% Table of indices for GmClassifierBySecondariesList " << theName << G4endl;
+    std::map<const G4String,int64_t>::const_iterator ite;
+    for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
+      G4cout << (*ite).first << " = " << (*ite).second << G4endl;
+    }
   }
+#endif
 }
 

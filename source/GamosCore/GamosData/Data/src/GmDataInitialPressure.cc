@@ -30,24 +30,28 @@ G4double GmDataInitialPressure::GetValueFromStep( const G4Step* aStep, G4int )
 //----------------------------------------------------------------
 G4double GmDataInitialPressure::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
-  return aTrack->GetLogicalVolumeAtVertex()->GetMaterial()->GetPressure()/CLHEP::atmosphere;
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetVertexPosition()) );
+  return mate->GetPressure()/CLHEP::atmosphere;
 }
 
 //----------------------------------------------------------------
 G4double GmDataInitialPressure::GetValueFromSecoTrack( const G4Track* aTrack1, const G4Track* , G4int )
 {
-  return aTrack1->GetMaterial()->GetPressure()/CLHEP::atmosphere;
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack1->GetPosition()) );
+  return mate->GetPressure()/CLHEP::atmosphere;
 }
 
 //----------------------------------------------------------------
 G4double GmDataInitialPressure::GetValueFromEvent( const G4Event* anEvent, G4int )
 {
-  G4TouchableHistory* touch = new G4TouchableHistory;
-  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( anEvent->GetPrimaryVertex(0)->GetPosition(), touch, false ); 
+  G4Material* mate = GetMateFromPV( GetPVFromPos(anEvent->GetPrimaryVertex(0)->GetPosition()) );
+  return mate->GetPressure()/CLHEP::atmosphere;
 
-  G4double density = touch->GetVolume()->GetLogicalVolume()->GetMaterial()->GetPressure()/CLHEP::atmosphere;
- 
-  delete touch;
+}
 
-  return density;
+//----------------------------------------------------------------
+G4double GmDataInitialPressure::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetPosition()) );
+  return mate->GetPressure()/CLHEP::atmosphere;
 }

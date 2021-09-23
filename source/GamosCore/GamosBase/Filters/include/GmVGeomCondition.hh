@@ -24,6 +24,13 @@ public: // with description
 public: // with description
   virtual const G4VTouchable* GetTouchableFromTrack(const G4Track*) = 0;
   virtual const G4VTouchable* GetTouchableFromStep(const G4Step*) = 0;
+  virtual const G4VTouchable* GetTouchableFromStackedTrack(const G4Track* ) {
+    G4Exception(" GmVGeomCondition::GetTouchableFromStackedTrack",
+		"",
+		FatalException,
+		"Cannot be called for a stacking action");
+    return (G4VTouchable*)0;
+  }
   const G4VTouchable* GetTouchableFromStepPoint(const G4StepPoint*);
   
 };

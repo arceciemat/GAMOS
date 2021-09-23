@@ -19,10 +19,10 @@ GmEventClassifierByGammaInteraction::~GmEventClassifierByGammaInteraction()
 }
 
 //---------------------------------------------------------------
-int GmEventClassifierByGammaInteraction::Classify( const std::vector<GmTrajPoint*>& interactionList )
+int64_t GmEventClassifierByGammaInteraction::Classify( const std::vector<GmTrajPoint*>& interactionList )
 {
   //  G4cout << " GmEventClassifierByGammaInteraction::Classify " << interactionList.size() << G4endl;
-  int type = 0;
+  int64_t type = 0;
 
   std::vector<GmTrajPoint*>::const_iterator ite;
   for( ite = interactionList.begin(); ite != interactionList.end(); ite++ ){ 
@@ -48,14 +48,14 @@ void GmEventClassifierByGammaInteraction::BuildProcessNames()
 }
 
 //---------------------------------------------------------------
-int GmEventClassifierByGammaInteraction::Classify( const std::vector<GmTrajStep*>& interactionList )
+int64_t GmEventClassifierByGammaInteraction::Classify( const std::vector<GmTrajStep*>& interactionList )
 {
   //  G4cout << " GmEventClassifierByGammaInteraction::Classify " << interactionList.size() << G4endl;
   if( !bProcessNamesBuilt ) {
     BuildProcessNames();
   }
 
-  int type = 0;
+  int64_t type = 0;
 
   std::vector<GmTrajStep*>::const_iterator ite;
   for( ite = interactionList.begin(); ite != interactionList.end(); ite++ ){ 
@@ -67,9 +67,9 @@ int GmEventClassifierByGammaInteraction::Classify( const std::vector<GmTrajStep*
 }
 
 //---------------------------------------------------------------
-int GmEventClassifierByGammaInteraction::Classify1Interaction( const G4String& processName )
+int64_t GmEventClassifierByGammaInteraction::Classify1Interaction( const G4String& processName )
 {
-  int type = 0;
+  int64_t type = 0;
 
   if( processName == thePhotoElecName ){ 
     type = 10000;
@@ -102,9 +102,8 @@ int GmEventClassifierByGammaInteraction::Classify1Interaction( const G4String& p
 }
 
 //---------------------------------------------------------------
-G4String GmEventClassifierByGammaInteraction::GetClassificationName( int ic ) 
+G4String GmEventClassifierByGammaInteraction::GetClassificationName( int64_t ic ) 
 {
-
   G4String name = "Evt:";
 
   int iPE = ic/10000;

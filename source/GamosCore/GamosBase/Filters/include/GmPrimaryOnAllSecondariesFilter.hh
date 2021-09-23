@@ -22,6 +22,7 @@ public: // with description
 public: // with description
   virtual G4bool AcceptTrack(const G4Track* );
   virtual G4bool AcceptStep(const G4Step* );
+  virtual G4bool AcceptStackedTrack(const G4Track* );
 
 private:
   G4bool AcceptAllSecoTracks( const G4TrackVector& secos, const G4String& name ); 

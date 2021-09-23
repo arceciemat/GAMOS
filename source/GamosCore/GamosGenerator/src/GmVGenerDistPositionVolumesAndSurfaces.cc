@@ -23,6 +23,7 @@ GmVGenerDistPositionVolumesAndSurfaces::GmVGenerDistPositionVolumesAndSurfaces()
   theGeomUtils = GmGeometryUtils::GetInstance();
 
   bOnlyVolume = G4bool( GmParameterMgr::GetInstance()->GetNumericValue("GmVGenerDistPositionVolumesAndSurfaces:OnlyVolume",0));
+
 }
 
 //------------------------------------------------------------------------
@@ -42,7 +43,9 @@ void GmVGenerDistPositionVolumesAndSurfaces::SetParams( const std::vector<G4Stri
   }
 
   std::vector<GVSTouchableInfo*> tinfos = theOrigin->AddTouchableInfos( params );
-
+  for(unsigned int jj=0; jj<theTouchableInfos.size(); jj++) { //gdl
+    delete theTouchableInfos[jj];//gdl
+  }//gdl
   theTouchableInfos.clear();
   theTotalObjectDimensions.clear();
 
@@ -60,7 +63,7 @@ void GmVGenerDistPositionVolumesAndSurfaces::SetParams( const std::vector<G4Stri
 
     theObject->BuildSurfaceAreas( solid );
   }
-  
+
 }
 
 //------------------------------------------------------------------------
@@ -76,32 +79,30 @@ G4ThreeVector GmVGenerDistPositionVolumesAndSurfaces::GeneratePosition( const Gm
       break;
     }
   }
+   GVSTouchableInfo* currentTouchableInfo = theTouchableInfos[io];
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << " GmVGenerDistPositionVolumesAndSurfaces::Generate in volume io " << io << " " << theTouchableInfos[io]->name << " rvol " << rvol << G4endl;
 #endif
-#ifndef GAMOS_NO_VERBOSE
-  //  if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistPositionInG4Volumes::Generate in volume " << theTouchables[io]->GetSolid()->GetName() << G4endl;
-#endif
-
+  
   G4ThreeVector pos;
   G4String volName;
   do {
     
-    pos = theObject->GeneratePosition( theTouchableInfos[io] );
+    pos = theObject->GeneratePosition( currentTouchableInfo );
     
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(infoVerb) ) G4cout << " GmVGenerDistPositionVolumesAndSurfaces::Generate pos before trans " << pos << G4endl;
 #endif
     
-    pos = theTouchableInfos[io]->rotmat * pos;
-    pos += theTouchableInfos[io]->pos;
+    pos = currentTouchableInfo->rotmat * pos;
+    pos += currentTouchableInfo->pos;
     
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(infoVerb) ) G4cout << " GmVGenerDistPositionVolumesAndSurfaces::Generate pos " << pos << " touchable global pos " <<theTouchableInfos[io]->pos  << G4endl;
+    if( GenerVerb(infoVerb) ) G4cout << " GmVGenerDistPositionVolumesAndSurfaces::Generate pos " << pos << " touchable global pos " <<currentTouchableInfo->pos  << G4endl;
 #endif
     volName = theGeomUtils->BuildTouchableName( pos );
     
-  } while(volName != theTouchableInfos[io]->name && bOnlyVolume );
+  } while(volName != currentTouchableInfo->name && bOnlyVolume );
     
   return pos;
 

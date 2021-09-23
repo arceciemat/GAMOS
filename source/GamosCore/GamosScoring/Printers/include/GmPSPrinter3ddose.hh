@@ -18,15 +18,12 @@ public: // with description
   virtual ~GmPSPrinter3ddose(){ };
   
   virtual void DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* theScorer );
-  virtual void SetParameters( const std::vector<G4String>& param );
 
 private:
   void Write3ddoseHeader();
   void Write3ddose( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* theScorer );
 
 private:
-  G4double theUnit;
-  G4String theUnitName;
   G4PhantomParameterisation* thePhantomParam;
 
 };

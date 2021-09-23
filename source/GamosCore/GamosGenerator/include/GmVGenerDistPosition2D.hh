@@ -15,8 +15,15 @@ public:
   virtual G4ThreeVector GeneratePosition( const GmParticleSource* source ) = 0;
 
   virtual G4ThreeVector RotateAndTranslate( G4ThreeVector& posini );
+  void SetCentre( G4ThreeVector centre ) {
+    theCentre = centre;
+  }
+
+  void SetRotation( G4RotationMatrix rot );
+  void SetRotation( G4ThreeVector dir );
 
 protected:
+  
   G4ThreeVector theCentre;
   G4RotationMatrix theRotation;
 };

@@ -41,7 +41,7 @@ GmG4PSPassageTrackLength::GmG4PSPassageTrackLength(G4String name)
 {
   fWeighted = 0;
   theUnit = 1.;
-  theUnitName = G4String("CLHEP::mm");
+  theUnitName = G4String("mm");
 
 }
 
@@ -88,20 +88,3 @@ G4bool GmG4PSPassageTrackLength::IsPassed(G4Step* aStep){
   return Passed;
 }
 
-void GmG4PSPassageTrackLength::PrintAll()
-{
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveSenstivity " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-           << "  track length : " << G4BestUnit(*(itr->second),"Length") 
-           << G4endl;
-  }
-}
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSPassageTrackLength::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

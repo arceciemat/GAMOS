@@ -1,4 +1,5 @@
 #include "Gm3ddose.hh"
+#include "GmSqdose.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
 //-----------------------------------------------------------------------
@@ -13,7 +14,7 @@ std::ostream& operator<<(std::ostream &out,
 {
   out << *(gmdose.GetHeader());
   size_t siz = gmdose.GetDoses().size();
-  size_t nz = gmdose.GetHeader()->GetNoVoxelZ();
+  size_t nz = gmdose.GetHeader()->GetNoVoxelsZ();
   std::vector<float> dose = gmdose.GetDoses();
   std::vector<float> doseError = gmdose.GetDoseErrors();
 
@@ -59,7 +60,8 @@ Gm3ddose::Gm3ddose(const GmSqdose& sqd)
   float nev1= nev - 1;
   size_t nv = theDoses.size();
   for( size_t jj = 0; jj < nv; jj++ ){
-    theDoseErrors.push_back( (doseSqs[jj]*nev - theDoses[jj]*theDoses[jj] ) / nev1);
+    //    theDoseErrors.push_back( (doseSqs[jj]*nev - theDoses[jj]*theDoses[jj] ) / nev1);
+    theDoseErrors.push_back( sqrt( (doseSqs[jj]*nev - theDoses[jj]*theDoses[jj] ) / nev1 )/theDoses[jj] );
   }
 
 }
@@ -68,6 +70,7 @@ Gm3ddose::Gm3ddose(const GmSqdose& sqd)
 //-----------------------------------------------------------------------
 void Gm3ddose::Read( GmFileIn& fin )
 {
+  G4cout << " Gm3ddose::Read " << G4endl; //GDEB
   if( theHeader != 0 ){
     G4Exception("Gm3ddose::Read",
 		"Wrong argument",
@@ -78,36 +81,24 @@ void Gm3ddose::Read( GmFileIn& fin )
 
   theHeader->Read( fin );
 
-  size_t nv = theHeader->GetNoVoxelX() *
-  theHeader->GetNoVoxelY() * 
-	       theHeader->GetNoVoxelZ();
+  size_t nv = theHeader->GetNoVoxelsX() *
+  theHeader->GetNoVoxelsY() * 
+	       theHeader->GetNoVoxelsZ();
   std::vector<G4String> wl;
   size_t iv = 0;
-  for( ;; ){
-    if( ! fin.GetWordsInLine(wl) ) break;
-    for( size_t jj = 0; jj < wl.size(); jj++ ){
-      theDoses.push_back( GmGenUtils::GetValue(wl[jj]) );
-      //      if( theDoses.size()%100000 == 1 ) G4cout << " READ dose " << theDoses.size() << " = " << theDoses[theDoses.size()-1] << G4endl;
-    }
-    iv+= wl.size();
-    if( iv == nv ) break;
-    if( iv > nv ) G4Exception("Gm3ddose::Read",
-			      "Too many dose values",FatalErrorInArgument,G4String("It must have "+GmGenUtils::itoa(nv)+" and it has "+GmGenUtils::itoa(iv)+" values").c_str());
+  G4double dose;
+  std::ifstream* fins = fin.GetIfstream();
+  for( iv = 0; iv < nv; iv++ ){
+    *fins >> dose;
+    theDoses.push_back( dose );
   }
 
   iv = 0;
-  for( ;; ){
-    if( ! fin.GetWordsInLine(wl) ) break;
-    for( size_t jj = 0; jj < wl.size(); jj++ ){
-      theDoseErrors.push_back( GmGenUtils::GetValue(wl[jj]) );
-      //      if( theDoseErrors.size()%100000 == 1 ) G4cout << " READ dose error " << theDoseErrors.size() << " = " << theDoseErrors[theDoseErrors.size()-1] << G4endl;
-    }
-    iv+= wl.size();
-    if( iv == nv ) break;
-    if( iv > nv ) G4Exception("Gm3ddose::Read",
-			      "Too many dose error values",FatalErrorInArgument,G4String("It must have "+GmGenUtils::itoa(nv)+" and it has "+GmGenUtils::itoa(iv)+" values").c_str());
+  for( iv = 0; iv < nv; iv++ ){
+    *fins >> dose;
+    theDoseErrors.push_back( dose );
   }
-
+ 
   if( theDoses.size() != theDoseErrors.size() ){
     G4Exception("Gm3ddose::Read",
 		"Wrong format of dose file",FatalErrorInArgument,G4String(" number of dose values = " + GmGenUtils::itoa(theDoses.size())+ "must be equal to number of error values"+GmGenUtils::itoa(theDoseErrors.size())).c_str());

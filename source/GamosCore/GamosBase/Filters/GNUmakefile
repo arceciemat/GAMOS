@@ -8,4 +8,4 @@ all: lib
 include $(GAMOSINSTALL)/config/binmake.gmk
 include $(GAMOSINSTALL)/config/general.gmk
 
-EXTRALIBS +=  -lGamosCore_GamosUtils -lGamosCore_GamosBase_Base -lGamosCore_GamosBase_Classifiers 
+EXTRALIBS +=  -lGamosCore_GamosUtils -lGamosCore_GamosBase_Base -lGamosCore_GamosBase_Classifiers -lGamosCore_GamosUserActionMgr

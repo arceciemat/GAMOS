@@ -5,7 +5,7 @@
 // based on the Program) you indicate your acceptance of this statement,
 // and all its terms.
 //
-// $Id: GmVisManager.hh,v 1.2 2010/06/17 13:23:31 arce Exp $
+// $Id: GmVisManager.hh,v 1.5 2018/06/28 15:26:56 arce Exp $
 // GEANT4 tag $Name:  $
 //
 // 

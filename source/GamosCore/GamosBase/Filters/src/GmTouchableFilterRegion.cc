@@ -5,7 +5,7 @@
 #include "G4Track.hh"
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 
 //---------------------------------------------------------------------
 GmTouchableFilterRegion::GmTouchableFilterRegion()
@@ -24,19 +24,19 @@ G4bool GmTouchableFilterRegion::AcceptTouchable(const G4VTouchable* touch)
 {
   if( !touch->GetVolume() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterRegion::AcceptTouchable return 0, no touch->GetVolume() " << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterRegion::AcceptTouchable return 0, no touch->GetVolume() " << G4endl;
 #endif
     return FALSE; // it should have detected before, but fWorldBoundary is not set
   }
   if( theRegions.find(touch->GetVolume()->GetLogicalVolume()->GetRegion()) != theRegions.end() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterRegion::AcceptTouchable TRUE return 1 " << touch->GetVolume()->GetLogicalVolume()->GetRegion()->GetName() << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterRegion::AcceptTouchable TRUE return 1 " << touch->GetVolume()->GetLogicalVolume()->GetRegion()->GetName() << G4endl;
 #endif
     return TRUE;
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterRegion::AcceptTouchable return 0 " << touch->GetVolume()->GetLogicalVolume()->GetRegion()->GetName() << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterRegion::AcceptTouchable return 0 " << touch->GetVolume()->GetLogicalVolume()->GetRegion()->GetName() << G4endl;
 #endif
 
   return FALSE;
@@ -71,7 +71,7 @@ void GmTouchableFilterRegion::SetParameters( std::vector<G4String>& params)
       if( GmGenUtils::AreWordsEquivalent(params[ii],reg->GetName()) ){
 	theRegions.insert(reg);
 #ifndef GAMOS_NO_VERBOSE
-	if( BaseVerb(debugVerb) ) G4cout << "GmTouchableFilterRegion::SetParameters add parameter " << (*regions)[jj]->GetName() << G4endl;
+	if( FilterVerb(debugVerb) ) G4cout << "GmTouchableFilterRegion::SetParameters add parameter " << (*regions)[jj]->GetName() << G4endl;
 #endif
       }
     }

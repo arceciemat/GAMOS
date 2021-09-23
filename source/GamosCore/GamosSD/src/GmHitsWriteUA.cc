@@ -12,12 +12,16 @@
 GmHitsWriteUA::GmHitsWriteUA()
 {
    bBinFile = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("SD:GmHitsWriteUA:BinFile",1));
-
    if( bBinFile ) {
      theHitsIOMgr = new GmHitsIObinMgr;
+     GmHitsIObinMgr* theHitsIOMgrbin = static_cast<GmHitsIObinMgr*>(theHitsIOMgr);
+     theHitsIOMgrbin->OpenFileOut();
    } else {
      theHitsIOMgr = new GmHitsIOtextMgr;
+     GmHitsIOtextMgr* theHitsIOMgrtext = static_cast<GmHitsIOtextMgr*>(theHitsIOMgr);
+     theHitsIOMgrtext->OpenFileOut();
    }
+
 }
 
 //---------------------------------------------------------------------

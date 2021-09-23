@@ -1,82 +1,93 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosReadDICOM
+# Module : GamosReadDICOM
+# Package: GamosCore_GamosReadDICOM
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosReadDICOM
+	 HEADERS
+		GmDumpMateG4dcmUA.hh
+		GmReadPhantomStMgr.hh
+		GmGenerDistPositionInPhantomVoxels.hh
+		GmReadPhantomG4withStGeometry.hh
+		GmTouchablePhantomStructure.hh
+		GmClassifierByPhantomStructure.hh
+		GmReadPhantomPartialG4Geometry.hh
+		Gm3ddose.hh
+		GmReadPhantomEGSwithStGeometry.hh
+		GmGenerDistPositionInStPhantomVoxels.hh
+		GmBuildPhantomStructuresUA.hh
+		GmReadPhantomEGSGeometry.hh
+		GmSimplePhantomGeometry.hh
+		GmReadNMDicom.hh
+		GmReadPETDicom.hh
+		GmGenerDistPositionPETImage.hh
+		GmSqdoseHeader.hh
+		GmClassifierCrossPhantom.hh
+		DicomNestedPhantomParameterisation.hh
+		GmReadPhantomG4BinGeometry.hh
+		Gm3ddoseHeader.hh
+		GmReadPhantomPSMgr.hh
+		GmSqdose.hh
+		GmPhantomStructures.hh
+		GmRegularParamUtils.hh
+		GmReadPhantomG4Geometry.hh
+		GmGenerDistPositionNMImage.hh
+		GmPhantomDensityHistosUA.hh
+		GmPhantomDoseUA.hh
+		GmReadDICOMVerbosity.hh
+		GmCrossPhantomGeometry.hh
+	 SOURCES
+		GmCrossPhantomGeometry.cc
+		GmSqdoseHeader.cc
+		plugin.cc
+		GmGenerDistPositionInStPhantomVoxels.cc
+		GmBuildPhantomStructuresUA.cc
+		GmReadPhantomEGSwithStGeometry.cc
+		GmReadPhantomStMgr.cc
+		GmSimplePhantomGeometry.cc
+		GmReadPhantomG4Geometry.cc
+		GmGenerDistPositionPETImage.cc
+		GmGenerDistPositionInPhantomVoxels.cc
+		Gm3ddose.cc
+		GmPhantomDoseUA.cc
+		GmReadPhantomEGSGeometry.cc
+		GmReadPhantomPartialG4Geometry.cc
+		GmClassifierCrossPhantom.cc
+		GmReadPhantomPSMgr.cc
+		GmPhantomDensityHistosUA.cc
+		GmSqdose.cc
+		GmReadDICOMVerbosity.cc
+		GmClassifierByPhantomStructure.cc
+		GmReadPhantomG4BinGeometry.cc
+		GmDumpMateG4dcmUA.cc
+		GmGenerDistPositionNMImage.cc
+		DicomNestedPhantomParameterisation.cc
+		GmReadPhantomG4withStGeometry.cc
+		GmRegularParamUtils.cc
+		GmReadNMDicom.cc
+		GmReadPETDicom.cc
+		GmTouchablePhantomStructure.cc
+		Gm3ddoseHeader.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+	GamosCore_GamosBase_Base
+	GamosCore_GamosUserActionMgr
+	GamosCore_GamosGeometry
+	GamosCore_GamosUtils
+	GamosCore_GamosBase_Filters
+	GamosCore_GamosGenerator
+		${SEAL_LIBRARIES} 
 
-   HEADERS
-       Gm3ddose.hh
-       Gm3ddoseHeader.hh
-       GmGenerDistPositionInPhantomVoxels.hh
-       GmReadPhantomG4withPSGeometry.hh
-       GmSqdoseHeader.hh
-       GmPhantomStructures.hh
-       GmSimplePhantomGeometry.hh
-       GmReadPhantomG4BinGeometry.hh
-       GmPhantomDoseUA.hh
-       GmReadPhantomG4Geometry.hh
-       GmDICOMIntersectVolume.hh
-       GmReadPhantomSVMgr.hh
-       GmReadPhantomGeometry.hh
-       GmSqdose.hh
-       GmRegularParamUtils.hh
-       GmBuildPhantomStructuresUA.hh
-       GmReadDICOMVerbosity.hh
-       GmReadPhantomPartialG4Geometry.hh
-       GmTouchablePhantomStructure.hh
-       GmReadPhantomEGSGeometry.hh
-       GmReadPhantomEGSwithPSGeometry.hh
-       GmPhantomDensityHistosUA.hh
-
-   SOURCES
-       GmReadPhantomGeometry.cc
-       plugin.cc
-       GmSimplePhantomGeometry.cc
-       GmReadPhantomG4Geometry.cc
-       GmReadPhantomG4withPSGeometry.cc
-       GmPhantomDensityHistosUA.cc
-       GmReadPhantomEGSwithPSGeometry.cc
-       Gm3ddose.cc
-       GmReadPhantomEGSGeometry.cc
-       GmBuildPhantomStructuresUA.cc
-       GmGenerDistPositionInPhantomVoxels.cc
-       GmReadPhantomPartialG4Geometry.cc
-       Gm3ddoseHeader.cc
-       GmReadDICOMVerbosity.cc
-       GmTouchablePhantomStructure.cc
-       GmRegularParamUtils.cc
-       GmSqdose.cc
-       GmReadPhantomSVMgr.cc
-       GmPhantomDoseUA.cc
-       GmSqdoseHeader.cc
-       GmDICOMIntersectVolume.cc
-       GmReadPhantomG4BinGeometry.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosBase_Filters
-  GamosCore_GamosGenerator
-  GamosCore_GamosUtils
-  GamosCore_GamosUserActionMgr
-  GamosCore_GamosBase_Base
-  GamosCore_GamosGeometry
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

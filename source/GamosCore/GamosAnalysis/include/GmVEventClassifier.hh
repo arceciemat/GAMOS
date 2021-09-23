@@ -16,7 +16,7 @@ public:
   GMEvClType GetType() const {
     return theType; }
   
-  virtual G4String GetClassificationName( int ic ) = 0;
+  virtual G4String GetClassificationName( int64_t ic ) = 0;
 
 private:
   G4String theName;

@@ -12,6 +12,9 @@ class GmPDSScore;
 class GmPDSGeantinoProcess;
 class GmPDSNeutronProcess;
 class GmPDSGammaProcess;
+#ifdef PDS_OP
+class GmPDSOpticalPhotonProcess;
+#endif
 class GmPDSDetector;
 class GmPDSProcessHelper;
 
@@ -28,6 +31,10 @@ class GmPDSUA : public GmUserRunAction,
 private:
   void AddNeutronScoringProcess();
   void AddGammaScoringProcess();
+#ifdef PDS_OP
+  void AddOpticalPhotonScoringProcess();
+#endif
+ 
   std::map<G4int,GmPDSDetector*> BuildDetectors();
 
 private:
@@ -35,6 +42,10 @@ private:
   GmPDSNeutronProcess* theNeutronScoringProcess;
   GmPDSGeantinoProcess* theGammaGeantinoScoringProcess;
   GmPDSGammaProcess* theGammaScoringProcess;
+#ifdef PDS_OP
+  GmPDSGeantinoProcess* theOpticalPhotonGeantinoScoringProcess;
+  GmPDSOpticalPhotonProcess* theOpticalPhotonScoringProcess;
+#endif
 
   std::map<G4String,GmPDSScore*>* theScoresN;
   std::map<G4String,GmPDSScore*>* theScoresG;
@@ -43,9 +54,13 @@ private:
 
   GmPDSProcessHelper* theNeutronHelper;
   GmPDSProcessHelper* theGammaHelper;
+#ifdef PDS_OP
+  GmPDSProcessHelper* theOpticalPhotonHelper;
+#endif
 
   G4bool bScoreNeutrons;
   G4bool bScoreGammas;
+  G4bool bScoreOpticalPhotons;
 
 };
 #endif

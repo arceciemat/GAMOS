@@ -4,7 +4,11 @@
 
 #include "G4MultiFunctionalDetector.hh"
 #include "G4SDManager.hh"
+#ifdef ROOT5
 #include "Reflex/PluginService.h"
+#else
+#include "GamosCore/GamosBase/Base/include/GmFilterFactory.hh"
+#endif
 
 GmFilterMgr* GmFilterMgr::theInstance = 0;
 
@@ -31,8 +35,12 @@ GmFilterMgr::~GmFilterMgr()
 //----------------------------------------------------------------------
 GmVFilter* GmFilterMgr::CreateFilter( std::vector<G4String> params, G4bool bExists )
 {
- Reflex::PluginService::SetDebug(2);
- GmVFilter* filter = Reflex::PluginService::Create<GmVFilter*>(params[1],params[0]);
+  GmVFilter* filter = 0;
+#ifdef ROOT5
+  filter = Reflex::PluginService::Create<GmVFilter*>(params[1],params[0]);
+#else
+  filter = GmFilterFactory::get()->create(params[1],params[0]);
+#endif
 
 #ifndef GAMOS_NO_VERBOSE
   if( BaseVerb(debugVerb) ) G4cout << " CreateFilter NAME=" << params[0] << " CLASS=" << params[1] << " = " << filter << G4endl;

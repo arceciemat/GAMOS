@@ -225,7 +225,7 @@ int GmHisto2::GetEntries() const
 }
 
 //----------------------------------------------------------------------
-double GmHisto2::GmGenUtils::GetIntegral() const
+double GmHisto2::GetIntegral() const
 {
   return theSumW;
 }
@@ -370,6 +370,7 @@ double GmHisto2::GetMean( int axis ) const
   } else if( axis == 2 ) {
     return ( theSumW ? theSumWY / theSumW : 0. );
   }
+  return 0.;
 }
 
 //----------------------------------------------------------------------
@@ -392,6 +393,7 @@ double GmHisto2::GetRMS( int axis ) const
     double sumr = theSumWY/theSumW;
     return ( theSumW ? sqrt(theSumWY2/theSumW - (sumr*sumr) ) : 0. );
   }
+  return 0.;
 
 }
 
@@ -401,6 +403,22 @@ double GmHisto2::GetRMSError( int axis ) const
   double rms = GetRMS(axis);
   double neff = GetEffectiveEntries();
   return ( neff > 0 ? sqrt(rms*rms/(2*neff) ) : 0. ); 
+}
+
+//----------------------------------------------------------------------                                         
+void GmHisto2::Reset()
+{
+	theEntries = 0;
+	theBinN.clear();
+	theBinSumW.clear();
+	theBinSumW2.clear();
+
+	theSumW = 0;
+	theSumW2 = 0;
+	theSumWX = 0;
+	theSumWX2 = 0;
+	theSumWY = 0;
+	theSumWY2 = 0;
 }
 
 #endif

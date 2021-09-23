@@ -20,41 +20,13 @@ GmRegularParamUtils* GmRegularParamUtils::GetInstance()
 
 }
 
-//-----------------------------------------------------------------------
-G4PhantomParameterisation* GmRegularParamUtils::GetPhantomParam(G4bool bMustExist)
-{
-  G4PhantomParameterisation* paramreg = 0;
-
-  G4PhysicalVolumeStore* pvs = G4PhysicalVolumeStore::GetInstance();
-  std::vector<G4VPhysicalVolume*>::iterator cite;
-  for( cite = pvs->begin(); cite != pvs->end(); cite++ ) {
-    //    G4cout << " PV " << (*cite)->GetName() << " " << (*cite)->GetTranslation() << G4endl;
-    if( IsPhantomVolume( *cite ) ) {
-      const G4PVParameterised* pvparam = static_cast<const G4PVParameterised*>(*cite);
-      G4VPVParameterisation* param = pvparam->GetParameterisation();
-      //    if( static_cast<const G4PhantomParameterisation*>(param) ){
-      //    if( static_cast<const G4PhantomParameterisation*>(param) ){
-      //      G4cout << "G4PhantomParameterisation volume found  " << (*cite)->GetName() << G4endl;
-      paramreg = static_cast<G4PhantomParameterisation*>(param);
-    }
-  }
-  
-  if( !paramreg && bMustExist ) G4Exception("GmRegularParamUtils::GetPhantomParam",
-					    "Wrong argument",
-					    FatalErrorInArgument,
-					    "No G4PhantomParameterisation found ");
-  
-  return paramreg;
-  
-}
-
 
 //-----------------------------------------------------------------------
 G4PhantomParameterisation* GmRegularParamUtils::GetPhantomParam( G4VPhysicalVolume* pv, G4bool bMustExist )
 {
   G4PhantomParameterisation* paramreg = 0;
   
-  if( IsPhantomVolume( pv ) ) {
+  if( theGeomUtils->IsPhantomVolume( pv ) ) {
     const G4PVParameterised* pvparam = static_cast<const G4PVParameterised*>(pv);
     G4VPVParameterisation* param = pvparam->GetParameterisation();
     //    if( static_cast<const G4PhantomParameterisation*>(param) ){
@@ -74,32 +46,15 @@ G4PhantomParameterisation* GmRegularParamUtils::GetPhantomParam( G4VPhysicalVolu
 
 
 //-----------------------------------------------------------------------
-G4bool GmRegularParamUtils::IsPhantomVolume( G4VPhysicalVolume* pv )
-{
-  EAxis axis;
-  G4int nReplicas;
-  G4double width,offset;
-  G4bool consuming;
-  pv->GetReplicationData(axis,nReplicas,width,offset,consuming);
-  EVolume type = (consuming) ? kReplica : kParameterised;
-  if( type == kParameterised && pv->GetRegularStructureId() == 1 ) {  
-    return TRUE;
-  } else {
-    return FALSE;
-  }
-
-} 
-
-
-//-----------------------------------------------------------------------
 G4ThreeVector GmRegularParamUtils::GetPhantomMotherTranslation( G4bool bMustExist )
 {
   G4ThreeVector translation;
 
   G4LogicalVolume* phantomVol = GetPhantomMotherVolume( bMustExist);
-  
+
+  theGeomUtils = GmGeometryUtils::GetInstance();
   //  translation = phantomVol->GetTranslation();
-  std::vector<GmTouchable*> touchs = GmGeometryUtils::GetInstance()->GetTouchables( phantomVol->GetName());
+  std::vector<GmTouchable*> touchs =theGeomUtils->GetTouchables( phantomVol->GetName());
   GmTouchable* touch = touchs[0];
 
   translation = touch->GetGlobalPosition();
@@ -119,7 +74,7 @@ G4RotationMatrix GmRegularParamUtils::GetPhantomMotherRotation( G4bool bMustExis
   
   G4LogicalVolume* phantomVol = GetPhantomMotherVolume( bMustExist);
   
-  std::vector<GmTouchable*> touchs = GmGeometryUtils::GetInstance()->GetTouchables( phantomVol->GetName() );
+  std::vector<GmTouchable*> touchs =theGeomUtils->GetTouchables( phantomVol->GetName() );
   GmTouchable* touch = touchs[0];
   rotation = touch->GetGlobalRotation();
   
@@ -142,7 +97,7 @@ G4LogicalVolume* GmRegularParamUtils::GetPhantomMotherVolume( G4bool bMustExist)
   std::vector<G4VPhysicalVolume*>::iterator cite;
   for( cite = pvs->begin(); cite != pvs->end(); cite++ ) {
     //    G4cout << " PV " << (*cite)->GetName() << " " << (*cite)->GetTranslation() << G4endl;
-    if( IsPhantomVolume( *cite ) ) {
+    if( theGeomUtils->IsPhantomVolume( *cite ) ) {
       phantVol = (*cite)->GetMotherLogical();
       break;
       //      G4cout << "G4PhantomParameterisation volume found  " << (*cite)->GetName() << G4endl;

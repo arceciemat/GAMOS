@@ -1,8 +1,6 @@
 #ifndef GmUIcmdWithAString_hh
 #define GmUIcmdWithAString_hh 1
 
-#define private public
-#include "G4UIcommand.hh"
 #include "G4UIcmdWithAString.hh"
 
 // class description:

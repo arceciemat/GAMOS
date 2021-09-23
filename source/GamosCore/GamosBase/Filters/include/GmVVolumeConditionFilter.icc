@@ -45,6 +45,17 @@ G4bool GmVVolumeConditionFilter<TCond,TVol>::AcceptTrack(const G4Track* aTrack)
 
 //-----------------------------------------------------------------------
 template <class TCond,class TVol>
+G4bool GmVVolumeConditionFilter<TCond,TVol>::AcceptStackedTrack(const G4Track* aTrack)
+{
+  const G4VTouchable* touch = theCondition->GetTouchableFromStackedTrack( aTrack );
+  if( touch && theFilterVolume->AcceptTouchable( touch ) ){
+    return TRUE;
+  }
+  return FALSE;
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
   void GmVVolumeConditionFilter<TCond,TVol>::show()
 {
   theFilterVolume->show();

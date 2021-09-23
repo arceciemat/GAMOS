@@ -7,9 +7,11 @@ class GmVStringDistribution : public GmVDistribution
 {
   
 public:
+  GmVStringDistribution();
   GmVStringDistribution(G4String name);
   virtual ~GmVStringDistribution(){};
 
+  virtual void Initialize();
   virtual void ReadFile();
   virtual void BuildData();
 

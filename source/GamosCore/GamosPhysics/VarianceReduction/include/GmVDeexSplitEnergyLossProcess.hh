@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: GmVDeexSplitEnergyLossProcess.hh,v 1.5 2013/12/09 14:24:16 arce Exp $
+// $Id: GmVDeexSplitEnergyLossProcess.hh,v 1.5 2018/06/28 15:27:38 arce Exp $
 // GEANT4 tag $Name:
 //
 // -------------------------------------------------------------------

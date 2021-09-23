@@ -44,7 +44,7 @@ GmPDSNeutronProcess::~GmPDSNeutronProcess()
 //------------------------------------------------------------------
 void GmPDSNeutronProcess::AddHelper( GmPDSProcessHelper* helper )
 {
-  theHelpers[helper->IsForNeutron()] = helper;
+  theHelpers[helper->Get1aryType()] = helper;
   theCurrentHelper = helper; //there is only one helper
 
   theClassifier = theCurrentHelper->theClassifier;

@@ -1,0 +1,64 @@
+#include "GmVParallelVolumeConditionFilter.hh"
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosUtils/include/GmG4Utils.hh"
+#include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
+#include "G4Track.hh"
+#include "G4LogicalVolume.hh"
+#include "G4LogicalVolumeStore.hh"
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+GmVParallelVolumeConditionFilter<TCond,TVol>::GmVParallelVolumeConditionFilter(G4String name)
+  :GmVFilter(name)
+{
+  theCondition = new TCond;
+  theFilterVolume = new TVol;
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+GmVParallelVolumeConditionFilter<TCond,TVol>::~GmVParallelVolumeConditionFilter()
+{ 
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+G4bool GmVParallelVolumeConditionFilter<TCond,TVol>::AcceptStep(const G4Step* aStep)
+{
+  const std::vector<const G4VTouchable*> touchs = theCondition->GetTouchableFromStep( aStep );
+  for( size_t it = 0; it < touchs.size(); it++ ) {
+    const G4VTouchable* touch = touchs[it];
+    if( touch && theFilterVolume->AcceptTouchable( touch ) ){
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+G4bool GmVParallelVolumeConditionFilter<TCond,TVol>::AcceptTrack(const G4Track* aTrack)
+{
+  const std::vector<const G4VTouchable*> touchs = theCondition->GetTouchableFromTrack( aTrack );
+  for( size_t it = 0; it < touchs.size(); it++ ) {
+    const G4VTouchable* touch = touchs[it];
+    if( touch && theFilterVolume->AcceptTouchable( touch ) ){
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+  void GmVParallelVolumeConditionFilter<TCond,TVol>::show()
+{
+  theFilterVolume->show();
+}
+
+//-----------------------------------------------------------------------
+template <class TCond,class TVol>
+  void GmVParallelVolumeConditionFilter<TCond,TVol>::SetParameters( std::vector<G4String>& params)
+{
+  theFilterVolume->SetParameters(params);
+}

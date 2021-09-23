@@ -137,4 +137,20 @@ GmHistoProfile2 operator+(const GmHistoProfile2 &h1, const GmHistoProfile2 &h2)
   return *his;
 }
 
+
+//----------------------------------------------------------------------                                         
+void GmHistoProfile2::Reset()
+{
+	theEntries = 0;
+	theBinN.clear();
+	theBinSumW.clear();
+	theBinSumW2.clear();
+
+	theSumW = 0;
+	theSumW2 = 0;
+	theSumWX = 0;
+	theSumWX2 = 0;
+	theSumWY = 0;
+	theSumWY2 = 0;
+}
 #endif

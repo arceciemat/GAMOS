@@ -3,6 +3,7 @@
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosSD/include/GmSDVerbosity.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
+#include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #ifndef GAMOS_NO_ROOT
 #include "TAxis.h"
 #endif
@@ -38,20 +39,21 @@ void GmHitsHistosUA::BookHistos()
 #endif
   theAnaMgr = GmAnalysisMgr::GetInstance("hits") ;
 
+  G4String sepa = GmParameterMgr::GetInstance()->GetStringValue("Histos:Separator",":");
   G4String hnam;
   theSDTypes = GmGeometryUtils::GetInstance()->GetAllSDTypes();
   std::vector<G4String> orig;
-  orig.push_back("SD ALL:");
+  orig.push_back("SD ALL"+sepa+"");
   std::set<G4String>::const_iterator ites;
   for( ites = theSDTypes.begin(); ites != theSDTypes.end(); ites++ ){
-    orig.push_back("SD " + *ites + ": ");  
+    orig.push_back("SD " + *ites + ""+sepa+" ");  
   }
-  G4String hgnam = "Hits: ";
+  G4String hgnam = "Hits"+sepa+" ";
   for( unsigned int ii = 0; ii <= theSDTypes.size(); ii++ ){
     hnam = hgnam + orig[ii] + G4String("Nhits");
     theAnaMgr->CreateHisto1D(hnam,100,0,100,201000+ii*100+1);
-    hnam = hgnam + orig[ii] + G4String("Energy (keV)");
-    theAnaMgr->CreateHisto1D(hnam,150,0.,1500.,201000+ii*100+2);
+    hnam = hgnam + orig[ii] + G4String("Energy (MeV)");
+    theAnaMgr->CreateHisto1D(hnam,120,0.,0.6,201000+ii*100+2);
     hnam = hgnam + orig[ii] + G4String("Width R3 (mm)");
     theAnaMgr->CreateHisto1D(hnam,100,0,1.,201000+ii*100+3);
     hnam = hgnam + orig[ii] + G4String("Width Z (mm)");
@@ -120,8 +122,8 @@ void GmHitsHistosUA::EndOfEventAction(const G4Event* )
   for( itehm = hitlists.begin(); itehm != hitlists.end(); itehm++ ){
     GmHitList* hitlist = (*itehm).second;
     G4int nh;
-    const hitVector* hitVector = hitlist->GetHitsCompatibleInTime();
-    for( iteh = hitVector->begin(); iteh != hitVector->end(); iteh++ ){
+    const hitVector* hitVector2 = hitlist->GetHitsCompatibleInTime();
+    for( iteh = hitVector2->begin(); iteh != hitVector2->end(); iteh++ ){
       GmHit* hit = *iteh;
      
       /*  std::vector<GmHit*> hits = GmHitsEventMgr::GetInstance()->GetHitsInEvent( evt->GetEventID() );
@@ -139,7 +141,7 @@ void GmHitsHistosUA::EndOfEventAction(const G4Event* )
       //---- Plot number of hits
       hitsInSDType[nh]++; //count hits of each SD type
       
-      theAnaMgr->GetHisto1(201000+nh*100+2)->Fill( float(hit->GetEnergy()/CLHEP::keV));
+      theAnaMgr->GetHisto1(201000+nh*100+2)->Fill( float(hit->GetEnergy()));
       G4ThreeVector depowidth = GetEDepoWidth( hit );
       theAnaMgr->GetHisto1(201000+nh*100+3)->Fill( depowidth.mag()/CLHEP::mm );
       theAnaMgr->GetHisto1(201000+nh*100+4)->Fill( depowidth.z()/CLHEP::mm );
@@ -157,14 +159,18 @@ void GmHitsHistosUA::EndOfEventAction(const G4Event* )
       theAnaMgr->GetHisto1(201000+nh*100+17)->Fill( pos.mag() );
       
       G4double disthits = -1.;
-      for( iteh2 = hitVector->begin(); iteh2 != hitVector->end(); iteh2++ ){
+      for( iteh2 = hitVector2->begin(); iteh2 != hitVector2->end(); iteh2++ ){
 	GmHit* hit2 = *iteh2;
 	//	if( hit->GetSDType() != hit2->GetSDType() ) continue;
-	G4double dhit = (hit->GetPosition() - hit2->GetPosition()).mag();
-	if( dhit > disthits ) disthits = dhit;
+	if( hit != hit2 ) {
+	  G4double dhit = (hit->GetPosition() - hit2->GetPosition()).mag();
+	  if( dhit > disthits ) disthits = dhit;
+	  //	G4cout << " HITSHISTOS DIST " << disthits <<  " dhit= " << dhit << " " << hit->GetPosition() << " " << hit2->GetPosition() << G4endl; //GDEB
+
 #ifndef GAMOS_NO_VERBOSE
 	// if( SDVerb(debugVerb) ) G4cout << ii << " " << ii2 << " disthits " << disthits << " dhit " << dhit << " pos1 " << hit->GetPosition() << " pos2 " << hit2->GetPosition() << " diff " << hit->GetPosition()-hit2->GetPosition() << G4endl;
 #endif
+	}
       }
       if( disthits != -1. ) theAnaMgr->GetHisto1(201000+nh*100+8)->Fill( disthits/CLHEP::mm );
     }

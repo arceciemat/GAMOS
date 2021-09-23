@@ -44,7 +44,7 @@
 #include "G4eBremsstrahlung.hh"
 #include "G4SeltzerBergerModel.hh"
 
-GmPhysicsElectronStandard::GmPhysicsElectronStandard(const G4String& name): GmVPhysicsElectron(name)
+GmPhysicsElectronStandard::GmPhysicsElectronStandard(const G4String& name, G4int type): GmVPhysicsElectron(name,type)
 { }
 
 GmPhysicsElectronStandard::~GmPhysicsElectronStandard()
@@ -71,13 +71,16 @@ void GmPhysicsElectronStandard::ConstructProcess()
 	  G4eBremsstrahlungRelModel* model2 = new G4eBremsstrahlungRelModel();
 	  G4eBremsstrahlung* brems = new G4eBremsstrahlung();
 	  model->SetLowEnergyLimit(brems->MinKinEnergy());
-	  model->SetHighEnergyLimit(model2->LowEnergyLimit());
+	  //	  model->SetHighEnergyLimit(model2->LowEnergyLimit());
+	  model->SetHighEnergyLimit(1.*CLHEP::GeV);
 	  model2->SetHighEnergyLimit(brems->MaxKinEnergy());                
-	  G4VEmFluctuationModel* fm = 0;
-	  brems->AddEmModel(1, brems->EmModel(1), fm);
-	  brems->AddEmModel(2, brems->EmModel(2), fm);
- 	  SelectBremssAngularDist( model );
-  	  manager->AddProcess(brems,  -1, 3, 3); 
+	  /*	  G4VEmFluctuationModel* fm = 0;
+	  brems->AddEmModel(0, model, fm);
+	  brems->AddEmModel(1, model2, fm); */
+	  brems->AddEmModel(0, model);
+	  brems->AddEmModel(1, model2);
+	  SelectBremssAngularDist( model, "Electron" );
+	  manager->AddProcess(brems,  -1, 3, 3); 
 	}   
     }
 }

@@ -4,6 +4,8 @@
 #include "GmGeomVerbosity.hh"
 #include "GmGeometryUtils.hh"
 #include "GmTouchable.hh"
+#include "GmOpticalPropertiesMgr.hh"
+
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 
@@ -11,14 +13,16 @@
 #include "GmUniformElectricField.hh"
 #include "GmUniformEMField.hh"
 #include "G4UniformMagField.hh"
-//#include "GmParallelToMassUA.hh"
 
 #include "G4UIdirectory.hh"
 #include "GamosCore/GamosBase/Base/include/GmUIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithADouble.hh"
     
 #include "G4FieldManager.hh"
 #include "G4Material.hh"
+#include "G4GeometryManager.hh"
+#include "G4tgrUtils.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -46,10 +50,6 @@ GmGeometryMessenger::GmGeometryMessenger()
   theGeometryDir = new G4UIdirectory("/gamos/geometry/");
   theGeometryDir->SetGuidance("Commands to control geometry");
   
-  theParallelToMassCmd = new GmUIcmdWithAString("/gamos/geometry/copyParallelToMassGeom",this);  
-  theParallelToMassCmd->SetGuidance("Copy a set of volumes from parallel to mass geometry: VOLUME_1 ... VOLUME_N DISPLACEMENT_X DISPLACEMENT_Y DISPLACEMENT_Z");
-  theParallelToMassCmd->AvailableForStates(G4State_Idle);  
-
   theRefracIndexCmd = new GmUIcmdWithAString("/gamos/geometry/setRefractionIndex",this);  
   theRefracIndexCmd->SetGuidance("Set refraction index for a material:MATERIAL_NAME ENERGY_1 REFRACTION_INDEX_1 ENERGY_2 REFRACTION_INDEX_2 ... ");
   theRefracIndexCmd->AvailableForStates(G4State_Idle);  
@@ -66,6 +66,38 @@ GmGeometryMessenger::GmGeometryMessenger()
   thePrintMaterialsCmd->SetGuidance("Print materials");
   thePrintMaterialsCmd->AvailableForStates(G4State_Idle);
 
+  theSetWorldMaxCmd = new G4UIcmdWithADouble("/gamos/geometry/SetWorldMaximumExtent",this);
+  theSetWorldMaxCmd->SetGuidance("Set the world maximum extent (it will change the precision of the Geant4 navigation");
+  theSetWorldMaxCmd->AvailableForStates(G4State_PreInit);
+
+  theCmdMatePropertiesTable = new GmUIcmdWithAString("/gamos/opticalProperties/matePropertiesTable",this);  
+  theCmdMatePropertiesTable->SetGuidance("Create a material properties table");
+  theCmdMatePropertiesTable->AvailableForStates(G4State_PreInit);
+  theCmdMatePTAddEnergies = new GmUIcmdWithAString("/gamos/opticalProperties/matePTAddEnergies",this);  
+  theCmdMatePTAddEnergies->SetGuidance("Add energies to a material properties table");
+  theCmdMatePTAddEnergies->AvailableForStates(G4State_PreInit);
+  theCmdMatePTAddProperty = new GmUIcmdWithAString("/gamos/opticalProperties/matePTAddProperty",this);  
+  theCmdMatePTAddProperty->SetGuidance("Add property to a material properties table");
+  theCmdMatePTAddProperty->AvailableForStates(G4State_PreInit);
+  theCmdMatePTAddConstProperty = new GmUIcmdWithAString("/gamos/opticalProperties/matePTAddConstProperty",this);  
+  theCmdMatePTAddConstProperty->SetGuidance("Add const property to a material properties table");
+  theCmdMatePTAddConstProperty->AvailableForStates(G4State_PreInit);
+  theCmdAttachPT2Material = new GmUIcmdWithAString("/gamos/opticalProperties/attachPT2Material",this);  
+  theCmdAttachPT2Material->SetGuidance("Attach a material properties table to a material");
+  theCmdAttachPT2Material->AvailableForStates(G4State_PreInit);
+  theCmdAttachPT2OpticalSurface = new GmUIcmdWithAString("/gamos/opticalProperties/attachPT2OpticalSurface",this);  
+  theCmdAttachPT2OpticalSurface->SetGuidance("Attach a material properties table to an optical surface");
+  theCmdAttachPT2OpticalSurface->AvailableForStates(G4State_PreInit);
+  theCmdCreateOpticalSurface = new GmUIcmdWithAString("/gamos/opticalProperties/createOpticalSurface",this);  
+  theCmdCreateOpticalSurface->SetGuidance("Create an optical surface");
+  theCmdCreateOpticalSurface->AvailableForStates(G4State_PreInit);
+  theCmdCreateLogicalBorderSurface = new GmUIcmdWithAString("/gamos/opticalProperties/createLogicalBorderSurface",this);  
+  theCmdCreateLogicalBorderSurface->SetGuidance("Create a  logical border surface");
+  theCmdCreateLogicalBorderSurface->AvailableForStates(G4State_PreInit);
+  theCmdCreateLogicalSkinSurface = new GmUIcmdWithAString("/gamos/opticalProperties/createLogicalSkinSurface",this);  
+  theCmdCreateLogicalSkinSurface->SetGuidance("Create a  logical skin surface");
+  theCmdCreateLogicalSkinSurface->AvailableForStates(G4State_PreInit);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -77,13 +109,23 @@ GmGeometryMessenger::~GmGeometryMessenger()
   delete theElecFieldCmd;
   delete theEMFieldCmd;
   delete theMagFieldLocalCmd;
-  delete theParallelToMassCmd;
   delete theRefracIndexCmd;
   delete theGeometryDir;
   delete thePrintTouchablesCmd;
   delete thePrintVolumeTreeCmd;
   delete thePrintMaterialsCmd;
+  delete theSetWorldMaxCmd;
 
+  delete theCmdMatePropertiesTable;
+  delete theCmdMatePTAddEnergies;
+  delete theCmdMatePTAddProperty;
+  delete theCmdMatePTAddConstProperty;
+  delete theCmdAttachPT2Material;
+  delete theCmdAttachPT2OpticalSurface;
+  delete theCmdCreateOpticalSurface;
+  delete theCmdCreateLogicalBorderSurface;
+  delete theCmdCreateLogicalSkinSurface;
+  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -102,9 +144,6 @@ void GmGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValues)
   } else  if( command == theMagFieldLocalCmd ) {
     SetMagFieldLocal(newValues);
   } 
-  else if( command == theParallelToMassCmd ) {
-  //  new GmParallelToMassUA( newValues );
-  }
   else if( command == theRefracIndexCmd ) {
     SetRefractionIndex( newValues );
   }
@@ -117,7 +156,56 @@ void GmGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValues)
   else if( command == thePrintMaterialsCmd ) {
     PrintMaterials( newValues );
   }
-
+  else if( command == theSetWorldMaxCmd ) {
+    G4GeometryManager::GetInstance()->SetWorldMaximumExtent(GmGenUtils::GetValue(newValues));
+  }
+  
+  else if( command == theCmdMatePropertiesTable ) {
+    std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+    G4tgrUtils::CheckWLsize( wl, 2, WLSIZE_EQ, " :MATE_PROPERTIES_TABLE");
+    GmOpticalPropertiesMgr::GetInstance()->CreateMaterialPropertiesTable( wl );
+  }
+  else if( command == theCmdMatePTAddEnergies ) {
+    std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+    G4tgrUtils::CheckWLsize( wl, 3, WLSIZE_GE, " :MATEPT_ADD_ENERGIES");
+    GmOpticalPropertiesMgr::GetInstance()->AddEnergiesToTable( wl );
+  }
+  else if( command == theCmdMatePTAddProperty ) {
+    std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+    G4tgrUtils::CheckWLsize( wl, 4, WLSIZE_GE, " :MATEPT_ADD_PROPERTY");
+    GmOpticalPropertiesMgr::GetInstance()->AddPropertyToTable( wl );
+  }
+  else if( command == theCmdMatePTAddConstProperty ) {
+    std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+    G4tgrUtils::CheckWLsize( wl, 4, WLSIZE_EQ, " :MATEPT_ADD_CONST_PROPERTY");
+    GmOpticalPropertiesMgr::GetInstance()->AddConstPropertyToTable( wl );
+  }
+  else if( command == theCmdAttachPT2Material ) {
+    std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+    G4tgrUtils::CheckWLsize( wl, 2, WLSIZE_GE, " :MATEPT_ATTACH_TO_MATERIAL");
+    //    G4cout << " GmGeometryMessenger:.theCmdAttachPT2Material " << wl[0] << " " << wl[1] << G4endl; //GDEB
+    GmOpticalPropertiesMgr::GetInstance()->AttachTableToMaterial( wl );  }
+  else if( command == theCmdAttachPT2OpticalSurface ) {
+    std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+    G4tgrUtils::CheckWLsize( wl, 2, WLSIZE_GE, " :MATEPT_ATTACH_TO_OPTICAL_SURFACE");
+    GmOpticalPropertiesMgr::GetInstance()->AttachTableToOpsurface( wl );
+  }
+  else if( command == theCmdCreateOpticalSurface ) {
+    std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+    G4tgrUtils::CheckWLsize( wl, 2, WLSIZE_GE, " :OPTICAL_SURFACE");
+    GmOpticalPropertiesMgr::GetInstance()->CreateOpticalSurface( wl );
+  }
+  else if( command == theCmdCreateLogicalBorderSurface ) {
+    std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+    G4tgrUtils::CheckWLsize( wl, 2, WLSIZE_GE, " :LOGICAL_BORDER_SURFACE");
+    GmOpticalPropertiesMgr::GetInstance()->CreateLogicalBorderSurface( wl );
+  }
+  else if( command == theCmdCreateLogicalSkinSurface ) {
+    std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+    G4tgrUtils::CheckWLsize( wl, 2, WLSIZE_GE, " :LOGICAL_SKIN_SURFACE");
+    GmOpticalPropertiesMgr::GetInstance()->CreateLogicalSkinSurface( wl );
+  }
+  
 }
 
 #include "G4TransportationManager.hh"

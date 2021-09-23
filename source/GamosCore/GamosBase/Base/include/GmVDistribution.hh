@@ -16,6 +16,7 @@ class GmVDistribution
 {
   
 public: 
+  GmVDistribution();
   GmVDistribution(G4String name);
   virtual ~GmVDistribution(){};
 

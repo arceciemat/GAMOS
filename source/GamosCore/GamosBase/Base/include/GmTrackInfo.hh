@@ -30,11 +30,11 @@ public:
   G4String GetStringValue( const G4String& key );
   G4ThreeVector GetThreeVectorValue( const G4String& key );
 
-  void SetBoolValue( const G4String& key, G4bool value );
-  void SetIntValue( const G4String& key, G4int value );
-  void SetDoubleValue( const G4String& key, G4double value );
-  void SetStringValue( const G4String& key, G4String value );
-  void SetThreeVectorValue( const G4String& key, G4ThreeVector value );
+  void SetBoolValue( const G4String& key, G4bool value, G4bool bCannotExist = false );
+  void SetIntValue( const G4String& key, G4int value, G4bool bCannotExist = false );
+  void SetDoubleValue( const G4String& key, G4double value, G4bool bCannotExist = false );
+  void SetStringValue( const G4String& key, G4String value, G4bool bCannotExist = false );
+  void SetThreeVectorValue( const G4String& key, G4ThreeVector value, G4bool bCannotExist = false );
   
   // special treatment to weight
   void SetWeight( G4double wei ) {

@@ -26,7 +26,7 @@ void GmVHitsIOMgr::WriteAllHits()
 
   gamosSDHitMap hits = theHitsEventMgr->GetHitLists();
  
-  G4int iev1 = GetFirstEventWithHit( hits );
+  GetFirstEventWithHit( hits );
 
   gamosSDHitMap::const_iterator itehm;
   hitVector::const_iterator iteh;
@@ -34,8 +34,8 @@ void GmVHitsIOMgr::WriteAllHits()
   std::multimap<G4int,GmHit*> hits2write;
   for( itehm = hits.begin(); itehm != hits.end(); itehm++ ){
     GmHitList* hitlist = (*itehm).second;
-    const hitVector* hitVector = hitlist->GetHitsCompatibleInTime();
-    for( iteh = hitVector->begin(); iteh != hitVector->end(); iteh++ ){
+    const hitVector* hitVector2 = hitlist->GetHitsCompatibleInTime();
+    for( iteh = hitVector2->begin(); iteh != hitVector2->end(); iteh++ ){
       GmHit* hit = *iteh;
       WriteHit( hit );
     } 

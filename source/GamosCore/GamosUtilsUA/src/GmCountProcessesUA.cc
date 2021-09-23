@@ -14,7 +14,7 @@
 
 //-----------------------------------------------------------------
 GmCountProcessesUA::GmCountProcessesUA()
-{
+{ 
 }
 
 
@@ -49,10 +49,10 @@ void GmCountProcessesUA::BeginOfRunAction(const G4Run* )
 #endif
 	theProcessList.insert( mss::value_type(particleName,processName) );
 	if( processName.find("Ioni") != std::string::npos ){
-	  theProcessList.insert( mss::value_type(particleName,processName) );
+	  theProcessList.insert( mss::value_type(particleName,processName+"_NoSeco") );
 	}
 	if( processName.find("Brem") != std::string::npos ){
-	  theProcessList.insert( mss::value_type(particleName,processName) );
+	  theProcessList.insert( mss::value_type(particleName,processName+"_NoSeco") );
 	}
       }
     } else {
@@ -63,18 +63,22 @@ void GmCountProcessesUA::BeginOfRunAction(const G4Run* )
     }
   }
 
-  /*  for( ii = 0; ii < G4int(theFilters.size()); ii++ ){
-    if( ii != 0 ) theNameSuffix += "_";
+  for( ii = 0; ii < G4int(theFilters.size()); ii++ ){
+    //    if( ii != 0 )
+    theNameSuffix += "_";
     theNameSuffix += theFilters[ii]->GetName();
   }
   if( theClassifier ) {
-    if( ii != 0 ) theNameSuffix += "_";
+    //    if( ii != 0 )
+    theNameSuffix += "_";
     theNameSuffix += theClassifier->GetName();
-    }*/
+  }
 
-  if( !theClassifier ) G4cout << "@@@@@ GmCountProcessesUA " << theName << G4endl;
-  G4bool bPrintPROC_LIST = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("GmCountProcessesUA:PrintProcList",0));
+  //  if( !theClassifier ) G4cout << "@@@@@ GmCountProcessesUA " << theName << " SUFF " << theNameSuffix << G4endl;
+  G4bool bPrintPROC_LIST = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theName+":PrintProcList",0));
   if( bPrintPROC_LIST ) DumpProcessList();
+ 
+  bCreatorModel = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theName + ":PrintCreatorModel",0));
 
 }
 
@@ -108,6 +112,8 @@ void GmCountProcessesUA::PreUserTrackingAction(const G4Track* aTrack)
     } else {
       processName = "Primary";
     }
+    G4String modelName = aTrack->GetCreatorModelName();
+    if( bCreatorModel ) processName += "_" + aTrack->GetCreatorModelName();
     mlmpssi::iterator itecp = theCreatorProcessCount.find(index);
     mpssi* creatorProcessCount = 0;
     if( itecp == theCreatorProcessCount.end() ) {
@@ -175,7 +181,7 @@ void GmCountProcessesUA::UserSteppingAction(const G4Step* aStep )
 //-----------------------------------------------------------------
 void GmCountProcessesUA::EndOfRunAction(const G4Run* )
 {
-  G4cout << "@@@@@ GmCountProcessesUA " << theNameSuffix << G4endl;
+  G4cout << "@@@@ " << theName << G4endl;
   DumpParticleCount();
   DumpProcessCount();
   DumpCreatorProcessCount();
@@ -200,7 +206,7 @@ void GmCountProcessesUA::DumpProcessCount( std::ostream& out)
   mlmpssi::iterator itemp;
   for( itemp = theProcessCount.begin(); itemp != theProcessCount.end(); itemp++ ) {
     if( theClassifier ) {
-      G4cout << "@@@@@ " << GetName() << " : " << theClassifier->GetIndexName((*itemp).first) << G4endl;
+      G4cout << "@@@@@ " << theName << " : " << theClassifier->GetIndexName((*itemp).first) << G4endl;
     } 
     mpssi* processCount = (*itemp).second;
     mpssi::iterator ite;
@@ -209,12 +215,17 @@ void GmCountProcessesUA::DumpProcessCount( std::ostream& out)
     for( ite = processCount->begin(); ite != processCount->end(); ite++ ) {
       if( (*ite).second != 0 ) {
 	totalProcCount[(*ite).first.first] += (*ite).second;
-	if( part != (*ite).first.first && part != "") out << "PROC_COUNT " << part << " : ALL = " << totalProcCount[part] << G4endl;
+	if( part != (*ite).first.first && part != "") {
+	  if( theClassifier ) out << theClassifier->GetIndexName((*itemp).first)  << " ";
+	  out << " PROC_COUNT " << part << " : ALL = " << totalProcCount[part] << G4endl;
+	}
 	part = (*ite).first.first;
-	out << "PROC_COUNT " << (*ite).first.first << " : " <<(*ite) .first.second << " = " << (*ite).second << G4endl;
+	if( theClassifier ) out << theClassifier->GetIndexName((*itemp).first)  << " ";
+	out << " PROC_COUNT " << (*ite).first.first << " : " <<(*ite) .first.second << " = " << (*ite).second << G4endl;
       }
     }
     
+    if( theClassifier ) out << theClassifier->GetIndexName((*itemp).first)  << " ";
     out << "PROC_COUNT " << part << " : ALL = " << totalProcCount[part] << G4endl;
   }
 
@@ -226,12 +237,13 @@ void GmCountProcessesUA::DumpCreatorProcessCount( std::ostream& out)
   mlmpssi::iterator itemp;
   for( itemp = theCreatorProcessCount.begin(); itemp != theCreatorProcessCount.end(); itemp++ ) {
     if( theClassifier ) {
-      G4cout << "@@@@@ " << GetName() << " : " << theClassifier->GetIndexName((*itemp).first) << G4endl;
+      G4cout << "@@@@@ " << theName << " : " << theClassifier->GetIndexName((*itemp).first) << G4endl;
     } 
     mpssi* creatorProcessCount = (*itemp).second;
     mpssi::iterator ite;
     for( ite = creatorProcessCount->begin(); ite != creatorProcessCount->end(); ite++ ) {
       if( (*ite).second != 0 ) {
+	if( theClassifier ) out << theClassifier->GetIndexName((*itemp).first)  << " ";
 	out << "PROC_CREATOR_COUNT " << (*ite).first.first << " : " <<(*ite) .first.second << " = " << (*ite).second << G4endl; 
       }
     }
@@ -245,13 +257,14 @@ void GmCountProcessesUA::DumpParticleCount( std::ostream& out)
   mlmsi::iterator itemp;
   for( itemp = theParticleCount.begin(); itemp != theParticleCount.end(); itemp++ ) {
     if( theClassifier ) {
-      G4cout << "@@@@@ " << GetName() << " : " << theClassifier->GetIndexName((*itemp).first) << G4endl;
+      G4cout << "@@@@@ " << theName << " : " << theClassifier->GetIndexName((*itemp).first) << G4endl;
     } 
     msi* particleCount = (*itemp).second;
     msi::iterator itep;
     for( itep = particleCount->begin(); itep != particleCount->end(); itep++ ) {
       if( (*itep).second != 0 ) {
-	out << "PART_COUNT: " << (*itep).first << " = " << (*itep).second << G4endl; 
+	if( theClassifier ) out << theClassifier->GetIndexName((*itemp).first)  << " ";
+	out << " PART_COUNT: " << (*itep).first << " = " << (*itep).second << G4endl; 
       }
     }
   }

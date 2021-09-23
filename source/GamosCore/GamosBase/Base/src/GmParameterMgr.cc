@@ -1,3 +1,4 @@
+
 #include "GmParameterMgr.hh"
 #include "GmParameterMessenger.hh"
 
@@ -39,7 +40,9 @@ G4bool GmParameterMgr::AddParam( const G4String& parstr, paramType typ )
   //  G4String valstr = wl[1];
   wl.erase( wl.begin() );
 
-  theParametersInScript[name] = 0;
+  if( theParametersInScript.find( name ) == theParametersInScript.end() ) {
+    theParametersInScript[name] = 0;
+  }
 
   return AddParamOfDefinedType( name, wl, typ );
 
@@ -49,18 +52,15 @@ G4bool GmParameterMgr::AddParam( const G4String& parstr, paramType typ )
 //----------------------------------------------------------------------
 G4bool GmParameterMgr::AddParamOfDefinedType( const G4String& name, const std::vector<G4String>& wl, paramType typ )
 {
-  //  G4cout << "GmParameterMgr::AddParamOfDefinedType typ " << typ << G4endl;
   G4bool bExists = TRUE;
   std::vector<G4String>::const_iterator ite;
   std::vector<G4int> values;
   std::vector<G4double> valuesd;
 
-  //  G4cout << " AddParamOfDefinedType  " << name << " = " << typ << G4endl;
-
   switch ( typ ){
   case PTdouble:
     bExists = theParametersDouble.AddParam( name, GmGenUtils::GetValue(wl[0]));
- //   G4cout <<  theParametersDouble.size() << " theParametersDouble.AddParam  name " << name << " GetVal " << GetVal(wl[0]) << G4endl;
+    //  G4cout <<  theParametersDouble.size() << " theParametersDouble.AddParam  name " << name << " GetVal " << GetVal(wl[0]) << G4endl;
     break;
   case PTstring:
     bExists = theParametersString.AddParam( name, wl[0]);
@@ -87,6 +87,9 @@ G4bool GmParameterMgr::AddParamOfDefinedType( const G4String& name, const std::v
     AddParamOfDefinedType( name, wl, typ );
     break;
   }
+
+  //  std::vector<G4String> fileNames;
+  //  GetVStringValue(name,fileNames);
 
   return bExists;
 }
@@ -117,7 +120,9 @@ paramType GmParameterMgr::SetParamType( G4bool noNumber, G4int nwords )
 //----------------------------------------------------------------------
 G4double GmParameterMgr::GetNumericValue( const G4String& parstr, const G4double def, G4bool mustExist )
 {
-  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) theParametersInScript[parstr] ++;
+  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) {
+    theParametersInScript[parstr] ++;
+  }
   theParametersInCode.insert(parstr);
 
   G4bool parExists;
@@ -137,15 +142,31 @@ G4double GmParameterMgr::GetNumericValue( const G4String& parstr, const G4double
       return def;
     }
   }
-
  
 }
- 
+
+//----------------------------------------------------------------------
+G4int GmParameterMgr::GetIntegerValue( const G4String& parstr, const G4int def, G4bool mustExist )
+{
+  return G4int(GetNumericValue( parstr, def, mustExist ));
+}
+
+//----------------------------------------------------------------------
+G4bool GmParameterMgr::GetBooleanValue( const G4String& parstr, const G4bool def, G4bool mustExist )
+{
+  return G4bool(GetNumericValue( parstr, def, mustExist ));
+}
 
 //----------------------------------------------------------------------
 G4String GmParameterMgr::GetStringValue( const G4String& parstr, const G4String& def, G4bool mustExist )
 {
-  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) theParametersInScript[parstr] ++;
+  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) {
+    theParametersInScript[parstr] ++;
+  }
+  for( GmParameterList<G4String>::iterator ites = theParametersString.begin(); ites != theParametersString.end(); ites++ ) {
+    GmParameter<G4String> param = ites->second;
+  }
+
   theParametersInCode.insert(parstr);
 
   G4bool parExists;
@@ -154,9 +175,9 @@ G4String GmParameterMgr::GetStringValue( const G4String& parstr, const G4String&
     return val;
   } else {
     // check if it is filled as a numeric value
-    G4double val = theParametersDouble.GetValue( parstr, parExists );
+    G4double vald = theParametersDouble.GetValue( parstr, parExists );
     if( parExists ) {
-      return GmGenUtils::ftoa(val);
+      return GmGenUtils::ftoa(vald);
     } else {
       if( mustExist ) {
 	theParametersString.DumpList("STRING");
@@ -177,7 +198,11 @@ G4String GmParameterMgr::GetStringValue( const G4String& parstr, const G4String&
 //----------------------------------------------------------------------
 std::vector<G4double> GmParameterMgr::GetVNumericValue( const G4String& parstr, const std::vector<G4double> def, G4bool )
 {
-  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) theParametersInScript[parstr] ++;
+  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) {
+    theParametersInScript[parstr] ++;
+    //    G4cout << " ADD theParametersInScriptV NUM " << parstr << " N=" << theParametersInScript[parstr] << G4endl;//GDEB
+  }
+      
   theParametersInCode.insert(parstr);
 
   /*  std::vector<G4double> def;
@@ -206,9 +231,9 @@ std::vector<G4double> GmParameterMgr::GetVNumericValue( const G4String& parstr, 
     //---look if it is a single double value
     G4double val1 = theParametersDouble.GetValue( parstr, parExists );
     if( parExists ) {
-      std::vector<G4double> val;
-      val.push_back( val1 );
-      return val;
+      std::vector<G4double> valvd;
+      valvd.push_back( val1 );
+      return valvd;
     } else {
       return def;
     } 
@@ -226,39 +251,64 @@ std::vector<G4double> GmParameterMgr::GetVNumericValue( const G4String& parstr, 
 
 }
 
+//----------------------------------------------------------------------
+std::vector<G4int> GmParameterMgr::GetVIntegerValue( const G4String& parstr, const std::vector<G4int> def, G4bool mustExist )
+{
+  
+  std::vector<G4double> vval;
+  for( size_t ii = 0; ii < def.size(); ii++ ) {
+    vval.push_back( def[ii] );
+  }
+  vval = GetVNumericValue( parstr, vval, mustExist );
+  
+  std::vector<G4int> ival;
+  for( size_t ii = 0; ii < vval.size(); ii++ ) {
+    ival.push_back( G4int(vval[ii]) );
+  }
+
+  return ival;
+}
 
 //----------------------------------------------------------------------
 std::vector<G4String> GmParameterMgr::GetVStringValue( const G4String& parstr, const std::vector<G4String>& def, G4bool )
 {
-  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) theParametersInScript[parstr] ++;
+  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) {
+    theParametersInScript[parstr] ++;
+    //    G4cout << " ADD theParametersInScript VSTRING " << parstr << " N=" << theParametersInScript[parstr] << G4endl;//GDEB
+  }
   theParametersInCode.insert(parstr);
 
   G4bool parExists;
   std::vector<G4String> val = theParametersVString.GetValue( parstr, parExists );
+
+  /*  for( GmParameterList<std::vector<G4String> >::const_iterator ite = theParametersVString.begin(); ite != theParametersVString.end(); ite++ ) {
+    G4cout << parstr << " " << parExists << " PARAMETER VSTRING " << (*ite).first << " parExists " << parExists << " : " << val.size() << G4endl; //GDEB
+    } */
+
   if( parExists ) {
     return val;
   } else {
     //---look if it is a single string value
     G4String val1 = theParametersString.GetValue( parstr, parExists );
     if( parExists ) {
-      std::vector<G4String> val;
-      val.push_back( val1 );
-      return val;
+      std::vector<G4String> valvs;
+      valvs.push_back( val1 );
+      return valvs;
     } else {
       //---- l
-      std::vector<G4double> vald = theParametersVDouble.GetValue( parstr, parExists );
+      std::vector<G4double> valdv = theParametersVDouble.GetValue( parstr, parExists );
       if( parExists ) {
-	std::vector<G4String> val;
-	for( unsigned int ii = 0; ii < vald.size(); ii++ ) {
-	  val.push_back( GmGenUtils::ftoa(vald[ii]) );
+	std::vector<G4String> valvs;
+	for( unsigned int ii = 0; ii < valdv.size(); ii++ ) {
+	  valvs.push_back( GmGenUtils::ftoa(valdv[ii]) );
 	}
-	return val;
+	return valvs;
       } else {
 	G4double vald = theParametersDouble.GetValue( parstr, parExists );
 	if( parExists ) {
-	  std::vector<G4String> val;
-	  val.push_back( GmGenUtils::ftoa(vald) );
-	  return val;
+	  std::vector<G4String> valvs;
+	  valvs.push_back( GmGenUtils::ftoa(vald) );
+	  return valvs;
 	}else {
 	  return def;
 	}
@@ -298,14 +348,20 @@ void GmParameterMgr::PrintParametersUsage( G4int iPrint, std::ostream& out, std:
       }
     }
     if( bFound ){
+      err << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% " << G4endl;
       err << "%%%%% PARAMETERS NOT USED (DEFINED IN SCRIPT BUT NOT USED BY C++ CODE) " << G4endl;
       err << "%%%    MAYBE YOU HAVE MISSPELLED THEM? " << G4endl;
       err << "%%%    OR YOU HAVE SET THEM AFTER THE CODE THAT USES THEM? " << G4endl;
+      err << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% " << G4endl;
       for( ites = theParametersInScript.begin(); ites != theParametersInScript.end(); ites++ ) {
 	if( (*ites).second == 0 ) {
 	  err << "PARAMETER: " << (*ites).first << std::endl;
 	}
       }
+      err << "%%%   PLEASE PUT THIS COMMAND AT THE END OF YOUR SCRIPT: " << G4endl;
+      err << "%%%   /gamos/base/printParametersUsage 2 " << G4endl;
+      err << "%%%   AND LOOK FOR A SIMILAR PARAMETER " << G4endl;
+      err << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% " << G4endl;
     }
   }
 
@@ -330,11 +386,11 @@ void GmParameterMgr::PrintParametersUsage( G4int iPrint, std::ostream& out, std:
   }
 
   if( iPrint >= 2 ) {
-    std::map<G4String,G4int>::const_iterator ites;
+    std::map<G4String,G4int>::iterator ites;
     //---- print number of times each parameter is used 
-    out << "%%%%% NUMBER OF TIMES EACH PARAMETER IS USED IN C++ CODE " << G4endl;
+    out << "%%%%% NUMBER OF TIMES EACH PARAMETER IS USED IN C++ CODE" << G4endl;
     for( ites = theParametersInScript.begin(); ites != theParametersInScript.end(); ites++ ) {
-      out << "PARAMETER " << (*ites).first << " TIMES USED= " << (*ites).second << G4endl;
+      out << " PARAMETER " << (*ites).first << " TIMES USED= " << (*ites).second << G4endl;
     }
   }
 }

@@ -2,7 +2,7 @@
 #define GmPDSVProcess_h
 
 #include "G4VDiscreteProcess.hh"
-class GmPDSProcessHelper;
+#include "GmPDSProcessHelper.hh"
 
 class G4SteppingManager;
 class GmPDSInteractionAngleManager;
@@ -12,6 +12,8 @@ class GmVClassifier;
 
 #include <map>
 #include <set>
+class G4ParticleDefinition;
+class G4VMscModel;
 
 class GmPDSVProcess : public G4VDiscreteProcess
 {
@@ -31,9 +33,23 @@ public:
 				   G4double   previousStepSize,
 				   G4ForceCondition* condition
 				   );
+
+  
+    virtual G4double AtRestGetPhysicalInteractionLength(const G4Track& ,
+                                                G4ForceCondition* condition)
+    {
+      *condition = Forced;
+      return 0.;
+    }
+
+  virtual G4VParticleChange* AtRestDoIt(const G4Track& track, const G4Step& aStep);
+
+  virtual G4bool IsApplicable(const G4ParticleDefinition& ) {
+    return true;
+  }
+
   //  Calculates from the macroscopic cross section a mean
   //  free path, the value is returned in units of distance.
- 
   virtual G4VParticleChange* PostStepDoIt( const G4Track& ,
 					   const G4Step& 
 					   );
@@ -53,7 +69,6 @@ protected:
 		       const G4double primPreEner, 
 		       const G4StepPoint* stepPoint2, 
 		       const G4double secoEner, 
-		       const G4ThreeVector secoTrkDir, 
 		       const G4int detID, 
 		       const G4String procDefStepName,
 		       G4int classifierIndex );
@@ -70,6 +85,8 @@ protected:
   void SetOriginalParticle( G4ParticleDefinition* op ){
     theOriginalParticle = op;
   }
+
+  G4VParticleChange* CheckSecondaries(const G4Track& track, const G4Step& aStep);
 
 protected:
   G4ParticleDefinition* theOriginalParticle;
@@ -91,7 +108,7 @@ protected:
 
   G4SteppingManager* fpSteppingManager;
 
-  std::map<G4int, GmPDSProcessHelper*> theHelpers;
+  std::map<PDS1aryType, GmPDSProcessHelper*> theHelpers;
   GmPDSProcessHelper* theCurrentHelper;
 
   std::vector<GmVFilter*> theFilters;
@@ -99,6 +116,8 @@ protected:
 
   GmVClassifier* theClassifier;
   G4bool bClassifierOnTrack;
+
+  std::map<G4ParticleDefinition*,G4VMscModel*>theMscModels;
 
 };
 #endif

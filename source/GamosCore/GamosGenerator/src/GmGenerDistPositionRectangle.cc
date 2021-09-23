@@ -48,28 +48,7 @@ void GmGenerDistPositionRectangle::SetParams( const std::vector<G4String>& param
   if( params.size() >= 8 ) {
     //normalize direction cosines
     G4ThreeVector dir(GmGenUtils::GetValue( params[5] ), GmGenUtils::GetValue( params[6] ), GmGenUtils::GetValue( params[7] ) );
-    if( fabs(dir.mag()-1.) > G4GeometryTolerance::GetInstance()->GetSurfaceTolerance() ) {
-      G4Exception("GmGenerDistPositionRectangle::SetParams",
-		  "Warning",
-		  JustWarning,
-		  G4String("direction cosines are normalized to one, they were " + GmGenUtils::ftoa(dir.mag())).c_str());
-      dir /= dir.mag();
-    } 
-    G4double angx = -asin(dir.y());
-    // there are always two solutions angx, angy and PI-angx, PI+angy, choose first
-    G4double angy;
-    if( dir.y() == 1. ) {
-      angy = 0.;
-    } else if( dir.y() == 0. ) {
-      angy = 0.;
-    } else {
-      angy = asin( dir.x()/sqrt(1-dir.y()*dir.y()) );
-    }
-
-    // choose between  angy and PI-angy
-    if( dir.z() * cos(angx)*cos(angy) < 0 ) angy = M_PI - angy;
-    theRotation.rotateX( angx );
-    theRotation.rotateY( angy );
+    SetRotation( dir );
   }
   
 #ifndef GAMOS_NO_VERBOSE

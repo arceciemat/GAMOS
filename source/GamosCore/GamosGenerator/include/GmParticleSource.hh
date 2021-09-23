@@ -22,6 +22,7 @@ public:
   void LastTimeActive( G4double tim = 0.);
   void LastTimeNotActive( G4double tim );
   virtual G4double GenerateTime();
+  virtual std::vector<G4PrimaryVertex*> GenerateVertices( G4double time );
   virtual G4PrimaryVertex* GenerateVertex( G4double time ) = 0;
 
   virtual G4String GetParticleName() const = 0;

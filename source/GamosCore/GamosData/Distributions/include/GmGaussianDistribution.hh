@@ -1,9 +1,9 @@
 #ifndef GmGaussianDistribution_h
 #define GmGaussianDistribution_h 1
 
-#include "GamosCore/GamosBase/Base/include/GmVDistribution.hh"
+#include "GamosCore/GamosData/Distributions/include/GmVNumericDistribution.hh"
 
-class GmGaussianDistribution : public GmVDistribution
+class GmGaussianDistribution : public GmVNumericDistribution
 {
   
 public: 
@@ -24,6 +24,7 @@ public:
 protected:
   
   G4double theSigma2;
+  G4double theMean;
   G4double theConstant;
   G4bool bNormalized;
 

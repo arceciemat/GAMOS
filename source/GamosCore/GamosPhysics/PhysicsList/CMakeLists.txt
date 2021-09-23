@@ -1,16 +1,13 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosPhysics_PhysicsList
+# Module : PhysicsList
+# Package: GamosCore_GamosPhysics_PhysicsList
 #
 #------------------------------------------------------------------------------
+# 
+set(CMAKE_VERBOSE_MAKEFILE ON)
 include(Geant4MacroLibraryTargets)
-
-# Add allocation export symbol for this category
-add_definitions(-DGmPhysicsPL_ALLOC_EXPORT)
-
-if(GAMOS_BUILD_GRANULAR_LIBS)
-   GAMOS_GRANULAR_LIBRARY_TARGET(COMPONENT sources.cmake)
+if(GEANT4_BUILD_GRANULAR_LIBS)
+    GEANT4_GRANULAR_LIBRARY_TARGET(COMPONENTS sources.cmake)
 else()
    GEANT4_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
 endif()

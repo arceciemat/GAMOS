@@ -16,8 +16,8 @@
 GmPSSurfaceFlux::GmPSSurfaceFlux(G4String name)
  :GmVPrimitiveScorer(name)
 {
-  theUnit = 1.;
-  theUnitName = G4String("");
+  theUnit = 1.e-2;
+  theUnitName = G4String("cm-2");
   
   GmParameterMgr* paramMgr = GmParameterMgr::GetInstance();
 
@@ -40,14 +40,14 @@ GmPSSurfaceFlux::GmPSSurfaceFlux(G4String name)
     G4Exception("GmPSSurfaceFlux::GmPSSurfaceFlux",
 		"No surface type supplied",
 		FatalErrorInArgument,
-		("Please use coCLHEP::mmand /gamos/setParam "+primitiveName + ":Surfaces SURFACE_1 SURFACE_2 ... SURFACE_N").c_str());
+		("Please use /gamos/setParam "+primitiveName + ":Surfaces SURFACE_1 SURFACE_2 ... SURFACE_N").c_str());
     
-  }
+   }
 
   bArea = G4bool(paramMgr->GetNumericValue(primitiveName+":DivideByArea",1));
   if( bArea ) {
     theUnit = CLHEP::mm*CLHEP::mm/(CLHEP::cm*CLHEP::cm);
-    theUnitName = G4String("CLHEP::cm-2");
+    theUnitName = G4String("cm-2");
   }
 
   bAngleFactor = G4bool(paramMgr->GetNumericValue(primitiveName+":DivideByAngle",1));
@@ -113,11 +113,14 @@ G4bool GmPSSurfaceFlux::ProcessHits(G4StepPoint* aStepPoint, G4Step* aStep, G4in
   if ( dirFlag > 0 ) {
     if ( theDirection == fFlux_InOut || theDirection == dirFlag ){
 
-      G4StepPoint* stepPoint=0;
+      G4StepPoint* stepPoint=0; // step point to calculate angle with normal
+      G4StepPoint* volumeStepPoint=0; // step point to know in which volume 
       if ( dirFlag == fFlux_In ){
 	stepPoint = aStep->GetPreStepPoint();
+	volumeStepPoint = stepPoint;
       }else if ( dirFlag == fFlux_Out ){
 	stepPoint = aStep->GetPostStepPoint();
+	volumeStepPoint = aStep->GetPreStepPoint();
       }else{
 	return FALSE;
       }
@@ -127,12 +130,12 @@ G4bool GmPSSurfaceFlux::ProcessHits(G4StepPoint* aStepPoint, G4Step* aStep, G4in
 	G4double area = theScoringSolid->GetArea();
 	flux /= area;
 #ifndef GAMOS_NO_VERBOSE
-	if( ScoringVerb(debugVerb) ) G4cout << " GmPSSurfaceFlux::ProcessHits flux after area= " << flux << " area " << area << G4endl;
+	if( ScoringVerb(debugVerb) ) G4cout << " GmPSSurfaceFlux::ProcessHits flux after area= " << flux << " area " << area << " flux*area " << flux*area << G4endl;
 #endif     
 
       }
       if( bAngleFactor ) {
-	G4double angleFactor = theScoringSolid->GetAngleFactor( stepPoint );
+	G4double angleFactor = theScoringSolid->GetAngleFactor( stepPoint, volumeStepPoint ); // stepPoint for the direction, but aStep->GetPreStepPoint for the touchable
 	flux /= angleFactor;
 #ifndef GAMOS_NO_VERBOSE
 	if( ScoringVerb(debugVerb) ) G4cout << " GmPSSurfaceFlux::ProcessHits flux after angleFactor= " << flux << " angleFactor " << angleFactor << G4endl;
@@ -148,31 +151,3 @@ G4bool GmPSSurfaceFlux::ProcessHits(G4StepPoint* aStepPoint, G4Step* aStep, G4in
 
   return TRUE;
 }
-
-//-----------------------------------------------------------------------
-void GmPSSurfaceFlux::EndOfEvent(G4HCofThisEvent*)
-{;}
-
-
-//-----------------------------------------------------------------------
-void GmPSSurfaceFlux::DrawAll()
-{;}
-
-//-----------------------------------------------------------------------
-void GmPSSurfaceFlux::PrintAll()
-{
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() <<G4endl; 
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  flux  : " << *(itr->second)
-	   << G4endl;
-  }
-}
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmPSSurfaceFlux::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

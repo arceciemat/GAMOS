@@ -25,6 +25,8 @@ class GmPhysicalVolumeFilter : public GmVFilter
 
   public: // with description
   virtual G4bool AcceptStep(const G4Step* aStep);
+  virtual G4bool AcceptTrack(const G4Track* aTrack);
+  virtual G4bool AcceptStackedTrack(const G4Track* aTrack);
 
       //
       void show();

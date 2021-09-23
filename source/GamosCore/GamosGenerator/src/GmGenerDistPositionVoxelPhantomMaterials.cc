@@ -3,9 +3,7 @@
 #include "GamosCore/GamosGenerator/include/GmParticleSource.hh"
 #include "GamosCore/GamosGeometry/include/GmTouchable.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
-//#define private public
 #include "G4PhantomParameterisation.hh"
-//#define private private
 #include "G4PhysicalVolumeStore.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVParameterised.hh"
@@ -68,11 +66,11 @@ void GmGenerDistPositionVoxelPhantomMaterials::SetParams( const std::vector<G4St
 #ifndef GAMOS_NO_VERBOSE
 	if( GenerVerb(infoVerb) ) G4cout << "GmGenerDistPositionVoxelPhantomMaterials voxel dimensions " << theVoxelDimX << " " << theVoxelDimY << " " << theVoxelDimZ << G4endl;
 #endif
-	theNoVoxelX = theParamReg->GetNoVoxelX();
-	theNoVoxelY = theParamReg->GetNoVoxelY();
-	theNoVoxelZ = theParamReg->GetNoVoxelZ();
+	theNoVoxelsX = theParamReg->GetNoVoxelsX();
+	theNoVoxelsY = theParamReg->GetNoVoxelsY();
+	theNoVoxelsZ = theParamReg->GetNoVoxelsZ();
 #ifndef GAMOS_NO_VERBOSE
-	if( GenerVerb(infoVerb) ) G4cout << "GmGenerDistPositionVoxelPhantomMaterials number of voxels " << theNoVoxelX << " " << theNoVoxelY << " " << theNoVoxelZ << G4endl;
+	if( GenerVerb(infoVerb) ) G4cout << "GmGenerDistPositionVoxelPhantomMaterials number of voxels " << theNoVoxelsX << " " << theNoVoxelsY << " " << theNoVoxelsZ << G4endl;
 #endif
 	
 	//---- Add the allowed materials of the voxels
@@ -121,9 +119,9 @@ G4ThreeVector GmGenerDistPositionVoxelPhantomMaterials::GeneratePosition( const 
   G4bool materialOK = false;
   unsigned int nvx, nvy, nvz, nvoxel;
   do{
-    nvx = (unsigned int)(CLHEP::RandFlat::shoot() * theNoVoxelX);
-    nvy = (unsigned int)(CLHEP::RandFlat::shoot() * theNoVoxelY);
-    nvz = (unsigned int)(CLHEP::RandFlat::shoot() * theNoVoxelZ);
+    nvx = (unsigned int)(CLHEP::RandFlat::shoot() * theNoVoxelsX);
+    nvy = (unsigned int)(CLHEP::RandFlat::shoot() * theNoVoxelsY);
+    nvz = (unsigned int)(CLHEP::RandFlat::shoot() * theNoVoxelsZ);
     nvoxel = theParamReg->GetMaterialIndex(nvx,nvy,nvz);
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(infoVerb) ) G4cout << "GmGenerDistPositionVoxelPhantomMaterials::GeneratePosition voxel numbers " << nvx << " " << nvy << " " << nvz << G4endl;
@@ -140,7 +138,7 @@ G4ThreeVector GmGenerDistPositionVoxelPhantomMaterials::GeneratePosition( const 
   if( GenerVerb(infoVerb) ) G4cout << "GmGenerDistPositionVoxelPhantomMaterials::GeneratePosition  pos before transformation " << pos << G4endl;
 #endif
 
-  pos += theParamReg->GetTranslation( nvy + theParamReg->GetNoVoxelY()*nvx + + theParamReg->GetNoVoxelX()*theParamReg->GetNoVoxelY()*nvz );
+  pos += theParamReg->GetTranslation( nvy + theParamReg->GetNoVoxelsY()*nvx + + theParamReg->GetNoVoxelsX()*theParamReg->GetNoVoxelsY()*nvz );
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << "GmGenerDistPositionVoxelPhantomMaterials::GeneratePosition  pos after voxel transformation " << pos << G4endl;
 #endif

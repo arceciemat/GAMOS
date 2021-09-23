@@ -54,8 +54,8 @@ G4bool GmVData::CheckAvailability( GmDType dtyp )
 //----------------------------------------------------------------
 void GmVData::BookHisto( G4String hNamePrefix, G4int hNumber, G4int index, GmAnalysisMgr* anaMgr )
 {
-
-  G4String hName = hNamePrefix+":"+theName;
+  G4String sepa = GmParameterMgr::GetInstance()->GetStringValue("Histos:Separator",":");
+  G4String hName = hNamePrefix+sepa+theName;
 
   anaMgr->CreateHisto1D(hName, theHNBins, theHMin, theHMax, hNumber);
   theHistos1[index] = anaMgr->GetHisto1D(hNumber);
@@ -368,7 +368,7 @@ G4double GmVData::GetValueFromSecoTrack( const G4Track* aTrack1, const G4Track* 
   } else {
     G4String expression;
     unsigned int siz = theSubExpressions.size();
-   unsigned int sizData = theSubData.size();
+    unsigned int sizData = theSubData.size();
     for( unsigned int ii = 0; ii < siz; ii++ ){
       expression += theSubExpressions[ii];
       if( ii < sizData ) expression += GmGenUtils::ftoa( theSubData[ii]->GetValueFromSecoTrack(aTrack1, aTrack2, index));
@@ -561,10 +561,12 @@ G4double GmVData::GetHMin() const
       if( ii < sizData ) expression += GmGenUtils::ftoa( theSubData[ii]->GetHMin());
     }
     if( expression.find("log") != std::string::npos && expression.find("(0") != std::string::npos ) {
-      G4Exception("GmVData::GetHMin",
-		  "",
-		  JustWarning,
-		  "Minimum of histogram with logarithmc X axis set to -99");
+      if( DataVerb(warningVerb) )  {
+	G4Exception("GmVData::GetHMin",
+		    "",
+		    JustWarning,
+		    "Minimum of histogram with logarithmc X axis set to -99");
+      }
       expression = "-99";
     }
     return GmGenUtils::GetValue( expression ); //GmGenUtils
@@ -588,3 +590,20 @@ G4double GmVData::GetHMax() const
   } 
 
 }
+
+#include "G4TouchableHistory.hh"
+#include "G4TransportationManager.hh"
+#include "G4Navigator.hh"
+#include "G4VPhysicalVolume.hh"
+
+//----------------------------------------------------------------
+G4VPhysicalVolume* GmVData::GetPVFromPos( G4ThreeVector pos )
+{ 
+  G4TouchableHistory* touch = new G4TouchableHistory;
+  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos, touch, false ); 
+  G4VPhysicalVolume* pv = touch->GetVolume();
+  delete touch;
+  return pv;
+  
+}  
+

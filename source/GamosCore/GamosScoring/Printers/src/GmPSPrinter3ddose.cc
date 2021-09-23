@@ -10,6 +10,8 @@
 #include "GamosCore/GamosGeometry/include/GmTouchable.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 #include "GamosCore/GamosUtils/include/GmNumberOfEvent.hh"
+#include "GamosCore/GamosGeometry/include/GmReadPhantomGeometry.hh"
+#include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 
 #include "G4UnitsTable.hh"
 #include "G4RunManager.hh"
@@ -17,41 +19,17 @@
 
 GmPSPrinter3ddose::GmPSPrinter3ddose(G4String name) : GmVPSPrinter( name )
 {
-  theUnit = CLHEP::gray;
-  theUnitName = G4String("Gy");
   theOutputType = "3ddose";
 
 }
 
-void GmPSPrinter3ddose::SetParameters( const std::vector<G4String>& params )
+void GmPSPrinter3ddose::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* scorer )
 {
-  if( params.size() != 0 && params.size() != 2 ){
-    G4String parastr;
-    for( unsigned int ii = 0; ii < params.size(); ii++ ){
-      parastr += params[ii] + " ";
-    }
-    G4Exception("GmPSPrinter3ddose::SetParameters",
-		"There should be two optional parameters: UNIT UNIT_NAME",
-		FatalErrorInArgument,
-		G4String("They are: "+parastr).c_str());
-  }
+  SetUnit(scorer);
 
-  if( params.size() == 2 ){
-    theUnit = GmGenUtils::GetValue( params[0] );
-    theUnitName = params[1];
-#ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(infoVerb) ) G4cout << " GmPSPrinter3ddose::SetParameters " << params[0] << " " << theUnit << " " << theUnitName << G4endl;
-#endif
-  }
-
-
-}
-
-void GmPSPrinter3ddose::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* theScorer )
-{ 
   G4String fileName = "3ddose.out";
   G4String scorerName = "";
-  if( theScorer ) scorerName = theScorer->GetName();
+  if( scorer ) scorerName = scorer->GetName();
   fileName = GmParameterMgr::GetInstance()->GetStringValue(theName+"_"+scorerName+":FileName",fileName);
 
   G4String suffix = GmParameterMgr::GetInstance()->GetStringValue("GmAnalysisMgr:FileNameSuffix","");
@@ -63,7 +41,7 @@ void GmPSPrinter3ddose::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScore
   OpenFileOut(fileName);
 
   Write3ddoseHeader();
-  Write3ddose(RunMap, theScorer);
+  Write3ddose(RunMap, scorer);
 
 }
 
@@ -77,22 +55,22 @@ void GmPSPrinter3ddose::Write3ddoseHeader()
   G4double nev = GmNumberOfEvent::GetNumberOfEvent();
   head.SetNumberOfEvents( nev );
 
-  thePhantomParam = GmRegularParamUtils::GetInstance()->GetPhantomParam( TRUE );
+  thePhantomParam = GmGeometryUtils::GetInstance()->GetPhantomParam( TRUE );
 
-  unsigned int nx = thePhantomParam->GetNoVoxelX();
-  unsigned int ny = thePhantomParam->GetNoVoxelY();
-  unsigned int nz = thePhantomParam->GetNoVoxelZ();
-  head.SetNoVoxelX( nx );
-  head.SetNoVoxelY( ny );
-  head.SetNoVoxelZ( nz );
+  unsigned int nx = thePhantomParam->GetNoVoxelsX();
+  unsigned int ny = thePhantomParam->GetNoVoxelsY();
+  unsigned int nz = thePhantomParam->GetNoVoxelsZ();
+  head.SetNoVoxelsX( nx );
+  head.SetNoVoxelsY( ny );
+  head.SetNoVoxelsZ( nz );
 
   //---- Get the positon of the phantom negative corner (-x,-y,-z)
-  G4ThreeVector thePhantomMinusCorner = (thePhantomParam->GetTranslation(0) + thePhantomParam->GetTranslation(thePhantomParam->GetNoVoxel()-1) )/ 2;
+  G4ThreeVector thePhantomMinusCorner = (thePhantomParam->GetTranslation(0) + thePhantomParam->GetTranslation(thePhantomParam->GetNoVoxels()-1) )/ 2;
   G4double voxelX = thePhantomParam->GetVoxelHalfX()*2;
   G4double voxelY = thePhantomParam->GetVoxelHalfY()*2;
   G4double voxelZ = thePhantomParam->GetVoxelHalfZ()*2;
 #ifndef GAMOS_NO_VERBOSE
-  if( ScoringVerb(infoVerb) ) G4cout << " GmPSPrinter3ddose::Write3ddoseHeader phantom minus corner (temp) " << thePhantomMinusCorner << " " << thePhantomParam->GetTranslation(0) << " " << thePhantomParam->GetTranslation(thePhantomParam->GetNoVoxel()-1) << G4endl;
+  if( ScoringVerb(infoVerb) ) G4cout << " GmPSPrinter3ddose::Write3ddoseHeader phantom minus corner (temp) " << thePhantomMinusCorner << " " << thePhantomParam->GetTranslation(0) << " " << thePhantomParam->GetTranslation(thePhantomParam->GetNoVoxels()-1) << G4endl;
 #endif
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << "GmPSPrinter3ddose::Write3ddoseHeader  voxelX " << thePhantomParam->GetVoxelHalfX() << " = " << voxelX <<  "  " << -voxelX*nx/2. << " " << G4ThreeVector( -nx*voxelX/2.,-ny*voxelY/2.,-nz*voxelZ/2.) << G4endl;
@@ -106,7 +84,31 @@ void GmPSPrinter3ddose::Write3ddoseHeader()
 
   std::vector<GmTouchable*> touchs = GmGeometryUtils::GetInstance()->GetTouchables( thePhantomVolume->GetName() );
   GmTouchable* pcont = touchs[0];
-  thePhantomMinusCorner += pcont->GetGlobalPosition();
+  G4ThreeVector phCentre = pcont->GetGlobalPosition();
+  //  G4RotationMatrix phRotMat = pcont->GetGlobalRotMat();
+  //  phCentre *= phRotMat; // print in the coordinates of the phantom without rotation
+
+  GmReadPhantomGeometry* phGeom = static_cast<GmReadPhantomGeometry*>(const_cast<G4VUserDetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction()));
+  if( !phGeom ) {
+    G4Exception("RTVPlanSource::MoveGeometry",
+		"",
+		FatalException,
+		"Geometry constructor has to be of type GmReadPhantomG4Geometry or one of its derived classes");
+  }
+
+  G4double theInitialRotAngleX = phGeom->GetInitialRotAngleX();
+  G4double theInitialRotAngleY = phGeom->GetInitialRotAngleY();
+  G4double theInitialRotAngleZ = phGeom->GetInitialRotAngleZ();
+  G4RotationMatrix phRotMat;
+  phRotMat.rotateX(theInitialRotAngleX);
+  phRotMat.rotateY(theInitialRotAngleY);
+  phRotMat.rotateZ(theInitialRotAngleZ);
+  phRotMat.invert();
+
+  phCentre -= phGeom->GetInitialDisp();
+  phCentre *= phRotMat; // print in the coordinates of the phantom without rotation
+  thePhantomMinusCorner += phCentre;
+
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << "GmPSPrinter3ddose::Write3ddoseHeader phantom minus corner " << thePhantomMinusCorner << *pcont << G4endl;
 #endif
@@ -144,11 +146,11 @@ void GmPSPrinter3ddose::Write3ddoseHeader()
 }
 
 //-----------------------------------------------------------------------
-void GmPSPrinter3ddose::Write3ddose( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* theScorer )
+void GmPSPrinter3ddose::Write3ddose( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* scorer )
 
 {
-  G4int nvoxels = thePhantomParam->GetNoVoxelX() * thePhantomParam->GetNoVoxelY() * thePhantomParam->GetNoVoxelZ();
-  G4int nvoxX = thePhantomParam->GetNoVoxelX();
+  G4int nvoxels = thePhantomParam->GetNoVoxelsX() * thePhantomParam->GetNoVoxelsY() * thePhantomParam->GetNoVoxelsZ();
+  G4int nvoxX = thePhantomParam->GetNoVoxelsX();
   
   //----- Loop to all voxels and print dose
   G4double nev = GmNumberOfEvent::GetNumberOfEvent();
@@ -156,9 +158,9 @@ void GmPSPrinter3ddose::Write3ddose( G4THitsMap<G4double>* RunMap, GmVPrimitiveS
   for( G4int ii = 0; ii < nvoxels; ii++ ){
     std::map<G4int,G4double*>::iterator ite = scorerMap->find( ii );
     if( ite != scorerMap->end() ){
-      *theFileOut << (*(ite->second))/theUnit / nev;
+      *theFileOut << (*(ite->second))*theUnitRatio;
 #ifndef GAMOS_NO_VERBOSE
-      if( ScoringVerb(debugVerb) ) G4cout << " GmPSPrinter3ddose::Write3ddose " << ii << " 3ddose " <<  (*(ite->second))/theUnit /nev << " " <<  (*(ite->second)) << " nev " << nev << " unit " << theUnit << G4endl;
+      if( ScoringVerb(debugVerb) ) G4cout << " GmPSPrinter3ddose::Write3ddose " << ii << " 3ddose " <<  (*(ite->second))*theUnitRatio << " " <<  (*(ite->second)) << " nev " << nev << " unit " << theUnitRatio << G4endl;
 #endif
     } else {
       *theFileOut << 0.;
@@ -176,7 +178,7 @@ void GmPSPrinter3ddose::Write3ddose( G4THitsMap<G4double>* RunMap, GmVPrimitiveS
     std::map<G4int,G4double*>::iterator ite = scorerMap->find( ii );
     if( ite != scorerMap->end() ){
       G4double sumX = (*(ite->second));
-      G4double error = theScorer->GetErrorRelative( ite->first, sumX, nev );
+      G4double error = scorer->GetErrorRelative( ite->first, sumX );
       *theFileOut << error;
     } else {
       *theFileOut << 0.;

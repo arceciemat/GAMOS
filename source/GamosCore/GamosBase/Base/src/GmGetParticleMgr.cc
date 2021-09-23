@@ -1,3 +1,4 @@
+
 #include "GmGetParticleMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -11,6 +12,7 @@
 #include "G4GenericIon.hh"
 #include "G4NistManager.hh"
 #include "G4ProcessManager.hh"
+#include "G4IonTable.hh"
 
 GmGetParticleMgr* GmGetParticleMgr::theInstance = 0;
 
@@ -86,7 +88,7 @@ G4ParticleDefinition* GmGetParticleMgr::GetG4Particle(const G4String& particleNa
   if( !particle ) {
     particle = CreateIon(particleName);
     if( particle == 0  && bMustExist ) {
-      G4Exception("GmG4Utils::GetG4Particle",
+      G4Exception("GmGetParticleMgr::GetG4Particle",
 		  "ERROR",
 		  FatalErrorInArgument,
 		  ("particle name not found " + particleName).c_str() );
@@ -117,7 +119,7 @@ G4ParticleDefinition* GmGetParticleMgr::GetG4Particle(const G4VProcess* proc, G4
   }
 
   if( !particle & bMustExist ) {
-    G4Exception("GmG4Utils::GetG4Particle",
+    G4Exception("GmGetParticleMgr::GetG4Particle",
 		"ERROR",
 		FatalErrorInArgument,
 		("process not found " + proc->GetProcessName() ).c_str() );
@@ -136,38 +138,45 @@ G4Ions* GmGetParticleMgr::CreateIon( const G4String& newValues )
     // check if it is an ion 
     std::string::size_type istart = partName.find("[");
     std::string::size_type iend = partName.find("]");
+    G4double excitation = 0.;
+    if( istart != std::string::npos ) {
+      excitation = GmGenUtils::GetValue(partName.substr(istart+1,iend-istart-1))*CLHEP::keV;
+    }
+    G4String isot = partName;
     if( istart  != std::string::npos
 	&& iend != std::string::npos ) {
-      G4String isot = partName.substr(0,istart);
-      unsigned int ii;
-      for( ii = 0; ii < isot.length(); ii++ ){
-	if( GmGenUtils::IsNumber( isot[ii] ) ) break;
+      isot = partName.substr(0,istart);
+    }
+    // look for the element (characters, not numbers)
+    unsigned int ii;
+    for( ii = 0; ii < isot.length(); ii++ ){
+      if( GmGenUtils::IsNumber( isot[ii] ) ) break;
+    }
+    if( ii != isot.length() ) {
+      G4String symb = isot.substr(0,ii);
+      G4Element* elem = G4NistManager::Instance()->FindOrBuildElement(symb, false);
+      if( elem ) {
+	ion = CreateIon( G4int(elem->GetZ()), atoi( G4String(isot.substr( ii, isot.length() )) ), excitation, 0 );
+	//ion = CreateIon( G4int(elem->GetZ()), atoi( G4String(isot.substr( ii, isot.length() )) ), 0.0*CLHEP::keV, 0 );
       }
-      if( ii != isot.length() ) {
-	G4String symb = isot.substr(0,ii);
-	G4Element* elem = G4NistManager::Instance()->FindOrBuildElement(symb, false);
-	if( elem ) {
-	  ion = CreateIon( G4int(elem->GetZ()), atoi( G4String(isot.substr( ii, isot.length() )) ), atof( G4String(partName.substr( istart+1, iend-istart-1 ) ))*CLHEP::keV, 0 );
-	}
-      }
-    } else {
+    }
+    /*  } else {
       G4Exception("GmGetParticleMgr::CreateIon",
-		  "Trying to create an ion from a wrong particle name",
+		  "Tryin1g to create an ion from a wrong particle name",
 		  FatalErrorInArgument,
 		  G4String("PARTICLE: "+ newValues).c_str());
-    }
+		  }*/
     return ion;
   }
-
 
   if( wl.size() < 2 || wl.size() > 4 ) {
     G4Exception("GmGeneratorMgr::CreateIon","ERROR there must be between 2 and 4: ATOMIC_NUMBER ATOMIC_MASS (ENERGY) (EXCITATION_NUMBER) ",FatalErrorInArgument,newValues);
   }
 
-  G4int atomicNumber;
-  G4int atomicMass;
-  G4double energy;
-  G4int excitNumber;
+  G4int atomicNumber = 0;
+  G4int atomicMass = 0;
+  G4double energy = 0;
+  G4int excitNumber = 0;
 
   atomicNumber = GmGenUtils::GetInteger( wl[0] );
   atomicMass = GmGenUtils::GetInteger( wl[1] );
@@ -195,12 +204,12 @@ G4Ions* GmGetParticleMgr::CreateIon( G4int atomicNumber,
 
   //  G4cout << " CreateIon " << atomicNumber << " " << atomicMass << " " << energy << " " <<  excitNumber << G4endl;
   
-  if( G4bool(GmParameterMgr::GetInstance()->GetNumericValue("Physics:RadioactiveDecay",1)) ){
+  /*  if( G4bool(GmParameterMgr::GetInstance()->GetNumericValue("Physics:RadioactiveDecay",1)) ){
     G4RadioactiveDecay* theRadioactiveDecay = new G4RadioactiveDecay();
     
     G4ProcessManager* pmanager = G4GenericIon::GenericIon()->GetProcessManager();
     if( !pmanager ) {
-      G4Exception("GmG4Utils::CreateIon",
+      G4Exception("GmGetParticleMgr::CreateIon",
 		  "Error",
 		  FatalException,
 		  "Ions cannot be created without an adequate physics list, use for example GmEMExtendedPhysics");
@@ -208,7 +217,7 @@ G4Ions* GmGetParticleMgr::CreateIon( G4int atomicNumber,
     if( !GmG4Utils::CheckProcessExists( pmanager, "RadioactiveDecay", 0 )) {
       pmanager->AddProcess(theRadioactiveDecay,0,-1,1);
     }  
-  }
+    } */
 
 #ifdef GAMOS_NO_VERBOSE
   // look if G4RadioactiveProcess exists 
@@ -237,7 +246,7 @@ std::vector<G4VProcess*> GmGetParticleMgr::GetG4ProcessList(const G4String& part
   for( unsigned int ii = 0; ii < particles.size(); ii++ ){
     G4ProcessManager* procMgr = particles[ii]->GetProcessManager();
     G4ProcessVector* procList = procMgr->GetProcessList();
-    for( int jj = 0; jj < procList->size(); jj++ ){
+    for( size_t jj = 0; jj < procList->size(); jj++ ){
       if( GmGenUtils::AreWordsEquivalent(processName,(*procList)[jj]->GetProcessName()) ) {
 	procV.push_back((*procList)[jj]);
       }
@@ -245,7 +254,7 @@ std::vector<G4VProcess*> GmGetParticleMgr::GetG4ProcessList(const G4String& part
   }
 
   if( procV.size() == 0 && bMustExist ) {
-    G4Exception("GmG4Utils::GetG4ProcessList",
+    G4Exception("GmGetParticleMgr::GetG4ProcessList",
 		"ERROR",
 		FatalErrorInArgument,
 		("process name not found " + processName + " for particle " + particleName ).c_str() );
@@ -268,7 +277,7 @@ std::vector<G4VProcess*> GmGetParticleMgr::GetG4ProcessList(const G4String& proc
     G4ParticleDefinition* particle = itepar->value();
     G4ProcessManager* procMgr = particle->GetProcessManager();
     G4ProcessVector* procList = procMgr->GetProcessList();
-    for( int jj = 0; jj < procList->size(); jj++ ){
+    for( size_t jj = 0; jj < procList->size(); jj++ ){
       if( GmGenUtils::AreWordsEquivalent(processName,(*procList)[jj]->GetProcessName()) ) {
 	G4cout << particle->GetParticleName() << " GetG4Process " << processName << " " << (*procList)[jj]->GetProcessName() << " " << (*procList)[jj] << G4endl;
 	procV.push_back((*procList)[jj]);
@@ -277,7 +286,7 @@ std::vector<G4VProcess*> GmGetParticleMgr::GetG4ProcessList(const G4String& proc
   }
 
   if( procV.size() == 0 && bMustExist ) {
-    G4Exception("GmG4Utils::GetG4ProcessList",
+    G4Exception("GmGetParticleMgr::GetG4ProcessList",
 		"ERROR",
 		FatalErrorInArgument,
 		("process name not found " + processName + " for any particle ").c_str() );
@@ -327,7 +336,7 @@ G4String GmGetParticleMgr::GetG4ProcessName(const G4String& particleName, G4Stri
 
   //PenAnnih annihil annihil
 
-  //  G4Exception("GmG4Utils::GetG4ProcessName","WARNING",JustWarning,("process name not found " + processName + " for particle " + particleName ).c_str() );
+  //  G4Exception("GmGetParticleMgr::GetG4ProcessName","WARNING",JustWarning,("process name not found " + processName + " for particle " + particleName ).c_str() );
 
   return "";
 }

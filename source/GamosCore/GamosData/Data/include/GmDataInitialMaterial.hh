@@ -2,8 +2,9 @@
 #define GmDataInitialMaterial_hh
 
 #include "GamosCore/GamosData/Management/include/GmVDataString.hh"
+#include "GmVDataInitialMaterial.hh"
 
-class GmDataInitialMaterial : public GmVDataString
+class GmDataInitialMaterial : public GmVDataString, public GmVDataInitialMaterial
 {
 public:
   GmDataInitialMaterial();
@@ -13,6 +14,10 @@ public:
   virtual G4String GetStringValueFromTrack( const G4Track* aTrack );
   virtual G4String GetStringValueFromSecoTrack( const G4Track* , const G4Track* );
   virtual G4String GetStringValueFromEvent( const G4Event* aEvent );
+  virtual G4String GetStringValueFromStackedTrack( const G4Track* aTrack );
 
+private:
+  G4String GetNameFromPV( G4VPhysicalVolume* pv );
+  
 };
 #endif

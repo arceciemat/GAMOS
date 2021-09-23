@@ -28,6 +28,10 @@ public:
   { return fPDGEncoding; }
   inline G4ThreeVector GetInitialMomentum() const
   { return fInitialMomentum; }
+  inline G4double GetVertexKineticEnergy() const
+  { return fVertexKineticEnergy; }
+ inline G4ThreeVector GetVertexMomentumDirection() const
+  { return fVertexMomentumDirection; }
   
 protected:
   G4int                     fTrackID;
@@ -36,6 +40,8 @@ protected:
   G4double                  fPDGCharge;
   G4String                  fParticleName;
   G4ThreeVector             fInitialMomentum;
+  G4double                  fVertexKineticEnergy;
+  G4ThreeVector             fVertexMomentumDirection;
 
 };
 

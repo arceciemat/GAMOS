@@ -6,6 +6,9 @@
 #include <iostream>
 #include "GamosCore/GamosUserActionMgr/include/GmUAVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
+#ifdef DOSE_REWEIGHT
+#include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
+#endif
 #include "GmFutureFilter.hh"
 #include "GmStepMgr.hh"
 
@@ -70,9 +73,20 @@ void GmUserSteppingActionList::UserSteppingAction(const G4Step* aStep)
 	    //-	    stepMgr->SaveStep( aStep ); // it is not saved by GmFutureFilterUA yet
 	    std::vector<G4Step*> steps = stepMgr->GetSteps( futureFilter, aStep );
 	    std::vector<G4Step*>::const_iterator ites;
-	    for( ites = steps.begin(); ites != steps.end(); ites++ ) {
+	    
+#ifdef DOSE_REWEIGHT
+	    //-- Reweight by dose of current step
+	    G4double density = aStep->GetTrack()->GetMaterial()->GetDensity();
+	    G4double dose = aStep->GetTotalEnergyDeposit()/ ( density * GmGeometryUtils::GetInstance()->GetCubicVolume( aStep->GetTrack()->GetVolume() ));
+#endif
+  	    for( ites = steps.begin(); ites != steps.end(); ites++ ) {
 #ifndef GAMOS_NO_VERBOSE
-	  if( UAVerb(infoVerb) ) G4cout << " GmUserSteppingActionList::UserSteppingAction futureFilter invoking action for step " << G4endl;
+	      if( UAVerb(infoVerb) ) G4cout << " GmUserSteppingActionList::UserSteppingAction futureFilter invoking action for step " << G4endl;
+#endif
+#ifdef DOSE_REWEIGHT
+	      //-- Reweight by dose of current step
+	      //	  G4cout << " PAST STEP WEIGHT " << (*ites)->GetTrack()->GetWeight() << G4endl; //GDEB
+	      (*ites)->GetTrack()->SetWeight(3.999999762527295e-07*dose);
 #endif
 	      (*aite)->UserSteppingAction(*ites);
 	    }

@@ -23,20 +23,21 @@ public: // with description
   G4String GetName() const {
     return theName; }
 
-  virtual void SetParameters( const std::vector<G4String>& ){};
- 
-  virtual void SetScoreByEvent( G4bool val ){
-    bScoreByEvent = val;}
-  G4bool ScoreByEvent() const { return bScoreByEvent; }
+  virtual void SetParameters( const std::vector<G4String>& );
 
+  void SetUnit(GmVPrimitiveScorer* theScorer );
+  
 protected:
 
   G4String theName;
 
-  G4bool bScoreByEvent;
-
   G4bool bPrintSumV2;
 
+  G4String theUnitName;
+  G4double theUnit;
+  G4double theNewUnit;
+  G4double theUnitRatio;
+  G4double theUnitRatio2;
 };
 
 #endif

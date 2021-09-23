@@ -8,7 +8,11 @@
 
 #include "G4tgrUtils.hh"
 
+#ifdef ROOT5
 #include "Reflex/PluginService.h"
+#else
+#include "GamosCore/GamosData/Management/include/GmDataFactory.hh"
+#endif
 
 GmDataMgr* GmDataMgr::theInstance = 0;
 
@@ -45,7 +49,11 @@ GmVData* GmDataMgr::BuildData( G4String dataName )
   if( iSeparator == G4int(std::string::npos) ) {
     if( dataName.find("AncestorStep") == 0 ) {
       G4String shortDataName = dataName.substr(12,dataName.length());
+#ifdef ROOT5
       GmVData * ancesData = Reflex::PluginService::Create<GmVData*>("GmData" + shortDataName);
+#else
+      GmVData * ancesData = GmDataFactory::get()->create("GmData" + shortDataName);
+#endif      
       if( ancesData == 0 ) {
 	G4Exception("GmVDataUser::GmVDataUser",
 		    "Wrong data type",
@@ -64,7 +72,11 @@ GmVData* GmDataMgr::BuildData( G4String dataName )
       }
       data->SetName( dataName ); // for others the user names the data
     } else {
+#ifdef ROOT5
       data = Reflex::PluginService::Create<GmVData*>("GmData" + dataName);
+#else
+      data = GmDataFactory::get()->create("GmData" + dataName);
+#endif      	
       if( data == 0 ) {
 	  G4Exception("GmDataMgr::BuildData",
 		      "Data type not found",
@@ -164,7 +176,11 @@ GmVData* GmDataMgr::CreateData( G4String dataName )
   GmVData * data = 0;
   if( dataName.find("AncestorStep") == 0 ) { 
       G4String shortDataName = dataName.substr(12,dataName.length());
+#ifdef ROOT5
       GmVData * ancesData = Reflex::PluginService::Create<GmVData*>("GmData" + shortDataName);
+#else
+      GmVData * ancesData = GmDataFactory::get()->create("GmData" + shortDataName);
+#endif
       if( ancesData == 0 ) {
 	G4Exception("GmVDataUser::GmVDataUser",
 		    "Wrong data type",
@@ -183,8 +199,12 @@ GmVData* GmDataMgr::CreateData( G4String dataName )
       }
       data->SetName( dataName ); // for others the user names the data
   } else {
+#ifdef ROOT5
     data = Reflex::PluginService::Create<GmVData*>("GmData" + dataName);
-    if( data == 0 ) {
+#else
+    data = GmDataFactory::get()->create("GmData" + dataName);
+#endif
+      if( data == 0 ) {
       G4Exception("GmVDataUser::GmVDataUser",
 		  "Wrong data type",
 		  FatalErrorInArgument,

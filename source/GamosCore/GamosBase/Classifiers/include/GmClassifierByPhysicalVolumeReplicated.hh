@@ -13,18 +13,18 @@ public: // with description
   GmClassifierByPhysicalVolumeReplicated(G4String);
   virtual ~GmClassifierByPhysicalVolumeReplicated();
   
-  virtual G4int GetIndexFromStep(const G4Step*);
-  virtual G4int GetIndexFromTrack(const G4Track*);
+  virtual int64_t GetIndexFromStep(const G4Step*);
+  virtual int64_t GetIndexFromTrack(const G4Track*);
 
   virtual void SetParameters( std::vector<G4String>& param );
 
-  virtual G4String GetIndexName(G4int);
+  virtual G4String GetIndexName(int64_t);
 
   virtual void SetIndices( std::vector<G4String> wl );
 
 private:
-  //  std::map<G4VPhysicalVolume*,G4int> theIndexMap;
-  std::map<G4String,G4int> theIndexMap; // for divisions the copies share a unique PV pointer
+  //  std::map<G4VPhysicalVolume*,int64_t> theIndexMap;
+  std::map<G4String,int64_t> theIndexMap; // for divisions the copies share a unique PV pointer
 };
 
 #endif

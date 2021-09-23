@@ -19,14 +19,15 @@ void GmGenerDistEnergyMCNPisolethargical::ReadEnergyDist()
   GmFileIn fin = GmFileIn::GetInstance(theFileName);
   std::vector<G4String> wl;
   std::map<G4double,G4double> enerprob;
-  G4int ii = 1;
+  G4int i1 = 1;
+
   fin.GetWordsInLine( wl );
   if( wl.size() != 3) {
     G4Exception("GmGenerDistEnergyMCNPisolethargical::ReadEnergyDist",
 		"Error in number of words in line",
 		FatalErrorInArgument,
 		G4String("Reading file " + theFileName 
-			 + ", line number " + GmGenUtils::itoa(ii) 
+			 + ", line number " + GmGenUtils::itoa(i1) 
 			 + " All lines must have two words: ENERGY PROBABILITY").c_str());
   }
    

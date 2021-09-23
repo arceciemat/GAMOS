@@ -12,7 +12,7 @@
 #include "G4LossTableManager.hh"
 
 //----------------------------------------------------------------------
-GmVPhysicsGamma::GmVPhysicsGamma(const G4String& name): G4VPhysicsConstructor(name)
+GmVPhysicsGamma::GmVPhysicsGamma(const G4String& name, G4int type): G4VPhysicsConstructor(name, type)
 { }
 
 //----------------------------------------------------------------------

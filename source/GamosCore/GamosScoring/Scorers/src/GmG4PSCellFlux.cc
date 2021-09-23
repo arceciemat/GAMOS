@@ -47,7 +47,7 @@ GmG4PSCellFlux::GmG4PSCellFlux(G4String name)
      :GmVPrimitiveScorer(name)
 {
   theUnit = 1.E-2;
-  theUnitName = "CLHEP::cm-2";
+  theUnitName = "cm-2";
 
   bUseVolume = true;
 }
@@ -68,26 +68,3 @@ G4bool GmG4PSCellFlux::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   return TRUE;
 }
 
-void GmG4PSCellFlux::EndOfEvent(G4HCofThisEvent*)
-{;}
-
-void GmG4PSCellFlux::DrawAll()
-{;}
-
-void GmG4PSCellFlux::PrintAll()
-{
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() <<G4endl; 
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  cell flux : " << *(itr->second)*CLHEP::cm*CLHEP::cm << " [CLHEP::cm^-2]"
-	   << G4endl;
-  }
-}
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSCellFlux::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

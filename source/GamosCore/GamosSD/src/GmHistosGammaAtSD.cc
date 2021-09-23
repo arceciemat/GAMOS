@@ -11,6 +11,7 @@
 #include <math.h>
 
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
+#include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosAnalysis/include/GmCheckOriginalGamma.hh"
 #include "GamosCore/GamosAnalysis/include/GmTrajStep.hh"
 #include "GamosCore/GamosAnalysis/include/GmEventClassifierByGammaInteraction.hh"
@@ -22,16 +23,20 @@
 GmHistosGammaAtSD::GmHistosGammaAtSD()
 {
   theAnaMgr = GmAnalysisMgr::GetInstance("gammaSD") ;
+  G4String sepa = GmParameterMgr::GetInstance()->GetStringValue("Histos:Separator",":");
+
 
   G4String hnam;
   std::vector<G4String> orig(6);
-  orig[0] = "ALL: "; 
-  orig[1] = "No PE: "; 
-  orig[2] = "Only PE: ";
-  orig[3] = "PE + 1 Compt: ";
-  orig[4] = "PE + 2 Compt: ";
-  orig[5] = "PE + >2 Compt: ";
-  G4String hgnam = "Gamma At SD: ";
+  orig[0] = "ALL"+sepa+" "; 
+  orig[1] = "No PE"+sepa+" "; 
+  orig[2] = "Only PE"+sepa+" ";
+  orig[3] = "PE + 1 Compt"+sepa+" ";
+  orig[4] = "PE + 2 Compt"+sepa+" ";
+  orig[5] = "PE + >2 Compt"+sepa+" ";
+  G4String hgnam = "Gamma At SD"+sepa+" ";
+  hnam = G4String("Energy lost ALL (MeV)") ;
+  theAnaMgr->CreateHisto1D(hnam,120,0,0.6,103000+91);
   for( unsigned int ii = 0; ii < 6; ii++ ){
     hnam = hgnam + orig[ii] + G4String("Event Type");
     theAnaMgr->CreateHisto1D(hnam,200,0,200,103000+ii*100+1);
@@ -48,35 +53,35 @@ GmHistosGammaAtSD::GmHistosGammaAtSD()
     hnam = hgnam + orig[ii] + G4String("N PhotoElec vs Compton+Rayleigh");
     theAnaMgr->CreateHisto2D(hnam,2,0,2,10,0.,10.,103000+ii*100+7);
 
-    hnam = hgnam + orig[ii] + G4String("Energy at entering SD (keV)");
-    theAnaMgr->CreateHisto1D(hnam,100,0,600.,103000+ii*100+8);
+    hnam = hgnam + orig[ii] + G4String("Energy at entering SD (MeV)");
+    theAnaMgr->CreateHisto1D(hnam,120,0,0.6,103000+ii*100+8);
 
-    hnam = hgnam + orig[ii] + G4String("Energy at entering SD vs energy initial (keV)");
-    theAnaMgr->CreateHisto2D(hnam,350,0,700.,350,0.,700,103000+ii*100+99);
+    hnam = hgnam + orig[ii] + G4String("Energy at entering SD vs energy initial (MeV)");
+    theAnaMgr->CreateHisto2D(hnam,120,0,0.6,120,0.,0.6,103000+ii*100+99);
 
-    hnam = hgnam + orig[ii] + G4String("Energy lost PhotoElec (keV)");
-    theAnaMgr->CreateHisto1D(hnam,100,0,600,103000+ii*100+11);
+    hnam = hgnam + orig[ii] + G4String("Energy lost PhotoElec (MeV)");
+    theAnaMgr->CreateHisto1D(hnam,120,0,0.6,103000+ii*100+11);
     hnam = hgnam + orig[ii] + G4String("Distance to 1st when Compton (mm)") ;
     theAnaMgr->CreateHisto1D(hnam,100,0,1000,103000+ii*100+12);
     hnam = hgnam + orig[ii] + G4String("Distance to 1st when PhotoElec (mm)") ;
     theAnaMgr->CreateHisto1D(hnam,100,0,1000,103000+ii*100+13);
     hnam = hgnam + orig[ii] + G4String("Diff ang when PhotoElec (mrad)");
     theAnaMgr->CreateHisto1D(hnam,100,0,3200,103000+ii*100+14);
-    hnam = hgnam + orig[ii] + G4String("Diff energy when PhotoElec (keV)");
-    theAnaMgr->CreateHisto1D(hnam,100,0,600,103000+ii*100+15);
+    hnam = hgnam + orig[ii] + G4String("Diff energy when PhotoElec (MeV)");
+    theAnaMgr->CreateHisto1D(hnam,120,0,0.6,103000+ii*100+15);
 
-    hnam = hgnam + orig[ii] + G4String("Energy lost Compton (keV)");
-    theAnaMgr->CreateHisto1D(hnam,100,0,600,103000+ii*100+21);
+    hnam = hgnam + orig[ii] + G4String("Energy lost Compton (MeV)");
+    theAnaMgr->CreateHisto1D(hnam,120,0,0.6,103000+ii*100+21);
     hnam = hgnam + orig[ii] + G4String("Angle variation Compton (mrad)");
     theAnaMgr->CreateHisto1D(hnam,100,0,3200.,103000+ii*100+22);
 
-    hnam = hgnam + orig[ii] + G4String("Energy lost Rayleigh (keV)") ;
-    theAnaMgr->CreateHisto1D(hnam,100,0,600,103000+ii*100+31);
+    hnam = hgnam + orig[ii] + G4String("Energy lost Rayleigh (MeV)") ;
+    theAnaMgr->CreateHisto1D(hnam,120,0,0.6,103000+ii*100+31);
     hnam = hgnam + orig[ii] + G4String("Angle variation Rayleigh (mrad)");
     theAnaMgr->CreateHisto1D(hnam,100,0,3200.,103000+ii*100+32);
 
-    hnam = hgnam + orig[ii] + G4String("Energy lost Conversion (keV)") ;
-    theAnaMgr->CreateHisto1D(hnam,100,0,600,103000+ii*100+41);
+    hnam = hgnam + orig[ii] + G4String("Energy lost Conversion (MeV)") ;
+    theAnaMgr->CreateHisto1D(hnam,120,0,0.6,103000+ii*100+41);
     hnam = hgnam + orig[ii] + G4String("Angle variation Conversion (mrad)");
     theAnaMgr->CreateHisto1D(hnam,100,0,3200.,103000+ii*100+42);
 
@@ -142,7 +147,7 @@ void GmHistosGammaAtSD::PostUserTrackingAction(const G4Track* )
   }
 
   if( theInteractions.GetSteps().size() != 0 ) {
-    theEnteringEnergies.push_back( theInteractions.GetStep(0)->GetKineticEnergyPre()/CLHEP::keV );
+    theEnteringEnergies.push_back( theInteractions.GetStep(0)->GetKineticEnergyPre() );
   }
 
   theInteractions.Clear();
@@ -230,9 +235,17 @@ void GmHistosGammaAtSD::FillHistos()
       dirFirst = trajsp->GetMomentumPre(); dirFirst /= dirFirst.mag();
       kinEFirst = trajsp->GetKineticEnergyPre();
     }
-    G4double dener = trajsp->GetDeltaKineticEnergy()/CLHEP::keV ;
+    G4double dener = trajsp->GetDeltaKineticEnergy();
     energyLost += dener;
 
+    if( dener != 0 ) {
+      if( trajsp->GetProcessName() == "phot" ||
+	  trajsp->GetProcessName() == "compt" || 
+	  trajsp->GetProcessName() == "Rayl"  ||
+	  trajsp->GetProcessName() == "conv" ){ 
+	theAnaMgr->GetHisto1(103000+91)->Fill( dener );
+      }
+    }
     if( trajsp->GetProcessName() == "phot" ){ 
       nPE++;
       theAnaMgr->GetHisto1(103000+icl*100+11)->Fill( dener );
@@ -249,13 +262,13 @@ void GmHistosGammaAtSD::FillHistos()
 	theAnaMgr->GetHisto1(103000+icl*100+14)->Fill( dirdiff  );
 	theAnaMgr->GetHisto1(103000+14)->Fill( dirdiff  );
 
-	G4double kinEdiff = (kinEFirst - trajsp->GetKineticEnergyPre() )/CLHEP::keV;
+	G4double kinEdiff = (kinEFirst - trajsp->GetKineticEnergyPre() );
 	theAnaMgr->GetHisto1(103000+icl*100+15)->Fill( kinEdiff  );
 	theAnaMgr->GetHisto1(103000+15)->Fill( kinEdiff  );
 #ifndef GAMOS_NO_VERBOSE
 	if( SDVerb(testVerb) ) G4cout << "PE: posdiff " << posdiff << " pos " << trajsp->GetPositionPost() << " posFirst " << posFirst << G4endl 
 	       << "PE: dirdiff " << dirdiff << " dir " << dir << " dirFirst " << dirFirst << G4endl
-	       << "PE: kinEdiff " << kinEdiff << " kinE " << trajsp->GetKineticEnergyPre()/CLHEP::keV << " kinEFirst " << kinEFirst/CLHEP::keV << G4endl; 
+	       << "PE: kinEdiff " << kinEdiff << " kinE " << trajsp->GetKineticEnergyPre() << " kinEFirst " << kinEFirst << G4endl; 
 #endif
 
       }
@@ -308,7 +321,7 @@ void GmHistosGammaAtSD::FillHistos()
       }
     }
     if( ii == 0 ) {
-      G4double kinE = trajsp->GetKineticEnergyPre()/CLHEP::keV;
+      G4double kinE = trajsp->GetKineticEnergyPre();
       theAnaMgr->GetHisto1(103000+icl*100+8)->Fill(kinE);
       theAnaMgr->GetHisto1(103000+8)->Fill(kinE);
       energyEntering = kinE;
@@ -383,7 +396,7 @@ void GmHistosGammaAtSD::EndOfRunAction( const G4Run* )
   GmHisto1* hisN = theAnaMgr->GetHisto1(103000+1);
   int nbins = hisN->GetNbins();
 #endif
-  int nevents = int(GmNumberOfEvent::GetNumberOfEvent());
+  G4double nevents = int(GmNumberOfEvent::GetNumberOfEvent());
   int cInSD = int(hisN->GetEntries());
   std::vector<int> nbinVal(nbins);
   int cPE = 0;

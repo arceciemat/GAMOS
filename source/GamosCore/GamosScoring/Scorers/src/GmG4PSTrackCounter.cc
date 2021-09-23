@@ -99,26 +99,3 @@ G4bool GmG4PSTrackCounter::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   return TRUE;
 }
 
-void GmG4PSTrackCounter::EndOfEvent(G4HCofThisEvent*)
-{;}
-
-void GmG4PSTrackCounter::DrawAll()
-{;}
-
-void GmG4PSTrackCounter::PrintAll()
-{
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  track count: " << *(itr->second)
-	   << G4endl;
-  }
-}
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSTrackCounter::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

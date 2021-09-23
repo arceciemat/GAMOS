@@ -54,3 +54,9 @@ G4String GmDataInitialLogicalVolume::GetStringValueFromEvent( const G4Event* anE
 
   return name;
 }
+
+//----------------------------------------------------------------
+G4String GmDataInitialLogicalVolume::GetStringValueFromStackedTrack( const G4Track* aTrack )
+{
+  return GetPVFromPos(aTrack->GetPosition())->GetLogicalVolume()->GetName();
+}

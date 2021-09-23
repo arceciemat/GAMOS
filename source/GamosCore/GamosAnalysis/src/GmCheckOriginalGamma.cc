@@ -51,9 +51,9 @@ void GmCheckOriginalGamma::BeginOfEventAction( const G4Event* )
 
 void GmCheckOriginalGamma::PreUserTrackingAction(const G4Track* aTrack)
 {
-  if( CheckIfOriginalGamma( aTrack ) != 0 ) GmCheckOriginalGamma::theOrigGammas.insert(aTrack->GetTrackID());
+	if( CheckIfOriginalGamma( aTrack ) != 0 ) GmCheckOriginalGamma::theOrigGammas.insert(aTrack->GetTrackID());
 
-  GmCheckOriginalGamma::theTrackAndParentIDs[aTrack->GetTrackID()] = aTrack->GetParentID()+1;
+	GmCheckOriginalGamma::theTrackAndParentIDs[aTrack->GetTrackID()] = aTrack->GetParentID()+1;
 
   G4bool isFromRD = false;
   if( aTrack->GetCreatorProcess() != 0 && aTrack->GetCreatorProcess()->GetProcessName() == "RadioactiveDecay" ) isFromRD = true;
@@ -73,13 +73,13 @@ G4int GmCheckOriginalGamma::GetOriginalGamma(const G4Track* aTrack)
     }
     // do not check this, because it will give an error if a track is postponed to next event
     if( theTrackAndParentIDs.find(trkid) == theTrackAndParentIDs.end() ) {
-     if( bCheckParentID ) {
-	G4Exception("GmCheckOriginalGamma::GetOriginalGamma",
+      if( bCheckParentID ) {
+				G4Exception("GmCheckOriginalGamma::GetOriginalGamma",
 		    "GAMOS internal error",
 		    FatalException,
 		    "Track ID not found in theTrackAndParentIDs");
       } else {
-	return 0;
+				return 0;
       }
     }
     trkid = theTrackAndParentIDs[trkid]-1;
@@ -90,4 +90,9 @@ G4int GmCheckOriginalGamma::GetOriginalGamma(const G4Track* aTrack)
 #endif
 
    return origGamma;
+}
+
+void GmCheckOriginalGamma::SetCheckParentID(G4int val)
+{
+	bCheckParentID = val;
 }

@@ -19,16 +19,13 @@ public: // with description
   virtual ~GmPSPrinterSqdose(){ };
   
   virtual void DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* theScorer );
-  virtual void SetParameters( const std::vector<G4String>& param );
 
 private:
   GmSqdoseHeader* BuildSqdoseHeader();
   void WriteSqdose( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* theScorer );
 
 private:
-  G4double theUnit;
-  G4String theUnitName;
-  G4PhantomParameterisation* thePhantomParam;
+  std::vector<G4PhantomParameterisation*> thePhantomParams;
 
 };
 

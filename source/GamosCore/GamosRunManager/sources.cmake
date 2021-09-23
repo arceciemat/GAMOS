@@ -1,55 +1,50 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosRunManager
+# Module : GamosRunManager
+# Package: GamosCore_GamosRunManager
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosRunManager
+	 HEADERS
+		GmDeprecatedCommandsMessenger.hh
+		GmRunManager.hh
+		GmFactoriesMessenger.hh
+		GmUIMessenger.hh
+		GmRunMessenger.hh
+		GmUIterminal.hh
+	 SOURCES
+		plugin.cc
+		GmUIterminal.cc
+		GmRunMessenger.cc
+		GmUIMessenger.cc
+		GmDeprecatedCommandsMessenger.cc
+		GmFactoriesMessenger.cc
+		GmRunManager.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+	GamosCore_GamosBase_Base
+	GamosCore_GamosUtils
+	GamosCore_GamosGeometry
+	GamosCore_GamosUserActionMgr
+	GamosCore_GamosAnalysis
+	GamosCore_GamosSD
+	GamosCore_GamosScoring_Management
+	GamosCore_GamosPhysics_PhysicsList
+	GamosCore_GamosPhysics_Cuts
+	GamosCore_GamosPhysics_Biasing
+	GamosCore_GamosPhysics_VarianceReduction
+	MagFieldManager
+		${SEAL_LIBRARIES} 
 
-   HEADERS
-       GmDeprecatedCommandsMessenger.hh
-       GmRunMessenger.hh
-       GmFactoriesMessenger.hh
-       GmUIMessenger.hh
-       GmRunManager.hh
-       GmUIterminal.hh
-
-   SOURCES
-       plugin.cc
-       GmUIMessenger.cc
-       GmRunMessenger.cc
-       GmDeprecatedCommandsMessenger.cc
-       GmUIterminal.cc
-       GmFactoriesMessenger.cc
-       GmRunManager.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosPhysics_Cuts
-  GamosCore_GamosPhysics_PhysicsList
-  GamosCore_GamosPhysics_VarianceReduction
-  GamosCore_GamosGeometry
-  GamosCore_GamosUtils
-  GamosCore_GamosScoring_Management
-  GamosCore_GamosUserActionMgr
-  GamosCore_GamosBase_Base
-  GamosCore_GamosSD
-  MagFieldManager
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

@@ -44,3 +44,12 @@ G4double GmDataInitialMomZ::GetValueFromEvent( const G4Event* aEvent, G4int )
 {
   return aEvent->GetPrimaryVertex(0)->GetPrimary(0)->GetMomentum().z();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialMomZ::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+ 
+  return ( GmGenUtils::GetMomentum( aTrack->GetDefinition()->GetPDGMass(), aTrack->GetKineticEnergy() )
+	   * aTrack->GetMomentumDirection() ).z();
+}
+

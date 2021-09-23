@@ -19,3 +19,5 @@ G4bool GmEMParticleFilter::AcceptTrack(const G4Track* aTrack)
       || part == G4Positron::Positron() ) return TRUE;
   return FALSE;
 }
+
+

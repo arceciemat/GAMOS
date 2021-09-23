@@ -13,16 +13,16 @@ public: // with description
   GmClassifierBy1Ancestor(G4String);
   virtual ~GmClassifierBy1Ancestor(){ };
   
-  virtual G4int GetIndexFromStep(const G4Step*);
-  virtual G4int GetIndexFromTrack(const G4Track*);
+  virtual int64_t GetIndexFromStep(const G4Step*);
+  virtual int64_t GetIndexFromTrack(const G4Track*);
 
   virtual void SetParameters( std::vector<G4String>& param );
 
   virtual void SetIndices( std::vector<G4String> wl );
 
 private:
-  G4int theIndexDepth;
-  std::map<G4int,G4int> theIndexMap;
+  int64_t theIndexDepth;
+  std::map<int64_t,int64_t> theIndexMap;
 };
 
 #endif

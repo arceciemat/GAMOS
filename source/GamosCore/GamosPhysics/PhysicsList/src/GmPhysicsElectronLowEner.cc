@@ -15,7 +15,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "G4RegionStore.hh"
 
-GmPhysicsElectronLowEner::GmPhysicsElectronLowEner(const G4String& name): GmVPhysicsElectron(name)
+GmPhysicsElectronLowEner::GmPhysicsElectronLowEner(const G4String& name, G4int type): GmVPhysicsElectron(name,type)
 { }
 
 GmPhysicsElectronLowEner::~GmPhysicsElectronLowEner()
@@ -54,7 +54,7 @@ void GmPhysicsElectronLowEner::ConstructProcess()
       G4eBremsstrahlung* eBrem = new G4eBremsstrahlung();
       G4LivermoreBremsstrahlungModel* bremsModel = new G4LivermoreBremsstrahlungModel();
       bremsModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
-      SelectBremssAngularDist( bremsModel );
+      SelectBremssAngularDist( bremsModel, "Electron" );
       eBrem->AddEmModel(0, bremsModel );
       pmanager->AddProcess(eBrem, -1,-3, 3);
 

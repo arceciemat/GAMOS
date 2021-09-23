@@ -1,5 +1,5 @@
 #include "GmClassifierByHadronicReaction.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Classifiers/include/GmClassifierVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
@@ -30,13 +30,13 @@ GmClassifierByHadronicReaction::GmClassifierByHadronicReaction(G4String name) : 
 void GmClassifierByHadronicReaction::SetParameters( std::vector<G4String>& params)
 {
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmClassifierByHadronicReaction::SetParameters " << params.size() << G4endl;
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierByHadronicReaction::SetParameters " << params.size() << G4endl;
 #endif
   /*
   for( unsigned int ii=0; ii < params.size(); ii++ ){
     theParticlesToExclude.insert(params[ii]);
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmClassifierByHadronicReaction::SetParameters particle to exclude  " << params[ii] << " " << theParticlesToExclude.size() << G4endl;
+    if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierByHadronicReaction::SetParameters particle to exclude  " << params[ii] << " " << theParticlesToExclude.size() << G4endl;
 #endif 
   }
   */
@@ -44,19 +44,19 @@ void GmClassifierByHadronicReaction::SetParameters( std::vector<G4String>& param
 }
 
 //------------------------------------------------------------------
-G4int GmClassifierByHadronicReaction::GetIndexFromStep(const G4Step* aStep)
+int64_t GmClassifierByHadronicReaction::GetIndexFromStep(const G4Step* aStep)
 {
-  G4int index;
+  int64_t index;
   G4String indexName;
 
   const G4VProcess* proc = aStep->GetPostStepPoint()->GetProcessDefinedStep();
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) 
+  if( ClassifierVerb(debugVerb) ) 
     G4cout << " GmClassifierByHadronicReaction::GetIndexFromStep process " << proc << G4endl;
 #endif
   if( !proc ) return 0;
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) 
+  if( ClassifierVerb(debugVerb) ) 
     G4cout << " GmClassifierByHadronicReaction::GetIndexFromStep process type " << proc->GetProcessType() << " fHadronic " << fHadronic << G4endl;
 #endif
 
@@ -70,7 +70,7 @@ G4int GmClassifierByHadronicReaction::GetIndexFromStep(const G4Step* aStep)
     indexName = GmG4Utils::GetInelasticName( aStep );
   }
 
-  std::map<const G4String,G4int>::const_iterator ite = theIndexMap.find(indexName);
+  std::map<const G4String,int64_t>::const_iterator ite = theIndexMap.find(indexName);
   if( ite == theIndexMap.end() ){
     index = theIndexMap.size()+1;
     theIndexMap[indexName] = index;
@@ -79,7 +79,7 @@ G4int GmClassifierByHadronicReaction::GetIndexFromStep(const G4Step* aStep)
   }
   
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmClassifierByHadronicReaction::GetIndexFromStep " << index << " Secondary_names " << indexName << G4endl;
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierByHadronicReaction::GetIndexFromStep " << index << " Secondary_names " << indexName << G4endl;
 #endif
   
   return index;
@@ -87,22 +87,22 @@ G4int GmClassifierByHadronicReaction::GetIndexFromStep(const G4Step* aStep)
 
 
 //------------------------------------------------------------------
-G4int GmClassifierByHadronicReaction::GetIndexFromTrack(const G4Track* )
+int64_t GmClassifierByHadronicReaction::GetIndexFromTrack(const G4Track* )
 {
   return 0;
   
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmClassifierByHadronicReaction::GetIndex  0 " << G4endl;
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierByHadronicReaction::GetIndex  0 " << G4endl;
 #endif
 
 }
 
 
 //--------------------------------------------------------------
-G4String GmClassifierByHadronicReaction::GetIndexName(G4int index)
+G4String GmClassifierByHadronicReaction::GetIndexName(int64_t index)
 {
   G4String name = "NOT_FOUND";
-  std::map<const G4String,G4int>::const_iterator ite;
+  std::map<const G4String,int64_t>::const_iterator ite;
   for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
     if((*ite).second == index ){
       return (*ite).first;
@@ -110,7 +110,7 @@ G4String GmClassifierByHadronicReaction::GetIndexName(G4int index)
     }
   }
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) 
+  if( ClassifierVerb(debugVerb) ) 
     G4cout << " GmClassifierByHadronicReaction::GetIndexName " << name << " index " << index << G4endl;
 #endif
 
@@ -121,10 +121,14 @@ G4String GmClassifierByHadronicReaction::GetIndexName(G4int index)
 GmClassifierByHadronicReaction::~GmClassifierByHadronicReaction()
 {
   //print names of each index 
-  G4cout << "%%%%% Table of indices for GmClassifierByHadronicReaction " << theName << G4endl;
-  std::map<const G4String,G4int>::const_iterator ite;
-  for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
-    G4cout << (*ite).first << " = " << (*ite).second << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+  if( ClassifierVerb(debugVerb) ) {
+    G4cout << "%%%%% Table of indices for GmClassifierByHadronicReaction " << theName << G4endl;
+    std::map<const G4String,int64_t>::const_iterator ite;
+    for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
+      G4cout << (*ite).first << " = " << (*ite).second << G4endl;
+    }
   }
+  #endif
 }
 

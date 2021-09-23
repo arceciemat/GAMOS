@@ -27,8 +27,8 @@ GmSDWithFilter::GmSDWithFilter(G4String sdtype): GmSDSimple( sdtype )
     std::vector<G4String> params;
     params.push_back( filterNames[ii] );
     params.push_back( filterNames[ii] );
-    GmVFilter* filter = GmFilterMgr::GetInstance()->FindOrBuildFilter(params, true );
-    theFilters.push_back( filter );
+    GmVFilter* filter2 = GmFilterMgr::GetInstance()->FindOrBuildFilter(params, true );
+    theFilters.push_back( filter2 );
   }
 
 }

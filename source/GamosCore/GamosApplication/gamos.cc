@@ -1,8 +1,4 @@
-#define private public
-#ifdef G4VIS_USE
- #include "G4VisExecutive.hh"
-#endif
-
+//#define private protected
 #include "GamosCore/GamosRunManager/include/GmRunManager.hh"
 #include "GamosCore/GamosRunManager/include/GmUIterminal.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
@@ -13,16 +9,23 @@
 #include "G4UItcsh.hh"
 #include "G4GeometryManager.hh"
 
-#include "TSystem.h"
-#include "TROOT.h"
+#ifdef WIN32
+#define G4VIS_USE //WINDEB
+#endif
+
+#ifdef G4VIS_USE
+ #include "G4VisExecutive.hh"
+#endif
 
 //---------------------------------------------------------------------------
 int main(int argc,char** argv) 
 {
+  if( argc > 1 ) G4cout << "@@@@@ Running GAMOS with script: " << argv[1] << G4endl;
+  
   GmRunManager* runManager = new GmRunManager();
   runManager->CreateG4RunManager();
-    
-#ifdef G4VIS_USE 
+
+#ifdef G4VIS_USE
   // Visualization, if you choose to have it!
   G4VisManager* visManager = new G4VisExecutive;
   visManager->Initialise();
@@ -79,9 +82,6 @@ int main(int argc,char** argv)
 
   GmFilterMgr::GetInstance()->DeleteFilters();
   GmClassifierMgr::GetInstance()->DeleteClassifiers();
-
-  // geom =  TClass::GetClass("geomtext",true,true);
-  // G4cout << " GEOM PLUGIN " << geom << G4endl;
 
   exit(1);
   return 0;

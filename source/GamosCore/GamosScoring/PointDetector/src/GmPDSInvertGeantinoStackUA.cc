@@ -1,4 +1,3 @@
-#define private public
 #include "G4StackManager.hh"
 #include "GmPDSInvertGeantinoStackUA.hh"
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"

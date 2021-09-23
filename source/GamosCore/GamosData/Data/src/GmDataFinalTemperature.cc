@@ -23,11 +23,21 @@ GmDataFinalTemperature::~GmDataFinalTemperature()
 //----------------------------------------------------------------
 G4double GmDataFinalTemperature::GetValueFromStep( const G4Step* aStep, G4int )
 {
-  return aStep->GetPostStepPoint()->GetMaterial()->GetTemperature();
+  G4Material* mate = aStep->GetPostStepPoint()->GetMaterial();
+  if( mate ) {
+    return mate->GetTemperature();
+  } else {
+    return 0.;
+  }
 }
 
 //----------------------------------------------------------------
 G4double GmDataFinalTemperature::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
-  return aTrack->GetNextMaterial()->GetTemperature();
+  G4Material* mate = aTrack->GetNextMaterial();
+  if( mate ) {
+    return mate->GetTemperature();
+  } else {
+    return 0.;
+  }
 }

@@ -65,6 +65,8 @@ void GmTrackDataBinFileUA::PreUserTrackingAction(const G4Track* aTrack)
 	(*ite)->Initialise();
       }
     }
+
+  theNCallsWritten++;
 }
 
 //----------------------------------------------------------------
@@ -88,8 +90,7 @@ void GmTrackDataBinFileUA::PostUserTrackingAction(const G4Track* aTrack )
 	(*ite)->WriteBin( aTrack );
       }
     }
-
-  theNCallsWritten++;
+   theNCallsWritten++;
 
 }
 

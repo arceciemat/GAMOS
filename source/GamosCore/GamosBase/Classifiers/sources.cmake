@@ -1,70 +1,66 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosBase_Classifiers
+# Module : Classifiers
+# Package: GamosCore_GamosBase_Classifiers
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosBase_Classifiers
+	 HEADERS
+		GmClassifierByParticle.hh
+		GmClassifierBySecondariesListExclude.hh
+		GmClassifierByCreatorProcess.hh
+		GmClassifierBy1Ancestor.hh
+		GmClassifierByMaterial.hh
+		GmClassifierByLogicalVolume.hh
+		GmClassifierByPrimaryParticle.hh
+		GmClassifierVerbosity.hh
+		GmClassifierByProcess.hh
+		GmCompoundClassifier.hh
+		GmClassifierBySecondariesList.hh
+		GmClassifierByPhysicalVolumeReplicated.hh
+		GmClassifierByParallelLogicalVolume.hh
+		GmClassifierByRegion.hh
+		GmClassifierByAncestors.hh
+		GmClassifierByHadronicReaction.hh
+		GmClassifierByPhysicalVolume.hh
+		GmClassifierByKineticEnergy.hh
+		GmClassifierByParticleProcess.hh
+	 SOURCES
+		GmClassifierByParticle.cc
+		GmClassifierByPhysicalVolumeReplicated.cc
+		GmClassifierByPrimaryParticle.cc
+		GmClassifierByLogicalVolume.cc
+		plugin.cc
+		GmClassifierBySecondariesListExclude.cc
+		GmClassifierVerbosity.cc
+		GmClassifierByRegion.cc
+		GmClassifierByCreatorProcess.cc
+		GmClassifierByPhysicalVolume.cc
+		GmClassifierByParticleProcess.cc
+		GmClassifierByMaterial.cc
+		GmClassifierBy1Ancestor.cc
+		GmClassifierByParallelLogicalVolume.cc
+		GmClassifierBySecondariesList.cc
+		GmClassifierByKineticEnergy.cc
+		GmClassifierByAncestors.cc
+		GmClassifierByProcess.cc
+		GmCompoundClassifier.cc
+		GmClassifierByHadronicReaction.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+	GamosCore_GamosUtils
+	GamosCore_GamosBase_Base
+	GamosCore_GamosGeometry
 
-   HEADERS
-       GmClassifierByPhysicalVolume.hh
-       GmClassifierByProcess.hh
-       GmClassifierByMaterial.hh
-       GmClassifierByParticleProcess.hh
-       GmClassifierByRegion.hh
-       GmClassifierBy1Ancestor.hh
-       GmClassifierBySecondariesListExclude.hh
-       GmClassifierByLogicalVolume.hh
-       GmClassifierByPhysicalVolumeReplicated.hh
-       GmClassifierByCreatorProcess.hh
-       GmClassifierByPrimaryParticle.hh
-       GmClassifierByParticle.hh
-       GmClassifierByAncestors.hh
-       GmClassifierBySecondariesList.hh
-       GmClassifierByHadronicReaction.hh
-       GmCompoundClassifier.hh
-       GmClassifierByKineticEnergy.hh
-
-   SOURCES
-       plugin.cc
-       GmClassifierByProcess.cc
-       GmClassifierByPhysicalVolume.cc
-       GmClassifierBySecondariesList.cc
-       GmClassifierByKineticEnergy.cc
-       GmClassifierByLogicalVolume.cc
-       GmClassifierByParticleProcess.cc
-       GmClassifierByParticle.cc
-       GmClassifierByPhysicalVolumeReplicated.cc
-       GmClassifierByCreatorProcess.cc
-       GmClassifierByPrimaryParticle.cc
-       GmClassifierByAncestors.cc
-       GmClassifierByRegion.cc
-       GmClassifierByMaterial.cc
-       GmCompoundClassifier.cc
-       GmClassifierByHadronicReaction.cc
-       GmClassifierBySecondariesListExclude.cc
-       GmClassifierBy1Ancestor.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosBase_Base
-  GamosCore_GamosUtils
-  GamosCore_GamosGeometry
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

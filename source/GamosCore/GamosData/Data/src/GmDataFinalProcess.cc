@@ -12,7 +12,6 @@ GmDataFinalProcess::GmDataFinalProcess()
   theNBytes = theNChar;
 
   theExcludedTypes.insert(DTTrack);
-  theExcludedTypes.insert(DTSeco);
   theExcludedTypes.insert(DTEvent);
 }
 
@@ -27,3 +26,10 @@ G4String GmDataFinalProcess::GetStringValueFromStep( const G4Step* aStep )
   return aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
 
 }
+
+//----------------------------------------------------------------
+G4String GmDataFinalProcess::GetStringValueFromSecoTrack( const G4Track* aTrack1 , const G4Track* )
+{
+  return GetStringValueFromStep( aTrack1->GetStep() );
+}
+

@@ -43,15 +43,18 @@ void GmTrackDataCoutUA::BeginOfRunAction( const G4Run* )
 //----------------------------------------------------------------
 void GmTrackDataCoutUA::PreUserTrackingAction(const G4Track* aTrack)
 {
+  if( !bUseAtInitial ) return;
   std::vector<GmVData*>::const_iterator ite;
-  for( ite = theData.begin(); ite != theData.end(); ite++ )
-    {
-      if( bUseAtInitial && (*ite)->IsInitial() ){
-	(*ite)->WriteCout( aTrack, ite == theData.begin() );
-      } else {
-	(*ite)->Initialise();
-      }
+  for( ite = theData.begin(); ite != theData.end(); ite++ ) {
+    if( bUseAtInitial && (*ite)->IsInitial() ){
+      (*ite)->WriteCout( aTrack, ite == theData.begin() );
+    } else {
+      (*ite)->Initialise();
     }
+  }
+  if( bUseAtInitial ){
+    G4cout << G4endl;  
+  }
 }
 
 //----------------------------------------------------------------
@@ -69,13 +72,11 @@ void GmTrackDataCoutUA::UserSteppingAction(const G4Step* aStep )
 //----------------------------------------------------------------
 void GmTrackDataCoutUA::PostUserTrackingAction(const G4Track* aTrack )
 {
+  if( bUseAtInitial ) return;
   std::vector<GmVData*>::const_iterator ite;
-  for( ite = theData.begin(); ite != theData.end(); ite++ )
-    {
-      if( !bUseAtInitial || !(*ite)->IsInitial() ){
-	(*ite)->WriteCout( aTrack, ite == theData.begin() );
-      }
-    }
+  for( ite = theData.begin(); ite != theData.end(); ite++ ){
+    (*ite)->WriteCout( aTrack, ite == theData.begin() );
+  }
   G4cout << G4endl;  
 }
 

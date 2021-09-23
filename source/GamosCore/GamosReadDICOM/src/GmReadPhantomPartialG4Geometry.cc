@@ -33,24 +33,28 @@ GmReadPhantomPartialG4Geometry::GmReadPhantomPartialG4Geometry()
 //---------------------------------------------------------------------------
 GmReadPhantomPartialG4Geometry::~GmReadPhantomPartialG4Geometry()
 {
+  thePhantomFileName = "test.g4dcm";
 }
 
 //---------------------------------------------------------------------------
 void GmReadPhantomPartialG4Geometry::ReadPhantomData()
 {
-  G4String filename = GmParameterMgr::GetInstance()->GetStringValue("GmReadPhantomGeometry:Phantom:FileName", "test.g4dcm");
+  G4String filename = GmParameterMgr::GetInstance()->GetStringValue("GmReadPhantomGeometry:Phantom:FileName", thePhantomFileName);
 
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  filename = GmGenUtils::FileInPath( path, filename );
+  filename = GmGenUtils::FileInPath( filename );
 
-  std::ifstream fin(filename.c_str());
+  GmFileIn fing = GmFileIn::GetInstance(filename);
+  std::vector<G4String> wl;
   G4int nMaterials;
-  fin >> nMaterials;
+  if( !fing.GetWordsInLine(wl) ) return;
+  nMaterials = GmGenUtils::GetInteger(wl[0]);
   G4String stemp;
   G4tgbMaterialMgr* matmgr = G4tgbMaterialMgr::GetInstance(); 
   G4int nmate;
   for( G4int ii = 0; ii < nMaterials; ii++ ){
-    fin >> nmate >> stemp;
+    if( !fing.GetWordsInLine(wl) ) return;
+    nmate = GmGenUtils::GetInteger(wl[0]);
+    stemp = wl[1];;
     G4cout << "GmReadPhantomPartialG4Geometry::ReadPhantomData reading nmate " << ii << " = " << nmate << " mate " << stemp << G4endl;
     if( ii != nmate ) G4Exception("GmReadPhantomPartialG4Geometry::ReadPhantomData",
 		    "Wrong argument",
@@ -60,13 +64,14 @@ void GmReadPhantomPartialG4Geometry::ReadPhantomData()
     thePhantomMaterialsOriginal[ii] = mate;
   }
 
-  fin >> nVoxelX >> nVoxelY >> nVoxelZ;
+  std::ifstream* fin = fing.GetIfstream();
+  *fin >> nVoxelX >> nVoxelY >> nVoxelZ;
   G4cout << "GmReadPhantomPartialG4Geometry::ReadPhantomData nVoxel X/Y/Z " << nVoxelX << " " << nVoxelY << " " << nVoxelZ << G4endl;
-  fin >> offsetX >> dimX;
+  *fin >> offsetX >> dimX;
   dimX = (dimX - offsetX)/nVoxelX;
-  fin >> offsetY >> dimY;
+  *fin >> offsetY >> dimY;
   dimY = (dimY - offsetY)/nVoxelY;
-  fin >> offsetZ >> dimZ;
+  *fin >> offsetZ >> dimZ;
   dimZ = (dimZ - offsetZ)/nVoxelZ;
   G4cout << "GmReadPhantomPartialG4Geometry::ReadPhantomData voxelDimX " << dimX << " offsetX " << offsetX << G4endl;
   G4cout << "GmReadPhantomPartialG4Geometry::ReadPhantomData voxelDimY " << dimY << " offsetY " << offsetY << G4endl;
@@ -81,7 +86,7 @@ void GmReadPhantomPartialG4Geometry::ReadPhantomData()
   for( G4int iz = 0; iz < nVoxelZ; iz++ ) {
     std::map< G4int, G4int > ifmin, ifmax;
     for( G4int iy = 0; iy < nVoxelY; iy++ ) {
-      fin >> ifxmin1 >> ifxmax1;      
+      *fin >> ifxmin1 >> ifxmax1;      
       // check coherence ...
 
       ifmin[iy] = ifxmin1;
@@ -90,7 +95,7 @@ void GmReadPhantomPartialG4Geometry::ReadPhantomData()
       if( ifxmax1 == -1 && ifxmin1 == -1 ) ifxdiff = 0;
       //      theFilledIDs.insert(std::multimap<G4int,size_t>::value_type(ifxdiff+theNVoxels, ifxmin1));
       theFilledIDs.insert(std::pair<size_t,size_t>(ifxdiff+theNVoxels-1, ifxmin1));
-      G4cout << "GmReadPhantomPartialG4Geometry::ReadPhantomData insert FilledIDs " << ifxdiff+theNVoxels-1 << " min " << ifxmin1 << " N= " << theFilledIDs.size() << G4endl;
+      //      G4cout << "GmReadPhantomPartialG4Geometry::ReadPhantomData insert FilledIDs " << ifxdiff+theNVoxels-1 << " min " << ifxmin1 << " N= " << theFilledIDs.size() << G4endl; //GDEB
       //filledIDs[iz*nVoxelY+iy+1] = ifxmax1-ifxmin1+1;
       for( G4int ix = 0; ix < nVoxelX; ix++ ) {
 	//	G4cout << "REGNAV GmReadPhantomPartialG4Geometry::ReadPhantomData checking to add voxel iz " << iz << " iy " << iy << " ix " << ix << "  min= " << ifxmin1 << " max= " << ifxmax1 << G4endl;
@@ -112,7 +117,7 @@ void GmReadPhantomPartialG4Geometry::ReadPhantomData()
 
   //--- Read material IDs
   G4int mateID1;
-  mateIDs = new size_t[nVoxelX*nVoxelY*nVoxelZ];
+  theMateIDs = new size_t[nVoxelX*nVoxelY*nVoxelZ];
   G4int copyNo = 0;
   for( G4int iz = 0; iz < nVoxelZ; iz++ ) {
     std::map< G4int, G4int > ifmin = theFilledMins[iz];
@@ -122,7 +127,7 @@ void GmReadPhantomPartialG4Geometry::ReadPhantomData()
       ifxmax1 = ifmax[iy];
       for( G4int ix = 0; ix < nVoxelX; ix++ ) {
 	if( ix >= G4int(ifxmin1) && ix <= G4int(ifxmax1) ) {
-	  fin >> mateID1;
+	  *fin >> mateID1;
 #ifndef GAMOS_NO_VERBOSE
 	  if( ReadDICOMVerb(debugVerb) )
 	    G4cout << ix << " " << iy << " " << iz << " filling mateIDs " << copyNo << " = " <<  mateID1 << G4endl;
@@ -136,18 +141,18 @@ void GmReadPhantomPartialG4Geometry::ReadPhantomData()
 				 + ", while it is " 
 				 + GmGenUtils::itoa(mateID1)).c_str());
 	  }
-	  mateIDs[copyNo] = mateID1;
+	  theMateIDs[copyNo] = mateID1;
 	  copyNo++;
 	}
       }
     }
   }
 
-  ReadVoxelDensitiesPartial( fin );
+  ReadVoxelDensitiesPartial( *fin );
 
-  ReadPV( fin );
+  ReadPV( fing );
 
-  fin.close();
+  fin->close();
 }
 
 //------------------------------------------------------------------------
@@ -167,6 +172,8 @@ void GmReadPhantomPartialG4Geometry::ReadVoxelDensitiesPartial( std::ifstream& f
   }
   //  densitySteps[0] = 0.0001; //air
 
+  theMateDensities = new float[nVoxelX*nVoxelY*nVoxelZ];
+
   //--- Calculate the average material density for each material/density bin
   std::map< std::pair<G4Material*,G4int>, matInfo* > newMateDens;
   G4double dens1;
@@ -184,15 +191,19 @@ void GmReadPhantomPartialG4Geometry::ReadVoxelDensitiesPartial( std::ifstream& f
 	if( ix >= G4int(ifxmin1) && ix <= G4int(ifxmax1) ) {
 	  fin >> dens1;
 	  //	G4cout << ix << " " << iy << " " << iz << " filling mateIDs " << copyNo << " = " <<  atoi(stemp.c_str())-1 << " " << stemp << G4endl;
-	  if( !bRecalculateMaterialDensities ) continue; 
+	  if( !bRecalculateMaterialDensities ) {
+	    copyNo = ix + (iy)*nVoxelX + (iz)*nVoxelX*nVoxelY;
+	    theMateDensities[copyNo] = dens1;
+	    continue;
+	  }
 	  
 	//--- store the minimum and maximum density for each material (just for printing)
-	  mpite = densiMinMax.find( mateIDs[copyNo] );
+	  mpite = densiMinMax.find( theMateIDs[copyNo] );
 	  if( dens1 < (*mpite).second.first ) (*mpite).second.first = dens1;
 	  if( dens1 > (*mpite).second.second ) (*mpite).second.second = dens1;
 	  
 	  //--- Get material from original list of material in file
-	  int mateID = mateIDs[copyNo];
+	  int mateID = theMateIDs[copyNo];
 	  std::map<G4int,G4Material*>::const_iterator imite = thePhantomMaterialsOriginal.find(mateID);
 	  //	G4cout << copyNo << " mateID " << mateID << G4endl;
 	  //--- Check if density is equal to the original material density
@@ -212,7 +223,7 @@ void GmReadPhantomPartialG4Geometry::ReadVoxelDensitiesPartial( std::ifstream& f
 	    matInfo* mi = (*mppite).second;
 	    mi->sumdens += dens1;
 	    mi->nvoxels++;
-	    mateIDs[copyNo] = thePhantomMaterialsOriginal.size()-1 + mi->id;
+	    theMateIDs[copyNo] = thePhantomMaterialsOriginal.size()-1 + mi->id;
 	    //	  G4cout << copyNo << " mat new again " << thePhantomMaterialsOriginal.size()-1 + mi->id << " " << mi->id << G4endl;
 	  } else {
 	    matInfo* mi = new matInfo;
@@ -220,12 +231,14 @@ void GmReadPhantomPartialG4Geometry::ReadVoxelDensitiesPartial( std::ifstream& f
 	    mi->nvoxels = 1;
 	    mi->id = newMateDens.size()+1;
 	    newMateDens[matdens] = mi;
-	    mateIDs[copyNo] = thePhantomMaterialsOriginal.size()-1 + mi->id;
+	    theMateIDs[copyNo] = thePhantomMaterialsOriginal.size()-1 + mi->id;
 	    //	  G4cout << copyNo << " mat new first " << thePhantomMaterialsOriginal.size()-1 + mi->id << G4endl;
 	  }
+	  theMateDensities[copyNo] = dens1;
+
 	  copyNo++;
-	//	G4cout << ix << " " << iy << " " << iz << " filling mateIDs " << copyNo << " = " << atoi(cid)-1 << G4endl;
-				      //	mateIDs[copyNo] = atoi(cid)-1;
+	//	G4cout << ix << " " << iy << " " << iz << " filling theMateIDs " << copyNo << " = " << atoi(cid)-1 << G4endl;
+				      //	theMateIDs[copyNo] = atoi(cid)-1;
 	}
       }
     }
@@ -267,10 +280,10 @@ void GmReadPhantomPartialG4Geometry::ConstructPhantom(G4LogicalVolume* )
 
   //----- Get phantom container
   G4tgbMaterialMgr* matmgr = G4tgbMaterialMgr::GetInstance(); 
-  G4Material* theMatePhantom = matmgr->FindOrBuildG4Material("G4_AIR");
+  theMatePhantom = matmgr->FindOrBuildG4Material("G4_AIR");
  
-  G4String motherName = GmParameterMgr::GetInstance()->GetStringValue("GmReadPhantomGeometry:MotherName","phantomContainer");
-  G4LogicalVolume* cont_logic = GmGeometryUtils::GetInstance()->GetLogicalVolumes(motherName,1,1)[0];
+  G4String motherName = GmParameterMgr::GetInstance()->GetStringValue("GmReadPhantomGeometry:ContainerName","phantomContainer");
+  cont_logic = GmGeometryUtils::GetInstance()->GetLogicalVolumes(motherName,1,1)[0];
 
   G4ThreeVector posCentreVoxels(offsetX+nVoxelX*dimX/2.,offsetY+nVoxelY*dimY/2.,offsetZ+nVoxelZ*dimZ/2.+00.);
 #ifndef GAMOS_NO_VERBOSE
@@ -311,8 +324,8 @@ void GmReadPhantomPartialG4Geometry::ConstructPhantom(G4LogicalVolume* )
 
   thePartialPhantomParam->SetMaterials( thePhantomMaterials );
   thePartialPhantomParam->SetVoxelDimensions( dimX/2., dimY/2., dimZ/2. );
-  thePartialPhantomParam->SetNoVoxel( nVoxelX, nVoxelY, nVoxelZ );
-  thePartialPhantomParam->SetMaterialIndices( mateIDs );
+  thePartialPhantomParam->SetNoVoxels( nVoxelX, nVoxelY, nVoxelZ );
+  thePartialPhantomParam->SetMaterialIndices( theMateIDs );
 
   thePartialPhantomParam->SetFilledIDs(theFilledIDs);
 
@@ -321,12 +334,13 @@ void GmReadPhantomPartialG4Geometry::ConstructPhantom(G4LogicalVolume* )
   thePartialPhantomParam->BuildContainerWalls();
 
   //  G4cout << " Number of Materials " << thePhantomMaterials.size() << G4endl;
-  //  G4cout << " SetMaterialIndices(0) " << mateIDs[0] << G4endl;
+  //  G4cout << " SetMaterialIndices(0) " << theMateIDs[0] << G4endl;
 
   G4PVParameterised * phantom_phys;
   if( OptimAxis == "kUndefined" ) {
     phantom_phys = new G4PVParameterised(voxelName,phantom_logic,cont_logic,
 					 kUndefined, theNVoxels, thePartialPhantomParam);
+    phantom_phys->SetRegularStructureId(regStructureID);
   } else   if( OptimAxis == "kXAxis" ) {
     //    G4cout << " optim kX " << G4endl;
     phantom_phys = new G4PVParameterised(voxelName,phantom_logic,cont_logic,

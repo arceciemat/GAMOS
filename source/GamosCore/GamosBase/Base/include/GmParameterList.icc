@@ -5,10 +5,13 @@ G4bool GmParameterList<TYP>::AddParam( const G4String& name, const TYP& val )
   typename GmParameterList<TYP>::iterator ite = GmParameterList<TYP>::find(name);
   if( ite != GmParameterList<TYP>::end() ) {
     (*ite).second.Set( val );
+    G4Exception("GmParameterList::AddParam",
+	        "",
+	        JustWarning,
+	        ("Adding a parameter that already exists, last value will be taken: "+name).c_str());
     return FALSE;
   } else {
     (*this)[name] = GmParameter<TYP>(val);
-//  G4cout << "ADD PARAM numb " << size() << G4endl;
     return TRUE;
   }
 }

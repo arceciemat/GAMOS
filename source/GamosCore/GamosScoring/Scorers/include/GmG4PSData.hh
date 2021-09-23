@@ -26,11 +26,6 @@ class GmG4PSData : public GmVPrimitiveScorer,
       virtual ~GmG4PSData();
 
   public: 
-      virtual void EndOfEvent(G4HCofThisEvent*);
-
-      virtual void DrawAll();
-      virtual void PrintAll();
-  virtual G4int GetIndex(G4Step*);
 
   void SetParameters( const std::vector<G4String>& params);
 

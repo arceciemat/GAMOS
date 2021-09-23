@@ -23,18 +23,13 @@ public:
     theName = name; }
   void SetParams();
 
-  virtual void CleanRecHits() = 0; //cannot be done here, because there is no info about GmRecHit
+  virtual void CheckRecHitsMinEnergy(std::vector<GmRecHit*>& recHits);
+  virtual void CheckEnergyEfficiency(std::vector<GmRecHit*>& recHits);
 
-  virtual void DeleteHit( GmRecHit* rhit ) = 0; //cannot be done here, because there is no info about GmRecHit
-
-  virtual void CheckRecHitsMinEnergy();
-  virtual void CheckEnergyEfficiency();
-
-  virtual void SmearRecHitsEnergy();
-  virtual void SmearRecHitsTime();
+  virtual void SmearRecHitsEnergy(std::vector<GmRecHit*>& recHits);
+  virtual void SmearRecHitsTime(std::vector<GmRecHit*>& recHits);
 
 protected:
-  std::vector<GmRecHit*> theRecHits;
 
   G4String theName;
   G4String theSDType;

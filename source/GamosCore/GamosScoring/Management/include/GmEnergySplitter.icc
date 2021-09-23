@@ -23,6 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "G4RegularNavigationHelper.hh"
 #include "G4UIcommand.hh"
 #include "G4PhantomParameterisation.hh"
@@ -46,7 +47,7 @@ inline void GmEnergySplitter::GetVoxelID( G4int stepNo, G4int& voxelID )
   G4Exception("GmEnergySplitter::GetVoxelID",
 	      "Invalid stepNo, smaller than 0 or bigger or equal to number of voxels traversed",
 	      FatalErrorInArgument,
-	      G4String("stepNo = " + G4UIcommand::ConvertToString(stepNo) + ", number of voxels = " + G4UIcommand::ConvertToString(G4int(G4RegularNavigationHelper::Instance()->theStepLengths.size())) ).c_str());
+	      G4String("stepNo = " + GmGenUtils::itoa(stepNo) + ", number of voxels = " + GmGenUtils::itoa(G4int(G4RegularNavigationHelper::Instance()->theStepLengths.size())) ).c_str());
   }
   std::vector< std::pair<G4int,G4double> >::const_iterator ite = G4RegularNavigationHelper::Instance()->theStepLengths.begin();
   advance( ite, stepNo );

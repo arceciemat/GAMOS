@@ -9,13 +9,24 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 
 //---------------------------------------------------------------------
+GmVStringDistribution::GmVStringDistribution()
+{ 
+}
+
+//---------------------------------------------------------------------
 GmVStringDistribution::GmVStringDistribution(G4String name)
   : GmVDistribution(name)
 {
+  Initialize();
+}
+
+//---------------------------------------------------------------------
+void GmVStringDistribution::Initialize()
+{
   bAllValuesDefined = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theName+":AllValuesDefined",0));
 
-  ReadFile();
-  BuildData();
+  this->ReadFile();
+  this->BuildData();
 }
 
 //---------------------------------------------------------------------
@@ -89,10 +100,9 @@ GmVData* GmVStringDistribution::Build1StringData(const G4String& dataName)
 //---------------------------------------------------------------------
 void GmVStringDistribution::ReadFileText( G4String& fileName )
 {
-  G4cout << " GmVStringDistribution::ReadFileText" << G4endl;
+  G4cout << " GmVStringDistribution::ReadFileText: " << fileName << G4endl;
 
-  G4String pathc = getenv("GAMOS_SEARCH_PATH");
-  fileName = GmGenUtils::FileInPath( pathc, fileName);
+  fileName = GmGenUtils::FileInPath( fileName);
   GmFileIn fin = GmFileIn::GetInstance(fileName);
   std::vector<G4String> wl;
   G4int ii = 1;
@@ -107,7 +117,7 @@ void GmVStringDistribution::ReadFileText( G4String& fileName )
 			   + " All lines must have two words: VALUE PROBABILITY").c_str());
     }
     theStringValues[ wl[0] ] = GmGenUtils::GetValue( wl[1] );
-    //-    G4cout << " theStringValues " << wl[0] << " = " << wl[1] << G4endl;
+    //      G4cout << " theStringValues " << wl[0] << " = " << wl[1] << G4endl;
     ii++;
   }
   

@@ -17,14 +17,7 @@ void GmGeneratorFromFile::ReadIsotopeAtomicNumbers()
 {
   // Get atomic number from list of isotopes
   G4String fileName = "isotopes.geom";
-  char* pathc = getenv( "GAMOS_SEARCH_PATH" );
-  if( !pathc ) G4Exception("GmGeneratorFromFile::ReadIsotopeAtomicNumbers",
-			   "Error",
-			   FatalException,
-			   "No GAMOS_SEARCH_PATH variable defined, please define it as in config/confgamos.sh or confgamos.csh");
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  //  G4tgrFileIn fin = G4tgrFileIn::GetInstance( GmGenUtils::FileInPath( path, fileName, "GmGeneratorFromFile::ReadIsotopeAtomicNumbers" ));
-  G4tgrFileIn fin = G4tgrFileIn::GetInstance( GmGenUtils::FileInPath( path, fileName ));
+  G4tgrFileIn fin = G4tgrFileIn::GetInstance( GmGenUtils::FileInPath( fileName ));
   std::vector<G4String> wl;
   for( ;; ) {
     if( !fin.GetWordsInLine( wl ) ) break;

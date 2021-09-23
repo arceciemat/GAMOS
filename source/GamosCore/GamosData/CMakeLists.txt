@@ -1,11 +1,9 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosData
+# Module : GamosData
+# Package: GamosCore_GamosData
 #
 #------------------------------------------------------------------------------
-add_definitions(-DGamosData_ALLOC_EXPORT)
-
+# 
 add_subdirectory(Management)
 add_subdirectory(Data)
 add_subdirectory(Users)

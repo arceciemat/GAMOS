@@ -28,7 +28,7 @@ class GmIsotopeMgr
   //! Get the only instance 
   static GmIsotopeMgr* GetInstance();
 
-  void ReadIsotopes( const G4String& filename );
+  void ReadIsotopes( G4String filename );
   void ReadIsotopes( GmFileIn& fin );
 
   GmIsotopeSource* AddActiveIsotopeSource(  const G4String& sourceName, const G4String& isoName, const G4double energy );

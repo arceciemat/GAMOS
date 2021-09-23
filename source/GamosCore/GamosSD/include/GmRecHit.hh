@@ -26,6 +26,7 @@ public:
   
   GmRecHit(){};
   GmRecHit( GmHit* hit );
+  GmRecHit( GmRecHit* rechit );
   ~GmRecHit(){};
 
   void AddHit( GmHit* hit );
@@ -59,7 +60,13 @@ public:
   void SetTimeMax( G4double tim ) { theTimeMax = tim;}
   void SetHits( std::vector<GmHit*> hits ) { theHits = hits; }
   void SetSDType( G4String sdt ) { theSDType = sdt; }
+  void ClearHits();
 
+  GmRecHit operator+=( const GmRecHit& rh );
+
+  G4double GetMaxSimHitEnergy() const {
+    return theMaxSimHitEnergy;
+  }
 
 protected:
   G4double theEnergy;

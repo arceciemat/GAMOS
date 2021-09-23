@@ -4,20 +4,16 @@
 #include "GmGenerVerbosity.hh"
 #include "GamosCore/GamosGenerator/include/GmParticleSource.hh"
 #include "CLHEP/Random/RandFlat.h"
+#include "CLHEP/Units/SystemOfUnits.h"
 
 G4ThreeVector GmGenerDistDirectionRandom::GenerateDirection( const GmParticleSource* )
 {
   //--- supplied direction is not used
-  double theta;
-  for( ;; ){
-    theta = M_PI*CLHEP::RandFlat::shoot();
-    double tt = CLHEP::RandFlat::shoot();
-    if( tt < sin(theta) ) break;
-  }
-  double phi = 2*M_PI*CLHEP::RandFlat::shoot();
+  double costheta = 2*CLHEP::RandFlat::shoot()-1;
+  double sintheta = sqrt(1.-costheta*costheta);
+  double phi = 2*CLHEP::pi*CLHEP::RandFlat::shoot();
 
-  G4ThreeVector dir = G4ThreeVector( sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta) );
-
+  G4ThreeVector dir = G4ThreeVector( sintheta*cos(phi), sintheta*sin(phi), costheta );
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistDirectionRandom::Generate  dir "  << dir << G4endl;
 #endif

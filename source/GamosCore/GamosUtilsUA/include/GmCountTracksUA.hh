@@ -21,7 +21,7 @@ public:
   virtual void PostUserTrackingAction(const G4Track* aTrack);
 
 private:
-  G4int theNTracks;
+  G4double theNTracks;
   G4int theNTracksThisEvent;
   G4int theEachNEvent;
   G4int theFirstEvent;

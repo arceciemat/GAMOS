@@ -57,7 +57,7 @@ void GmSimplePhantomGeometry::ReadPhantomData()
  
   //  G4cout << " theMaterialZVoxels.size() != theMaterialNames.size() " << theMaterialZVoxels.size() << " " <<  theMaterialNames.size()  << G4endl;
   if( theMaterialZVoxels.size() != theMaterialNames.size() ) {
-    G4Exception("GmSimplePhantomGeometry::ReadPhantomData","Wrong number of material Z voxels",FatalErrorInArgument,G4String(G4String("Number of material Z voxels = ") + GmGenUtils::itoa(theMaterialDensities.size()) + G4String(" different than number of materials = ") + GmGenUtils::itoa(theMaterialNames.size())).c_str());
+    G4Exception("GmSimplePhantomGeometry::ReadPhantomData","Wrong number of material Z voxels",FatalErrorInArgument,G4String(G4String("Number of material Z voxels = ") + GmGenUtils::itoa(theMaterialZVoxels.size()) + G4String(" different than number of materials = ") + GmGenUtils::itoa(theMaterialNames.size())).c_str());
   }
  
   theMaterialDensities = GmParameterMgr::GetInstance()->GetVNumericValue("GmSimplePhantomGeometry:MaterialDensities",theMaterialDensities);
@@ -130,7 +130,7 @@ void GmSimplePhantomGeometry::ReadPhantomData()
   }
 #endif
 
-  mateIDs = new size_t[nVoxelX*nVoxelY*nVoxelZ];
+  theMateIDs = new size_t[nVoxelX*nVoxelY*nVoxelZ];
   G4int imate;
   for( G4int iz = 0; iz < nVoxelZ; iz++ ) {
     std::map<G4int,G4int>::iterator ite = theMaterialZVoxels.upper_bound( iz );
@@ -146,7 +146,7 @@ void GmSimplePhantomGeometry::ReadPhantomData()
 	G4int nnew = iy + (ix)*nVoxelY + (iz)*nVoxelX*nVoxelY;
 	
 	//	G4cout << ix << " " << iy << " " << iz << " filling mateIDs " << nnew << " = " << atoi(cid)-1 << G4endl;
-	mateIDs[nnew] = imate;
+	theMateIDs[nnew] = imate;
       }
     }
   }

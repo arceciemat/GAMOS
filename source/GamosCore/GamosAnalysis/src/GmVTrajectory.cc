@@ -23,5 +23,6 @@ GmVTrajectory::GmVTrajectory( const G4Track* aTrack)
    fPDGCharge = fpParticleDefinition->GetPDGCharge();
    fPDGEncoding = fpParticleDefinition->GetPDGEncoding();
    fInitialMomentum = aTrack->GetMomentum();
-
+   fVertexKineticEnergy = aTrack->GetVertexKineticEnergy();
+   fVertexMomentumDirection = aTrack->GetVertexMomentumDirection();
 }

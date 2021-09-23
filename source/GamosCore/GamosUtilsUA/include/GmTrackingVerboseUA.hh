@@ -32,7 +32,7 @@ public:
 
  public:
   virtual void BeginOfRunAction(const G4Run* );
-  virtual void EndOfEventAction(const G4Event* );
+  virtual void BeginOfEventAction(const G4Event* );
   virtual void PreUserTrackingAction(const G4Track* aTrack);
 
  private:

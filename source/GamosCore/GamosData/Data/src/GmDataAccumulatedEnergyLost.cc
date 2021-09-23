@@ -23,25 +23,30 @@ void GmDataAccumulatedEnergyLost::Accumulate( const G4Step* aStep, G4int index )
 {
   theDataAccumulated[index] += aStep->GetPreStepPoint()->GetKineticEnergy() - aStep->GetPostStepPoint()->GetKineticEnergy();
 
-#ifndef GAMOS_NO_VERBOSE
+#ifndef WIN32
+#ifndef GAMOS_NO_VERBOSE 
   if( DataVerb(debugVerb) ) {
     G4cout << index << " GmDataAccumulatedEnergyLost " << aStep->GetPreStepPoint()->GetKineticEnergy() 
 	   << " - " << aStep->GetPostStepPoint()->GetKineticEnergy() 
 	   << " ACCU " <<  theDataAccumulated[index] << G4endl;
   }
 #endif
+#endif
+
 }
 
 
 //----------------------------------------------------------------
 G4double GmDataAccumulatedEnergyLost::GetValueFromStep( const G4Step* aStep, G4int )
 {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( DataVerb(debugVerb) ) {
     G4cout << " GmDataAccumulatedEnergyLost::GetValueFromStep " << aStep->GetPreStepPoint()->GetKineticEnergy() - aStep->GetPostStepPoint()->GetKineticEnergy() 
 	   << " POST " <<aStep->GetPreStepPoint()->GetKineticEnergy() 
 	   << " PRE " << aStep->GetPostStepPoint()->GetKineticEnergy() << G4endl;
   }
+#endif
 #endif
 
   return aStep->GetPreStepPoint()->GetKineticEnergy() - aStep->GetPostStepPoint()->GetKineticEnergy();

@@ -5,7 +5,7 @@
 #include "G4Track.hh"
 #include "G4LogicalVolume.hh"
 #include "G4LogicalVolumeStore.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 
 //---------------------------------------------------------------------
 GmTouchableFilterTouchableChildren::GmTouchableFilterTouchableChildren()
@@ -25,7 +25,7 @@ G4bool GmTouchableFilterTouchableChildren::AcceptTouchable(const G4VTouchable* t
 {
   if( !touch->GetVolume() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchableChildren::AcceptTouchable return 0, no touch->GetVolume() " << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchableChildren::AcceptTouchable return 0, no touch->GetVolume() " << G4endl;
 #endif
     return FALSE; // it should have detected before, but fWorldBoundary is not set
   }
@@ -50,13 +50,13 @@ G4bool GmTouchableFilterTouchableChildren::AcceptTouchable(const G4VTouchable* t
       }
     }
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchableChildren::AcceptTouchable TRUE return 1 " << bFound << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchableChildren::AcceptTouchable TRUE return 1 " << bFound << G4endl;
 #endif
     if( bFound ) return TRUE;
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchableChildren::AcceptTouchable return 0 " << touch->GetVolume()->GetName() << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchableChildren::AcceptTouchable return 0 " << touch->GetVolume()->GetName() << G4endl;
 #endif
 
   return FALSE;
@@ -87,7 +87,7 @@ void GmTouchableFilterTouchableChildren::SetParameters( std::vector<G4String>& p
   for( unsigned int ii = 0; ii < params.size(); ii++ ){
     vpsi ancestors = geomUtils->ExtractAncestorsRequested( params[ii] );
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << "GmTouchableFilterTouchableChildren::SetParameters add parameter " << params[ii] << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << "GmTouchableFilterTouchableChildren::SetParameters add parameter " << params[ii] << G4endl;
 #endif
   }
 }

@@ -20,9 +20,15 @@ class GmCheckOriginalGamma : public GmUserEventAction, public GmUserTrackingActi
   static G4int CheckIfOriginalGamma(const G4Track* aTrack);
   static G4int GetOriginalGamma(const G4Track* aTrack);
 
-  static void SetCheckParentID( G4int val ){
-    bCheckParentID = val;
-  }
+#ifndef WIN32
+  static void SetCheckParentID(G4int val);
+#else
+#if defined GmAnalysis_ALLOC_EXPORT
+  G4DLLEXPORT void SetCheckParentID(G4int val);
+#else
+  G4DLLIMPORT void SetCheckParentID(G4int val);
+#endif
+#endif
 
 private:
   static std::set<G4int> theOrigGammas;

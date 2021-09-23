@@ -73,10 +73,10 @@ G4ThreeVector GmGenerDistPositionInG4VolumesGeneral::GeneratePosition( const GmP
     pos = G4ThreeVector( -theWorldHalfX+2*theWorldHalfX*CLHEP::RandFlat::shoot(), 
 		      -theWorldHalfY+2*theWorldHalfY*CLHEP::RandFlat::shoot(),
 		      -theWorldHalfZ+2*theWorldHalfZ*CLHEP::RandFlat::shoot() );
-#ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistPositionInG4VolumesGeneral::Generate " << pos << G4endl;
-#endif
     G4String volName = theGeomUtils->BuildTouchableName( pos );
+#ifndef GAMOS_NO_VERBOSE
+    if( GenerVerb(infoVerb) ) G4cout << nt << " GmGenerDistPositionInG4VolumesGeneral::Generate " << pos << " volume " << volName << G4endl;
+#endif
     for( unsigned int ii = 0; ii < siz; ii++ ) {
       if( int(volName.find( theVolumes[ii] )) != -1 ) {
 	inVolumes = true;

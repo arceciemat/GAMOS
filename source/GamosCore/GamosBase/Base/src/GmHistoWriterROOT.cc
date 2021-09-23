@@ -1,7 +1,6 @@
 #ifndef GAMOS_NO_ROOT
 #include "GmAnalysisMgr.hh"
 
-#define protected public
 #include "TH1F.h"
 
 #include "TFile.h"

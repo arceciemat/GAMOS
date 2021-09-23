@@ -15,7 +15,7 @@ public:
 
   virtual G4bool CheckHitInRecHit( const GmRecHit* rhit, const GmHit* hit );
 
-private:
+protected:
   G4double theHitsDist;
 
 };

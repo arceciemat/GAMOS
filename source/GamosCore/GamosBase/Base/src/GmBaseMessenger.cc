@@ -29,7 +29,7 @@ GmBaseMessenger::GmBaseMessenger()
   distributionCmd = new GmUIcmdWithAString("/gamos/distribution",this);
   distributionCmd->SetGuidance("Create a new distribution assigning parameters to one of the plug-in distributions: DISTRIBUTION_NAME DISTRIBUTION_CLASS");
   distributionCmd->SetParameterName("choice",true);
-  distributionCmd->AvailableForStates(G4State_Idle);
+  distributionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //---------------------------------------------------------------------

@@ -28,7 +28,7 @@ GmIsotopeDecay::GmIsotopeDecay( const G4String& energy, const G4String& prob, co
     G4Exception("GmIsotopeDecay::GmIsotopeDecay","Error in argument",FatalErrorInArgument,(" particle does not exist: " + product).c_str() );
   }
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(infoVerb) ) G4cout << " GmIsotopeDecay::GmIsotopeDecay  product " << theProduct << " energy " << theEnergy << " prob " << theProbability << G4endl;
+  if( GenerVerb(infoVerb) ) G4cout << " GmIsotopeDecay::GmIsotopeDecay  product " << theProduct->GetParticleName() << " energy " << theEnergy << " prob " << theProbability << G4endl;
 #endif
 }
 

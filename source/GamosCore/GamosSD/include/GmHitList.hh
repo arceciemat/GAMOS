@@ -22,7 +22,7 @@ public:
     return theSDType; }  
 
   void BuildHitsCompatibleInTime( G4double tim = -1. );
-  void BuildHitsAll();
+  void BuildHitsAll( G4double tim = -1. );
   void BuildHitsCompatibleInTimeBackwards( G4double tim = -1. );
   void BuildHitsCompatibleInTimeInterval( G4double tim );
   void BuildHitsCompatibleInTimeTriggerGlobal( G4double tim );
@@ -58,7 +58,7 @@ private:
 
   hitVector theHitsCompatibleInTime;
 
-  G4bool bParalizable;
+  G4bool bParalyzable;
 
   MeasuringType theMeasuringType;
   G4double theCurrentIntervalStartTime;

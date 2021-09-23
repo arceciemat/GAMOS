@@ -8,7 +8,7 @@ class GmPhysicsGammaNuclear : public G4VPhysicsConstructor {
 
 public: 
 
-  GmPhysicsGammaNuclear(const G4String& name = "gamma-nuclear");
+  GmPhysicsGammaNuclear(const G4String& name = "gamma-nuclear", G4int type=22);
   
   virtual ~GmPhysicsGammaNuclear();
   

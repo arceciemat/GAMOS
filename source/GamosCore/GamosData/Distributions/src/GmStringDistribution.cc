@@ -11,6 +11,7 @@
 GmStringDistribution::GmStringDistribution(G4String name)
   : GmVStringDistribution(name)
 {
+  BuildData();
 }
 
 //---------------------------------------------------------------------

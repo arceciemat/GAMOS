@@ -1,80 +1,93 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosUtilsUA
+# Module : GamosUtilsUA
+# Package: GamosCore_GamosUtilsUA
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosUtilsUA
+	 HEADERS
+		GmMaterialBudgetUA.hh
+		GmPrintXSUA.hh
+		GmKillTooManyStepsUA.hh
+		GmKillAllUA.hh
+		GmCopyWeightToRDSecondaryUA.hh
+		GmCountProcessesUA.hh
+		GmTimeStudyUA.hh
+		GmDumpGeometryUA.hh
+		GmStopRunAfterTimeUA.hh
+		GmPrintEMParamsUA.hh
+		GmTimeStudyMgr.hh
+		GmRandomKillByParticleUA.hh
+		GmSaveStepUA.hh
+		GmCountTracksAndStepsUA.hh
+		GmTrackingVerboseUA.hh
+		GmCountTracksUA.hh
+		GmSaveHistosAtRTCPUA.hh
+		GmChangeWeightUA.hh
+		GmUtilsUAVerbosity.hh
+		GmGenerHistosUA.hh
+		GmTimeStudyEventUA.hh
+		GmShowerShapeUA.hh
+		GmKillAtTrackingActionUA.hh
+		GmCopyWeightToSecondaryUA.hh
+		GmKillAtSteppingActionUA.hh
+		GmKillAtStackingActionUA.hh
+		GmKillAtStackingActionRandomUA.hh
+		GmSSData.hh
+		GmVisStoreTrajUA.hh
+		GmGamosVerboseByEventUA.hh
+		GmRandomByTimeUA.hh
+		GmSaveHistosAfterNEvents.hh
+	 SOURCES
+		GmKillAtSteppingActionUA.cc
+		GmMaterialBudgetUA.cc
+		GmDumpGeometryUA.cc
+		GmKillAllUA.cc
+		GmPrintXSUA.cc
+		plugin.cc
+		GmGamosVerboseByEventUA.cc
+		GmCountTracksAndStepsUA.cc
+		GmTimeStudyMgr.cc
+		GmRandomKillByParticleUA.cc
+		GmGenerHistosUA.cc
+		GmVisStoreTrajUA.cc
+		GmSSData.cc
+		GmTrackingVerboseUA.cc
+		GmUtilsUAVerbosity.cc
+		GmCopyWeightToSecondaryUA.cc
+		GmStopRunAfterTimeUA.cc
+		GmCountProcessesUA.cc
+		GmChangeWeightUA.cc
+		GmShowerShapeUA.cc
+		GmKillTooManyStepsUA.cc
+		GmCopyWeightToRDSecondaryUA.cc
+		GmTimeStudyEventUA.cc
+		GmSaveHistosAtRTCPUA.cc
+		GmKillAtStackingActionUA.cc
+		GmKillAtStackingActionRandomUA.cc
+		GmRandomByTimeUA.cc
+		GmTimeStudyUA.cc
+		GmKillAtTrackingActionUA.cc
+		GmCountTracksUA.cc
+		GmSaveHistosAfterNEvents.cc
+		GmPrintEMParamsUA.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+		${SEAL_LIBRARIES} 
+		GamosCore_GamosBase_Base
+		GamosCore_GamosUserActionMgr
+		GamosCore_GamosGeometry
+		GamosCore_GamosAnalysis
 
-   HEADERS
-       GmTimeStudyUA.hh
-       GmChangeWeightUA.hh
-       GmCopyWeightToRDSecondaryUA.hh
-       GmTimeStudyMgr.hh
-       GmSaveHistosAfterNEvents.hh
-       GmTrackingVerboseUA.hh
-       GmKillAllUA.hh
-       GmSaveStepUA.hh
-       GmCountTracksAndStepsUA.hh
-       GmGamosVerboseByEventUA.hh
-       GmMaterialBudgetUA.hh
-       GmKillAtSteppingActionUA.hh
-       GmCopyWeightToSecondaryUA.hh
-       GmCountProcessesUA.hh
-       GmShowerShapeUA.hh
-       GmStopRunAfterTimeUA.hh
-       GmUtilsUAVerbosity.hh
-       GmCountTracksUA.hh
-       GmKillAtStackingActionUA.hh
-       GmGenerHistosUA.hh
-       GmSSData.hh
-       GmVisStoreTrajUA.hh
-
-   SOURCES
-       plugin.cc
-       GmGenerHistosUA.cc
-       GmCountProcessesUA.cc
-       GmCountTracksAndStepsUA.cc
-       GmCopyWeightToRDSecondaryUA.cc
-       GmTrackingVerboseUA.cc
-       GmCopyWeightToSecondaryUA.cc
-       GmGamosVerboseByEventUA.cc
-       GmKillAtSteppingActionUA.cc
-       GmShowerShapeUA.cc
-       GmChangeWeightUA.cc
-       GmSSData.cc
-       GmKillAtStackingActionUA.cc
-       GmTimeStudyUA.cc
-       GmCountTracksUA.cc
-       GmMaterialBudgetUA.cc
-       GmSaveHistosAfterNEvents.cc
-       GmTimeStudyMgr.cc
-       GmVisStoreTrajUA.cc
-       GmUtilsUAVerbosity.cc
-       GmStopRunAfterTimeUA.cc
-       GmKillAllUA.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosBase_Base
-  GamosCore_GamosUtils
-  GamosCore_GamosAnalysis
-  GamosCore_GamosUserActionMgr
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

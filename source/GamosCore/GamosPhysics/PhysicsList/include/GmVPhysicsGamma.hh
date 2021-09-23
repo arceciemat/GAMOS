@@ -11,7 +11,7 @@ class GmVPhysicsGamma : public G4VPhysicsConstructor {
 
 public: 
 
-  GmVPhysicsGamma(const G4String& name);
+  GmVPhysicsGamma(const G4String& name, G4int type);
   
   virtual ~GmVPhysicsGamma();
   

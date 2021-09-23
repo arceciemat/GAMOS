@@ -45,7 +45,7 @@ class GmPhysicsGammaPenelope : public GmVPhysicsGamma {
 
 public: 
 
-  GmPhysicsGammaPenelope(const G4String& name = "gamma-penelope");
+  GmPhysicsGammaPenelope(const G4String& name = "gamma-penelope", G4int type=22);
   
   virtual ~GmPhysicsGammaPenelope();
   

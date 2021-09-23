@@ -7,7 +7,7 @@
 #include "G4RegionStore.hh"
 #include "G4TransportationManager.hh"
 #include "G4Navigator.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 
 //-------------------------------------------------------------
 GmInMassRegionFilter::GmInMassRegionFilter(G4String name)
@@ -26,7 +26,7 @@ GmInMassRegionFilter::~GmInMassRegionFilter()
 G4bool GmInMassRegionFilter::AcceptTrack(const G4Track* aTrack )
 {
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptTrack " << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptTrack " << G4endl;
 #endif
 
   G4VPhysicalVolume* physvol = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndSetup( aTrack->GetPosition(), (G4ThreeVector*)0, false, false ); 
@@ -35,17 +35,17 @@ G4bool GmInMassRegionFilter::AcceptTrack(const G4Track* aTrack )
     
     if( theRegions.find(region) != theRegions.end() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptTrack  return 1 " << region->GetName() << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptTrack  return 1 " << region->GetName() << G4endl;
 #endif
       return TRUE;
     }
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptTrack  return 0 " << region->GetName() << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptTrack  return 0 " << region->GetName() << G4endl;
 #endif
     return FALSE;
   } else {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptTrack  return 0 , no vol " << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptTrack  return 0 , no vol " << G4endl;
 #endif
     return FALSE;
   }
@@ -57,13 +57,13 @@ G4bool GmInMassRegionFilter::AcceptStep(const G4Step* aStep)
   G4Region* region = aStep->GetTrack()->GetVolume()->GetLogicalVolume()->GetRegion();
   if( theRegions.find(region) != theRegions.end() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptStep  return 1 " << region->GetName() << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptStep  return 1 " << region->GetName() << G4endl;
 #endif
     return TRUE;
   } 
   
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptStep  return 0 " << region->GetName() << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << " GmInMassRegionFilter::AcceptStep  return 0 " << region->GetName() << G4endl;
 #endif
   
   return FALSE;
@@ -85,4 +85,16 @@ void GmInMassRegionFilter::show()
 void GmInMassRegionFilter::SetParameters( std::vector<G4String>& params)
 {
   GmTouchableFilterRegion::SetParameters(params);
+}
+
+
+//-------------------------------------------------------------------------
+G4bool GmInMassRegionFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmInMassRegionFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
 }

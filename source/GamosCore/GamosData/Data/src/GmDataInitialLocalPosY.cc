@@ -39,7 +39,8 @@ G4double GmDataInitialLocalPosY::GetValueFromTrack( const G4Track* aTrack, G4int
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos, touch, false ); 
 
   G4ThreeVector localPos = GmG4Utils::GetLocalFromGlobalPos( pos, touch->GetHistory() );
-
+  delete touch;
+  
   return localPos.y();
 }
 
@@ -60,7 +61,20 @@ G4double GmDataInitialLocalPosY::GetValueFromEvent( const G4Event* anEvent, G4in
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos , touch, false ); 
 
   G4ThreeVector localPos = GmG4Utils::GetLocalFromGlobalPos( pos, touch->GetHistory() );
-
+  delete touch;
+  
   return localPos.y();
 }
 
+//----------------------------------------------------------------
+G4double GmDataInitialLocalPosY::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  G4ThreeVector pos = aTrack->GetPosition();
+  G4TouchableHistory* touch = new G4TouchableHistory;
+  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos, touch, false ); 
+
+  G4ThreeVector localPos = GmG4Utils::GetLocalFromGlobalPos( pos, touch->GetHistory() );
+  delete touch;
+  
+  return localPos.y();
+}

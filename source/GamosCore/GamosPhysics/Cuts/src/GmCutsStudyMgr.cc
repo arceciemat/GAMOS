@@ -76,7 +76,10 @@ GmCSTrackStepInfo* GmCutsStudyMgr::GetTrackStepInfo( G4int id, G4ThreeVector pos
     if( tsit->GetTrackID() == id && (tsit->GetPosition()-pos).mag() < 1.e-9 ) {
       ti = tsit;
 #ifndef GAMOS_NO_VERBOSE
-      if( PhysicsVerb(debugVerb) ) G4cout << " GmCutsStudyMgr::GetTrackStepInfo found ";   if( PhysicsVerb(debugVerb) ) ti->Print();
+      if( PhysicsVerb(debugVerb) ) {
+	G4cout << " GmCutsStudyMgr::GetTrackStepInfo found ";
+	ti->Print();
+      }
 #endif
       break;
       /*      if( nti != 0 ){
@@ -112,7 +115,10 @@ std::vector<GmCSTrackStepInfo*> GmCutsStudyMgr::GetTrackStepInfosBefore( G4int i
       }
       tis.push_back(tsit);
 #ifndef GAMOS_NO_VERBOSE
-      if( PhysicsVerb(debugVerb) ) G4cout << " GmCutsStudyMgr::GetTrackStepInfo ";   if( PhysicsVerb(debugVerb) ) tsit->Print();
+      if( PhysicsVerb(debugVerb) ) {
+	G4cout << " GmCutsStudyMgr::GetTrackStepInfo ";
+	tsit->Print();
+      }
 #endif
       tsitPrev = tsit;
     }

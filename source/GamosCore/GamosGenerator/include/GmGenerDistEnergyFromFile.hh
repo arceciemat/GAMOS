@@ -12,7 +12,6 @@ class GmAnalysisMgr;
 
 #include "GamosCore/GamosGenerator/include/GmVGenerDistEnergy.hh"
 class GmParticleSource;
-enum EFFCalcType { EFFCT_Fixed, EFFCT_Histogram, EFFCT_Interpolate, EFFCT_InterpolateLog };
 
 class GmGenerDistEnergyFromFile : public GmVGenerDistEnergy
 {

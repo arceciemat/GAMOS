@@ -1,5 +1,5 @@
 #include "GmEMPhysics.hh"
-#include "GmPhysicsMessenger.hh"
+#include "GmEMPhysicsMessenger.hh"
 #include "GmPhysicsGammaStandard.hh"
 #include "GmPhysicsGammaLowEner.hh"
 #include "GmPhysicsGammaPenelope.hh"
@@ -25,22 +25,32 @@
 #include "G4VAtomDeexcitation.hh"
 #include "G4UAtomicDeexcitation.hh"
 #include "G4LossTableManager.hh"
-
+#include "GmPhysicsGammaStandard_XSChange.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
 
-GmEMPhysics::GmEMPhysics(): G4VModularPhysicsList(),
-					      electronIsRegistered(false), 
-					      positronIsRegistered(false), 
-					      gammaIsRegistered(false)
+GmEMPhysics::GmEMPhysics(): G4VModularPhysicsList()
 {
   // The threshold of production of secondaries is fixed to 10. mm
   // for all the particles, in all the experimental set-up
   defaultCutValue = 0.1 * CLHEP::mm;
-  messenger = new GmPhysicsMessenger(this);
+  messenger = new GmEMPhysicsMessenger(this);
   SetVerboseLevel(1);
   ConstructParticles();
 
+
+  G4String name;
+  name = "gamma-standard";
+  G4cout << "GmEMPhysics PhysicsList:DEFAULT = " << name << " is registered" << G4endl;
+  RegisterPhysics( new GmPhysicsGammaStandard(name,22) );
+
+  name = "electron-standard";
+  G4cout << "GmEMPhysics PhysicsList: DEFAULT = " << name << " is registered" << G4endl;
+  RegisterPhysics( new GmPhysicsElectronStandard(name, 11) );
+
+  name = "positron-standard"; 
+  G4cout << "GmEMPhysics PhysicsList: DEFAULT = " << name << " is registered" << G4endl;
+  RegisterPhysics( new GmPhysicsPositronStandard(name, 111) );
 }
 
 GmEMPhysics::~GmEMPhysics()
@@ -59,10 +69,13 @@ void GmEMPhysics::ConstructParticles()
   G4Positron::PositronDefinition();
   G4NeutrinoE::NeutrinoEDefinition();
   G4AntiNeutrinoE::AntiNeutrinoEDefinition();
+  G4MuonMinus::MuonMinusDefinition();
+  G4MuonPlus::MuonPlusDefinition();
 
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
+  auto particleIterator=GetParticleIterator();
+  particleIterator->reset();
+  while( (*particleIterator)() ){
+    particleIterator->value();
   }
 
 }
@@ -79,147 +92,40 @@ G4bool GmEMPhysics::ReplacePhysicsList(const G4String& name)
   //
   G4bool bFound = true;
 
-  // Register standard processes for gammas
-  if (name == "gamma-standard") 
-    {
-      if (gammaIsRegistered) 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name  
-		 << " cannot be registered ---- gamma List already existing" 
-                 << G4endl;
-	} 
-      else 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name 
-                 << " is registered" << G4endl;
-	  RegisterPhysics( new GmPhysicsGammaStandard(name) );
-	  gammaIsRegistered = true;
-	}
-  
-      // Register LowE-EPDL processes for gammas
-    } else if (name == "gamma-lowener"  
-    || name == "gamma-epdl") 
-    {
-      if (gammaIsRegistered) 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name  
-		 << " cannot be registered ---- gamma List already existing"
-                 << G4endl;
-	} 
-      else 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name 
-                 << " is registered" << G4endl;
-	  RegisterPhysics( new GmPhysicsGammaLowEner(name) );
-	  gammaIsRegistered = true;
-	}
+  // Replace standard processes for gammas
+  if (name == "gamma-standard") {
+    ReplacePhysics( new GmPhysicsGammaStandard(name,22) );
 
-  // Register processes a' la Penelope for gammas
-    } else if (name == "gamma-penelope")
-    {
-      if (gammaIsRegistered) 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name  
-		 << " cannot be registered ---- gamma List already existing" 
-                 << G4endl;
-	} 
-      else 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name 
-                 << " is registered" << G4endl;
-	  RegisterPhysics( new GmPhysicsGammaPenelope(name) );
-	  gammaIsRegistered = true;
-	}
+  } else if (name == "gamma-lowener" || name == "gamma-epdl") {
+    ReplacePhysics( new GmPhysicsGammaLowEner(name,22) );
+
+  } else if (name == "gamma-penelope") {
+    ReplacePhysics( new GmPhysicsGammaPenelope(name,22) );
   
-      // Register standard processes for electrons
-    } else if (name == "electron-standard") 
-    {
-      if (electronIsRegistered) 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name  
-		 << " cannot be registered ---- electron List already existing" 
-		 << G4endl;
-	} 
-      else 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name 
-                 << " is registered" << G4endl;
-	  RegisterPhysics( new GmPhysicsElectronStandard(name) );	  
-	  electronIsRegistered = true;
-	}
+  } else if (name == "electron-standard") {
+    ReplacePhysics( new GmPhysicsElectronStandard(name,11) );
+
+  } else if (name == "electron-lowener" || name == "electron-eedl") {
+    ReplacePhysics( new GmPhysicsElectronLowEner(name,11) );
       
-      // Register LowE-EEDL processes for electrons
-    } else if (name == "electron-lowener"  
-      || name == "electron-eedl") 
-    {
-      if (electronIsRegistered) 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name  
-		 << " cannot be registered ---- electron List already existing"                  
-		 << G4endl;
-	} 
-      else 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name 
-                 << " is registered" << G4endl;
-	  RegisterPhysics( new GmPhysicsElectronLowEner(name) );
-	  electronIsRegistered = true;
-	}
+  } else if (name == "electron-penelope") {
+    ReplacePhysics( new GmPhysicsElectronPenelope(name,11) );
       
-      // Register processes a' la Penelope for electrons
-    } else if (name == "electron-penelope")
-    {
-      if (electronIsRegistered) 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name 
-		 << " cannot be registered ---- electron List already existing"                  
-		 << G4endl;
-	} 
-      else 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name 
-                 << " is registered" << G4endl;
-	  RegisterPhysics( new GmPhysicsElectronPenelope(name) );
-	  electronIsRegistered = true;
-	}
-      
-      // Register standard processes for positrons
-    } else if (name == "positron-standard") 
-    {
-      if (positronIsRegistered) 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name  
-		 << " cannot be registered ---- positron List already existing"                  
-		 << G4endl;
-	} 
-      else 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name 
-                 << " is registered" << G4endl;
-	  RegisterPhysics( new GmPhysicsPositronStandard(name) );
-	  positronIsRegistered = true;
-	}
-      
-      // Register penelope processes for positrons
-    } else if (name == "positron-penelope") 
-    {
-      if (positronIsRegistered) 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name  
-		 << " cannot be registered ---- positron List already existing"   << G4endl;
-	} 
-      else 
-	{
-	  G4cout << "GmEMPhysics::ReplacePhysicsList: " << name 
-                 << " is registered" << G4endl;
-	  RegisterPhysics( new GmPhysicsPositronPenelope(name) );
-	  positronIsRegistered = true;
-	}
+  } else if (name == "positron-standard") {
+    ReplacePhysics( new GmPhysicsPositronStandard(name,111) );
+
+  } else if (name == "positron-penelope") {
+    ReplacePhysics( new GmPhysicsPositronPenelope(name,111) );
+
+  } else if (name == "gamma-standard_XSChange") {
+    ReplacePhysics( new GmPhysicsGammaStandard_XSChange(name,22) );
 
   } else {
     bFound = false;
   }  
-  
+
+  if( bFound ) G4cout << "GmEMPhysics::ReplacePhysicsList: " << name << " is registered" << G4endl;
+
   return bFound;
 }
 
@@ -236,29 +142,7 @@ void GmEMPhysics::SetCuts()
      
 void GmEMPhysics::ConstructProcess()
 {
-  AddTransportation();
-
-  G4String name;
-  if (!gammaIsRegistered ) {
-    name = "gamma-lowener";
-    G4cout << "GmEMPhysics PhysicsList:DEFAULT = " << name << " is registered" << G4endl;
-    RegisterPhysics( new GmPhysicsGammaLowEner(name) );
-    gammaIsRegistered = true;
-  } 
-  
-  if (!electronIsRegistered) {  
-    name = "electron-lowener";
-    G4cout << "GmEMPhysics PhysicsList: DEFAULT = " << name << " is registered" << G4endl;
-    RegisterPhysics( new GmPhysicsElectronLowEner(name) );
-    electronIsRegistered = true;
-  }
-
-  if (!positronIsRegistered) {
-    name = "positron-standard"; 
-    G4cout << "GmEMPhysics PhysicsList: DEFAULT = " << name << " is registered" << G4endl;
-    RegisterPhysics( new GmPhysicsPositronStandard(name) );
-    positronIsRegistered = true;
-  }
+  //  AddTransportation();
 
 
   /* t G4PhysConstVector::iterator itr;
@@ -291,4 +175,3 @@ void GmEMPhysics::ConstructProcess()
   
   G4VModularPhysicsList::ConstructProcess();
 }
-                                                                                

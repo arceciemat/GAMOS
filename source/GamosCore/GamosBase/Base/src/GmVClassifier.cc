@@ -1,5 +1,5 @@
 #include "GmVClassifier.hh"
-#include "G4UIcommand.hh"
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
 //---------------------------------------------------------
@@ -13,20 +13,20 @@ GmVClassifier::GmVClassifier(G4String name ) : theName( name )
 }
 
 //---------------------------------------------------------
-G4String GmVClassifier::GetIndexName(G4int index )
+G4String GmVClassifier::GetIndexName(int64_t index )
 {
-  return G4UIcommand::ConvertToString( G4int(index) );
+  return GmGenUtils::itoa( index );
 }
 
 //---------------------------------------------------------
-G4int GmVClassifier::GetIndexFromTrack(const G4Track*)
+int64_t GmVClassifier::GetIndexFromTrack(const G4Track*)
 {
   return 0;
 }
 
 #include "G4Track.hh" //GDEB
 //---------------------------------------------------------
-G4int GmVClassifier::GetIndexFromSecoTrack(const G4Track*, const G4Track* aTrack2)
+int64_t GmVClassifier::GetIndexFromSecoTrack(const G4Track*, const G4Track* aTrack2)
 {
   return GetIndexFromTrack(aTrack2);
 }

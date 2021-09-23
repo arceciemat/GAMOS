@@ -44,3 +44,12 @@ G4double GmDataInitialMomY::GetValueFromEvent( const G4Event* aEvent, G4int )
 {
   return aEvent->GetPrimaryVertex(0)->GetPrimary(0)->GetMomentum().y();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialMomY::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+ 
+  return ( GmGenUtils::GetMomentum( aTrack->GetDefinition()->GetPDGMass(), aTrack->GetKineticEnergy() )
+	   * aTrack->GetMomentumDirection() ).y();
+}
+

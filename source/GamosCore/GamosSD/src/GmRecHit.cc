@@ -28,7 +28,32 @@ GmRecHit::GmRecHit( GmHit* hit )
   theHitsTimeType = GmHitsEventMgr::GetInstance()->GetHitsTimeType();
   theHitsTimeType = 1;
 #ifndef GAMOS_NO_VERBOSE
-  if( SDVerb(infoVerb) ) G4cout << " Created GmRecHit E " << theEnergy << " posXYZ " << thePosition.x() << " pos " << thePosition.y() << " pos " << thePosition.z() << " time " << GetTime() << G4endl;
+  if( SDVerb(infoVerb) ) G4cout << " Created GmRecHit E " << theEnergy << " posXYZ " << thePosition.x() << " pos " << thePosition.y() << " pos " << thePosition.z() << " time " << GetTime()
+				<< " EVENT_ID " << hit->GetEventID() << " ORIG_ID " << *(hit->GetOriginalTrackIDs().begin()) << " TRK_ID " << *(hit->GetTrackIDs().begin()) << G4endl;
+#endif
+
+}
+
+//----------------------------------------------------------------------
+GmRecHit::GmRecHit( GmRecHit* rh )
+{
+  theSDType = rh->GetSDType();
+  theTimeMin = rh->GetTimeMin();
+  theTimeMax = rh->GetTimeMax();
+  theEnergy = rh->GetEnergy();
+  thePosition = rh->GetPosition();
+  std::vector<GmHit*> rhHits = rh->GetHits();
+  for( size_t ii = 0; ii < rhHits.size(); ii++ ) {
+    theHits.push_back( rhHits[ii] );
+  }
+  theMaxSimHitEnergy = rh->GetMaxSimHitEnergy();
+  theSDType = rh->GetSDType();
+
+  bPosAtBarycentre = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("SD:RecHit:PosAtBarycentre:"+theSDType,0));
+  theHitsTimeType = GmHitsEventMgr::GetInstance()->GetHitsTimeType();
+  theHitsTimeType = 1;
+#ifndef GAMOS_NO_VERBOSE
+  if( SDVerb(infoVerb) ) G4cout << " Created GmRecHit E " << theEnergy << " posXYZ " << thePosition.x() << " pos " << thePosition.y() << " pos " << thePosition.z() << " time " << GetTime() << G4endl; 
 #endif
 
 }
@@ -64,7 +89,9 @@ void GmRecHit::AddHit( GmHit* hit )
 
 #ifndef GAMOS_NO_VERBOSE
   if( SDVerb(infoVerb) ) G4cout << " Update GmRecHit E " << theEnergy 
-	 << " pos " << thePosition.x() << " pos " << thePosition.y() << " pos " << thePosition.z() << " time " << GetTime() << G4endl;
+				<< " pos " << thePosition.x() << " pos " << thePosition.y() << " pos " << thePosition.z() << " time " << GetTime()
+				<< " EVENT_ID " << hit->GetEventID() << " ORIG_ID " << *(hit->GetOriginalTrackIDs().begin()) << " TRK_ID " << *(hit->GetTrackIDs().begin()) << G4endl;
+
 #endif
   //<< thePosition.mag() << " pos " << thePosition.phi() << " pos " << thePosition.theta() << G4endl;
 
@@ -87,6 +114,32 @@ void GmRecHit::AddHit( GmHit* hit )
 }
 
 
+//----------------------------------------------------------------------
+GmRecHit GmRecHit::operator+=( const GmRecHit& rh )
+{
+  if( theSDType != rh.GetSDType() ) {
+    G4Exception("GmRecHit::operator+=",
+		"",
+		FatalException,
+		("Trying to merge recHits with different SDType "+theSDType+" <> "+rh.GetSDType()).c_str());
+  }
+
+  theTimeMin = std::min(rh.GetTimeMin(),GetTimeMin());
+  theTimeMax = std::max(rh.GetTimeMax(),GetTimeMax());
+  if( bPosAtBarycentre ) {
+    thePosition = (rh.GetPosition()*rh.GetEnergy()+thePosition*theEnergy)/(rh.GetEnergy()+theEnergy);
+  }
+  theEnergy += rh.GetEnergy();
+  std::vector<GmHit*> rhHits = rh.GetHits();
+  for( size_t ii = 0; ii < rhHits.size(); ii++ ) {
+    theHits.push_back( rhHits[ii] );
+    if( rhHits[ii]->GetEnergy() > theMaxSimHitEnergy ) {
+      theMaxSimHitEnergy = rhHits[ii]->GetEnergy();
+    }
+  }
+  
+  return *this;  
+}
 
 //----------------------------------------------------------------------
 #include "G4Visible.hh"
@@ -184,4 +237,9 @@ std::ostream& operator<<(std::ostream& os, const GmRecHit& rhit)
   rhitnc.Print( os );
 
   return os;
+}
+//----------------------------------------------------------------------
+void GmRecHit::ClearHits()
+{
+  theHits.clear();
 }

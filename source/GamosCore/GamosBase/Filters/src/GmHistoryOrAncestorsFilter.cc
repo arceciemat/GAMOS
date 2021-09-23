@@ -1,6 +1,6 @@
 #include "GmHistoryOrAncestorsFilter.hh"
 #include "GamosCore/GamosBase/Base/include/GmTrackInfo.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 
@@ -27,7 +27,7 @@ G4bool GmHistoryOrAncestorsFilter::AcceptTrack(const G4Track* aTrack)
   if( bPassed.find(trkID) != bPassed.end()  // passed a previous step
       || bPassed.find( aTrack->GetParentID()) != bPassed.end()) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << GetName() <<" GmHistoryOrAncestorsFilter::AcceptTrack return 1, because ancestor was accepted " << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << GetName() <<" GmHistoryOrAncestorsFilter::AcceptTrack return 1, because ancestor track was accepted " << G4endl;
 #endif
     return TRUE;
   }
@@ -37,7 +37,7 @@ G4bool GmHistoryOrAncestorsFilter::AcceptTrack(const G4Track* aTrack)
   if( bAccept ) bPassed.insert(aTrack->GetTrackID());
 
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << GetName() <<" GmHistoryOrAncestorsFilter::AcceptTrack return " << bAccept << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << GetName() <<" GmHistoryOrAncestorsFilter::AcceptTrack return " << bAccept << G4endl;
 #endif
 
   return bAccept;
@@ -53,17 +53,23 @@ G4bool GmHistoryOrAncestorsFilter::AcceptStep(const G4Step* aStep)
   G4Track* aTrack = const_cast<G4Track*>(aStep->GetTrack());
   
   if( aTrack->GetParentID() == 0 &&
-      aTrack->GetCurrentStepNumber() == 1 ) bPassed.clear();
+      aTrack->GetCurrentStepNumber() == 1 ) {
+#ifndef GAMOS_NO_VERBOSE
+    if( FilterVerb(debugVerb) ) G4cout << GetName() <<" GmHistoryOrAncestorsFilter::AcceptStep bPassed clear " << G4endl;
+#endif
+    bPassed.clear();
+  }
 
   G4VUserTrackInformation* trkInfo = aTrack->GetUserInformation();
-  GmTrackInfo* gmTrkInfo = (GmTrackInfo*)(trkInfo);
+  GmTrackInfo* gmTrkInfo = dynamic_cast<GmTrackInfo*>(trkInfo);
+  //-  if( !gmTrkInfo ) return FALSE;
 
   //--- Check if passed a previous step of current track or previous track at AcceptTrack
   G4int trkID = aTrack->GetTrackID();
-  if( bPassed.find(trkID) != bPassed.end()  
-      || bPassed.find( aTrack->GetParentID()) != bPassed.end()) {
+  if( bPassed.find(trkID) != bPassed.end() ) {
+      //      || bPassed.find( aTrack->GetParentID()) != bPassed.end()) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << this << GetName() <<" GmHistoryOrAncestorsFilter::AcceptStep return 1, because previous step of current track or ancestor was accepted " << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << this << GetName() <<" GmHistoryOrAncestorsFilter::AcceptStep return 1, because previous step of current track was accepted " << G4endl;
 #endif
     bPassed.insert(trkID);
     bAccept = TRUE;
@@ -73,7 +79,7 @@ G4bool GmHistoryOrAncestorsFilter::AcceptStep(const G4Step* aStep)
     if( gmTrkInfo ) {
       if( gmTrkInfo->IntValueExists("HistoryOrAncestors"+GetName()) ) {
 #ifndef GAMOS_NO_VERBOSE
-	if( BaseVerb(debugVerb) ) G4cout << GetName() << " GmHistoryOrAncestorsFilter::AcceptStep return 1, because ancestor was accepted " << G4endl;
+	if( FilterVerb(debugVerb) ) G4cout << GetName() << " GmHistoryOrAncestorsFilter::AcceptStep return 1, because ancestor step was accepted " << G4endl;
 #endif
 	bAccept = TRUE;
       }
@@ -84,7 +90,7 @@ G4bool GmHistoryOrAncestorsFilter::AcceptStep(const G4Step* aStep)
   if( !bAccept ) {
     bAccept = AcceptStepAND(aStep);
 #ifndef GAMOS_NO_VERBOSE
-    if( bAccept ) if( BaseVerb(debugVerb) ) G4cout << GetName() << " GmHistoryOrAncestorsFilter::AcceptStep return 1, because current step is accepted " << G4endl;
+    if( bAccept ) if( FilterVerb(debugVerb) ) G4cout << GetName() << " GmHistoryOrAncestorsFilter::AcceptStep return 1, because current step is accepted " << G4endl;
 #endif
   }
 
@@ -99,16 +105,59 @@ G4bool GmHistoryOrAncestorsFilter::AcceptStep(const G4Step* aStep)
     
     G4TrackVector secos = GmG4Utils::GetSecondariesOfCurrentStep();
     for( unsigned int ii = 0; ii < secos.size(); ii++) {
-      GmTrackInfo* gmTrkInfo = new GmTrackInfo();
-      gmTrkInfo->SetIntValue("HistoryOrAncestors"+GetName(),ancestorLevel);
-      secos[ii]->SetUserInformation(gmTrkInfo);
+      GmTrackInfo* gmTrkInfo2 = 0;
+      if( secos[ii]->GetUserInformation() == 0 ) {
+	gmTrkInfo2 = new GmTrackInfo();
+	//	G4cout << " G4TrackInfo CREATE " << gmTrkInfo2  << G4endl; //GDEB
+     } else {
+	G4VUserTrackInformation* g4TrkInfo = secos[ii]->GetUserInformation();
+	if( ! dynamic_cast<GmTrackInfo*>(g4TrkInfo) ) {
+	  G4Exception("GmAncestorsFilter::AcceptStep",
+		      "",
+		      FatalException,
+		      "Creating a GmTrackInfo for a track that has already a G4VUserTrackInformation");
+	} else {
+	  gmTrkInfo2 = dynamic_cast<GmTrackInfo*>(g4TrkInfo);
+	}
+      }
+      gmTrkInfo2->SetIntValue("HistoryOrAncestors"+GetName(),ancestorLevel,true);
+      secos[ii]->SetUserInformation(gmTrkInfo2);
     } 
   }
     
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << GetName() << " GmHistoryOrAncestorsFilter::AcceptStep return " << bAccept << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << GetName() << " GmHistoryOrAncestorsFilter::AcceptStep return " << bAccept << G4endl;
 #endif
 
   return bAccept;
 
 }
+
+//----------------------------------------------------------------
+G4bool GmHistoryOrAncestorsFilter::AcceptStackedTrack(const G4Track* aTrack)
+{
+  if( aTrack->GetParentID() == 0 &&
+      aTrack->GetCurrentStepNumber() == 0 ) bPassed.clear();
+
+  G4int trkID = aTrack->GetTrackID();
+  if( bPassed.find(trkID) != bPassed.end()  // passed a previous step
+      || bPassed.find( aTrack->GetParentID()) != bPassed.end()) {
+#ifndef GAMOS_NO_VERBOSE
+    if( FilterVerb(debugVerb) ) G4cout << GetName() <<" GmHistoryOrAncestorsFilter::AcceptStackedTrack return 1, because ancestor was accepted " << G4endl;
+#endif
+    return TRUE;
+  }
+
+  G4bool bAccept = AcceptStackedTrackAND(aTrack);
+
+  if( bAccept ) bPassed.insert(aTrack->GetTrackID());
+
+#ifndef GAMOS_NO_VERBOSE
+  if( FilterVerb(debugVerb) ) G4cout << GetName() <<" GmHistoryOrAncestorsFilter::AcceptStackedTrack return " << bAccept << G4endl;
+#endif
+
+  return bAccept;
+
+}
+
+

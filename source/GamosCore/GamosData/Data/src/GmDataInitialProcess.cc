@@ -32,3 +32,9 @@ G4String GmDataInitialProcess::GetStringValueFromStep( const G4Step* aStep )
   }
 
 }
+//----------------------------------------------------------------
+G4String GmDataInitialProcess::GetStringValueFromSecoTrack( const G4Track* aTrack1 , const G4Track* )
+{
+  return GetStringValueFromStep( aTrack1->GetStep() );
+}
+

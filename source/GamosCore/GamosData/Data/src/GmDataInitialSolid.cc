@@ -54,3 +54,10 @@ G4String GmDataInitialSolid::GetStringValueFromEvent( const G4Event* anEvent )
 
   return name;
 }
+
+//----------------------------------------------------------------
+G4String GmDataInitialSolid::GetStringValueFromStackedTrack( const G4Track* aTrack )
+{ 
+  return GetPVFromPos( aTrack->GetPosition() )->GetLogicalVolume()->GetSolid()->GetName();
+}
+

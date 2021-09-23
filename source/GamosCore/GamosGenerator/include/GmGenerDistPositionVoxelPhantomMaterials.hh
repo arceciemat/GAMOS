@@ -25,7 +25,7 @@ private:
   G4PhantomParameterisation* theParamReg;
   G4AffineTransform theTransformation;
   G4double theVoxelDimX, theVoxelDimY, theVoxelDimZ;
-  unsigned int theNoVoxelX, theNoVoxelY, theNoVoxelZ;
+  unsigned int theNoVoxelsX, theNoVoxelsY, theNoVoxelsZ;
   std::set<unsigned int> theMaterialIndexes;
 };
 

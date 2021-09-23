@@ -13,11 +13,11 @@ public:
   GmEventClassifierByGammaInteraction();
   virtual ~GmEventClassifierByGammaInteraction();
 
-  int Classify( const std::vector<GmTrajPoint*>& interactionList );
-  int Classify( const std::vector<GmTrajStep*>& interactionList );
-  int Classify1Interaction( const G4String& processName );
+  int64_t Classify( const std::vector<GmTrajPoint*>& interactionList );
+  int64_t Classify( const std::vector<GmTrajStep*>& interactionList );
+  int64_t Classify1Interaction( const G4String& processName );
 
-  virtual G4String GetClassificationName( int ic );
+  virtual G4String GetClassificationName( int64_t ic );
 
 private:
   void BuildProcessNames();

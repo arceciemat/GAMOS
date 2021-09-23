@@ -1,64 +1,61 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosScoring_PointDetector
+# Module : PointDetector
+# Package: GamosCore_GamosScoring_PointDetector
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_PointDetector
+	 HEADERS
+		GmPDSInvertGeantinoStackUA.hh
+		GmPDSDetector.hh
+		GmPDSOpticalPhotonProcess.hh
+		GmPDSCreateAngleTablesUA.hh
+		GmPDSNeutronProcess.hh
+		GmPDSInteractionAngleManager.hh
+		GmPDSGeantinoProcess.hh
+		GmPDSVProcess.hh
+		GmPDSUtils.hh
+		GmPDSScoringTrackInfo.hh
+		GmPDSProcessHelper.hh
+		GmPDSUA.hh
+		GmPDSGammaProcess.hh
+		GmPDSScore.hh
+	 SOURCES
+		plugin.cc
+		GmPDSProcessHelper.cc
+		GmPDSUA.cc
+		GmPDSGeantinoProcess.cc
+		GmPDSUtils.cc
+		GmPDSVProcess.cc
+		GmPDSNeutronProcess.cc
+		GmPDSCreateAngleTablesUA.cc
+		GmPDSGammaProcess.cc
+		GmPDSInvertGeantinoStackUA.cc
+		GmPDSOpticalPhotonProcess.cc
+		GmPDSInteractionAngleManager.cc
+		GmPDSScore.cc
+		GmPDSDetector.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+		${SEAL_LIBRARIES} 
+		GamosCore_GamosUtils
+		GamosCore_GamosBase_Base
+		GamosCore_GamosGeometry
+		GamosCore_GamosReadDICOM
+		GamosCore_GamosGenerator
+		GamosCore_GamosData_Management
+		GamosCore_GamosData_Users
+		GamosCore_GamosScoring_Management
 
-   HEADERS
-       GmPDSProcessHelper.hh
-       GmPDSInvertGeantinoStackUA.hh
-       GmPDSNeutronProcess.hh
-       GmPDSVProcess.hh
-       GmPDSScoringTrackInfo.hh
-       GmPDSGammaProcess.hh
-       GmPDSCreateAngleTablesUA.hh
-       GmPDSScore.hh
-       GmPDSInteractionAngleManager.hh
-       GmPDSUA.hh
-       GmPDSUtils.hh
-       GmPDSGeantinoProcess.hh
-       GmPDSDetector.hh
-
-   SOURCES
-       plugin.cc
-       GmPDSProcessHelper.cc
-       GmPDSUA.cc
-       GmPDSCreateAngleTablesUA.cc
-       GmPDSInteractionAngleManager.cc
-       GmPDSNeutronProcess.cc
-       GmPDSDetector.cc
-       GmPDSUtils.cc
-       GmPDSInvertGeantinoStackUA.cc
-       GmPDSGeantinoProcess.cc
-       GmPDSGammaProcess.cc
-       GmPDSVProcess.cc
-       GmPDSScore.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosAnalysis
-  GamosCore_GamosGeometry
-  GamosCore_GamosUtils
-  GamosCore_GamosScoring_Management
-  GamosCore_GamosUserActionMgr
-  GamosCore_GamosBase_Base
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

@@ -56,16 +56,19 @@ void GmTrackDataTextFileUA::BeginOfRunAction( const G4Run* )
 //----------------------------------------------------------------
 void GmTrackDataTextFileUA::PreUserTrackingAction(const G4Track* aTrack)
 {
-  std::vector<GmVData*>::const_iterator ite;
-  for( ite = theData.begin(); ite != theData.end(); ite++ )
-    {
+  //t  if( !bUseAtInitial ) return;
 
-      if( bUseAtInitial && (*ite)->IsInitial() ){
-	(*ite)->WriteText( aTrack, ite == theData.begin() );
-      } else {
-	(*ite)->Initialise();
-      }
+  std::vector<GmVData*>::const_iterator ite;
+  for( ite = theData.begin(); ite != theData.end(); ite++ ) {
+    if( bUseAtInitial && (*ite)->IsInitial() ){
+      (*ite)->WriteText( aTrack, ite == theData.begin() );
+    } else {
+      (*ite)->Initialise();
     }
+  }
+  if( bUseAtInitial && (*ite)->IsInitial() ){
+    *theFileOut << G4endl;  
+  }
 }
 
 //----------------------------------------------------------------
@@ -82,14 +85,14 @@ void GmTrackDataTextFileUA::UserSteppingAction(const G4Step* aStep )
 //----------------------------------------------------------------
 void GmTrackDataTextFileUA::PostUserTrackingAction(const G4Track* aTrack )
 {
+  if( bUseAtInitial ) return;
+
   std::vector<GmVData*>::const_iterator ite;
-  for( ite = theData.begin(); ite != theData.end(); ite++ )
-    {
-      if( !bUseAtInitial || !(*ite)->IsInitial() ){
-	(*ite)->WriteText( aTrack, ite == theData.begin() );
-      }
-    }
+  for( ite = theData.begin(); ite != theData.end(); ite++ ) {
+    (*ite)->WriteText( aTrack, ite == theData.begin() );
+  }
   *theFileOut << G4endl;  
+
 }
 
 //----------------------------------------------------------------

@@ -181,7 +181,7 @@ void GmPDSScore::PrintResults( std::ostream& out, GmPDSDetector* det )
   G4double fluxTotErr = 0.;
   if( fluxTot != 0. ) fluxTotErr = sqrt(fluxTotErr2)/fluxTot;
   //    out << theName << "  FLUX_TOTAL/particle= " << fluxTot << " +-(REL) " << fluxTotErr << "  N " << nHits << G4endl;
-  out << theName << " SUM ALL: " << fluxTot << " +-(REL) " << fluxTotErr << " cm-2 " << "  N " << nHits << G4endl;
+  out << theName << " SUM_ALL: " << fluxTot << " +-(REL) " << fluxTotErr << " cm-2 " << "  N " << nHits << G4endl;
   if( bHstar ) {
     out << theName << " Hstar= " << theHstar/NEvents << " pSv/particle " << G4endl;
   }

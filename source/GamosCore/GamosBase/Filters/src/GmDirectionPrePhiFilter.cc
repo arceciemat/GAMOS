@@ -43,8 +43,8 @@ G4bool GmDirectionPrePhiFilter::AcceptTrack(const G4Track* aTrack)
 void GmDirectionPrePhiFilter::show() 
 {
     G4cout << " GmDirectionPrePhiFilter:: " << GetName()
-	 << " LowLimiE  " << G4BestUnit(theLowLimit,"Position") 
-	 << " HighLimit " << G4BestUnit(theHighLimit,"Position")
+	 << " LowLimiE  " << G4BestUnit(theLowLimit,"Direction") 
+	 << " HighLimit " << G4BestUnit(theHighLimit,"Direction")
 	 <<G4endl;
 }
 
@@ -65,4 +65,16 @@ void GmDirectionPrePhiFilter::SetParameters( std::vector<G4String>& params)
  theLowLimit  = GmGenUtils::GetValue( params[0] );
  theHighLimit = GmGenUtils::GetValue( params[1] );
 
+}
+
+
+//-------------------------------------------------------------------------
+G4bool GmDirectionPrePhiFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmDirectionPrePhiFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
 }

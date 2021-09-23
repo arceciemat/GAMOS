@@ -39,6 +39,15 @@ G4double GmVDataAccumulated::GetValueFromTrack( const G4Track*, G4int index )
 }
 
 //----------------------------------------------------------------
+G4double GmVDataAccumulated::GetValueFromSecoTrack( const G4Track* , const G4Track* , G4int index)
+{
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << theName << "  GmVDataAccumulated::GetValueFromSecoTrack " << index << " = " << theDataAccumulated[index] << G4endl;
+#endif 
+  return theDataAccumulated[index];
+}
+
+//----------------------------------------------------------------
 G4double GmVDataAccumulated::GetValueFromEvent( const G4Event*, G4int index )
 {
 #ifndef GAMOS_NO_VERBOSE

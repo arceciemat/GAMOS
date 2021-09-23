@@ -21,6 +21,8 @@ public:
   
 public: // with description
   virtual G4bool AcceptTrack(const G4Track*){ return TRUE; };
+  virtual G4bool AcceptStackedTrack(const G4Track* aTrack){
+    return AcceptTrack(aTrack); };
   virtual G4bool AcceptStep(const G4Step* aStep){ 
     return AcceptTrack(aStep->GetTrack()); }
   
@@ -29,7 +31,7 @@ public: // with description
 
 public:
   inline G4String GetName() const {
-    return theName; }
+    return theFilterName; }
   inline G4String GetClass() const {
     return theClass; }
   inline void SetClass( G4String cl ) {
@@ -39,7 +41,7 @@ public:
   }
 
 protected:
-  G4String theName;
+  G4String theFilterName;
   G4String theClass;
   G4bool bFutureFilter;  
 };

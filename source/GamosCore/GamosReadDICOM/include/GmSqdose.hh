@@ -3,16 +3,18 @@
 
 #include <vector>
 #include "GmSqdoseHeader.hh"
-enum SqdoseType{ SqTALL=1, SqTFILLED=2 };
+class Gm3ddose;
+enum SqdoseType{ SqTALL, SqTFILLED, SqTCROSS_PHANTOM };
 
 class GmSqdose
 {
 public:
   GmSqdose();
-  //  GmSqdose(const GmSqdose& dold);
+  GmSqdose(const Gm3ddose& dold);
   ~GmSqdose();
 
   GmSqdose operator+=( const GmSqdose& dose );
+  GmSqdose operator*=( double factor );
 
   void Read( G4String fileName );
   void Read( FILE* fin);
@@ -32,13 +34,13 @@ public:
   float GetDoseSq(G4int ii ) const {
     return theDoseSqs[ii]; }
   std::vector<float> GetDoseErrors() const {
-    return theErrors; }
+    return theDoseErrors; }
   float GetDoseError(G4int ii) const {
-    return theErrors[ii]; }
+    return theDoseErrors[ii]; }
 
   void SetHeader( GmSqdoseHeader* header ){
     theHeader = header; }
-void SetDoses( std::vector<float>& doses ) {
+  void SetDoses( std::vector<float>& doses ) {
     theDoses = doses; }
   void SetDoseSqs( std::vector<float>& dosesqs ) {
     theDoseSqs = dosesqs; }
@@ -46,13 +48,21 @@ void SetDoses( std::vector<float>& doses ) {
   void SetSqdoseType( SqdoseType typ ) {
     theType = typ; }
 
+  SqdoseType GetType() const {
+    return theType; }
+
+  G4String GetTypeStr() const;
+
 private:
   GmSqdoseHeader* theHeader;
   std::vector<float> theDoses;
   std::vector<float> theDoseSqs;
-  std::vector<float> theErrors;
+  std::vector<float> theDoseErrors;
 
   SqdoseType theType;
+
+  G4bool bBelowFloatPrecisionSetTo0;
 };
+
 
 #endif

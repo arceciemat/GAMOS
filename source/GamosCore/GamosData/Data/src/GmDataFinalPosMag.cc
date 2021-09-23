@@ -9,7 +9,6 @@ GmDataFinalPosMag::GmDataFinalPosMag()
   bInitial = false;
   theHMin = 0.;
   theHMax = 1000.;
-  theExcludedTypes.insert(DTSeco);
   theExcludedTypes.insert(DTEvent);
 }
 
@@ -30,3 +29,9 @@ G4double GmDataFinalPosMag::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
   return aTrack->GetPosition().mag();
 }
+//----------------------------------------------------------------
+G4double GmDataFinalPosMag::GetValueFromSecoTrack( const G4Track* aTrack1, const G4Track*, G4int )
+{
+  return aTrack1->GetPosition().mag();
+}
+

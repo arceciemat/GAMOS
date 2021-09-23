@@ -22,7 +22,8 @@ public: // with description
 public: // with description
   virtual G4bool AcceptTrack(const G4Track* );
   virtual G4bool AcceptStep(const G4Step* );
-
+  virtual G4bool AcceptStackedTrack(const G4Track* );
+  
 private:
   std::set<G4int> bPassed; // list of tracks (ancestors) that passed the filters in any previous step, or PreTrack
 };

@@ -1,5 +1,5 @@
 #include "GmClassifierByProcess.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Classifiers/include/GmClassifierVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 #include "GamosCore/GamosBase/Base/include/GmGetParticleMgr.hh"
@@ -28,15 +28,15 @@ void GmClassifierByProcess::SetParameters( std::vector<G4String>& params)
 }
 
 //------------------------------------------------------------------
-G4int GmClassifierByProcess::GetIndexFromStep(const G4Step* aStep)
+int64_t GmClassifierByProcess::GetIndexFromStep(const G4Step* aStep)
 {
-  G4int index;
+  int64_t index;
   const G4VProcess* proc = aStep->GetPostStepPoint()->GetProcessDefinedStep();
   G4String procName = "OutOfWorld";
   if( proc ) {
     procName = proc->GetProcessName();
   }
-  std::map<const G4String,G4int>::const_iterator ite = theIndexMap.find(procName);
+  std::map<const G4String,int64_t>::const_iterator ite = theIndexMap.find(procName);
   if( ite == theIndexMap.end() ){
     index = theIndexMap.size()+1+theMaxIndex;
     theIndexMap[procName] = index;
@@ -45,16 +45,16 @@ G4int GmClassifierByProcess::GetIndexFromStep(const G4Step* aStep)
   }
   
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmClassifierByProcess::GetIndexFromStep " << index << " proc " << procName << G4endl;
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierByProcess::GetIndexFromStep " << index << " proc " << procName << G4endl;
 #endif
   
   return index;
 }
 
 //------------------------------------------------------------------
-G4int GmClassifierByProcess::GetIndexFromTrack(const G4Track* aTrack)
+int64_t GmClassifierByProcess::GetIndexFromTrack(const G4Track* aTrack)
 {
-  G4int index;
+  int64_t index;
   const G4Step* aStep = aTrack->GetStep();
   if( !aStep ) return 0;
 
@@ -63,7 +63,7 @@ G4int GmClassifierByProcess::GetIndexFromTrack(const G4Track* aTrack)
   if( proc ) {
     procName = proc->GetProcessName();
   }
-  std::map<const G4String,G4int>::const_iterator ite = theIndexMap.find(procName);
+  std::map<const G4String,int64_t>::const_iterator ite = theIndexMap.find(procName);
   if( ite == theIndexMap.end() ){
     index = theIndexMap.size()+1+theMaxIndex;
     theIndexMap[procName] = index;
@@ -72,17 +72,17 @@ G4int GmClassifierByProcess::GetIndexFromTrack(const G4Track* aTrack)
   }
   
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmClassifierByProcess::GetIndexFromTrack " << index << " proc " << procName << G4endl;
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierByProcess::GetIndexFromTrack " << index << " proc " << procName << G4endl;
 #endif
   
   return index;
 }
 
 //--------------------------------------------------------------
-G4String GmClassifierByProcess::GetIndexName(G4int index)
+G4String GmClassifierByProcess::GetIndexName(int64_t index)
 {
   G4String name = "NOT_FOUND";
-  std::map<const G4String,G4int>::const_iterator ite;
+  std::map<const G4String,int64_t>::const_iterator ite;
   for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
     if((*ite).second == index ){
       return (*ite).first;
@@ -96,11 +96,15 @@ G4String GmClassifierByProcess::GetIndexName(G4int index)
 GmClassifierByProcess::~GmClassifierByProcess()
 {
   //print names of each index 
-  G4cout << "%%%%% Table of indices for GmClassifierByProcess " << theName << G4endl;
-  std::map<const G4String,G4int>::const_iterator ite;
-  for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
-    G4cout << (*ite).first << " = " << (*ite).second << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+  if( ClassifierVerb(debugVerb) ) {
+    G4cout << "%%%%% Table of indices for GmClassifierByProcess " << theName << G4endl;
+    std::map<const G4String,int64_t>::const_iterator ite;
+    for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
+      G4cout << (*ite).first << " = " << (*ite).second << G4endl;
+    }
   }
+#endif
 }
 
 //-------------------------------------------------------------
@@ -111,7 +115,7 @@ void GmClassifierByProcess::SetIndices( std::vector<G4String> wl )
     std::vector<G4VProcess*> keys = GmGetParticleMgr::GetInstance()->GetG4ProcessList( wl[ii]);
     for( unsigned int jj = 0; jj < keys.size(); jj++ ){
       G4VProcess* key = keys[jj];
-      G4int index = G4int(GmGenUtils::GetValue(wl[ii+1]));
+      int64_t index = int64_t(GmGenUtils::GetValue(wl[ii+1]));
       theIndexMap[key->GetProcessName()] = index;
       if( theMaxIndex < index) theMaxIndex = index;
     }

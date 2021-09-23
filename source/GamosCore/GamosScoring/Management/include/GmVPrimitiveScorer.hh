@@ -6,11 +6,11 @@
 // It construct the G4VPrimitiveSensor object passing the corresponding arguments
 
 #include "GmEnergySplitter.hh"
-#include "GamosCore/GamosReadDICOM/include/GmRegularParamUtils.hh"
 #include "G4VPrimitiveScorer.hh"
 #include "G4THitsMap.hh"
 #include <vector>
 #include <map>
+#include <set>
 class GmVFilter;
 class GmVPSPrinter;
 class GmVClassifier;
@@ -19,6 +19,7 @@ class GmVData;
 class GmVDistribution;
 class GmConvergenceTester;
 class GmGeometryUtils;
+enum ScoreNEventsType { SNET_ByRun, SNET_ByEvent, SNET_ByNFilled };
 
 class GmVPrimitiveScorer : public G4VPrimitiveScorer
 {
@@ -40,7 +41,7 @@ protected: // with description
 public:
   virtual void SetParameters( const std::vector<G4String>& ){
     G4cout << " GmVPrimitiveScorer::SetParameters: no parameters " << G4endl;
-};
+  }
    
   virtual void DumpAll(G4THitsMap<G4double>* RunMap);
   
@@ -48,10 +49,9 @@ public:
 
   G4bool FillScorer(G4Step* aStep, G4double val, G4double wei);
   G4bool FillScorer(G4Step* aStep, G4int index, G4double val, G4double wei);
-  void FillScorerAtPostCheckingRegular(G4Step* aStep, G4double val, G4double wei); 
   G4bool IsRegularScoring( G4Step*aStep );
 
-  void ScoreNewEvent();
+  virtual void SumEndOfEvent();
 
   void SetGmFilter(GmVFilter* f)
   { theFilter = f; }
@@ -82,9 +82,10 @@ public:
   void SetSumV2( std::map<G4int,G4double>& sumw2 ) {
     theSumV2 = sumw2; }
 
+  void Normalize(G4THitsMap<G4double>* RunMap);
   void CalculateErrors(G4THitsMap<G4double>* RunMap);
   G4double GetError( G4int index );
-  G4double GetErrorRelative( G4int index, G4double sumWX, G4double nEvents );
+  G4double GetErrorRelative( G4int index, G4double sumWX );
   
   void SetNewEvent( G4bool val ){
     bNewEvent = val; }
@@ -95,9 +96,34 @@ public:
   G4String GetUnitName() const { return theUnitName;}
 
   virtual void SetScoreByEvent( G4bool val ){
-    bScoreByEvent = val;}
-  G4bool ScoreByEvent() const { return bScoreByEvent; }
-
+    if( val ) {
+      theNEventsType = SNET_ByEvent;
+    } else {
+      theNEventsType = SNET_ByRun;
+    }
+  }
+  //  G4bool ScoreByEventType() const { return theNEventsType; }
+  void SetNEventsType( ScoreNEventsType net ) {
+    theNEventsType = net;
+  }
+  ScoreNEventsType GetNEventsType() const {
+    return theNEventsType;
+  }    
+    
+  virtual G4double GetNEvents( G4int index );
+  virtual std::map<G4int,size_t> GetNFilled() const;
+  G4int GetNFilled(size_t index) const {
+    std::map<G4int,size_t>::const_iterator ite = theNFilled.find(index);
+    if( ite != theNFilled.end() ) {
+      return G4int((*ite).second);
+    } else {
+      return -1;
+    }
+  }
+  std::set<size_t> GetNFilled_tmp() const {
+    return theNFilled_tmp;
+  }
+  
   G4bool AcceptByFilter( G4Step*aStep );
 
   void SetUnit( const G4String& unitName, G4double val );
@@ -106,6 +132,49 @@ public:
   std::vector<G4LogicalVolume*> GetMFDVolumes();
   void CalculateTotalVolume();
   G4double GetVolume( const G4Step* aStep );
+  
+  void SetErrors( std::map<G4int,G4double> err ) {
+    theError = err;
+  }
+  
+  G4THitsMap<G4double>* GetEvtMap() {
+    return EvtMap;
+  }
+  std::map<G4int,G4double> GetSumV_tmp(){
+    return theSumV_tmp;
+  }
+
+  G4MultiFunctionalDetector* GetMFD() const {
+    return theMFD;
+  }
+
+  virtual void PropagateMFDToSubScorers(){};
+  virtual void PropagateFilterToSubScorers(){};
+  virtual void PropagateClassifierToSubScorers(){};
+  virtual void PropagatePrinterToSubScorers(GmVPSPrinter* ){};
+  virtual void PropagateTrkWeightToSubScorers(){}; 
+  virtual void PropagateScoreErrorsToSubScorers(){};
+
+  void SetDefaultPrinter( G4bool bdf ) {
+    bDefaultPrinter = bdf;
+  }
+
+  void SetSubScorer( G4bool bss ) {
+    bSubScorer = bss;
+  }
+  G4bool IsSubScorer() const {
+    return bSubScorer;
+  }
+  void ClearSumV_tmp();
+  void ClearNFilled_tmp();
+
+  virtual void PrintAll();
+  void EndOfEvent(G4HCofThisEvent*);
+  void DrawAll();
+
+  void SetMultiplyingDistribution( GmVDistribution* dist ) {
+    theMultiplyingDistribution = dist;
+  }
 
 private:
   G4double GetError( G4int index, G4double sumWX, G4double nEvents );
@@ -128,8 +197,10 @@ protected:
   G4double theUnit;
   G4String theUnitName;
 
-  G4bool bScoreByEvent;
-
+  ScoreNEventsType theNEventsType;
+  std::map<G4int,size_t> theNFilled;
+  std::set<size_t> theNFilled_tmp;
+  
   G4double sumALL; 
 
   GmVData* theMultiplyingData;
@@ -142,13 +213,16 @@ protected:
   G4bool bSkipEqualMaterials;
   G4bool bUseClassifierIndex;
 
-  GmRegularParamUtils* theRegularParamUtils;
-
   G4MultiFunctionalDetector* theMFD;
-  GmGeometryUtils* theGeometryUtils;
+  GmGeometryUtils* theGeomUtils;
   G4bool bIntegrateVolumes;
   G4double theTotalVolume;
   G4bool bUseVolume;
+  G4bool bDefaultPrinter;
+  G4bool bSubScorer;
+
+  G4double theMinDensity;
+
 };
 
 #endif

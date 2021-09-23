@@ -30,7 +30,8 @@ G4double GmDataInitialElectronDensity::GetValueFromStep( const G4Step* aStep, G4
 //----------------------------------------------------------------
 G4double GmDataInitialElectronDensity::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
-  return aTrack->GetLogicalVolumeAtVertex()->GetMaterial()->GetElectronDensity()/CLHEP::g*CLHEP::cm3;
+  G4Material* mate = GetMateFromPV(  GetPVFromPos(aTrack->GetVertexPosition()) );
+  return mate->GetElectronDensity()/CLHEP::g*CLHEP::cm3;
 }
 
 //----------------------------------------------------------------
@@ -42,12 +43,15 @@ G4double GmDataInitialElectronDensity::GetValueFromSecoTrack( const G4Track* aTr
 //----------------------------------------------------------------
 G4double GmDataInitialElectronDensity::GetValueFromEvent( const G4Event* anEvent, G4int )
 {
-  G4TouchableHistory* touch = new G4TouchableHistory;
-  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( anEvent->GetPrimaryVertex(0)->GetPosition(), touch, false ); 
-
-  G4double density = touch->GetVolume()->GetLogicalVolume()->GetMaterial()->GetElectronDensity()/CLHEP::g*CLHEP::cm3;
- 
-  delete touch;
-
-  return density;
+  G4Material* mate = GetMateFromPV( GetPVFromPos(anEvent->GetPrimaryVertex(0)->GetPosition()) );
+  return mate->GetElectronDensity()/CLHEP::g*CLHEP::cm3;
 }
+
+
+ //----------------------------------------------------------------
+G4double GmDataInitialElectronDensity::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetPosition()) );
+  return mate->GetElectronDensity()/CLHEP::g*CLHEP::cm3;
+}
+

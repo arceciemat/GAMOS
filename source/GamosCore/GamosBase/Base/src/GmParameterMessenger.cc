@@ -11,6 +11,10 @@ GmParameterMessenger::GmParameterMessenger(GmParameterMgr* myua):
   AddParamCmd->SetGuidance("Set Parameter value(s)");
   AddParamCmd->SetParameterName("choice",true);
   AddParamCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  AddParamCmd2 = new GmUIcmdWithAString("/P",this);
+  AddParamCmd2->SetGuidance("Set Parameter value(s)");
+  AddParamCmd2->SetParameterName("choice",true);
+  AddParamCmd2->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   PrintParamCmd = new G4UIcmdWithAnInteger("/gamos/base/printParametersUsage",this);
   PrintParamCmd->SetGuidance("Print the usage of Parameters");
@@ -22,13 +26,15 @@ GmParameterMessenger::GmParameterMessenger(GmParameterMgr* myua):
 GmParameterMessenger::~GmParameterMessenger() 
 {
   if (AddParamCmd) delete AddParamCmd;
+  if (AddParamCmd2) delete AddParamCmd2;
   if (PrintParamCmd) delete PrintParamCmd;
 }
 
 void GmParameterMessenger::SetNewValue(G4UIcommand * command,
 						   G4String newValues)    
 { 
-  if (command == AddParamCmd) {
+  if (command == AddParamCmd || 
+      command == AddParamCmd2) {
     myAction->AddParam(newValues);
   }
   else if (command == PrintParamCmd) {

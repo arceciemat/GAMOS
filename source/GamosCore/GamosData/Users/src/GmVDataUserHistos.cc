@@ -19,12 +19,13 @@ GmVDataUserHistos::GmVDataUserHistos()
 //----------------------------------------------------------------
 void GmVDataUserHistos::BookHistos(G4int index, GmVClassifier* theClassifier)
 {
+  G4String sepa = GmParameterMgr::GetInstance()->GetStringValue("Histos:Separator",":");
   theHistos.insert(index);
   G4String histoName = theHistoName;
   G4String hname;
   if( theClassifier ) {
     hname += theClassifier->GetIndexName(index);
-    histoName += ":" + hname;
+    histoName += sepa + hname;
   }
   unsigned int MAXNDATA = 100;
   if( theData.size() > MAXNDATA ) {
@@ -58,6 +59,8 @@ void GmVDataUserHistos::BookHistos(G4int index, GmVClassifier* theClassifier)
 //----------------------------------------------------------------
 void GmVDataUserHistos::EndOfRun()
 {
+  theHistos.clear();
+  
   if( !bPrintHistoStats ) return;
 
   std::vector<GmVData*>::const_iterator ite;

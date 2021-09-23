@@ -2,8 +2,11 @@
 #include "GmGeneratorMessenger.hh"
 #include "GmIsotopeMgr.hh"
 #include "GmSingleParticleSource.hh"
-#include "GmIsotopeSource.hh"
 #include "GmDoubleBackToBackParticleSource.hh"
+#include "GmIsotopeSource.hh"
+#include "RTPlanSource.hh"
+#include "RTIonPlanScanSpotSource.hh"
+#include "GmFromTextFileSource.hh"
 #include "GmGenerVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosData/Distributions/include/GmVNumericDistribution.hh"
@@ -32,7 +35,7 @@ GmGenerator::GmGenerator()
 
   theLastEventTime = 0.;
 
- // GmMovementUtils::SetbUsingGmGenerator( true );
+  GmMovementUtils::SetbUsingGmGenerator( true );
 
   bBiasDistributions = false;
 }
@@ -56,11 +59,13 @@ void GmGenerator::AddSingleParticleSource( const G4String& newValues )
     G4Exception("GmGenerator::AddSingleParticleSource",
 		"Wrong argument",
 		FatalErrorInArgument,
-		G4String("There must be three parameters: SOURCE_NAME PARTICLE_NAME ENERGY " + newValues).c_str());
+		G4String("There must be three parameters: SOURCE_NAME PARTICLE_NAME ENERGY, while they are: " + newValues).c_str());
   }
+  CheckSourceIsNotRepeated( wl[0] );
+
   energy = GmGenUtils::GetValue( wl[2] ); 
-  
-  GmSingleParticleSource* parts = new GmSingleParticleSource( wl[0], wl[1], energy );
+
+  GmSingleParticleSource* parts = new GmSingleParticleSource( wl[0], wl[1], energy );  
   theSources.push_back( parts );
 }
 
@@ -78,8 +83,9 @@ void GmGenerator::AddDoubleBackToBackParticleSource( const G4String& newValues )
     G4Exception("GmGenerator::AddDoubleBackToBackParticleSource",
 		"Wrong argument",
 		FatalErrorInArgument,
-		G4String("There must be three parameters: SOURCE_NAME PARTICLE_NAME ENERGY " + newValues).c_str());
+		G4String("There must be three parameters: SOURCE_NAME PARTICLE_NAME ENERGY, while they are: " + newValues).c_str());
   }
+  CheckSourceIsNotRepeated( wl[0] );
   energy = GmGenUtils::GetValue( wl[2] ); 
   
   GmDoubleBackToBackParticleSource* parts = new GmDoubleBackToBackParticleSource( wl[0], wl[1], energy );
@@ -99,11 +105,69 @@ void GmGenerator::AddIsotopeSource( const G4String& newValues )
     G4Exception("GmGenerator::AddIsotopeSource",
 		"Wrong argument",
 		FatalErrorInArgument,
-		G4String("There must be three parameters: SOURCE_NAME PARTICLE_NAME ACTIVITY " + newValues).c_str());
+		G4String("There must be three parameters: SOURCE_NAME PARTICLE_NAME ACTIVITY, while they are: " + newValues).c_str());
   }
+  CheckSourceIsNotRepeated( wl[0] );
   activity = GmGenUtils::GetValue( wl[2] );
   
   theSources.push_back( theIsotopeMgr->AddActiveIsotopeSource( wl[0], wl[1], activity ) );
+}
+
+//----------------------------------------------------------------------
+void GmGenerator::AddRTPlanSource( const G4String& newValues )
+{
+  G4String sourceName;
+  G4String particleName;
+  
+  std::vector<G4String> wl = GmGenUtils::GetWordsInString(newValues);
+  if( wl.size() != 2 ) {
+    G4Exception("GmGenerator::AddRTPlanSource",
+		"Wrong argument",
+		FatalErrorInArgument,
+		G4String("There must be two parameters: SOURCE_NAME PARTICLE, while they are: " + newValues).c_str());
+  }
+  CheckSourceIsNotRepeated( wl[0] );
+    
+  RTPlanSource* parts = new RTPlanSource( wl[0], wl[1] );
+  theSources.push_back( parts );
+}
+
+//----------------------------------------------------------------------
+void GmGenerator::AddRTIonPlanScanSpotSource( const G4String& newValues )
+{
+  G4String sourceName;
+  G4String particleName;
+  
+  std::vector<G4String> wl = GmGenUtils::GetWordsInString(newValues);
+  if( wl.size() != 2 ) {
+    G4Exception("GmGenerator::AddRTIonPlanScanSpotSource",
+		"Wrong argument",
+		FatalErrorInArgument,
+		G4String("There must be two parameters: SOURCE_NAME PARTICLE, while they are: " + newValues).c_str());
+  }
+  CheckSourceIsNotRepeated( wl[0] );
+    
+  RTIonPlanScanSpotSource* parts = new RTIonPlanScanSpotSource( wl[0], wl[1] );
+  theSources.push_back( parts );
+}
+
+//----------------------------------------------------------------------
+void GmGenerator::AddFromTextFileSource( const G4String& newValues )
+{
+  G4String sourceName;
+  G4String fileName;
+  
+  std::vector<G4String> wl = GmGenUtils::GetWordsInString(newValues);
+  if( wl.size() != 2 ) {
+    G4Exception("GmGenerator::AddFromTextFileSource",
+		"Wrong argument",
+		FatalErrorInArgument,
+		G4String("There must be two parameters: SOURCE_NAME FILE_NAME, while they are: " + newValues).c_str());
+  }
+  CheckSourceIsNotRepeated( wl[0] );
+  
+  GmFromTextFileSource* parts = new GmFromTextFileSource( wl[0], wl[1] );
+  theSources.push_back( parts );
 }
 
 
@@ -213,7 +277,11 @@ void GmGenerator::GeneratePrimaries(G4Event* evt)
 #endif
 
   for( ite2 = currentSources.begin(); ite2 != currentSources.end(); ite2++ ){
-    evt->AddPrimaryVertex( (*ite2)->GenerateVertex( theLastEventTime ) );
+    std::vector<G4PrimaryVertex*> vtxs = (*ite2)->GenerateVertices( theLastEventTime );
+    for( size_t iv = 0; iv < vtxs.size(); iv++ ){
+      G4PrimaryVertex* vtx = vtxs[iv];
+      evt->AddPrimaryVertex( vtx );
+    }
   }
   
 }
@@ -307,4 +375,17 @@ void GmGenerator::BiasTime(GmParticleSource* source, G4double& time)
     
   }
 
+}
+
+//-----------------------------------------------------------------------
+void GmGenerator::CheckSourceIsNotRepeated( std::string sName )
+{
+  for( size_t ii = 0; ii < theSources.size(); ii++ ) {
+    if( theSources[ii]->GetName() == "sName" ) {
+      G4Exception("GmGenerator::CheckSourceIsNotRepeated",
+		  "",
+		  FatalException,
+		  ("Source name is repeated : "+sName).c_str());
+    }
+  }
 }

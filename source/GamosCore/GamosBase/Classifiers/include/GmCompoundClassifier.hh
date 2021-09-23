@@ -13,11 +13,11 @@ public: // with description
   GmCompoundClassifier(G4String);
   virtual ~GmCompoundClassifier();
   
-  virtual G4int GetIndexFromStep(const G4Step*);
-  virtual G4int GetIndexFromTrack(const G4Track*);
-  virtual G4int GetIndexFromSecoTrack(const G4Track* aTrack1, const G4Track* aTrack2);
+  virtual int64_t GetIndexFromStep(const G4Step*);
+  virtual int64_t GetIndexFromTrack(const G4Track*);
+  virtual int64_t GetIndexFromSecoTrack(const G4Track* aTrack1, const G4Track* aTrack2);
   
-  virtual G4String GetIndexName(G4int index);
+  virtual G4String GetIndexName(int64_t index);
 
   virtual void SetParameters( std::vector<G4String>& param );
 

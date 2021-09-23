@@ -1,5 +1,6 @@
 #include "GmMovementFromFile.hh"
 #include "GmMovementMgr.hh"
+#include "GmMovementVerbosity.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
@@ -43,11 +44,18 @@ GmMovementFromFile::GmMovementFromFile(std::vector<G4String> wl )
 //------------------------------------------------------------------------
 void GmMovementFromFile::AddMovement(std::vector<G4String> wl )
 {
+#ifndef GAMOS_NO_VERBOSE
+  if( MoveVerb(debugVerb) ) G4cout << " GmMovementFromFile::AddMovement " << G4endl;
+#endif
   MovementFF mff;
   mff.DispValue =  theValue = GmGenUtils::GetValue(wl[0]);
   mff.DispAxis = G4ThreeVector(GmGenUtils::GetValue(wl[1]),GmGenUtils::GetValue(wl[2]),GmGenUtils::GetValue(wl[3]));
   mff.RotValue =  theValue = GmGenUtils::GetValue(wl[4]);
   mff.RotAxis = G4ThreeVector(GmGenUtils::GetValue(wl[5]),GmGenUtils::GetValue(wl[6]),GmGenUtils::GetValue(wl[7]));
+
+#ifndef GAMOS_NO_VERBOSE
+  if( MoveVerb(debugVerb) ) G4cout << " GmMovementFromFile::AddMovement " << mff.DispValue << " " << mff.DispAxis << " " << mff.RotValue << " " << mff.RotAxis << G4endl;
+#endif
 
   theMovements.push_back(mff);
 } 
@@ -78,7 +86,7 @@ G4bool GmMovementFromFile::Move()
       }
     }
 
-    geomMgr->CloseGeometry(true,*itev);
+    geomMgr->CloseGeometry(true,false,*itev);
   }
   
   // Notify the VisManager as well

@@ -1,72 +1,65 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosAnalysis
+# Module : GamosAnalysis
+# Package: GamosCore_GamosAnalysis
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosAnalysis
+	 HEADERS
+		GmTrajPointSeco.hh
+		GmVEventClassifier.hh
+		GmTrajStepProcess.hh
+		GmTrajStepPosMom.hh
+		GmTrajPointProcess.hh
+		GmAnalysisVerbosity.hh
+		GmVHistoBuilder.hh
+		GmTrajectorySteps.hh
+		GmTrajPointPosMom.hh
+		GmVTrajStep.hh
+		GmCheckOriginalGamma.hh
+		GmTrajPoint.hh
+		GmTrajStep.hh
+		GmEventClassifierByGammaInteraction.hh
+		GmTrajStepEner.hh
+		GmVHistoMgr.hh
+		GmTrajectoryPosMom.hh
+		GmVTrajPoint.hh
+		GmTrajectory.hh
+		GmVTrajectory.hh
+	 SOURCES
+		GmVTrajectory.cc
+		plugin.cc
+		GmTrajPointPosMom.cc
+		GmCheckOriginalGamma.cc
+		GmTrajPointSeco.cc
+		GmTrajStepProcess.cc
+		GmTrajPoint.cc
+		GmAnalysisVerbosity.cc
+		GmEventClassifierByGammaInteraction.cc
+		GmTrajectory.cc
+		GmTrajectoryPosMom.cc
+		GmTrajStepEner.cc
+		GmTrajectorySteps.cc
+		GmVHistoBuilder.cc
+		GmTrajPointProcess.cc
+		GmTrajStep.cc
+		GmTrajStepPosMom.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+		${SEAL_LIBRARIES} 
+	GamosCore_GamosUtils
+	GamosCore_GamosBase_Base
+	GamosCore_GamosUserActionMgr
 
-   HEADERS
-       GmTrajectory.hh
-       GmTrajPointPosMom.hh
-       GmTrajPointProcess.hh
-       GmEventClassifierByGammaInteraction.hh
-       GmVTrajectory.hh
-       GmTrajStepProcess.hh
-       GmAnalysisVerbosity.hh
-       GmVTrajPoint.hh
-       GmTrajStep.hh
-       GmVHistoBuilder.hh
-       GmTrajPointSeco.hh
-       GmTrajStepEner.hh
-       GmTrajectoryPosMom.hh
-       GmTrajPoint.hh
-       GmTrajectorySteps.hh
-       GmCheckOriginalGamma.hh
-       GmVTrajStep.hh
-       GmTrajStepPosMom.hh
-       GmVHistoMgr.hh
-       GmVEventClassifier.hh
-
-   SOURCES
-       plugin.cc
-       GmTrajectorySteps.cc
-       GmTrajectory.cc
-       GmTrajPointProcess.cc
-       GmTrajStepEner.cc
-       GmVTrajectory.cc
-       GmTrajStepProcess.cc
-       GmTrajStepPosMom.cc
-       GmAnalysisVerbosity.cc
-       GmTrajPointSeco.cc
-       GmCheckOriginalGamma.cc
-       GmTrajectoryPosMom.cc
-       GmTrajStep.cc
-       GmVHistoBuilder.cc
-       GmTrajPointPosMom.cc
-       GmEventClassifierByGammaInteraction.cc
-       GmTrajPoint.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosBase_Base
-  GamosCore_GamosUtils
-  GamosCore_GamosUserActionMgr
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

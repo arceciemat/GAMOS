@@ -1,9 +1,9 @@
 #ifndef GmDistributionRatio_h
 #define GmDistributionRatio_h 1
 
-#include "GmVStringDistribution.hh"
+#include "GamosCore/GamosData/Distributions/include/GmVNumericDistribution.hh"
 
-class GmDistributionRatio : public GmVDistribution
+class GmDistributionRatio : public GmVNumericDistribution
 {
   
 public: // with description

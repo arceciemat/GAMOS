@@ -20,6 +20,8 @@ protected:
   std::map<G4String,G4int> theIsotNameZ; // map of isotope name - atomic number
 
   G4bool bInitialised;
+
+  G4int theNEventsToSkip;
 };
 
 #endif

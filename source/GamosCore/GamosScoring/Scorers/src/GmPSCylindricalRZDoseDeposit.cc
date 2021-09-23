@@ -1,7 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#define protected public
 #include "G4VPrimitiveScorer.hh"
 #include "GmPSCylindricalRZDoseDeposit.hh"
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
@@ -83,30 +82,6 @@ G4bool GmPSCylindricalRZDoseDeposit::ProcessHits(G4Step* aStep,G4TouchableHistor
 } 
 
 //--------------------------------------------------------------------
-void GmPSCylindricalRZDoseDeposit::EndOfEvent(G4HCofThisEvent*)
-{
-}
-
-//--------------------------------------------------------------------
-void GmPSCylindricalRZDoseDeposit::DrawAll()
-{;}
-
-//--------------------------------------------------------------------
-void GmPSCylindricalRZDoseDeposit::PrintAll()
-{
-  G4cout <<" GmPSCylindricalRZDoseDeposit::PrintAllDefault() " << G4endl;
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  dose deposit: " << G4BestUnit(*(itr->second),"Dose")
-	   << G4endl;
-  }
-}
-
-//--------------------------------------------------------------------
 void GmPSCylindricalRZDoseDeposit::SetParameters( const std::vector<G4String>& params)
 {
   if( params.size() != 6
@@ -133,7 +108,6 @@ void GmPSCylindricalRZDoseDeposit::SetParameters( const std::vector<G4String>& p
   if( params.size() >= 9 ) {
     theCentre = G4ThreeVector(GmGenUtils::GetValue(params[6]),GmGenUtils::GetValue(params[7]),GmGenUtils::GetValue(params[8]));
   }
-  G4ThreeVector zAxis(0.,0.,1.);
   if( params.size() == 12 ) {
     G4ThreeVector zAxis(GmGenUtils::GetValue(params[9]),GmGenUtils::GetValue(params[10]),GmGenUtils::GetValue(params[11]));
     //normalize to 1
@@ -151,9 +125,13 @@ void GmPSCylindricalRZDoseDeposit::SetParameters( const std::vector<G4String>& p
   if( !bTotalVolume ) {
     G4int index;
     for( int iR = 0; iR < theNBinsR; iR++ ){
-      for( int iz = 0; iz < theNBinsZ; iz++ ){
-	index = theNBinsR*iz+iR;
+      for( int iZ = 0; iZ < theNBinsZ; iZ++ ){
+	index = theNBinsR*iZ+iR;
 	theVolumes[index] = M_PI*(pow(theMinR+(iR+1)*theStepR,2)-pow(theMinR+iR*theStepR,2))*theStepZ;
+#ifndef GAMOS_NO_VERBOSE
+    if( ScoringVerb(debugVerb) ) 
+      G4cout << "  GmPSCylindricalRZDoseDeposit::SetParameters : " << index << " iR= " << iR << " iZ=" << iZ << " VOLUME=" << theVolumes[index] << " theStepR= " <<  theStepR << " theStepZ=" << theStepZ << G4endl;
+#endif
       }
     } 
   } else {
@@ -161,8 +139,3 @@ void GmPSCylindricalRZDoseDeposit::SetParameters( const std::vector<G4String>& p
   }
 
 }
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmPSCylindricalRZDoseDeposit::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

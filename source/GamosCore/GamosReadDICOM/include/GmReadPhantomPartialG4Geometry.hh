@@ -2,7 +2,7 @@
 #define GmReadPhantomPartialG4Geometry_h 1
 
 #include "globals.hh"
-#include "GmReadPhantomGeometry.hh"
+#include "GamosCore/GamosGeometry/include/GmReadPhantomGeometry.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include <map>
 #include <set>
@@ -18,7 +18,7 @@ public:
   GmReadPhantomPartialG4Geometry();
   ~GmReadPhantomPartialG4Geometry();
 
-  virtual void ReadPV( std::ifstream& ){};
+  virtual void ReadPV( GmFileIn& ){};
 
 private:
   virtual void ReadPhantomData();

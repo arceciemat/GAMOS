@@ -31,7 +31,6 @@ private:
   G4double theMaxY;
   G4double theOffsetY;
   G4int theNShift;
-  G4double theUnit;
   G4bool bHistoEachRow;
 };
 

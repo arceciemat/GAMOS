@@ -43,3 +43,9 @@ G4double GmDataInitialTotalEnergy::GetValueFromEvent( const G4Event* aEvent, G4i
 
   return sqrt( sqr(mom) + sqr(mass) );
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialTotalEnergy::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  return aTrack->GetKineticEnergy()+aTrack->GetDefinition()->GetPDGMass();
+}

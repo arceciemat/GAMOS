@@ -32,7 +32,7 @@ class GmFilterFromClassifier : public GmVFilter
 
   private:
   GmVClassifier* theClassifier;
-  G4int theIndex;
+  int64_t theIndex;
 
 };
 

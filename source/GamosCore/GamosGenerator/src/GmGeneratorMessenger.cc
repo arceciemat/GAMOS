@@ -16,7 +16,7 @@
 GmGeneratorMessenger::GmGeneratorMessenger(GmGenerator* myua) 
    : myAction(myua) 
 {
-  AddSingleParticleCmd = new GmUIcmdWithAString("/gamos/generator/addSingleParticleSource",this);
+  AddSingleParticleCmd = new GmUIcmdWithAString("/gamos/generator/addSingleParticleSource",this); 
   AddSingleParticleCmd->SetGuidance("Add single particle source to list of active particle sources");
   AddSingleParticleCmd->SetParameterName("NAME PARTICLE_NAME ENERGY",false);
   AddSingleParticleCmd->AvailableForStates(G4State_Idle,G4State_PreInit);
@@ -30,6 +30,21 @@ GmGeneratorMessenger::GmGeneratorMessenger(GmGenerator* myua)
   AddDoubleBackToBackParticleCmd->SetGuidance("Add particle source of two particles with opposite directions to list of active particle sources");
   AddDoubleBackToBackParticleCmd->SetParameterName("NAME PARTICLE_NAME ENERGY",false);
   AddDoubleBackToBackParticleCmd->AvailableForStates(G4State_Idle,G4State_PreInit);
+
+  AddRTPlanCmd = new GmUIcmdWithAString("/gamos/generator/addRTPlanSource",this);
+  AddRTPlanCmd->SetGuidance("Add RTIonPlan ScanSpot source to list of active particle sources");
+  AddRTPlanCmd->SetParameterName("NAME",false);
+  AddRTPlanCmd->AvailableForStates(G4State_Idle,G4State_PreInit);
+
+  AddRTIonPlanScanSpotCmd = new GmUIcmdWithAString("/gamos/generator/addRTIonPlanScanSpotSource",this);
+  AddRTIonPlanScanSpotCmd->SetGuidance("Add RTIonPlan ScanSpot source to list of active particle sources");
+  AddRTIonPlanScanSpotCmd->SetParameterName("NAME",false);
+  AddRTIonPlanScanSpotCmd->AvailableForStates(G4State_Idle,G4State_PreInit);
+
+  AddFromTextFileCmd = new GmUIcmdWithAString("/gamos/generator/addFromTextFileSource",this); 
+  AddFromTextFileCmd->SetGuidance("Add source that reads particle from a text file");
+  AddFromTextFileCmd->SetParameterName("NAME PARTICLE_NAME ENERGY",false);
+  AddFromTextFileCmd->AvailableForStates(G4State_Idle,G4State_PreInit);
 
   DistTimeCmd = new GmUIcmdWithAString("/gamos/generator/timeDist",this);
   DistTimeCmd->SetGuidance("Sets the time distribution type for one source");
@@ -60,6 +75,7 @@ GmGeneratorMessenger::GmGeneratorMessenger(GmGenerator* myua)
   DistributionCmd->SetGuidance("Add a new distribution to bias a variable");
   DistributionCmd->SetParameterName("GENERATOR_DIST_TYPE BIAS_DIST_NAME",false);
   DistributionCmd->AvailableForStates(G4State_Idle);
+
 }
 
 //------------------------------------------------------------------------
@@ -68,6 +84,9 @@ GmGeneratorMessenger::~GmGeneratorMessenger()
   if (AddSingleParticleCmd) delete AddSingleParticleCmd;
   if (AddIsotopeCmd) delete AddIsotopeCmd;
   if (AddDoubleBackToBackParticleCmd) delete AddDoubleBackToBackParticleCmd;
+  if (AddRTIonPlanScanSpotCmd) delete AddRTIonPlanScanSpotCmd;
+  if (AddRTPlanCmd) delete AddRTPlanCmd;
+  if (AddFromTextFileCmd) delete AddFromTextFileCmd;
   if (DistTimeCmd) delete DistTimeCmd;
   if (DistEnergyCmd) delete DistEnergyCmd;
   if (DistPositionCmd) delete DistPositionCmd;
@@ -88,11 +107,26 @@ void GmGeneratorMessenger::SetNewValue(G4UIcommand * command,
   if (command == AddSingleParticleCmd) {
     //    GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: name particle_name energy energy_unit"); 
     myAction->AddSingleParticleSource(newValues);
-  }else if (command == AddIsotopeCmd) {
+
+  } else if (command == AddIsotopeCmd) {
     //    GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: source_name isotope_name activity activity_unit"); 
     myAction->AddIsotopeSource(newValues);
-  }else if (command == AddDoubleBackToBackParticleCmd) {
+
+  } else if (command == AddDoubleBackToBackParticleCmd) {
     myAction->AddDoubleBackToBackParticleSource(newValues);
+
+  } else if (command == AddRTPlanCmd) {
+    //    GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: name particle_name energy energy_unit"); 
+    myAction->AddRTPlanSource(newValues);
+
+  } else if (command == AddRTIonPlanScanSpotCmd) {
+    //    GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: name particle_name energy energy_unit"); 
+    myAction->AddRTIonPlanScanSpotSource(newValues);
+
+  } else if (command == AddFromTextFileCmd) {
+    //    GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: name particle_name energy energy_unit"); 
+    myAction->AddFromTextFileSource(newValues);
+
   } else if (command == DistTimeCmd || command == DistEnergyCmd || command == DistPositionCmd || command == DistDirectionCmd ) {
     std::vector<G4String> wordlist = GmGenUtils::GetWordsInString( newValues );
     if( wordlist.size() < 2 ) {

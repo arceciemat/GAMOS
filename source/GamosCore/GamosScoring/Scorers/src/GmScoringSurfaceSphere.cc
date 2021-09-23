@@ -188,12 +188,11 @@ G4bool GmScoringSurfaceSphere::CheckSurfaceAngle(G4double localAng, G4double ang
 
 
 //-----------------------------------------------------------------------
-G4double GmScoringSurfaceSphere::GetAngleFactor( G4StepPoint* stepPoint )
+G4double GmScoringSurfaceSphere::GetAngleFactor( G4StepPoint* stepPoint, G4StepPoint* volumeStepPoint )
 {
-  G4TouchableHandle touchable = stepPoint->GetTouchableHandle();
+  G4TouchableHandle touchable = volumeStepPoint->GetTouchableHandle();
   G4ThreeVector dir = stepPoint->GetMomentumDirection();
-  G4ThreeVector localDir  = 
-    touchable->GetHistory()->GetTopTransform().TransformAxis(dir).unit();
+  G4ThreeVector localDir = touchable->GetHistory()->GetTopTransform().TransformAxis(dir).unit();
   G4ThreeVector pos= stepPoint->GetPosition();
   G4double angleFactor = localDir*theNormal;
 #ifndef GAMOS_NO_VERBOSE

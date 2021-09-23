@@ -1,9 +1,5 @@
-#define protected public
 #include "G4VPrimitiveScorer.hh"
-//#define protected protected
-#define private public
 #include "G4EnergyLossForExtrapolator.hh"
-//#define private private
 #include "GmVPrimitiveScorerVector.hh"
 #include "GmVPSPrinter.hh"
 #include "GmScoringVerbosity.hh"
@@ -21,7 +17,11 @@
 #include "G4LogicalVolume.hh"
 #include "G4VSolid.hh"
 
+#ifdef ROOT5
 #include "Reflex/PluginService.h"
+#else
+#include "GmPSPrinterFactory.hh"
+#endif
 
 //--------------------------------------------------------------------
 GmVPrimitiveScorerVector::GmVPrimitiveScorerVector(G4String name) 
@@ -87,8 +87,12 @@ void GmVPrimitiveScorerVector::SetClassifier(GmVClassifier* idx )
 //--------------------------------------------------------------------
 void GmVPrimitiveScorerVector::AddDefaultPrinter()
 {
-  G4String param = "GmPSPrinterG4cout";
+  G4String param = "GmPSPrinterCout";
+#ifdef ROOT5
   GmVPSPrinter* psp = Reflex::PluginService::Create<GmVPSPrinter*>(param,param);
+#else
+  GmVPSPrinter* psp = GmPSPrinterFactory::get()->create(param,param);
+#endif
   thePrinters.push_back( psp );
 }
 
@@ -287,9 +291,9 @@ G4bool GmVPrimitiveScorerVector::AcceptByFilter( G4Step*aStep )
 }
 
 //--------------------------------------------------------------------
-void GmVPrimitiveScorerVector::SetUnit( const G4String& unitName, G4double val )
+void GmVPrimitiveScorerVector::SetUnit( const G4String& unitName2, G4double val )
 {
-  theUnitName = unitName;
+  theUnitName = unitName2;
   theUnit = val;
 
 }

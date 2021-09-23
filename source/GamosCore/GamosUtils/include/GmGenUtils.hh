@@ -5,14 +5,22 @@
 #include <set>
 #include <vector>
 #include <map>
+#include <iostream>
 
 class GmGenUtils 
 {
 public:
   static G4bool bCheckTimeUnits;
-  static void SetCheckTimeUnits( G4bool bctu ) {
-    bCheckTimeUnits = bctu;
-  }
+
+#ifdef WIN32  //WINDEB                                                                                           
+#if defined GmUtils_ALLOC_EXPORT
+	G4DLLEXPORT  void SetCheckTimeUnits( G4bool bctu );
+#else
+	G4DLLIMPORT  void SetCheckTimeUnits( G4bool bctu );
+#endif
+#else
+	static void SetCheckTimeUnits( G4bool bctu );
+#endif
   
   static G4bool IsNumber( const G4String& str);
   static G4bool IsNumberWithUnit( const G4String& str);
@@ -30,10 +38,10 @@ public:
   //G4double GetFloat( const G4String& str );  //from G4tgrUtils
   //G4double GetDouble( const G4String& str ); //from G4tgrUtils
   static std::vector<G4String> GetWordsInString( const G4String& stemp);
-  static G4String itoa(int current);
+  static G4String itoa(int current, int nChars = -1);
   static G4String ftoa(float flo);
-  static G4String FileInPath( const G4String& filename );
-  static G4String FileInPath( const G4String& filepath, const G4String& filename );
+  static G4String FileInPath( G4String filename );
+  static G4String FileInPath( G4String& filepath, const G4String filename );
   static G4bool CheckNWords( const G4String& line, G4int nWords, const G4String& msg, G4bool error = 1 );
   
   //---- Looks if word1 and word2 are equivalent, considering that word1 may have '*', meaning 'any character'
@@ -62,6 +70,25 @@ public:
 
   static std::vector<G4String> StringSplit( const G4String& theString, const  G4String& theDelimiter);
 
+  static G4bool IsSeparator( const G4String word );
+  static std::string::size_type GetNextSeparator( G4int iSeparator, G4String dataName );
+
+  static void WriteStringToBinaryFile(std::ofstream& fout, G4String dat, size_t nChars );
+
+  static void DateAndTimeNow( G4String& date, G4String& time );
+
+#ifndef WIN32
+  static G4int GetAboveInt( G4double val, G4double precision = thePrecision );
+  static G4int GetBelowInt( G4double val, G4double precision = thePrecision );
+  static G4double thePrecision;
+#else 
+  static G4int GetAboveInt(G4double val, G4double precision = 1.e-6);
+  static G4int GetBelowInt(G4double val, G4double precision = 1.e-6);
+#endif
+  static G4String GetEnv(const G4String& var, bool bExists = true);
+  
+  static std::string rtrim(const std::string &s);
+  
 };
 
 #endif

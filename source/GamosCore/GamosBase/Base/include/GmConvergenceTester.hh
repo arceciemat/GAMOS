@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 //
-// $Id: GmConvergenceTester.hh,v 1.1 2011/01/24 09:24:39 arce Exp $
+// $Id: GmConvergenceTester.hh,v 1.5 2018/06/28 15:26:54 arce Exp $
 // GEANT4 tag $Name:  $
 //
 // Class description:

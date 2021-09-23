@@ -25,6 +25,7 @@ class GmScoringUA : public GmUserRunAction,  public GmUserEventAction
   virtual G4Run* GenerateRun();
   virtual void EndOfRunAction(const G4Run* );
   virtual void BeginOfEventAction( const G4Event* );
+  virtual void EndOfEventAction( const G4Event* );
 
 };
 

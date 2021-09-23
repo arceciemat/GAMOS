@@ -54,29 +54,7 @@ G4bool GmG4PSNofSecondary::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   //    return FALSE;
   //
   //- This is a newly produced secondary particle.
-  FillScorerAtPostCheckingRegular( aStep, 1., aStep->GetPreStepPoint()->GetWeight());
+  FillScorer( aStep, 1., aStep->GetPreStepPoint()->GetWeight());
   return TRUE;
 }
 
-void GmG4PSNofSecondary::EndOfEvent(G4HCofThisEvent*)
-{;}
-
-void GmG4PSNofSecondary::DrawAll()
-{;}
-
-void GmG4PSNofSecondary::PrintAll()
-{
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  num of step: " << *(itr->second)
-	   << G4endl;
-  }
-}
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSNofSecondary::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

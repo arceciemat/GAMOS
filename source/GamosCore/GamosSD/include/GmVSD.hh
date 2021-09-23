@@ -13,6 +13,8 @@ enum SDSegmType { SDSegm, SDvirtSegm, SDnoSegm };
 class GmVSD: public G4VSensitiveDetector{
 public:
   GmVSD(G4String name);
+  GmVSD();
+  void SetName(G4String name);
   ~GmVSD();
 
   virtual void Initialize(G4HCofThisEvent*HCE);
@@ -40,8 +42,13 @@ protected:
   virtual void UpdateHit( GmHit* hit, G4Step* aStep );
 
 private:
+#ifndef WIN32
   virtual unsigned long long GetDetUnitID( G4Step* aStep ) = 0;
   virtual void CalculateAndSetPosition( GmHit* hit, G4Step* aStep ) = 0;
+#else
+  virtual unsigned long long GetDetUnitID(G4Step* aStep) { return 0; };
+  virtual void CalculateAndSetPosition(GmHit* hit, G4Step* aStep) {};
+#endif
   G4String CleanPathName( G4String name );
 
 protected:

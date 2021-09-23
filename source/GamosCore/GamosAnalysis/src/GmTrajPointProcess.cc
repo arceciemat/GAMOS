@@ -1,8 +1,3 @@
-/*#define private public
-#include "G4EventManager.hh"
-#define private private
-*/
-
 #include "GmTrajPointProcess.hh"
 #include "G4Step.hh"
 #include "G4VProcess.hh"

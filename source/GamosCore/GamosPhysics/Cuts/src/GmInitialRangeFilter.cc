@@ -24,8 +24,6 @@ G4bool GmInitialRangeFilter::AcceptTrack(const G4Track* aTrack)
   G4EmCalculator* calculator = new G4EmCalculator();
   if( aTrack->GetTrackStatus() == fStopAndKill ) return bAccept;
 
-  G4double range = theCutsEnergy2Range->ConvertSlow( aTrack->GetVertexKineticEnergy(), aTrack->GetDefinition(),aTrack->GetVolume()->GetLogicalVolume()->GetMaterialCutsCouple());
-  
   //is wrong  G4double range = G4EnergyLossTables::GetRange(aTrack->GetDefinition(),aTrack->GetVertexKineticEnergy(),aTrack->GetVolume()->GetLogicalVolume()->GetMaterialCutsCouple());
   for( G4double zz = -5.; zz < 5; zz+=0.01) {
     G4double ener = pow(10.,zz);
@@ -43,8 +41,11 @@ G4bool GmInitialRangeFilter::AcceptTrack(const G4Track* aTrack)
 	   << " r_GAMOS= " << range << G4endl;
   }
 
+  G4double range = theCutsEnergy2Range->ConvertSlow( aTrack->GetVertexKineticEnergy(), aTrack->GetDefinition(),aTrack->GetVolume()->GetLogicalVolume()->GetMaterialCutsCouple());
 #ifndef GAMOS_NO_VERBOSE
- if( BaseVerb(debugVerb) ) G4cout << "  GmInitialRangeFilter::AcceptTrack range= " << range << " energy= " <<aTrack->GetVertexKineticEnergy() << " volume= " << aTrack->GetVolume()->GetLogicalVolume()->GetName() << " lowLimit= " << fLowLimit << " highLimit= " << fHighLimit << G4endl;
+  if( BaseVerb(debugVerb) ) {
+      G4cout << "  GmInitialRangeFilter::AcceptTrack range= " << range << " energy= " <<aTrack->GetVertexKineticEnergy() << " volume= " << aTrack->GetVolume()->GetLogicalVolume()->GetName() << " lowLimit= " << fLowLimit << " highLimit= " << fHighLimit << G4endl;
+  }
 #endif
   bAccept = TRUE;
   if ( range < fLowLimit  ) bAccept = FALSE;

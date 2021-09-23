@@ -115,7 +115,7 @@ void GmVProdCutOutsideVoxelFilter::SetParameters( std::vector<G4String>& params)
   for( ite = matTable->begin(); ite != matTable->end(); ite++ ){    
     theGammaCuts[*ite] = R2EGamma->Convert(gammaCut,*ite);
     theElectronCuts[*ite] = R2EElectron->Convert( electronCut,*ite );
-    thePositronCuts[*ite] = R2EPositron->Convert( electronCut,*ite );
+    thePositronCuts[*ite] = R2EPositron->Convert( positronCut,*ite );
     G4cout << "GmVProdCutsOutsideVolume mate " << (*ite)->GetName() << " CUT gamma: " << theGammaCuts[*ite] << " e-: " << theElectronCuts[*ite] << " e+: " << thePositronCuts[*ite] << G4endl;
     G4cout << " gamma cut " << gammaCut << " e- cut " << electronCut << G4endl;
   }
@@ -138,4 +138,15 @@ G4bool GmVProdCutOutsideVoxelFilter::CheckStepNumber( G4int nstep )
 G4double GmVProdCutOutsideVoxelFilter::GetTrackEnergy( const G4Track* aTrack )
 {
   return aTrack->GetVertexKineticEnergy();
+}
+
+//-------------------------------------------------------------------------
+G4bool GmVProdCutOutsideVoxelFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmVProdCutOutsideVoxelFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
 }

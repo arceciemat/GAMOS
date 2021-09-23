@@ -7,6 +7,7 @@
 class G4UIdirectory;
 class GmUIcmdWithAString;
 class G4UIcmdWithAnInteger;
+class G4UIcmdWithADouble;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -24,6 +25,7 @@ private:
   void SetEMField(const G4String& newValues);
   void SetMagFieldLocal(const G4String& newValues);
   void SetRefractionIndex(const G4String& newValues);
+public:
   void PrintTouchables(const G4String& newValues); 
   void PrintVolumeTree(const G4String& newValues);
   void PrintMaterials(const G4String& newValues);
@@ -41,6 +43,18 @@ private:
   GmUIcmdWithAString* thePrintTouchablesCmd;
   G4UIcmdWithAnInteger* thePrintVolumeTreeCmd;
   G4UIcmdWithAnInteger* thePrintMaterialsCmd;
+  G4UIcmdWithADouble* theSetWorldMaxCmd;
+
+  GmUIcmdWithAString* theCmdMatePropertiesTable;
+  GmUIcmdWithAString* theCmdMatePTAddEnergies;
+  GmUIcmdWithAString* theCmdMatePTAddProperty;
+  GmUIcmdWithAString* theCmdMatePTAddConstProperty;
+  GmUIcmdWithAString* theCmdAttachPT2Material;
+  GmUIcmdWithAString* theCmdAttachPT2OpticalSurface;
+  GmUIcmdWithAString* theCmdCreateOpticalSurface;
+  GmUIcmdWithAString* theCmdCreateLogicalBorderSurface;
+  GmUIcmdWithAString* theCmdCreateLogicalSkinSurface;
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

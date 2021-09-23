@@ -3,6 +3,7 @@
 #include <map>
 #include "GmGeomTextDetectorBuilder.hh"
 #include "GmGeometryUtils.hh"
+#include "GmGeometryFactory.hh"
 
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -14,13 +15,18 @@
 #include "G4tgrMessenger.hh"
 #include "G4VUserParallelWorld.hh"
 
+#ifdef ROOT5
 #include "TROOT.h"
 #include "TPluginManager.h"
+#endif
+
 GmGeometryFromText::GmGeometryFromText()
 {
   new G4tgrMessenger;
-  gROOT->GetPluginManager()->AddHandler("G4VUserDetectorConstruction", "^geomtext:", "GmGeometryFromText",
+#ifdef ROOT5
+  gROOT->GetPluginManager()->AddHandler("G4VUserDetectorConstruction", "^geomtext:", "GmGeometryFromText",	
 			 "GamosCore_GamosGeometry", "GmGeometryFromText()");
+#endif
 }
 
 
@@ -39,8 +45,7 @@ G4VPhysicalVolume* GmGeometryFromText::Construct()
 		"filename is not defined, please use '/gamos/setParam GmGeometryFromText:FileName MU_FILE_NAME'");
   }
 
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  filename = GmGenUtils::FileInPath( path, filename );
+  filename = GmGenUtils::FileInPath( filename );
 
   //------------------------------------------------ 
   // Read the text files 

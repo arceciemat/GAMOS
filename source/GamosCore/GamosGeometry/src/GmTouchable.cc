@@ -1,6 +1,8 @@
 #include "GmTouchable.hh"
 #include "GmGeomVerbosity.hh"
 
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+
 #include <vector>
 #include "CLHEP/Vector/ThreeVector.h"
 #include "CLHEP/Geometry/Point3D.h"
@@ -43,9 +45,6 @@ void GmTouchable::BuildTouchable( std::vector<G4VPhysicalVolume*> vpv, std::vect
 
   //----- name
   theName = pv->GetName();
-#ifndef GAMOS_NO_VERBOSE
- if( GeomVerb(debugVerb) ) G4cout << " building Touchable " << theName << G4endl;
-#endif
   //----- long name: for efficiency reasons, build it when looping the PV's
 
   //----- copyNo: if Placement GetCopyNo
@@ -58,8 +57,11 @@ void GmTouchable::BuildTouchable( std::vector<G4VPhysicalVolume*> vpv, std::vect
 
   // theVisCateg
   //----- materialName
-  theMaterialName = pv->GetLogicalVolume()->GetMaterial()->GetName();
-
+  if( !pv->IsParameterised() ) {
+    theMaterialName = pv->GetLogicalVolume()->GetMaterial()->GetName();
+  } else {
+    theMaterialName = ((G4PVParameterised*)pv)->GetParameterisation()->ComputeMaterial(theCopyNo,pv)->GetName();
+  }
   //----- solid 
   theSolid = pv->GetLogicalVolume()->GetSolid();
 
@@ -93,23 +95,24 @@ void GmTouchable::BuildTouchable( std::vector<G4VPhysicalVolume*> vpv, std::vect
   theLongName = "";
   G4String ancestorName;
   for( ii = 0; ii < nAnces; ii++ ) {
-    G4VPhysicalVolume* pv = vpv[ii];
+    G4VPhysicalVolume* pv2 = vpv[ii];
     //    G4cout << ii << " trans pv " << pv << G4endl;
-    ancestorName = "/" + pv->GetName();
-    char chartmp[10];
+    ancestorName = "/" + pv2->GetName();
     G4int copyNoAncestor;
-    if( !pv->IsReplicated() ) {
-      copyNoAncestor = pv->GetCopyNo();
+    if( !pv2->IsReplicated() ) {
+      copyNoAncestor = pv2->GetCopyNo();
     } else {
       copyNoAncestor = ancestorsCopyNo[ii];
     }
     copyNoAncestor = ancestorsCopyNo[ii];
-    //    G4cout << "  ancestorsCopyNo[ii] " <<  ancestorsCopyNo[ii] << " pv->GetCopyNo() " << pv->GetCopyNo() << G4endl;
-    gcvt( copyNoAncestor, 10, chartmp );
-    ancestorName += G4String(":") + G4String(chartmp);
-    theLongName =  ancestorName + theLongName;
+    //    G4cout << "  ancestorsCopyNo[ii] " <<  ancestorsCopyNo[ii] << " pv2->GetCopyNo() " << pv2->GetCopyNo() << G4endl;
+    //    char chartmp[10];
+    //gcvt( copyNoAncestor, 10, chartmp );
+   // ancestorName += G4String(":") + G4String(chartmp);
+		ancestorName += G4String(":") + GmGenUtils::itoa(copyNoAncestor);
+		theLongName =  ancestorName + theLongName;
 
-    G4Transform3D trans = CalculateTransformation( pv, ancestorsCopyNo[ii] );
+    G4Transform3D trans = CalculateTransformation( pv2, ancestorsCopyNo[ii] );
     globalTrans = trans * globalTrans;
     //    G4cout << " trans " << trans.getTranslation() << G4endl;
 #ifndef GAMOS_NO_VERBOSE
@@ -164,7 +167,11 @@ GmTouchable::GmTouchable( const G4VTouchable* g4touch )
 
   // theVisCateg
   //----- materialName
-  theMaterialName = pv->GetLogicalVolume()->GetMaterial()->GetName();
+  if( !pv->IsParameterised() ) {
+    theMaterialName = pv->GetLogicalVolume()->GetMaterial()->GetName();
+  } else {
+    theMaterialName = ((G4PVParameterised*)pv)->GetParameterisation()->ComputeMaterial(theCopyNo,pv)->GetName();
+  }
 
   //----- solid 
   theSolid = pv->GetLogicalVolume()->GetSolid();
@@ -202,32 +209,34 @@ GmTouchable::GmTouchable( const G4VTouchable* g4touch )
 #endif
   for( ii = 0; ii < nAnces; ii++ ) {
     //    g4touch->MoveUpHistory();
-    G4VPhysicalVolume* pv = g4touch->GetVolume(ii);
-    //-    G4VPhysicalVolume* pv = g4touch->GetVolume(ii+1);
-    //-    G4cout << " trans pv " << pv->GetName() << G4endl;
-    ancestorName = "/" + pv->GetName();
-    char chartmp[10];
+    G4VPhysicalVolume* pv2 = g4touch->GetVolume(ii);
+    //-    G4VPhysicalVolume* pv2 = g4touch->GetVolume(ii+1);
+    //-    G4cout << " trans pv2 " << pv2->GetName() << G4endl;
+    ancestorName = "/" + pv2->GetName();
     int copyNoAncestor;
-    if( !pv->IsReplicated() ) {
-      copyNoAncestor = pv->GetCopyNo();
+    if( !pv2->IsReplicated() ) {
+      copyNoAncestor = pv2->GetCopyNo();
     } else {
       copyNoAncestor = -1;
     }
-    gcvt( copyNoAncestor, 10, chartmp );
-    ancestorName += G4String(":") + G4String(chartmp);
+    //    char chartmp[10];
+//    gcvt( copyNoAncestor, 10, chartmp );
+ //   ancestorName += G4String(":") + G4String(chartmp);
+		ancestorName += G4String(":") + GmGenUtils::itoa(copyNoAncestor);
+
     theLongName =  ancestorName + theLongName;
 #ifndef GAMOS_NO_VERBOSE
     if( GeomVerb(debugVerb) ) G4cout << ii << "ancestorsName " << ancestorName << " theLongName " << theLongName << G4endl;
 #endif
 
     G4Transform3D trans;
-    if( pv->GetRotation() != 0 ) {
-      trans = G4Transform3D( *(pv->GetRotation()), pv->GetObjectTranslation() );
+    if( pv2->GetRotation() != 0 ) {
+      trans = G4Transform3D( *(pv2->GetRotation()), pv2->GetObjectTranslation() );
     } else {
-      //      G4cout << " no rotation for volume " << pv->GetName() << "  " << pv << G4endl;
-      trans = G4Transform3D( G4RotationMatrix(), pv->GetObjectTranslation() );
+      //      G4cout << " no rotation for volume " << pv2->GetName() << "  " << pv2 << G4endl;
+      trans = G4Transform3D( G4RotationMatrix(), pv2->GetObjectTranslation() );
     }  
-    // CalculateTransformation( pv, copyNoAncestor );
+    // CalculateTransformation( pv2, copyNoAncestor );
     globalTrans = trans * globalTrans;
     if( ii == 0 ){
       theLocalPos = trans.getTranslation();
@@ -395,7 +404,7 @@ std::ostream& operator<<(std::ostream& os, const GmTouchable& touch)
   os << "GmTouchable: " << touch.theLongName 
      << " solid type " << touch.theSolid->GetEntityType() << " material " << touch.theMaterialName
      << " Global position " << touch.theGlobalPos 
-    << " rotation " << touch.theGlobalRotMat
+     << " rotation " << touch.theGlobalRotMat
      << " Local position " << touch.theLocalPos;
 
   return os;

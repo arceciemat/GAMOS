@@ -19,6 +19,74 @@ GmVDataInt::~GmVDataInt()
 }
 
 //----------------------------------------------------------------
+void GmVDataInt::WriteText( const G4Step* aStep, G4bool bIsFirst )
+{
+  long unsigned int data = (long unsigned int) (GetValueFromStep( aStep, 0 ));
+  if( !bIsFirst ) *theFileOutText << ",";
+  *theFileOutText << data;
+
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteText Step " << theName << " = " << data << G4endl;
+#endif
+
+}
+
+//----------------------------------------------------------------
+void GmVDataInt::WriteText( const G4Track* aTrack, G4bool bIsFirst )
+{
+  long unsigned int data = (long unsigned int) (GetValueFromTrack( aTrack, 0 ));
+  if( !bIsFirst ) *theFileOutText << ",";
+  *theFileOutText << data;
+
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteText Track " << theName << " = " << data << G4endl;
+#endif
+
+}
+
+//----------------------------------------------------------------
+void GmVDataInt::WriteText( const G4Track* aTrack1, const G4Track* aTrack2, G4bool bIsFirst )
+{
+  G4double data = GetValueFromSecoTrack( aTrack1, aTrack2, 0 );
+  if( !bIsFirst ) *theFileOutText << ",";
+  *theFileOutText << data;
+
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteText SecoTrack " << theName << " = " << data << G4endl;
+#endif
+
+}
+
+
+//----------------------------------------------------------------
+void GmVDataInt::WriteText( const G4Event* anEvent, G4bool bIsFirst )
+{
+  G4double data = GetValueFromEvent( anEvent, 0 );
+  if( !bIsFirst ) *theFileOutText << ",";
+  *theFileOutText << data;
+
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteText Event " << theName << " = " << data << G4endl;
+#endif
+
+}
+
+
+//----------------------------------------------------------------
+void GmVDataInt::WriteText( const G4Run* aRun, G4bool bIsFirst )
+{
+  G4double data = GetValueFromRun( aRun, 0 );
+  if( !bIsFirst ) *theFileOutText << ",";
+  *theFileOutText << data;
+
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteText Run " << theName << " = " << data << G4endl;
+#endif
+
+}
+
+
+//----------------------------------------------------------------
 void GmVDataInt::WriteBin( const G4Step* aStep )
 {
   int data = int(GetValueFromStep( aStep ));
@@ -71,6 +139,73 @@ void GmVDataInt::WriteBin( const G4Run* aRun )
   theFileOutBin->write((char*)&data, sizeof(int));
 #ifndef GAMOS_NO_VERBOSE
   if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteBin Run " << theName << " = " << data << G4endl;
+#endif
+
+}
+
+//----------------------------------------------------------------
+void GmVDataInt::WriteCout( const G4Step* aStep, G4bool bIsFirst )
+{
+  long unsigned int data = (long unsigned int) (GetValueFromStep( aStep, 0 ));
+  if( !bIsFirst ) G4cout << ",";
+  G4cout << data;
+
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteCout Step " << theName << " = " << data << G4endl;
+#endif
+
+}
+
+//----------------------------------------------------------------
+void GmVDataInt::WriteCout( const G4Track* aTrack, G4bool bIsFirst )
+{
+  long unsigned int data = (long unsigned int) (GetValueFromTrack( aTrack, 0 ));
+  if( !bIsFirst ) G4cout << ",";
+  G4cout << data;
+
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteCout Track " << theName << " = " << data << G4endl;
+#endif
+
+}
+
+//----------------------------------------------------------------
+void GmVDataInt::WriteCout( const G4Track* aTrack1, const G4Track* aTrack2, G4bool bIsFirst )
+{
+  G4double data = GetValueFromSecoTrack( aTrack1, aTrack2, 0 );
+  if( !bIsFirst ) G4cout << ",";
+  G4cout << data;
+
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteCout SecoTrack " << theName << " = " << data << G4endl;
+#endif
+
+}
+
+
+//----------------------------------------------------------------
+void GmVDataInt::WriteCout( const G4Event* anEvent, G4bool bIsFirst )
+{
+  G4double data = GetValueFromEvent( anEvent, 0 );
+  if( !bIsFirst ) G4cout << ",";
+  G4cout << data;
+
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteCout Event " << theName << " = " << data << G4endl;
+#endif
+
+}
+
+
+//----------------------------------------------------------------
+void GmVDataInt::WriteCout( const G4Run* aRun, G4bool bIsFirst )
+{
+  G4double data = GetValueFromRun( aRun, 0 );
+  if( !bIsFirst ) G4cout << ",";
+  G4cout << data;
+
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout << " GmVDataInt::WriteCout Run " << theName << " = " << data << G4endl;
 #endif
 
 }

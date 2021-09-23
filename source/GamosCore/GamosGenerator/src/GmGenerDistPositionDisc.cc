@@ -10,6 +10,14 @@
 #include "geomdefs.hh"
 
 //---------------------------------------------------------------------
+GmGenerDistPositionDisc::GmGenerDistPositionDisc()
+{
+  theRadius = 0.;
+  theCentre = G4ThreeVector( 0., 0., 0. );
+  theRotation = G4RotationMatrix();
+}
+
+//---------------------------------------------------------------------
 G4ThreeVector GmGenerDistPositionDisc::GeneratePosition( const GmParticleSource* )
 {
   int iii=0;
@@ -38,7 +46,7 @@ G4ThreeVector GmGenerDistPositionDisc::GeneratePosition( const GmParticleSource*
 #endif
   */
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDisc::Generate pos before rotation " << pos << G4endl;
+  if( GenerVerb(debugVerb) ) G4cout << this <<" GmGenerDistPositionDisc::Generate pos before rotation " << pos << " radius " << theRadius << G4endl;
 #endif
   pos = theRotation * pos;
 #ifndef GAMOS_NO_VERBOSE
@@ -57,7 +65,7 @@ G4ThreeVector GmGenerDistPositionDisc::GeneratePosition( const GmParticleSource*
 //---------------------------------------------------------------------
 void GmGenerDistPositionDisc::SetParams( const std::vector<G4String>& params )
 {
-
+  theRotation = G4RotationMatrix();
   if( params.size() != 1 && params.size() != 4 && params.size() != 7 ) {
     G4Exception(" GmGenerDistPositionDisc::SetParams",
 		"Wrong argument",
@@ -65,39 +73,20 @@ void GmGenerDistPositionDisc::SetParams( const std::vector<G4String>& params )
 		"To set point you have to add 1, 4 or 7 parameters: RADIUS (POS_X POS_Y POS_Z) (DIR_X DIR_Y DIR_Z");
   }
   theRadius = GmGenUtils::GetValue( params[0] );
-
+  
   if( params.size() >= 4 ) {
     theCentre = G4ThreeVector(GmGenUtils::GetValue( params[1] ), GmGenUtils::GetValue( params[2] ), GmGenUtils::GetValue( params[3] ) );
   }
   if( params.size() >= 7 ) {
     //normalize direction cosines
     G4ThreeVector dir(GmGenUtils::GetValue( params[4] ), GmGenUtils::GetValue( params[5] ), GmGenUtils::GetValue( params[6] ) );
-    if( fabs(dir.mag()-1.) > G4GeometryTolerance::GetInstance()->GetSurfaceTolerance() ) {
-      G4Exception("GmGenerDistPositionDisc::SetParams",
-		  "Warning",
-		  JustWarning,
-		  G4String("direction cosines are normalized to one, they were " + GmGenUtils::ftoa(dir.mag())).c_str());
-      dir /= dir.mag();
-    } 
-    G4double angx = -asin(dir.y());
-    // there are always two solutions angx, angy and PI-angx, PI+angy, choose first
-    G4double angy;
-    if( dir.y() == 1. ) {
-      angy = 0.;
-    } else if( dir.y() == 0. ) {
-      angy = 0.;
-    } else {
-      angy = asin( dir.x()/sqrt(1-dir.y()*dir.y()) );
-    }
+    SetRotation( dir );
 
-    // choose between  angy and PI-angy
-    if( dir.z() * cos(angx)*cos(angy) < 0 ) angy = M_PI - angy;
-    theRotation.rotateX( angx );
-    theRotation.rotateY( angy );
-  }
-  
+  }    
+
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDisc::SetParams radius " << theRadius << " translation " << theCentre << " rotation " << theRotation << G4endl;
 #endif
 
 }
+

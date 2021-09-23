@@ -300,7 +300,7 @@ void GmUserLimitsMgr::AssociateProcesses2Particle( G4ParticleDefinition* particl
 
   if( bStepLimiter ) { 
     G4bool bStepLimiterFound = FALSE;
-    for( G4int ii = 0; ii < pvect->size(); ii++ ){
+    for( size_t ii = 0; ii < pvect->size(); ii++ ){
       if( (*pvect)[ii]->GetProcessName() == "GmStepLimiter" ){
 	bStepLimiterFound = TRUE;
       }
@@ -312,7 +312,7 @@ void GmUserLimitsMgr::AssociateProcesses2Particle( G4ParticleDefinition* particl
 
   if( bSpecialCuts ) {
     G4bool bSpecialCutsFound = FALSE;
-    for( G4int ii = 0; ii < pvect->size(); ii++ ){
+    for( size_t ii = 0; ii < pvect->size(); ii++ ){
       if( (*pvect)[ii]->GetProcessName() == "GmUserSpecialCut" ){
 	bSpecialCutsFound = TRUE;
       }

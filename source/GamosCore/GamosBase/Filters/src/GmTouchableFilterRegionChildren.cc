@@ -5,7 +5,7 @@
 #include "G4Track.hh"
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 
 //---------------------------------------------------------------------
 GmTouchableFilterRegionChildren::GmTouchableFilterRegionChildren()
@@ -24,7 +24,7 @@ G4bool GmTouchableFilterRegionChildren::AcceptTouchable(const G4VTouchable* touc
 {
   if( !touch->GetVolume() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterRegionChildren::AcceptTouchable return 0, no touch->GetVolume() " << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterRegionChildren::AcceptTouchable return 0, no touch->GetVolume() " << G4endl;
 #endif
     return FALSE; // it should have detected before, but fWorldBoundary is not set
   }
@@ -32,14 +32,14 @@ G4bool GmTouchableFilterRegionChildren::AcceptTouchable(const G4VTouchable* touc
   for( G4int ii = 0; ii < siz; ii++ ){
     if( theRegions.find(touch->GetVolume(ii)->GetLogicalVolume()->GetRegion()) != theRegions.end() ) {
 #ifndef GAMOS_NO_VERBOSE
-      if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterRegionChildren::AcceptTouchable TRUE return 1 " << touch->GetVolume()->GetLogicalVolume()->GetRegion()->GetName() << G4endl;
+      if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterRegionChildren::AcceptTouchable TRUE return 1 " << touch->GetVolume()->GetLogicalVolume()->GetRegion()->GetName() << G4endl;
 #endif
       return TRUE;
     }
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterRegionChildren::AcceptTouchable return 0 " << touch->GetVolume()->GetLogicalVolume()->GetRegion()->GetName() << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterRegionChildren::AcceptTouchable return 0 " << touch->GetVolume()->GetLogicalVolume()->GetRegion()->GetName() << G4endl;
 #endif
 
   return FALSE;
@@ -74,7 +74,7 @@ void GmTouchableFilterRegionChildren::SetParameters( std::vector<G4String>& para
       if( GmGenUtils::AreWordsEquivalent(params[ii],reg->GetName()) ){
 	theRegions.insert(reg);
 #ifndef GAMOS_NO_VERBOSE
-	if( BaseVerb(debugVerb) ) G4cout << "GmTouchableFilterRegionChildren::SetParameters add parameter " << (*regions)[jj]->GetName() << G4endl;
+	if( FilterVerb(debugVerb) ) G4cout << "GmTouchableFilterRegionChildren::SetParameters add parameter " << (*regions)[jj]->GetName() << G4endl;
 #endif
       }
     }

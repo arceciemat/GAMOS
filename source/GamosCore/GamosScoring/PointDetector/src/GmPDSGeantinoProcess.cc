@@ -16,13 +16,18 @@
 #include "G4SteppingManager.hh"
 #include "G4EventManager.hh"
 #include "G4Event.hh"
+#ifdef WIN32 //WINDEB
+#define GAMOS_NO_VERBOSE 
+#endif
 
 #include <cmath>
 
 //------------------------------------------------------------------
 GmPDSGeantinoProcess::GmPDSGeantinoProcess(const G4String& name, G4SteppingManager* fpSM, G4ParticleDefinition* origParticle ): GmPDSVProcess( name, fpSM )
 {
-  if(ScoringVerb(testVerb)) G4cout << "GmPDSGeantinoProcess::GmPDSGeantinoProcess " << this << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+	if(ScoringVerb(testVerb)) G4cout << "GmPDSGeantinoProcess::GmPDSGeantinoProcess " << this << G4endl;
+#endif
   theOriginalParticle = origParticle;
   G4String partName = origParticle->GetParticleName();
 
@@ -74,7 +79,7 @@ G4VParticleChange* GmPDSGeantinoProcess::PostStepDoIt( const G4Track& aTrack, co
     if( ScoringVerb(testVerb) ) G4cout << "GmPDSGeantinoProcess::PostStepDoIt weight " << wei << G4endl;
 #endif
     
-    theCurrentHelper->FillScores(aTrack, TRUE, DR);
+    theCurrentHelper->FillScores(aTrack, 1, DR);
 
     /*    G4Track* aTrackNC = const_cast<G4Track*>(aStep.GetTrack());
     G4cout << " SetTrackStatus fStopAndKill " << G4endl;
@@ -138,7 +143,7 @@ G4VParticleChange* GmPDSGeantinoProcess::PostStepDoIt( const G4Track& aTrack, co
 }
 
 //------------------------------------------------------------------
-void GmPDSGeantinoProcess::SplitOriginalParticle( const G4Track& aTrack, const G4Step& aStep, G4ParticleChange& aParticleChange )
+void GmPDSGeantinoProcess::SplitOriginalParticle( const G4Track& aTrack, const G4Step& aStep, G4ParticleChange& aParticleChange2 )
 {
   G4double logwei = log(GetWeight(&aTrack));
 #ifndef GAMOS_NO_VERBOSE
@@ -165,7 +170,7 @@ void GmPDSGeantinoProcess::SplitOriginalParticle( const G4Track& aTrack, const G
       G4double weinew = exp(logwei)/nSplit;
       G4String procDefStepName = aStep.GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
       G4Point3D point; // dummy
-      aParticleChange.SetNumberOfSecondaries(nSplit);
+      aParticleChange2.SetNumberOfSecondaries(nSplit);
       for( G4int ii = 0; ii < nSplit-1; ii++ ) {
 	G4Track* trk = new G4Track( new G4DynamicParticle( theOriginalParticle, gmtrki->GetThreeVectorValue("OriginalParticleDir"), aTrack.GetVertexKineticEnergy() ), aTrack.GetGlobalTime()-aTrack.GetLocalTime(), aTrack.GetVertexPosition() );
 #ifndef GAMOS_NO_VERBOSE
@@ -185,7 +190,7 @@ void GmPDSGeantinoProcess::SplitOriginalParticle( const G4Track& aTrack, const G
 #ifndef GAMOS_NO_VERBOSE
 	if( ScoringVerb(debugVerb) ) G4cout << trk << " GmPDSGeantinoProcess::SplitOriginalPartile  new weight " << weinew << " = " << trk->GetWeight() << " = " << GetWeight(trk) << " old weight " << exp(logwei) << " pos " <<  trk->GetVertexPosition() << G4endl;
 #endif
-	aParticleChange.AddSecondary(trk);
+	aParticleChange2.AddSecondary(trk);
       }
       // Diminish weight of all geantinos in the TrackStack, including this one, if they point to detector
       if( nSplit > 1 ) theInverseStackingUA->ChangeGeantinoWeight( 1./nSplit, aTrack.GetParentID(), gmtrki->GetIntValue("DetectorID") );
@@ -204,7 +209,8 @@ void GmPDSGeantinoProcess::ChangeGeantinoWeight(const G4Step* aStep)
   const G4Track* aTrack = aStep->GetTrack();
   G4Track* aTracknc = const_cast<G4Track*>(aTrack);
 
-  if( ScoringVerb(testVerb) ) {
+#ifndef GAMOS_NO_VERBOSE
+	if( ScoringVerb(testVerb) ) {
     G4VUserTrackInformation* trki = aTrack->GetUserInformation();
     GmTrackInfo* gmtrki = dynamic_cast<GmTrackInfo*>( trki );
     G4Point3D point = gmtrki->GetThreeVectorValue("Point"); // geantino has in TrackInformation the point it is aimed to
@@ -213,10 +219,9 @@ void GmPDSGeantinoProcess::ChangeGeantinoWeight(const G4Step* aStep)
     stepPtDir = stepPtDir.unit();
     G4ThreeVector trkdir = aTrack->GetMomentumDirection();
     G4double distpt = (point-trkpos).mag();
-#ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb) ) G4cout << "GmPDSGeantinoProcess::ChangeGeantinoWeight  dir_to_point = " << stepPtDir << " dir_track " << trkdir << " distance_to_point " << distpt << G4endl;
+    G4cout << "GmPDSGeantinoProcess::ChangeGeantinoWeight  dir_to_point = " << stepPtDir << " dir_track " << trkdir << " distance_to_point " << distpt << G4endl;
+	}
 #endif
-  }
 
   //----- Get mean free path  
   // G4double nmfp = aStep->GetStepLength() / theMeanFreePathCalculator->GetMeanFreePath("neutron",aStep->GetTrack()->GetKineticEnergy(),aStep->GetTrack()->GetVolume()->GetLogicalVolume()->GetMaterial()->GetName();

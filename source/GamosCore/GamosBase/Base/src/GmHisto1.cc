@@ -206,7 +206,7 @@ double GmHisto1::GetEffectiveEntries() const
 }
 
 //----------------------------------------------------------------------
-double GmHisto1::GmGenUtils::GetIntegral() const
+double GmHisto1::GetIntegral() const
 {
   return theSumW;
 }
@@ -302,4 +302,18 @@ double GmHisto1::GetBinCenter( int ibin ) const
   return theLowerEdge + theBinWidth*(ibin-0.5);
 }
 
+
+//----------------------------------------------------------------------                                         
+void GmHisto1::Reset()
+{
+	theEntries = 0;
+	theBinN.clear();
+	theBinSumW.clear();
+	theBinSumW2.clear();
+
+	theSumW = 0;
+	theSumW2 = 0;
+	theSumWX = 0;
+	theSumWX2 = 0;
+}
 #endif

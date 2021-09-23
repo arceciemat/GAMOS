@@ -23,12 +23,22 @@ GmDataFinalMaterial::~GmDataFinalMaterial()
 
 //----------------------------------------------------------------
 G4String GmDataFinalMaterial::GetStringValueFromStep( const G4Step* aStep )
-{ 
-  return aStep->GetPostStepPoint()->GetMaterial()->GetName();
+{
+  G4Material* mate =  aStep->GetPostStepPoint()->GetMaterial();
+  if( mate ) {
+    return mate->GetName();
+  } else {
+    return "OutOfWorld";
+  }
 }
 
 //----------------------------------------------------------------
 G4String GmDataFinalMaterial::GetStringValueFromTrack( const G4Track* aTrack )
 { 
-  return aTrack->GetNextMaterial()->GetName();
+ 
+  if( aTrack->GetNextMaterial() ) {
+    return aTrack->GetNextMaterial()->GetName();
+  } else {
+    return "OutOfWorld";
+  }
 }

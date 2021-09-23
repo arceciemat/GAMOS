@@ -18,7 +18,7 @@ GmHistoProfile1::GmHistoProfile1( const std::string& name, const std::string& , 
 //----------------------------------------------------------------------
 void GmHistoProfile1::Fill( double valueX, double valueY, double weight )
 {
-  std::cout << "  GmHistoProfile1::Fill " <<  valueX << " " <<  valueY << " " <<  weight <<std::endl;
+  //  std::cout << "  GmHistoProfile1::Fill " <<  valueX << " " <<  valueY << " " <<  weight <<std::endl;
 
   double weightY = valueY*weight;
 
@@ -106,4 +106,18 @@ GmHistoProfile1 operator+(const GmHistoProfile1 &h1, const GmHistoProfile1 &h2)
   return *his;
 }
 
+
+//----------------------------------------------------------------------                                         
+void GmHistoProfile1::Reset()
+{
+	theEntries = 0;
+	theBinN.clear();
+	theBinSumW.clear();
+	theBinSumW2.clear();
+
+	theSumW = 0;
+	theSumW2 = 0;
+	theSumWX = 0;
+	theSumWX2 = 0;
+}
 #endif

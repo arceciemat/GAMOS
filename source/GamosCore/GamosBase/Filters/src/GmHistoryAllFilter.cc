@@ -1,6 +1,6 @@
 #include "GmHistoryAllFilter.hh"
 #include "G4Track.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 
 //----------------------------------------------------------------
 GmHistoryAllFilter::GmHistoryAllFilter(G4String name)
@@ -37,6 +37,21 @@ G4bool GmHistoryAllFilter::AcceptStep(const G4Step* aStep)
   if( !bNotPassed ) return FALSE; // if one step failed, do not continue checking
 
   G4bool bAccept = AcceptStepAND(aStep);
+
+  if( !bAccept ) bNotPassed = FALSE;
+
+  return bAccept;
+
+}
+
+//----------------------------------------------------------------
+G4bool GmHistoryAllFilter::AcceptStackedTrack(const G4Track* aTrack)
+{
+  if( aTrack->GetCurrentStepNumber() == 0 ) bNotPassed = TRUE;
+
+  if( !bNotPassed ) return FALSE;
+
+  G4bool bAccept = AcceptStackedTrackAND(aTrack);
 
   if( !bAccept ) bNotPassed = FALSE;
 

@@ -1,63 +1,62 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosScoring_Management
+# Module : Management
+# Package: GamosCore_GamosScoring_Management
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Management
+	 HEADERS
+		GmPrimitiveScorerFactory.hh
+		GmVChangeWorldAndSource.hh
+		GmScoringMessenger.hh
+		GmVPSPrinter.hh
+		GmVPrimitiveScorer.hh
+		GmScoringVerbosity.hh
+		GmEnergySplitter.icc
+		GmPSPrinterFactory.hh
+		GmPSPrinterMgr.hh
+		GmVPrimitiveScorerVector.hh
+		GmScoringRun.hh
+		GmEnergySplitter.hh
+		GmScoringUA.hh
+		GmCompoundScorer.hh
+		GmScoringMgr.hh
+	 SOURCES
+		GmPSPrinterMgr.cc
+		plugin.cc
+		GmScoringUA.cc
+		GmVChangeWorldAndSource.cc
+		GmEnergySplitter.cc
+		GmCompoundScorer.cc
+		GmVPrimitiveScorerVector.cc
+		GmVPrimitiveScorer.cc
+		GmScoringVerbosity.cc
+		GmScoringRun.cc
+		GmScoringMgr.cc
+		GmPrimitiveScorerFactory.cc
+		GmPSPrinterFactory.cc
+		GmVPSPrinter.cc
+		GmScoringMessenger.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+	GamosCore_GamosUtils
+	GamosCore_GamosBase_Base
+	GamosCore_GamosBase_Filters
+	GamosCore_GamosGeometry
+	GamosCore_GamosReadDICOM
+	GamosCore_GamosGenerator
+	GamosCore_GamosData_Management
+		${SEAL_LIBRARIES} 
 
-   HEADERS
-       GmScoringRun.hh
-       GmScoringVerbosity.hh
-       GmVPrimitiveScorer.hh
-       GmVPSPrinter.hh
-       GmScoringMessenger.hh
-       GmScoringMgr.hh
-       GmVChangeWorldAndSource.hh
-       GmPSPrinterMgr.hh
-       GmVPrimitiveScorerVector.hh
-       GmScoringUA.hh
-       GmEnergySplitter.hh
-
-   SOURCES
-       GmScoringVerbosity.cc
-       plugin.cc
-       GmEnergySplitter.cc
-       GmScoringMgr.cc
-       GmScoringMessenger.cc
-       GmVPrimitiveScorerVector.cc
-       GmPSPrinterMgr.cc
-       GmScoringUA.cc
-       GmVChangeWorldAndSource.cc
-       GmVPrimitiveScorer.cc
-       GmScoringRun.cc
-       GmVPSPrinter.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosBase_Classifiers
-  GamosCore_GamosGenerator
-  GamosCore_GamosUtils
-  GamosCore_GamosReadDICOM
-  GamosCore_GamosUserActionMgr
-  GamosCore_GamosBase_Base
-  GamosCore_GamosGeometry
-  GamosCore_GamosData_Management
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

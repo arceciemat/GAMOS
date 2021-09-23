@@ -8,7 +8,7 @@ class GmPhysicsPositronNuclear : public G4VPhysicsConstructor {
 
 public: 
 
-  GmPhysicsPositronNuclear(const G4String& name = "electron-nuclear");
+  GmPhysicsPositronNuclear(const G4String& name = "electron-nuclear", G4int type=111);
   
   virtual ~GmPhysicsPositronNuclear();
   

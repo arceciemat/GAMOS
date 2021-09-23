@@ -5,8 +5,6 @@
 #include "GmEMPhysics.hh"
 #include "globals.hh"
 
-class GmEMExtendedPhysicsMessenger;
-
 class GmEMExtendedPhysics: public GmEMPhysics
 {
 public:

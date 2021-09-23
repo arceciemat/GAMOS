@@ -34,3 +34,16 @@ G4bool GmSameLogicalVolumeFilter::AcceptTrack(const G4Track* aTrack)
   return TRUE;
 
 }
+
+
+
+//-------------------------------------------------------------------------
+G4bool GmSameLogicalVolumeFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmSameLogicalVolumeFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
+}

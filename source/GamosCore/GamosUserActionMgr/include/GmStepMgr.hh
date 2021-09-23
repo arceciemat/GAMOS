@@ -15,6 +15,7 @@ Changes:     12/01: creation
 #include <map>
 #include <set>
 #include "globals.hh"
+#include "G4TrackVector.hh"
 class GmFutureFilter;
 class G4Step;
 class G4StepPoint;
@@ -49,6 +50,8 @@ protected:
   std::vector<G4TouchableHistory*> theNewTouchables;
   std::map<G4int,G4Step*> theCreatorStep;
 
+  G4TrackVector theTracksSaved;
+  G4int theNTracksSavedInEvent;
 };
 
 #endif

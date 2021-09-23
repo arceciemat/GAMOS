@@ -4,7 +4,7 @@
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 
 //---------------------------------------------------------------------
 GmTouchableFilterPhysicalVolume::GmTouchableFilterPhysicalVolume()
@@ -23,19 +23,19 @@ G4bool GmTouchableFilterPhysicalVolume::AcceptTouchable(const G4VTouchable* touc
 {
   if( !touch->GetVolume() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterPhysicalVolume::AcceptTouchable return 0, no touch->GetVolume() " << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterPhysicalVolume::AcceptTouchable return 0, no touch->GetVolume() " << G4endl;
 #endif
     return FALSE; // it should have detected before, but fWorldBoundary is not set
   }
   if( theVPhysicalVolumes.find(touch->GetVolume()) != theVPhysicalVolumes.end() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterPhysicalVolume::AcceptTouchable TRUE return 1 " << touch->GetVolume()->GetName() << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterPhysicalVolume::AcceptTouchable TRUE return 1 " << touch->GetVolume()->GetName() << G4endl;
 #endif
     return TRUE;
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterPhysicalVolume::AcceptTouchable return 0 " << touch->GetVolume()->GetName() << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterPhysicalVolume::AcceptTouchable return 0 " << touch->GetVolume()->GetName() << G4endl;
 #endif
 
   return FALSE;
@@ -65,13 +65,13 @@ void GmTouchableFilterPhysicalVolume::SetParameters( std::vector<G4String>& para
 
   for( unsigned int ii = 0; ii < params.size(); ii++ ){
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << "GmTouchableFilterPhysicalVolume::SetParameters parameter " << params[ii] << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << "GmTouchableFilterPhysicalVolume::SetParameters parameter " << params[ii] << G4endl;
 #endif
     std::vector<G4VPhysicalVolume*> volumes = GmGeometryUtils::GetInstance()->GetPhysicalVolumes( params[ii] );
     for(unsigned int jj = 0; jj < volumes.size(); jj++ ){
       theVPhysicalVolumes.insert( volumes[jj] );
 #ifndef GAMOS_NO_VERBOSE
-      if( BaseVerb(debugVerb) ) G4cout << "GmTouchableFilterPhysicalVolume::SetParameters add parameter " << volumes[jj]->GetName() << " " <<  volumes[jj]->GetCopyNo() << G4endl;
+      if( FilterVerb(debugVerb) ) G4cout << "GmTouchableFilterPhysicalVolume::SetParameters add parameter " << volumes[jj]->GetName() << " " <<  volumes[jj]->GetCopyNo() << G4endl;
 #endif
      }
   }

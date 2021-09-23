@@ -23,26 +23,6 @@ G4bool GmG4PSData::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   return TRUE;
 }
 
-void GmG4PSData::EndOfEvent(G4HCofThisEvent*)
-{;}
-
-void GmG4PSData::DrawAll()
-{;}
-
-void GmG4PSData::PrintAll()
-{
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  data: " << *(itr->second)
-	   << G4endl;
-  }
-}
-
-
 void GmG4PSData::SetParameters( const std::vector<G4String>& params)
 {
   if( params.size() != 1 ){
@@ -59,8 +39,3 @@ void GmG4PSData::SetParameters( const std::vector<G4String>& params)
   theData.push_back( Build1Data( params[0] ) );
 
 }
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSData::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

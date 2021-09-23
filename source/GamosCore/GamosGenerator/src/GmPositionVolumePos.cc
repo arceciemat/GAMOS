@@ -16,15 +16,23 @@
 #include "G4Torus.hh"
 #include "G4GeometryTolerance.hh"
 #include <math.h>
+#include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
+#include "G4TouchableHistory.hh"
+#include "G4Navigator.hh"
+#include "G4TransportationManager.hh"
 
 //------------------------------------------------------------------------
 GmPositionVolumePos::GmPositionVolumePos()
 { 
+  theParamMgr = GmParameterMgr::GetInstance();
+  theTouchable = new G4TouchableHistory;
+  theNavigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
 }
 
 //------------------------------------------------------------------------
 GmPositionVolumePos::~GmPositionVolumePos()
 {
+  delete theTouchable;
 }
 
 
@@ -58,7 +66,6 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
   G4double y = 0.;
   G4double z = 0.;
   unsigned int ii = 0;
-  
   if( solid->GetEntityType() == "G4Orb" ) {
     const G4Orb* sphe = static_cast<const G4Orb*>(solid);
     G4double radO = sphe->GetRadius();
@@ -93,7 +100,7 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
 
 
 #ifndef GAMOS_NO_VERBOSE
-    if( !bFullSphere &  GenerVerb(debugVerb) ) G4cout << "GmPositionVolumePos::GeneratePosInSolid solid is sphere but not full " << solid->GetName() << G4endl;
+    if( !bFullSphere && GenerVerb(debugVerb) ) G4cout << "GmPositionVolumePos::GeneratePosInSolid solid is sphere but not full " << solid->GetName() << G4endl;
 #endif
 
     // Generate (x,y,z) inside sphere
@@ -158,7 +165,7 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
     //----- most cases it will be a full tube section, and not checking will spare some time
     G4bool bFullTubs = (radI2 == 0. && phiStart == 0. && fabs(phiEnd - CLHEP::twopi) < angTolerance );
 #ifndef GAMOS_NO_VERBOSE
-    if( !bFullTubs ) if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid solid is tube section but not full " << solid->GetName() << " phiStart " << phiStart/CLHEP::deg << " phiEnd " << phiEnd/CLHEP::deg << G4endl;
+    if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid solid is tube section but not full " << solid->GetName() << " phiStart " << phiStart/CLHEP::deg << " phiEnd " << phiEnd/CLHEP::deg << G4endl;
 #endif
     
     // Generate (x,y,z) inside tube section
@@ -296,7 +303,6 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
 	    if( GenerVerb(infoVerb) ) G4cout << "  " << newP.r << "  " << newP.z << G4endl; 
 #endif
 	  };
-	  
 	  
 	  TRIdata newD; newD.Atot=0;
 	  ListTRI.push_back(newD);
@@ -449,46 +455,44 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
   } else if( solid->GetEntityType() == "G4Torus" ) {
     const G4Torus* tor = static_cast<const G4Torus*>(solid);
   
-    // Radius and axial size ÂÂÂ
+    // Radius and axial size
     G4double radO = tor->GetRmax();
     G4double radO2 = radO*radO;
     G4double radI2 = tor->GetRmin() * tor->GetRmin();
     G4double phiStart = tor->GetSPhi();
-    G4double phiEnd = tor->GetSPhi() + tor->GetDPhi();
-    if( phiEnd < 0. || phiEnd > CLHEP::twopi ) phiEnd = fmod(phiEnd+CLHEP::twopi,CLHEP::twopi);
+    G4double phiDelta = tor->GetDPhi();
     G4double radTor = tor->GetRtor();
 
     //----- most cases it will be a full tube section, and not checking will spare some time
-    G4bool bFullTubs = (radI2 == 0. && phiStart == 0. && fabs(phiEnd - CLHEP::twopi) < angTolerance );
+    //    G4bool bFullTubs = (radI2 == 0. && phiStart == 0. && fabs(phiEnd - CLHEP::twopi) < angTolerance );
 #ifndef GAMOS_NO_VERBOSE
-    if( !bFullTubs ) if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid solid is tube section but not full " << solid->GetName() << " phiStart " << phiStart << " phiEnd " << phiEnd << G4endl;
+    if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid solid is tube section but not full " << solid->GetName() << " phiStart " << phiStart << " phiDelta " << phiDelta << G4endl;
 #endif
     
     // Generate (x,y,z) inside tube section
     for( ;; ){
       ii++;
       x = -radO+2*radO*CLHEP::RandFlat::shoot();
-      y = -radO+2*radO*CLHEP::RandFlat::shoot();
+      z = -radO+2*radO*CLHEP::RandFlat::shoot();
 #ifndef GAMOS_NO_VERBOSE
-      if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid try x " << x << " y " << y << " x*x+y*y " <<  x*x+y*y << " radO2 " << radO2 << G4endl;
+      if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid try x " << x << " z " << z << " x*x+z*z " << x*x+z*z << " radO2 " << radO2 << G4endl;
 #endif
-
-      if( x*x+y*y > radO2 ) {
+      G4double posXZ = x*x+z*z;
+      
+      if( posXZ < radI2 || posXZ > radO2 ) {
 	continue;
-      } else if( !bFullTubs ){
-	G4ThreeVector pos = G4ThreeVector(x,y,z);
-	G4double phi = fmod(pos.phi()+CLHEP::twopi,CLHEP::twopi); 
-#ifndef GAMOS_NO_VERBOSE
-	if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid try  pos " << pos << " mag2 " << pos.mag2() << " phi " << phi << G4endl;
-#endif
-	if( pos.mag2() < radI2 ||
-	    phi < phiStart || phi > phiEnd ) continue;
       }
  
       x += radTor;
-      double Rp = CLHEP::twopi*CLHEP::RandFlat::shoot();
-      z = x * sin(Rp);
-      x *= cos(Rp);
+      double phi = CLHEP::RandFlat::shoot()*phiDelta + phiStart;
+      y = x * sin(phi);
+      x *= cos(phi);
+#ifndef GAMOS_NO_VERBOSE
+      if( GenerVerb(debugVerb) ) {
+	G4ThreeVector pos = G4ThreeVector(x,y,z);
+	G4cout  << "GmPositionVolumePos::GeneratePosInSolid try  pos " << pos << " phi " << phi/CLHEP::deg << G4endl;
+      }
+#endif
 
       break;
     }
@@ -498,6 +502,13 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
 		    "Wrong argument",
 		    FatalErrorInArgument,
 		G4String("Solid type not supported " + solid->GetEntityType() + " , for volume " + solid->GetName() ).c_str());
+  }
+
+  //check if
+  if( int(theParamMgr->GetNumericValue("PositionInVolumes:NotDaughters",0)) == 1 ) {
+    theNavigator->LocateGlobalPointAndUpdateTouchable( G4ThreeVector(x,y,z), theTouchable, false );
+    std::cout << " CHECK VOL " << G4ThreeVector(x,y,z) << " TOUCH " <<  theTouchable->GetVolume(0)->GetName() << " SOLID " << solid->GetName() << std::endl;
+    if( theTouchable->GetVolume(0)->GetName() != solid->GetName() ) return GeneratePosInSolid( solid );
   }
   
   return G4ThreeVector(x,y,z);

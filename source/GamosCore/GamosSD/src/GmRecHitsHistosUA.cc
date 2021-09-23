@@ -3,6 +3,7 @@
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosSD/include/GmSDVerbosity.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
+#include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
 #include "G4Event.hh"
 
@@ -36,20 +37,21 @@ void GmRecHitsHistosUA::BookHistos()
 #endif
   theAnaMgr = GmAnalysisMgr::GetInstance("recHits") ;
 
+  G4String sepa = GmParameterMgr::GetInstance()->GetStringValue("Histos:Separator",":");
   G4String hnam;
   theSDTypes = GmGeometryUtils::GetInstance()->GetAllSDTypes();
   std::vector<G4String> orig;
-  orig.push_back("SD ALL:");
+  orig.push_back("SD ALL"+sepa+"");
   std::set<G4String>::const_iterator ites;
   for( ites = theSDTypes.begin(); ites != theSDTypes.end(); ites++ ){
-    orig.push_back("SD " + *ites + ": ");  
+    orig.push_back("SD " + *ites + ""+sepa+" ");  
   }
-  G4String hgnam = "RecHits: ";
+  G4String hgnam = "RecHits"+sepa+" ";
   for( unsigned int ii = 0; ii <= theSDTypes.size(); ii++ ){
     hnam = hgnam + orig[ii] + G4String("N rec hits");
     theAnaMgr->CreateHisto1D(hnam,100,0,100,202000+ii*100+1);
-    hnam = hgnam + orig[ii] + G4String("Energy (keV)");
-    theAnaMgr->CreateHisto1D(hnam,150,0.,1500.,202000+ii*100+2);
+    hnam = hgnam + orig[ii] + G4String("Energy (MeV)");
+    theAnaMgr->CreateHisto1D(hnam,120,0.,0.6,202000+ii*100+2);
     hnam = hgnam + orig[ii] + G4String("Width R3 (mm)");
     theAnaMgr->CreateHisto1D(hnam,100,0,50.,202000+ii*100+3);
     hnam = hgnam + orig[ii] + G4String("Width Z (mm)");
@@ -95,7 +97,7 @@ void GmRecHitsHistosUA::EndOfEventAction(const G4Event* )
   gamosSDRecHitMap::iterator item;
   std::vector<GmRecHit*>::const_iterator ite,ite2;
   std::vector<GmHit*>::const_iterator iteh,iteh2;
-  std::map<G4int,G4int> hitsInSDType;
+  std::map<G4int,G4int> rhitsInSDType;
 
   for( item = rechitsMap.begin(); item != rechitsMap.end(); item++ ){
     std::vector<GmRecHit*> rhits = (*item).second;
@@ -105,10 +107,10 @@ void GmRecHitsHistosUA::EndOfEventAction(const G4Event* )
     for( ite = rhits.begin(); ite != rhits.end(); ite++ ){
       GmRecHit* rhit = *ite;
       int nh = GetHitTypeInt( rhit );
-      hitsInSDType[nh]++; //count hits of each SD type
-      //      G4cout << " Rechit hitsInSDType " << nh << " = " << hitsInSDType[nh] << G4endl;
+      rhitsInSDType[nh]++; //count hits of each SD type
+      //      G4cout << " Rechit rhitsInSDType " << nh << " = " << rhitsInSDType[nh] << G4endl;
       
-      theAnaMgr->GetHisto1(202000+nh*100+2)->Fill( float(rhit->GetEnergy()/CLHEP::keV));
+      theAnaMgr->GetHisto1(202000+nh*100+2)->Fill( float(rhit->GetEnergy()));
       G4ThreeVector depowidth = GetEDepoWidth( rhit );
       theAnaMgr->GetHisto1(202000+nh*100+3)->Fill( depowidth.mag()/CLHEP::mm );
       theAnaMgr->GetHisto1(202000+nh*100+4)->Fill( depowidth.z()/CLHEP::mm );
@@ -127,18 +129,22 @@ void GmRecHitsHistosUA::EndOfEventAction(const G4Event* )
       theAnaMgr->GetHisto1(202000+nh*100+7)->Fill( (timemax-timemin)/CLHEP::ns );
       for( ite2 = rhits.begin(); ite2 != rhits.end(); ite2++ ){
 	GmRecHit* rhit2 = *ite2;
-	//	if( hit->GetSDType() != hit2->GetSDType() ) continue;
-	G4double dhit = (rhit->GetPosition() - rhit2->GetPosition()).mag();
-	if( dhit > disthits ) disthits = dhit;
+	    //	if( hit->GetSDType() != hit2->GetSDType() ) continue;
+	if( rhit != rhit2 ) {
+	  G4double dhit = (rhit->GetPosition() - rhit2->GetPosition()).mag();
+	  if( dhit > disthits ) disthits = dhit;
+	  //	G4cout << " RECHITSHISTOS DIST " << disthits <<  " dhit= " << dhit << " " << rhit->GetPosition() << " " << rhit2->GetPosition() << G4endl; //GDEB
+	}
       }
-      if( disthits != -1. ) theAnaMgr->GetHisto1(202000+nh*100+8)->Fill( disthits/CLHEP::mm ); 
+      if( disthits != -1. ) theAnaMgr->GetHisto1(202000+nh*100+8)->Fill( disthits/CLHEP::mm );
+      //      G4cout << " RECHITSHISTOS DIST " << disthits <<  " " << theAnaMgr->GetHisto1(202000+nh*100+8)->GetName() << " " << theAnaMgr->GetHisto1(202000+nh*100+8)->GetEntries() << G4endl; //GDEB
     }
   }
 
   //----- Fill histo of number of hits per type
   std::map<G4int,G4int>::const_iterator itet;
   int nh = 1;
-  for( itet = hitsInSDType.begin(); itet != hitsInSDType.end(); itet++, nh++ ){
+  for( itet = rhitsInSDType.begin(); itet != rhitsInSDType.end(); itet++, nh++ ){
     theAnaMgr->GetHisto1(202000+nh*100+1)->Fill( float((*itet).second) );
   }
 } 

@@ -37,10 +37,10 @@ GmG4PSMinKinEAtGeneration::GmG4PSMinKinEAtGeneration(G4String name)
 {
   fWeighted = FALSE;
   bScoreErrors = FALSE;
-  bScoreByEvent = FALSE;
+  theNEventsType = SNET_ByRun;
 
   theUnit = 1.;
-  theUnitName = G4String("CLHEP::MeV");
+  theUnitName = G4String("MeV");
 
 }
 
@@ -89,26 +89,3 @@ G4bool GmG4PSMinKinEAtGeneration::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   return TRUE;
 }
 
-void GmG4PSMinKinEAtGeneration::EndOfEvent(G4HCofThisEvent*)
-{;}
-
-
-void GmG4PSMinKinEAtGeneration::DrawAll()
-{;}
-
-void GmG4PSMinKinEAtGeneration::PrintAll()
-{
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  num of step: " << G4BestUnit(*(itr->second),"Energy")
-	   << G4endl;
-  }
-}
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSMinKinEAtGeneration::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

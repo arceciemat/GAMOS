@@ -13,6 +13,9 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh"
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
+#ifdef PDS_OP
+#include "GamosCore/GamosPhysics/PhysicsList/include/G4VOpDiscreteProcess.hh"
+#endif
 
 #include "G4Neutron.hh"
 #include "G4Geantino.hh"
@@ -27,17 +30,25 @@
 #include "G4VEmProcess.hh"
 
 //------------------------------------------------------------------
-GmPDSProcessHelper::GmPDSProcessHelper(G4bool bneut ) 
-  : bIsForNeutron( bneut )
+GmPDSProcessHelper::GmPDSProcessHelper(PDS1aryType ptype ) 
+  : the1aryType( ptype )
 //GmPDSProcessHelper::GmPDSProcessHelper(const G4String& name, G4SteppingManager* fpSM ): G4VDiscreteProcess( name )5~, fpSteppingManager(fpSM)
 {
 #ifndef GAMOS_NO_VERBOSE
   if(ScoringVerb( testVerb) ) G4cout << " GmPDSProcessHelper::GmPDSProcessHelper " << this << G4endl;
 #endif
-  if( bneut ) {
+  switch (the1aryType) {
+  case PDSNeutron:
     theOriginalParticleName = "neutron";
-  } else {
+    break;
+  case PDSGamma:
     theOriginalParticleName = "gamma";
+    break;
+#ifdef PDS_OP
+  case PDSOpticalPhoton:
+    theOriginalParticleName = "opticalphoton";
+    break;
+#endif
   }
 
   // USE PARAMETER AND FILEINPATH
@@ -50,12 +61,21 @@ GmPDSProcessHelper::GmPDSProcessHelper(G4bool bneut )
 
   bScoreTrueAndGeantino = G4bool(GetPDSNumericParameter("ScoreSeparatelyTrueAndGeantino",theOriginalParticleName,0));
 
-  if( bIsForNeutron ) {
+  switch (the1aryType) {
+  case PDSNeutron:
     StoreNeutronProcesses();
     ReadEnergyBinsForNeutrons();
-  } else {
+    break;
+  case PDSGamma:
     StoreGammaProcesses();
     ReadEnergyBinsForGammas();
+    break;
+#ifdef PDS_OP
+  case PDSOpticalPhoton:
+    StoreOpticalPhotonProcesses();
+    ReadEnergyBinsForOpticalPhotons();
+    break;
+#endif
   }
 
   BuildEnergies();
@@ -121,7 +141,11 @@ void GmPDSProcessHelper::BookHistos(G4int index)
     std::set<G4double>::iterator itee = theEnergies.end();
     itee--;
     G4double hLogEnerMax = log10(*itee);
-    
+    G4int hEnerNBins = G4int(theEnergies.size());
+    G4double hEnerMin = *(theEnergies.begin());
+    G4double hEnerMax = *itee;
+
+    //    G4cout << *(theEnergies.begin())  " PDS HIST " << hLogEnerNBins << " " << hLogEnerMin << " " << hLogEnerMax << G4endl; //GDEB
     G4int histoNumber = theHistoNumber;
     G4String PDIDstr = theOriginalParticleName + ": ";
 
@@ -144,16 +168,16 @@ void GmPDSProcessHelper::BookHistos(G4int index)
     std::map<G4int,GmPDSDetector*>::const_iterator itedet;
     for( itedet = theDetectors.begin(); itedet != theDetectors.end(); itedet++ ){
       G4int detID = (*itedet).second->GetID();
-      G4int histoNumber = theHistoNumber + 100000 * index + 100*detID;
+      G4int histoNumber2 = theHistoNumber + 100000 * index + 100*detID;
       G4String PDIDstr2 = PDIDstr + " PD" + GmGenUtils::itoa(detID) + ": ";
       
       G4String hnamt = "interaction dist to detector (mm)";
       hnam = PDIDstr2 + hnamt;
-      theAnaMgr->CreateHisto1D(hnam,hDistNbins,hDistMin,hDistMax,histoNumber+91);
+      theAnaMgr->CreateHisto1D(hnam,hDistNbins,hDistMin,hDistMax,histoNumber2+91);
       hnam += " vs weight";
-      theAnaMgr->CreateHisto2D(hnam,hDistNbins,hDistMin,hDistMax,hLogWeiNbins,hLogWeiMin,hLogWeiMax,histoNumber+92);
+      theAnaMgr->CreateHisto2D(hnam,hDistNbins,hDistMin,hDistMax,hLogWeiNbins,hLogWeiMin,hLogWeiMax,histoNumber2+92);
       hnam = PDIDstr2 + hnamt + " weighted by Hstar";
-      theAnaMgr->CreateHisto2D(hnam,hDistNbins,hDistMin,hDistMax,hLogWeiNbins,hLogWeiMin,hLogWeiMax,histoNumber+93);
+      theAnaMgr->CreateHisto2D(hnam,hDistNbins,hDistMin,hDistMax,hLogWeiNbins,hLogWeiMin,hLogWeiMax,histoNumber2+93);
     
       //----- Histos for particles reaching detector
       G4String hnam0;
@@ -174,25 +198,32 @@ void GmPDSProcessHelper::BookHistos(G4int index)
 	} 
 
 	for( size_t kk = 0; kk < 2; kk++ ){ 
-	  G4int histoNumber = theHistoNumber + index*100000 + kk*50000 + scoreID*100;
+	  G4int histoNumber3 = theHistoNumber + index*100000 + kk*50000 + scoreID*100;
 	  if( kk == 0 ) {
 	    hnam0 = (*itet).first + " At detector : geantino : ";  //histograms for pseudo geantinos 
 	  } else if( kk == 1 ) {
 	    hnam0 = (*itet).first+ " At detector : " + theOriginalParticleName + " : "; //histograms for neutrons
 	  } 
+	  hnam = hnam0 + G4String("Energy (MeV)");
+	  theAnaMgr->CreateHisto1D(hnam,hLogEnerNBins,hEnerMin,hEnerMax,histoNumber3+1);
+	  hnam = hnam0 + G4String("Energy no weighted (MeV)");
+	  theAnaMgr->CreateHisto1D(hnam,hEnerNBins,hEnerMin,hEnerMax,histoNumber3+2);
+	  hnam = hnam0 + G4String("Energy weighted by Hstar");
+	  theAnaMgr->CreateHisto1D(hnam,hEnerNBins,hEnerMin,hEnerMax,histoNumber3+3);
+
 	  hnam = hnam0 + G4String("log10(energy) (MeV)");
-	  theAnaMgr->CreateHisto1D(hnam,hLogEnerNBins,hLogEnerMin,hLogEnerMax,histoNumber+1);
+	  theAnaMgr->CreateHisto1D(hnam,hLogEnerNBins,hLogEnerMin,hLogEnerMax,histoNumber3+11);
 	  hnam = hnam0 + G4String("log10(energy) no weighted (MeV)");
-	  theAnaMgr->CreateHisto1D(hnam,hLogEnerNBins,hLogEnerMin,hLogEnerMax,histoNumber+2);
+	  theAnaMgr->CreateHisto1D(hnam,hLogEnerNBins,hLogEnerMin,hLogEnerMax,histoNumber3+12);
 	  hnam = hnam0 + G4String("log10(energy) weighted by Hstar");
-	  theAnaMgr->CreateHisto1D(hnam,hLogEnerNBins,hLogEnerMin,hLogEnerMax,histoNumber+3);
+	  theAnaMgr->CreateHisto1D(hnam,hLogEnerNBins,hLogEnerMin,hLogEnerMax,histoNumber3+13);
 	  
 	  hnam = hnam0 + G4String("log10(weight)");
-	  theAnaMgr->CreateHisto1D(hnam,hLogWeiNbins,hLogWeiMin,hLogWeiMax,histoNumber+11);
+	  theAnaMgr->CreateHisto1D(hnam,hLogWeiNbins,hLogWeiMin,hLogWeiMax,histoNumber3+21);
 	  hnam = hnam0 + G4String("log10(weight) weighted by Hstar");
-	  theAnaMgr->CreateHisto1D(hnam,hLogWeiNbins,hLogWeiMin,hLogWeiMax,histoNumber+12);
+	  theAnaMgr->CreateHisto1D(hnam,hLogWeiNbins,hLogWeiMin,hLogWeiMax,histoNumber3+22);
 	  hnam = hnam0 + G4String("log10(energy) vs log10(weight)");
-	  theAnaMgr->CreateHisto2D(hnam,hLogEnerNBins,hLogEnerMin,hLogEnerMax,hLogWeiNbins,hLogWeiMin,hLogWeiMax,histoNumber+21);
+	  theAnaMgr->CreateHisto2D(hnam,hLogEnerNBins,hLogEnerMin,hLogEnerMax,hLogWeiNbins,hLogWeiMin,hLogWeiMax,histoNumber3+31);
 	}
       }
     }
@@ -245,8 +276,7 @@ void GmPDSProcessHelper::ReadEnergyBinsForNeutrons()
   G4String flux2DoseFile = GetPDSStringParameter("Flux2DoseFileName","neutron","Flux2Dose.neutron.ICRU57.lis");
 
   //  std::set<float>* energyBins = new std::set<float>;
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  flux2DoseFile = GmGenUtils::FileInPath( path, flux2DoseFile );
+  flux2DoseFile = GmGenUtils::FileInPath( flux2DoseFile );
   GmFileIn fin = GmFileIn::GetInstance(flux2DoseFile);
   std::vector<G4String> wl;
   for( ;; ){
@@ -280,8 +310,7 @@ void GmPDSProcessHelper::ReadEnergyBinsForGammas()
   G4String flux2DoseFile = GetPDSStringParameter("Flux2DoseFileName","gamma","Flux2Dose.gamma.ICRU57.lis");
 
   //  std::set<float>* energyBins = new std::set<float>;
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  flux2DoseFile = GmGenUtils::FileInPath( path, flux2DoseFile );
+  flux2DoseFile = GmGenUtils::FileInPath( flux2DoseFile );
   GmFileIn fin = GmFileIn::GetInstance(flux2DoseFile);
   std::vector<G4String> wl;
   for( ;; ){
@@ -308,13 +337,47 @@ void GmPDSProcessHelper::ReadEnergyBinsForGammas()
 
 }
 
+#ifdef PDS_OP
+//------------------------------------------------------------------
+void GmPDSProcessHelper::ReadEnergyBinsForOpticalPhotons()
+{
+  G4String flux2DoseFile = GetPDSStringParameter("Flux2DoseFileName","opticalphoton","Flux2Dose.opticalphoton.ICRU57.lis");
+
+  //  std::set<float>* energyBins = new std::set<float>;
+  flux2DoseFile = GmGenUtils::FileInPath( flux2DoseFile );
+  GmFileIn fin = GmFileIn::GetInstance(flux2DoseFile);
+  std::vector<G4String> wl;
+  for( ;; ){
+    if(! fin.GetWordsInLine( wl ) ) break;
+    if( wl.size() != 6 ) {
+      G4Exception("GmPDSProcessHelper::ReadEnergyBinsForOpticalPhotons",
+		  G4String("Wrong number of words in file "+flux2DoseFile + " line number = " + GmGenUtils::itoa(fin.Nline()\
+												     ).c_str()),
+                  FatalErrorInArgument,
+                  G4String("There must be 6 words, there are "+ GmGenUtils::itoa(wl.size())).c_str());
+    }
+    Flux2Dose f2d;
+    f2d.Hstar = GmGenUtils::GetValue(wl[1]);
+    f2d.Hp0 = 0.;
+    f2d.Hp15 = 0.;
+    f2d.Hp30 = 0.;
+    f2d.Hp45 = 0.;
+    f2d.Hp60 = 0.;
+    f2d.Hp75 = 0.;
+    theFlux2Dose[GmGenUtils::GetValue(wl[0])] = f2d;
+  }
+
+  fin.Close();
+
+}
+#endif
 
 //------------------------------------------------------------------
 void GmPDSProcessHelper::BuildEnergies()
 {
 
-  G4String energiesFile = GetPDSStringParameter("EnergiesFileName",theOriginalParticleName,"Flux2Dose.neutrons.ICRU57.lis");
-  G4String flux2DoseFile = GetPDSStringParameter("Flux2DoseFileName",theOriginalParticleName,"Flux2Dose.neutrons.ICRU57.lis");
+  G4String energiesFile = GetPDSStringParameter("EnergiesFileName",theOriginalParticleName,"Flux2Dose.neutron.ICRU57.lis");
+  G4String flux2DoseFile = GetPDSStringParameter("Flux2DoseFileName",theOriginalParticleName,"Flux2Dose.neutron.ICRU57.lis");
 
   //--- If two files are equal use Flux2Dose, else read file
   if( energiesFile == flux2DoseFile ) {
@@ -341,8 +404,7 @@ void GmPDSProcessHelper::BuildEnergies()
     }
        
   } else {
-    G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-    energiesFile = GmGenUtils::FileInPath( path, energiesFile );
+    energiesFile = GmGenUtils::FileInPath( energiesFile );
     GmFileIn fin = GmFileIn::GetInstance(energiesFile);
     std::vector<G4String> wl;
     for( ;; ){
@@ -507,13 +569,16 @@ void GmPDSProcessHelper::FillControlHistos( G4double ener, G4double wei, G4bool 
 {
   // Fill histograms
   G4int nh = theHistoNumber + index*100000 + !bGeantino*50000 + score->GetID()*100;
-  theAnaMgr->GetHisto1(nh+1)->Fill(log10(ener),wei);
-  theAnaMgr->GetHisto1(nh+2)->Fill(log10(ener));
+  theAnaMgr->GetHisto1(nh+1)->Fill(ener,wei);
+  theAnaMgr->GetHisto1(nh+2)->Fill(ener);
+  theAnaMgr->GetHisto1(nh+11)->Fill(log10(ener),wei);
+  theAnaMgr->GetHisto1(nh+12)->Fill(log10(ener));
   G4double hstar = flux2Dose.Hstar;
-  theAnaMgr->GetHisto1(nh+3)->Fill(log10(ener),wei*hstar);
-  theAnaMgr->GetHisto1(nh+11)->Fill(log10(wei));
-  theAnaMgr->GetHisto1(nh+12)->Fill(log10(wei),wei*hstar);
-  theAnaMgr->GetHisto2(nh+21)->Fill(log10(ener),log10(wei));
+  theAnaMgr->GetHisto1(nh+3)->Fill(ener,wei*hstar);
+  theAnaMgr->GetHisto1(nh+13)->Fill(log10(ener),wei*hstar);
+  theAnaMgr->GetHisto1(nh+21)->Fill(log10(wei));
+  theAnaMgr->GetHisto1(nh+22)->Fill(log10(wei),wei*hstar);
+  theAnaMgr->GetHisto2(nh+31)->Fill(log10(ener),log10(wei));
   //  G4int evtid = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   //  theAnaMgr->GetHisto2(nh+12)->Fill(log10(ener),float(evtid));
   //  theAnaMgr->GetHisto2(nh+13)->Fill(log10(wei),float(evtid));
@@ -573,17 +638,50 @@ void GmPDSProcessHelper::StoreGammaProcesses()
   }
 }
 
+//------------------------------------------------------------------
+void GmPDSProcessHelper::StoreOpticalPhotonProcesses()
+{
+  G4ProcessManager* pmanager = G4OpticalPhoton::OpticalPhoton()->GetProcessManager();
+  G4ProcessVector* pvect = pmanager->GetProcessList();
+  int jj, sizproc = pvect->size();
+  for( jj = 0; jj < sizproc; jj++ ) {
+#ifdef PDS_OP
+    G4VProcess* proc = (*pvect)[jj];
+    if( proc->GetProcessType() == fElectromagnetic ) {
+      G4VOpDiscreteProcess* procDis = dynamic_cast<G4VOpDiscreteProcess*>(proc);
+      if( ! procDis ) continue;
+      theOpticalPhotonProcesses[proc->GetProcessName()] = procDis;
+      //    theOpticalPhotonProcesses.push_back(proc->GetProcessName());
+#ifndef GAMOS_NO_VERBOSE
+      if( ScoringVerb(infoVerb) ) G4cout << "GmPDSGeantinoProcess::StoreOpticalPhotonProcesses proc= " << proc->GetProcessName() << G4endl;
+#endif
+    }
+#endif
+  }
+
+}
 
 
 //------------------------------------------------------------------
 G4double GmPDSProcessHelper::GetCrossSection( const G4Step* aStep )
 {
-  if(bIsForNeutron) {
+  switch (the1aryType) {
+  case PDSNeutron:
     return GetCrossSectionForNeutron( aStep );
-  } else {
+    break;
+  case PDSGamma:
     return GetCrossSectionForGamma( aStep );
+    break;
+#ifdef PDS_OP
+  case PDSOpticalPhoton:
+    return GetCrossSectionForOpticalPhoton( aStep );
+    break;
+#endif
+  default:
+    return 0.;
   }
 
+  
 }
 
 //------------------------------------------------------------------
@@ -671,6 +769,37 @@ G4double GmPDSProcessHelper::GetCrossSectionForGamma( const G4Step* aStep )
   
   return XStot;
 }
+
+#ifdef PDS_OP
+//------------------------------------------------------------------
+G4double GmPDSProcessHelper::GetCrossSectionForOpticalPhoton( const G4Step* aStep )
+{
+  /*const G4Track* aTrack = aStep->GetTrack();
+  G4double energy = aStep->GetPreStepPoint()->GetKineticEnergy();
+  G4LogicalVolume* lv = aTrack->GetVolume()->GetLogicalVolume();
+  const G4MaterialCutsCouple* cutsC = lv->GetMaterialCutsCouple();
+   G4Region* region = lv->GetRegion();
+  */
+  
+  G4double XStot = 0.;
+  G4ForceCondition* dummyFC = 0;
+  std::map<G4String,G4VOpDiscreteProcess*>::const_iterator iteg;
+  //  std::vector<G4String>::const_iterator iteg;
+  for( iteg = theOpticalPhotonProcesses.begin(); iteg != theOpticalPhotonProcesses.end(); iteg++ ){
+    //    G4double XS = theEmCalculator->GetCrossSectionPerVolume(energy, G4OpticalPhoton::OpticalPhoton(), (*iteg).first, aMaterial, region ); // it returns 0. for phot
+    G4double XS = 1./(*iteg).second->GetMeanFreePath( *aTrack, 0, dummyFC );
+    XStot += XS;
+    //      G4cout << "GmPDSProcessHelper::GetCrossSectionForOpticalPhoton  CrossSection EM = " << procEM->CrossSectionPerVolume( energy, lv->GetMaterialCutsCouple() ) 
+    //    << " ener " << energy 
+    //     << " mate " << lv->GetMaterial()->GetName() << " process " << (*iteg).first << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+  if( ScoringVerb(debugVerb) ) G4cout << "GmPDSProcessHelper::GetCrossSectionForOpticalPhoton  CrossSection = " << XS << " ener " << energy << " mate " << lv->GetMaterial()->GetName() << " process " << (*iteg).first << G4endl;
+#endif
+  }
+  
+  return XStot;
+}
+#endif
 
 //------------------------------------------------------------------
 G4double GmPDSProcessHelper::GetDistanceToDetectorIncm( const G4ThreeVector pos, G4int detID ) 

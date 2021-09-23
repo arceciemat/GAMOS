@@ -1,6 +1,7 @@
 #include "GmMovementMgr.hh"
 #include "GmVMovement.hh"
 #include "GmMovementFromFile.hh"
+#include "GmMovementVerbosity.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
@@ -46,6 +47,9 @@ std::vector<GmVMovement*> GmMovementMgr::GetNewMovements( G4int eventID, G4doubl
     bApplyMovements = TRUE;
   }
 
+#ifndef GAMOS_NO_VERBOSE
+  if( MoveVerb(debugVerb) ) G4cout << " GmMovementMgr::GetNewMovements " << eventID << " " << time << " : bApplyMovements=" << bApplyMovements << " NToDo " << movementsToDo.size() << G4endl;
+#endif
   return movementsToDo;
 }
 
@@ -61,6 +65,9 @@ void GmMovementMgr::InitialiseLastValue()
 //----------------------------------------------------------------------
 void GmMovementMgr::ReadMovementFile( G4String fileName )
 {
+#ifndef GAMOS_NO_VERBOSE
+  if( MoveVerb(debugVerb) ) G4cout << " GmMovementMgr::ReadMovementFile " << fileName << G4endl;
+#endif
   GmFileIn fin = GmFileIn::GetInstance(fileName);
   std::vector<G4String> wl;
   G4int iline = 1;

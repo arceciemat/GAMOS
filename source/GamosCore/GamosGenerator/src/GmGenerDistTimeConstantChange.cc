@@ -16,7 +16,7 @@ GmGenerDistTimeConstantChange::GmGenerDistTimeConstantChange()
 G4double GmGenerDistTimeConstantChange::GenerateTime( const GmParticleSource* )
 {
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistTimeConstantChange::GenerateTime " << thePreviousTime+theInterval << G4endl;
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistTimeConstantChange::GenerateTime " << thePreviousTime+theInterval << " " << thePreviousTime << " " << theInterval << G4endl;
 #endif
  return thePreviousTime+theInterval;
 }

@@ -30,24 +30,28 @@ G4double GmDataInitialTemperature::GetValueFromStep( const G4Step* aStep, G4int 
 //----------------------------------------------------------------
 G4double GmDataInitialTemperature::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
-  return aTrack->GetLogicalVolumeAtVertex()->GetMaterial()->GetTemperature();
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetVertexPosition()) );
+  return mate->GetTemperature();
 }
 
 //----------------------------------------------------------------
 G4double GmDataInitialTemperature::GetValueFromSecoTrack( const G4Track* aTrack1, const G4Track* , G4int )
 {
-  return aTrack1->GetMaterial()->GetTemperature();
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack1->GetPosition()) );
+  return mate->GetTemperature();
 }
 
 //----------------------------------------------------------------
 G4double GmDataInitialTemperature::GetValueFromEvent( const G4Event* anEvent, G4int )
 {
-  G4TouchableHistory* touch = new G4TouchableHistory;
-  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( anEvent->GetPrimaryVertex(0)->GetPosition(), touch, false ); 
-
-  G4double density = touch->GetVolume()->GetLogicalVolume()->GetMaterial()->GetTemperature();
- 
-  delete touch;
-
-  return density;
+  G4Material* mate = GetMateFromPV( GetPVFromPos(anEvent->GetPrimaryVertex(0)->GetPosition()) );
+  return mate->GetTemperature();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialTemperature::GetValueFromStackedTrack( const G4Track* aTrack, G4int)
+{ 
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetPosition()) );
+  return mate->GetTemperature();
+}
+

@@ -6,6 +6,13 @@
 #include "G4EmStandardPhysics_option2.hh"
 #include "G4EmStandardPhysics_option3.hh"
 #include "G4EmStandardPhysics_option4.hh"
+#include "G4EmLivermorePhysics.hh"
+#include "G4EmLivermorePolarizedPhysics.hh"
+#include "G4EmLowEPPhysics.hh"
+#include "G4EmPenelopePhysics.hh"
+#include "G4EmStandardPhysicsGS.hh"
+#include "G4EmStandardPhysicsWVI.hh"
+#include "G4EmStandardPhysicsSS.hh"
 
 #include "G4UnitsTable.hh"
 
@@ -34,8 +41,12 @@
 #include "G4BaryonConstructor.hh"
 #include "G4IonConstructor.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#include "G4SeltzerBergerModel.hh"
+#include "G4ModifiedTsai.hh"
+#include "G4Generator2BN.hh"
+#include "G4Generator2BS.hh"
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 GmEMStandardPhysics::GmEMStandardPhysics() : G4VModularPhysicsList()
 {
   pMessenger = new GmEMStandardPhysicsMessenger(this); 
@@ -43,7 +54,8 @@ GmEMStandardPhysics::GmEMStandardPhysics() : G4VModularPhysicsList()
   // EM physics
   emName = G4String("local");
   emPhysics = new G4EmStandardPhysics_option3();
-    
+  RegisterPhysics(emPhysics);
+
   defaultCutValue = 1.*CLHEP::mm;
   cutForGamma     = defaultCutValue;
   cutForElectron  = defaultCutValue;
@@ -102,9 +114,11 @@ void GmEMStandardPhysics::ConstructParticle()
 
 void GmEMStandardPhysics::ConstructProcess()
 {
-  AddTransportation();
-  emPhysics->ConstructProcess();
+  G4VModularPhysicsList::ConstructProcess();
+//  AddTransportation();
+//  emPhysics->ConstructProcess();
   AddDecay();  
+  SelectBremssAngularDist();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -117,9 +131,10 @@ void GmEMStandardPhysics::AddDecay()
 
   G4Decay* fDecayProcess = new G4Decay();
 
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
+  auto particleIterator=GetParticleIterator();
+  particleIterator->reset();
+  while( (*particleIterator)() ){
+    G4ParticleDefinition* particle = particleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
 
     if (fDecayProcess->IsApplicable(*particle) && !particle->IsShortLived()) { 
@@ -144,35 +159,82 @@ void GmEMStandardPhysics::ReplacePhysicsList(const G4String& name)
 
   if (name == emName) return;
 
-  if (name == "emstandard_opt0") {
-
+  if (name == "emstandard_opt0"
+      || name == "emstandard_option0") {
+    
     emName = name;
     delete emPhysics;
     emPhysics = new G4EmStandardPhysics();
 
-  } else if (name == "emstandard_opt1") {
+  } else if (name == "emstandard_opt1" 
+	     || name == "emstandard_option1") {
 
     emName = name;
     delete emPhysics;
     emPhysics = new G4EmStandardPhysics_option1();
-
-  } else if (name == "emstandard_opt2") {
+    
+  } else if (name == "emstandard_opt2"
+    || name == "emstandard_option2") {
 
     emName = name;
     delete emPhysics;
     emPhysics = new G4EmStandardPhysics_option2();
     
-  } else if (name == "emstandard_opt3") {
-
+  } else if (name == "emstandard_opt3"
+	     || name == "emstandard_option3") {
+    
     emName = name;
     delete emPhysics;
     emPhysics = new G4EmStandardPhysics_option3();
 
-  } else if (name == "emstandard_opt4") {
+  } else if (name == "emstandard_opt4"
+	     || name == "emstandard_option4") {
 
     emName = name;
     delete emPhysics;
     emPhysics = new G4EmStandardPhysics_option4();
+    
+  } else if (name == "emlivermore") {
+
+    emName = name;
+    delete emPhysics;
+    emPhysics = new G4EmLivermorePhysics();
+    
+  } else if (name == "emlivermorepolarized") {
+
+    emName = name;
+    delete emPhysics;
+    emPhysics = new G4EmLivermorePolarizedPhysics();
+    
+  } else if (name == "emlowEP") {
+
+    emName = name;
+    delete emPhysics;
+    emPhysics = new G4EmLowEPPhysics();
+    
+  } else if (name == "empenelope") {
+
+    emName = name;
+    delete emPhysics;
+    emPhysics = new G4EmPenelopePhysics();
+    
+  } else if (name == "emstandard_GS") {
+
+    emName = name;
+    delete emPhysics;
+    emPhysics = new G4EmStandardPhysicsGS();
+    
+  } else if (name == "emstandard_WVI") {
+
+    emName = name;
+    delete emPhysics;
+    emPhysics = new G4EmStandardPhysicsWVI();
+    
+  } else if (name == "emstandard_SS") {
+
+    emName = name;
+    delete emPhysics;
+    emPhysics = new G4EmStandardPhysicsSS();
     
   } else {
 
@@ -181,12 +243,62 @@ void GmEMStandardPhysics::ReplacePhysicsList(const G4String& name)
            << G4endl;
 	  exit(1);
   }
+
+}
+
+#include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
+#include "G4VEmProcess.hh"
+#include "G4VEmModel.hh"
+
+//----------------------------------------------------------------------
+void GmEMStandardPhysics::SelectBremssAngularDist()
+{
+  G4SeltzerBergerModel* bremsModel = 0;
+
+  G4String theProcessName = "eBrems";
+
+  //  G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
+  //  G4ParticleTable::G4PTblDicIterator* theParticleIterator = theParticleTable->GetIterator();
+   auto particleIterator=GetParticleIterator();
+  particleIterator->reset();
+  while( (*particleIterator)() ){
+    G4ParticleDefinition* particle = particleIterator->value();
+    G4ProcessManager* pmanager = particle->GetProcessManager();
+    G4ProcessVector* procVector = pmanager->GetProcessList();
+    for( G4int ii = procVector->size()-1; ii >= 0; ii-- ) {
+      if( theProcessName == (*procVector)[ii]->GetProcessName() ) {
+	G4String angularDist;
+	G4VEmProcess* EMProcess = static_cast<G4VEmProcess*>((*procVector)[ii]);
+	bremsModel = static_cast<G4SeltzerBergerModel*>(EMProcess->EmModel(0));
+	if( particle == G4Electron::Electron()) {
+	  angularDist = GmParameterMgr::GetInstance()->GetStringValue("GmPhysicsElectron:Bremsstrahlung:AngularDistribution","");
+	} else if( particle == G4Positron::Positron()) {
+	  angularDist = GmParameterMgr::GetInstance()->GetStringValue("GmPhysicsPositron:Bremsstrahlung:AngularDistribution","");
+	}	
+	
+	if( angularDist == "tsai" ) {
+	  bremsModel->SetAngularDistribution( new G4ModifiedTsai() );
+	}else if( angularDist == "2bn" ) {
+	  bremsModel->SetAngularDistribution( new G4Generator2BN() );
+	}else if( angularDist == "2bs" ) {
+	  bremsModel->SetAngularDistribution( new G4Generator2BS() );
+	}else if( angularDist == "" ) {
+	} else {
+	  G4Exception("GmVPhysicsElectron::SelectBremssAngularDist",
+		      "Wrong angular distribution",
+		      FatalErrorInArgument,
+		      G4String("Available distributions are tsai / 2bn /2bs , you have set it to "+angularDist).c_str());
+	}
+      }
+    }
+  }
+  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void GmEMStandardPhysics::SetCuts()
 {
-
+      
   if (verboseLevel >0){
     G4cout << "GmEMStandardPhysics::SetCuts:";
     G4cout << "CutLength : " << G4BestUnit(defaultCutValue,"Length") << G4endl;

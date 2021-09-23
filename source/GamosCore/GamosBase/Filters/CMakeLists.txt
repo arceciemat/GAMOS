@@ -1,13 +1,16 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosBase_Filters
+# Module : Filters
+# Package: GamosCore_GamosBase_Filters
 #
 #------------------------------------------------------------------------------
-include(Geant4MacroLibraryTargets)
+# 
+add_definitions(-DGmBaseFilters_ALLOC_EXPORT)
+#add_definitions(-DGAMOS_NO_ROOT)
 
-if(GAMOS_BUILD_GRANULAR_LIBS)
-   GAMOS_GRANULAR_LIBRARY_TARGET(COMPONENT sources.cmake)
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include(Geant4MacroLibraryTargets)
+if(GEANT4_BUILD_GRANULAR_LIBS)
+    GEANT4_GRANULAR_LIBRARY_TARGET(COMPONENTS sources.cmake)
 else()
    GEANT4_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
 endif()

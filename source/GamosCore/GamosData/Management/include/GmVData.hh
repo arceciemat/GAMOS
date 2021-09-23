@@ -1,7 +1,8 @@
 #ifndef GmVData_hh
 #define GmVData_hh
 
-#include "globals.hh"
+#include "G4ThreeVector.hh"
+
 #include <set>
 #include <map>
 #include <vector>
@@ -26,6 +27,7 @@ class G4Track;
 class G4Event;
 class G4Run;
 class GmAnalysisMgr;
+class G4VPhysicalVolume;
 
 enum GmDType { DTStep, DTTrack, DTSeco, DTEvent, DTRun };
 
@@ -66,6 +68,9 @@ public:
   virtual G4double GetValueFromStep( const G4Step* aStep, G4int index = 0 );
   virtual G4double GetValueFromTrack( const G4Track* aTrack, G4int index = 0 );
   virtual G4double GetValueFromSecoTrack( const G4Track* aTrack1, const G4Track* aTrack2, G4int index = 0 );
+  virtual G4double GetValueFromStackedTrack( const G4Track* aTrack, G4int index = 0 ) {
+    return GetValueFromTrack( aTrack, index );
+  }
   virtual G4double GetValueFromEvent( const G4Event* anEvent, G4int index = 0 );
   virtual G4double GetValueFromRun( const G4Run* aRun, G4int index = 0 );
 
@@ -108,6 +113,8 @@ public:
     return (*(theHistosProf2.find(index))).second; 
   }
 
+  G4VPhysicalVolume* GetPVFromPos( G4ThreeVector pos );
+  
   void AddSubData(GmVData* data );
 
   void AddSubExpression( G4String expr );

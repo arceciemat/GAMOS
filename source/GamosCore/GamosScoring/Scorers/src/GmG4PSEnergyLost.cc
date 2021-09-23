@@ -37,7 +37,7 @@ GmG4PSEnergyLost::GmG4PSEnergyLost(G4String name)
      :GmVPrimitiveScorer(name)
 {
   theUnit = 1.;
-  theUnitName = G4String("CLHEP::MeV");
+  theUnitName = G4String("MeV");
 }
 
 GmG4PSEnergyLost::~GmG4PSEnergyLost()
@@ -60,67 +60,14 @@ G4bool GmG4PSEnergyLost::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 #endif
 
  // use index from classifier, unless you are skipping borders of equal material voxels in G4RegularNavigation
-  if( bUseClassifierIndex || !bSkipEqualMaterials || !theRegularParamUtils->IsPhantomVolume( aStep->GetPreStepPoint()->GetPhysicalVolume() ) ) {
-    G4int index = GetIndex(aStep);
-    FillScorer( aStep, index, edep, weight );
-    
+  G4int index = GetIndex(aStep);
+  FillScorer( aStep, index, edep, weight );
+  
 #ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb)) G4cout  << "GmG4PSEnergyLost::ProcessHits  eDepo " << edep*weight << " index " << index << G4endl;
+  if( ScoringVerb(debugVerb)) G4cout  << "GmG4PSEnergyLost::ProcessHits  eDepo " << edep*weight << " index " << index << G4endl;
 #endif
-  } else {
-    
-    //----- Distribute edep in voxels 
-    G4int numberVoxelsInStep= theEnergySplitter->SplitEnergyInVolumes( aStep );
-    
-#ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb) ) G4cout << "GmG4PSEnergyLost::ProcessHits totalEdepo " << aStep->GetTotalEnergyDeposit() 
-					<< " Nsteps " << G4RegularNavigationHelper::Instance()->theStepLengths.size() 
-					<< " numberVoxelsInStep " <<  numberVoxelsInStep
-					<< G4endl;
-#endif
-    
-    G4int index = -1;
-    G4double stepLength = 0.;
-    G4double energyDepo = 0.;
-    for ( G4int ii =0; ii < numberVoxelsInStep; ii++ ){ 
-      theEnergySplitter->GetLengthAndEnergyDeposited( ii, index, stepLength, energyDepo);
-
-      // in the last voxel a secondary is emiited, so energyLost > energyDeposited
-      if( ii == numberVoxelsInStep-1 ) {
-	G4double energyLost = aStep->GetPostStepPoint()->GetKineticEnergy() - aStep->GetPreStepPoint()->GetKineticEnergy();  
-	energyDepo += energyLost - edep;
-      }
-
-      FillScorer( aStep, index, energyDepo, weight );
-    }
-    
-    //?  G4RegularNavigationHelper::ClearStepLengths();
-  }
 
   return TRUE;
 } 
 
 
-void GmG4PSEnergyLost::EndOfEvent(G4HCofThisEvent*)
-{;}
-
-void GmG4PSEnergyLost::DrawAll()
-{;}
-
-void GmG4PSEnergyLost::PrintAll()
-{
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  energy deposit: " << G4BestUnit(*(itr->second),"Energy") 
-	   << G4endl;
-  }
-}
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSEnergyLost::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

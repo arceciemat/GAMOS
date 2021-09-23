@@ -5,7 +5,7 @@
 #include "G4ElectroVDNuclearModel.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 
-GmPhysicsPositronNuclear::GmPhysicsPositronNuclear(const G4String& name): G4VPhysicsConstructor(name)
+GmPhysicsPositronNuclear::GmPhysicsPositronNuclear(const G4String& name,G4int type): G4VPhysicsConstructor(name,type)
 { }
 
 GmPhysicsPositronNuclear::~GmPhysicsPositronNuclear()

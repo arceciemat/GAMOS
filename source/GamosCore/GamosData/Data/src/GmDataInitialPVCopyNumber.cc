@@ -25,17 +25,17 @@ GmDataInitialPVCopyNumber::~GmDataInitialPVCopyNumber()
 G4double GmDataInitialPVCopyNumber::GetValueFromStep( const G4Step* aStep, G4int )
 {
 
-  return aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
+  return aStep->GetPreStepPoint()->GetTouchable()->GetReplicaNumber();
 
 }
 
 //----------------------------------------------------------------
 G4double GmDataInitialPVCopyNumber::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
- G4TouchableHistory* touch = new G4TouchableHistory;
+  G4TouchableHistory* touch = new G4TouchableHistory;
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack->GetVertexPosition(), touch, false ); 
 
-  G4int copyNo = touch->GetVolume()->GetCopyNo();
+  G4int copyNo = touch->GetReplicaNumber();
  
   delete touch;
 
@@ -43,12 +43,19 @@ G4double GmDataInitialPVCopyNumber::GetValueFromTrack( const G4Track* aTrack, G4
 }
 
 //----------------------------------------------------------------
-G4double GmDataInitialPVCopyNumber::GetValueFromSecoTrack(const G4Track* , const G4Track* aTrack2, G4int )
+G4double GmDataInitialPVCopyNumber::GetValueFromSecoTrack(const G4Track* aTrack, const G4Track* , G4int )
 {
 
-  return aTrack2->GetTrackID();
-}
+  G4TouchableHistory* touch = new G4TouchableHistory;
+  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack->GetVertexPosition(), touch, false ); 
 
+  G4int copyNo = touch->GetReplicaNumber();
+ 
+  delete touch;
+
+  return copyNo;
+
+}
 
 
 //----------------------------------------------------------------
@@ -57,9 +64,22 @@ G4double GmDataInitialPVCopyNumber::GetValueFromEvent( const G4Event* anEvent, G
   G4TouchableHistory* touch = new G4TouchableHistory;
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( anEvent->GetPrimaryVertex(0)->GetPosition(), touch, false ); 
 
-  G4double val = touch->GetVolume()->GetCopyNo();
+  G4double val = touch->GetReplicaNumber();
  
   delete touch;
 
   return val;
+}
+
+//----------------------------------------------------------------
+G4double GmDataInitialPVCopyNumber::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  G4TouchableHistory* touch = new G4TouchableHistory;
+  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack->GetPosition(), touch, false ); 
+
+  G4int copyNo = touch->GetReplicaNumber();
+ 
+  delete touch;
+
+  return copyNo;
 }

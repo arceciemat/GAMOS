@@ -1,5 +1,5 @@
 #include "GmClassifierByAncestors.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Classifiers/include/GmClassifierVerbosity.hh"
 #include "G4Step.hh"
 #include "G4TouchableHistory.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -8,9 +8,9 @@
 GmClassifierByAncestors::GmClassifierByAncestors(G4String name) : GmVClassifier( name )
 {
 #ifdef WIN32
-  theMaxIndex = G4int(std::pow(double(2),int(16))); // sizeof(G4int) = 32 gives error 
-#else 
-  theMaxIndex = G4int(pow(double(2),int(sizeof(G4int)*8)));
+  theMaxIndex = int64_t(std::pow(double(2),int(16)-1)-1); // sizeof(int64_t) = 32 gives error 
+#else
+  theMaxIndex = int64_t(pow(double(2.),int(sizeof(int64_t)*8)-2)-1);
 #endif
 }
 
@@ -30,40 +30,39 @@ void GmClassifierByAncestors::SetParameters( std::vector<G4String>& params )
 }
 
 //---------------------------------------------------------------
-G4int GmClassifierByAncestors::GetIndexFromStep(const G4Step* aStep)
+int64_t GmClassifierByAncestors::GetIndexFromStep(const G4Step* aStep)
 {
   G4StepPoint* preStep = aStep->GetPreStepPoint();
   G4TouchableHistory* th = (G4TouchableHistory*)(preStep->GetTouchable());
-  G4int index = 0;
-  G4int nsiz = std::min(theNAncestors,th->GetHistoryDepth());
-  for( G4int ii = 0; ii < nsiz; ii++ ){
-    index += G4int(pow(float(theNShift), int(ii))) * th->GetReplicaNumber(ii);
+  int64_t index = 0;
+  int64_t nsiz = std::min(theNAncestors,th->GetHistoryDepth());
+  for( int64_t ii = 0; ii < nsiz; ii++ ){
+    index += int64_t(pow(float(theNShift), int(ii))) * th->GetReplicaNumber(ii);
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << ii << " GmClassifierByAncestors " << theName << " index= " << index << G4endl;
+    if( ClassifierVerb(debugVerb) ) G4cout << ii << " GmClassifierByAncestors " << theName << " index= " << index << G4endl;
 #endif
   }
-
   if(index > theMaxIndex ){
     G4Exception("GmClassifierByAncestors::GetIndexFromStep",
 		"Index too big",
 		FatalErrorInArgument,
-		G4String("It is a G4int, so it cannot be bigger than " + GmGenUtils::itoa(theMaxIndex)).c_str());
+		G4String("It is a int64_t, so it cannot be bigger than " + GmGenUtils::itoa(theMaxIndex)).c_str());
   }
 
   G4String name;
   if( theIndexNames.find(index) == theIndexNames.end() ){
-    for( G4int ii = nsiz-1; ii >= 0; ii-- ){
+    for( int64_t ii = nsiz-1; ii >= 0; ii-- ){
       name += th->GetVolume(ii)->GetName() + ":" + GmGenUtils::itoa( th->GetReplicaNumber(ii) );
       if( ii != 0 ) name+= "/";
     }
     theIndexNames[index] = name;
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << th->GetHistoryDepth() << " GmClassifierByAncestors theIndexNames = " << name << G4endl;
+    if( ClassifierVerb(debugVerb) ) G4cout << th->GetHistoryDepth() << " GmClassifierByAncestors theIndexNames = " << name << G4endl;
 #endif
   }
   
   if( theIndexMap.size() != 0 ) {
-    std::map<G4String,G4int>::const_iterator ite = theIndexMap.find(name);
+    std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(name);
     if( ite == theIndexMap.end() ) {
       G4Exception("GmClassifierByAncestors::GetIndexFromStep",
 		  "Index not found",
@@ -79,40 +78,40 @@ G4int GmClassifierByAncestors::GetIndexFromStep(const G4Step* aStep)
 }
 
 //---------------------------------------------------------------
-G4int GmClassifierByAncestors::GetIndexFromTrack(const G4Track* aTrack)
+int64_t GmClassifierByAncestors::GetIndexFromTrack(const G4Track* aTrack)
 {
   const G4Step* aStep = aTrack->GetStep();
   if( !aStep ) return 0;
 
   G4StepPoint* preStep = aStep->GetPreStepPoint();
   G4TouchableHistory* th = (G4TouchableHistory*)(preStep->GetTouchable());
-  G4int index = 0;
+  int64_t index = 0;
   G4int nsiz = std::min(theNAncestors,th->GetHistoryDepth());
   for( G4int ii = 0; ii < nsiz; ii++ ){
-    index += G4int(pow(float(theNShift), int(ii))) * th->GetReplicaNumber(ii);
+    index += int64_t(pow(float(theNShift), int(ii))) * th->GetReplicaNumber(ii);
   }
 
   if(index > theMaxIndex ){
     G4Exception("GmClassifierByAncestors::GetIndex()",
 		"Index too big",
 		FatalErrorInArgument,
-		G4String("It is a G4int, so it cannot be bigger than " + GmGenUtils::itoa(theMaxIndex)).c_str());
+		G4String("It is a int64_t, so it cannot be bigger than " + GmGenUtils::itoa(theMaxIndex)).c_str());
   }
 
   G4String name;
   if( theIndexNames.find(index) == theIndexNames.end() ){
-    for( G4int ii = nsiz-1; ii >= 0; ii-- ){
+    for( int64_t ii = nsiz-1; ii >= 0; ii-- ){
       name += th->GetVolume(ii)->GetName() + ":" + GmGenUtils::itoa( th->GetReplicaNumber(ii) );
       if( ii != 0 ) name+= "/";
     }
     theIndexNames[index] = name;
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << th->GetHistoryDepth() << " GmClassifierByAncestors theIndexNames = " << name << G4endl;
+    if( ClassifierVerb(debugVerb) ) G4cout << th->GetHistoryDepth() << " GmClassifierByAncestors theIndexNames = " << name << G4endl;
 #endif
   }
   
   if( theIndexMap.size() != 0 ) {
-    std::map<G4String,G4int>::const_iterator ite = theIndexMap.find(name);
+    std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(name);
     if( ite == theIndexMap.end() ) {
       G4Exception("GmClassifierByAncestors::GetIndex",
 		  "Index not found",
@@ -129,9 +128,9 @@ G4int GmClassifierByAncestors::GetIndexFromTrack(const G4Track* aTrack)
 
 
 //--------------------------------------------------------------
-G4String GmClassifierByAncestors::GetIndexName(G4int index)
+G4String GmClassifierByAncestors::GetIndexName(int64_t index)
 {
-  std::map<G4int,G4String>::const_iterator ite = theIndexNames.find(index);
+  std::map<int64_t,G4String>::const_iterator ite = theIndexNames.find(index);
   if( ite == theIndexNames.end() ){
     G4Exception(" GmClassifierByAncestors::GetIndexName",
 		"Index not found",
@@ -147,10 +146,10 @@ void GmClassifierByAncestors::SetIndices( std::vector<G4String> wl )
 {
 
   for( unsigned int ii = 0; ii < wl.size(); ii+=2 ){
-    G4int index = G4int(GmGenUtils::GetValue(wl[ii+1]));
+    int64_t index = int64_t(GmGenUtils::GetValue(wl[ii+1]));
     theIndexMap[wl[ii]] = index;
     if( theMaxIndex < index) theMaxIndex = index;
-    theIndexNames[G4int(GmGenUtils::GetValue(wl[ii]))] = wl[ii+1];
+    theIndexNames[int64_t(GmGenUtils::GetValue(wl[ii]))] = wl[ii+1];
   }
 
   theMaxIndex -= theIndexMap.size()+1;  

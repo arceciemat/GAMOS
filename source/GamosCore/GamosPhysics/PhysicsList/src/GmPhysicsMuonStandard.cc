@@ -43,11 +43,11 @@
 #include "G4MuIonisation.hh"
 #include "G4MuBremsstrahlung.hh"
 #include "G4MuPairProduction.hh"
-#include "G4MuonMinusCaptureAtRest.hh" 
+#include "G4MuonMinusCapture.hh" 
 #include "G4MuonPlus.hh"
 #include "G4MuonMinus.hh"
 
-GmPhysicsMuonStandard::GmPhysicsMuonStandard(const G4String& name): G4VPhysicsConstructor(name)
+GmPhysicsMuonStandard::GmPhysicsMuonStandard(const G4String& name, G4int type): G4VPhysicsConstructor(name,type)
 { }
 
 GmPhysicsMuonStandard::~GmPhysicsMuonStandard()
@@ -87,7 +87,7 @@ void GmPhysicsMuonStandard::ConstructProcess()
 	  pmanager -> AddProcess(aPairProduction,-1, 4, 4);
 	  //
 	  if( particleName == "mu-" )
-	    pmanager -> AddProcess(new G4MuonMinusCaptureAtRest(), 0,-1,-1);
+	    pmanager -> AddProcess(new G4MuonMinusCapture(), 0,-1,-1);
 	}
     }
   G4cout << "muon processed loaded"<<G4endl;

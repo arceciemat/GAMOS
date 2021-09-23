@@ -21,6 +21,7 @@ public:
     
   void ConstructProcess();    
   void AddDecay();
+  void SelectBremssAngularDist();
     
   void SetCuts();
   //  void SetCutForGamma(G4double);

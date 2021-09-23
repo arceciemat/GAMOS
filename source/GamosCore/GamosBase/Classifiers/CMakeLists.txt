@@ -1,13 +1,15 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosBase_Classifiers
+# Module : Classifiers
+# Package: GamosCore_GamosBase_Classifiers
 #
 #------------------------------------------------------------------------------
-include(Geant4MacroLibraryTargets)
+# 
+add_definitions(-DGmBaseClassifiers_ALLOC_EXPORT)
 
-if(GAMOS_BUILD_GRANULAR_LIBS)
-   GAMOS_GRANULAR_LIBRARY_TARGET(COMPONENT sources.cmake)
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include(Geant4MacroLibraryTargets)
+if(GEANT4_BUILD_GRANULAR_LIBS)
+    GEANT4_GRANULAR_LIBRARY_TARGET(COMPONENTS sources.cmake)
 else()
    GEANT4_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
 endif()

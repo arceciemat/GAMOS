@@ -1,16 +1,18 @@
 #include "GmHit.hh"
 #include "GmEDepo.hh"
 
+#include "GamosCore/GamosSD/include/GmSDVerbosity.hh"
 #include "GamosCore/GamosSD/include/GmHitsEventMgr.hh"
 #include "GamosCore/GamosAnalysis/include/GmCheckOriginalGamma.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosUtils/include/GmG4Utils.hh"
+#include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
 #include "G4Step.hh"
 #include "G4Track.hh"
 #include "G4VVisManager.hh"
 
 #include "CLHEP/Random/RandGauss.h"
-#include "GamosCore/GamosSD/include/GmSDVerbosity.hh"
 
 //----------------------------------------------------------------------
 GmHit::GmHit(G4Step* aStep, G4double energy, unsigned long long id, const G4String& sdtyp, G4int evtid )
@@ -27,20 +29,38 @@ GmHit::GmHit(G4Step* aStep, G4double energy, unsigned long long id, const G4Stri
   theEDepos.push_back( new GmEDepo( energy, aTrack->GetPosition(), aStep->GetTrack()->GetDefinition(), aStep->GetPostStepPoint()->GetGlobalTime() ) );
 
   // only for checks, it should be set by SD (at the center of face of entrance)
-  thePosition = aStep->GetTrack()->GetPosition();
-  
+  if( GmParameterMgr::GetInstance()->GetNumericValue("GmHit:LocalHitCoordinates",0) ) {
+    thePosition = aStep->GetTrack()->GetPosition();
+    thePosition = GmG4Utils::GetLocalFromGlobalPos( thePosition, aStep->GetPostStepPoint()->GetTouchable()->GetHistory());
+  } else {
+    thePosition = aStep->GetTrack()->GetPosition();
+  }
+
+  GmHitsEventMgr* evtmgr = GmHitsEventMgr::GetInstance();
+  theHitsTimeType = evtmgr->GetHitsTimeType();
+
+  //  G4cout << " TIMEMIN " << theTimeMin << " MAX " << theTimeMax << " GLOBAL_TIME " << aTrack->GetGlobalTime() << G4endl; //GDEB
 #ifndef GAMOS_NO_VERBOSE
-  if( SDVerb(infoVerb) ) G4cout << " new GmHit " << id << " in det type " << sdtyp << " E " << theEnergy << " posXYZ " << aStep->GetTrack()->GetPosition().x() << " " << aStep->GetTrack()->GetPosition().y() << " " << aStep->GetTrack()->GetPosition().z() << G4endl;
+  if( SDVerb(infoVerb) ) G4cout << " new GmHit " << id << " in det type " << sdtyp << " E " << theEnergy << " posXYZ " << aStep->GetTrack()->GetPosition().x() << " " << aStep->GetTrack()->GetPosition().y() << " " << aStep->GetTrack()->GetPosition().z() << " time= " << GetTime() << " " << theTimeMin << " " << theTimeMax << " " <<  aStep->GetTrack()->GetGlobalTime() << G4endl;
 #endif
   //<< " posRPHIZ " << aStep->GetTrack()->GetPosition().perp() << " " << aStep->GetTrack()->GetPosition().phi()/deg << " " << aStep->GetTrack()->GetPosition().z() << G4endl;
 
-
-  GmHitsEventMgr* evtmgr = GmHitsEventMgr::GetInstance();
   evtmgr->AddHit( this, sdtyp );
 
   bDeadTimeFound = false;
 
-  theHitsTimeType = evtmgr->GetHitsTimeType();
+}
+
+//----------------------------------------------------------------------
+void GmHit::SetPosition(G4ThreeVector pos ) {
+
+  if( GmParameterMgr::GetInstance()->GetNumericValue("GmHit:LocalHitCoordinates",0) ) {
+    thePosition = (G4TransportationManager::GetTransportationManager()->
+		   GetNavigatorForTracking()->
+		   GetGlobalToLocalTransform()).TransformPoint(pos);
+  } else {
+    thePosition = pos;
+  }
 }
 
 //----------------------------------------------------------------------
@@ -131,7 +151,6 @@ G4bool GmHit::CheckSameCellAndTime( unsigned long long id, G4double time, G4doub
 
 }
 
-
 //----------------------------------------------------------------------
 void GmHit::UpdateMe( G4Step* aStep, G4double energy )
 {
@@ -147,7 +166,7 @@ void GmHit::UpdateMe( G4Step* aStep, G4double energy )
   InsertTrackIDs( aTrack );
 
 #ifndef GAMOS_NO_VERBOSE
-  if( SDVerb(debugVerb) ) G4cout << " Update GmHit " << theDetUnitID << " E= " << energy << " Etot= " << theEnergy<< " N E depos= " << theEDepos.size() << G4endl;
+  if( SDVerb(debugVerb) ) G4cout << " Update GmHit " << theDetUnitID << " E= " << energy << " Etot= " << theEnergy<< " N E depos= " << theEDepos.size() << " time=" << GetTime() << G4endl;
 #endif
 
 }
@@ -209,12 +228,12 @@ void GmHit::Print(std::ostream& os, G4bool bVerbose )
   if( bVerbose ) os << G4endl << " energy= ";
   os << theEnergy << " ";
   if( bVerbose ) os << G4endl << " time_min= ";
-  os << (unsigned long long)(theTimeMin) << " ";
+  os << std::setprecision(15) << theTimeMin << " ";
   if( bVerbose ) os << G4endl << " time_max= ";
-  os << theTimeMax << " ";
+  os << std::setprecision(15) << theTimeMax << " ";
   //     << " pos= " << thePosition.mag() << " " << thePosition.theta()/deg << " " if( bVerbose ) os<< thePosition.phi()/deg
   if( bVerbose ) os << G4endl << " posXYZ= ";
-  os << thePosition.x() << " " << thePosition.y() << " " << thePosition.z() << " ";
+  os << std::setprecision(8) << thePosition.x() << " " << thePosition.y() << " " << thePosition.z() << " ";
   if( bVerbose ) os << G4endl << " N original tracks= ";
   os << theOriginalTrackIDs.size() << " ";
   htidori = theOriginalTrackIDs;
@@ -253,8 +272,8 @@ void GmHit::Print(FILE* fout, G4bool )
   fwrite((char *) &sdtype, sizeof(char*), sdtype.length(), fout);
   fwrite((unsigned long long *) &theDetUnitID,  sizeof(unsigned long long), 1, fout);
   fwrite((float *) &theEnergy,  sizeof(float), 1, fout);
-  fwrite((unsigned long long *) &theTimeMin,  sizeof(unsigned long long), 1, fout);
-  fwrite((unsigned long long *) &theTimeMax,  sizeof(unsigned long long), 1, fout);
+  fwrite((G4double *) &theTimeMin,  sizeof(G4double), 1, fout);
+  fwrite((G4double *) &theTimeMax,  sizeof(G4double), 1, fout);
 
   float pos = thePosition.x();
   fwrite((float *) &pos,  sizeof(float), 1, fout);

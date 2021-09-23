@@ -70,8 +70,7 @@ void GmGenerDistEnergyBetaDecay::ReadFile( const G4String fname )
 
   // read input file 
   G4String filename = fname;
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  filename = GmGenUtils::FileInPath( path, filename );
+  filename = GmGenUtils::FileInPath( filename );
   GmFileIn fin = GmFileIn::GetInstance( filename );
   fin.SetSuppressQuotes(0);
 

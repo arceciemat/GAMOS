@@ -32,7 +32,6 @@ void GmCountTracksUA::PostUserTrackingAction(const G4Track* )
 //----------------------------------------------------------------
 void GmCountTracksUA::EndOfEventAction( const G4Event* event )
 {
-
   G4int evtid = event->GetEventID();
   if( evtid >= theFirstEvent && evtid%theEachNEvent == 0 ) {
     G4cout << " %%% EVENT " << evtid << " NTRACKS " << theNTracksThisEvent << " TOTAL NTRACKS " << theNTracks << G4endl;

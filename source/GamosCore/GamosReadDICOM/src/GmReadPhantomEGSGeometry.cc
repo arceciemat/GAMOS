@@ -12,6 +12,7 @@
 #include "GmReadPhantomEGSGeometry.hh"
 #include "GmReadDICOMVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 
@@ -30,27 +31,32 @@ GmReadPhantomEGSGeometry::GmReadPhantomEGSGeometry()
 //---------------------------------------------------------------------------
 GmReadPhantomEGSGeometry::~GmReadPhantomEGSGeometry()
 {
+    thePhantomFileName = "test.egsphant";
 }
 
 
 //---------------------------------------------------------------------------
 void GmReadPhantomEGSGeometry::ReadPhantomData()
 {
-  G4String filename = GmParameterMgr::GetInstance()->GetStringValue("GmReadPhantomGeometry:Phantom:FileName", "test.egsphant");
+  G4String filename = GmParameterMgr::GetInstance()->GetStringValue("GmReadPhantomGeometry:Phantom:FileName", thePhantomFileName);
 
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  filename = GmGenUtils::FileInPath( path, filename );
+  filename = GmGenUtils::FileInPath( filename );
 
-  std::ifstream fin(filename.c_str());
+  GmFileIn fing = GmFileIn::GetInstance(filename);
+  std::ifstream* fin = fing.GetIfstream();
+
+  std::vector<G4String> wl;
   G4int nMaterials;
-  fin >> nMaterials;
+  if( !fing.GetWordsInLine(wl) ) return;
+  nMaterials = GmGenUtils::GetInteger(wl[0]);
 #ifndef GAMOS_NO_VERBOSE
   if( ReadDICOMVerb(infoVerb) ) G4cout << "GmReadPhantomEGSGeometry::ReadPhantomData nMaterials " << nMaterials << G4endl;
 #endif
   G4String stemp;
   G4tgbMaterialMgr* matmgr = G4tgbMaterialMgr::GetInstance(); 
   for( G4int ii = 0; ii < nMaterials; ii++ ){
-    fin >> stemp;
+    if( !fing.GetWordsInLine(wl) ) return;
+    stemp = wl[0];
 #ifndef GAMOS_NO_VERBOSE
   if( ReadDICOMVerb(infoVerb) ) G4cout << "GmReadPhantomEGSGeometry::ReadPhantomData material " << stemp << G4endl;
 #endif
@@ -58,42 +64,43 @@ void GmReadPhantomEGSGeometry::ReadPhantomData()
     thePhantomMaterialsOriginal[ii] = mate;
   }
 
-  for( G4int ii = 0; ii < nMaterials; ii++ ) fin >> stemp;  // not used 
+  for( G4int ii = 0; ii < nMaterials; ii++ ) *fin >> stemp;  // not used 
 
-  fin >> nVoxelX >> nVoxelY >> nVoxelZ;
+  *fin >> nVoxelX >> nVoxelY >> nVoxelZ;
 #ifndef GAMOS_NO_VERBOSE
   if( ReadDICOMVerb(infoVerb) ) G4cout << "GmReadPhantomEGSGeometry::ReadPhantomData nVoxelX " << nVoxelX << " nVoxelY " << nVoxelY << " nVoxelZ " << nVoxelZ << G4endl;
 #endif
-  std::pair<G4double,G4double> posdim = ReadVoxelDim( nVoxelX, fin );
+  std::pair<G4double,G4double> posdim = ReadVoxelDim( nVoxelX, *fin );
   offsetX = posdim.first;
   dimX = posdim.second;
 #ifndef GAMOS_NO_VERBOSE
   if( ReadDICOMVerb(infoVerb) ) G4cout << "GmReadPhantomEGSGeometry::ReadPhantomData dimX " << dimX << " offsetX " << offsetX << G4endl;
 #endif
-  posdim = ReadVoxelDim( nVoxelY, fin );
+  posdim = ReadVoxelDim( nVoxelY, *fin );
   offsetY = posdim.first;
   dimY = posdim.second;
 #ifndef GAMOS_NO_VERBOSE
   if( ReadDICOMVerb(infoVerb) ) G4cout << "GmReadPhantomEGSGeometry::ReadPhantomData dimY " << dimY << " offsetY " << offsetY << G4endl;
 #endif
-  posdim = ReadVoxelDim( nVoxelZ, fin );
+  posdim = ReadVoxelDim( nVoxelZ, *fin );
   offsetZ = posdim.first;
   dimZ = posdim.second;
 #ifndef GAMOS_NO_VERBOSE
   if( ReadDICOMVerb(infoVerb) ) G4cout << "GmReadPhantomEGSGeometry::ReadPhantomData dimZ " << dimZ << " offsetZ " << offsetZ << G4endl;
 #endif
 
-  //  mateIDs = new size_t[nVoxelX*nVoxelY*nVoxelZ];
-  mateIDs = new size_t[nVoxelX*nVoxelY*nVoxelZ];
+  //  theMateIDs = new size_t[nVoxelX*nVoxelY*nVoxelZ];
+  theMateIDs = new size_t[nVoxelX*nVoxelY*nVoxelZ];
   for( G4int iz = 0; iz < nVoxelZ; iz++ ) {
     for( G4int iy = 0; iy < nVoxelY; iy++ ) { // check if loop in X first???
-      fin >> stemp; 
+      if( !fing.GetWordsInLine(wl) ) return;
+      stemp = wl[0];
       for( G4int ix = 0; ix < nVoxelX; ix++ ) {
       //      G4cout << " stemp " << stemp << G4endl;
 	G4int nnew = ix + (iy)*nVoxelX + (iz)*nVoxelX*nVoxelY;
 	G4String cid = stemp.substr(ix,1).c_str();
-		//if( nnew % 10000 == 0 ) G4cout << stemp << " " << ix << " " << iy << " " << iz << " filling mateIDs " << nnew << " = " << atoi(cid.c_str())-1 << G4endl;
-		//if( nnew > nVoxelX*nVoxelY*nVoxelZ-10000 ) G4cout << ix << " " << iy << " " << iz << " filling mateIDs " << nnew << " = " << atoi(cid)-1 << G4endl;
+		//if( nnew % 10000 == 0 ) G4cout << stemp << " " << ix << " " << iy << " " << iz << " filling theMateIDs " << nnew << " = " << atoi(cid.c_str())-1 << G4endl;
+		//if( nnew > nVoxelX*nVoxelY*nVoxelZ-10000 ) G4cout << ix << " " << iy << " " << iz << " filling theMateIDs " << nnew << " = " << atoi(cid)-1 << G4endl;
 	G4int mateID = atoi(cid)-1;
 	if( mateID < 0 || mateID >= nMaterials ) {
 	  G4Exception("GmReadPhantomEGSGeometry::ReadPhantomData",
@@ -104,17 +111,17 @@ void GmReadPhantomEGSGeometry::ReadPhantomData()
 			       + ", while it is " 
 			       + GmGenUtils::itoa(mateID)).c_str());
 	}
-	mateIDs[nnew] = mateID;
-	//	mateIDs[nnew] = 1-1;
+	theMateIDs[nnew] = mateID;
+	//	theMateIDs[nnew] = 1-1;
       }
     }
   }
 
-  ReadVoxelDensities( fin );
+  ReadVoxelDensities( *fin );
 
-  ReadPV( fin );
+  ReadPV( fing );
 
-  fin.close();
+  fin->close();
 
 }
 

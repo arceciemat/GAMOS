@@ -1,0 +1,80 @@
+#------------------------------------------------------------------------------
+# Module : Biasing
+# Package: GamosCore_GamosPhysics_Biasing
+#
+#------------------------------------------------------------------------------
+#
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+#
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
+GEANT4_DEFINE_MODULE(NAME GamosCore_GamosPhysics_Biasing
+	 HEADERS
+		GmBiasingMgr.hh
+		GmEWBSSplittingProcess.hh
+		GmBOptnEWCompton.hh
+		GmBOptrForceCollisionTrackData.hh
+		GmBOptrBremsSplitting.hh
+		GmBOptrChangeCrossSection.hh
+		GmBOptnEWBS.hh
+		GmBOptrDirBremsSplitting.hh
+		GmBOptnEWBremsstrahlung.hh
+		GmBOptnEWPhotoElectric.hh
+		GmBiasingVerbosity.hh
+		GmBOptnBremsSplitting.hh
+		GmBOptrEWBS.hh
+		GmBiasingOperatorFactory.hh
+		GmVEWBiasingOperation.hh
+		GmVBiasingOperator.hh
+		GmBOptnEWPairProduction.hh
+		GmBOptrForceCollision.hh
+		GmBOptnDirBremsSplitting.hh
+		GmVEWBiasingOperation.h
+		GmGenericBiasingPhysics.hh
+		GmBOptnEWAnnihilation.hh
+		GmBOptnEWRayleigh.hh
+		GmBiasingMessenger.hh
+		GmBOptrChangeCrossSectionByDistribution.hh
+	 SOURCES
+		GmBOptrDirBremsSplitting.cc
+		GmBiasingMessenger.cc
+		plugin.cc
+		GmBOptrEWBS.cc
+		GmBOptrChangeCrossSection.cc
+		GmBOptrChangeCrossSectionByDistribution.cc
+		GmBiasingOperatorFactory.cc
+		GmBOptnEWBS.cc
+		GmEWBSSplittingProcess.cc
+		GmBiasingMgr.cc
+		GmBOptnEWBremsstrahlung.cc
+		GmVEWBiasingOperation.cc
+		GmBOptrForceCollisionTrackData.cc
+		GmBiasingVerbosity.cc
+		GmBOptnEWPhotoElectric.cc
+		GmBOptnDirBremsSplitting.cc
+		GmBOptrForceCollision.cc
+		GmBOptnEWPairProduction.cc
+		GmBOptnBremsSplitting.cc
+		GmBOptrBremsSplitting.cc
+		GmGenericBiasingPhysics.cc
+		GmBOptnEWRayleigh.cc
+		GmVBiasingOperator.cc
+		GmBOptnEWCompton.cc
+		GmBOptnEWAnnihilation.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+	GamosCore_GamosUtils
+	GamosCore_GamosGeometry
+	GamosCore_GamosPhysics_PhysicsList
+	GamosCore_GamosUserActionMgr
+	GamosCore_GamosUtils
+		${SEAL_LIBRARIES} 
+
+	LINK_LIBRARIES
+)

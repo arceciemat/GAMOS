@@ -21,9 +21,11 @@ public: // with description
   
 public: // with description
   virtual G4bool AcceptTrack(const G4Track* ) = 0; 
+  virtual G4bool AcceptStackedTrack(const G4Track* ) = 0; 
   virtual G4bool AcceptStep(const G4Step* ) = 0;
 
   virtual G4bool AcceptTrackAND(const G4Track* ); 
+  virtual G4bool AcceptStackedTrackAND(const G4Track* ); 
   virtual G4bool AcceptStepAND(const G4Step* );
  
 };

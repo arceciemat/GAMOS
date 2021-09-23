@@ -13,6 +13,7 @@
 #include "CLHEP/Random/RanluxEngine.h"
 #include "CLHEP/Random/RanshiEngine.h"
 #include "CLHEP/Random/JamesRandom.h"
+#include "CLHEP/Random/MixMaxRng.h"
 
 #include <sstream>
 
@@ -92,6 +93,9 @@ void GmRunMessenger::SetNewValue(G4UIcommand * command, G4String newValues)
       CLHEP::HepRandom::setTheEngine(new CLHEP::Ranlux64Engine);
     } else if( newValues == "RanshiEngine" ){  
       CLHEP::HepRandom::setTheEngine(new CLHEP::RanshiEngine);
+    } else if( newValues == "MixMaxRng" ){ 
+      CLHEP::HepRandom::setTheEngine(new CLHEP::MixMaxRng);
+
     } else {
       G4Exception("GmRunMessenger::SetNewValue",
 		  "Engine does not exists",

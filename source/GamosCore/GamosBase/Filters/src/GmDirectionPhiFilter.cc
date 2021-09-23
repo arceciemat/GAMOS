@@ -17,7 +17,7 @@ GmDirectionPhiFilter::~GmDirectionPhiFilter()
 //------------------------------------------------------------
 G4bool GmDirectionPhiFilter::AcceptStep(const G4Step* aStep)
 {
-  G4double val = aStep->GetPostStepPoint()->GetPosition().x();
+  G4double val = aStep->GetPostStepPoint()->GetMomentumDirection().phi();
   if ( val < theLowLimit  ) return FALSE;
   if ( val > theHighLimit ) return FALSE;
   return TRUE;
@@ -26,7 +26,7 @@ G4bool GmDirectionPhiFilter::AcceptStep(const G4Step* aStep)
 //------------------------------------------------------------
 G4bool GmDirectionPhiFilter::AcceptTrack(const G4Track* aTrack)
 {
-  G4double val = aTrack->GetPosition().x();
+  G4double val = aTrack->GetMomentumDirection().phi();
   if ( val < theLowLimit  ) return FALSE;
   if ( val > theHighLimit ) return FALSE;
   return TRUE;
@@ -36,8 +36,8 @@ G4bool GmDirectionPhiFilter::AcceptTrack(const G4Track* aTrack)
 void GmDirectionPhiFilter::show() 
 {
     G4cout << " GmDirectionPhiFilter:: " << GetName()
-	 << " LowLimiE  " << G4BestUnit(theLowLimit,"Position") 
-	 << " HighLimit " << G4BestUnit(theHighLimit,"Position")
+	 << " LowLimiE  " << G4BestUnit(theLowLimit,"Direction") 
+	 << " HighLimit " << G4BestUnit(theHighLimit,"Direction")
 	 <<G4endl;
 }
 
@@ -59,3 +59,4 @@ void GmDirectionPhiFilter::SetParameters( std::vector<G4String>& params)
  theHighLimit = GmGenUtils::GetValue( params[1] );
 
 }
+

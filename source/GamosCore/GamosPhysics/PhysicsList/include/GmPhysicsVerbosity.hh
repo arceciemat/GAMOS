@@ -16,7 +16,7 @@ public:
 };
 
 #ifdef WIN32
-  #if defined GmPhysicsPL_ALLOC_EXPORT 
+  #if defined GmPhysicsPL_ALLOC_EXPORT
     extern G4DLLEXPORT GmVerbosity PhysicsVerb;
   #else 
     extern G4DLLIMPORT GmVerbosity PhysicsVerb;
@@ -24,5 +24,6 @@ public:
 #else
 extern GmVerbosity PhysicsVerb;
 #endif
+
 
 #endif

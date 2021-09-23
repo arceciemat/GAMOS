@@ -1,4 +1,3 @@
-#define private public
 #include "G4VEmProcess.hh"
 #include "G4VEnergyLossProcess.hh"
 #include "G4EmModelManager.hh"
@@ -40,7 +39,7 @@
 #include "G4LivermoreGammaConversionModel.hh"
 #include "G4PenelopeGammaConversionModel.hh"
 
-#include "G4LivermoreRayleighModel.hh"
+#include "GmLivermoreRayleighModel_XSChangeNEW.hh"
 #include "G4PenelopeRayleighModel.hh"
 
 #include "G4MollerBhabhaModel.hh"
@@ -455,7 +454,7 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
       if( newParticleName == "gamma" ) {	  
 	G4ProcessManager* pmanager = particle->GetProcessManager();
 	G4ProcessVector* procVector = pmanager->GetProcessList();
-	for( G4int ii = 0; ii < procVector->size(); ii++ ) {
+	for( size_t ii = 0; ii < procVector->size(); ii++ ) {
 	  G4VEmProcess* process = (G4VEmProcess*)((*procVector)[ii]);
 	  G4String processName = process->GetProcessName();
 	  G4VEmModel* newModel = 0;
@@ -510,7 +509,7 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
 	    } else if( processName == "Rayl" ) { 
 	      if( newModelName == "standard" ) {	   
 	      } else if( newModelName == "low-energy" ) {
-		newModel = new G4LivermoreRayleighModel();
+		newModel = new GmLivermoreRayleighModel_XSChangeNEW();
 		newModel->SetHighEnergyLimit(1.*CLHEP::GeV);
 	      } else if( newModelName == "penelope" ) {
 		newModel = new G4PenelopeRayleighModel();
@@ -528,8 +527,8 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
 	    if( newModel == 0 ) continue; // rayleigh for standard models
 	    // Delete old model and add new
 	    std::vector<G4VEmModel*> models = process->modelManager->models;
-	    for( size_t ii = 0; ii < models.size(); ii++) {
-	      delete models[ii];
+	    for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+	      delete models[ii2];
 	    }
 	    process->modelManager->models.clear();
 	    process->modelManager->flucModels.clear();
@@ -544,7 +543,7 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
       } else if( newParticleName == "e-" ) {
 	G4ProcessManager* pmanager = particle->GetProcessManager();
 	G4ProcessVector* procVector = pmanager->GetProcessList();
-	for( G4int ii = 0; ii < procVector->size(); ii++ ) {
+	for( size_t ii = 0; ii < procVector->size(); ii++ ) {
 	  G4VEnergyLossProcess* process = (G4VEnergyLossProcess*)((*procVector)[ii]);
 	  G4String processName = process->GetProcessName();
 	  if( processName == newProcessName ) {
@@ -604,8 +603,8 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
 	    
 	    // Delete old modle and add new
 	    std::vector<G4VEmModel*> models = process->modelManager->models;
-	    for( size_t ii = 0; ii < models.size(); ii++) {
-	      delete models[ii];
+	    for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+	      delete models[ii2];
 	    }
 	    process->modelManager->models.clear();
 	    process->modelManager->flucModels.clear();
@@ -620,7 +619,7 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
       } else if( newParticleName == "e+" ) {
 	G4ProcessManager* pmanager = particle->GetProcessManager();
 	G4ProcessVector* procVector = pmanager->GetProcessList();
-	for( G4int ii = 0; ii < procVector->size(); ii++ ) {
+	for( size_t ii = 0; ii < procVector->size(); ii++ ) {
 	  G4VEnergyLossProcess* process = (G4VEnergyLossProcess*)((*procVector)[ii]);
 	  G4String processName = process->GetProcessName();
 	  if( processName == newProcessName ) {
@@ -691,8 +690,8 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
 	    
 	    // Delete old model and add new
 	    std::vector<G4VEmModel*> models = process->modelManager->models;
-	    for( size_t ii = 0; ii < models.size(); ii++) {
-	      delete models[ii];
+	    for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+	      delete models[ii2];
 	    }
 	    process->modelManager->models.clear();
 	    process->modelManager->flucModels.clear();

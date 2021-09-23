@@ -15,6 +15,7 @@ public:
 
   double GetBinContent(int ibin) const;
   double GetBinError(int ibin) const;
+  void Reset();
 
 private:
   friend  GmHistoProfile1 operator+(const GmHistoProfile1 &h1, const GmHistoProfile1 &h2);

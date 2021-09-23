@@ -8,12 +8,12 @@ class GmScoringVerbosity : public GmVVerbosity
 {
 public:
   GmScoringVerbosity();
+  virtual ~GmScoringVerbosity(){};
 
   virtual void SetFilterLevel( int fl );
   virtual int GetFilterLevel() const;
 
 };
-
 
 #ifdef WIN32
   #if defined GmScoringMgt_ALLOC_EXPORT 

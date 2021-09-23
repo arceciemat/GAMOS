@@ -30,24 +30,27 @@ G4double GmDataInitialRadLength::GetValueFromStep( const G4Step* aStep, G4int )
 //----------------------------------------------------------------
 G4double GmDataInitialRadLength::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
-  return aTrack->GetLogicalVolumeAtVertex()->GetMaterial()->GetRadlen();
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetVertexPosition()) );
+  return mate->GetRadlen();
 }
 
 //----------------------------------------------------------------
 G4double GmDataInitialRadLength::GetValueFromSecoTrack( const G4Track* aTrack1, const G4Track* , G4int )
 {
-  return aTrack1->GetMaterial()->GetRadlen();
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack1->GetPosition()) );
+  return mate->GetRadlen();
 }
 
 //----------------------------------------------------------------
 G4double GmDataInitialRadLength::GetValueFromEvent( const G4Event* anEvent, G4int )
 {
-  G4TouchableHistory* touch = new G4TouchableHistory;
-  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( anEvent->GetPrimaryVertex(0)->GetPosition(), touch, false ); 
+  G4Material* mate = GetMateFromPV( GetPVFromPos(anEvent->GetPrimaryVertex(0)->GetPosition()) );
+  return mate->GetRadlen();
+}
 
-  G4double density = touch->GetVolume()->GetLogicalVolume()->GetMaterial()->GetRadlen();
- 
-  delete touch;
-
-  return density;
+//----------------------------------------------------------------
+G4double GmDataInitialRadLength::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetPosition()) );
+  return mate->GetRadlen();
 }

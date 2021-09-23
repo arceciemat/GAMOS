@@ -24,7 +24,7 @@ G4ThreeVector GmGenerDistDirectionCone::GenerateDirection( const GmParticleSourc
   G4ThreeVector newDir = theInitialDir; 
   newDir.rotate( theta, thePerpDir );
 #ifndef GAMOS_NO_VERBOSE
-   if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistDirectionCone::Generate:  dir after theta rotation " << newDir << " theta " << theta << G4endl;
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistDirectionCone::Generate:  dir after theta rotation " << newDir << " theta " << theta/CLHEP::deg << " " << thePerpDir << G4endl;
 #endif
 
   //---- Get phi angle around newDir
@@ -32,7 +32,7 @@ G4ThreeVector GmGenerDistDirectionCone::GenerateDirection( const GmParticleSourc
   newDir.rotate( phi , theInitialDir );
 
 #ifndef GAMOS_NO_VERBOSE
-   if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistDirectionCone::Generate:  final dir " << newDir << G4endl;
+  if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistDirectionCone::Generate:  final dir " << newDir << " phi " << phi/CLHEP::deg << G4endl;
 #endif
 
   return newDir;
@@ -46,7 +46,7 @@ void GmGenerDistDirectionCone::SetParams( const std::vector<G4String>& params )
     G4Exception(" GmGenerDistDirectionCone::SetParam",
 		"Wrong argument",
 		FatalErrorInArgument,
-		"To set direction you have to add 3 parameters: DIR_X DIR_Y DIR_Z OPENING_ANGLE");  
+		"To set direction you have to add 4 parameters: DIR_X DIR_Y DIR_Z OPENING_ANGLE");  
   }
 
   theInitialDir = G4ThreeVector(GmGenUtils::GetValue( params[0] ), GmGenUtils::GetValue( params[1] ), GmGenUtils::GetValue( params[2] ) );
@@ -55,7 +55,6 @@ void GmGenerDistDirectionCone::SetParams( const std::vector<G4String>& params )
 
   //----- Get one perpendicular direction
   G4ThreeVector dir(1.,0.,0.);
-
   if( fabs(fabs(theInitialDir*dir) - 1.) < 1.E-9 ){
     dir = G4ThreeVector(0.,1.,0.);
   }
@@ -66,4 +65,18 @@ void GmGenerDistDirectionCone::SetParams( const std::vector<G4String>& params )
 #endif
 
 
+}
+
+//---------------------------------------------------------------------
+void GmGenerDistDirectionCone::SetDirection( G4ThreeVector dirIni )
+{
+  theInitialDir = dirIni;
+  G4ThreeVector dirPP(1.,0.,0.);
+  if( fabs(fabs(theInitialDir*dirPP) - 1.) < 1.E-9 ){
+    dirPP = G4ThreeVector(0.,1.,0.);
+  }
+  thePerpDir = theInitialDir.cross(dirPP);
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistDirectionCone::SetDirection theInitialDir " << theInitialDir << "thePerpDir " << thePerpDir << G4endl;
+#endif
 }

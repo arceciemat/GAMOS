@@ -1,4 +1,5 @@
 #include "GmMovementRotation.hh"
+#include "GmMovementVerbosity.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
@@ -25,8 +26,10 @@ G4bool GmMovementRotation::Move()
     G4RotationMatrix* rm = (*itev)->GetRotation();
     rm->rotate(theValue,theAxis);
     (*itev)->SetRotation(rm);
-
-    geomMgr->CloseGeometry(true,*itev);
+#ifndef GAMOS_NO_VERBOSE
+    if( MoveVerb(debugVerb) ) G4cout << " GmMovementRotation::Move " << (*itev)->GetName() << " " << rm << G4endl;
+#endif
+    geomMgr->CloseGeometry(true,false,*itev);
   }
   
   // Notify the VisManager as well

@@ -51,6 +51,7 @@ class GmOpticalPropertiesMgr
 
   void CreateMaterialPropertiesTable( const std::vector<G4String> wl );
   void AddEnergiesToTable( std::vector<G4String> wl );
+  void AddWavelengthsToTable( std::vector<G4String> wl );
   void AddPropertyToTable( const std::vector<G4String> wl );
   void AddConstPropertyToTable( const std::vector<G4String> wl );
   void AttachTableToMaterial( const std::vector<G4String> wl );

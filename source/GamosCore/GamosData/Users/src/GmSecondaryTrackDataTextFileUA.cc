@@ -77,11 +77,12 @@ void GmSecondaryTrackDataTextFileUA::UserSteppingAction(const G4Step* aStep )
     }
     if( !bSecoAccepted ) continue;
     for( ite = theData.begin(); ite != theData.end(); ite++ ) {
-      (*ite)->WriteText( aTrack, secoTrack, ite == theData.begin() && ii == 0);
+      (*ite)->WriteText( aTrack, secoTrack, ite == theData.begin() );
     }
+    *theFileOut << G4endl;  
   }
-  if( nSeco != 0 ) *theFileOut << G4endl;  
-  
+  //    if( nSeco != 0 ) *theFileOut << G4endl;  
+
 }
 
 

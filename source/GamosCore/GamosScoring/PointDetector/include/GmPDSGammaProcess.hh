@@ -14,7 +14,8 @@ public:
   GmPDSGammaProcess(const G4String&, G4SteppingManager* );
   
   virtual ~GmPDSGammaProcess();
-  
+
+
 public :
 
   virtual void AddHelper( GmPDSProcessHelper* helper );

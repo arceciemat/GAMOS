@@ -190,42 +190,42 @@ void GmHistoWriterTXT::SaveHisto2D(const G4String& hisType, const TH2* his )
   
   theFile << " RMSY= " << his->GetRMS(2);  
   if( bHistoTXTErrors ) {
-    theFile << " " << his->GetRMSError(2) << G4endl;  
+    theFile << " " << his->GetRMSError(2);  
   }
 
   G4double flow;
   G4int ii, jj;
   flow = 0;
   ii = 0;
-  for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( jj = 0; jj <= nbinsy+1; jj++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " UFLOWX= " << flow;
 
   flow = 0.;
   ii = nbinsx+1;
-  for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( jj = 0; jj <= nbinsy+1; jj++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " OFLOWX= " << flow;
 
   flow = 0.;
   jj = 0;
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
+  for( ii = 0; ii <= nbinsx+1; ii++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " UFLOWY= " << flow;
 
   flow = 0.;
   jj = nbinsy+1;
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
+  for( ii = 0; ii <= nbinsx+1; ii++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " OFLOWY= " << flow;
   theFile << G4endl;
 
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
-    for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( ii = 0; ii <= nbinsx+1; ii++ ){
+    for( jj = 0; jj <= nbinsy+1; jj++ ){
       theFile << his->GetXaxis()->GetXmin()+his->GetXaxis()->GetBinWidth(ii)*(ii-0.5) 
 	      << " " << his->GetYaxis()->GetXmin()+his->GetYaxis()->GetBinWidth(jj)*(jj-0.5) 
 	      << " " << his->GetBinContent(ii,jj);

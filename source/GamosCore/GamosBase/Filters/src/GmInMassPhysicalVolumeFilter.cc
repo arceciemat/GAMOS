@@ -7,7 +7,7 @@
 #include "G4PhysicalVolumeStore.hh"
 #include "G4TransportationManager.hh"
 #include "G4Navigator.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 
 //-----------------------------------------------------------------
 GmInMassPhysicalVolumeFilter::GmInMassPhysicalVolumeFilter(G4String name)
@@ -26,24 +26,24 @@ GmInMassPhysicalVolumeFilter::~GmInMassPhysicalVolumeFilter()
 G4bool GmInMassPhysicalVolumeFilter::AcceptTrack(const G4Track* aTrack )
 {
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptTrack " << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptTrack " << G4endl;
 #endif
 
   G4VPhysicalVolume* physvol = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndSetup( aTrack->GetPosition(), (G4ThreeVector*)0, false, false ); 
   if( physvol ) {
     if( theVPhysicalVolumes.find(physvol) != theVPhysicalVolumes.end() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptTrack  return 1 " << physvol->GetName() << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptTrack  return 1 " << physvol->GetName() << G4endl;
 #endif
       return TRUE;
     }
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptTrack  return 0 " << physvol->GetName() << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptTrack  return 0 " << physvol->GetName() << G4endl;
 #endif
     return FALSE;
   } else {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptTrack  return 0 , no vol " << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptTrack  return 0 , no vol " << G4endl;
 #endif
     return FALSE;
   }
@@ -55,12 +55,12 @@ G4bool GmInMassPhysicalVolumeFilter::AcceptStep(const G4Step* aStep)
   G4VPhysicalVolume* physvol = aStep->GetTrack()->GetVolume();
   if( theVPhysicalVolumes.find(physvol) != theVPhysicalVolumes.end() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptStep  return 1 " << physvol->GetName() << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptStep  return 1 " << physvol->GetName() << G4endl;
 #endif
     return TRUE;
   }
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptStep  return 0 " << physvol->GetName() << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeFilter::AcceptStep  return 0 " << physvol->GetName() << G4endl;
 #endif
   return FALSE;
 }
@@ -80,4 +80,15 @@ void GmInMassPhysicalVolumeFilter::show()
 void GmInMassPhysicalVolumeFilter::SetParameters( std::vector<G4String>& params)
 {
   GmTouchableFilterPhysicalVolume::SetParameters(params);
+}
+
+//-------------------------------------------------------------------------
+G4bool GmInMassPhysicalVolumeFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmInMassPhysicalVolumeFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
 }

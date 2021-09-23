@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: GmDeexSplitPenelopePhotoElectricModel.hh,v 1.4 2012/12/15 20:42:21 arce Exp $
+// $Id: GmDeexSplitPenelopePhotoElectricModel.hh,v 1.5 2018/06/28 15:27:37 arce Exp $
 // GEANT4 tag $Name:  $
 //
 // Author: Luciano Pandola

@@ -44,7 +44,7 @@ class GmPhysicsGammaLowEner : public GmVPhysicsGamma {
 
 public: 
 
-  GmPhysicsGammaLowEner(const G4String& name = "gamma-lowener");
+  GmPhysicsGammaLowEner(const G4String& name = "gamma-lowener", G4int type=22);
   
   virtual ~GmPhysicsGammaLowEner();
   

@@ -3,14 +3,18 @@
 #include "G4Track.hh"
 #include "G4UnitsTable.hh"
 
+//-------------------------------------------------------------------------
 GmVertexKineticEnergyFilter::GmVertexKineticEnergyFilter(G4String name)
   :GmVFilter(name)
 {
 }
 
+//-------------------------------------------------------------------------
 GmVertexKineticEnergyFilter::~GmVertexKineticEnergyFilter()
 {;}
 
+
+//-------------------------------------------------------------------------
 G4bool GmVertexKineticEnergyFilter::AcceptStep(const G4Step* aStep)
 {
   G4double kinetic = aStep->GetTrack()->GetVertexKineticEnergy();
@@ -20,6 +24,8 @@ G4bool GmVertexKineticEnergyFilter::AcceptStep(const G4Step* aStep)
   return TRUE;
 }
 
+
+//-------------------------------------------------------------------------
 G4bool GmVertexKineticEnergyFilter::AcceptTrack(const G4Track* aTrack)
 {
   G4double kinetic = aTrack->GetVertexKineticEnergy();
@@ -29,6 +35,8 @@ G4bool GmVertexKineticEnergyFilter::AcceptTrack(const G4Track* aTrack)
   return TRUE;
 }
 
+
+//-------------------------------------------------------------------------
 void GmVertexKineticEnergyFilter::show() 
 {
     G4cout << " GmVertexKineticEnergyFilter:: " << GetName()
@@ -37,7 +45,7 @@ void GmVertexKineticEnergyFilter::show()
 	 <<G4endl;
 }
 
-
+//-------------------------------------------------------------------------
 void GmVertexKineticEnergyFilter::SetParameters( std::vector<G4String>& params)
 {
  if( params.size() != 2 ){
@@ -54,4 +62,15 @@ void GmVertexKineticEnergyFilter::SetParameters( std::vector<G4String>& params)
  fLowEnergy  = GmGenUtils::GetValue( params[0] );
  fHighEnergy = GmGenUtils::GetValue( params[1] );
 
+}
+
+//-------------------------------------------------------------------------
+G4bool GmVertexKineticEnergyFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmVertexKineticEnergyFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
 }

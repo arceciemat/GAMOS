@@ -6,6 +6,7 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4TouchableHistory.hh"
 #include "G4EmCalculator.hh"
+#include "G4PVParameterised.hh"
 
 //----------------------------------------------------------------
 GmDataInitialDEDX::GmDataInitialDEDX()
@@ -36,18 +37,31 @@ G4double GmDataInitialDEDX::GetValueFromStep( const G4Step* aStep, G4int )
 //----------------------------------------------------------------
 G4double GmDataInitialDEDX::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetVertexPosition()) );
   return theEmCalculator->GetDEDX( aTrack->GetVertexKineticEnergy(), 
 				   aTrack->GetDefinition(), 
-				   aTrack->GetLogicalVolumeAtVertex()->GetMaterial(), 
+				   mate, 
 				   aTrack->GetLogicalVolumeAtVertex()->GetRegion() );
 }
 
 //----------------------------------------------------------------
 G4double GmDataInitialDEDX::GetValueFromSecoTrack( const G4Track* aTrack1, const G4Track* aTrack2, G4int )
 {
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack1->GetPosition()) );
   return theEmCalculator->GetDEDX( aTrack2->GetKineticEnergy(), 
 				   aTrack2->GetDefinition(), 
-				   aTrack1->GetNextVolume()->GetLogicalVolume()->GetMaterial(), 
+				   mate, 
 				   aTrack1->GetNextVolume()->GetLogicalVolume()->GetRegion() );
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialDEDX::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  G4Material* mate = GetMateFromPV( GetPVFromPos(aTrack->GetPosition()) );
+  return theEmCalculator->GetDEDX( aTrack->GetKineticEnergy(), 
+				   aTrack->GetDefinition(), 
+				   mate,
+				   aTrack->GetLogicalVolumeAtVertex()->GetRegion() );
+}
+
 

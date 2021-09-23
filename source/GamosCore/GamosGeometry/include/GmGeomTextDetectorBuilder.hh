@@ -21,7 +21,7 @@ public:
   ~GmGeomTextDetectorBuilder(){ };
 
   virtual const G4tgrVolume* ReadDetector();
-  G4VPhysicalVolume* ConstructDetectorGAMOS( const G4tgrVolume* tgrVoltop, G4int parallelID = -1, G4bool bBuildRegionCuts = 1 );
+  G4VPhysicalVolume* ConstructDetectorGAMOS( const G4tgrVolume* tgrVoltop, G4int parallelID = -1, G4bool bBuildRegionCuts = 1, G4bool bCallOpticalPropertiesMgr = true );
 
 private:
 };

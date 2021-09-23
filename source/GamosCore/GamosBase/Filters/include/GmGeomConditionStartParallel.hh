@@ -7,18 +7,18 @@
 //  Return touchable of volume traversed
 // 
 ///////////////////////////////////////////////////////////////////////////////
-#define private public
 #include "G4ParallelWorldScoringProcess.hh"
 
 #include "GmVGeomCondition.hh"
 class G4TouchableHistory;
+class G4Navigator;
 
 class GmGeomConditionStartParallel : public GmVGeomCondition
 {
 public: // with description
   GmGeomConditionStartParallel();
   
-  virtual ~GmGeomConditionStartParallel(){};
+  virtual ~GmGeomConditionStartParallel(){delete theTouchable;};
   
 public: // with description
   virtual const G4VTouchable* GetTouchableFromTrack(const G4Track*);
@@ -26,6 +26,7 @@ public: // with description
 
 private:
   G4TouchableHistory* theTouchable;
+  G4Navigator* theNavigator;
 
   G4ParallelWorldScoringProcess* theParallelWorldProcess;
   

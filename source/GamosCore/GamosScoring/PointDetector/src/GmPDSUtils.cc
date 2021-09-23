@@ -50,6 +50,8 @@ G4double GetPDSNumericParameter(const G4String& param, G4String partName, G4doub
     partName = "neutron";
   } else if( partName == "G4Gamma" ) {
     partName = "gamma";
+  } else if( partName == "G4OpticalPhoton" ) {
+    partName = "opticalphoton";
   }
 
   GmParameterMgr* theParamMgr = GmParameterMgr::GetInstance();
@@ -71,6 +73,8 @@ G4String GetPDSStringParameter(const G4String& param, G4String partName, G4Strin
     partName = "neutron";
   } else if( partName == "G4Gamma" ) {
     partName = "gamma";
+  } else if( partName == "G4OpticalPhoton" ) {
+    partName = "opticalphoton";
   }
 
   GmParameterMgr* theParamMgr = GmParameterMgr::GetInstance();

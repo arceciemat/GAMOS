@@ -1,6 +1,6 @@
 #include "GmHistoryAncestorsAllFilter.hh"
 #include "G4Track.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 
 //----------------------------------------------------------------
 GmHistoryAncestorsAllFilter::GmHistoryAncestorsAllFilter(G4String name)
@@ -55,7 +55,7 @@ G4bool GmHistoryAncestorsAllFilter::AcceptStep(const G4Step* aStep)
   if( bAccept ) {
     bAccept = AcceptStepAND(aStep);
 #ifndef GAMOS_NO_VERBOSE
-    if( bAccept ) if( BaseVerb(debugVerb) ) G4cout << " GmHistoryAncestorsFilter::AcceptStep return 1, because current step is accepted " << G4endl;
+    if( bAccept ) if( FilterVerb(debugVerb) ) G4cout << " GmHistoryAncestorsFilter::AcceptStep return 1, because current step is accepted " << G4endl;
 #endif
   }
 
@@ -67,3 +67,27 @@ G4bool GmHistoryAncestorsAllFilter::AcceptStep(const G4Step* aStep)
   return bAccept;
 
 }
+
+
+//----------------------------------------------------------------
+G4bool GmHistoryAncestorsAllFilter::AcceptStackedTrack(const G4Track* aTrack)
+{
+  if( aTrack->GetParentID() == 0 &&
+      aTrack->GetCurrentStepNumber() == 0 ) {
+    bNotPassed.clear();
+  } else {
+    if( bNotPassed.find(aTrack->GetTrackID()) != bNotPassed.end() || 
+	bNotPassed.find(aTrack->GetParentID()) != bNotPassed.end() ) {
+      return FALSE;
+    }
+  }
+
+  // Ancestors passed, see if track also passes
+  G4bool bAccept = AcceptStackedTrackAND(aTrack);
+
+  if( !bAccept ) bNotPassed.insert(aTrack->GetTrackID());
+
+  return bAccept;
+
+}
+

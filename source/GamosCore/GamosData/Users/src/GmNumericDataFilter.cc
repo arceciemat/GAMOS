@@ -1,5 +1,6 @@
 #include "GmNumericDataFilter.hh"
 #include "GamosCore/GamosData/Management/include/GmDataVerbosity.hh"
+#include "GamosCore/GamosData/Management/include/GmVDataAccumulated.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
@@ -22,11 +23,17 @@ G4bool GmNumericDataFilter::AcceptStep(const G4Step* aStep)
 {
   G4double val = theData[0]->GetValueFromStep( aStep );
 #ifndef GAMOS_NO_VERBOSE
-  if( DataVerb(debugVerb) )   G4cout << "  GmNumericDataFilter::AcceptStep " << val << " lowerLimit " << theLowerLimit << " upperLimit " << theUpperLimit << G4endl;
+  if( DataVerb(debugVerb) ) G4cout << GetName() << "  GmNumericDataFilter::AcceptStep " << val << " lowerLimit " << theLowerLimit << " upperLimit " << theUpperLimit << G4endl;
 #endif
   if ( val < theLowerLimit ) return FALSE;
   if ( val > theUpperLimit ) return FALSE;
-  if( DataVerb(debugVerb) )   G4cout << "  GmNumericDataFilter::AcceptStep  ACCEPTED " << G4endl;
+  if( DataVerb(debugVerb) )   G4cout << GetName() << "  GmNumericDataFilter::AcceptStep  ACCEPTED " << G4endl;
+
+  if( theData[0]->IsAccumulating() ) {
+    GmVDataAccumulated* dataAccum = dynamic_cast<GmVDataAccumulated*>(theData[0]);
+    dataAccum->Accumulate(aStep);
+  }
+  
   return TRUE;
   
 }
@@ -36,13 +43,40 @@ G4bool GmNumericDataFilter::AcceptTrack(const G4Track* aTrack)
 {
   G4double val = theData[0]->GetValueFromTrack( aTrack );
 #ifndef GAMOS_NO_VERBOSE
-  if( DataVerb(debugVerb) )   G4cout << "  GmNumericDataFilter::AcceptTrack " << val << " lowerLimit " << theLowerLimit << " upperLimit " << theUpperLimit << G4endl;
+  if( DataVerb(debugVerb) )  G4cout << GetName() << "  GmNumericDataFilter::AcceptTrack " << val << " lowerLimit " << theLowerLimit << " upperLimit " << theUpperLimit << G4endl;
 #endif
+
+  if( theData[0]->IsAccumulating() ) {
+    GmVDataAccumulated* dataAccum = dynamic_cast<GmVDataAccumulated*>(theData[0]);
+    dataAccum->Initialise();
+  }
+  
   if ( val < theLowerLimit ) return FALSE;
   if ( val > theUpperLimit ) return FALSE;
   return TRUE;
     
 }
+
+//----------------------------------------------------------------------------
+G4bool GmNumericDataFilter::AcceptStackedTrack(const G4Track* aTrack)
+{
+  G4double val = theData[0]->GetValueFromStackedTrack( aTrack );
+#ifndef GAMOS_NO_VERBOSE
+  if( DataVerb(debugVerb) ) G4cout <<  GetName() << "  GmNumericDataFilter::AcceptStackedTrack " << val << " lowerLimit " << theLowerLimit << " upperLimit " << theUpperLimit << G4endl;
+#endif
+
+  if( theData[0]->IsAccumulating() ) {
+    GmVDataAccumulated* dataAccum = dynamic_cast<GmVDataAccumulated*>(theData[0]);
+    dataAccum->Initialise();
+  }
+  
+  if ( val < theLowerLimit ) return FALSE;
+  if ( val > theUpperLimit ) return FALSE;
+
+  return TRUE;
+    
+}
+
 
 //----------------------------------------------------------------------------
 void GmNumericDataFilter::show() 
@@ -61,7 +95,7 @@ void GmNumericDataFilter::SetParameters( std::vector<G4String>& params)
 
   GmVData* data = Build1Data( params[0] );
 #ifndef GAMOS_NO_VERBOSE
-  if( DataVerb(infoVerb) ) G4cout << " GmNumericDataFilter::SetParameters " << params[0] << G4endl;
+  if( DataVerb(infoVerb) ) G4cout << GetName() << " GmNumericDataFilter::SetParameters " << params[0] << G4endl;
 #endif
   data->SetName( params[0] );
   theData.push_back( data );
@@ -70,7 +104,7 @@ void GmNumericDataFilter::SetParameters( std::vector<G4String>& params)
    G4Exception("GmNumericDataFilter::SetParameters",
 		"Data is not of numeric type",
   		JustWarning,
-		G4String("Data is " + params[0] + " Maybe you want to use GmStringDataFilter?").c_str());
+		G4String("Data is " + params[0] + " Maybe you want to use GmNumericDataFilter?").c_str());
   }
 
  if( params.size() != 3 ){

@@ -71,6 +71,13 @@ public:
   G4int GetHitsTimeType() const {
     return theHitsTimeType;
   }
+  void SetEventTime( G4double et ) {
+    theEventTime = et;
+  }
+
+  G4double GetInitialEventTime() const {
+    return theInitialEventTime;
+  }
 
 private:
   static GmHitsEventMgr* theInstance;
@@ -90,6 +97,9 @@ private:
   GmVEventTimeExtractor* theEventTimeExtractor;
 
   G4int theHitsTimeType;
+  G4bool bInitialEventTime;
+  G4double theInitialEventTime;
+
 };
 
 #endif

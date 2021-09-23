@@ -1,6 +1,7 @@
 #ifndef GmHisto1_hh
 #define GmHisto1_hh
 #ifdef GAMOS_NO_ROOT
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
 #include <string>
 #include <map>
@@ -52,7 +53,7 @@ public:
   double GetMeanError() const;
   double GetRMSError() const;
   
-  double GmGenUtils::GetIntegral() const;
+  double GetIntegral() const;
   int GetBin(double binx ) const;
   
   //  virtual Float_t GetKurtosis(Int_t axis=1) const;

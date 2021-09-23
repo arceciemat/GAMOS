@@ -24,10 +24,15 @@ class GmVModule {
   const G4String& GetName() const {
     return theName; 
   }
+  void SetWord( G4String nameW, G4int idW );
+
   std::vector<G4String> GetParams() const {
     return theParams;
   }
-  G4String GetParams( G4int ii );
+  G4String GetParam( G4int ii );
+  G4String GetParam( G4String name );
+  void ReplaceParam( G4int ii, G4String val );
+  void ReplaceParam( G4String name, G4String val );
 
   void SetLineProcessor(G4tgrLineProcessor* lp ){
     theLineProcessor = lp;
@@ -36,12 +41,21 @@ class GmVModule {
 protected:
   void BuildObject( std::ostringstream& fout );
 
+  G4String PrintW(G4String name );
+  G4String PrintWVal(G4String name );
+
+  G4double GetPosRound( G4double posCircleZ, G4double slope, G4double profR, G4double hvlX, G4int sign );
+  
 protected:
   G4String theName; 
-  std::vector<G4String> theParams;
   std::map<G4String,G4String> theWords;
+  std::map<G4String,G4int> theWordIDs; // number of parameter that corresponds to each word. Needed for ReplaceParam(name): to change theParams
 
   G4tgrLineProcessor* theLineProcessor;
+
+protected:
+  std::vector<G4String> theParams;
+
 }; 
 
 #endif

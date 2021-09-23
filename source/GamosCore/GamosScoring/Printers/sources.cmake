@@ -1,56 +1,52 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosScoring_Printers
+# Module : Printers
+# Package: GamosCore_GamosScoring_Printers
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Printers
+	 HEADERS
+		GmPSPrinterCoutContIndex.hh
+		GmPSPrinterSqdose.hh
+		GmPSPrinterBinFile.hh
+		GmPSPrinterCout.hh
+		GmPSPrinter3ddoseSplitZ.hh
+		GmPSPrinterHistos.hh
+		GmPSPrinterCSVFile.hh
+		GmPSPrinter3ddose.hh
+		GmPSPrinterTextFile.hh
+		GmPSPrinterXYZ.hh
+	 SOURCES
+		plugin.cc
+		GmPSPrinterCout.cc
+		GmPSPrinter3ddoseSplitZ.cc
+		GmPSPrinterTextFile.cc
+		GmPSPrinter3ddose.cc
+		GmPSPrinterSqdose.cc
+		GmPSPrinterXYZ.cc
+		GmPSPrinterBinFile.cc
+		GmPSPrinterCSVFile.cc
+		GmPSPrinterHistos.cc
+		GmPSPrinterCoutContIndex.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+	GamosCore_GamosUtils
+	GamosCore_GamosBase_Base
+	GamosCore_GamosBase_Classifiers
+	GamosCore_GamosGeometry
+	GamosCore_GamosReadDICOM
+	GamosCore_GamosScoring_Management
+		${SEAL_LIBRARIES} 
 
-   HEADERS
-       GmPSPrinterCSVFile.hh
-       GmPSPrinterXYZ.hh
-       GmPSPrinterSqdose.hh
-       GmPSPrinterTextFile.hh
-       GmPSPrinterBinFile.hh
-       GmPSPrinterHistos.hh
-       GmPSPrinter3ddose.hh
-       GmPSPrinterCout.hh
-
-   SOURCES
-       plugin.cc
-       GmPSPrinterTextFile.cc
-       GmPSPrinterCout.cc
-       GmPSPrinterCSVFile.cc
-       GmPSPrinter3ddose.cc
-       GmPSPrinterSqdose.cc
-       GmPSPrinterHistos.cc
-       GmPSPrinterXYZ.cc
-       GmPSPrinterBinFile.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosAnalysis
-  GamosCore_GamosBase_Classifiers
-  GamosCore_GamosGeometry
-  GamosCore_GamosUtils
-  GamosCore_GamosReadDICOM
-  GamosCore_GamosScoring_Management
-  GamosCore_GamosBase_Base
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

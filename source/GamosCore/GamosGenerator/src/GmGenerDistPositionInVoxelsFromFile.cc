@@ -61,7 +61,7 @@ void GmGenerDistPositionInVoxelsFromFile::SetParams( const std::vector<G4String>
     G4Exception(" GmGenerDistPositionInVoxelsFromFile::SetParams",
 		"Wrong argument",
 		FatalErrorInArgument,
-		"You need to defined a parameter: FILE_NAME (POS_X POS_Y POS_Z) (DIR_X DIR_Y DIR_Z");
+		"You need to defined a parameter: FILE_NAME (POS_X POS_Y POS_Z) (ROT_X ROT_Y ROT_Z");
   }
  
   G4String fileName = params[0];
@@ -127,30 +127,9 @@ void GmGenerDistPositionInVoxelsFromFile::SetParams( const std::vector<G4String>
 
   //--- Get rotation
   if( params.size() >= 7 ) {
-    //normalize direction cosines
-    G4ThreeVector dir(GmGenUtils::GetValue( params[4] ), GmGenUtils::GetValue( params[5] ), GmGenUtils::GetValue( params[6] ) );
-    if( fabs(dir.mag()-1.) > G4GeometryTolerance::GetInstance()->GetSurfaceTolerance() ) {
-      G4Exception("GmGenerDistPositionInVoxelsFromFile::SetParams",
-		  "Warning",
-		  JustWarning,
-		  G4String("direction cosines are normalized to one, they were " + GmGenUtils::ftoa(dir.mag())).c_str());
-      dir /= dir.mag();
-    } 
-    G4double angx = -asin(dir.y());
-    // there are always two solutions angx, angy and PI-angx, PI+angy, choose first
-    G4double angy;
-    if( dir.y() == 1. ) {
-      angy = 0.;
-    } else if( dir.y() == 0. ) {
-      angy = 0.;
-    } else {
-      angy = asin( dir.x()/sqrt(1-dir.y()*dir.y()) );
-    }
-
-    // choose between  angy and PI-angy
-    if( dir.z() * cos(angx)*cos(angy) < 0 ) angy = M_PI - angy;
-    theRotation.rotateX( angx );
-    theRotation.rotateY( angy );
+    theRotation.rotateX( GmGenUtils::GetValue( params[4] ) );
+    theRotation.rotateY( GmGenUtils::GetValue( params[5] ) );
+    theRotation.rotateZ( GmGenUtils::GetValue( params[6] ) );
   }
   
 #ifndef GAMOS_NO_VERBOSE

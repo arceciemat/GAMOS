@@ -1,20 +1,20 @@
 #ifndef GmDummyPhysics_h
 #define GmDummyPhysics_h 1
 
-#include "G4VModularPhysicsList.hh"
+#include "G4VUserPhysicsList.hh"
 #include "globals.hh"
 
-class GmDummyPhysics: public G4VModularPhysicsList
+class GmDummyPhysics: public G4VUserPhysicsList
 {
 public:
   GmDummyPhysics();
-  virtual ~GmDummyPhysics();
+  ~GmDummyPhysics();
 
-  void ConstructParticles();
+  void ConstructParticle();
 
-  virtual void SetCuts();
+  void SetCuts();
 
-  virtual void ConstructProcess();  
+  void ConstructProcess();  
 
 private:
 };

@@ -23,9 +23,12 @@ GmDataAccumulatedEnergyDeposited::~GmDataAccumulatedEnergyDeposited()
 void GmDataAccumulatedEnergyDeposited::Accumulate( const G4Step* aStep, G4int index )
 {
   theDataAccumulated[index] += aStep->GetTotalEnergyDeposit();
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( DataVerb(debugVerb) ) G4cout << " GmDataAccumulatedEnergyDeposited::Accumulate " << index << " = " << theDataAccumulated[index] << " energyDepo " <<  aStep->GetTotalEnergyDeposit() << G4endl;
 #endif
+#endif
+
 }
 
 //----------------------------------------------------------------

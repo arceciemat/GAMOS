@@ -12,10 +12,10 @@ public: // with description
   GmClassifierByAncestors(G4String);
   virtual ~GmClassifierByAncestors(){ };
   
-  virtual G4int GetIndexFromStep(const G4Step*);
-  virtual G4int GetIndexFromTrack(const G4Track*);
+  virtual int64_t GetIndexFromStep(const G4Step*);
+  virtual int64_t GetIndexFromTrack(const G4Track*);
 
-  virtual G4String GetIndexName(G4int index);
+  virtual G4String GetIndexName(int64_t index);
 
   virtual void SetParameters( std::vector<G4String>& param );
 
@@ -24,10 +24,10 @@ public: // with description
 private:
   G4int theNAncestors;
   G4int theNShift;
-  G4int theMaxIndex;
+  int64_t theMaxIndex;
 
-  std::map<G4int,G4String> theIndexNames;
-  std::map<G4String,G4int> theIndexMap;
+  std::map<int64_t,G4String> theIndexNames;
+  std::map<G4String,int64_t> theIndexMap;
 };
 
 #endif

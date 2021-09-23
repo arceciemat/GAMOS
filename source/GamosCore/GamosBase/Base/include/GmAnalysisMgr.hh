@@ -2,9 +2,7 @@
 #define GmAnalysisMgr_h 1
 
 #ifndef GAMOS_NO_ROOT
-#define protected public
 #include "TH1F.h"
-//#define protected protected
 #include "TH2F.h"
 #include "TProfile.h"
 #include "TProfile2D.h"
@@ -40,12 +38,19 @@ public:
 
   ~GmAnalysisMgr();
   void Save( const G4String& name, const G4String& format );
+	void SaveAllFormats(const G4String& name);
 
   static GmAnalysisMgr* GetInstance(const G4String& filename);
-  static std::map<G4String,GmAnalysisMgr*> GetAllInstances()
-  {return theInstances; }
-
-  //  bool CreateHistogram1D(const G4String & path, const G4String & title, int nBins, double lowerEdge, double upperEdge, int nHisto = -1);
+#ifdef WIN32  //WINDEB                                                                                           
+#if defined GmBaseBase_ALLOC_EXPORT
+  G4DLLEXPORT std::map<G4String, GmAnalysisMgr*> GetAllInstances();
+#else
+  G4DLLIMPORT std::map<G4String, GmAnalysisMgr*> GetAllInstances();
+#endif
+#else
+  static std::map<G4String, GmAnalysisMgr*> GetAllInstances();
+#endif
+    //  bool CreateHistogram1D(const G4String & path, const G4String & title, int nBins, double lowerEdge, double upperEdge, int nHisto = -1);
   bool CreateHisto1D(const G4String & pathAndTitle, int nBins, double lowerEdge, double upperEdge, int nHisto = -1 );
   //  bool CreateHisto1D(const G4String & pathAndTitle, int nBins, double lowerEdge, double upperEdge, int nHisto = -1 ) { 
   //    return CreateHistogram1D( pathAndTitle, nBins, lowerEdge, upperEdge, nHisto ); }
@@ -70,6 +75,10 @@ public:
   GmHistoProfile2* GetHistoProf2( int ih, bool itExists = TRUE );
   GmHistoProfile1* GetHistoProf1( const G4String& hnam, bool itExists = TRUE );
   GmHistoProfile2* GetHistoProf2( const G4String& hnam, bool itExists = TRUE );
+  mih1 GetHistos1D() const{ return theHistos1; }
+  mih2 GetHistos2D() const{ return theHistos2; }
+  mihp1 GetHistosProf1() const{ return theHistosProf1; }
+  mihp2 GetHistosProf2() const{ return theHistosProf2; }
 
   void HistoDoesNotExists( int ih, const G4String& hisname, bool itExists = TRUE);
   void HistoDoesNotExists( const G4String& hnam, const G4String& histype, bool itExists = TRUE );
@@ -97,9 +106,17 @@ public:
   static std::map<G4String,GmAnalysisMgr*> GetInstances() { 
     return theInstances;
   }
-  static std::set<G4String> GetFileFormats() {
-    return theFileFormats; 
-  }
+
+#ifdef WIN32  //WINDEB                                                                       
+#if defined GmBaseBase_ALLOC_EXPORT
+  G4DLLEXPORT std::set<G4String> GetFileFormats();
+#else
+  G4DLLIMPORT std::set<G4String> GetFileFormats()
+#endif
+#else
+  static std::set<G4String> GetFileFormats();
+#endif
+
   G4String GetFileName() const {
     return theFileName;
   }
@@ -118,8 +135,6 @@ private:
   void Normalize();
   void NormalizeToNEvents( GmHisto1* his );
   void NormalizeToNEvents( GmHisto2* his );
-  void NormalizeToNEvents( GmHistoProfile1* his );
-  void NormalizeToNEvents( GmHistoProfile2* his );
 
  private:
   static std::map<G4String,GmAnalysisMgr*> theInstances;

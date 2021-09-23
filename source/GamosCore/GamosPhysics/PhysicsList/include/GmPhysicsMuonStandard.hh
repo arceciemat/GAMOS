@@ -43,7 +43,7 @@ class GmPhysicsMuonStandard : public G4VPhysicsConstructor {
 
 public: 
 
-  GmPhysicsMuonStandard(const G4String& name = "muon-standard");
+  GmPhysicsMuonStandard(const G4String& name = "muon-standard", G4int type=33);
   
   virtual ~GmPhysicsMuonStandard();
   

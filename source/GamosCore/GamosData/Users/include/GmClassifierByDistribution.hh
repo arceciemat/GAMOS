@@ -13,18 +13,18 @@ public: // with description
   GmClassifierByDistribution(G4String);
   virtual ~GmClassifierByDistribution();
   
-  virtual G4int GetIndexFromStep(const G4Step*);
-  virtual G4int GetIndexFromTrack(const G4Track*);
-  G4int GetIndexFromValue(const G4double val );
+  virtual int64_t GetIndexFromStep(const G4Step*);
+  virtual int64_t GetIndexFromTrack(const G4Track*);
+  int64_t GetIndexFromValue(const G4double val );
 
   virtual void SetParameters( std::vector<G4String>& param );
 
-  virtual G4String GetIndexName(G4int);
+  virtual G4String GetIndexName(int64_t);
 
   virtual void SetIndices(std::vector<G4String, std::allocator<G4String> >){};
 
 private:
-  std::map<G4int,G4String> theIndexNamesMap;
+  std::map<int64_t,G4String> theIndexNamesMap;
   GmVDistribution* theDistribution;
 };
 

@@ -17,7 +17,6 @@ G4double GmGenerDistTimeConstant::GenerateTime( const GmParticleSource* )
   return theTime;
 }
 
-
 //---------------------------------------------------------------------
 void GmGenerDistTimeConstant::SetParams( const std::vector<G4String>& params )
 {

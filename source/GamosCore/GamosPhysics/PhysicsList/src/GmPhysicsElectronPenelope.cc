@@ -10,8 +10,8 @@
 #include "G4eBremsstrahlung.hh"
 #include "G4PenelopeBremsstrahlungModel.hh"
 
-GmPhysicsElectronPenelope::GmPhysicsElectronPenelope(const G4String& name): 
-G4VPhysicsConstructor(name)
+GmPhysicsElectronPenelope::GmPhysicsElectronPenelope(const G4String& name, G4int type): 
+G4VPhysicsConstructor(name,type)
 { }
 
 GmPhysicsElectronPenelope::~GmPhysicsElectronPenelope()
@@ -42,7 +42,6 @@ void GmPhysicsElectronPenelope::ConstructProcess()
 	new G4PenelopeIonisationModel();
       theIoniPenelope->SetHighEnergyLimit(PenelopeHighEnergyLimit);
       eIoni->AddEmModel(0,theIoniPenelope,new G4UniversalFluctuation());
-      eIoni->SetStepFunction(0.2, 100*CLHEP::um); //     
       pmanager->AddProcess(eIoni,                 -1, 2, 2);
       
       //Bremsstrahlung

@@ -40,7 +40,8 @@ G4ClassificationOfNewTrack GmUserStackingActionList::ClassifyNewTrack(const G4Tr
     G4bool bAccept = TRUE;
     if( (*aite)->ApplyFiltersToStacking() ) {
       for( ite = (*aite)->theFilters.begin(); ite != (*aite)->theFilters.end(); ite++ ){
-	if( !(*ite)->AcceptTrack(aTrack) ) {
+	//	G4cout << " FILTER " << (*ite)->GetName() << G4endl; //GDEB
+	if( !(*ite)->AcceptStackedTrack(aTrack) ) {
 	  bAccept = FALSE;
 	  if( !(*aite)->CheckAllFiltersAtStacking() ) break;
 	}

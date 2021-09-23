@@ -1,13 +1,13 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosScoring_Printers
+# Module : Printers
+# Package: GamosCore_GamosScoring_Printers
 #
 #------------------------------------------------------------------------------
+# 
+set(CMAKE_VERBOSE_MAKEFILE ON)
 include(Geant4MacroLibraryTargets)
-
-if(GAMOS_BUILD_GRANULAR_LIBS)
-   GAMOS_GRANULAR_LIBRARY_TARGET(COMPONENT sources.cmake)
+if(GEANT4_BUILD_GRANULAR_LIBS)
+    GEANT4_GRANULAR_LIBRARY_TARGET(COMPONENTS sources.cmake)
 else()
    GEANT4_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
 endif()

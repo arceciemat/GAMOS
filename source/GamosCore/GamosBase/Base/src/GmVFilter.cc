@@ -1,7 +1,7 @@
 #include "GmVFilter.hh"
 
 GmVFilter::GmVFilter(G4String name)
-:theName(name)
+:theFilterName(name)
 {
   bFutureFilter = FALSE;
 }

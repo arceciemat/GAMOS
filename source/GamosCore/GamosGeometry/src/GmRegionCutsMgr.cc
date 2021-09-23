@@ -93,8 +93,8 @@ void GmRegionCutsMgr::BuildRegions()
     G4Region* reg = new G4Region( (*iter)->GetRegionName() );
     std::vector<G4String> lvs = (*iter)->GetLVNames();
     for( ites = lvs.begin(); ites != lvs.end(); ites++ ){
-      std::vector<G4LogicalVolume*> lvs = geomUtils->GetLogicalVolumes( *ites, true );
-      for( itelv = lvs.begin(); itelv != lvs.end(); itelv++ ){
+      std::vector<G4LogicalVolume*> lvsv = geomUtils->GetLogicalVolumes( *ites, true );
+      for( itelv = lvsv.begin(); itelv != lvsv.end(); itelv++ ){
 	reg->AddRootLogicalVolume( *itelv );
 #ifndef GAMOS_NO_VERBOSE
 	if( GeomVerb(infoVerb) ) G4cout << "BuildRegions " << reg->GetName() << " LV " << (*itelv)->GetName() << G4endl;

@@ -31,7 +31,9 @@ const G4String & GmVerbosity::levelName(int il) {
  
 static std::ofstream devnull("/dev/null");
 
+#ifndef WIN32  //NEW
 std::ostream & GmVerbosity::out = devnull;
+#endif
 
 void GmVerbosity::Verbose() {verbose_=true;}
 

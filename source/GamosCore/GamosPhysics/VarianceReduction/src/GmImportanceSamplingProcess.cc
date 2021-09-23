@@ -19,7 +19,7 @@ GmInheritTrackInfoUA* GmImportanceSamplingProcess::theInheritTrackInfoUA = 0;
 GmImportanceSamplingProcess::GmImportanceSamplingProcess(const G4String& name , GmVDistribution* distrib ): G4VDiscreteProcess( name ), theDistribution(distrib)
 {
   GmParameterMgr* parMgr = GmParameterMgr::GetInstance();
-  theMaxSplitTimes = G4int(parMgr->GetNumericValue(theProcessName+":MaxSplitTimes",DBL_MAX));
+  theMaxSplitTimes = G4int(parMgr->GetNumericValue(theProcessName+":MaxSplitTimes",INT_MAX));
 
   bSplitAtSeveralSteps = G4bool(parMgr->GetNumericValue(theProcessName+":SplitAtSeveralSteps",1));
   std::vector<G4String> filterNames;
@@ -114,6 +114,7 @@ G4VParticleChange* GmImportanceSamplingProcess::PostStepDoIt( const G4Track& aTr
 					 << " MaxSplitTimes " << theMaxSplitTimes
 					 << " weight " << aTrack.GetWeight() <<  G4endl;
 #endif
+    //    G4cout << " IMPOR " << bSplitAtSeveralSteps << G4endl;//GDEB
     if( !bSplitAtSeveralSteps ) {
 #ifndef GAMOS_NO_VERBOSE
       if( PhysicsVerb(debugVerb)  ) G4cout << " GmImportanceSamplingProcess::PostStepDoIt not split at several steps NsplitTimes " << nSplitTimes << G4endl;
@@ -126,8 +127,19 @@ G4VParticleChange* GmImportanceSamplingProcess::PostStepDoIt( const G4Track& aTr
 
   } else {
     GmTrackInfo* gmTrackInfo = new GmTrackInfo("GmImpSamplInfo");
-    gmTrackInfo->SetIntValue("NSplitTimes", 1);
     G4Track* aTrackNC = (G4Track*)(&aTrack);
+    if( aTrackNC->GetUserInformation() != 0 ) {
+      G4VUserTrackInformation* g4TrkInfo = aTrackNC->GetUserInformation();
+      G4String TIType = "GEANT4";
+      if( dynamic_cast<GmTrackInfo*>(g4TrkInfo) ) {
+	TIType = dynamic_cast<GmTrackInfo*>(g4TrkInfo)->GetType();
+      }
+      G4Exception("GmImportanceSamplingProcess::PostStepDoIt",
+		  "",
+		  JustWarning,
+		  ("Creating a GmTrackInfo for a track that has already a G4VUserTrackInformation, of type: "+ TIType).c_str());
+    } 
+    gmTrackInfo->SetIntValue("NSplitTimes", 1);
     aTrackNC->SetUserInformation( gmTrackInfo);
 #ifndef GAMOS_NO_VERBOSE
     if( PhysicsVerb(debugVerb)  ) G4cout << " GmImportanceSamplingProcess::PostStepDoIt first time split " << G4endl;
@@ -137,6 +149,9 @@ G4VParticleChange* GmImportanceSamplingProcess::PostStepDoIt( const G4Track& aTr
   
   if( indexVal > 1. ) {
     G4int indexInt = G4int(indexVal);
+    G4double indexTrunc = indexVal - indexInt;
+    if( CLHEP::RandFlat::shoot() < indexTrunc ) indexInt += 1;
+
     G4double newWeight = aTrack.GetWeight() / (indexInt);
     pParticleChange->ProposeParentWeight( newWeight );
     
@@ -160,6 +175,17 @@ G4VParticleChange* GmImportanceSamplingProcess::PostStepDoIt( const G4Track& aTr
       pParticleChange->AddSecondary(newTrack);
       newTrack->SetWeight( newWeight );
       GmTrackInfo* gmTrackInfo = new GmTrackInfo("GmImpSamplInfo");
+      if( newTrack->GetUserInformation() != 0 ) {
+	G4VUserTrackInformation* g4TrkInfo = newTrack->GetUserInformation();
+	G4String TIType = "GEANT4";
+	if( dynamic_cast<GmTrackInfo*>(g4TrkInfo) ) {
+	  TIType = dynamic_cast<GmTrackInfo*>(g4TrkInfo)->GetType();
+	}
+	G4Exception("GmImportanceSamplingProcess::PostStepDoIt",
+		    "",
+		    JustWarning,
+		    ("Creating a GmTrackInfo for a track that has already a G4VUserTrackInformation, of type: "+ TIType).c_str());
+      }
       gmTrackInfo->SetIntValue("NSplitTimes", parentNSplitTimes);
       newTrack->SetUserInformation( gmTrackInfo );
     }

@@ -47,10 +47,6 @@ class GmG4PSCellCharge : public GmVPrimitiveScorer
       virtual G4bool ProcessHits(G4Step*,G4TouchableHistory*);
 
   public: 
-      virtual void EndOfEvent(G4HCofThisEvent*);
-      virtual void DrawAll();
-      virtual void PrintAll();
-  virtual G4int GetIndex(G4Step*);
 
   virtual G4double GetUnit() const {
     return 1.; }

@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: GmDeexSplitLivermorePhotoElectricModel.hh,v 1.7 2012/10/22 15:26:10 arce Exp $
+// $Id: GmDeexSplitLivermorePhotoElectricModel.hh,v 1.5 2018/06/28 15:27:37 arce Exp $
 // GEANT4 tag $Name:  $
 //
 // Author: Sebastien Incerti
@@ -34,7 +34,6 @@
 //               Main cuts from G4ProductionCutsTable are always used
 // 30 May 2011   A Mantero & V Ivanchenko Migration to model design for deexcitation
 //
-
 
 #ifndef GmDeexSplitLivermorePhotoElectricModel_h
 #define GmDeexSplitLivermorePhotoElectricModel_h 1
@@ -47,6 +46,8 @@ class G4VCrossSectionHandler;
 class G4VAtomDeexcitation;
 class G4VPhotoElectricAngularDistribution;
 class G4AtomicTransitionManager;
+
+using namespace CLHEP;
 
 class GmDeexSplitLivermorePhotoElectricModel : public G4LivermorePhotoElectricModel, public GmVPSModelHelper
 {

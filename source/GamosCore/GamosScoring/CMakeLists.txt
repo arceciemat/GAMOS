@@ -1,11 +1,9 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosScoring
+# Module : GamosScoring
+# Package: GamosCore_GamosScoring
 #
 #------------------------------------------------------------------------------
-add_definitions(-DGamosScoring_ALLOC_EXPORT)
-
+# 
 add_subdirectory(Management)
 add_subdirectory(Scorers)
 add_subdirectory(Printers)

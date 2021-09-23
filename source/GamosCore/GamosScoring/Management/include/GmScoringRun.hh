@@ -12,9 +12,12 @@
 
 #include "G4Run.hh"
 #include "G4Event.hh"
-
 #include "G4THitsMap.hh"
 #include <vector>
+
+class GmVPrimitiveScorer;
+class GmScoringMgr;
+
 //
 class GmScoringRun : public G4Run {
 
@@ -44,10 +47,13 @@ public:
   //   This method calls G4THisMap::PrintAll() for individual HitsMap.
   void DumpAllScorers();
 
+  G4THitsMap<G4double>* GetRunMap(GmVPrimitiveScorer* scorer );
+
 private:
   std::vector<G4String> theCollName;
   std::vector<G4int> theCollID;
   std::vector<G4THitsMap<G4double>*> theRunMap;
+  GmScoringMgr* theScoringMgr;
 };
 
 //

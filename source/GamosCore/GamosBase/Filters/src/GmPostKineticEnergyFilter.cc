@@ -52,3 +52,14 @@ void GmPostKineticEnergyFilter::SetParameters( std::vector<G4String>& params)
  fHighEnergy = GmGenUtils::GetValue( params[1] );
 
 }
+
+//-------------------------------------------------------------------------
+G4bool GmPostKineticEnergyFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmPostKineticEnergyFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
+}

@@ -1,4 +1,5 @@
 #include "GmClassifierByPrimaryParticle.hh"
+#include "GmClassifierVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 #include "GamosCore/GamosBase/Base/include/GmGetParticleMgr.hh"
@@ -28,15 +29,15 @@ void GmClassifierByPrimaryParticle::SetParameters( std::vector<G4String>& params
 }
 
 //-------------------------------------------------------------
-G4int GmClassifierByPrimaryParticle::GetIndexFromStep(const G4Step* aStep)
+int64_t GmClassifierByPrimaryParticle::GetIndexFromStep(const G4Step* aStep)
 {
   if( aStep->GetTrack()->GetParentID() == 0 
       && aStep->GetTrack()->GetCurrentStepNumber() == 1 ) {
     thePrimaryParticle = aStep->GetTrack()->GetDefinition();
   }
 
-  G4int index;
-  std::map<G4ParticleDefinition*,G4int>::const_iterator ite = theIndexMap.find(thePrimaryParticle);
+  int64_t index;
+  std::map<G4ParticleDefinition*,int64_t>::const_iterator ite = theIndexMap.find(thePrimaryParticle);
   if( ite == theIndexMap.end() ){
     index = theIndexMap.size()+1+theMaxIndex;
     theIndexMap[thePrimaryParticle] = index;
@@ -47,15 +48,15 @@ G4int GmClassifierByPrimaryParticle::GetIndexFromStep(const G4Step* aStep)
 }
 
 //-------------------------------------------------------------
-G4int GmClassifierByPrimaryParticle::GetIndexFromTrack(const G4Track* aTrack)
+int64_t GmClassifierByPrimaryParticle::GetIndexFromTrack(const G4Track* aTrack)
 {
   if( aTrack->GetParentID() == 0 
       && aTrack->GetCurrentStepNumber() == 1 ) {
     thePrimaryParticle = aTrack->GetDefinition();
   }
 
-  G4int index;
-  std::map<G4ParticleDefinition*,G4int>::const_iterator ite = theIndexMap.find(thePrimaryParticle);
+  int64_t index;
+  std::map<G4ParticleDefinition*,int64_t>::const_iterator ite = theIndexMap.find(thePrimaryParticle);
   if( ite == theIndexMap.end() ){
     index = theIndexMap.size()+1+theMaxIndex;
     theIndexMap[thePrimaryParticle] = index;
@@ -66,10 +67,10 @@ G4int GmClassifierByPrimaryParticle::GetIndexFromTrack(const G4Track* aTrack)
 }
 
 //---------------------------------------------------------------
-G4String GmClassifierByPrimaryParticle::GetIndexName(G4int index)
+G4String GmClassifierByPrimaryParticle::GetIndexName(int64_t index)
 {
   G4String name = "NOT_FOUND";
-  std::map<G4ParticleDefinition*,G4int>::const_iterator ite;
+  std::map<G4ParticleDefinition*,int64_t>::const_iterator ite;
   for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
     if((*ite).second == index ){
       name= (*ite).first->GetParticleName();
@@ -83,12 +84,16 @@ G4String GmClassifierByPrimaryParticle::GetIndexName(G4int index)
 GmClassifierByPrimaryParticle::~GmClassifierByPrimaryParticle()
 {
   //print names of each index 
-  G4cout << "%%%%% Table of indices for GmClassifierByPrimaryParticle " << theName << G4endl;
-  std::map<G4ParticleDefinition*,G4int>::const_iterator ite;
-  for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
-    G4cout << theName << ": " << (*ite).first->GetParticleName() << " = " << (*ite).second << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+  if( ClassifierVerb(debugVerb) ) {
+    G4cout << "%%%%% Table of indices for GmClassifierByPrimaryParticle " << theName << G4endl;
+    std::map<G4ParticleDefinition*,int64_t>::const_iterator ite;
+    for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
+      G4cout << theName << ": " << (*ite).first->GetParticleName() << " = " << (*ite).second << G4endl;
+    }
   }
-}
+#endif
+}  
 
 //-------------------------------------------------------------
 void GmClassifierByPrimaryParticle::SetIndices( std::vector<G4String> wl )
@@ -98,7 +103,7 @@ void GmClassifierByPrimaryParticle::SetIndices( std::vector<G4String> wl )
     std::vector<G4ParticleDefinition*> keys = GmGetParticleMgr::GetInstance()->GetG4ParticleList( wl[ii] );
     for( unsigned int jj = 0; jj < keys.size(); jj++ ){
       G4ParticleDefinition* key = keys[jj];
-      G4int index = G4int(GmGenUtils::GetValue(wl[ii+1]));
+      int64_t index = int64_t(GmGenUtils::GetValue(wl[ii+1]));
       theIndexMap[key] = index;
       if( theMaxIndex < index) theMaxIndex = index;
     }

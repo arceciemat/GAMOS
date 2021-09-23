@@ -1,5 +1,5 @@
 #include "GmParticleFilter.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 #include "GamosCore/GamosBase/Base/include/GmGetParticleMgr.hh"
@@ -28,12 +28,12 @@ G4bool GmParticleFilter::AcceptTrack(const G4Track* aTrack)
 {
   if( theParticles.find( aTrack->GetDefinition() ) != theParticles.end() ){
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmParticleFilter::AcceptTrack 1 " <<  aTrack->GetDefinition()->GetParticleName() << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmParticleFilter::AcceptTrack 1 " <<  aTrack->GetDefinition()->GetParticleName() << G4endl;
 #endif
     return TRUE;
   } else {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmParticleFilter::AcceptTrack 0 " <<  aTrack->GetDefinition()->GetParticleName() << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmParticleFilter::AcceptTrack 0 " <<  aTrack->GetDefinition()->GetParticleName() << G4endl;
 #endif
     return FALSE;
   }
@@ -75,7 +75,7 @@ void GmParticleFilter::SetParameters( std::vector<G4String>& params)
       } else {
 	theParticles.insert(part);
 #ifndef GAMOS_NO_VERBOSE
-	if( BaseVerb(debugVerb) ) G4cout << " GmParticleFilter::SetParameters add particle " << params[ii] << G4endl;
+	if( FilterVerb(debugVerb) ) G4cout << " GmParticleFilter::SetParameters add particle " << params[ii] << G4endl;
 #endif
       }     
     }

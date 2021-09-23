@@ -1,4 +1,5 @@
 #include "GmMovementDisplacement.hh"
+#include "GmMovementVerbosity.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
@@ -24,8 +25,11 @@ G4bool GmMovementDisplacement::Move()
     G4ThreeVector trans = (*itev)->GetTranslation();
     trans += theValue * theAxis;
     (*itev)->SetTranslation(trans);
+#ifndef GAMOS_NO_VERBOSE
+    if( MoveVerb(debugVerb) ) G4cout << " GmMovementDisplacement::Move " << (*itev)->GetName() << " " << trans << G4endl;
+#endif
 
-    geomMgr->CloseGeometry(true,*itev);
+    geomMgr->CloseGeometry(true,false,*itev);
     //   geomMgr->CloseGeometry(true);
   }
   

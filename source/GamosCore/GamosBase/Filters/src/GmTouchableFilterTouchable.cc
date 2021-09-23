@@ -5,7 +5,7 @@
 #include "G4Track.hh"
 #include "G4LogicalVolume.hh"
 #include "G4LogicalVolumeStore.hh"
-#include "GamosCore/GamosBase/Base/include/GmBaseVerbosity.hh"
+#include "GamosCore/GamosBase/Filters/include/GmFilterVerbosity.hh"
 
 //---------------------------------------------------------------------
 GmTouchableFilterTouchable::GmTouchableFilterTouchable()
@@ -25,7 +25,7 @@ G4bool GmTouchableFilterTouchable::AcceptTouchable(const G4VTouchable* touch)
 {
   if( !touch->GetVolume() ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchable::AcceptTouchable return 0, no touch->GetVolume() " << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchable::AcceptTouchable return 0, no touch->GetVolume() " << G4endl;
 #endif
     return FALSE; // it should have detected before, but fWorldBoundary is not set
   }
@@ -38,7 +38,7 @@ G4bool GmTouchableFilterTouchable::AcceptTouchable(const G4VTouchable* touch)
       G4VPhysicalVolume* pv = touch->GetVolume(jj);
       G4bool cn = !geomUtils->CheckPVCopyNo( pv, ancestors[jj].second ) ;
 #ifndef GAMOS_NO_VERBOSE
-      if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchable::AcceptTouchable check " <<  pv->GetName() << " != " << ancestors[jj].first << " " 
+      if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchable::AcceptTouchable check " <<  pv->GetName() << " != " << ancestors[jj].first << " " 
 	     << pv->GetCopyNo() << "- " << ancestors[jj].second 
 	     << "?" << (pv->GetName() != ancestors[jj].first)
 	     << "?" << G4int(cn)
@@ -51,13 +51,13 @@ G4bool GmTouchableFilterTouchable::AcceptTouchable(const G4VTouchable* touch)
       }
     }
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchable::AcceptTouchable return " << bFound << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchable::AcceptTouchable return " << bFound << G4endl;
 #endif
     if( bFound ) return TRUE;
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( BaseVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchable::AcceptTouchable return 0 " << touch->GetVolume()->GetName() << G4endl;
+  if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchable::AcceptTouchable return 0 " << touch->GetVolume()->GetName() << G4endl;
 #endif
 
   return FALSE;
@@ -89,7 +89,7 @@ void GmTouchableFilterTouchable::SetParameters( std::vector<G4String>& params)
     vpsi ancestors = geomUtils->ExtractAncestorsRequested( params[ii] );
     theTouchableNames.push_back(ancestors);
 #ifndef GAMOS_NO_VERBOSE
-    if( BaseVerb(debugVerb) ) G4cout << "GmTouchableFilterTouchable::SetParameters add parameter " << params[ii] << G4endl;
+    if( FilterVerb(debugVerb) ) G4cout << "GmTouchableFilterTouchable::SetParameters add parameter " << params[ii] << G4endl;
 #endif
   }
 }

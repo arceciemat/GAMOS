@@ -23,6 +23,7 @@ class GmNumberOfSecondariesFilter : public GmVFilter
 
   public: // with description
       virtual G4bool AcceptStep(const G4Step*);
+  virtual G4bool AcceptStackedTrack(const G4Track* );
 
       //
       void show();

@@ -1,10 +1,10 @@
 #ifndef GmPolynomialDistribution_h
 #define GmPolynomialDistribution_h 1
 
-#include "GamosCore/GamosBase/Base/include/GmVDistribution.hh"
+#include "GamosCore/GamosData/Distributions/include/GmVNumericDistribution.hh"
 #include <vector>
 
-class GmPolynomialDistribution : public GmVDistribution
+class GmPolynomialDistribution : public GmVNumericDistribution
 {
   
 public: 

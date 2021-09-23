@@ -15,12 +15,9 @@ public: // with description
   virtual ~GmPSPrinterBinFile(){ };
   
   virtual void DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* theScorer );
-  virtual void SetParameters( const std::vector<G4String>& param );
 
 private:
 
-  G4double theUnit;
-  G4String theUnitName;
 };
 
 #endif

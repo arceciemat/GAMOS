@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: GmDeexSpliteIonisation.hh,v 1.3 2012/10/22 15:26:10 arce Exp $
+// $Id: GmDeexSpliteIonisation.hh,v 1.5 2018/06/28 15:27:37 arce Exp $
 // GEANT4 tag $Name:  $
 //
 // -------------------------------------------------------------------

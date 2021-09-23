@@ -52,6 +52,36 @@ GmVSD::GmVSD(G4String my_det_name) : G4VSensitiveDetector(my_det_name)
 GmVSD::~GmVSD(){}
 
 //--------------------------------------------------------------------
+GmVSD::GmVSD() :  G4VSensitiveDetector("")
+{
+}
+
+//--------------------------------------------------------------------
+void GmVSD::SetName(G4String name)
+{
+  verboseLevel = 0;
+  active = true;
+  ROgeometry = nullptr;
+  filter = nullptr;
+
+  size_t sLast = name.last('/');
+  if(sLast==std::string::npos)
+    { // detector name only
+      SensitiveDetectorName = name;
+      thePathName = "/";
+    }
+  else
+    { // name conatin the directory path
+      SensitiveDetectorName = name;
+      SensitiveDetectorName.remove(0,sLast+1);
+      thePathName = name;
+      thePathName.remove(sLast+1,name.length()-sLast);
+      if(thePathName(0)!='/') thePathName.prepend("/");
+    }
+  fullPathName = thePathName + SensitiveDetectorName;
+}
+
+//--------------------------------------------------------------------
 void GmVSD::Initialize(G4HCofThisEvent*)
 {
   const G4Event* event = G4RunManager::GetRunManager()->GetCurrentEvent();
@@ -133,7 +163,7 @@ G4bool GmVSD::ProcessHits(G4Step* aStep,
     }     
   } 
   
-
+  //  G4cout << " GmVSD::ProcessHits aStep->GetTrack()->GetGlobalTime() " << aStep->GetTrack()->GetGlobalTime() << G4endl; //GDEB
   //----- Create hit if is not updating an existing one
   if( !hitUpdated ) CreateHit( aStep, detunitID );
 
@@ -146,7 +176,9 @@ void GmVSD::CreateHit( G4Step* aStep, unsigned long long id )
   G4String type = GetPathName();
   G4double energy = GetEnergyInSD( aStep );
 
+  //  G4cout << " GmVSD::CreateHit aStep->GetTrack()->GetGlobalTime() " << aStep->GetTrack()->GetGlobalTime() << G4endl; //GDEB
   theCurrentHit = new GmHit( aStep, energy, id, type, theEventID );
+
   
   CalculateAndSetPosition( theCurrentHit, aStep ); //it is the SD that knows how to calculate the hit position
   theHitsInEvent.push_back( theCurrentHit );

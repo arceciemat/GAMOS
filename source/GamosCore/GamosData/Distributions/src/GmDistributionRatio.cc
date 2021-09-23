@@ -10,7 +10,7 @@
 
 //---------------------------------------------------------------------
 GmDistributionRatio::GmDistributionRatio(G4String name)
-  : GmVDistribution(name)
+  : GmVNumericDistribution(name)
 {
   BuildData();
 }

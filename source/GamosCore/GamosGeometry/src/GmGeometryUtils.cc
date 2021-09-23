@@ -22,6 +22,7 @@
 #include "G4RegionStore.hh"
 #include "G4PVParameterised.hh"
 #include "G4DensityEffectData.hh"
+#include "G4PhantomParameterisation.hh"
 #include "CLHEP/Units/SystemOfUnits.h"
 
 GmGeometryUtils* GmGeometryUtils::theInstance = 0;
@@ -170,6 +171,27 @@ G4Material* GmGeometryUtils::GetMaterial( const G4String& name, bool exists )
 
   }
   return mate;
+}
+
+//-----------------------------------------------------------------------
+std::vector<G4Material*> GmGeometryUtils::GetAllMaterials( const G4String& name, bool exists )
+{
+  std::vector<G4Material*> mates;
+  const G4MaterialTable* matTab = G4Material::GetMaterialTable();
+  std::vector<G4Material*>::const_iterator matite;
+  for( matite = matTab->begin(); matite != matTab->end(); matite++ ) {
+    if( GmGenUtils::AreWordsEquivalent( name, (*matite)->GetName()) ) {
+      mates.push_back(*matite);
+    }
+  }
+
+  if( mates.size() == 0 ){
+    if( exists ) {
+      G4Exception("GmGeometryUtils::GetMaterial","ERROR",FatalErrorInArgument,("Material does not exist: " + name).c_str());
+    }
+
+  }
+  return mates;
 }
 
 //-----------------------------------------------------------------------
@@ -549,9 +571,6 @@ G4LogicalVolume* GmGeometryUtils::GetTopLV(G4bool bGeomInit)
 {
   G4LogicalVolume* topLV ;
   theTopPV = GetTopPV();
-#ifndef GAMOS_NO_VERBOSE
-  if( GeomVerb(debugVerb) ) G4cout << " topPV " << theTopPV << G4endl;
-#endif
   if( bGeomInit && theTopPV ) {
     topLV = theTopPV->GetLogicalVolume();
   } else {
@@ -598,15 +617,15 @@ std::vector<GmTouchable*> GmGeometryUtils::GetTouchables( const G4String& name, 
   //--- 3. get all PV corresponding to this LV
     G4VPhysicalVolume* pv0 = *cite;
 #ifndef GAMOS_NO_VERBOSE
-    if( GeomVerb(debugVerb) ) G4cout << " Looking for volName0 " << pv0->GetName() << G4endl;
+    if( GeomVerb(debugVerb) ) G4cout << "@@@ GmGeometryUtils::GetTouchables: Looking for: " << pv0->GetName() << G4endl;
 #endif
     if( GmGenUtils::AreWordsEquivalent( volName, pv0->GetName() ) ) {
       //    if( (*cite)->GetName() == name ) {
 #ifndef GAMOS_NO_VERBOSE
-      if( GeomVerb(debugVerb) ) G4cout << " Found volName0 " << pv0->GetName() << " :" << pv0->GetCopyNo() << G4endl;
+      if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::GetTouchables FOUND: " << pv0->GetName() << " :" << pv0->GetCopyNo() << G4endl;
 #endif
       //--- create vector of PV ancestors of this PV: each PV will have associated a vector of its PV's ancestors. All the vectors will be then stored in 'theAncestorLines'
-      std::vector< G4VPhysicalVolume* > vpv;
+      std::vector< G4VPhysicalVolume* > vpv; // vector of PV's ancestors
 
       //(( the following 3 lines should be moved to AddParentPV (where a PV register itself and then the parents) ))
       //--- check that it is the copy number we are looking for
@@ -614,6 +633,9 @@ std::vector<GmTouchable*> GmGeometryUtils::GetTouchables( const G4String& name, 
       if( copyOK ) { 
 	//-- add it to the vector of ancestors as the first one
 	vpv.push_back( pv0 );
+#ifndef GAMOS_NO_VERBOSE
+	if( GeomVerb(testVerb) ) G4cout << " GmGeometryUtils::GetTouchables Added to PV's ancestor list: " << pv0->GetName() << " N=" << vpv.size() << G4endl;
+#endif
 	//-- add parent (recursively all ancestors will be added)
 	AddParentPV( pv0, vpv, ancestorsRequested, 0);
       }
@@ -622,11 +644,11 @@ std::vector<GmTouchable*> GmGeometryUtils::GetTouchables( const G4String& name, 
   
   //----- Construct GmTouchable's for each line of PV's ancestors 
   std::vector<GmTouchable*> vtouch;
-  G4int ii,jj, kk;
+  G4int jj, kk;
   G4int asiz = theAncestorLines.size();
 
   //--- Loop to each line of PV's ancestors
-  for( ii = 0; ii < asiz; ii++ ) {
+  for( G4int ii = 0; ii < asiz; ii++ ) {
     std::vector<G4VPhysicalVolume*> vpv = theAncestorLines[ii];
     G4int siz =  vpv.size();
     std::vector<G4int> vi;
@@ -683,9 +705,9 @@ std::vector<GmTouchable*> GmGeometryUtils::GetTouchables( const G4String& name, 
     for( kk = 0; kk < sizv; kk++ ) {
     //----- dump ancestor line
       if( GeomVerb(debugVerb) ) {
-       	G4cout << ii << "theAncestorLine: ";
+       	G4cout << ii << " theAncestorLine: ";
 	for( jj = 0; jj < G4int(vpv.size()); jj++ ){
-	  G4cout << " " << vpv[jj]->GetName()  << " " << vpv[jj]->GetCopyNo()<< "=" << vvi[kk][jj] << " " << vpv[jj] ;
+	  G4cout << " " << vpv[jj]->GetName()  << " " << vpv[jj]->GetCopyNo()<< "=" << vvi[kk][jj];
 	}
 	G4cout << G4endl;
       }
@@ -695,18 +717,17 @@ std::vector<GmTouchable*> GmGeometryUtils::GetTouchables( const G4String& name, 
       G4String longName = "";
       G4String ancestorName;
       G4int nAnces = vpv.size();
-      G4int ii;
-      for( ii = 0; ii < nAnces-1; ii++ ) {
-	G4VPhysicalVolume* pv = vpv[ii];
+      for( G4int ii2 = 0; ii2 < nAnces-1; ii2++ ) {
+	G4VPhysicalVolume* pv = vpv[ii2];
 	ancestorName = "/" + pv->GetName();
 	char chartmp[10];
 	G4int copyNoAncestor;
 	if( !pv->IsReplicated() ) {
 	  copyNoAncestor = pv->GetCopyNo();
 	} else {
-	  copyNoAncestor = vvi[kk][ii];
+	  copyNoAncestor = vvi[kk][ii2];
 	}
-	copyNoAncestor = vvi[kk][ii];
+	copyNoAncestor = vvi[kk][ii2];
 	gcvt( copyNoAncestor, 10, chartmp );
 	ancestorName += G4String(":") + G4String(chartmp);
 	longName =  ancestorName + longName;
@@ -751,7 +772,7 @@ std::vector<G4VPhysicalVolume*> GmGeometryUtils::GetPhysicalVolumes( const G4Str
   std::vector<G4VPhysicalVolume*> vvolu;
   std::string::size_type ial = name.rfind(":");
 #ifndef GAMOS_NO_VERBOSE
-  if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::GetPhysicalVolumes volname " << ial << " " << name << G4endl;
+  if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::GetPhysicalVolumes volname found ':' at " << ial << " " << name << G4endl;
 #endif
   G4String volname = "";
   G4int volcopy = 0;
@@ -775,15 +796,15 @@ std::vector<G4VPhysicalVolume*> GmGeometryUtils::GetPhysicalVolumes( const G4Str
   std::vector<G4VPhysicalVolume*>::iterator citepv;
   for( citepv = pvs->begin(); citepv != pvs->end(); citepv++ ) {
 #ifndef GAMOS_NO_VERBOSE
-      if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::GetPhysicalVolumes  volname " << volname << " copy " << volcopy << " TRY " << (*citepv)->GetName() << " " << (*citepv)->GetCopyNo() << 
-	" " <<   GmGenUtils::AreWordsEquivalent( volname, (*citepv)->GetName() )  << G4endl;
+      if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::GetPhysicalVolumes  volname " << volname << " copy " << volcopy << " TRY " << (*citepv)->GetName() << " copyN " << (*citepv)->GetCopyNo() << 
+	" OK? " <<   GmGenUtils::AreWordsEquivalent( volname, (*citepv)->GetName() )  << G4endl;
 #endif
     if( GmGenUtils::AreWordsEquivalent( volname, (*citepv)->GetName() ) 
 	&& ( (*citepv)->GetCopyNo() == volcopy || -1 == volcopy ) ){
-#ifndef GAMOS_NO_VERBOSE
-      if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::GetPhysicalVolumes  volname found " << G4endl;
-#endif
       vvolu.push_back( *citepv );
+#ifndef GAMOS_NO_VERBOSE
+      if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::GetPhysicalVolumes  volname found N= " <<  vvolu.size() << G4endl;
+#endif
     }
   }
 
@@ -983,12 +1004,21 @@ vpsi GmGeometryUtils::ExtractAncestorsRequested( const G4String& name )
     //    G4int tt =  atoi( (namet.substr(fnumb+1, namet.size()-1).c_str()) );
     std::pair<G4String, G4int> psi( shortName, numb);
 #ifndef GAMOS_NO_VERBOSE
-    if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::ExtractAncestorsRequested new node " << psi.first << " : " << psi.second << G4endl;
+    if( GeomVerb(testVerb) ) G4cout << " GmGeometryUtils::ExtractAncestorsRequested new node " << psi.first << " : " << psi.second << G4endl;
 #endif
     ancestorsRequested.push_back( psi );
     if( fslash == 0 || fslash == -1 ) break;
     namet = namet.substr(0, fslash);
   }
+
+#ifndef GAMOS_NO_VERBOSE
+  if( GeomVerb(debugVerb) ) {
+    G4cout << " GmGeometryUtils::ExtractAncestorsRequested from " << name << " : " << std::endl;
+    for( size_t ii = 0; ii < ancestorsRequested.size(); ii++ ) {
+      std::cout << "    ances: " << ancestorsRequested[ii].first << " copyNo " << ancestorsRequested[ii].second << std::endl;
+    }
+  }
+#endif
 
   return ancestorsRequested;
 }
@@ -998,17 +1028,13 @@ vpsi GmGeometryUtils::ExtractAncestorsRequested( const G4String& name )
 void GmGeometryUtils::AddParentPV( const G4VPhysicalVolume* pv, std::vector<G4VPhysicalVolume*>& vpv, vpsi& ancestorsRequested, G4int ancestorLevel ) 
 {
 #ifndef GAMOS_NO_VERBOSE
-  if( GeomVerb(debugVerb) ) G4cout << "GmGeometryUtils::AddParentPV of " << pv->GetName() << " :" << pv->GetCopyNo() << " ancestorsRequested.size() " << ancestorsRequested.size() << " ancestorLevel " << ancestorLevel << G4endl;
+  if( GeomVerb(debugVerb) ) G4cout << "  GmGeometryUtils::AddParentPV of " << pv->GetName() << " :" << pv->GetCopyNo() << " ancestorsRequested.size() " << ancestorsRequested.size() << " ancestorLevel " << ancestorLevel << G4endl;
 #endif
   
   //----- 1. get the LV parent:
   // As a PV does not have any pointer to its parent (only if the placement is done inside PV, instead of inside LV, this last being the only option currently supported),  we have to look for its parent LV and then get the list of all the PV's of this LV.
   const G4LogicalVolume* lvParent = thePVLVTree[ const_cast<G4VPhysicalVolume*>(pv) ];
 
-  //  G4cout << " lvParent  " << lvParent << " " << thePVLVTree.size() << G4endl;
-  
-  //-  if( verbose >= 5 ) G4cout << " parentName  "<<  parentName  << " parentCopyNo " << parentCopyNo << G4endl;
-  
   if( lvParent != 0 ) {
     //----- get which is the parent name and copy number you are looking for 
     G4String parentName;
@@ -1041,14 +1067,16 @@ void GmGeometryUtils::AddParentPV( const G4VPhysicalVolume* pv, std::vector<G4VP
 #endif
       exit(1);
     }
-    if( GeomVerb(debugVerb) ){
+#ifndef GAMOS_NO_VERBOSE
+    if( GeomVerb(testVerb) ){
       G4int iim = 0;
       for( mmcite = mmdi.first; mmcite != mmdi.second; mmcite++ ) {
 	iim++;
-	//	G4cout << " LV parent name: " << lvParent->GetName() << " : PV corresponding to LV parent = " << iim << G4endl;
+	G4cout << " LV parent name: " << lvParent->GetName() << " : PV corresponding to LV parent = " << iim << G4endl;
       }
     }
-
+#endif
+    
     //t    G4int iim = 0;
     //---- Loop to all the PV's corresponding to LV parent
     for( mmcite = mmdi.first; mmcite != mmdi.second; mmcite++ ) {
@@ -1081,7 +1109,6 @@ void GmGeometryUtils::AddParentPV( const G4VPhysicalVolume* pv, std::vector<G4VP
 bool GmGeometryUtils::CheckPVCopyNo( const G4VPhysicalVolume* pv, G4int copyNo )
 {
   bool copyOK = 0;
-
   if( copyNo == -1) { 
     copyOK = 1;
   } else {
@@ -1121,7 +1148,7 @@ bool GmGeometryUtils::CheckPVCopyNo( const G4VPhysicalVolume* pv, G4int copyNo )
 void GmGeometryUtils::ExpandCopyNoList( std::vector< std::vector<G4int> >& vvi, std::vector<G4int> vi, G4int level )
 {
 #ifndef GAMOS_NO_VERBOSE
-  if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::ExpandCopyNoList " << level << G4endl;
+  if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::ExpandCopyNoList level: " << level << G4endl;
 #endif
   G4int siz = vi.size();
   G4int ii, jj;
@@ -1144,7 +1171,7 @@ void GmGeometryUtils::ExpandCopyNoList( std::vector< std::vector<G4int> >& vvi, 
   vvi.push_back( viNew );
 
   if(GeomVerb(debugVerb)) {
-    G4cout << vvi.size() << " expandList ";
+    G4cout << vvi.size() << " expandList copyNo: ";
     for( ii=0; ii < siz; ii ++ ){
       G4cout << " " << viNew[ii];
     }
@@ -1170,13 +1197,17 @@ void GmGeometryUtils::BuildDictionaries()
 {
   G4PhysicalVolumeStore* pvs = G4PhysicalVolumeStore::GetInstance();
   std::vector<G4VPhysicalVolume*>::iterator citepv;
-  //  G4cout << " pvs size " << pvs->size() << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+  if( GeomVerb(debugVerb) ) G4cout << "@@@ GmGeometryUtils::BuildDictionaries()  N pvs  " << pvs->size() << G4endl;
+#endif
   for( citepv = pvs->begin(); citepv != pvs->end(); citepv++ ) {
     //build multimap of PV name - list of PV*'s 
     thePVs.insert( mmspv::value_type( (*citepv)->GetName(), *citepv ) );
     //build multimap of LV* - list of its PV*'s
     theLVPVTree.insert( mmlvpv::value_type((*citepv)->GetLogicalVolume(), *citepv) );
-    //-    cout << " inserting theLVPVTree " << (*citepv)->GetLogicalVolume()->GetName() << " " << (*citepv)->GetName() << endl;
+#ifndef GAMOS_NO_VERBOSE
+  if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::BuildDictionaries  inserting theLVPVTree " << (*citepv)->GetLogicalVolume()->GetName() << " " << (*citepv)->GetName() << G4endl;
+#endif
   }
 
   //build map of PV* - parent LV* : the only info in GEANT4 is from a LV, the list of its daughters PV's
@@ -1189,8 +1220,10 @@ void GmGeometryUtils::BuildDictionaries()
     siz = (*citelv)->GetNoDaughters();
     for( ii=0; ii< siz; ii++ ) {
       thePVLVTree[(*citelv)->GetDaughter(ii)] = *citelv;
-    }
-    //    cout << " G4LOGICALVOLUME " << (*citelv)->GetName() << " " << (*citelv)->GetMaterial()->GetName() << endl;
+#ifndef GAMOS_NO_VERBOSE
+  if( GeomVerb(debugVerb) ) G4cout << " GmGeometryUtils::BuildDictionaries  inserting thePVLVTree " << (*citelv)->GetDaughter(ii)->GetName() << " " << (*citelv)->GetName() << G4endl;
+#endif
+  }
   }
 
 }
@@ -1205,10 +1238,12 @@ std::set<G4String> GmGeometryUtils::GetAllSDTypes()
  for( lvcite = lvs->begin(); lvcite != lvs->end(); lvcite++ ) {
    if( (*lvcite)->GetSensitiveDetector() != 0 ){
 #ifndef GAMOS_NO_VERBOSE
-     if( GeomVerb(debugVerb) ) G4cout << " SD type " << (*lvcite)->GetSensitiveDetector()->GetPathName()  << G4endl;
+     if( GeomVerb(infoVerb) ) G4cout << (*lvcite)->GetName() << " GetAllSDTypes SD type " << (*lvcite)->GetSensitiveDetector()->GetPathName()  << G4endl;
 #endif
      G4String sdtype = (*lvcite)->GetSensitiveDetector()->GetPathName();
-     sdtypes.insert( sdtype.substr(1,sdtype.length()-2) );
+     if( sdtype != "/" ) { // MFD for scoring
+       sdtypes.insert( sdtype.substr(1,sdtype.length()-2) );
+     }
    }
  }
 
@@ -1321,8 +1356,8 @@ G4double GmGeometryUtils::GetCubicVolume( G4VPhysicalVolume* pv )
     //-    volume = GmParallelToMassUA::GetCubicVolume( pv->GetCopyNo() );
   }
 
-  	G4VPhysicalVolume* pv2;
-	//G4cout << pv2->GetName() << G4endl;
+  //  G4VPhysicalVolume* pv2;
+  //G4cout << pv2->GetName() << G4endl;
 
   return volume;
 }
@@ -1360,9 +1395,11 @@ G4double GmGeometryUtils::CalculateParameterisedCubicVolume( G4VPhysicalVolume* 
   }
   if( !parVols ){
     parVols = new std::map<G4int,G4double>;
+    //    G4cout << " CalculateParameterisedCubicVolume " << pv->GetName() << " NEW parvols " << parVols->size() << G4endl;
   }
    
-//    G4cout << " CalculateParameterisedCubicVolume " << pv->GetName() << " parvols " << parVols->size() << G4endl;
+  //  G4cout << " CalculateParameterisedCubicVolume SIZE " << thePreCalculatedParameterisedCubicVolumes.size() << G4endl;
+  //    G4cout << " CalculateParameterisedCubicVolume " << pv->GetName() << " parvols " << parVols->size() << G4endl;
   std::map<G4int, G4double>::const_iterator iteid = parVols->find( copyNo );
   if( iteid != parVols->end() ) {
     volume = (*iteid).second;
@@ -1371,8 +1408,9 @@ G4double GmGeometryUtils::CalculateParameterisedCubicVolume( G4VPhysicalVolume* 
     G4VSolid* solid = pvParam->GetParameterisation()->ComputeSolid( copyNo, pv );
 //	G4cout << " CalculateParameterisedCubicVolume solid " << solid->GetName() << G4endl;
     volume = solid->GetCubicVolume();
-//    G4cout << " CalculateParameterisedCubicVolume solid volume " << copyNo << " = " << volume << G4endl;
+    //    G4cout << " CalculateParameterisedCubicVolume solid volume " << copyNo << " = " << volume << G4endl;
     (*parVols)[copyNo] = volume;
+    thePreCalculatedParameterisedCubicVolumes[pv] = parVols;
   }
 
   return volume;
@@ -1394,10 +1432,97 @@ G4String GmGeometryUtils::BuildTouchableName( const G4ThreeVector& pos )
     if( GeomVerb(infoVerb) ) G4cout << pv << " GmGeometryUtils::BuildTouchableName vol " << volName << " pos " << pos << G4endl;
 #endif
   }
-
+  
 #ifndef GAMOS_NO_VERBOSE
   if( GeomVerb(infoVerb) ) G4cout << " GmGeometryUtils::BuildTouchableName vol " << volName << " pos " << pos << G4endl;
 #endif
-
+  
   return volName;
 }
+
+//----------------------------------------------------------------
+G4VPhysicalVolume* GmGeometryUtils::GetPVFromPos( G4ThreeVector pos )
+{ 
+  G4TouchableHistory* touch = new G4TouchableHistory;
+  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos, touch, false ); 
+  G4VPhysicalVolume* pv = touch->GetVolume();
+  delete touch;
+  return pv;
+  
+}  
+
+//-----------------------------------------------------------------------
+G4bool GmGeometryUtils::IsPhantomVolume( G4VPhysicalVolume* pv )
+{
+  EAxis axis;
+  G4int nReplicas;
+  G4double width,offset;
+  G4bool consuming = false;
+  pv->GetReplicationData(axis,nReplicas,width,offset,consuming);
+  EVolume type = (consuming) ? kReplica : kParameterised;
+  //  G4cout << " GmRegularParamUtils " << type << " " <<  pv->GetRegularStructureId() << G4endl; //GDEB
+  if( type == kParameterised && pv->GetRegularStructureId() != 0 ) {   //=1 G4PhantomParameterisation =2 G4PartialPhantomParameterisation
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+
+} 
+
+
+//-----------------------------------------------------------------------
+std::vector<G4PhantomParameterisation*> GmGeometryUtils::GetPhantomParams(G4bool bMustExist)
+{
+  std::vector<G4PhantomParameterisation*> paramregs;
+
+  G4PhysicalVolumeStore* pvs = G4PhysicalVolumeStore::GetInstance();
+  std::vector<G4VPhysicalVolume*>::iterator cite;
+  for( cite = pvs->begin(); cite != pvs->end(); cite++ ) {
+    G4cout << " PV  " << (*cite)->GetName() << " " << (*cite)->GetTranslation() << G4endl; //GDEB
+    if( IsPhantomVolume( *cite ) ) {
+      const G4PVParameterised* pvparam = static_cast<const G4PVParameterised*>(*cite);
+      G4VPVParameterisation* param = pvparam->GetParameterisation();
+      //    if( static_cast<const G4PhantomParameterisation*>(param) ){
+      //    if( static_cast<const G4PhantomParameterisation*>(param) ){
+      G4cout << "G4PhantomParameterisation volume found  " << (*cite)->GetName() << G4endl; //GDEB
+      paramregs.push_back( static_cast<G4PhantomParameterisation*>(param) );
+    }
+  }
+  
+  if( paramregs.size() == 0 && bMustExist ) G4Exception("GmRegularParamUtils::GetPhantomParam",
+					    "Wrong argument",
+					    FatalErrorInArgument,
+					    "No G4PhantomParameterisation found ");
+  
+  return paramregs;
+  
+}
+
+//-----------------------------------------------------------------------
+G4PhantomParameterisation* GmGeometryUtils::GetPhantomParam(G4bool bMustExist)
+{
+  G4PhantomParameterisation* paramreg = 0;
+
+  G4PhysicalVolumeStore* pvs = G4PhysicalVolumeStore::GetInstance();
+  std::vector<G4VPhysicalVolume*>::iterator cite;
+  for( cite = pvs->begin(); cite != pvs->end(); cite++ ) {
+    //    G4cout << " PV " << (*cite)->GetName() << " " << (*cite)->GetTranslation() << G4endl;
+    if( IsPhantomVolume( *cite ) ) {
+      const G4PVParameterised* pvparam = static_cast<const G4PVParameterised*>(*cite);
+      G4VPVParameterisation* param = pvparam->GetParameterisation();
+      //    if( static_cast<const G4PhantomParameterisation*>(param) ){
+      //    if( static_cast<const G4PhantomParameterisation*>(param) ){
+      //      G4cout << "G4PhantomParameterisation volume found  " << (*cite)->GetName() << G4endl;
+      paramreg = static_cast<G4PhantomParameterisation*>(param);
+    }
+  }
+  
+  if( !paramreg && bMustExist ) G4Exception("GmRegularParamUtils::GetPhantomParam",
+					    "Wrong argument",
+					    FatalErrorInArgument,
+					    "No G4PhantomParameterisation found ");
+  
+  return paramreg;
+  
+}
+

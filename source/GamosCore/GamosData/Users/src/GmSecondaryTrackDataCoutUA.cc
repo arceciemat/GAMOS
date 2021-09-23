@@ -64,8 +64,9 @@ void GmSecondaryTrackDataCoutUA::UserSteppingAction(const G4Step* aStep )
     for( ite = theData.begin(); ite != theData.end(); ite++ ) {
       (*ite)->WriteCout( aTrack, secoTrack, ite == theData.begin() );
     }
+    G4cout << G4endl;  
   }
-  if( nSeco != 0 ) G4cout << G4endl;  
+  //  if( nSeco != 0 ) G4cout << G4endl;  
 
 }
 

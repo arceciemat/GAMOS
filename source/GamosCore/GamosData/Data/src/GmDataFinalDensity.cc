@@ -23,11 +23,21 @@ GmDataFinalDensity::~GmDataFinalDensity()
 //----------------------------------------------------------------
 G4double GmDataFinalDensity::GetValueFromStep( const G4Step* aStep, G4int )
 {
-  return aStep->GetPostStepPoint()->GetMaterial()->GetDensity()/CLHEP::g*CLHEP::cm3;
+  G4Material* mate = aStep->GetPostStepPoint()->GetMaterial();
+  if( mate ) {
+    return mate->GetDensity()/CLHEP::g*CLHEP::cm3;
+  } else {
+    return 0.;
+  }
 }
 
 //----------------------------------------------------------------
 G4double GmDataFinalDensity::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
-  return aTrack->GetNextMaterial()->GetDensity()/CLHEP::g*CLHEP::cm3;
+  G4Material* mate = aTrack->GetNextMaterial();
+  if( mate ) {
+    return mate->GetDensity()/CLHEP::g*CLHEP::cm3;
+  } else {
+    return 0.;
+  }
 }

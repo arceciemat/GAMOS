@@ -136,13 +136,13 @@ void GmPhantomDoseUA::BookHistos()
   G4double ymin, ymax;
   G4double zmin, zmax;
   G4int xstep, ystep, zstep;
-  xstep = theRegularParam->GetNoVoxelX();
+  xstep = theRegularParam->GetNoVoxelsX();
   xmin = thePhantomMinusCorner.x();
   xmax = thePhantomMinusCorner.x()+2.*theRegularParam->GetVoxelHalfX()*xstep;
-  ystep = theRegularParam->GetNoVoxelY();
+  ystep = theRegularParam->GetNoVoxelsY();
   ymin = thePhantomMinusCorner.y();
   ymax = thePhantomMinusCorner.y()+2.*theRegularParam->GetVoxelHalfY()*ystep;
-  zstep = theRegularParam->GetNoVoxelZ();
+  zstep = theRegularParam->GetNoVoxelsZ();
   zmin = thePhantomMinusCorner.z();
   zmax = thePhantomMinusCorner.z()+2.*theRegularParam->GetVoxelHalfZ()*zstep;
 
@@ -165,9 +165,9 @@ void GmPhantomDoseUA::BookHistos()
 
 
   G4int nx, ny, nz;
-  nx = theRegularParam->GetNoVoxelX();
-  ny = theRegularParam->GetNoVoxelY();
-  nz = theRegularParam->GetNoVoxelZ();
+  nx = theRegularParam->GetNoVoxelsX();
+  ny = theRegularParam->GetNoVoxelsY();
+  nz = theRegularParam->GetNoVoxelsZ();
 
   //----- Histograms for energy deposited
   for( G4int ii = 0; ii < nz; ii++ ){        
@@ -185,18 +185,18 @@ void GmPhantomDoseUA::Write3ddoseHeader()
 
   G4String fileName = GmParameterMgr::GetInstance()->GetStringValue("GmPhantomDoseUA:FileName","phantom.gm3ddose");
   theDoseFile = new std::ofstream(fileName);
-  size_t nx = theRegularParam->GetNoVoxelX();
-  size_t ny = theRegularParam->GetNoVoxelY();
-  size_t nz = theRegularParam->GetNoVoxelZ();
-  head.SetNoVoxelX( nx );
-  head.SetNoVoxelY( ny );
-  head.SetNoVoxelZ( nz );
+  size_t nx = theRegularParam->GetNoVoxelsX();
+  size_t ny = theRegularParam->GetNoVoxelsY();
+  size_t nz = theRegularParam->GetNoVoxelsZ();
+  head.SetNoVoxelsX( nx );
+  head.SetNoVoxelsY( ny );
+  head.SetNoVoxelsZ( nz );
   //  *theDoseFile << nx << "  " << ny << "  " << nz << G4endl;
-  thePhantomMinusCorner = (theRegularParam->GetTranslation(0) + theRegularParam->GetTranslation(theRegularParam->GetNoVoxel()-1) )/ 2;
+  thePhantomMinusCorner = (theRegularParam->GetTranslation(0) + theRegularParam->GetTranslation(theRegularParam->GetNoVoxels()-1) )/ 2;
   G4double voxelX = theRegularParam->GetVoxelHalfX()*2;
   G4double voxelY = theRegularParam->GetVoxelHalfY()*2;
   G4double voxelZ = theRegularParam->GetVoxelHalfZ()*2;
-  G4cout << " phantom minus corner " << thePhantomMinusCorner << " " << theRegularParam->GetTranslation(0) << " " << theRegularParam->GetTranslation(theRegularParam->GetNoVoxel()-1) << G4endl;
+  G4cout << " phantom minus corner " << thePhantomMinusCorner << " " << theRegularParam->GetTranslation(0) << " " << theRegularParam->GetTranslation(theRegularParam->GetNoVoxels()-1) << G4endl;
   G4cout << " voxelX " << theRegularParam->GetVoxelHalfX() << " = " << voxelX <<  "  " << -voxelX*nx/2. << " " << G4ThreeVector( -nx*voxelX/2.,-ny*voxelY/2.,-nz*voxelZ/2.) << G4endl;
   thePhantomMinusCorner -= G4ThreeVector(voxelX*nx/2.,voxelY*ny/2.,voxelZ*nz/2.);
   G4cout << " phantom minus corner " << thePhantomMinusCorner << G4endl;
@@ -242,8 +242,8 @@ void GmPhantomDoseUA::Write3ddoseHeader()
 //-----------------------------------------------------------------------
 void GmPhantomDoseUA::FillDoseHistos()
 {
-  size_t nx = theRegularParam->GetNoVoxelX();
-  size_t ny = theRegularParam->GetNoVoxelY();
+  size_t nx = theRegularParam->GetNoVoxelsX();
+  size_t ny = theRegularParam->GetNoVoxelsY();
 
   size_t siz = theDose.size();
 
@@ -258,10 +258,10 @@ void GmPhantomDoseUA::FillDoseHistos()
 //-----------------------------------------------------------------------
 void GmPhantomDoseUA::InitialiseDoseCounters()
 {
- G4cout << " no voxel " << theRegularParam->GetNoVoxel() << G4endl;
-  theDose.resize(theRegularParam->GetNoVoxel());
-  theDose2.resize(theRegularParam->GetNoVoxel());
-  theDoseCounts.resize(theRegularParam->GetNoVoxel());
+ G4cout << " no voxel " << theRegularParam->GetNoVoxels() << G4endl;
+  theDose.resize(theRegularParam->GetNoVoxels());
+  theDose2.resize(theRegularParam->GetNoVoxels());
+  theDoseCounts.resize(theRegularParam->GetNoVoxels());
 }
 
 
@@ -270,7 +270,7 @@ void GmPhantomDoseUA::Write3ddose()
 {
   G4double vol = theRegularParam->GetVoxelHalfX()* theRegularParam->GetVoxelHalfY()*theRegularParam->GetVoxelHalfZ()*8.;
   size_t siz = theDose.size();
-  size_t nx = theRegularParam->GetNoVoxelX();
+  size_t nx = theRegularParam->GetNoVoxelsX();
 
   for( size_t ii = 0; ii < siz; ii++ ) {
     G4double dens = theRegularParam->ComputeMaterial(ii,(G4VPhysicalVolume*)0,(G4VTouchable*)0)->GetDensity()/ CLHEP::kg*CLHEP::mm3;

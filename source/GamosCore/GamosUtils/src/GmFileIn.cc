@@ -13,7 +13,7 @@ GmFileIn::GmFileIn()
 }
 
 //-----------------------------------------------------------------------
-GmFileIn& GmFileIn::GetInstance( const G4String& filename )
+GmFileIn& GmFileIn::GetInstance( const G4String& filename, G4bool bMustExist )
 {
   std::vector<GmFileIn*>::const_iterator vfcite;
   for( vfcite = theInstances.begin(); vfcite != theInstances.end(); vfcite++) {
@@ -27,7 +27,7 @@ GmFileIn& GmFileIn::GetInstance( const G4String& filename )
     instance = new GmFileIn( filename );
     
     instance->theCurrentFile = -1;
-    instance->OpenNewFile( filename.c_str() );
+    instance->OpenNewFile( filename.c_str(), bMustExist );
     instance->SetSeparator(' ');
     instance->SetSuppressQuotes(1);
 
@@ -40,7 +40,7 @@ GmFileIn& GmFileIn::GetInstance( const G4String& filename )
 }
 
 //-----------------------------------------------------------------------
-void GmFileIn::OpenNewFile( const char* filename )
+void GmFileIn::OpenNewFile( const char* filename, G4bool bMustExist )
 { 
   theCurrentFile++;
   std::ifstream* fin = new std::ifstream(filename);
@@ -53,12 +53,14 @@ void GmFileIn::OpenNewFile( const char* filename )
 
   theNames.push_back( filename );
 
-#ifndef OS_SUN_4_2
-  if( !fin->is_open()) {
-    G4cerr << "!!!! Input file does not exist: " << filename << G4endl;
-    exit(1);
+  if( bMustExist )  {
+    if( !fin->is_open()) {
+      G4Exception("GmFileIn::GetInstance ",
+		  "",
+		  FatalException,
+		  (G4String("!!!! Input file does not exist: ")+filename).c_str());
+    }
   }
-#endif
 }
 
 
@@ -85,8 +87,7 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
   //@@@@--- Cannot be read with a istream_iterator, because it uses G4cout, and then doesn't read '\n'
   //----- Clear wordlist
   G4int wsiz = wordlist.size();
-  G4int ii;
-  for (ii = 0; ii < wsiz; ii++) {
+  for (G4int ii = 0; ii < wsiz; ii++) {
     wordlist.pop_back();
   } 
 
@@ -95,7 +96,7 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
   char ltemp[NMAXLIN]; //there won't be lines longer than NMAXLIN characters
   for (;;) {
     (theLineNo[theCurrentFile])++;
-    for( ii = 0; ii < NMAXLIN; ii++) ltemp[ii] = ' ';
+    for( G4int ii = 0; ii < NMAXLIN; ii++) ltemp[ii] = ' ';
     theFiles[theCurrentFile]->getline( ltemp, NMAXLIN );  
 #ifdef DEBUG_FILEIN
     G4cout << " FILEIN ltemp " << ltemp << G4endl;
@@ -128,7 +129,7 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
     //--------- count how many words are there in ltemp (this sohuld not be needed, but sun compiler has problems) !! this has to be nvestigated...
     G4int NoWords = 0;
     char* tt = ltemp;
-    G4String stemp(ltemp);
+    theStrTemp = G4String(ltemp);
     std::vector<G4int> separators;
     G4int it = 0;
     do{ 
@@ -155,26 +156,24 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
      }
       tt++;
       it++;
-    }while((*tt != '\0') && (stemp.length()!=0));
+    }while((*tt != '\0') && (theStrTemp.length()!=0));
     G4String stempt (ltemp);
     if(stempt.length() == 0) NoWords = 0;
     
     //--------- Read words from istr_line and write them into wordlist
-    //    G4int stre = 1;
-    //-    G4int sep1 = 0;
     for( ii=0; ii < NoWords; ii++) {
-      G4String stemp = "";
+      theStrTemp = "";
       if( theSeparator == ' ' ) {
-	istr_line >> stemp;   //?? gives warning in Insure++
+	istr_line >> theStrTemp;   //?? gives warning in Insure++
 #ifdef DEBUG_FILEIN
-	G4cout << " STEMP BUILT " << stemp << G4endl;
+	G4cout << " STEMP BUILT " << theStrTemp << G4endl;
 #endif
       } else {
         G4int sep1 = separators[ii];
 		if( ii != NoWords-1 ) {
-          stemp = stempt.substr(sep1,separators[ii+1]-sep1-1);
+		  theStrTemp = stempt.substr(sep1,separators[ii+1]-sep1-1);
 		} else {
-		  stemp = stempt.substr(sep1,stempt.length()-sep1);
+		  theStrTemp = stempt.substr(sep1,stempt.length()-sep1);
 		}
 	/*	size_t sep2 = stempt.find(theSeparator,sep1);
 	if( sep2 == std::string::npos ) sep2 = stempt.length();
@@ -183,20 +182,26 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
 	sep1 = sep2+1;*/
 
       }
-      if ( theSeparator == ' ' && stemp.length() == 0 ) break;
-      G4int comment = stemp.find(G4String("//") );
+      if ( theSeparator == ' ' && theStrTemp.length() == 0 ) break;
+      size_t comment = theStrTemp.find(G4String("//") );
+      if( comment == G4String::npos ) {
+	comment = theStrTemp.find(G4String("#"));
+      } else {
+	comment = std::min(comment,theStrTemp.find(G4String("#")));
+      }
+      
 #ifdef DEBUG_FILEIN
-      G4cout << "!!!COMMENT" << comment << stemp.c_str() << G4endl;
+      G4cout << "!!!GmFileIn COMMENT" << comment << theStrTemp.c_str() << G4endl;
 #endif
       if ( comment == 0 ) {
 	break; 
-      } else if ( comment > 0 ) {
-	stemp = stemp.substr( 0, comment );
-	wordlist.push_back(stemp);
+      } else if ( comment != G4String::npos && comment > 0 ) {
+	theStrTemp = theStrTemp.substr( 0, comment );
+	wordlist.push_back(theStrTemp);
 	break;
-	//-   for( int jj=0; jj < stemp.length()-comment; jj++) stemp.pop_back();
+	//-   for( int jj=0; jj < theStrTemp.length()-comment; jj++) theStrTemp.pop_back();
       } 
-      wordlist.push_back(stemp);
+      wordlist.push_back(theStrTemp);
     }
     
     //These two algorithms should be the more STL-like way, but they don't work for files whose lines end without '\015'=TAB (STL problem: doesn't find end of string??)
@@ -293,10 +298,13 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
   G4cout << " checking for include " << wordlist[0] << G4endl;
 #endif
   // check if including a new file
-  if( wordlist[0] == "#include" ) {
+  if( wordlist[0] == ":include" || wordlist[0] == "#include" ) {
+    if( wordlist[0] == "#include" ) {
+      G4cerr << "!! WARNING '#include' is deprecated and will be retired soon, use instead ':include' "<< G4endl;
+    }
     if( wordlist.size() != 2 ) {
       ErrorInLine();
-      G4cerr << "'#include' should have as second argument the filename " << G4endl;
+      G4cerr << "a'#include' should have as second argument the filename " << G4endl;
       exit(0);
     }
 #ifdef DEBUG_FILEIN
@@ -360,7 +368,7 @@ G4int GmFileIn::GetWordsInLineDouble(std::vector<G4double>& wordlist)
   //--------- count how many words are there in ltemp (this sohuld not be needed, but sun compiler has problems) !! this has to be nvestigated...
   G4int NoWords = 0;
   char* tt = ltemp;
-  G4String stemp(ltemp);
+  theStrTemp = G4String(ltemp);
   do{ 
     if( *tt != theSeparator && *(tt) != '\0' ) {
       if( tt == ltemp) {
@@ -376,7 +384,7 @@ G4int GmFileIn::GetWordsInLineDouble(std::vector<G4double>& wordlist)
       }
     }
     tt++;
-  }while((*tt != '\0') && (stemp.length()!=0));
+  }while((*tt != '\0') && (theStrTemp.length()!=0));
   G4String stempt (ltemp);
 
   if(stempt.length() == 0) NoWords = 0;
@@ -414,12 +422,12 @@ G4bool GmFileIn::eof()
 {
   G4bool isok = theFiles[theCurrentFile]->eof();
   if( isok ) {
-    //G4cout << " eof theCurrentFile " << theCurrentFile << G4endl;
-    theCurrentFile--;
+    //     theCurrentFile--;
     if( theCurrentFile != -1 ) Close();  // last file will be closed by the user
   }
   //only real closing if all files are closed
   //-  G4cout << " eof " << isok << " " << theCurrentFile << G4endl;
+  return isok; //NEW t
   if( theCurrentFile != -1 ) { 
     return 0;
   } else {
@@ -455,7 +463,9 @@ void GmFileIn::Close()
 //-----------------------------------------------------------------------
 void GmFileIn::Rewind()
 {
-  theifstream->seekg(0, std::ios::beg);
+  //  theifstream->seekg(0, std::ios::beg);
+  Close();
+  OpenNewFile(theNames[0],true);
 }
 
 //-----------------------------------------------------------------------

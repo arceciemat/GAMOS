@@ -4,6 +4,7 @@
 GmTrackInfo::  GmTrackInfo( const G4String& type ) 
   : G4VUserTrackInformation(type)
 {
+  //  G4cout << this << " new GmTrackInfo " << type << G4endl; //GDEB
 }
 
 // --------------------------------------------------------------
@@ -134,36 +135,76 @@ G4ThreeVector GmTrackInfo::GetThreeVectorValue( const G4String& key )
 
 
 //--------------------------------------------------------------
-void GmTrackInfo::SetBoolValue(  const G4String& key, G4bool value )
+void GmTrackInfo::SetBoolValue(  const G4String& key, G4bool value, G4bool bCannotExist )
 {
+  if( bCannotExist ) {
+    if( theBoolValues.find(key) != theBoolValues.end() ) {
+      G4Exception("GmTrackInfo::SetBoolValue",
+		  "",
+		  FatalException,
+		  ("Trying to add a value that already exits " + key).c_str());
+    }
+  }
   theBoolValues[key] = value;
 }
 
 
 //--------------------------------------------------------------
-void GmTrackInfo::SetIntValue(  const G4String& key, G4int value )
+void GmTrackInfo::SetIntValue(  const G4String& key, G4int value, G4bool bCannotExist )
 {
   //  G4cout << this << "GmTrackInfo::SetIntValue " << key << " = " << value << G4endl;
+  if( bCannotExist ) {
+    if( theIntValues.find(key) != theIntValues.end() ) {
+      G4Exception("GmTrackInfo::SetIntValue",
+		  "",
+		  FatalException,
+		  ("Trying to add a value that already exits " + key).c_str());
+    }
+  }
   theIntValues[key] = value;
 }
 
 
 //--------------------------------------------------------------
-void GmTrackInfo::SetDoubleValue(  const G4String& key, G4double value )
+void GmTrackInfo::SetDoubleValue(  const G4String& key, G4double value, G4bool bCannotExist )
 {
+  if( bCannotExist ) {
+    if( theDoubleValues.find(key) != theDoubleValues.end() ) {
+      G4Exception("GmTrackInfo::SetDoubleValue",
+		  "",
+		  FatalException,
+		  ("Trying to add a value that already exits " + key).c_str());
+    }
+  }
   theDoubleValues[key] = value;
 }
 
 
 //--------------------------------------------------------------
-void GmTrackInfo::SetStringValue(  const G4String& key, G4String value )
+void GmTrackInfo::SetStringValue(  const G4String& key, G4String value, G4bool bCannotExist )
 {
+  if( bCannotExist ) {
+    if( theStringValues.find(key) != theStringValues.end() ) {
+      G4Exception("GmTrackInfo::SetStringValue",
+		  "",
+		  FatalException,
+		  ("Trying to add a value that already exits " + key).c_str());
+    }
+  }
   theStringValues[key] = value;
 }
 
 
 //--------------------------------------------------------------
-void GmTrackInfo::SetThreeVectorValue( const G4String& key, G4ThreeVector value )
+void GmTrackInfo::SetThreeVectorValue( const G4String& key, G4ThreeVector value, G4bool bCannotExist )
 {
+  if( bCannotExist ) {
+    if( theThreeVectorValues.find(key) != theThreeVectorValues.end() ) {
+      G4Exception("GmTrackInfo::SetThreeVectorValue",
+		  "",
+		  FatalException,
+		  ("Trying to add a value that already exits " + key).c_str());
+    }
+  }
   theThreeVectorValues[key] = value;
 }

@@ -101,26 +101,26 @@ void GmSDVirtSegmentedSphereThetaPhi::DefineThetaPhiSegmentation(const G4String&
     // ThetaPhi radius at center of ring
     float ang = theThetaAngle*(ii+0.5);
     float rad = theRadius*sin(ang);
-    float nring = 2.*M_PI*rad/cellThetaPhi;
+    float nring2 = 2.*M_PI*rad/cellThetaPhi;
 #ifndef GAMOS_NO_VERBOSE
-    if( SDVerb(infoVerb) ) G4cout << "ring radius " << rad << " nring " << nring << G4endl;
+    if( SDVerb(infoVerb) ) G4cout << "ring radius " << rad << " nring " << nring2 << G4endl;
 #endif
     // make it the closest integer so that the percentage of increase/decrease is minimum (1.02 bigger heights is better than 0.91)
-    ext = nring - int(nring);
+    ext = nring2 - int(nring2);
     //    G4cout << " nring1 " << ext / (1-ext) << " nring2 " << nring/(nring+1) << G4endl;
-    ( ext / (1-ext) < nring/(nring+1) ) ? nring = int(nring) : nring = int(nring+1);
-    thePhiAngles.push_back( 2.*M_PI/nring );
+    ( ext / (1-ext) < nring2/(nring2+1) ) ? nring2 = int(nring2) : nring2 = int(nring2+1);
+    thePhiAngles.push_back( 2.*M_PI/nring2 );
 #ifndef GAMOS_NO_VERBOSE
-    if( SDVerb(infoVerb) ) G4cout << ii << " thePhiAngle " << thePhiAngles[ii] << " nring " << nring << G4endl; 
+    if( SDVerb(infoVerb) ) G4cout << ii << " thePhiAngle " << thePhiAngles[ii] << " nring " << nring2 << G4endl; 
 #endif
-    if( nring > MAXNDIV ) {
+    if( nring2 > MAXNDIV ) {
 #ifndef GAMOS_NO_VERBOSE
-      if( SDVerb(errorVerb) ) G4cerr << "!!! Too big numbers of phi divisions at ring " << ii << " = " << nring << " > " << MAXNDIV << G4endl;
+      if( SDVerb(errorVerb) ) G4cerr << "!!! Too big numbers of phi divisions at ring " << ii << " = " << nring2 << " > " << MAXNDIV << G4endl;
 #endif
       G4Exception("GmSDVirtSegmentedSphereThetaPhi::DefineSegmentation",
 		  "Wrong argument",
 		  FatalErrorInArgument,
-		  G4String("nring " + GmGenUtils::ftoa(nring) + " > MAXNDIV " + GmGenUtils::ftoa(MAXNDIV)).c_str());
+		  G4String("nring " + GmGenUtils::ftoa(nring2) + " > MAXNDIV " + GmGenUtils::ftoa(MAXNDIV)).c_str());
     }
   }
 }

@@ -23,11 +23,21 @@ GmDataFinalNuclearInterLength::~GmDataFinalNuclearInterLength()
 //----------------------------------------------------------------
 G4double GmDataFinalNuclearInterLength::GetValueFromStep( const G4Step* aStep, G4int )
 {
-  return aStep->GetPostStepPoint()->GetMaterial()->GetNuclearInterLength();
+  G4Material* mate = aStep->GetPostStepPoint()->GetMaterial();
+  if( mate ) {
+    return mate->GetNuclearInterLength();
+  } else {
+    return 0.;
+  }
 }
 
 //----------------------------------------------------------------
 G4double GmDataFinalNuclearInterLength::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
-  return aTrack->GetNextMaterial()->GetNuclearInterLength();
+  G4Material* mate = aTrack->GetNextMaterial();
+  if( mate ) {
+    return mate->GetNuclearInterLength();
+  } else {
+    return 0.;
+  }
 }

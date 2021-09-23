@@ -15,7 +15,11 @@
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
+#ifdef ROOT5
 #include "Reflex/PluginService.h"
+#else
+#include "GmSensDetFactory.hh"
+#endif
 
 #include <sstream>
 
@@ -125,7 +129,12 @@ void GmSDMessenger::AssociateSD2LogVol( G4String& sdclass, G4String& sdtype, G4S
       //	G4VSensitiveDetector* sd = 0;
       G4String sdPathAndName = sdtype+G4String("/")+logvol->GetName();
 
+#ifdef ROOT5
       G4VSensitiveDetector* theSD = Reflex::PluginService::Create<G4VSensitiveDetector*>(sdclass, sdPathAndName);
+#else
+      G4VSensitiveDetector* theSD = GmSensDetFactory::get()->create(sdclass, sdPathAndName);
+#endif
+								 
       //      G4cout << " sdclass " << sdclass << G4endl;
       
       if( sdclass == "GmSDVirtSegmentedSphereRThetaPhi" || sdclass == "GmSDVirtSegmentedSphereThetaPhi" ) {

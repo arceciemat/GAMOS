@@ -171,3 +171,14 @@ G4bool GmMinRangeCutOutsideVoxelFilter::CheckProcess(const G4VProcess*)
 {
   return TRUE;
 }
+
+//-------------------------------------------------------------------------
+G4bool GmMinRangeCutOutsideVoxelFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmMinRangeCutOutsideVoxelFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
+}

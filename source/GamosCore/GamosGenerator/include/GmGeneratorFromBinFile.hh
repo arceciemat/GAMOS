@@ -35,7 +35,7 @@ private:
 
   G4int theLastEventID;
 
-  G4int theNEvents;
+  G4double theNEvents;
 
 };
 

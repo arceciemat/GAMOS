@@ -16,8 +16,7 @@ GmGenerDistEnergyFromFile::GmGenerDistEnergyFromFile()
 void GmGenerDistEnergyFromFile::ReadEnergyDist()
 {
   // Read energy - probability  pairs
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  theFileName = GmGenUtils::FileInPath( path, theFileName );
+  theFileName = GmGenUtils::FileInPath( theFileName );
 
   GmFileIn fin = GmFileIn::GetInstance(theFileName);
 
@@ -34,6 +33,8 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
 			   + " All lines must have two words: ENERGY PROBABILITY").c_str());
     }
     theEnerProb[ GmGenUtils::GetValue( wl[0] ) * theUnit ] = GmGenUtils::GetValue( wl[1] );
+    //    G4cout << " ENERPROB  READ " <<  GmGenUtils::GetValue( wl[0] ) * theUnit << " =" <<  GmGenUtils::GetValue( wl[1] ) << G4endl;
+
     ii++;
   }
 
@@ -68,10 +69,10 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
     }
   }      
   //--- For all: Check that energy increases
-  G4cout << " ENERPROB " << theEnerProb.size() << G4endl;
+  //  G4cout << " ENERPROB " << theEnerProb.size() << G4endl;
   ite2 = theEnerProb.begin(); ite2++;
   for(ite = theEnerProb.begin(); ite2 != theEnerProb.end(); ite++, ite2++){
-    G4cout << " ENERPROB " << (*ite).first << " >= " << (*ite2).first << G4endl;
+    //    G4cout << " ENERPROB " << (*ite).first << " >= " << (*ite2).first << G4endl;
     if( (*ite).first >= (*ite2).first ) {
 	G4Exception("GmGenerDistEnergyFromFile::ReadEnergyDist",
 		    "Energies should be in increasing order",
@@ -91,7 +92,7 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
       if( theCalculationType == EFFCT_InterpolateLog ){
 	hbinn = log((*ite2).first) - log((*ite).first);
       } else {
-	hbinn = log((*ite2).first) - log((*ite).first);
+	hbinn = (*ite2).first - (*ite).first;
       }
       if( fabs(hbinn - theHBin) > 1.E-6*theHBin ) {
 	G4Exception("GmGenerDistEnergyFromFile::ReadEnergyDist",
@@ -133,7 +134,7 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
 	tp += prob;
 	probaccumEner0.insert( std::multimap<G4double,G4double>::value_type(tp, (*ite).first));
 #ifndef GAMOS_NO_VERBOSE
-	if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistEnergyFromFile  PROB " << prob << " " << (*ite).first << " " << (*ite).second << " " << (*ite2).second << " " << (*ite).first << " " << (*ite2).first << G4endl;
+	if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistEnergyFromFile  PROB_SUM " << tp << " " << prob << " " << (*ite).first << " " << (*ite).second << " " << (*ite2).second << " " << (*ite).first << " " << (*ite2).first << G4endl;
 #endif
       }
     } else if( theCalculationType == EFFCT_InterpolateLog ) {
@@ -143,7 +144,7 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
 	tp += prob;
 	probaccumEner0.insert( std::multimap<G4double,G4double>::value_type(tp, (*ite).first));
 #ifndef GAMOS_NO_VERBOSE
-	if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistEnergyFromFile  PROB " << prob << " " << (*ite).first << " " << (*ite).second << " " << (*ite2).second << " " << log((*ite).first) << " " << log((*ite2).first) << G4endl;
+	if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistEnergyFromFile  PROB " << prob << " PROB_SUM " << tp << " " << (*ite).first << " " << (*ite).second << " " << (*ite2).second << " " << log((*ite).first) << " " << log((*ite2).first) << G4endl;
 #endif
       }
     }
@@ -214,7 +215,11 @@ G4double GmGenerDistEnergyFromFile::GenerateEnergy( const GmParticleSource* )
     G4double normCDF = slope*sqr(diffE)/2. + (*iteD).second*diffE ; // normalize Cumulative Distribution Function
     //    G4double randomProb = ((*iteU).second-(*iteD).second) * CLHEP::RandFlat::shoot()/ normCDF;
     G4double randomProb = CLHEP::RandFlat::shoot();
-    energy = (( -(*iteD).second + sqrt( sqr((*iteD).second) + 2*slope*randomProb*normCDF) ) / slope ) + (*iteD).first;
+    if(slope == 0) {
+      energy = (*iteD).first + randomProb* ((*iteU).first-(*iteD).first);
+    } else {
+      energy = (( -(*iteD).second + sqrt( sqr((*iteD).second) + 2*slope*randomProb*normCDF) ) / slope ) + (*iteD).first;
+    }
     //    energy = ((*iteU).second-(*iteD).second) * CLHEP::RandFlat::shoot() / slope + (*iteD).first;
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistEnergyFromFile energy =  " << energy 
@@ -233,8 +238,12 @@ G4double GmGenerDistEnergyFromFile::GenerateEnergy( const GmParticleSource* )
     G4double slope = diffP/diffE;
     G4double normCDF = slope*sqr(diffE)/2. + (*iteD).second*diffE ; // normalize Cumulative Distribution Function
     G4double randomProb = CLHEP::RandFlat::shoot();
-    energy = exp( (( -(*iteD).second + sqrt( sqr((*iteD).second) + 2*slope*randomProb*normCDF) ) / slope ) + log((*iteD).first) );
-    //    energy = exp( ((*iteU).second-(*iteD).second) * CLHEP::RandFlat::shoot() / slope + log((*iteD).first) );
+    if(slope == 0) {
+      energy = exp( log((*iteD).first) + randomProb* (log((*iteU).first)-log((*iteD).first)) );
+    } else {
+     energy = exp( (( -(*iteD).second + sqrt( sqr((*iteD).second) + 2*slope*randomProb*normCDF) ) / slope ) + log((*iteD).first) );
+    }
+     //    energy = exp( ((*iteU).second-(*iteD).second) * CLHEP::RandFlat::shoot() / slope + log((*iteD).first) );
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistEnergyFromFile energy =  " << energy 
 				      << " randomProb " << randomProb
@@ -255,20 +264,26 @@ void GmGenerDistEnergyFromFile::SetParams( const std::vector<G4String>& params )
   theUnit = 1.;
   G4String calcType = "histogram";
 
-  switch (nParams) {
-  case 3:
-    theUnit = GmGenUtils::GetValue( params[2] );
-  case 2:
-    calcType = params[1];
-  case 1:
-    theFileName = params[0];
-    break;
-  default:
-    G4Exception("GmGenerDistEnergyFromFile::SetParams",
-		"Wrong number of parameters", 
-		FatalErrorInArgument,
-		G4String("There should be 1, 2 or 3 parameters: FILE_NAME CALCULATION_TYPE UNIT, there are " + GmGenUtils::itoa(nParams)).c_str());
-  }
+	switch (nParams) {
+	case 3:
+		theUnit = GmGenUtils::GetValue(params[2]);
+#ifndef WIN32
+		[[fallthrough]];
+#endif
+	case 2:
+		calcType = params[1];
+#ifndef WIN32
+		[[fallthrough]];
+#endif
+	case 1:
+		theFileName = params[0];
+		break;
+	default:
+		G4Exception("GmGenerDistEnergyFromFile::SetParams",
+			"Wrong number of parameters",
+			FatalErrorInArgument,
+			G4String("There should be 1, 2 or 3 parameters: FILE_NAME CALCULATION_TYPE UNIT, there are " + GmGenUtils::itoa(nParams)).c_str());
+	}
 
   if( calcType == "fixed" ) {
     theCalculationType = EFFCT_Fixed;

@@ -21,6 +21,7 @@ public:
   virtual ~GmInteractionFilter();
 
   virtual G4bool AcceptStep(const G4Step* aStep);
+  virtual G4bool AcceptStackedTrack(const G4Track* );
 
 };
 

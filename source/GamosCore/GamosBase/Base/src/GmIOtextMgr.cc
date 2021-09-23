@@ -45,8 +45,7 @@ void GmIOtextMgr::OpenFileIn( const G4String& fname )
   } 
   
   SetFileNameIn( fname );
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  theFileNameIn = GmGenUtils::FileInPath( path, theFileNameIn );
+  theFileNameIn = GmGenUtils::FileInPath( theFileNameIn );
 
   theFileIn =  & GmFileIn::GetInstance(theFileNameIn);
 #ifndef GAMOS_NO_VERBOSE

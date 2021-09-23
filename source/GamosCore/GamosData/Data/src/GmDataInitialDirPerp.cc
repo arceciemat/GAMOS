@@ -44,3 +44,11 @@ G4double GmDataInitialDirPerp::GetValueFromEvent( const G4Event* aEvent, G4int )
   G4ThreeVector mom = aEvent->GetPrimaryVertex(0)->GetPrimary(0)->GetMomentum().unit();
   return mom.perp();
 }
+
+
+//----------------------------------------------------------------
+G4double GmDataInitialDirPerp::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  return aTrack->GetMomentumDirection().perp();
+}
+

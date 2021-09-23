@@ -21,11 +21,13 @@ public:
   virtual ~GmMaterialFilter();
 
   virtual G4bool AcceptStep(const G4Step* aStep);
-
+  virtual G4bool AcceptTrack(const G4Track* );
+  virtual G4bool AcceptStackedTrack(const G4Track* aTrack);
   void show();
   void SetParameters( std::vector<G4String>& params);
   
 private:
+  G4Material* GetMateFromPV( G4VPhysicalVolume* pv );
   std::set<G4Material*> theMaterials;
   
 };

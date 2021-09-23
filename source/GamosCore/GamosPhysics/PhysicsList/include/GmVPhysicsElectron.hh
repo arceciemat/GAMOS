@@ -14,7 +14,7 @@ class GmVPhysicsElectron : public G4VPhysicsConstructor {
 
 public: 
 
-  GmVPhysicsElectron(const G4String& name);
+  GmVPhysicsElectron(const G4String& name, G4int type);
   
   virtual ~GmVPhysicsElectron();
   
@@ -24,9 +24,9 @@ public:
   virtual void ConstructProcess() = 0;
 
 protected:
-  void SelectBremssAngularDist(G4SeltzerBergerModel* bremsModel );
+  void SelectBremssAngularDist(G4SeltzerBergerModel* bremsModel, G4String part = "Electron" );
 
-  void SelectBremssAngularDist(G4LivermoreBremsstrahlungModel* bremsModel );
+  void SelectBremssAngularDist(G4LivermoreBremsstrahlungModel* bremsModel, G4String part = "Electron" );
 
   void AddDeexcitation();
 

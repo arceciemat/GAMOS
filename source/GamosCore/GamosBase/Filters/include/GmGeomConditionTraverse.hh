@@ -7,7 +7,7 @@
 //  Return touchable of volume traversed, if not in GeomBoundary)
 // 
 ///////////////////////////////////////////////////////////////////////////////
-class G4TouchableHistory;
+#include "G4TouchableHistory.hh"
 #include "GmVGeomCondition.hh"
 
 class GmGeomConditionTraverse : public GmVGeomCondition
@@ -15,7 +15,7 @@ class GmGeomConditionTraverse : public GmVGeomCondition
 public: // with description
   GmGeomConditionTraverse(){};
   
-  virtual ~GmGeomConditionTraverse(){};
+  virtual ~GmGeomConditionTraverse(){delete theTouchable;};
   
 public: // with description
   virtual const G4VTouchable* GetTouchableFromTrack(const G4Track*);

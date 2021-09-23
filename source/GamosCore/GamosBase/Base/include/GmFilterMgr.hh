@@ -3,6 +3,7 @@
 
 #include "G4RunManager.hh"
 #include <map>
+#include <vector>
 class GmVFilter;
 // FindOrBuildFilter : first looks if a filter with same name already exists (using GetFilterFromList)
 // if it dose not exists creates a new one (using CreateFilter)

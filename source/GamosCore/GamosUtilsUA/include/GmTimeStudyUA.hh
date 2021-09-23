@@ -25,8 +25,9 @@ public:
   virtual void UserSteppingAction( const G4Step* aStep );
   virtual void EndOfRunAction( const G4Run* aRun );
 
-private:
+protected:
   mut fTimers;
+private:
   unsigned int theCurrentTimerID;
 
 };

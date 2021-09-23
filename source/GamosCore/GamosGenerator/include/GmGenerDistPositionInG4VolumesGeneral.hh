@@ -3,7 +3,7 @@
 
 #include "GamosCore/GamosGenerator/include/GmVGenerDistPosition.hh"
 #include "G4ThreeVector.hh"
-class G4TouchableHistory;
+#include "G4TouchableHistory.hh"
 class GmParticleSource;
 class GmGeometryUtils;
 
@@ -11,7 +11,7 @@ class GmGenerDistPositionInG4VolumesGeneral : public GmVGenerDistPosition
 {
 public:
   GmGenerDistPositionInG4VolumesGeneral();
-  virtual ~GmGenerDistPositionInG4VolumesGeneral(){};
+  virtual ~GmGenerDistPositionInG4VolumesGeneral(){delete theTouchable;};
 
   virtual G4ThreeVector GeneratePosition( const GmParticleSource* source );
 

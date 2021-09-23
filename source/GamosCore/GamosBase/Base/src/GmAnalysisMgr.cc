@@ -10,9 +10,17 @@
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-std::map<G4String,GmAnalysisMgr*> GmAnalysisMgr::theInstances;
 
-std::set<G4String> GmAnalysisMgr::theFileFormats;
+#ifdef WIN32
+ #if defined GmBaseBase_ALLOC_EXPORT 
+  std::set<G4String> GmAnalysisMgr::theFileFormats;
+  std::map<G4String, GmAnalysisMgr*> GmAnalysisMgr::theInstances;
+#endif
+#else
+ std::set<G4String> GmAnalysisMgr::theFileFormats;
+ std::map<G4String, GmAnalysisMgr*> GmAnalysisMgr::theInstances;
+#endif
+
 std::map<G4String,G4double> GmAnalysisMgr::theHisto1NBins;
 std::map<G4String,G4double> GmAnalysisMgr::theHisto1Min;
 std::map<G4String,G4double> GmAnalysisMgr::theHisto1Max;
@@ -31,8 +39,13 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
 #ifndef GAMOS_NO_VERBOSE
   if( BaseVerb(infoVerb) ) G4cout << " AnalysisMgr fileName " << fileName  << G4endl;
 #endif
-   G4String prefix = GmParameterMgr::GetInstance()->GetStringValue("GmAnalysisMgr:FileNamePrefix","");
-  theFileName = prefix + fileName;
+  theFileName = fileName;
+  bDefaultNormalize = true;  
+  bNormalizeToNEvents = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theFileName+":NormalizeToNEvents",bDefaultNormalize));
+  //  G4cout << " NormalizeToNEvents " << theFileName+":NormalizeToNEvents = " <<bNormalizeToNEvents << G4endl; //GDEB
+  
+  G4String prefix = GmParameterMgr::GetInstance()->GetStringValue("GmAnalysisMgr:FileNamePrefix","");
+  theFileName = prefix + theFileName;
 #ifndef GAMOS_NO_VERBOSE
   if( BaseVerb(infoVerb) ) G4cout << " AnalysisMgr fileName with prefix " << theFileName  << G4endl;
 #endif
@@ -53,7 +66,6 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
 #endif
   }
 
-  bDefaultNormalize = true;
 }
  
 
@@ -68,8 +80,7 @@ GmAnalysisMgr* GmAnalysisMgr::GetInstance( const G4String& fileName )
 GmAnalysisMgr::~GmAnalysisMgr()
 { 
 
-  bNormalizeToNEvents = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theFileName+":NormalizeToNEvents",bDefaultNormalize));
-
+  G4cout << " GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents " << bNormalizeToNEvents << " " << theFileName+":NormalizeToNEvents" << G4endl;
   Normalize();
 
   if( G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theFileName+":DeleteEmptyHistos",0)) ) DeleteEmptyHistos();
@@ -150,6 +161,15 @@ void GmAnalysisMgr::AddFileFormat( G4String& ff )
   theFileFormats.insert(ff); 
 }
 
+
+//----------------------------------------------------------------------
+void GmAnalysisMgr::SaveAllFormats(const G4String& name)
+{
+	for (std::set<G4String>::const_iterator ite = theFileFormats.begin(); ite != theFileFormats.end(); ite++) {
+		Save(name, *ite);	
+	}
+}
+
 //----------------------------------------------------------------------
 void GmAnalysisMgr::Save( const G4String& name, const G4String& format)
 {
@@ -218,7 +238,6 @@ void GmAnalysisMgr::Save( const G4String& name, const G4String& format)
     GmHistoProfile1* his = (*itep1).second;
     if( bNormalizeToNEvents ) {
       GmHistoProfile1* hisN = new GmHistoProfile1(*his);
-      NormalizeToNEvents(hisN); 
       hisWriter->SaveHistoProf1( hisN );
       delete hisN;
     }else {
@@ -229,7 +248,6 @@ void GmAnalysisMgr::Save( const G4String& name, const G4String& format)
     GmHistoProfile2* his = (*itep2).second;
     if( bNormalizeToNEvents ) {
       GmHistoProfile2* hisN = new GmHistoProfile2(*his);
-      NormalizeToNEvents(hisN); 
       hisWriter->SaveHistoProf2( hisN );
       delete hisN;
     }else {
@@ -512,6 +530,7 @@ bool GmAnalysisMgr::CreateHisto2D(const G4String & pathAndTitle, int nBinsX, dou
       lowerEdgeX = (*ite).second;
     }
   }
+  ite = theHisto2MinX.begin(); //GDEB
   for( ite = theHisto2MaxX.begin(); ite != theHisto2MaxX.end(); ite++ ){
     if( GmGenUtils::AreWordsEquivalent( (*ite).first, pathAndTitle ) ) {
       upperEdgeX = (*ite).second;
@@ -1151,7 +1170,7 @@ void GmAnalysisMgr::AddHistoNorm( G4String parstr)
 //----------------------------------------------------------------------------
 void GmAnalysisMgr::NormalizeToNEvents( GmHisto1* his )
 {
-  G4int NEvents = GmNumberOfEvent::GetNumberOfEvent();
+  G4double NEvents = GmNumberOfEvent::GetNumberOfEvent();
   G4double nent = his->GetEntries();
   for( G4int ii = 0; ii < his->GetNbinsX()+1; ii++ ){
     double error = his->GetBinError(ii);
@@ -1164,22 +1183,9 @@ void GmAnalysisMgr::NormalizeToNEvents( GmHisto1* his )
 
 
 //----------------------------------------------------------------------------
-void GmAnalysisMgr::NormalizeToNEvents( GmHistoProfile1* his )
-{
-  G4int NEvents = GmNumberOfEvent::GetNumberOfEvent();
-  G4double nent = his->GetEntries();
-  for( G4int ii = 0; ii < his->GetNbinsX()+1; ii++ ){
-    his->SetBinContent(ii, his->GetBinContent(ii) / NEvents );
-    his->SetBinError(ii, his->GetBinError(ii) / NEvents );
-  }
-  his->SetEntries(nent);
-  
-}
-
-//----------------------------------------------------------------------------
 void GmAnalysisMgr::NormalizeToNEvents( GmHisto2* his )
 {
-  G4int NEvents = GmNumberOfEvent::GetNumberOfEvent();
+  G4double NEvents = GmNumberOfEvent::GetNumberOfEvent();
   G4double nent = his->GetEntries();
   for( G4int ix = 0; ix < his->GetNbinsX()+1; ix++ ){
     for( G4int iy = 0; iy < his->GetNbinsY()+1; iy++ ){
@@ -1192,16 +1198,13 @@ void GmAnalysisMgr::NormalizeToNEvents( GmHisto2* his )
 }
 
 //----------------------------------------------------------------------------
-void GmAnalysisMgr::NormalizeToNEvents( GmHistoProfile2* his )
-{
-  G4int NEvents = GmNumberOfEvent::GetNumberOfEvent();
-  G4double nent = his->GetEntries();
-  for( G4int ix = 0; ix < his->GetNbinsX()+1; ix++ ){
-    for( G4int iy = 0; iy < his->GetNbinsY()+1; iy++ ){
-      his->SetBinContent(ix, iy, his->GetBinContent(ix,iy) / NEvents );
-      his->SetBinError(ix, iy, his->GetBinError(ix,iy) / NEvents );
-    }
-  }
-  his->SetEntries(nent);
-
+std::set<G4String> GmAnalysisMgr::GetFileFormats() {
+  return theFileFormats;
 }
+
+//----------------------------------------------------------------------------
+std::map<G4String, GmAnalysisMgr*> GmAnalysisMgr::GetAllInstances()
+{
+  return theInstances;
+}
+

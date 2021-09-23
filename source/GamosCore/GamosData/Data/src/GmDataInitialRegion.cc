@@ -54,3 +54,11 @@ G4String GmDataInitialRegion::GetStringValueFromEvent( const G4Event* anEvent )
 
   return name;
 }
+
+
+//----------------------------------------------------------------
+G4String GmDataInitialRegion::GetStringValueFromStackedTrack( const G4Track* aTrack )
+{ 
+  return GetPVFromPos( aTrack->GetPosition() )->GetLogicalVolume()->GetRegion()->GetName();
+}
+

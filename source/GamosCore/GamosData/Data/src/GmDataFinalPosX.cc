@@ -9,7 +9,6 @@ GmDataFinalPosX::GmDataFinalPosX()
   bInitial = false;
   theHMin = -1000.;
   theHMax = 1000.;
-  theExcludedTypes.insert(DTSeco);
   theExcludedTypes.insert(DTEvent);
 }
 
@@ -29,4 +28,10 @@ G4double GmDataFinalPosX::GetValueFromStep( const G4Step* aStep, G4int )
 G4double GmDataFinalPosX::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
   return aTrack->GetPosition().x();
+}
+
+//----------------------------------------------------------------
+G4double GmDataFinalPosX::GetValueFromSecoTrack( const G4Track* aTrack1, const G4Track*, G4int )
+{
+  return aTrack1->GetPosition().x();
 }

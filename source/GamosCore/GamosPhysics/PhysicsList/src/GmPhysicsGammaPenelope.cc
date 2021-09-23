@@ -13,7 +13,7 @@
 #include "G4RayleighScattering.hh" 
 #include "G4PenelopeRayleighModel.hh"
 
-GmPhysicsGammaPenelope::GmPhysicsGammaPenelope(const G4String& name): GmVPhysicsGamma(name)
+GmPhysicsGammaPenelope::GmPhysicsGammaPenelope(const G4String& name, G4int type): GmVPhysicsGamma(name,type)
 { }
 
 GmPhysicsGammaPenelope::~GmPhysicsGammaPenelope()

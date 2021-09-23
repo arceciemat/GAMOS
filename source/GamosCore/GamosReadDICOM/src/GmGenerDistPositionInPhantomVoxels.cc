@@ -20,8 +20,6 @@
 #include "G4Geantino.hh"
 #include "CLHEP/Random/RandFlat.h"
 
-#include "Reflex/PluginService.h"
-
 //------------------------------------------------------------------------
 GmGenerDistPositionInPhantomVoxels::GmGenerDistPositionInPhantomVoxels()
 {
@@ -30,9 +28,9 @@ GmGenerDistPositionInPhantomVoxels::GmGenerDistPositionInPhantomVoxels()
   //---- Add the G4PhantomParameterisation
   G4PhantomParameterisation* thePhantomParam = 0;
   G4AffineTransform theTransformation;
-  G4int theNoVoxelX;
-  G4int theNoVoxelY;
-  G4int theNoVoxelZ;
+  G4int theNoVoxelsX;
+  G4int theNoVoxelsY;
+  G4int theNoVoxelsZ;
   std::vector<G4VPhysicalVolume*>::const_iterator ite;
   G4PhysicalVolumeStore* pvstore = G4PhysicalVolumeStore::GetInstance();
   for( ite = pvstore->begin(); ite != pvstore->end(); ite++ ) {
@@ -69,11 +67,11 @@ GmGenerDistPositionInPhantomVoxels::GmGenerDistPositionInPhantomVoxels()
 #ifndef GAMOS_NO_VERBOSE
 	if( ReadDICOMVerb(infoVerb) ) G4cout << "GmGenerDistPositionInPhantomVoxels voxel dimensions " << theVoxelDimX << " " << theVoxelDimY << " " << theVoxelDimZ << G4endl;
 #endif
-	theNoVoxelX = thePhantomParam->GetNoVoxelX();
-	theNoVoxelY = thePhantomParam->GetNoVoxelY();
-	theNoVoxelZ = thePhantomParam->GetNoVoxelZ();
+	theNoVoxelsX = thePhantomParam->GetNoVoxelsX();
+	theNoVoxelsY = thePhantomParam->GetNoVoxelsY();
+	theNoVoxelsZ = thePhantomParam->GetNoVoxelsZ();
 #ifndef GAMOS_NO_VERBOSE
-	if( ReadDICOMVerb(infoVerb) ) G4cout << "GmGenerDistPositionInPhantomVoxels number of voxels " << theNoVoxelX << " " << theNoVoxelY << " " << theNoVoxelZ << G4endl;
+	if( ReadDICOMVerb(infoVerb) ) G4cout << "GmGenerDistPositionInPhantomVoxels number of voxels " << theNoVoxelsX << " " << theNoVoxelsY << " " << theNoVoxelsZ << G4endl;
 #endif
 	
 	break; // do not look for another volume
@@ -165,15 +163,18 @@ GmGenerDistPositionInPhantomVoxels::GmGenerDistPositionInPhantomVoxels()
 
   G4Navigator* theNavigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
 
-  for( G4int ix = 0; ix < theNoVoxelX; ix++ ) {
-    for( G4int iy = 0; iy < theNoVoxelY; iy++ ) {
-      for( G4int iz = 0; iz < theNoVoxelZ; iz++ ) { 
-	G4int copyNo = ix + thePhantomParam->GetNoVoxelX()*iy + thePhantomParam->GetNoVoxelX()*thePhantomParam->GetNoVoxelY()*iz;
+  size_t nvphanX = thePhantomParam->GetNoVoxelsX();
+  size_t nvphanY = thePhantomParam->GetNoVoxelsY();
+  size_t nvphanXY = nvphanX*nvphanY;
+  for( G4int iz = 0; iz < theNoVoxelsZ; iz++ ) { 
+    for( G4int iy = 0; iy < theNoVoxelsY; iy++ ) {
+      for( G4int ix = 0; ix < theNoVoxelsX; ix++ ) {
+	G4int copyNo = ix + nvphanX*iy + nvphanXY*iz;
 	G4ThreeVector pos = thePhantomParam->GetTranslation( copyNo );
 	theTransformation.ApplyPointTransform(pos);	
 	G4TouchableHistory* theTouchable = new G4TouchableHistory;
 	theNavigator->LocateGlobalPointAndUpdateTouchable( pos, theTouchable, false ); 
-	G4Material* material = thePhantomParam->GetMaterial(ix,iy,iz); 
+	G4Material* material = thePhantomParam->GetMaterial(copyNo); 
 	preSP->SetTouchableHandle(theTouchable);
 	preSP->SetMaterial(material);  
 	//	postSP->SetTouchableHandle(theTouchable);

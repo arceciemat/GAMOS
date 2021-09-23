@@ -1,6 +1,4 @@
-//#define private public
 #include "G4EventManager.hh"
-//#define private private
 
 #include "GmTrajectoryPosMom.hh"
 #include "G4Step.hh"

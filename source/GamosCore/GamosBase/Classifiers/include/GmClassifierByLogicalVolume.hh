@@ -13,17 +13,17 @@ public: // with description
   GmClassifierByLogicalVolume(G4String);
   virtual ~GmClassifierByLogicalVolume();
   
-  virtual G4int GetIndexFromStep(const G4Step*);
-  virtual G4int GetIndexFromTrack(const G4Track*);
+  virtual int64_t GetIndexFromStep(const G4Step*);
+  virtual int64_t GetIndexFromTrack(const G4Track*);
 
   virtual void SetParameters( std::vector<G4String>& param );
 
-  virtual G4String GetIndexName(G4int);
+  virtual G4String GetIndexName(int64_t);
 
   virtual void SetIndices( std::vector<G4String> wl );
 
 private:
-  std::map<G4LogicalVolume*,G4int> theIndexMap;
+  std::map<G4LogicalVolume*,int64_t> theIndexMap;
 };
 
 #endif

@@ -9,6 +9,7 @@ class GmTouchable;
 class G4Material;
 class G4Track;
 class G4TouchableHistory;
+class G4PhantomParameterisation;
 #include <map>
 #include <vector>
 #include <set>
@@ -48,6 +49,7 @@ public:
   G4LogicalVolume* GetTopLV(G4bool bGeomInit = true);
 
   G4Material* GetMaterial( const G4String& name, bool exists = true );
+  std::vector<G4Material*> GetAllMaterials( const G4String& name, bool exists = true );
   std::vector<G4Material*> GetMaterials( const G4String& name, bool exists = true );
 
   std::vector<GmTouchable*> GetTouchables( const G4String& name, bool exists = true );
@@ -78,6 +80,12 @@ public:
 
   G4String BuildTouchableName( const G4ThreeVector& pos );
 
+  G4VPhysicalVolume* GetPVFromPos( G4ThreeVector pos );
+
+  G4bool IsPhantomVolume( G4VPhysicalVolume* pv );
+  std::vector<G4PhantomParameterisation*> GetPhantomParams(G4bool bMustExist);
+  G4PhantomParameterisation* GetPhantomParam(G4bool bMustExist = true);
+  
 private:
   void BuildDictionaries();
 
@@ -89,11 +97,12 @@ private:
   void ExpandCopyNoList( std::vector< std::vector<G4int> >& vvi, std::vector<G4int> vi, G4int level );
   G4double CalculateCubicVolume( G4LogicalVolume* lv );
 
+  
 private:
   static GmGeometryUtils* theInstance;
 
   int                 nchar;
-  G4String            name;
+  //-  G4String            name;
   mpvpv               thePVTree;
   G4VPhysicalVolume*  theTopPV; 
   // G4NavigationHistory fHistory;
@@ -103,7 +112,7 @@ private:
   mmspv thePVs;
   //key = logical volume, value = physical volume from this LV (to allow easy retrieval of all PV's of one LV)
   mmlvpv theLVPVTree;
- //key = physical volume, value = logical volume where the PV is placed (GEANT4 does not keep the pointer from a PV to the LV where it is placed)
+ //key = physical volume, value = mother logical volume where the PV is placed (GEANT4 does not keep the pointer from a PV to the LV where it is placed)
   mpvlv thePVLVTree;
 
   G4bool bPreCalculatedPhantomCubicVolumes;

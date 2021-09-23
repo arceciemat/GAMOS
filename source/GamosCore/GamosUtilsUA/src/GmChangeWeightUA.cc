@@ -39,7 +39,7 @@ GmChangeWeightUA::~GmChangeWeightUA()
 {}
 
 //----------------------------------------------------------------
-void GmChangeWeightUA::UserSteppingAction( const G4Step* aStep )
+void GmChangeWeightUA::UserSteppingAction( const G4Step* )
 {
   /*
   G4double value = theDistribution->GetValueFromStep( aStep );

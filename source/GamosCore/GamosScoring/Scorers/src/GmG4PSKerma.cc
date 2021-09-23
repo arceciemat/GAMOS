@@ -45,32 +45,9 @@ G4bool GmG4PSKerma::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   G4double density = aStep->GetTrack()->GetMaterial()->GetDensity();
   G4double kerma   = eseco / ( density * volume );
 
-  FillScorerAtPostCheckingRegular( aStep, kerma, aStep->GetPreStepPoint()->GetWeight() );
+  FillScorer( aStep, kerma, aStep->GetPreStepPoint()->GetWeight() );
 
   return TRUE;
 }
 
 
-void GmG4PSKerma::EndOfEvent(G4HCofThisEvent*)
-{;}
-
-void GmG4PSKerma::DrawAll()
-{;}
-
-void GmG4PSKerma::PrintAll()
-{
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  energy of secondaries: " << G4BestUnit(*(itr->second),"Energy") 
-	   << G4endl;
-  }
-}
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSKerma::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

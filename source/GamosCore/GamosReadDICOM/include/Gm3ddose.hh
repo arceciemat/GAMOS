@@ -4,7 +4,7 @@
 #include <vector>
 #include "Gm3ddoseHeader.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
-#include "GmSqdose.hh"
+class GmSqdose;
 
 class Gm3ddose
 {

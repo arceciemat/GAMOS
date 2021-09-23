@@ -168,11 +168,11 @@ void GmXrayRefraction::Snell() {
 			sint2 = 0.0;
 		}
 		if (sint2 >= 1.0) {
-			if (Swap)
-				Swap = !Swap;
+		  if (Swap) {
+		                Swap = !Swap; 
 				PdotN = OldMomentum * theFacetNormal;
 				NewMomentum = OldMomentum - (2.*PdotN)*theFacetNormal;
-
+		  }
 
 		} else if (sint2 < 1.0) {
 			if (cost1 > 0.0) {

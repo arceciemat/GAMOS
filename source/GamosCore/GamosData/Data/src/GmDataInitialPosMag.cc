@@ -41,3 +41,9 @@ G4double GmDataInitialPosMag::GetValueFromEvent( const G4Event* aEvent, G4int )
 {
   return aEvent->GetPrimaryVertex(0)->GetPosition().mag();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialPosMag::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  return aTrack->GetPosition().mag();
+}

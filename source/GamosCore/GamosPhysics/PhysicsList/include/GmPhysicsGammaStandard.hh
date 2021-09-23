@@ -44,7 +44,7 @@ class GmPhysicsGammaStandard : public GmVPhysicsGamma {
 
 public: 
 
-  GmPhysicsGammaStandard(const G4String& name = "gamma-standard");
+  GmPhysicsGammaStandard(const G4String& name = "gamma-standard", G4int type=22);
   
   virtual ~GmPhysicsGammaStandard();
   

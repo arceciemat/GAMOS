@@ -2,7 +2,6 @@
 #include "G4ProcessManager.hh"
 
 #include "GmVarianceReductionMessenger.hh"
-#include "GmPSEMPhysics.hh"
 #include "GmImportanceSamplingProcess.hh"
 #include "GmWrapperProcess.hh"
 
@@ -93,55 +92,3 @@ void GmVarianceReductionMessenger::SetImportanceSampling(std::vector<G4String> p
   }
 }
 
-/*
-//-----------------------------------------------------------------------
-void GmVarianceReductionMessenger::XSBiasing(std::vector<G4String> params )
-{
-  mmspsd thePartprocNames; 
-  if( params.size()%3 != 0 ) {
-    for( unsigned int ii = 0; ii < params.size(); ii++ ){
-      G4cerr << "PARAM= " << params[ii] << G4endl;
-    }
-    G4Exception("GmVarianceReductionMessenger::XSBiasing",
-		"Wrong argument",
-		FatalErrorInArgument,
-		"Number of arguments has to be a multiple of three: PARTICLE_NAME PROCESS_NAME BIAS_FACTOR");
-  }
-
-  for( unsigned int ii = 0; ii < params.size(); ii+=3 ){
-    thePartprocNames.insert(mmspsd::value_type(params[ii],psd(params[ii+1],GmGenUtils::GetValue(params[ii+2]))));
-  }
-  G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleTable::G4PTblDicIterator* theParticleIterator = theParticleTable->GetIterator();
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-    G4ProcessVector* procVector = pmanager->GetProcessList();
-    std::pair< mmspsd::iterator, mmspsd::iterator > itemmp = thePartprocNames.equal_range(particle->GetParticleName());
-    if( itemmp.first == itemmp.second ) continue;
-    for( G4int ii = procVector->size()-1; ii >= 0; ii-- ) {
-      G4VProcess* proc = (*procVector)[ii];
-      //      G4cout << ii << " check RemoveProcess " << particle->GetParticleName() << " " << (*procVector)[ii]->GetProcessName() << " " << (*procVector)[ii]->GetProcessType() << " =? " << (*itep) << G4endl;
-      //?      if( find ( itemmp.first, itemmp.second, (*procVector)[ii]->GetProcessName() ) != itemmp.second ) {
-      mmspsd::iterator itemm; 
-      G4bool bFound = false;
-      for( itemm = itemmp.first; itemm != itemmp.second; itemm++ ){
-	if( (*itemm).second.first == proc->GetProcessName() ) {
-	  bFound = true;
-	  break;
-	}
-      }
-      if( bFound ) {
-	//	pmanager->RemoveProcess( pmanager->GetProcessIndex( proc ) );
-//	G4cout << " RemoveProcess " << particle->GetParticleName() << " " << proc->GetProcessName() << G4endl;
-	G4ProcessAttribute* attr = pmanager->GetAttribute(proc);
-	pmanager->AddProcess( new GmWrapperProcess( "XSB_", proc , (*itemm).second.second ), attr->ordProcVector[0],  attr->ordProcVector[2], attr->ordProcVector[4] ); // do not take into accout the order process, for the moment!!	
-	//	pmanager->CreateGPILvectors(); // reordering already calls this
-      }
-    }
-
-  }
-}
-
-*/

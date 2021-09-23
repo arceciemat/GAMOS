@@ -20,15 +20,16 @@ GmReadPhantomG4BinGeometry::GmReadPhantomG4BinGeometry()
 //---------------------------------------------------------------------------
 GmReadPhantomG4BinGeometry::~GmReadPhantomG4BinGeometry()
 {
+  thePhantomFileName = "test.g4dcmb";
 }
+
 
 //---------------------------------------------------------------------------
 void GmReadPhantomG4BinGeometry::ReadPhantomData()
 {
-   G4String filename = GmParameterMgr::GetInstance()->GetStringValue("GmReadPhantomGeometry:Phantom:FileName", "test.g4dcmb");
+   G4String filename = GmParameterMgr::GetInstance()->GetStringValue("GmReadPhantomGeometry:Phantom:FileName", thePhantomFileName);
   
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  filename = GmGenUtils::FileInPath( path, filename );
+  filename = GmGenUtils::FileInPath( filename );
   FILE* fin = std::fopen(filename,"rb");
   
   size_t nMaterials;
@@ -64,6 +65,15 @@ void GmReadPhantomG4BinGeometry::ReadPhantomData()
     thePhantomMaterialsOriginal[ii] = mate;
   }
 
+  for( G4int jj = 0; jj < 3; jj++) {
+    if( fread(&sc, sizeof(char), 1, fin) != 1) {
+      G4Exception(" GmReadPhantomG4BinGeometry::ReadPhantomData",
+		  "Error",
+		  FatalException,
+		  "Problem reading patient position");
+    }
+    thePatientPosition += G4String(sc);
+  }
   if( fread(&nVoxelX, sizeof(size_t),  1, fin) != 1) {
     G4Exception(" GmReadPhantomG4BinGeometry::ReadPhantomData",
 		"Error",
@@ -131,7 +141,7 @@ void GmReadPhantomG4BinGeometry::ReadPhantomData()
   G4cout << "GmReadPhantomG4BinGeometry::ReadPhantomData voxelDimZ " << dimZ << " offsetZ " << offsetZ << G4endl;
 
   size_t mateID; 
-  mateIDs = new size_t[nVoxelX*nVoxelY*nVoxelZ];
+  theMateIDs = new size_t[nVoxelX*nVoxelY*nVoxelZ];
   for( G4int iz = 0; iz < nVoxelZ; iz++ ) {
     for( G4int iy = 0; iy < nVoxelY; iy++ ) {
       for( G4int ix = 0; ix < nVoxelX; ix++ ) {
@@ -143,7 +153,7 @@ void GmReadPhantomG4BinGeometry::ReadPhantomData()
 	}
 	G4int nnew = ix + (iy)*nVoxelX + (iz)*nVoxelX*nVoxelY;
 	//	G4cout << " nnew " << nnew << " = " << mateID<< G4endl;
-	mateIDs[nnew] = mateID;
+	theMateIDs[nnew] = mateID;
       }
     }
   }
@@ -176,6 +186,8 @@ void GmReadPhantomG4BinGeometry::ReadVoxelDensitiesBin( FILE* fin )
   //--- Calculate the average material density for each material/density bin
   std::map< std::pair<G4Material*,G4int>, matInfo* > newMateDens;
   
+  theMateDensities = new float[nVoxelX*nVoxelY*nVoxelZ];
+
   G4float dens;
   //---- Read the material densities
   for( G4int iz = 0; iz < nVoxelZ; iz++ ) {
@@ -189,16 +201,20 @@ void GmReadPhantomG4BinGeometry::ReadVoxelDensitiesBin( FILE* fin )
 		      G4String("Problem reading material density" + GmGenUtils::itoa(ix) + " " + GmGenUtils::itoa(iy) + " " + GmGenUtils::itoa(iz)).c_str());
 	}
 	//	G4cout << ix << " " << iy << " " << iz << " density " << dens << G4endl;
-	if( !bRecalculateMaterialDensities ) continue; 
+	if( !bRecalculateMaterialDensities ) {
+	  G4int copyNo = ix + (iy)*nVoxelX + (iz)*nVoxelX*nVoxelY;
+	  theMateDensities[copyNo] = dens;
+	  continue;
+	}
 	
 	G4int copyNo = ix + (iy)*nVoxelX + (iz)*nVoxelX*nVoxelY;
 	//--- store the minimum and maximum density for each material (just for printing)
-	mpite = densiMinMax.find( mateIDs[copyNo] );
+	mpite = densiMinMax.find( theMateIDs[copyNo] );
 	if( dens < (*mpite).second.first ) (*mpite).second.first = dens;
 	if( dens > (*mpite).second.second ) (*mpite).second.second = dens;
 	
 	//--- Get material from original list of material in file
-	int mateID = mateIDs[copyNo];
+	int mateID = theMateIDs[copyNo];
 	std::map<G4int,G4Material*>::const_iterator imite = thePhantomMaterialsOriginal.find(mateID);
 	//	G4cout << copyNo << " mateID " << mateID << G4endl;
 	//--- Check if density is equal to the original material density
@@ -218,7 +234,7 @@ void GmReadPhantomG4BinGeometry::ReadVoxelDensitiesBin( FILE* fin )
 	  matInfo* mi = (*mppite).second;
 	  mi->sumdens += dens;
 	  mi->nvoxels++;
-	  mateIDs[copyNo] = thePhantomMaterialsOriginal.size()-1 + mi->id;
+	  theMateIDs[copyNo] = thePhantomMaterialsOriginal.size()-1 + mi->id;
 	  //	  G4cout << copyNo << " mat new again " << thePhantomMaterialsOriginal.size()-1 + mi->id << " " << mi->id << G4endl;
 	} else {
 	  matInfo* mi = new matInfo;
@@ -226,11 +242,12 @@ void GmReadPhantomG4BinGeometry::ReadVoxelDensitiesBin( FILE* fin )
 	  mi->nvoxels = 1;
 	  mi->id = newMateDens.size()+1;
 	  newMateDens[matdens] = mi;
-	  mateIDs[copyNo] = thePhantomMaterialsOriginal.size()-1 + mi->id;
+	  theMateIDs[copyNo] = thePhantomMaterialsOriginal.size()-1 + mi->id;
 	  //	  G4cout << copyNo << " mat new first " << thePhantomMaterialsOriginal.size()-1 + mi->id << G4endl;
 	}
-	//	G4cout << ix << " " << iy << " " << iz << " filling mateIDs " << copyNo << " = " << atoi(cid)-1 << G4endl;
-	//	mateIDs[copyNo] = atoi(cid)-1;
+	theMateDensities[copyNo] = dens;
+	//	G4cout << ix << " " << iy << " " << iz << " filling theMateIDs " << copyNo << " = " << atoi(cid)-1 << G4endl;
+	//	theMateIDs[copyNo] = atoi(cid)-1;
       }
     }
   }

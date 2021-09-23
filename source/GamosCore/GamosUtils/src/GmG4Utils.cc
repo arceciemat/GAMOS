@@ -22,6 +22,10 @@
 #include "G4RadioactiveDecay.hh"
 #include "G4Nucleus.hh"
 #include "G4HadronicProcess.hh"
+#include "G4RadioactiveDecayBase.hh"
+#include "G4DecayTable.hh"
+
+std::map<const G4ParticleDefinition*,G4DecayTable*> GmG4Utils::thePartDecayTable;
 
 /*//------------------------------------------------------------------
 G4VProcess* GetProcess(const G4String& particleName, const G4String& processName )
@@ -343,7 +347,22 @@ G4ThreeVector GmG4Utils::GetLocalFromGlobalPos( const G4ThreeVector globalPos, c
 {
   const G4AffineTransform transform = navHis->GetTopTransform();
   G4ThreeVector localPos = transform.TransformPoint(globalPos);
+
+  //  G4cout << " GmG4Utils::GetLocalFromGlobalPos " << localPos << " FROM " << globalPos << G4endl; //GDEB
+  // G4cout << " GmG4Utils::GetLocalFromGlobalPos  transform " << transform << G4endl; //GDEB
+  return localPos;
   
+}
+
+
+//----------------------------------------------------------------
+G4ThreeVector GmG4Utils::GetLocalNFromGlobalPos( const G4ThreeVector globalPos, const G4NavigationHistory* navHis, G4int ancestorLevel )
+{
+  const G4AffineTransform transform = navHis->GetTransform(ancestorLevel);
+  G4ThreeVector localPos = transform.TransformPoint(globalPos);
+
+  //  G4cout << " GmG4Utils::GetLocalFromGlobalPos " << localPos << " FROM " << globalPos << G4endl; //GDEB
+  // G4cout << " GmG4Utils::GetLocalFromGlobalPos  transform " << transform << G4endl; //GDEB
   return localPos;
   
 }
@@ -371,6 +390,7 @@ G4String GmG4Utils::GetInelasticName( const G4Step* aStep )
 
   const G4HadronicProcess* hadProc = (const G4HadronicProcess*)(proc);
   const G4Nucleus* aNucleus = hadProc->GetTargetNucleus();
+  //  G4cout << " GmG4Utils::GetInelasticName::aStep NSECOS " << aNucleus << G4endl; //GDEG
 
   std::vector<G4String> secos;
   std::vector<G4Track*>::const_iterator itet;
@@ -378,7 +398,7 @@ G4String GmG4Utils::GetInelasticName( const G4Step* aStep )
   //  G4cout << " GmG4Utils::GetInelasticName::aStep NSECOS " << secoTracks.size() << G4endl;
   for( itet = secoTracks.begin(); itet != secoTracks.end(); itet++ ){
     G4ParticleDefinition* part = (*itet)->GetDefinition();
-    //    G4cout << " GmG4Utils::GetInelasticName::aStep " << part->GetParticleName() << G4endl;
+    //    G4cout << " GmG4Utils::GetInelasticName::aStep " << part->GetParticleName() << " baryon= " << part->GetBaryonNumber() << G4endl; //GDEB
     if( !part->GetBaryonNumber() ) continue;
     secos.push_back( part->GetParticleName() );
     //    G4cout << " GmG4Utils::GetInelasticName::aStep nSecosInV " << secos.size() << G4endl;
@@ -419,8 +439,12 @@ G4String GmG4Utils::GetInelasticName( std::map<G4String,G4int> secosN, const G4P
 
   G4String targetNucName = "";
   if( targetNucleus != 0 ){
-    targetNucName = GmG4Utils::GetElementNameFromZ(targetNucleus->GetZ_asInt() ) + GmGenUtils::itoa(targetNucleus->GetA_asInt() ); 
-    //    G4cout << " GmG4Utils::GetInelasticName: targetNucName from targetNucleus " << targetNucName << G4endl;
+    if( targetNucleus->GetZ_asInt() != 0 ) {
+      targetNucName = GmG4Utils::GetElementNameFromZ(targetNucleus->GetZ_asInt() ) + GmGenUtils::itoa(targetNucleus->GetA_asInt() );
+    } else {
+      targetNucName = "ZZZ";
+    }
+    //    G4cout << " GmG4Utils::GetInelasticName: targetNucName from targetNucleus " << targetNucName << G4endl; //GDEB
   }
   G4String primaryParticleName = primaryParticle->GetParticleName();
   
@@ -430,9 +454,10 @@ G4String GmG4Utils::GetInelasticName( std::map<G4String,G4int> secosN, const G4P
   G4String ionName = "";
   for(itepi = secosN.rbegin(); itepi != secosN.rend(); itepi++) { 
     G4String particleName = (*itepi).first;
-    G4int nPart = (*itepi).second;
+    //    G4int nPart = (*itepi).second;
+  /* OLD GEANT4, ion O15[0.0], now O15
     size_t ic = particleName.find("[");
-    //    G4cout << " GmG4Utils::GetInelasticName: seco " << particleName << " N " << nPart << G4endl;
+    G4cout << " GmG4Utils::GetInelasticName: seco " << particleName << " N " << nPart << G4endl; //GDEB
     if( ic != G4String::npos ) {
       if( ic == 0 ) {
 	G4String newTargetNucName = particleName.substr(1,particleName.size());
@@ -446,12 +471,6 @@ G4String GmG4Utils::GetInelasticName( std::map<G4String,G4int> secosN, const G4P
 	//	G4cout << " GmG4Utils::GetInelasticName: targetNucName from seco loop " << targetNucName << G4endl;
 
       } else {
-	/*	if( ionName != "" ) {
-	  G4Exception("SHGetHadronicXSBRUA::EndOfRunAction",
-		      "Warning",
-		      JustWarning,
-		      G4String("Two ions produced: " + ionName + " " + particleName).c_str());
-		      } */
 	if( ionName != "" ) {
 	  ionName += "-";
 	}
@@ -460,14 +479,22 @@ G4String GmG4Utils::GetInelasticName( std::map<G4String,G4int> secosN, const G4P
 	}else {
 	  ionName +=  GmGenUtils::itoa(nPart) + particleName.substr(0,ic);
 	}
-	//	G4cout << " GmG4Utils::GetInelasticName: ionName " << ionName << G4endl;
+	//	G4cout << " GmG4Utils::GetInelasticName: ionName " << ionName << G4endl; //GDEB
 
       }
     } else{
-      G4String partNameShort = GetParticleShortName( particleName );
-      secosNShortName[partNameShort] = (*itepi).second;
-      //           G4cout << " GmG4Utils::GetInelasticName: secoPart add " << partNameShort << " : " << particleName << G4endl;
+      G4String particleNameShort = GetParticleShortName( particleName );
+      secosNShortName[particleNameShort] = (*itepi).second;
+      //      G4cout << " GmG4Utils::GetInelasticName: secoPart add " << particleNameShort << " : " << particleName << G4endl; //GDEB
 
+    } */
+    if( particleName == "neutron" || particleName == "proton" || particleName == "deuteron"  || particleName == "triton" || particleName == "He3" || particleName == "alpha" ) {
+      G4String particleNameShort = GetParticleShortName( particleName );
+      secosNShortName[particleNameShort] = (*itepi).second;
+      //      G4cout << " GmG4Utils::GetInelasticName: secoPart add " << particleNameShort << " : " << particleName << G4endl; //GDEB
+    } else {
+      if( ionName != "" ) ionName += "+";
+      ionName += particleName;
     }
   }
   // Now non ions particles in order
@@ -570,8 +597,7 @@ G4String GmG4Utils::GetNucleusNameFromSecos( std::map<G4String,G4int> secosN, co
 void GmG4Utils::BuildElementNames()
 {
   G4String fileName = "elementsZ.lis";
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  fileName = GmGenUtils::FileInPath( path, fileName );
+  fileName = GmGenUtils::FileInPath( fileName );
 
   G4tgrFileIn fin = G4tgrFileIn::GetInstance(fileName);
   std::vector<G4String> wl;
@@ -624,7 +650,7 @@ G4bool GmG4Utils::CheckProcessExists( G4ProcessManager* pmanager, const G4String
 {
   G4bool bFound = false;
   G4ProcessVector* procList = pmanager->GetProcessList();
-  for( G4int ii = 0; ii < procList->size(); ii++) {
+  for( size_t ii = 0; ii < procList->size(); ii++) {
     if( (*procList)[ii]->GetProcessName() == procName) {
       bFound = true;
       break;
@@ -667,3 +693,27 @@ G4String GmG4Utils::GetParticleShortName( G4String name )
   }
  
 }
+
+//---------------------------------------------------------------------------
+G4DecayTable* GmG4Utils::FindOrBuildDecayTable( const G4ParticleDefinition* part )
+{
+  std::map<const G4ParticleDefinition*,G4DecayTable*>::const_iterator ite = thePartDecayTable.find(part);
+  G4DecayTable* decayTable = 0;
+  if( ite == thePartDecayTable.end() ) {
+    G4ProcessManager* pmanager = part->GetProcessManager();
+    G4ProcessVector* procList = pmanager->GetProcessList();
+    for( size_t ii = 0; ii < procList->size(); ii++) {
+      G4RadioactiveDecayBase* decayProc = dynamic_cast<G4RadioactiveDecayBase*>((*procList)[ii]);
+      if( decayProc ) {
+	decayTable = decayProc->GetDecayTable(part);
+	thePartDecayTable[part] = decayTable;
+	break;
+      }
+    }
+  } else {
+    return ite->second;
+  }
+  
+  return decayTable;
+}
+

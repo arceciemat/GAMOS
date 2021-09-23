@@ -1,8 +1,6 @@
 #ifndef GmPDSProcessHelper_h
 #define GmPDSProcessHelper_h
 
-#include "GmPDSNeutronProcess.hh"
-#include "GmPDSGeantinoProcess.hh"
 #include "GamosCore/GamosAnalysis/include/GmVHistoBuilder.hh"
 
 #include "G4Point3D.hh"
@@ -16,7 +14,9 @@ class GmAnalysisMgr;
 class GmVClassifier;
 class GmVFilter;
 class G4Navigator;
+class G4HadronicProcess;
 class G4VEmProcess;
+class G4VOpDiscreteProcess;
 
 #include <map>
 #include <set>
@@ -31,13 +31,19 @@ struct Flux2Dose {
   G4double Hp75;
 };
 
+#ifdef PDS_OP
+enum PDS1aryType { PDSNeutron, PDSGamma, PDSOpticalPhoton};
+#else
+enum PDS1aryType { PDSNeutron, PDSGamma};
+#endif
+
 class GmPDSProcessHelper : public GmVHistoBuilder
 {
   friend class GmPDSVProcess;
   friend class GmPDSGeantinoProcess;
 public:
   
-  GmPDSProcessHelper(G4bool bForNeutron );
+  GmPDSProcessHelper(PDS1aryType ptype );
   
   virtual ~GmPDSProcessHelper();
   
@@ -76,10 +82,13 @@ public :// with description
   G4double GetCrossSection( const G4Step* aStep );
   G4double GetCrossSectionForNeutron( const G4Step* aStep );
   G4double GetCrossSectionForGamma( const G4Step* aStep );
-
-  G4bool IsForNeutron() const
+#ifdef PDS_OP
+  G4double GetCrossSectionForOpticalPhoton( const G4Step* aStep );
+#endif
+  
+  PDS1aryType Get1aryType() const
   {
-    return bIsForNeutron;
+    return the1aryType;
   }
 
   G4double GetDistanceToDetectorIncm( const G4ThreeVector pos, G4int detID );
@@ -99,6 +108,7 @@ public :// with description
 protected:
   void StoreNeutronProcesses();
   void StoreGammaProcesses();
+  void StoreOpticalPhotonProcesses();
 
   G4int DetectorReached(const G4Step& aStep);
   void FillScores( const G4Track& aTrack, G4bool bGeantino, G4int detID );
@@ -107,6 +117,9 @@ protected:
 private:
   void ReadEnergyBinsForNeutrons();
   void ReadEnergyBinsForGammas();
+#ifdef PDS_OP
+  void ReadEnergyBinsForOpticalPhotons();
+#endif
   void BuildEnergies();
   void AddScore(const G4String& name, G4int detID );
   void CheckNewIndex( G4int index );
@@ -141,10 +154,11 @@ protected:
   G4bool bScorePerVolume;
   G4bool bScoreInSpheres;
 
-  G4bool bIsForNeutron;
+  PDS1aryType the1aryType;
 
   std::map<G4String,G4HadronicProcess*> theNeutronProcesses;
   std::map<G4String,G4VEmProcess*> theGammaProcesses;
+  std::map<G4String,G4VOpDiscreteProcess*> theOpticalPhotonProcesses;
   //  std::vector<G4String> theGammaProcesses;
 
   G4String theOriginalParticleName;

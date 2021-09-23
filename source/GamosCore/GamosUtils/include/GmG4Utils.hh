@@ -30,6 +30,7 @@ public:
   static G4bool IsIon( G4ParticleDefinition* partDef );
   
   static G4ThreeVector GetLocalFromGlobalPos( const G4ThreeVector globalPos, const G4NavigationHistory* touch );
+  static G4ThreeVector GetLocalNFromGlobalPos( const G4ThreeVector globalPos, const G4NavigationHistory* navHis, G4int ancestorLevel );
   static G4ThreeVector GetLocalFromGlobalDir( const G4ThreeVector globalDir, const G4NavigationHistory* navHis );
 
   static G4String GetInelasticName( const G4Step* aStep );
@@ -46,7 +47,10 @@ public:
   static G4bool CheckProcessExists( G4ProcessManager* pmanager, const G4String& procName, G4bool bWarning = false );
   static std::vector<G4Material*> GetG4MaterialList( const G4String& materialName, G4bool bMustExist );
   static G4String GetParticleShortName( G4String name );
+  static G4DecayTable* FindOrBuildDecayTable( const G4ParticleDefinition* part );
 
+private:
+  static std::map<const G4ParticleDefinition*,G4DecayTable*> thePartDecayTable;
 };
 
 #endif

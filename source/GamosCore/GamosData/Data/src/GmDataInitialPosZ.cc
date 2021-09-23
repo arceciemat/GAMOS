@@ -42,3 +42,9 @@ G4double GmDataInitialPosZ::GetValueFromEvent( const G4Event* aEvent, G4int )
 {
   return aEvent->GetPrimaryVertex(0)->GetZ0();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialPosZ::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  return aTrack->GetPosition().z();
+}

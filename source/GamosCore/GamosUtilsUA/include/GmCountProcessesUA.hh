@@ -59,6 +59,7 @@ class GmCountProcessesUA : public GmUserRunAction,
   mlmsi theParticleCount;
 
   G4String theNameSuffix;
+  G4bool bCreatorModel;
 };
 
 #endif

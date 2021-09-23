@@ -9,14 +9,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "GmVGeomCondition.hh"
-class G4TouchableHistory;
+#include "G4TouchableHistory.hh"
 
 class GmGeomConditionIn : public GmVGeomCondition
 {
 public: // with description
   GmGeomConditionIn();
   
-  virtual ~GmGeomConditionIn(){};
+  virtual ~GmGeomConditionIn(){delete theTouchable;};
   
 public: // with description
   virtual const G4VTouchable* GetTouchableFromTrack(const G4Track*);

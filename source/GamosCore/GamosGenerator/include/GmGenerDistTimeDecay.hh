@@ -2,6 +2,7 @@
 #define GmGenerDistTimeDecay_HH
 
 #include "GamosCore/GamosGenerator/include/GmVGenerDistTime.hh"
+#include "G4Types.hh"
 
 class GmParticleSource;
 class GmGenerator;
@@ -17,16 +18,22 @@ public:
   virtual void SetParams( const std::vector<G4String>& params );
 
   void SetActivity( const G4double act );
+  void SetLifeTime( const G4double lf );
 
-  static G4double GetCurrentActivity() {
-    return theCurrentActivity;
-  }
-
-private:
-  static G4double theCurrentActivity;
+public:
+#ifndef WIN32
+	static G4double GetCurrentActivity();
+#else
+	#if defined GmGenerator_ALLOC_EXPORT
+	  G4DLLEXPORT G4double GetCurrentActivity();
+  #else
+  	G4DLLIMPORT G4double GetCurrentActivity();
+  #endif
+#endif
 
 protected:
-  G4double theActivity;
+	static G4double theCurrentActivity;
+	G4double theActivity;
   G4double theLifeTime;
   GmGenerator* theGenerator;
 };

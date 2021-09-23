@@ -40,6 +40,7 @@ G4double GmDataInitialLocalDirPerp::GetValueFromTrack( const G4Track* aTrack, G4
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos, touch, false ); 
 
   G4ThreeVector localDir = GmG4Utils::GetLocalFromGlobalDir( dir, touch->GetHistory() );
+  delete touch;
 
   return localDir.perp();
 }
@@ -63,6 +64,22 @@ G4double GmDataInitialLocalDirPerp::GetValueFromEvent( const G4Event* anEvent, G
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos , touch, false ); 
 
   G4ThreeVector localDir = GmG4Utils::GetLocalFromGlobalDir( dir, touch->GetHistory() );
+  delete touch;
+
+  return localDir.perp();
+}
+
+
+//----------------------------------------------------------------
+G4double GmDataInitialLocalDirPerp::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  G4ThreeVector pos = aTrack->GetPosition();
+  G4ThreeVector dir = aTrack->GetMomentumDirection();
+  G4TouchableHistory* touch = new G4TouchableHistory;
+  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos, touch, false ); 
+
+  G4ThreeVector localDir = GmG4Utils::GetLocalFromGlobalDir( dir, touch->GetHistory() );
+  delete touch;
 
   return localDir.perp();
 }

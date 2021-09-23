@@ -7,7 +7,6 @@
 //  Return touchable of volume traversed
 // 
 ///////////////////////////////////////////////////////////////////////////////
-#define private public
 #include "G4ParallelWorldScoringProcess.hh"
 
 #include "GmVGeomCondition.hh"

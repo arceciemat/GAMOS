@@ -8,7 +8,7 @@
 #include "G4GeometryTolerance.hh"
 
 //-----------------------------------------------------------------------
-GmScoringSurfaceTubs::GmScoringSurfaceTubs(G4VSolid* tubs)
+GmScoringSurfaceTubs::GmScoringSurfaceTubs(G4VSolid* tubs )
   : GmVScoringSurfaceSolid()
 {
 
@@ -41,7 +41,7 @@ void GmScoringSurfaceTubs::SetSurfaces( std::vector<G4String> surfaces )
       G4Exception("GmScoringSurfaceTubs::SetSurfaces",
 		  "None of the surfaces is valid",
 		  FatalErrorInArgument,
-		  G4String("Available types are: INNER OUTER, you are using "+surfaces[ii]).c_str());
+		  G4String("Available types are: UP DOWN INNER OUTER PHI, you are using "+surfaces[ii]).c_str());
     }
 
   }
@@ -55,6 +55,7 @@ void GmScoringSurfaceTubs::ComputeArea()
   theArea = 0.;
   if( theSurfaces.find( "INNER" ) != theSurfaces.end() ) {
     theArea += 2*theTubs->GetZHalfLength() * theTubs->GetInnerRadius() * theTubs->GetDeltaPhiAngle();
+    //    G4cout << " AREA INNER " <<  theArea << " += " << 2*theTubs->GetZHalfLength() << " * " << theTubs->GetInnerRadius() << " * " << theTubs->GetDeltaPhiAngle() << G4endl; //GDEB
   }
   
   if( theSurfaces.find( "OUTER" ) != theSurfaces.end() ) {
@@ -62,11 +63,12 @@ void GmScoringSurfaceTubs::ComputeArea()
   }
 
   if( theSurfaces.find( "UP" ) != theSurfaces.end() ) {
-	theArea += (theTubs->GetOuterRadius() - theTubs->GetInnerRadius()) * theTubs->GetDeltaPhiAngle();
+    theArea +=  theTubs->GetDeltaPhiAngle()*0.5*(pow(theTubs->GetOuterRadius(),2) - pow(theTubs->GetInnerRadius(),2));
   }
 
   if( theSurfaces.find( "DOWN" ) != theSurfaces.end() ) {
-	theArea += (theTubs->GetOuterRadius() - theTubs->GetInnerRadius()) * theTubs->GetDeltaPhiAngle();
+    theArea +=  theTubs->GetDeltaPhiAngle()*0.5*(pow(theTubs->GetOuterRadius(),2) - pow(theTubs->GetInnerRadius(),2));
+    //    G4cout << " AREA DOWN " <<  theArea << " += " << pow(theTubs->GetOuterRadius(),2) << " - " << pow(theTubs->GetInnerRadius(),2) << " * " << theTubs->GetDeltaPhiAngle() << G4endl; //GDEB
   }
 
   if( theSurfaces.find( "PHI" ) != theSurfaces.end() ) {
@@ -93,7 +95,6 @@ G4bool GmScoringSurfaceTubs::IsSelectedSurface(G4StepPoint* stepPoint, G4Step* a
       }
     }
 
-
     if( theSurfaces.find( "OUTER" ) != theSurfaces.end() ) {
       G4bool bInSurface = CheckSurfaceRadius( GetLocalPoint(stepPoint->GetPosition(), aStep), theTubs->GetOuterRadius() );
       if( bInSurface ) {
@@ -106,18 +107,30 @@ G4bool GmScoringSurfaceTubs::IsSelectedSurface(G4StepPoint* stepPoint, G4Step* a
     }
 
     if( theSurfaces.find( "UP" ) != theSurfaces.end() ) {
-      G4bool bInSurface = CheckSurfaceCap( GetLocalPoint(stepPoint->GetPosition(), aStep).z(), theTubs->GetZHalfLength() );
+      G4bool bInSurface;
+      if( theDirection == fFlux_In || theDirection == fFlux_InOut ) {
+	bInSurface = CheckSurfaceCap( GetLocalPoint(aStep->GetPreStepPoint()->GetPosition(), aStep).z(), theTubs->GetZHalfLength() );
+      }
+      if( !bInSurface && ( theDirection == fFlux_Out || theDirection == fFlux_InOut ) ) {
+	bInSurface = CheckSurfaceCap( GetLocalPoint(stepPoint->GetPosition(), aStep).z(), theTubs->GetZHalfLength() );
+      }
       if( bInSurface ) {
 #ifndef GAMOS_NO_VERBOSE
-	if( ScoringVerb(debugVerb) ) G4cout << " GmScoringSurfaceTubs::IsSelectedSurface UP TRUE " << G4endl;
-#endif    
+      if( ScoringVerb(debugVerb) ) G4cout << " GmScoringSurfaceTubs::IsSelectedSurface UP TRUE " << G4endl;
+#endif
 	theNormal = G4ThreeVector(0.,0.,1.);
 	return true;
       }
     }
 
     if( theSurfaces.find( "DOWN" ) != theSurfaces.end() ) {
-      G4bool bInSurface = CheckSurfaceCap( GetLocalPoint(stepPoint->GetPosition(),aStep).z(), -theTubs->GetZHalfLength() );
+      G4bool bInSurface;
+      if( theDirection == fFlux_In || theDirection == fFlux_InOut ) {
+	bInSurface = CheckSurfaceCap( GetLocalPoint(aStep->GetPreStepPoint()->GetPosition(),aStep).z(), -theTubs->GetZHalfLength() );
+      }
+      if( !bInSurface && ( theDirection == fFlux_Out || theDirection == fFlux_InOut ) ) {
+	bInSurface = CheckSurfaceCap( GetLocalPoint(stepPoint->GetPosition(),aStep).z(), -theTubs->GetZHalfLength() );
+      }
       if( bInSurface ) {
 #ifndef GAMOS_NO_VERBOSE
 	if( ScoringVerb(debugVerb) ) G4cout << " GmScoringSurfaceTubs::IsSelectedSurface DOWN TRUE " << G4endl;
@@ -136,7 +149,7 @@ G4bool GmScoringSurfaceTubs::IsSelectedSurface(G4StepPoint* stepPoint, G4Step* a
 #ifndef GAMOS_NO_VERBOSE
 	if( ScoringVerb(debugVerb) ) G4cout << " GmScoringSurfaceTubs::IsSelectedSurface PHI TRUE " << G4endl;
 #endif    
-	theArea = (theTubs->GetOuterRadius() - theTubs->GetInnerRadius()) * theTubs->GetDeltaPhiAngle();
+	//	theArea = (theTubs->GetOuterRadius() - theTubs->GetInnerRadius()) * theTubs->GetDeltaPhiAngle();
 	if( std::fabs(theTubs->GetStartPhiAngle() - phi ) < theAngularTolerance ) {
 	  theNormal = G4ThreeVector(sin(phi),-cos(phi),0.);
 	} else {
@@ -211,12 +224,12 @@ G4bool GmScoringSurfaceTubs::CheckSurfacePhi(G4double localPhi, G4double phi )
 
 
 //-----------------------------------------------------------------------
-G4double GmScoringSurfaceTubs::GetAngleFactor( G4StepPoint* stepPoint )
+G4double GmScoringSurfaceTubs::GetAngleFactor( G4StepPoint* stepPoint, G4StepPoint* volumeStepPoint )
 {
-  G4TouchableHandle touchable = stepPoint->GetTouchableHandle();
+  G4TouchableHandle touchable = volumeStepPoint->GetTouchableHandle();
   G4ThreeVector dir = stepPoint->GetMomentumDirection();
-  G4ThreeVector localDir  = 
-    touchable->GetHistory()->GetTopTransform().TransformAxis(dir).unit();
+  G4ThreeVector localDir = touchable->GetHistory()->GetTopTransform().TransformAxis(dir).unit();
+  //    G4cout << " localDir " <<localDir << " dir " << dir << G4endl; //GDEB 
   if( theNormal.mag() == 0 ) {
   // build normal for inner and outer surfaces
     G4ThreeVector pos= stepPoint->GetPosition();

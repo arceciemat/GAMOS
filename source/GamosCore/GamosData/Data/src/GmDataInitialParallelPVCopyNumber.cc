@@ -14,7 +14,7 @@ GmDataInitialParallelPVCopyNumber::GmDataInitialParallelPVCopyNumber()
 {
   bInitial = true;
   theExcludedTypes.clear(); // delete DTRun
-  std::vector<G4VProcess*> parallelWorldProcesses = GmGetParticleMgr::GetInstance()->GetG4ProcessList("parallelWorldProcess_*");
+  std::vector<G4VProcess*> parallelWorldProcesses = GmGetParticleMgr::GetInstance()->GetG4ProcessList("ParaWorldProc_*");
   if( parallelWorldProcesses.size() == 0 ) {
     G4Exception("GmGeomConditionStartParallel::GmGeomConditionStartParallel",
 		"No G4ParallelWorldScoringProcess named 'parallelWorldProcess_*' found",
@@ -77,4 +77,19 @@ G4double GmDataInitialParallelPVCopyNumber::GetValueFromEvent( const G4Event* an
   delete touch;
 
   return val;
+}
+
+//----------------------------------------------------------------
+G4double GmDataInitialParallelPVCopyNumber::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  G4TouchableHistory* touch = new G4TouchableHistory;
+
+  theParallelWorldProcess->fGhostNavigator->LocateGlobalPointAndUpdateTouchable( aTrack->GetPosition(), touch, false ); 
+  
+  G4int copyNo = touch->GetVolume()->GetCopyNo();
+  
+  delete touch;
+
+  return copyNo;
+  
 }

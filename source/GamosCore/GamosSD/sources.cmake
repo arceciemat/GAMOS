@@ -1,137 +1,146 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosSD
+# Module : GamosSD
+# Package: GamosCore_GamosSD
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosSD
+	 HEADERS
+		GmEDepo.hh
+		GmRecHitBuilderByEMax.hh
+		GmVSDList.hh
+		GmHitsHistosUA.hh
+		GmSDSimple.hh
+		GmVRecHitsIOMgr.hh
+		GmRecHitPair.hh
+		GmSDWithFilter.hh
+		GmVHitsIOMgr.hh
+		GmVEventTimeExtractor.hh
+		GmVRecHitBuilder.hh
+		GmSDVirtSegmentedSphereThetaPhi.hh
+		GmRecHitBuilder1AroundInBlock.hh
+		GmHitsEventMgr.hh
+		GmRecHitsWriteUA.hh
+		GmSDOpticalPhoton.hh
+		GmDigitizerFactory.hh
+		GmVSD.hh
+		GmDeadTimeDUListByCrystal.hh
+		GmRecHitBuilderByBlock.hh
+		GmSDSeparateByTime.hh
+		GmRecHit.hh
+		GmSDVirtSegmentedSphereXYZ.hh
+		GmHitsReadUA.hh
+		GmRecHitsIObinMgr.hh
+		GmVDeadTimeDUList.hh
+		GmRecHitBuilderByDistance.hh
+		GmSDSimpleSmearDOI.hh
+		GmHitsIObinMgr.hh
+		GmRecHitsIOtextMgr.hh
+		GmSDFirstInter.hh
+		GmVRecHitBuilderFromHits.hh
+		GmSDVirtSegmBox.hh
+		GmVDigitizer.hh
+		GmHitList.hh
+		GmDigit.hh
+		GmEventTimeExtractorFromFirstTrack.hh
+		GmSDVirtSegmentedSphereRThetaPhi.hh
+		GmEventTimeExtractorFromHit.hh
+		GmHistosGammaAtSD.hh
+		GmDetUnitIDBuilderFromAncestors.hh
+		GmSDVirtSegmentedSphere.hh
+		GmRecHitBuilderSmearDOIByEMax.hh
+		GmHitsWriteUA.hh
+		GmDeadTimeDUListByBlock.hh
+		GmSDType.hh
+		GmSDMessenger.hh
+		GmVVirtSegmSD.hh
+		GmSDSimpleExactPos.hh
+		GmHit.hh
+		GmRecHitBuilderByBlockFirstInter.hh
+		GmHitsIOtextMgr.hh
+		GmRecHitBuilderFactory.hh
+		GmSDVerbosity.hh
+		GmVRecHitBuilderFromDigits.hh
+		GmRecHitBuilder1to1.hh
+		GmDetUnitIDBuilder.hh
+		GmTrajPointSD.hh
+		GmRecHitsHistosUA.hh
+		GmSensDetFactory.hh
+	 SOURCES
+		GmHit.cc
+		GmRecHitPair.cc
+		GmEventTimeExtractorFromHit.cc
+		GmEventTimeExtractorFromFirstTrack.cc
+		GmVRecHitBuilder.cc
+		GmHistosGammaAtSD.cc
+		GmSDSimpleSmearDOI.cc
+		GmVSDList.cc
+		plugin.cc
+		GmSDVirtSegmentedSphereRThetaPhi.cc
+		GmSDMessenger.cc
+		GmSDVirtSegmentedSphereThetaPhi.cc
+		GmHitList.cc
+		GmRecHitBuilderByEMax.cc
+		GmVSD.cc
+		GmRecHitsIOtextMgr.cc
+		GmRecHitBuilderSmearDOIByEMax.cc
+		GmHitsHistosUA.cc
+		GmHitsWriteUA.cc
+		GmRecHitBuilderByDistance.cc
+		GmSDVirtSegmBox.cc
+		GmSDSimpleExactPos.cc
+		GmHitsIOtextMgr.cc
+		GmSDSeparateByTime.cc
+		GmRecHitBuilder1to1.cc
+		GmVRecHitsIOMgr.cc
+		GmVDeadTimeDUList.cc
+		GmDetUnitIDBuilderFromAncestors.cc
+		GmSDSimple.cc
+		GmVHitsIOMgr.cc
+		GmRecHitBuilderByBlock.cc
+		GmSDVirtSegmentedSphere.cc
+		GmDigitizerFactory.cc
+		GmEDepo.cc
+		GmHitsReadUA.cc
+		GmRecHitsWriteUA.cc
+		GmSDOpticalPhoton.cc
+		GmRecHitsIObinMgr.cc
+		GmHitsIObinMgr.cc
+		GmSDVerbosity.cc
+		GmDeadTimeDUListByCrystal.cc
+		GmSDWithFilter.cc
+		GmVRecHitBuilderFromDigits.cc
+		GmRecHitBuilderByBlockFirstInter.cc
+		GmSDType.cc
+		GmDigit.cc
+		GmRecHitsHistosUA.cc
+		GmHitsEventMgr.cc
+		GmRecHit.cc
+		GmSensDetFactory.cc
+		GmSDFirstInter.cc
+		GmVRecHitBuilderFromHits.cc
+		GmRecHitBuilder1AroundInBlock.cc
+		GmDeadTimeDUListByBlock.cc
+		GmTrajPointSD.cc
+		GmRecHitBuilderFactory.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+	GamosCore_GamosUtils
+	GamosCore_GamosBase_Base
+	GamosCore_GamosGeometry
+	GamosCore_GamosUserActionMgr
+	GamosCore_GamosAnalysis
+		${SEAL_LIBRARIES} 
 
-   HEADERS
-       GmDeadTimeDUListByBlock.hh
-       GmTrajPointSD.hh
-       GmSDVirtSegmentedSphereRThetaPhi.hh
-       GmHistosGammaAtSD.hh
-       GmSDWithFilter.hh
-       GmVRecHitsIOMgr.hh
-       GmRecHitBuilder1to1.hh
-       GmDeadTimeDUListByCrystal.hh
-       GmEDepo.hh
-       GmRecHitBuilderByBlock.hh
-       GmVRecHitBuilderFromDigits.hh
-       GmSDOpticalPhoton.hh
-       GmVHitsIOMgr.hh
-       GmVRecHitBuilderFromHits.hh
-       GmEventTimeExtractorFromHit.hh
-       GmVDigitizer.hh
-       GmHitsReadUA.hh
-       GmRecHit.hh
-       GmRecHitPair.hh
-       GmEventTimeExtractorFromFirstTrack.hh
-       GmSDSeparateByTime.hh
-       GmHitsIOtextMgr.hh
-       GmRecHitsWriteUA.hh
-       GmVSD.hh
-       GmSDType.hh
-       GmDigit.hh
-       GmHitsEventMgr.hh
-       GmHitsWriteUA.hh
-       GmVVirtSegmSD.hh
-       GmSDVirtSegmBox.hh
-       GmHitList.hh
-       GmSDSimpleExactPos.hh
-       GmVRecHitBuilder.hh
-       GmDetUnitIDBuilderFromAncestors.hh
-       GmHitsHistosUA.hh
-       GmSDVirtSegmentedSphere.hh
-       GmRecHitsIObinMgr.hh
-       GmVSDList.hh
-       GmRecHitsIOtextMgr.hh
-       GmSDVerbosity.hh
-       GmSDMessenger.hh
-       GmVEventTimeExtractor.hh
-       GmRecHitBuilderByDistance.hh
-       GmDetUnitIDBuilder.hh
-       GmSDSimple.hh
-       GmSDVirtSegmentedSphereXYZ.hh
-       GmHit.hh
-       GmHitsIObinMgr.hh
-       GmSDVirtSegmentedSphereThetaPhi.hh
-       GmVDeadTimeDUList.hh
-       GmRecHitsHistosUA.hh
-
-   SOURCES
-       plugin.cc
-       GmRecHitPair.cc
-       GmTrajPointSD.cc
-       GmHitsIOtextMgr.cc
-       GmRecHitBuilder1to1.cc
-       GmVRecHitsIOMgr.cc
-       GmSDVerbosity.cc
-       GmDigit.cc
-       GmRecHitsHistosUA.cc
-       GmSDVirtSegmentedSphere.cc
-       GmSDVirtSegmentedSphereRThetaPhi.cc
-       GmVHitsIOMgr.cc
-       GmHitsHistosUA.cc
-       GmSDWithFilter.cc
-       GmSDMessenger.cc
-       GmRecHit.cc
-       GmDeadTimeDUListByBlock.cc
-       GmRecHitsWriteUA.cc
-       GmVRecHitBuilder.cc
-       GmVRecHitBuilderFromHits.cc
-       GmEventTimeExtractorFromFirstTrack.cc
-       GmVSD.cc
-       GmHitList.cc
-       GmSDSimpleExactPos.cc
-       GmHitsEventMgr.cc
-       GmSDOpticalPhoton.cc
-       GmDeadTimeDUListByCrystal.cc
-       GmVSDList.cc
-       GmHitsReadUA.cc
-       GmHitsIObinMgr.cc
-       GmEventTimeExtractorFromHit.cc
-       GmSDVirtSegmBox.cc
-       GmHitsWriteUA.cc
-       GmEDepo.cc
-       GmHistosGammaAtSD.cc
-       GmSDSimple.cc
-       GmHit.cc
-       GmSDVirtSegmentedSphereThetaPhi.cc
-       GmVRecHitBuilderFromDigits.cc
-       GmRecHitBuilderByBlock.cc
-       GmSDSeparateByTime.cc
-       GmRecHitsIObinMgr.cc
-       GmRecHitsIOtextMgr.cc
-       GmDetUnitIDBuilderFromAncestors.cc
-       GmSDType.cc
-       GmRecHitBuilderByDistance.cc
-       GmVDeadTimeDUList.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosAnalysis
-  GamosCore_GamosGeometry
-  GamosCore_GamosData_Distributions
-  GamosCore_GamosUtils
-  GamosCore_GamosUserActionMgr
-  GamosCore_GamosBase_Base
-  GamosCore_GamosGenerator
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

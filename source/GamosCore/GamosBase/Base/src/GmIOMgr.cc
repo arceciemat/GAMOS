@@ -74,12 +74,6 @@ void GmIOMgr::SetFileNameIn( const G4String& fname )
     fnout = theOutputType+":FileName";
     theFileNameIn = GmParameterMgr::GetInstance()->GetStringValue(fnout,theFileNameIn);
 
-    G4String prefix = GmParameterMgr::GetInstance()->GetStringValue("GmAnalysisMgr:FileNamePrefix","");
-    theFileNameIn = prefix + theFileNameOut;
-
-    G4String suffix = GmParameterMgr::GetInstance()->GetStringValue("GmAnalysisMgr:FileNameSuffix","");
-    theFileNameIn += suffix;
-
 #ifndef GAMOS_NO_VERBOSE
     if( BaseVerb(infoVerb) ) G4cout << " GmIOMgr::SetFileNameIn " << theFileNameIn <<  " fnout " << fnout << G4endl;
 #endif

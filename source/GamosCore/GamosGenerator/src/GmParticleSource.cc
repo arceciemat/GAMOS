@@ -16,14 +16,18 @@
 #include "G4ParticleDefinition.hh"
 #include "CLHEP/Random/RandFlat.h"
  
+#ifdef ROOT5
 #include "Reflex/PluginService.h"
+#else
+#include "GmGeneratorDistributionFactories.hh"
+#endif
 
 //-----------------------------------------------------------------------
 GmParticleSource::GmParticleSource( const G4String& name )
 {
   theName = name;
   theLastDecayTimeAnySource = 0.;
-  bUsedLastTime = 1;
+  bUsedLastTime = true;
 
   bBiasDistributions = false;
 
@@ -47,15 +51,19 @@ void GmParticleSource::CheckDistributionsExist()
 //-----------------------------------------------------------------------
 void GmParticleSource::SetDistributionTime( const G4String& distName, const std::vector<G4String>& wl )
 {
+#ifdef ROOT5
   theTimeDistribution = Reflex::PluginService::Create<GmVGenerDistTime*>(distName);
+#else
+  theTimeDistribution = GmGenerDistTimeFactory::get()->create(distName);
+#endif
   if( !theTimeDistribution ) {
     G4Exception("GmParticleSource::SetDistributionTime","Fatal error in argument",FatalErrorInArgument,G4String(" Distribution does not exist, check documentation").c_str());
   }
+  theTimeDistribution->SetName(distName);
+  
   theTimeDistribution->SetParticleSource( this );
   theTimeDistribution->CopyParams( wl );
   theTimeDistribution->SetParams( wl );
-
-  G4cout << "    theTimeDistribution->SetParticleSource( this ) " << this << " " << theTimeDistribution << G4endl;
 
 }
 
@@ -63,10 +71,15 @@ void GmParticleSource::SetDistributionTime( const G4String& distName, const std:
 //-----------------------------------------------------------------------
 void GmParticleSource::SetDistributionEnergy( const G4String& distName, const std::vector<G4String>& wl )
 {
+#ifdef ROOT5
   theEnergyDistribution = Reflex::PluginService::Create<GmVGenerDistEnergy*>(distName);
+#else
+  theEnergyDistribution = GmGenerDistEnergyFactory::get()->create(distName);
+#endif
   if( !theEnergyDistribution ) {
     G4Exception("GmParticleSource::SetDistributionEnergy","Fatal error in argument",FatalErrorInArgument,G4String(" Distribution does not exist, check documentation ").c_str());
   }
+  theEnergyDistribution->SetName(distName);
   theEnergyDistribution->SetParticleSource( this );
   theEnergyDistribution->CopyParams( wl ); 
   theEnergyDistribution->SetParams( wl ); 
@@ -77,10 +90,16 @@ void GmParticleSource::SetDistributionEnergy( const G4String& distName, const st
 //-----------------------------------------------------------------------
 void GmParticleSource::SetDistributionPosition( const G4String& distName, const std::vector<G4String>& wl )
 {
+#ifdef ROOT5
   thePositionDistribution = Reflex::PluginService::Create<GmVGenerDistPosition*>(distName);
+#else
+  thePositionDistribution = GmGenerDistPositionFactory::get()->create(distName);
+#endif
   if(  !thePositionDistribution ) {
     G4Exception("GmParticleSource::SetDistributionPosition","Fatal error in argument",FatalErrorInArgument,G4String(" Distribution does not exist, check documentation ").c_str());
   }
+  thePositionDistribution->SetName(distName);
+  
   thePositionDistribution->SetParticleSource( this );
   thePositionDistribution->CopyParams( wl );
   thePositionDistribution->SetParams( wl );
@@ -91,17 +110,21 @@ void GmParticleSource::SetDistributionPosition( const G4String& distName, const 
 //-----------------------------------------------------------------------
 void GmParticleSource::SetDistributionDirection( const G4String& distName, const std::vector<G4String>& wl )
 {
+#ifdef ROOT5
   theDirectionDistribution = Reflex::PluginService::Create<GmVGenerDistDirection*>(distName);
+#else
+  theDirectionDistribution = GmGenerDistDirectionFactory::get()->create(distName);
+#endif
   if(  !theDirectionDistribution ) {
     G4Exception("GmParticleSource::SetDistributionDirection","Fatal error in argument",FatalErrorInArgument,G4String(" Distribution does not exist, check documentaiton ").c_str());
   }
+  theDirectionDistribution->SetName(distName);
+
   theDirectionDistribution->SetParticleSource( this );
   theDirectionDistribution->CopyParams( wl );
   theDirectionDistribution->SetParams( wl );
 
 }
-
-
 //-----------------------------------------------------------------------
 G4double GmParticleSource::GenerateTime()
 {
@@ -130,7 +153,7 @@ G4double GmParticleSource::GenerateTime()
 void GmParticleSource::LastTimeActive( G4double )
 {
   theLastDecayTimeAnySource = 0.;
-  bUsedLastTime = TRUE;
+  bUsedLastTime = true;
 }
 
 
@@ -139,7 +162,8 @@ void GmParticleSource::LastTimeNotActive( G4double tim )
 {
   //  theLastDecayTimeAnySource += tim;
   theLastDecayTimeAnySource = tim;
-  bUsedLastTime = FALSE;
+  bUsedLastTime = false;
+  //  G4cout << theName << "  GmParticleSource::LastTimeNotActive theLastDecayTimeAnySource " <<  theLastDecayTimeAnySource << G4endl; //GDEB
 }
 
 
@@ -415,5 +439,12 @@ void GmParticleSource::BiasEnergy()
   }
 
 }
+ 
+//-----------------------------------------------------------------------
+std::vector<G4PrimaryVertex*> GmParticleSource::GenerateVertices( G4double time )
+{
+  std::vector<G4PrimaryVertex*> vtxs;
+  vtxs.push_back(GenerateVertex( time ));
 
-
+  return vtxs;
+}

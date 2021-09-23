@@ -18,7 +18,7 @@ public:
   G4ThreeVector GetLocalPoint( G4ThreeVector pos, G4Step* aStep );
   virtual void SetSurfaces( std::vector<G4String> surfaces ) = 0;
   virtual G4bool IsSelectedSurface(G4StepPoint* stepPoint, G4Step* aStep ) = 0;
-  virtual G4double GetAngleFactor( G4StepPoint* stepPoint ) = 0;
+  virtual G4double GetAngleFactor( G4StepPoint* stepPoint, G4StepPoint* volumeStepPoint ) = 0;
   virtual void ComputeArea() = 0;
   G4double GetArea(){
     return theArea;
@@ -31,6 +31,7 @@ protected:
   G4double theArea;
   G4ThreeVector theNormal;
   G4int theNSurfaceMax;
+  G4PSFluxFlag theDirection;
 };
 
 #endif

@@ -3,7 +3,7 @@
 #define GmReadPhantomG4BinGeometry_h 1
 
 #include "globals.hh"
-#include "GmReadPhantomGeometry.hh"
+#include "GamosCore/GamosGeometry/include/GmReadPhantomGeometry.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 
 #include <fstream>
@@ -15,7 +15,7 @@ public:
   GmReadPhantomG4BinGeometry();
   ~GmReadPhantomG4BinGeometry();
 
-  virtual void ReadPV( std::ifstream& ){};
+  virtual void ReadPV( GmFileIn& ){};
 
 private:
   virtual void ReadPhantomData();
@@ -24,6 +24,7 @@ private:
 
   std::pair<G4double,G4double> ReadVoxelDim( G4int nVoxel, std::ifstream& fin );
 
+  G4String thePatientPosition;
 };
 
 #endif

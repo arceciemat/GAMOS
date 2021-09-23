@@ -14,8 +14,8 @@
 #include "G4eplusAnnihilation.hh"
 #include "G4PenelopeAnnihilationModel.hh"
 
-GmPhysicsPositronPenelope::GmPhysicsPositronPenelope(const G4String& name): 
-  G4VPhysicsConstructor(name)
+GmPhysicsPositronPenelope::GmPhysicsPositronPenelope(const G4String& name,G4int type): 
+  G4VPhysicsConstructor(name,type)
 { }
 
 GmPhysicsPositronPenelope::~GmPhysicsPositronPenelope()

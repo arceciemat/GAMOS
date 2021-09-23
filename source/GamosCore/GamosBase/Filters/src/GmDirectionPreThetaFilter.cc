@@ -43,8 +43,8 @@ G4bool GmDirectionPreThetaFilter::AcceptTrack(const G4Track* aTrack)
 void GmDirectionPreThetaFilter::show() 
 {
     G4cout << " GmDirectionPreThetaFilter:: " << GetName()
-	 << " LowLimiE  " << G4BestUnit(theLowLimit,"Position") 
-	 << " HighLimit " << G4BestUnit(theHighLimit,"Position")
+	 << " LowLimiE  " << G4BestUnit(theLowLimit,"Direction") 
+	 << " HighLimit " << G4BestUnit(theHighLimit,"Direction")
 	 <<G4endl;
 }
 
@@ -65,4 +65,16 @@ void GmDirectionPreThetaFilter::SetParameters( std::vector<G4String>& params)
  theLowLimit  = GmGenUtils::GetValue( params[0] );
  theHighLimit = GmGenUtils::GetValue( params[1] );
 
+}
+
+
+//-------------------------------------------------------------------------
+G4bool GmDirectionPreThetaFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmDirectionPreThetaFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
 }

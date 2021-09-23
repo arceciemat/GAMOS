@@ -29,7 +29,7 @@ GmUniformEMField::GmUniformEMField( G4ThreeVector MagFieldVector,G4ThreeVector E
   theField[5] = ElecFieldVector.z();
 }
 
-void GmUniformEMField::GetFieldValue(const double point[4], double *Bfield ) const
+void GmUniformEMField::GetFieldValue(const double*, double *Bfield ) const
 { 
   Bfield = theField;  
   G4cout << " GmUniformEMField::GetFieldValue " << Bfield[0] << " " 

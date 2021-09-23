@@ -5,7 +5,11 @@
 #include "G4MultiFunctionalDetector.hh"
 #include "G4SDManager.hh"
 
+#ifdef ROOT5
 #include "Reflex/PluginService.h"
+#else
+#include "GmDistributionFactory.hh"
+#endif
 
 GmDistributionMgr* GmDistributionMgr::theInstance = 0;
 
@@ -32,8 +36,12 @@ GmDistributionMgr::~GmDistributionMgr()
 //----------------------------------------------------------------------
 GmVDistribution* GmDistributionMgr::CreateDistribution( std::vector<G4String> params, G4bool bExists )
 {
+#ifdef ROOT5
   GmVDistribution* distrib = Reflex::PluginService::Create<GmVDistribution*>(params[1],params[0]);
-
+#else
+  GmVDistribution* distrib = GmDistributionFactory::get()->create(params[1],params[0]);
+#endif
+  
 #ifndef GAMOS_NO_VERBOSE
   if( BaseVerb(debugVerb) ) G4cout << " GmDistributionMgr::CreateDistribution NAME=" << params[0] << " CLASS=" << params[1] << " = " << distrib << G4endl;
 #endif

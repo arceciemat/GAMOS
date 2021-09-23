@@ -126,11 +126,11 @@ void GmShowerShapeUA::BookHistos(G4int index)
   std::set<G4double>::const_iterator ite;
   unsigned int ii = 0;
   for( ite = theRadii.begin(); ite != theRadii.end(); ite++, ii++ ) {
-    G4String hname = theHistoName+": Energy inside radius " + GmGenUtils::ftoa((*ite));
-    theAnaMgr->CreateHisto1D(hname,100,0.,1.,histoNumber+10+ii);
+    G4String hname2 = theHistoName+": Energy inside radius " + GmGenUtils::ftoa((*ite));
+    theAnaMgr->CreateHisto1D(hname2,100,0.,1.,histoNumber+10+ii);
 
-    hname = theHistoName+": Relative energy in radius " + GmGenUtils::ftoa((*ite));
-    theAnaMgr->CreateHisto1D(hname,100,0.,1.,histoNumber+20+ii);
+    hname2 = theHistoName+": Relative energy in radius " + GmGenUtils::ftoa((*ite));
+    theAnaMgr->CreateHisto1D(hname2,100,0.,1.,histoNumber+20+ii);
   }
   
 }
@@ -147,7 +147,22 @@ void GmShowerShapeUA::UserSteppingAction(const G4Step* aStep )
   G4int showerID; 
   
   GmSSData* ssdata = CheckWhichShower( aStep );
-  GmTrackInfo* trkInfo = new GmTrackInfo();
+  GmTrackInfo* trkInfo = 0;
+  if( aTrack->GetUserInformation() == 0 ) {
+    trkInfo = new GmTrackInfo();
+    //	G4cout << " G4TrackInfo CREATE " << trkInfo  << G4endl; //GDEB
+  } else {
+    G4VUserTrackInformation* g4TrkInfo = aTrack->GetUserInformation();
+    if( ! dynamic_cast<GmTrackInfo*>(g4TrkInfo) ) {
+      G4Exception("GmAncestorsFilter::AcceptStep",
+		  "",
+		  FatalException,
+		  "Creating a GmTrackInfo for a track that has already a G4VUserTrackInformation");
+    } else {
+      trkInfo = dynamic_cast<GmTrackInfo*>(g4TrkInfo);
+    }
+  }
+
   if( ! ssdata ) {
     showerID = theShowerData.size();
     ssdata = new GmSSData( theShowerData.size(), aStep, thePointToUse );
@@ -172,9 +187,23 @@ void GmShowerShapeUA::UserSteppingAction(const G4Step* aStep )
   G4TrackVector fSec = GmG4Utils::GetSecondariesOfCurrentStep();
   G4TrackVector::iterator ite;
   for( ite = fSec.begin(); ite != fSec.end(); ite++ ) {
-    GmTrackInfo* trkInfo = new GmTrackInfo();
-    trkInfo->SetIntValue("showerID", showerID );
-    (*ite)->SetUserInformation( trkInfo ); 
+    GmTrackInfo* trkInfo2 = 0;
+    if( (*ite)->GetUserInformation() == 0 ) {
+      trkInfo2 = new GmTrackInfo();
+      //	G4cout << " G4TrackInfo CREATE " << trkInfo2  << G4endl; //GDEB
+    } else {
+      G4VUserTrackInformation* g4TrkInfo = (*ite)->GetUserInformation();
+      if( ! dynamic_cast<GmTrackInfo*>(g4TrkInfo) ) {
+	G4Exception("GmAncestorsFilter::AcceptStep",
+		    "",
+		    FatalException,
+		    "Creating a GmTrackInfo for a track that has already a G4VUserTrackInformation");
+      } else {
+	trkInfo2 = dynamic_cast<GmTrackInfo*>(g4TrkInfo);
+      }
+    }    
+    trkInfo2->SetIntValue("showerID", showerID );
+    (*ite)->SetUserInformation( trkInfo2 ); 
   }
 }
 

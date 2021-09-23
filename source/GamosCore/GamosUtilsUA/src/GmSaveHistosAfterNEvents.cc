@@ -27,15 +27,12 @@ void GmSaveHistosAfterNEvents::EndOfEventAction( const G4Event* event )
 
   G4int evtid = event->GetEventID();
   if( evtid >= theFirstEvent && evtid%theEachNEvent == 0 ) {
-    std::map<G4String,GmAnalysisMgr*> anaMgrs = GmAnalysisMgr::GetInstances();
+    GmAnalysisMgr* anaMgr = GmAnalysisMgr::GetInstance("");
+    std::map<G4String, GmAnalysisMgr*> anaMgrs = anaMgr->GetAllInstances();
     std::map<G4String,GmAnalysisMgr*>::const_iterator itea;
-    std::set<G4String> fileFormats = GmAnalysisMgr::GetFileFormats();
-    std::set<G4String>::const_iterator ites;
     for( itea = anaMgrs.begin(); itea != anaMgrs.end(); itea++ ){
-      GmAnalysisMgr* anaMgr = (*itea).second;
-      for( ites = fileFormats.begin(); ites != fileFormats.end(); ites++) {
-	anaMgr->Save( anaMgr->GetFileName(), *ites );
-      }
+      GmAnalysisMgr* anaMgr2 = (*itea).second;
+      anaMgr2->SaveAllFormats( anaMgr2->GetFileName());
     }
   }
 }

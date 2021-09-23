@@ -15,7 +15,7 @@
 #endif
 //---------------------------------------------------------------------
 GmGaussianDistribution::GmGaussianDistribution(G4String name)
-: GmVDistribution(name)
+: GmVNumericDistribution(name)
 {
   bNormalized = false;
   BuildData();
@@ -34,7 +34,14 @@ void GmGaussianDistribution::SetParameters( std::vector<G4String>& params )
   G4double sigma = GmGenUtils::GetValue( params[0] );
   theSigma2 = 2.*sigma*sigma;
 
-  theConstant = GmGenUtils::GetValue( params[1] );
+  theMean = 0.;
+  theConstant = 1.; 
+  if( params.size() >= 2 ) {
+    theMean = GmGenUtils::GetValue( params[1] );
+    if( params.size() >= 3 ) {
+      theConstant = GmGenUtils::GetValue( params[2] );
+    }
+  }
 
 #ifndef GAMOS_NO_VERBOSE
   if( DistVerb(debugVerb) ) {
@@ -48,7 +55,7 @@ void GmGaussianDistribution::BuildData()
 {  
   GmParameterMgr* parMgr = GmParameterMgr::GetInstance();
   G4String dataName = parMgr->GetStringValue(theName+":Data","");
-  theData = GmDataMgr::GetInstance()->BuildData("GmData" + dataName);
+  theData = GmDataMgr::GetInstance()->BuildData(dataName);
   if( theData == 0 ) {
     G4Exception("GmGaussianDistribution::GmGaussianDistribution",
 		"Data class not found",
@@ -112,9 +119,9 @@ G4double GmGaussianDistribution::GetValueFromTrack(const G4Track* aTrack)
 G4double GmGaussianDistribution::GetNumericValueFromIndex(const G4double indexVal)
 {
   if( bNormalized ) {
-    return exp(-sqr(indexVal)/theSigma2);
+    return exp(-sqr(indexVal)/theSigma2)+theMean;
   } else {
-    return theConstant* exp(-sqr(indexVal)/theSigma2);
+    return theConstant* (exp(-sqr(indexVal)/theSigma2)+theMean);
   }
 }
 

@@ -41,7 +41,7 @@ GmG4PSPassageCellCurrent::GmG4PSPassageCellCurrent(G4String name)
   :GmVPrimitiveScorer(name),fCurrentTrkID(-1),fCurrent(0)
 {
   theUnit = 1.E-2;
-  theUnitName = G4String("CLHEP::cm-2");
+  theUnitName = G4String("cm-2");
 }
 
 GmG4PSPassageCellCurrent::~GmG4PSPassageCellCurrent()
@@ -82,28 +82,3 @@ G4bool GmG4PSPassageCellCurrent::IsPassed(G4Step* aStep){
 }
 
 
-void GmG4PSPassageCellCurrent::EndOfEvent(G4HCofThisEvent*)
-{
-}
-
-
-void GmG4PSPassageCellCurrent::DrawAll()
-{;}
-
-void GmG4PSPassageCellCurrent::PrintAll()
-{
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() <<G4endl; 
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  cell current : " << *(itr->second)
-	   << G4endl;
-  }
-}
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSPassageCellCurrent::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

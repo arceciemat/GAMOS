@@ -1,5 +1,4 @@
 #ifndef GAMOS_NO_ROOT
-#define protected public
 #include "TH1F.h"
 
 #include "TCanvas.h"

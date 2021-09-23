@@ -44,3 +44,10 @@ G4double GmDataInitialDirTheta::GetValueFromEvent( const G4Event* aEvent, G4int 
   G4ThreeVector mom = aEvent->GetPrimaryVertex(0)->GetPrimary(0)->GetMomentum().unit();
   return mom.theta();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialDirTheta::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  return aTrack->GetMomentumDirection().theta();
+}
+

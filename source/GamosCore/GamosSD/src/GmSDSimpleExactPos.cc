@@ -6,6 +6,7 @@
 
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
+#include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
 #include "CLHEP/Random/RandGauss.h"
 
@@ -48,6 +49,11 @@ void GmSDSimpleExactPos::UpdateHit( GmHit* hit, G4Step* aStep  )
 
   //--- Set position as barycenter
   G4ThreeVector posold = hit->GetPosition();
+  if( GmParameterMgr::GetInstance()->GetNumericValue("GmHit:LocalHitCoordinates",0) == 1 ) {
+    posold = (G4TransportationManager::GetTransportationManager()->
+	      GetNavigatorForTracking()->
+	      GetLocalToGlobalTransform()).TransformPoint(posold);
+  }
   G4ThreeVector posnew = aStep->GetPostStepPoint()->GetPosition();
   G4double enerold = hit->GetEnergy();
   G4double enernew = energy;

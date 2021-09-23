@@ -41,7 +41,8 @@ G4double GmDataFinalLocalInPrePosY::GetValueFromTrack( const G4Track* aTrack, G4
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos, touch, false ); 
 
   G4ThreeVector localPos = GmG4Utils::GetLocalFromGlobalPos( aTrack->GetPosition(), touch->GetHistory() );
-
+  delete touch;
+  
   return localPos.y();
 }
 

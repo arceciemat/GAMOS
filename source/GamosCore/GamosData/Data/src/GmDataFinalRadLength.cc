@@ -23,11 +23,21 @@ GmDataFinalRadLength::~GmDataFinalRadLength()
 //----------------------------------------------------------------
 G4double GmDataFinalRadLength::GetValueFromStep( const G4Step* aStep, G4int )
 {
-  return aStep->GetPostStepPoint()->GetMaterial()->GetRadlen();
+  G4Material* mate = aStep->GetPostStepPoint()->GetMaterial();
+  if( mate ) {
+    return mate->GetRadlen();
+  } else {
+    return 0.;
+  }
 }
 
 //----------------------------------------------------------------
 G4double GmDataFinalRadLength::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
-  return aTrack->GetNextMaterial()->GetRadlen();
+  G4Material* mate = aTrack->GetNextMaterial();
+  if( mate ) {
+    return mate->GetRadlen();
+  } else {
+    return 0.;
+  }
 }

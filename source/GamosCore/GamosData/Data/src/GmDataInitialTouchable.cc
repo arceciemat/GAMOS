@@ -75,3 +75,16 @@ G4String GmDataInitialTouchable::GetTouchableLongName( const G4VTouchable* touch
 
   return name;
 }
+
+//----------------------------------------------------------------
+G4String GmDataInitialTouchable::GetStringValueFromStackedTrack( const G4Track* aTrack )
+{ 
+  G4TouchableHistory* touch = new G4TouchableHistory;
+  G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack->GetPosition(), touch, false ); 
+
+  G4String name = GetTouchableLongName( touch );
+ 
+  delete touch;
+
+  return name;
+}

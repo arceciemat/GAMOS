@@ -39,8 +39,9 @@
 #include "G4ComptonScattering.hh"
 #include "G4GammaConversion.hh"
 #include "G4PhotoElectricEffect.hh"
+#include "G4RayleighScattering.hh"
 
-GmPhysicsGammaStandard::GmPhysicsGammaStandard(const G4String& name): GmVPhysicsGamma(name)
+GmPhysicsGammaStandard::GmPhysicsGammaStandard(const G4String& name, G4int type): GmVPhysicsGamma(name,type)
 { }
 
 GmPhysicsGammaStandard::~GmPhysicsGammaStandard()
@@ -64,6 +65,7 @@ void GmPhysicsGammaStandard::ConstructProcess()
 	  manager -> AddDiscreteProcess(new G4PhotoElectricEffect);
 	  manager -> AddDiscreteProcess(new G4ComptonScattering);
 	  manager -> AddDiscreteProcess(new G4GammaConversion); 
+	  manager -> AddDiscreteProcess(new G4RayleighScattering);
 	}   
     }
 }

@@ -48,7 +48,8 @@ GmEnergySplitter::GmEnergySplitter()
    theElossExt = new G4EnergyLossForExtrapolator(0);
    thePhantomParam = 0;
    theNIterations = G4int(GmParameterMgr::GetInstance()->GetNumericValue("GmEnergySplitter:NIterations",2));
-;
+   G4cout << "GmEnergySplitter::GmEnergySplitter" << G4endl; //GDEB
+		
 }
 
 GmEnergySplitter::~GmEnergySplitter()
@@ -59,11 +60,11 @@ G4int GmEnergySplitter::SplitEnergyInVolumes(const G4Step* aStep )
   theEnergies.clear();
 
   G4double edep = aStep->GetTotalEnergyDeposit();
- 
+
 #ifdef VERBOSE_ENERSPLIT
   G4bool verbose = 1;
   if( verbose ) G4cout << "GmEnergySplitter::SplitEnergyInVolumes totalEdepo " << aStep->GetTotalEnergyDeposit() 
-		       << " Nsteps " << G4RegularNavigationHelper::Instance()->GetStepLengths.size() << G4endl;
+		       << " Nsteps " << G4RegularNavigationHelper::Instance()->theStepLengths.size() << G4endl;
 #endif    
 
   if( aStep->GetTrack()->GetDefinition()->GetPDGCharge() == 0)  { // neutral particle: energy is deposited at the end of the step (if the process is Transportation , edepo = 0)
@@ -98,8 +99,8 @@ G4int GmEnergySplitter::SplitEnergyInVolumes(const G4Step* aStep )
   
   G4double stepLength = aStep->GetStepLength();
   G4double slSum = 0.;
-  unsigned int ii;
-  for( ii = 0; ii < rnsl.size(); ii++ ){
+  
+  for( unsigned int ii = 0; ii < rnsl.size(); ii++ ){
     G4double sl = rnsl[ii].second;
     slSum += sl;
 #ifdef VERBOSE_ENERSPLIT
@@ -134,14 +135,14 @@ G4int GmEnergySplitter::SplitEnergyInVolumes(const G4Step* aStep )
 #ifdef VERBOSE_ENERSPLIT
     // print corrected energy at iteration 0 
     if(verbose)  {
-      G4double slSum = 0.;
-      for( ii = 0; ii < rnsl.size(); ii++ ){
-	G4double sl = rnsl[ii].second;
-	slSum += sl;
+      G4double slSump = 0.;
+      for( size_t ii2 = 0; ii2 < rnsl.size(); ii2++ ){
+	G4double sl = rnsl[ii2].second;
+	slSump += sl;
       }
-      for( ii = 0; ii < rnsl.size(); ii++ ){
-	G4cout  << "GmEnergySplitter::SplitEnergyInVolumes "<< ii
-		<< " RN: iter0 corrected energy lost " << edep*rnsl[ii].second/slSum  
+      for( size_t ii2 = 0; ii2 < rnsl.size(); ii2++ ){
+	G4cout  << "GmEnergySplitter::SplitEnergyInVolumes "<< ii2
+		<< " RN: iter0 corrected energy lost " << edep*rnsl[ii2].second/slSump  
 		<< G4endl;
       }
     }
@@ -159,26 +160,26 @@ G4int GmEnergySplitter::SplitEnergyInVolumes(const G4Step* aStep )
     for( int iiter = 1; iiter <= theNIterations; iiter++ ) {
       //--- iter1: distribute true step length in each voxel: geom SL in each voxel is multiplied by a constant so that the sum gives the total true step length
       if( iiter == 1 ) {
-	for( ii = 0; ii < rnsl.size(); ii++ ){
-	  G4double sl = rnsl[ii].second;
+	for( size_t ii2 = 0; ii2 < rnsl.size(); ii2++ ){
+	  G4double sl = rnsl[ii2].second;
 	  stepLengths.push_back( sl * slRatio );
 #ifdef VERBOSE_ENERSPLIT
-	  if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes"<< ii << " RN: iter" << iiter << " corrected step length " << sl*slRatio << G4endl;
+	  if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes"<< ii2 << " RN: iter" << iiter << " corrected step length " << sl*slRatio << G4endl;
 #endif
 	}
 	
-	for( ii = 0; ii < rnsl.size(); ii++ ){
-	  const G4Material* mate = thePhantomParam->GetMaterial( rnsl[ii].first );
+	for( size_t ii2 = 0; ii2 < rnsl.size(); ii2++ ){
+	  const G4Material* mate = thePhantomParam->GetMaterial( rnsl[ii2].first );
 	  G4double dEdx = 0.;
 	  if( kinEnergyPre > 0. ) {  //t check this 
 	    dEdx = emcalc.GetDEDX(kinEnergyPre, part, mate);
 	  }
-	  G4double elost = stepLengths[ii] * dEdx;
+	  G4double elost = stepLengths[ii2] * dEdx;
 	  
 #ifdef VERBOSE_ENERSPLIT
-	  if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes"<< ii << " RN: iter1 energy lost "  << elost 
+	  if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes"<< ii2 << " RN: iter1 energy lost "  << elost 
 			      << " energy at interaction " << kinEnergyPre 
-			      << " = stepLength " << stepLengths[ii] 
+			      << " = stepLength " << stepLengths[ii2] 
 			      << " * dEdx " << dEdx << G4endl;
 #endif
 	  kinEnergyPre -= elost;
@@ -192,50 +193,50 @@ G4int GmEnergySplitter::SplitEnergyInVolumes(const G4Step* aStep )
 	//-- Get ratios for each energy 
 	slSum = 0.;
 	kinEnergyPre = kinEnergyPreOrig;
-	for( ii = 0; ii < rnsl.size(); ii++ ){
-	  const G4Material* mate = thePhantomParam->GetMaterial( rnsl[ii].first );
-	  stepLengths[ii] = theElossExt->TrueStepLength( kinEnergyPre, rnsl[ii].second , mate, part );
-	  kinEnergyPre -= theEnergies[ii];
+	for( size_t ii2 = 0; ii2 < rnsl.size(); ii2++ ){
+	  const G4Material* mate = thePhantomParam->GetMaterial( rnsl[ii2].first );
+	  stepLengths[ii2] = theElossExt->TrueStepLength( kinEnergyPre, rnsl[ii2].second , mate, part );
+	  kinEnergyPre -= theEnergies[ii2];
 	  
 #ifdef VERBOSE_ENERSPLIT
-	  if(verbose) G4cout << "GmEnergySplitter::SplitEnergyInVolumes" << ii 
-			     << " RN: iter" << iiter << " step length geom " << stepLengths[ii] 
-			     << " geom2true " << rnsl[ii].second / stepLengths[ii]  << G4endl;
+	  if(verbose) G4cout << "GmEnergySplitter::SplitEnergyInVolumes" << ii2 
+			     << " RN: iter" << iiter << " step length geom " << stepLengths[ii2] 
+			     << " geom2true " << rnsl[ii2].second / stepLengths[ii2]  << G4endl;
 #endif
 	  
-	  slSum += stepLengths[ii];
+	  slSum += stepLengths[ii2];
 	}
 	
 	//Correct step lengths so that they sum the total step length
 	G4double slratio = aStep->GetStepLength()/slSum;
 #ifdef VERBOSE_ENERSPLIT
-	if(verbose) G4cout << "GmEnergySplitter::SplitEnergyInVolumes" << ii << " RN: iter" << iiter << " step ratio " << slRatio << G4endl;
+	if(verbose) G4cout << "GmEnergySplitter::SplitEnergyInVolumes" << " RN: iter" << iiter << " step ratio " << slRatio << G4endl;
 #endif
-	for( ii = 0; ii < rnsl.size(); ii++ ){
-	  stepLengths[ii] *= slratio;
+	for( size_t ii2 = 0; ii2 < rnsl.size(); ii2++ ){
+	  stepLengths[ii2] *= slratio;
 #ifdef VERBOSE_ENERSPLIT
-	  if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes"<< ii << " RN: iter" << iiter << " corrected step length " << stepLengths[ii] << G4endl;
+	  if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes"<< ii2 << " RN: iter" << iiter << " corrected step length " << stepLengths[ii2] << G4endl;
 #endif
 	}
 	
 	//---- Recalculate energy lost with this new step lengths
-	G4double kinEnergyPre = aStep->GetPreStepPoint()->GetKineticEnergy();
+	G4double kinEnergyPre2 = aStep->GetPreStepPoint()->GetKineticEnergy();
 	totalELost = 0.;
-	for( ii = 0; ii < rnsl.size(); ii++ ){
-	  const G4Material* mate = thePhantomParam->GetMaterial( rnsl[ii].first );
+	for( size_t ii2 = 0; ii2 < rnsl.size(); ii2++ ){
+	  const G4Material* mate = thePhantomParam->GetMaterial( rnsl[ii2].first );
 	  G4double dEdx = 0.;
-	  if( kinEnergyPre > 0. ) {
-	    dEdx = emcalc.GetDEDX(kinEnergyPre, part, mate);
+	  if( kinEnergyPre2 > 0. ) {
+	    dEdx = emcalc.GetDEDX(kinEnergyPre2, part, mate);
 	  }
-	  G4double elost = stepLengths[ii] * dEdx;
+	  G4double elost = stepLengths[ii2] * dEdx;
 #ifdef VERBOSE_ENERSPLIT
-	  if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes"<< ii << " RN: iter" << iiter << " energy lost " << elost 
-			      << " energy at interaction " << kinEnergyPre 
-			      << " = stepLength " << stepLengths[ii] 
+	  if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes"<< ii2 << " RN: iter" << iiter << " energy lost " << elost 
+			      << " energy at interaction " << kinEnergyPre2 
+			      << " = stepLength " << stepLengths[ii2] 
 			      << " * dEdx " << dEdx << G4endl;
 #endif
-	  kinEnergyPre -= elost;
-	  theEnergies[ii] = elost;
+	  kinEnergyPre2 -= elost;
+	  theEnergies[ii2] = elost;
 	  totalELost += elost;
 	}
 	
@@ -245,19 +246,19 @@ G4int GmEnergySplitter::SplitEnergyInVolumes(const G4Step* aStep )
       G4double enerRatio = (edep/totalELost);
       
 #ifdef VERBOSE_ENERSPLIT
-      if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes"<< ii << " RN: iter" << iiter << " energy ratio " << enerRatio << G4endl;
+      if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes"<< " RN: iter" << iiter << " energy ratio " << enerRatio << G4endl;
 #endif
 	
 #ifdef VERBOSE_ENERSPLIT
       G4double elostTot = 0.; 
 #endif
-      for( ii = 0; ii < theEnergies.size(); ii++ ){
-	theEnergies[ii] *= enerRatio;
+      for( size_t ii2 = 0; ii2 < theEnergies.size(); ii2++ ){
+	theEnergies[ii2] *= enerRatio;
 #ifdef VERBOSE_ENERSPLIT
-	elostTot += theEnergies[ii];
-	if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes "<< ii << " RN: iter" << iiter << " corrected energy lost " << theEnergies[ii] 
-			    << " orig elost " << theEnergies[ii]/enerRatio 
-			    << " energy before interaction " << kinEnergyPreOrig-elostTot+theEnergies[ii]
+	elostTot += theEnergies[ii2];
+	if(verbose) G4cout  << "GmEnergySplitter::SplitEnergyInVolumes "<< ii2 << " RN: iter" << iiter << " corrected energy lost " << theEnergies[ii2] 
+			    << " orig elost " << theEnergies[ii2]/enerRatio 
+			    << " energy before interaction " << kinEnergyPreOrig-elostTot+theEnergies[ii2]
 			    << " energy after interaction " << kinEnergyPreOrig-elostTot
 			    << G4endl;
 #endif

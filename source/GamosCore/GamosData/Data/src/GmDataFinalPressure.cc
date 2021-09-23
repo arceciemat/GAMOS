@@ -23,11 +23,21 @@ GmDataFinalPressure::~GmDataFinalPressure()
 //----------------------------------------------------------------
 G4double GmDataFinalPressure::GetValueFromStep( const G4Step* aStep, G4int )
 {
-  return aStep->GetPostStepPoint()->GetMaterial()->GetPressure()/CLHEP::atmosphere;
+  G4Material* mate = aStep->GetPostStepPoint()->GetMaterial();
+  if( mate ) {
+    return mate->GetPressure()/CLHEP::atmosphere;
+  } else {
+    return 0.;
+  } 
 }
 
 //----------------------------------------------------------------
 G4double GmDataFinalPressure::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
-  return aTrack->GetNextMaterial()->GetPressure()/CLHEP::atmosphere;
+  G4Material* mate = aTrack->GetNextMaterial();
+  if( mate ) {
+    return mate->GetPressure()/CLHEP::atmosphere;
+  } else {
+    return 0.;
+  } 
 }

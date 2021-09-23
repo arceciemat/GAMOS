@@ -27,6 +27,7 @@ private:
   GmParameterMgr*   myAction;
   
   GmUIcmdWithAString*        AddParamCmd;
+  GmUIcmdWithAString*        AddParamCmd2;
   G4UIcmdWithAnInteger*      PrintParamCmd;
 
 };

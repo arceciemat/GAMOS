@@ -18,6 +18,7 @@ private:
   GmUIcmdWithAString* PrinterCmd;
   GmUIcmdWithAString* MFDetectorCmd;
   GmUIcmdWithAString* AssocMFD2LVCmd;
+  GmUIcmdWithAString* Scorer2MFDCmd;
   GmUIcmdWithAString* ScorerCmd;
   GmUIcmdWithAString* FilterCmd;
   GmUIcmdWithAString* Printer2ScorerCmd;
@@ -25,6 +26,7 @@ private:
   GmUIcmdWithAString* TrkWeightCmd;
   GmUIcmdWithAString* ScoreErrorsCmd;
   GmUIcmdWithAString* PrintByEventCmd;
+  GmUIcmdWithAString* PrintNEventsTypeCmd;
   GmUIcmdWithAString* UnitCmd;
 
   GmScoringMgr* theAction;

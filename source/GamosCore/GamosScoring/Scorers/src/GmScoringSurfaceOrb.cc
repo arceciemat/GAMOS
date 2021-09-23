@@ -117,9 +117,9 @@ G4bool GmScoringSurfaceOrb::CheckSurfaceAngle(G4double localAng, G4double angle 
 
 
 //-----------------------------------------------------------------------
-G4double GmScoringSurfaceOrb::GetAngleFactor( G4StepPoint* stepPoint )
+G4double GmScoringSurfaceOrb::GetAngleFactor( G4StepPoint* stepPoint, G4StepPoint* volumeStepPoint )
 {
-  G4TouchableHandle touchable = stepPoint->GetTouchableHandle();
+  G4TouchableHandle touchable = volumeStepPoint->GetTouchableHandle();
   G4ThreeVector dir = stepPoint->GetMomentumDirection();
   G4ThreeVector localDir  = 
     touchable->GetHistory()->GetTopTransform().TransformAxis(dir).unit();

@@ -1,64 +1,61 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosData_Distributions
+# Module : Distributions
+# Package: GamosCore_GamosData_Distributions
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosData_Distributions
+	 HEADERS
+		GmVNumericNDimDistribution.hh
+		GmDistributionVerbosity.hh
+		GmNumericDistributionLogLin.hh
+		GmNumericDistributionLower.hh
+		GmPolynomialDistribution.hh
+		GmStringDistribution.hh
+		GmNumericDistributionLinLin.hh
+		GmVStringDistribution.hh
+		GmNumericDistributionLinLog.hh
+		GmVNumericDistribution.hh
+		GmNumericDistributionUpper.hh
+		GmNumericNDimDistributionUpper.hh
+		GmGeometricalBiasingDistribution.hh
+		GmNumericDistributionLogLog.hh
+		GmDistributionRatio.hh
+		GmGaussianDistribution.hh
+	 SOURCES
+		GmGeometricalBiasingDistribution.cc
+		GmVStringDistribution.cc
+		GmVNumericDistribution.cc
+		plugin.cc
+		GmDistributionVerbosity.cc
+		GmNumericDistributionUpper.cc
+		GmNumericDistributionLogLog.cc
+		GmNumericNDimDistributionUpper.cc
+		GmNumericDistributionLinLog.cc
+		GmStringDistribution.cc
+		GmVNumericNDimDistribution.cc
+		GmNumericDistributionLinLin.cc
+		GmPolynomialDistribution.cc
+		GmNumericDistributionLogLin.cc
+		GmDistributionRatio.cc
+		GmNumericDistributionLower.cc
+		GmGaussianDistribution.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+	GamosCore_GamosUtils
+	GamosCore_GamosBase_Base
+	GamosCore_GamosData_Management
+		${SEAL_LIBRARIES} 
 
-   HEADERS
-       GmNumericDistributionLinLog.hh
-       GmPolynomialDistribution.hh
-       GmNumericDistributionLower.hh
-       GmDistributionVerbosity.hh
-       GmNumericDistributionLogLog.hh
-       GmNumericDistributionLogLin.hh
-       GmNumericDistributionLinLin.hh
-       GmStringDistribution.hh
-       GmNumericDistributionUpper.hh
-       GmVStringDistribution.hh
-       GmGeometricalBiasingDistribution.hh
-       GmVNumericDistribution.hh
-       GmDistributionRatio.hh
-       GmGaussianDistribution.hh
-
-   SOURCES
-       plugin.cc
-       GmNumericDistributionLower.cc
-       GmNumericDistributionUpper.cc
-       GmGeometricalBiasingDistribution.cc
-       GmNumericDistributionLinLin.cc
-       GmGaussianDistribution.cc
-       GmDistributionRatio.cc
-       GmVStringDistribution.cc
-       GmVNumericDistribution.cc
-       GmDistributionVerbosity.cc
-       GmStringDistribution.cc
-       GmPolynomialDistribution.cc
-       GmNumericDistributionLinLog.cc
-       GmNumericDistributionLogLin.cc
-       GmNumericDistributionLogLog.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosBase_Base
-  GamosCore_GamosUtils
-  GamosCore_GamosData_Management
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

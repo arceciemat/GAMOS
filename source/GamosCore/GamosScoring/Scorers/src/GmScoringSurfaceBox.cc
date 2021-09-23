@@ -169,9 +169,9 @@ G4bool GmScoringSurfaceBox::CheckSurface(G4double localPos, G4double dim )
 
 
 //-----------------------------------------------------------------------
-G4double GmScoringSurfaceBox::GetAngleFactor( G4StepPoint* stepPoint )
+G4double GmScoringSurfaceBox::GetAngleFactor( G4StepPoint* stepPoint, G4StepPoint* volumeStepPoint )
 {
-  G4TouchableHandle touchable = stepPoint->GetTouchableHandle();
+  G4TouchableHandle touchable = volumeStepPoint->GetTouchableHandle();
   G4ThreeVector dir = stepPoint->GetMomentumDirection();
   G4ThreeVector localDir  = 
     touchable->GetHistory()->GetTopTransform().TransformAxis(dir).unit();

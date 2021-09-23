@@ -10,9 +10,17 @@ private:
   ~GmMovementUtils(){};
 
 public:
-  static G4bool bUsingGmGenerator;
 
-private:
+#ifdef WIN32
+#if defined GmUtils_ALLOC_EXPORT
+	G4DLLEXPORT static G4bool bUsingGmGenerator;
+#else
+	G4DLLIMPORT static G4bool bUsingGmGenerator;
+#endif
+#else
+	static G4bool bUsingGmGenerator;
+#endif
+
   static void SetbUsingGmGenerator( G4bool val ) {
     bUsingGmGenerator = val;
   }

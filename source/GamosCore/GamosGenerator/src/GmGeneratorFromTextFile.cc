@@ -18,11 +18,15 @@ GmGeneratorFromTextFile::GmGeneratorFromTextFile()
 {
   GmParameterMgr* parmgr = GmParameterMgr::GetInstance(); 
   G4String fname = parmgr->GetStringValue("GmGeneratorFromTextFile:FileName", "generator.txt");
-  theFileIn = GmFileIn::GetInstance(fname);
+  theFileIn = GmFileIn::GetInstance(fname,1);
   theFileIn.SetSeparator(',');
 
   thePrevData.eventID = -1;
   theNLinesRead = 0;
+
+  theNEventsToSkip = GmParameterMgr::GetInstance()->GetNumericValue("GmGeneratorFromTextFile:NEventsToSkip",0);
+
+
 }
 
 
@@ -38,9 +42,9 @@ void GmGeneratorFromTextFile::GeneratePrimaries(G4Event* evt)
   if( theFileIn.eof() ) {
     G4RunManager::GetRunManager()->AbortRun();  //  /abortrun
   }
-  
+
   //P  22 18.7405 -15.5304 -11.4193 0.85396 -0.625037 -0.711131 0  
-  
+ 
   if( thePrevData.eventID != -1 ) {
     GenerateParticle(thePrevData, evt);
   }
@@ -90,9 +94,11 @@ void GmGeneratorFromTextFile::GeneratePrimaries(G4Event* evt)
 				      << G4endl;
 #endif
     if( thePrevData.eventID == -1 || thePrevData.eventID == evtDat.eventID ) {
-      GenerateParticle( evtDat, evt ); 
-      if( thePrevData.eventID == -1 ) {
-	thePrevData = evtDat;
+      if( evtDat.eventID >= theNEventsToSkip ) {
+	GenerateParticle( evtDat, evt ); 
+	if( thePrevData.eventID == -1 ) {
+	  thePrevData = evtDat;
+	}
       }
     } else {
       break;  // generate particle in next event

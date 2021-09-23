@@ -1,14 +1,10 @@
 //#define VERBOSE_DOSEDEP
-#define protected public
 #include "G4VPrimitiveScorer.hh"
-//define protected protected
-#define private public
 #include "G4EnergyLossForExtrapolator.hh"
-//#define private private
 #include "GmG4PSDoseDeposit_old.hh"
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
 
-#include "GamosCore/GamosReadDICOM/include/GmRegularParamUtils.hh"
+#include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
@@ -108,7 +104,7 @@ G4bool GmG4PSDoseDeposit_old::FillScorer(G4Step* aStep, G4double val, G4double w
 #endif
     //      G4double geomSL = rnsl[0].second;
     //      G4double SL = aStep->GetStepLength(); 
-    if( !thePhantomParam ) thePhantomParam = GmRegularParamUtils::GetInstance()->GetPhantomParam();
+    if( !thePhantomParam ) thePhantomParam = GmGeometryUtils::GetInstance()->GetPhantomParam();
     //      const G4Material* mate = thePhantomParam->GetMaterial( rnsl[0].first );
     const G4ParticleDefinition* part = aStep->GetTrack()->GetDefinition();
     G4double kinEnergyPreOrig = aStep->GetPreStepPoint()->GetKineticEnergy();
@@ -116,8 +112,8 @@ G4bool GmG4PSDoseDeposit_old::FillScorer(G4Step* aStep, G4double val, G4double w
     
     G4double stepLength = aStep->GetStepLength();
     G4double slSum = 0.;
-    unsigned int ii;
-    for( ii = 0; ii < rnsl.size(); ii++ ){
+    
+    for( unsigned int ii = 0; ii < rnsl.size(); ii++ ){
       G4double sl = rnsl[ii].second;
       slSum += sl;
 #ifndef GAMOS_NO_VERBOSE
@@ -157,16 +153,16 @@ G4bool GmG4PSDoseDeposit_old::FillScorer(G4Step* aStep, G4double val, G4double w
 #ifndef GAMOS_NO_VERBOSE
       // print corrected energy at iteration 0 
       if(ScoringVerb(debugVerb))  {
-	G4double slSum = 0.;
-	for( ii = 0; ii < rnsl.size(); ii++ ){
+	G4double slSum2 = 0.;
+	for( size_t ii = 0; ii < rnsl.size(); ii++ ){
 	  G4double sl = rnsl[ii].second;
-	  slSum += sl;
+	  slSum2 += sl;
 	}
 	
-	for( ii = 0; ii < rnsl.size(); ii++ ){
+	for( size_t ii = 0; ii < rnsl.size(); ii++ ){
 	  	  G4cout  << "GmG4PSDoseDeposit_old::FillScorer "<< ii
 	    //-		  << " RN: iter0 corrected energy lost " << aStep->GetTotalEnergyDeposit()*rnsl[ii].second/slSum  
-		  << " RN: iter0 corrected energy lost " << stepElost*rnsl[ii].second/slSum  
+		  << " RN: iter0 corrected energy lost " << stepElost*rnsl[ii].second/slSum2  
 		  << G4endl;
 	}
       }
@@ -184,7 +180,7 @@ G4bool GmG4PSDoseDeposit_old::FillScorer(G4Step* aStep, G4double val, G4double w
       for( int iiter = 1; iiter <= theNIterations; iiter++ ) {
 	//--- iter1: distribute true step length in each voxel: geom SL in each voxel is multiplied by a constant so that the sum gives the total true step length
 	if( iiter == 1 ) {
-	  for( ii = 0; ii < rnsl.size(); ii++ ){
+	  for( size_t ii = 0; ii < rnsl.size(); ii++ ){
 	    G4double sl = rnsl[ii].second;
 	    stepLengths.push_back( sl * slRatio );
 #ifndef GAMOS_NO_VERBOSE
@@ -192,7 +188,7 @@ G4bool GmG4PSDoseDeposit_old::FillScorer(G4Step* aStep, G4double val, G4double w
 #endif
 	  }
 	  
-	  for( ii = 0; ii < rnsl.size(); ii++ ){
+	  for( size_t ii = 0; ii < rnsl.size(); ii++ ){
 	    const G4Material* mate = thePhantomParam->GetMaterial( rnsl[ii].first );
 	    G4double dEdx = 0.;
 	    if( kinEnergyPre > 0. ) {  //t check this 
@@ -217,7 +213,7 @@ G4bool GmG4PSDoseDeposit_old::FillScorer(G4Step* aStep, G4double val, G4double w
 	  //-- Get ratios for each energy 
 	  slSum = 0.;
 	  kinEnergyPre = kinEnergyPreOrig;
-	  for( ii = 0; ii < rnsl.size(); ii++ ){
+	  for( size_t ii = 0; ii < rnsl.size(); ii++ ){
 	    const G4Material* mate = thePhantomParam->GetMaterial( rnsl[ii].first );
 	    stepLengths[ii] = theElossExt->TrueStepLength( kinEnergyPre, rnsl[ii].second , mate, part );
 	    kinEnergyPre -= kinELost[ii];
@@ -234,32 +230,32 @@ G4bool GmG4PSDoseDeposit_old::FillScorer(G4Step* aStep, G4double val, G4double w
 	  //Correct step lengths so that they sum the total step length
 	  G4double slratio = aStep->GetStepLength()/slSum;
 #ifndef GAMOS_NO_VERBOSE
-	  if(ScoringVerb(debugVerb)) G4cout << "GmG4PSDoseDeposit_old::FillScorer" << ii << " RN: iter" << iiter << " step ratio " << slRatio << G4endl;
+	  if(ScoringVerb(debugVerb)) G4cout << "GmG4PSDoseDeposit_old::FillScorer RN: iter" << iiter << " step ratio " << slRatio << G4endl;
 #endif
-	  for( ii = 0; ii < rnsl.size(); ii++ ){
+	  for( size_t ii = 0; ii < rnsl.size(); ii++ ){
 	    stepLengths[ii] *= slratio;
 #ifndef GAMOS_NO_VERBOSE
-	    if(ScoringVerb(debugVerb)) G4cout  << "GmG4PSDoseDeposit_old::FillScorer"<< ii << " RN: iter" << iiter << " corrected step length " << stepLengths[ii] << G4endl;
+	    if(ScoringVerb(debugVerb)) G4cout  << "GmG4PSDoseDeposit_old::FillScorer RN: iter" << iiter << " corrected step length " << stepLengths[ii] << G4endl;
 #endif
 	    }
 	  
 	  //---- Recalculate energy lost with this new step lengths
-	  G4double kinEnergyPre = aStep->GetPreStepPoint()->GetKineticEnergy();
+	  G4double kinEnergyPre2 = aStep->GetPreStepPoint()->GetKineticEnergy();
 	  totalELost = 0.;
-	  for( ii = 0; ii < rnsl.size(); ii++ ){
+	  for( size_t ii = 0; ii < rnsl.size(); ii++ ){
 	    const G4Material* mate = thePhantomParam->GetMaterial( rnsl[ii].first );
 	    G4double dEdx = 0.;
-	    if( kinEnergyPre > 0. ) {
-	      dEdx = emcalc.GetDEDX(kinEnergyPre, part, mate);
+	    if( kinEnergyPre2 > 0. ) {
+	      dEdx = emcalc.GetDEDX(kinEnergyPre2, part, mate);
 	    }	 
 	    G4double elost = stepLengths[ii] * dEdx * stepElost/stepEdepo;
 #ifndef GAMOS_NO_VERBOSE
 	    if(ScoringVerb(debugVerb)) G4cout  << "GmG4PSDoseDeposit_old::FillScorer"<< ii << " RN: iter" << iiter << " energy lost " << elost 
-				<< " energy at interaction " << kinEnergyPre 
+				<< " energy at interaction " << kinEnergyPre2 
 				<< " = stepLength " << stepLengths[ii] 
 				<< " * dEdx " << dEdx << G4endl;
 #endif
-	    kinEnergyPre -= elost;
+	    kinEnergyPre2 -= elost;
 	    kinELost[ii] = elost;
 	    totalELost += elost;
 	  }
@@ -271,13 +267,13 @@ G4bool GmG4PSDoseDeposit_old::FillScorer(G4Step* aStep, G4double val, G4double w
 	G4double enerRatio = stepElost/totalELost;
 	
 #ifndef GAMOS_NO_VERBOSE
-	if(ScoringVerb(debugVerb)) G4cout  << "GmG4PSDoseDeposit_old::FillScorer"<< ii << " RN: iter" << iiter << " energy ratio " << enerRatio << G4endl;
+	if(ScoringVerb(debugVerb)) G4cout  << "GmG4PSDoseDeposit_old::FillScorer RN: iter" << iiter << " energy ratio " << enerRatio << G4endl;
 #endif
 	
 #ifndef GAMOS_NO_VERBOSE
 	G4double elostTot = 0.; 
 #endif
-	for( ii = 0; ii < kinELost.size(); ii++ ){
+	for( size_t ii = 0; ii < kinELost.size(); ii++ ){
 	  kinELost[ii] *= enerRatio;
 #ifndef GAMOS_NO_VERBOSE
 	  elostTot += kinELost[ii];
@@ -295,7 +291,7 @@ G4bool GmG4PSDoseDeposit_old::FillScorer(G4Step* aStep, G4double val, G4double w
       G4double volume = theGeomUtils->GetCubicVolume( aStep->GetPreStepPoint()->GetPhysicalVolume() );
       G4double density = aStep->GetTrack()->GetMaterial()->GetDensity();
       
-      for( ii = 0; ii < kinELost.size(); ii++ ){
+      for( size_t ii = 0; ii < kinELost.size(); ii++ ){
 	G4double dose  = kinELost[ii]*stepEdepo/stepElost / ( density * volume );
 	G4double valwei = dose*wei;
 	G4int index = rnsl[ii].first;
@@ -341,31 +337,3 @@ G4double GmG4PSDoseDeposit_old::GetGeom2TrueStepLength( G4double kinEnergy )
   return g2tratio;
 }
 
-//--------------------------------------------------------------------
-void GmG4PSDoseDeposit_old::EndOfEvent(G4HCofThisEvent*)
-{
-}
-
-//--------------------------------------------------------------------
-void GmG4PSDoseDeposit_old::DrawAll()
-{;}
-
-//--------------------------------------------------------------------
-void GmG4PSDoseDeposit_old::PrintAll()
-{
-  G4cout <<" GmG4PSDoseDeposit_old::PrintAllDefault() " << G4endl;
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  dose deposit: " << G4BestUnit(*(itr->second),"Dose")
-	   << G4endl;
-  }
-}
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmG4PSDoseDeposit_old::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 

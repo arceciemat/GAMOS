@@ -25,10 +25,12 @@ G4double GmVDataEquivalentDose::DoseFromEnergy( G4double ener, const G4Step* aSt
 {
   G4double eqdose = aStep->GetStepLength() / aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetSolid()->GetCubicVolume();
   G4double doseFactor =  EnergyToDoseFactor( ener );
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE 
   if( DataVerb(debugVerb) ) G4cout << "GmVDataEquivalentDose::DoseFromEnergy " << eqdose * doseFactor
 				   << " flux = " << eqdose 
 				   << " DoseFactor = " << doseFactor << G4endl;
+#endif
 #endif
   return eqdose * doseFactor;
 }
@@ -57,8 +59,10 @@ G4double GmVDataEquivalentDose::EnergyToDoseFactor( G4double ener )
     doseFactor = f2d.Hp75; 
   }
 
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE 
   if( DataVerb(debugVerb) ) G4cout << "GmVDataEquivalentDose::EnergyToDoseFactor = " << doseFactor << G4endl;
+#endif
 #endif
 
   return doseFactor;
@@ -71,8 +75,7 @@ std::map<G4double,Flux2Dose>* GmVDataEquivalentDose::ReadEnergyBinsForNeutrons()
 
   //  std::set<float>* energyBins = new std::set<float>;
   std::map<G4double,Flux2Dose>* flux2DoseNeutron  = new std::map<G4double,Flux2Dose>;
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  flux2DoseFile = GmGenUtils::FileInPath( path, flux2DoseFile );
+  flux2DoseFile = GmGenUtils::FileInPath( flux2DoseFile );
   GmFileIn fin = GmFileIn::GetInstance(flux2DoseFile);
   std::vector<G4String> wl;
   for( ;; ){
@@ -108,8 +111,7 @@ std::map<G4double,Flux2Dose>* GmVDataEquivalentDose::ReadEnergyBinsForGammas()
   //  std::set<float>* energyBins = new std::set<float>;
   std::map<G4double,Flux2Dose>* flux2DoseGamma 
     = new std::map<G4double,Flux2Dose>;
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  energyBinsFile = GmGenUtils::FileInPath( path, energyBinsFile );
+  energyBinsFile = GmGenUtils::FileInPath( energyBinsFile );
   GmFileIn fin = GmFileIn::GetInstance(energyBinsFile);
   std::vector<G4String> wl;
   for( ;; ){

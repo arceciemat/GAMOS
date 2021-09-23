@@ -80,9 +80,9 @@ G4Point3D GmPDSDetector::GetRandomPoint() const
 G4Point3D GmPDSDetector::GetCentrePoint() const
 {
   G4Point3D point(0.,0.,0.);
-  //  G4cout << " GmPDSDetector::GetRandomPoint bef transf " << point << G4endl;
+  //  G4cout << " GmPDSDetector::GetRandomPoint bef transf " << point << G4endl; //GDEB
   point = point.transform( theTransform );
-  //  G4cout << " GmPDSDetector::GetRandomPoint aft transf " << point << " transf " << theTransform.getRotation() << G4endl;
+  //  G4cout << " GmPDSDetector::GetRandomPoint aft transf " << point << " transf " << theTransform.getRotation() << G4endl; //GDEB
 
 #ifdef DEBUG
   G4VPhysicalVolume* pv = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndSetup( point, (const G4ThreeVector*)0,false, true );

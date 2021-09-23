@@ -48,3 +48,9 @@ G4double GmDataInitialKineticEnergy::GetValueFromEvent( const G4Event* aEvent, G
 
   return GmGenUtils::GetKineticEnergy( mass, mom );
 }
+
+ //----------------------------------------------------------------
+G4double GmDataInitialKineticEnergy::GetValueFromStackedTrack( const G4Track* aTrack, G4int ) 
+{
+  return aTrack->GetKineticEnergy();
+}

@@ -1,9 +1,9 @@
 #ifndef GmPhysicsRadioactiveDecay_h
 #define GmPhysicsRadioactiveDecay_h 1
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....
+#include "globals.hh"
 
-class G4RadioactiveDecay;
+class G4RadioactiveDecayBase;
 
 class GmPhysicsRadioactiveDecay
 {
@@ -16,7 +16,7 @@ public:
   virtual void ConstructProcess();
 
 private:
-  G4RadioactiveDecay*  theRadioactiveDecay;
+  G4RadioactiveDecayBase*  theRadioactiveDecay;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

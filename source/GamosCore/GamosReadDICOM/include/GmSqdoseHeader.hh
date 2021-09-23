@@ -5,13 +5,15 @@
 #include <fstream>
 #include "G4ThreeVector.hh"
 #include "G4RotationMatrix.hh"
-
+#include "Gm3ddoseHeader.hh"
+class Gm3ddoseHeader;
 class GmFileIn;
 
 class GmSqdoseHeader 
 {
 public:
   GmSqdoseHeader(){};
+  GmSqdoseHeader(const Gm3ddoseHeader& dh3d);
   ~GmSqdoseHeader(){};
 
   G4bool operator==(const GmSqdoseHeader& right) const;
@@ -22,12 +24,12 @@ public:
   // Get and Set methods
   float GetNumberOfEvents() const {
     return theNoEvent; }
-  size_t GetNoVoxelX() const {
-    return theNoVoxelX; }
-  size_t GetNoVoxelY() const {
-    return theNoVoxelY; }
-  size_t GetNoVoxelZ() const {
-    return theNoVoxelZ; }
+  size_t GetNoVoxelsX() const {
+    return theNoVoxelsX; }
+  size_t GetNoVoxelsY() const {
+    return theNoVoxelsY; }
+  size_t GetNoVoxelsZ() const {
+    return theNoVoxelsZ; }
   std::vector<float> GetVoxelLimitsX() const {
     return theVoxelLimitsX; }
   std::vector<float> GetVoxelLimitsY() const {
@@ -35,27 +37,39 @@ public:
   std::vector<float> GetVoxelLimitsZ() const {
     return theVoxelLimitsZ; }
   float GetVoxelHalfX() const {
-    return (theVoxelLimitsX[theNoVoxelX]-theVoxelLimitsX[0])/theNoVoxelX/2.; }
+    return (theVoxelLimitsX[theNoVoxelsX]-theVoxelLimitsX[0])/theNoVoxelsX/2.; }
   float GetVoxelHalfY() const {
-    return (theVoxelLimitsY[theNoVoxelY]-theVoxelLimitsY[0])/theNoVoxelY/2.; }
+    return (theVoxelLimitsY[theNoVoxelsY]-theVoxelLimitsY[0])/theNoVoxelsY/2.; }
   float GetVoxelHalfZ() const {
-    return (theVoxelLimitsZ[theNoVoxelZ]-theVoxelLimitsZ[0])/theNoVoxelZ/2.; }
+    return (theVoxelLimitsZ[theNoVoxelsZ]-theVoxelLimitsZ[0])/theNoVoxelsZ/2.; }
+  float GetMinX() const {
+    return (theVoxelLimitsX[0]); }
+  float GetMinY() const {
+    return (theVoxelLimitsY[0]); }
+  float GetMinZ() const {
+    return (theVoxelLimitsZ[0]); }
+  float GetMaxX() const {
+    return (theVoxelLimitsX[theNoVoxelsX]); }
+  float GetMaxY() const {
+    return (theVoxelLimitsY[theNoVoxelsY]); }
+  float GetMaxZ() const {
+    return (theVoxelLimitsZ[theNoVoxelsZ]); }
   G4ThreeVector GetTranslation() const {
-    return G4ThreeVector((theVoxelLimitsX[theNoVoxelX]+theVoxelLimitsX[0])/2,
-			 (theVoxelLimitsY[theNoVoxelY]+theVoxelLimitsY[0])/2,
-			 (theVoxelLimitsZ[theNoVoxelZ]+theVoxelLimitsZ[0])/2); }
+    return G4ThreeVector((theVoxelLimitsX[theNoVoxelsX]+theVoxelLimitsX[0])/2,
+			 (theVoxelLimitsY[theNoVoxelsY]+theVoxelLimitsY[0])/2,
+			 (theVoxelLimitsZ[theNoVoxelsZ]+theVoxelLimitsZ[0])/2); }
     
   G4RotationMatrix GetRotation() const {
     return theRotationMatrix; }
 
   void SetNumberOfEvents( float nev ) {
     theNoEvent = nev; }
-  void SetNoVoxelX( size_t nv ) {
-    theNoVoxelX = nv; }
-  void SetNoVoxelY( size_t nv ) {
-    theNoVoxelY = nv; }
-  void SetNoVoxelZ( size_t nv ) {
-    theNoVoxelZ = nv; }
+  void SetNoVoxelsX( size_t nv ) {
+    theNoVoxelsX = nv; }
+  void SetNoVoxelsY( size_t nv ) {
+    theNoVoxelsY = nv; }
+  void SetNoVoxelsZ( size_t nv ) {
+    theNoVoxelsZ = nv; }
 
   void SetVoxelLimitsX( std::vector<float> vl ) {
     theVoxelLimitsX = vl; }
@@ -69,7 +83,7 @@ public:
 
   void Print( FILE* fout );
 private:
-  size_t theNoVoxelX,theNoVoxelY,theNoVoxelZ;
+  size_t theNoVoxelsX,theNoVoxelsY,theNoVoxelsZ;
   float theNoEvent;  // it can be fractional, as obtained with the fraction of events that reach the phase space
   // Number of voxel in x, y and z dimensions.
   std::vector<float> theVoxelLimitsX, theVoxelLimitsY, theVoxelLimitsZ;

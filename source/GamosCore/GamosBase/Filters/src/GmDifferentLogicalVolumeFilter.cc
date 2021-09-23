@@ -36,3 +36,18 @@ G4bool GmDifferentLogicalVolumeFilter::AcceptTrack(const G4Track* aTrack)
   return TRUE;
 
 }
+
+
+//-------------------------------------------------------------------------
+G4bool GmDifferentLogicalVolumeFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmDifferentLogicalVolumeFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
+}
+
+
+

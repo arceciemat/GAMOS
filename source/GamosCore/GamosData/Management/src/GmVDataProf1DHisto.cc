@@ -24,8 +24,8 @@ GmVDataProf1DHisto::~GmVDataProf1DHisto()
 //----------------------------------------------------------------
 void GmVDataProf1DHisto::BookHisto( G4String hNamePrefix, G4int hNumber, G4int index, GmAnalysisMgr* anaMgr )
 {
-
-  G4String hName = hNamePrefix+":"+theName;
+  G4String sepa = GmParameterMgr::GetInstance()->GetStringValue("Histos:Separator",":");
+  G4String hName = hNamePrefix+sepa+theName;
 
   anaMgr->CreateHistoProfile1D(hName, theSubData[0]->GetHNBins(), theSubData[0]->GetHMin(), theSubData[0]->GetHMax(),
 			       hNumber);

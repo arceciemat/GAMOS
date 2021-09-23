@@ -3,13 +3,26 @@
 
 #include "G4RadioactiveDecay.hh"
 #include "G4GenericIon.hh"
-#include "globals.hh"
+#include "G4ParticleTable.hh"
+#include "G4LossTableManager.hh"
+#include "G4NuclearLevelData.hh"
+#include "G4PhysicsListHelper.hh"
+#include "G4UAtomicDeexcitation.hh"
+#include "G4NuclideTable.hh"
+
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 
 //----------------------------------------------------------------------
 GmPhysicsRadioactiveDecay::GmPhysicsRadioactiveDecay()
-  : theRadioactiveDecay(0)
-{}
+: theRadioactiveDecay(0)
+{
+  G4DeexPrecoParameters* deex = G4NuclearLevelData::GetInstance()->GetParameters();
+  deex->SetStoreICLevelData(true);
+  deex->SetMaxLifeTime(G4NuclideTable::GetInstance()->GetThresholdOfHalfLife()
+                       /std::log(2.));
+  deex->SetIsomerProduction(true);
+
+}
 
 //----------------------------------------------------------------------
 GmPhysicsRadioactiveDecay::~GmPhysicsRadioactiveDecay()
@@ -20,28 +33,20 @@ GmPhysicsRadioactiveDecay::~GmPhysicsRadioactiveDecay()
 //----------------------------------------------------------------------
 void GmPhysicsRadioactiveDecay::ConstructProcess()
 {
-  G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleTable::G4PTblDicIterator* theParticleIterator = theParticleTable->GetIterator();
-  theParticleIterator->reset();
-  if( !theRadioactiveDecay ) theRadioactiveDecay = new G4RadioactiveDecay();
+  G4EmParameters::Instance()->SetAugerCascade(true);
+  G4EmParameters::Instance()->SetDeexcitationIgnoreCut(true);
 
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    if(particle->GetParticleName() != "GenericIon" && 
-       ( particle->GetParticleType() != "nucleus" || particle->GetPDGLifeTime() < 0. )) continue;
-    // THIS HAS A BUG IN GEANT4   if( ! theRadioactiveDecay->IsApplicable( *particle ) ) continue;
-
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-
-    if( GmG4Utils::CheckProcessExists( pmanager, "RadioactiveDecay" )) break;
-    //  if not Found
-    //      G4cout << " GmPhysicsRadioactiveDecay::ConstructProcess  "<< particle->GetParticleName()  << G4endl;
-    //  G4GenericIon* ion = G4GenericIon::GenericIon();
-    //  G4ProcessManager* pmanager = ion->GetProcessManager();
-    pmanager->AddProcess(theRadioactiveDecay);
-    pmanager->SetProcessOrdering(theRadioactiveDecay, idxPostStep);
-    pmanager->SetProcessOrdering(theRadioactiveDecay, idxAtRest);
+  G4LossTableManager* man = G4LossTableManager::Instance();
+  G4VAtomDeexcitation* ad = man->AtomDeexcitation();
+  if( ad == nullptr ) {
+    ad = new G4UAtomicDeexcitation();
+    man->SetAtomDeexcitation(ad);
+    man->ResetParameters();
   }
+
+  G4PhysicsListHelper::GetPhysicsListHelper()->
+    RegisterProcess(new G4RadioactiveDecay(), G4GenericIon::GenericIon());
+
 }
 
 

@@ -11,7 +11,7 @@ GmHitsIOtextMgr::GmHitsIOtextMgr()
 { 
   theOutputType = "hits.text";
   Init();
-  OpenFileOut();
+  //  OpenFileOut();
 }
 
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
@@ -20,7 +20,7 @@ GmHitsIOtextMgr::GmHitsIOtextMgr()
 void GmHitsIOtextMgr::WriteHit(GmHit* hit)
 {
   G4String sdtype =  "/" + GmParameterMgr::GetInstance()->GetStringValue("GmHitsIOtextMgr:SDType","") + "/";
-  if( sdtype != "//" && sdtype != hit->GetSDType() ) return;
+  if( sdtype != "//" && sdtype != hit->GetSDType() )  return;
 
   if( bDebugOut ) hit->Print( G4cout, bDebugOut );
   hit->Print( *theFileOut, bDebugOut );

@@ -42,3 +42,10 @@ G4double GmDataInitialPosPerp::GetValueFromEvent( const G4Event* aEvent, G4int )
 {
   return aEvent->GetPrimaryVertex(0)->GetPosition().perp();
 }
+
+
+//----------------------------------------------------------------
+G4double GmDataInitialPosPerp::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  return aTrack->GetPosition().perp();
+}

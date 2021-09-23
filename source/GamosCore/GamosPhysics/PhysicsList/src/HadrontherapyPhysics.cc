@@ -153,10 +153,6 @@ void HadrontherapyPhysics::ConstructProcess()
   //
   AddStepMax();
 
-  //Parallel world sensitivity
-  G4ParallelWorldPhysics* pWorld = new G4ParallelWorldPhysics("DetectorROGeometry");
-  pWorld->ConstructProcess();
-
   return;
 }
 
@@ -219,9 +215,10 @@ void HadrontherapyPhysics::AddStepMax()
   // Step limitation seen as a process
   stepMaxProcess = new HadrontherapyStepMax();
 
-  theParticleIterator->reset();
-  while ((*theParticleIterator)()){
-    G4ParticleDefinition* particle = theParticleIterator->value();
+  auto particleIterator=GetParticleIterator();
+  particleIterator->reset();
+  while ((*particleIterator)()){
+    G4ParticleDefinition* particle = particleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
 
     if (stepMaxProcess->IsApplicable(*particle) && pmanager)
@@ -246,8 +243,6 @@ void HadrontherapyPhysics::SetCuts()
   SetCutValue(cutForElectron, "e-");
   SetCutValue(cutForPositron, "e+");
 
-  // Set cuts for detector
-  SetDetectorCut(defaultCutValue); 
   if (verboseLevel>0) DumpCutValuesTable();
 }
 
@@ -272,15 +267,4 @@ void HadrontherapyPhysics::SetCutForPositron(G4double cut)
   SetParticleCuts(cutForPositron, G4Positron::Positron());
 }
 
-void HadrontherapyPhysics::SetDetectorCut(G4double cut)
-{
-  G4String regionName = "DetectorLog";
-  G4Region* region = G4RegionStore::GetInstance()->GetRegion(regionName);
-
-  G4ProductionCuts* cuts = new G4ProductionCuts ;
-  cuts -> SetProductionCut(cut,G4ProductionCuts::GetIndex("gamma"));
-  cuts -> SetProductionCut(cut,G4ProductionCuts::GetIndex("e-"));
-  cuts -> SetProductionCut(cut,G4ProductionCuts::GetIndex("e+"));
-  region -> SetProductionCuts(cuts);
-}
 

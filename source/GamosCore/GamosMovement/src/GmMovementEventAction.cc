@@ -2,6 +2,7 @@
 #include "GmVMovement.hh"
 #include "GmMovementMgr.hh"
 #include "GmMovementMessenger.hh"
+#include "GmMovementVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmMovementUtils.hh"
 #include "GamosCore/GamosGenerator/include/GmGenerator.hh"
 
@@ -22,12 +23,18 @@ void GmMovementEventAction::BeginOfEventAction(const G4Event* anEvent)
   std::vector<GmVMovement*> movements = GmMovementMgr::GetInstance()->GetNewMovements(anEvent->GetEventID(),anEvent->GetPrimaryVertex(0)->GetT0() );
 
   std::vector<GmVMovement*>::const_iterator ite;
+#ifndef GAMOS_NO_VERBOSE
+  if( MoveVerb(debugVerb) ) G4cout << " GmMovementEventAction::BeginOfEventAction MOVE " << G4endl;
+#endif
   for( ite = movements.begin(); ite != movements.end(); ite++) {
     (*ite)->Move();
   }
 
+  //  G4cout << " GmMovementEventAction::BeginOfEventAction() nmovements " << movements.size() << G4endl; //GDEB
+  
+
   // Recalculate generator distribution (in case a GmGenerator GenerDist use volume position)
-  if( GmMovementUtils::bUsingGmGenerator ) {
+  if( GmMovementUtils::bUsingGmGenerator && movements.size() != 0 ) {
     theGmGenerator->ReInitialiseDistributions();
   }
 

@@ -10,8 +10,9 @@
 #include "G4GammaParticipants.hh"
 #include "G4QGSModel.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
+using namespace CLHEP;
 
-GmPhysicsGammaNuclear::GmPhysicsGammaNuclear(const G4String& name): G4VPhysicsConstructor(name)
+GmPhysicsGammaNuclear::GmPhysicsGammaNuclear(const G4String& name, G4int type): G4VPhysicsConstructor(name,type)
 { }
 
 GmPhysicsGammaNuclear::~GmPhysicsGammaNuclear()

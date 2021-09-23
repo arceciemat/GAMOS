@@ -1,7 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#define protected public
 #include "G4VPrimitiveScorer.hh"
 #include "GmPSSphericalDoseDeposit.hh"
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
@@ -78,30 +77,6 @@ G4bool GmPSSphericalDoseDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 } 
 
 //--------------------------------------------------------------------
-void GmPSSphericalDoseDeposit::EndOfEvent(G4HCofThisEvent*)
-{
-}
-
-//--------------------------------------------------------------------
-void GmPSSphericalDoseDeposit::DrawAll()
-{;}
-
-//--------------------------------------------------------------------
-void GmPSSphericalDoseDeposit::PrintAll()
-{
-  G4cout <<" GmPSSphericalDoseDeposit::PrintAllDefault() " << G4endl;
-  G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
-  G4cout << " PrimitiveScorer " << GetName() << G4endl;
-  G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-  std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
-  for(; itr != EvtMap->GetMap()->end(); itr++) {
-    G4cout << "  copy no.: " << itr->first
-	   << "  dose deposit: " << G4BestUnit(*(itr->second),"Dose")
-	   << G4endl;
-  }
-}
-
-//--------------------------------------------------------------------
 void GmPSSphericalDoseDeposit::SetParameters( const std::vector<G4String>& params)
 {
   if( params.size() != 3 
@@ -135,8 +110,4 @@ void GmPSSphericalDoseDeposit::SetParameters( const std::vector<G4String>& param
     theTotalVolume = 4./3.*M_PI*(pow(theMinRadius+theNBinsRadius*theStepRadius,3)-pow(theMinRadius,3));
   }
 }
- #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh" 
-G4int GmPSSphericalDoseDeposit::GetIndex(G4Step* aStep ) 
- { 
- return theClassifier->GetIndexFromStep( aStep ); 
-} 
+

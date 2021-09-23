@@ -8,6 +8,13 @@ public:
   G4FTFP_BERT() {}
 };
  
+#include "FTFP_BERT_ATL.hh"
+class G4FTFP_BERT_ATL : public  FTFP_BERT_ATL 
+{
+public:
+  G4FTFP_BERT_ATL() {}
+};
+
 #include "FTFP_BERT_HP.hh"
 class G4FTFP_BERT_HP : public  FTFP_BERT_HP 
 {
@@ -21,7 +28,7 @@ class G4FTFP_BERT_TRV : public  FTFP_BERT_TRV
 public:
   G4FTFP_BERT_TRV() {}
 };
- 
+
 #include "FTFP_INCLXX.hh"
 class G4FTFP_INCLXX : public  FTFP_INCLXX 
 {
@@ -35,28 +42,45 @@ class G4FTFP_INCLXX_HP : public  FTFP_INCLXX_HP
 public:
   G4FTFP_INCLXX_HP() {}
 };
- 
+
+#include "FTFQGSP_BERT.hh"
+class G4FTFQGSP_BERT : public  FTFQGSP_BERT 
+{
+public:
+  G4FTFQGSP_BERT() {}
+};
+
 #include "FTF_BIC.hh"
 class G4FTF_BIC : public  FTF_BIC 
 {
 public:
   G4FTF_BIC() {}
 };
- 
+
+#ifndef WIN32
 #include "G4GenericPhysicsList.hh"
 class G4G4GenericPhysicsList : public  G4GenericPhysicsList 
 {
 public:
   G4G4GenericPhysicsList() {}
 };
- 
+#endif
+
 #include "LBE.hh"
 class G4LBE : public  LBE 
 {
 public:
   G4LBE() {}
 };
- 
+
+#include "NuBeam.hh"
+class G4NuBeam : public  NuBeam 
+{
+public:
+  G4NuBeam() {}
+};
+
+
 #include "QBBC.hh"
 class G4QBBC : public  QBBC 
 {
@@ -127,25 +151,12 @@ public:
   G4Shielding() {}
 };
 
-#include "QGSP_BIC_NHP.hh"
-class G4QGSP_BIC_NHP : public  QGSP_BIC_NHP
-{
-public:
-  G4QGSP_BIC_NHP() {}
-};
-
-#include "QGSP_BIC_PHP.hh"
-class G4QGSP_BIC_PHP : public  QGSP_BIC_PHP
-{
-public:
-  G4QGSP_BIC_PHP() {}
-};
-
 #include "QGSP_BIC_AllHP.hh"
 class G4QGSP_BIC_AllHP : public  QGSP_BIC_AllHP
 {
 public:
   G4QGSP_BIC_AllHP() {}
 };
- 
+
+
 #endif

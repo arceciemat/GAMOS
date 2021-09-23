@@ -48,9 +48,9 @@ G4bool GmVDeadTimeDUList::FindDetUnit( GmHit* hit, G4double deadTime )
 #endif
       return true;
       } else {
-	G4double deadHitTime = ((*ite).second).time;
+	G4double deadHitTime2 = ((*ite).second).time;
 #ifndef GAMOS_NO_VERBOSE
-	if( SDVerb(debugVerb) ) G4cout << "GmVDeadTimeDUList::FindDetUnit du not dead " << du << " out of time " << deadHitTime << " <= " << hitTime <<  " || " << deadHitTime+deadTime << " > " << hitTime << " || eventID " << hit->GetEventID() << " = " << ((*ite).second).eventID << G4endl;
+	if( SDVerb(debugVerb) ) G4cout << "GmVDeadTimeDUList::FindDetUnit du not dead " << du << " out of time " << deadHitTime2 << " <= " << hitTime <<  " || " << deadHitTime2+deadTime << " > " << hitTime << " || eventID " << hit->GetEventID() << " = " << ((*ite).second).eventID << G4endl;
 #endif
     }
   }

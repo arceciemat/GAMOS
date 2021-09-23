@@ -44,3 +44,12 @@ G4double GmDataInitialMomPhi::GetValueFromEvent( const G4Event* aEvent, G4int )
 {
   return aEvent->GetPrimaryVertex(0)->GetPrimary(0)->GetMomentum().phi();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialMomPhi::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+ 
+  return ( GmGenUtils::GetMomentum( aTrack->GetDefinition()->GetPDGMass(), aTrack->GetKineticEnergy() )
+	   * aTrack->GetMomentumDirection() ).phi();
+}
+

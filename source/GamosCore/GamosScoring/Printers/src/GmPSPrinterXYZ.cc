@@ -74,22 +74,22 @@ void GmPSPrinterXYZ::WriteHeader()
   G4double nev = GmNumberOfEvent::GetNumberOfEvent();
   head.SetNumberOfEvents( nev );
 
-  thePhantomParam = GmRegularParamUtils::GetInstance()->GetPhantomParam( TRUE );
+  thePhantomParam = GmGeometryUtils::GetInstance()->GetPhantomParam( TRUE );
 
-  unsigned int nx = thePhantomParam->GetNoVoxelX();
-  unsigned int ny = thePhantomParam->GetNoVoxelY();
-  unsigned int nz = thePhantomParam->GetNoVoxelZ();
-  head.SetNoVoxelX( nx );
-  head.SetNoVoxelY( ny );
-  head.SetNoVoxelZ( nz );
+  unsigned int nx = thePhantomParam->GetNoVoxelsX();
+  unsigned int ny = thePhantomParam->GetNoVoxelsY();
+  unsigned int nz = thePhantomParam->GetNoVoxelsZ();
+  head.SetNoVoxelsX( nx );
+  head.SetNoVoxelsY( ny );
+  head.SetNoVoxelsZ( nz );
 
   //---- Get the positon of the phantom negative corner (-x,-y,-z)
-  G4ThreeVector thePhantomMinusCorner = (thePhantomParam->GetTranslation(0) + thePhantomParam->GetTranslation(thePhantomParam->GetNoVoxel()-1) )/ 2;
+  G4ThreeVector thePhantomMinusCorner = (thePhantomParam->GetTranslation(0) + thePhantomParam->GetTranslation(thePhantomParam->GetNoVoxels()-1) )/ 2;
   G4double voxelX = thePhantomParam->GetVoxelHalfX()*2;
   G4double voxelY = thePhantomParam->GetVoxelHalfY()*2;
   G4double voxelZ = thePhantomParam->GetVoxelHalfZ()*2;
 #ifndef GAMOS_NO_VERBOSE
-  if( ScoringVerb(infoVerb) ) G4cout << " GmPSPrinterXYZ::Write3ddoseHeader phantom minus corner (temp) " << thePhantomMinusCorner << " " << thePhantomParam->GetTranslation(0) << " " << thePhantomParam->GetTranslation(thePhantomParam->GetNoVoxel()-1) << G4endl;
+  if( ScoringVerb(infoVerb) ) G4cout << " GmPSPrinterXYZ::Write3ddoseHeader phantom minus corner (temp) " << thePhantomMinusCorner << " " << thePhantomParam->GetTranslation(0) << " " << thePhantomParam->GetTranslation(thePhantomParam->GetNoVoxels()-1) << G4endl;
 #endif
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << "GmPSPrinterXYZ::Write3ddoseHeader  voxelX " << thePhantomParam->GetVoxelHalfX() << " = " << voxelX <<  "  " << -voxelX*nx/2. << " " << G4ThreeVector( -nx*voxelX/2.,-ny*voxelY/2.,-nz*voxelZ/2.) << G4endl;
@@ -144,13 +144,13 @@ void GmPSPrinterXYZ::WriteHeader()
 void GmPSPrinterXYZ::WriteValues( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* )
 {
   //---- Get the positon of the phantom negative corner (-x,-y,-z)
-  G4ThreeVector thePhantomMinusCorner = (thePhantomParam->GetTranslation(0) + thePhantomParam->GetTranslation(thePhantomParam->GetNoVoxel()-1) )/ 2;
+  G4ThreeVector thePhantomMinusCorner = (thePhantomParam->GetTranslation(0) + thePhantomParam->GetTranslation(thePhantomParam->GetNoVoxels()-1) )/ 2;
   G4double voxelHalfX = thePhantomParam->GetVoxelHalfX();
   G4double voxelHalfY = thePhantomParam->GetVoxelHalfY();
   G4double voxelHalfZ = thePhantomParam->GetVoxelHalfZ();
-  unsigned int nx = thePhantomParam->GetNoVoxelX();
-  unsigned int ny = thePhantomParam->GetNoVoxelY();
-  unsigned int nz = thePhantomParam->GetNoVoxelZ();
+  unsigned int nx = thePhantomParam->GetNoVoxelsX();
+  unsigned int ny = thePhantomParam->GetNoVoxelsY();
+  unsigned int nz = thePhantomParam->GetNoVoxelsZ();
   unsigned int nxy = nx * ny;
   thePhantomMinusCorner -= G4ThreeVector(voxelHalfX*nx,voxelHalfY*ny,voxelHalfZ*nz);
 
@@ -163,7 +163,7 @@ void GmPSPrinterXYZ::WriteValues( G4THitsMap<G4double>* RunMap, GmVPrimitiveScor
     delete *ite;
   }
 
-  G4int nvoxels = thePhantomParam->GetNoVoxelX() * thePhantomParam->GetNoVoxelY() * thePhantomParam->GetNoVoxelZ();
+  G4int nvoxels = thePhantomParam->GetNoVoxelsX() * thePhantomParam->GetNoVoxelsY() * thePhantomParam->GetNoVoxelsZ();
   
   //----- Loop to all voxels and print dose
   G4double nev = GmNumberOfEvent::GetNumberOfEvent();

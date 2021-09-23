@@ -49,14 +49,6 @@ class GmG4PSNofStep : public GmVPrimitiveScorer
   public:
       virtual ~GmG4PSNofStep();
 
-  public: 
-      virtual void EndOfEvent(G4HCofThisEvent*);
-
-  public:
-      virtual void DrawAll();
-      virtual void PrintAll();
-  virtual G4int GetIndex(G4Step*);
-
   void SetParameters( const std::vector<G4String>& params);
 
   public: 

@@ -12,8 +12,7 @@
 GmDeprecatedCommandsMessenger::GmDeprecatedCommandsMessenger() 
 {
   G4String fileName = "deprecatedCommands.lis";
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  fileName = GmGenUtils::FileInPath( path, fileName );
+  fileName = GmGenUtils::FileInPath( fileName );
 
   GmFileIn fin = GmFileIn::GetInstance(fileName);
   std::vector<G4String> wl;

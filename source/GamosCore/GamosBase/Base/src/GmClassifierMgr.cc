@@ -6,7 +6,11 @@
 #include "G4MultiFunctionalDetector.hh"
 #include "G4SDManager.hh"
 
+#ifdef ROOT5
 #include "Reflex/PluginService.h"
+#else
+#include "GamosCore/GamosBase/Base/include/GmClassifierFactory.hh"
+#endif
 
 GmClassifierMgr* GmClassifierMgr::theInstance = 0;
 
@@ -34,7 +38,11 @@ GmClassifierMgr::~GmClassifierMgr()
 //----------------------------------------------------------------------
 GmVClassifier* GmClassifierMgr::CreateClassifier( std::vector<G4String> params, G4bool bExists )
 {
+#ifdef ROOT5
   GmVClassifier* classifier = Reflex::PluginService::Create<GmVClassifier*>(params[1],params[0]);
+#else
+	GmVClassifier* classifier = GmClassifierFactory::get()->create(params[1], params[0]);
+#endif
 #ifndef GAMOS_NO_VERBOSE
   if( BaseVerb(debugVerb) ) G4cout << " CreateClassifier NAME=" << params[0] << " CLASS=" << params[1] << " = " << classifier->GetName() << G4endl;
 #endif

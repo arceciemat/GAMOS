@@ -12,12 +12,7 @@ class GmIsotopeMgr;
 #include <fstream>
 #include "GmGeneratorFromFile.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
-
-struct GenerTextFileData{
-  G4int eventID;
-  G4String partName;
-  G4double posx, posy, posz, momx, momy, momz, time, weight;
-};
+#include "GmGenerTextFileData.hh"
 
 class GmGeneratorFromTextFile: public GmGeneratorFromFile
 {

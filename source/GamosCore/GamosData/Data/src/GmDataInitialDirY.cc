@@ -45,3 +45,10 @@ G4double GmDataInitialDirY::GetValueFromEvent( const G4Event* aEvent, G4int )
   G4ThreeVector mom = aEvent->GetPrimaryVertex(0)->GetPrimary(0)->GetMomentum().unit();
   return mom.y();
 }
+
+//----------------------------------------------------------------
+G4double GmDataInitialDirY::GetValueFromStackedTrack( const G4Track* aTrack, G4int )
+{
+  return aTrack->GetMomentumDirection().y();
+}
+

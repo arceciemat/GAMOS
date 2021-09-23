@@ -1,56 +1,48 @@
 #------------------------------------------------------------------------------
-# 
-# Module : GamosCore
-# Package: GamosMovement
+# Module : GamosMovement
+# Package: GamosCore_GamosMovement
 #
 #------------------------------------------------------------------------------
-# List external includes needed.
-
-# List external includes needed.
-include(GamosSetup)
-include(UseRoot)
-
 #
-# Define the GAMOS Module.
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 #
-include(Geant4MacroDefineModule)
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosMovement
+	 HEADERS
+		GmVMovement.hh
+		GmMovementNEvents.hh
+		GmMovementDisplacement.hh
+		GmMovementFromFile.hh
+		GmMovementRotation.hh
+		GmMovementEventAction.hh
+		GmMovementTime.hh
+		GmMovementMgr.hh
+		GmMovementVerbosity.hh
+		GmMovementMessenger.hh
+	 SOURCES
+		plugin.cc
+		GmVMovement.cc
+		GmMovementFromFile.cc
+		GmMovementVerbosity.cc
+		GmMovementMgr.cc
+		GmMovementDisplacement.cc
+		GmMovementRotation.cc
+		GmMovementMessenger.cc
+		GmMovementEventAction.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+	GamosCore_GamosUtils
+	GamosCore_GamosUserActionMgr
+	GamosCore_GamosGeometry
+	GamosCore_GamosGenerator
+		${SEAL_LIBRARIES} 
 
-   HEADERS
-       GmMovementRotation.hh
-       GmMovementMgr.hh
-       GmMovementNEvents.hh
-       GmMovementMessenger.hh
-       GmMovementFromFile.hh
-       GmMovementEventAction.hh
-       GmVMovement.hh
-       GmMovementVerbosity.hh
-       GmMovementTime.hh
-       GmMovementDisplacement.hh
-
-   SOURCES
-       plugin.cc
-       GmMovementVerbosity.cc
-       GmVMovement.cc
-       GmMovementRotation.cc
-       GmMovementFromFile.cc
-       GmMovementDisplacement.cc
-       GmMovementEventAction.cc
-       GmMovementMgr.cc
-       GmMovementMessenger.cc
- 
-   GRANULAR_DEPENDENCIES
-
-   GLOBAL_DEPENDENCIES
-    ${Geant4_LIBRARIES}
-    ${Root_LIBRARIES}
-  GamosCore_GamosUserActionMgr
-  GamosCore_GamosBase_Base
-  GamosCore_GamosUtils
-  GamosCore_GamosGenerator
-  GamosCore_GamosGeometry
-
-   LINK_LIBRARIES
+	LINK_LIBRARIES
 )
-
-# List any source specific properties here

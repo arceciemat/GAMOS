@@ -14,7 +14,7 @@ class G4VTouchable;
 // 
 ///////////////////////////////////////////////////////////////////////////////
 class GmRegularParamUtils;
-class GmReadPhantomSVMgr;
+class GmReadPhantomStMgr;
 
 class GmTouchablePhantomStructure : public GmVTouchableFilterVolume 
 {
@@ -30,12 +30,13 @@ public: // with description
   void show();
 
   virtual void SetParameters( std::vector<G4String>& params);
+  G4bool CheckIndex( G4int idx );
 
 protected:
   std::set<G4int> theIndices;
 
   GmRegularParamUtils* theRegularUtils;
-  GmReadPhantomSVMgr* thePVMgr;
+  GmReadPhantomStMgr* theStructMgr;
 
 };
 

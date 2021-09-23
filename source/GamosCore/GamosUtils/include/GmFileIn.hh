@@ -15,7 +15,7 @@ class GmFileIn
 
  public:
   // Get the only instance opening the file
-  static GmFileIn& GetInstance( const G4String& name ); 
+  static GmFileIn& GetInstance( const G4String& name, G4bool bMustExist = false ); 
 
   // Get the only instance when file should be already opened
   static GmFileIn& GetInstanceOpened( const G4String& name ); 
@@ -63,9 +63,12 @@ class GmFileIn
   {
     return theifstream;
   }
+  G4String GetCurrentLine() const {
+    return theStrTemp;
+  }
 
  private:
-  void OpenNewFile( const char* filename );
+  void OpenNewFile( const char* filename, G4bool bMustExist = false ); 
 
  private:
   std::vector< std::ifstream* > theFiles;
@@ -85,6 +88,7 @@ class GmFileIn
   char theSeparator;
   G4bool bSuppressQuotes;
   G4bool bCheckQuotes;
+  G4String theStrTemp;
 };
 
 #endif 

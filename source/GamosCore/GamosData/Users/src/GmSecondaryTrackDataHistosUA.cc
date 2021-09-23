@@ -74,7 +74,7 @@ void GmSecondaryTrackDataHistosUA::UserSteppingAction(const G4Step* aStep )
 	  break;
 	}
       }
-    }
+    } 
     if( !bSecoAccepted ) continue;
     if (theClassifier ) {
       if( bClassifierOnSecondary ) {
@@ -87,7 +87,17 @@ void GmSecondaryTrackDataHistosUA::UserSteppingAction(const G4Step* aStep )
     }
     if( theHistos.find(index) == theHistos.end() ) BookHistos(index, theClassifier);
     for( ite = theData.begin(); ite != theData.end(); ite++ ) {
-      (*ite)->FillHisto( aTrack, secoTrack, index);
+      if( (*ite)->IsAccumulating() ){
+	// fill histos for all indices (get index from theDataAccumulated)
+	std::map<G4int, G4double> dataAccul = (*ite)->GetDataAccumulated();
+	std::map<G4int, G4double>::const_iterator iteacul;
+	for(iteacul = dataAccul.begin(); iteacul != dataAccul.end(); iteacul++) {
+	  (*ite)->FillHisto( aTrack, secoTrack, (*iteacul).first );
+	}
+      } else {
+	
+	(*ite)->FillHisto( aTrack, secoTrack, index);
+      }
     }
   }
 }

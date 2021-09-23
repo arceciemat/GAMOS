@@ -23,15 +23,9 @@ GmIsotopeMgr* GmIsotopeMgr::GetInstance()
 }
 
 //----------------------------------------------------------------------
-void GmIsotopeMgr::ReadIsotopes( const G4String& filename )
+void GmIsotopeMgr::ReadIsotopes( G4String filename )
 {
-  char* pathc = getenv( "GAMOS_SEARCH_PATH" );
-  if( !pathc ) G4Exception("GmIsotopeMgr::ReadIsotopes",
-			   "Wrong argument",
-			   FatalErrorInArgument,
-			   "No GAMOS_SEARCH_PATH variable defined, please define it as in config/confgamos.sh or config/confgamos.csh");
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  GmFileIn fin = GmFileIn::GetInstance( GmGenUtils::FileInPath( path, filename ));
+  GmFileIn fin = GmFileIn::GetInstance( GmGenUtils::FileInPath( filename ));
   ReadIsotopes( fin );
 }
 

@@ -135,11 +135,11 @@ void GmPDSCreateAngleTablesUA::BookHistos(G4String energyName, G4String mateName
   theHistos.insert(energyName+mateName);
 
 #ifndef GAMOS_NO_VERBOSE
-      if( ScoringVerb(-debugVerb) ) G4cout << " GmPDSCreateAngleTablesUA::BookHistos " << energyName << " " << mateName << G4endl;
+      if( ScoringVerb(debugVerb) ) G4cout << " GmPDSCreateAngleTablesUA::BookHistos " << energyName << " " << mateName << G4endl;
 #endif
   std::string hnam,hnam0,hnam1;
   std::string procName;
-  for( G4int nn = 0; nn < theProclis->entries(); nn++ ){
+  for( size_t nn = 0; nn < theProclis->entries(); nn++ ){
     procName = (*theProclis)[nn]->GetProcessName();
     theProcesses[procName] = nn;
     if( procName == "Transportation" || procName == "Decay" ) continue;    
@@ -150,7 +150,7 @@ void GmPDSCreateAngleTablesUA::BookHistos(G4String energyName, G4String mateName
     
     hnam1 = hnam0 + std::string(energyName) + std::string(" : ");
     hnam = hnam1 + std::string("cos Deviation Angle");
-    theAnaMgr->CreateHisto1D(hnam,200,-1.01,1.01,5000000+nn*100000+theCurrentEnergyID*1000+theCurrentMateID*10+1);
+    theAnaMgr->CreateHisto1D(hnam,200,-1.0,1.0,5000000+nn*100000+theCurrentEnergyID*1000+theCurrentMateID*10+1);
     hnam = hnam1 + std::string("log10 Interaction Distance (cm)");
     theAnaMgr->CreateHisto1D(hnam,220,-5,6.,5000000+nn*100000+theCurrentEnergyID*1000+theCurrentMateID*10+2);	
   }
@@ -206,7 +206,17 @@ void GmPDSCreateAngleTablesUA::UserSteppingAction(const G4Step* aStep)
 #ifndef GAMOS_NO_VERBOSE
       //  if( procName != "LElastic" &&  procName != "hElastic" && procName != "inelastic" && procName != "NeutronInelastic" ) if( ScoringVerb(debugVerb) ) G4cout << " neutron from process " << procName << G4endl;
 #endif
-      G4double cosAngle = (aStep->GetPreStepPoint()->GetMomentumDirection() * seco->GetMomentumDirection() );
+      //-      G4double cosAngle = (aStep->GetPreStepPoint()->GetMomentumDirection() * seco->GetMomentumDirection() );
+      // for charged particles, msc is applied at AlongStepDoIt changing the direction and secondary emission at process PostStepDoIt, using the direction at post step
+      //t and for others? 
+      //t protonInelastic stop the particle and postStep direction does not change, and eBrems??
+      G4double cosAngle;
+      if( seco != aTracknc ) {
+	cosAngle = (aStep->GetPostStepPoint()->GetMomentumDirection() * seco->GetMomentumDirection() );
+      } else {
+	cosAngle = (aStep->GetPreStepPoint()->GetMomentumDirection() * seco->GetMomentumDirection() );
+      }
+
       G4double ener = aStep->GetPreStepPoint()->GetKineticEnergy();
       G4double dist = aStep->GetStepLength()/CLHEP::cm;
 #ifndef GAMOS_NO_VERBOSE

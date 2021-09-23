@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-// File: GmGeneratorMessenger.h
-// Date: 27/03/2002 P.Arce
+// File: GmGeneratorMessenger.hh
+//
 // Description: Adds commands for listing, enabling and disabling user actions
 // Modification: 
 ///////////////////////////////////////////////////////////////////////////////
@@ -30,6 +30,10 @@ private:
   GmUIcmdWithAString* AddSingleParticleCmd;
   GmUIcmdWithAString* AddIsotopeCmd;
   GmUIcmdWithAString* AddDoubleBackToBackParticleCmd;
+  GmUIcmdWithAString* AddRTPlanCmd;
+  GmUIcmdWithAString* AddRTIonPlanScanSpotCmd;
+  GmUIcmdWithAString* AddFromTextFileCmd;
+
   GmUIcmdWithAString* DistTimeCmd;
   GmUIcmdWithAString* DistEnergyCmd;
   GmUIcmdWithAString* DistPositionCmd;

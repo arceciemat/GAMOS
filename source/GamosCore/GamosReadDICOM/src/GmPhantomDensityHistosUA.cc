@@ -56,9 +56,9 @@ void GmPhantomDensityHistosUA::BookHistos()
   G4String hnam;
   G4String hnamt;
   G4int nx, ny, nz;
-  nx = theRegularParam->GetNoVoxelX();
-  ny = theRegularParam->GetNoVoxelY();
-  nz = theRegularParam->GetNoVoxelZ();
+  nx = theRegularParam->GetNoVoxelsX();
+  ny = theRegularParam->GetNoVoxelsY();
+  nz = theRegularParam->GetNoVoxelsZ();
 
   //----- Histograms for energy deposited
   for( G4int ii = 0; ii < nz; ii++ ){        
@@ -74,9 +74,9 @@ void GmPhantomDensityHistosUA::FillHistos()
 {
 
   G4int nx, ny, nz;
-  nx = theRegularParam->GetNoVoxelX();
-  ny = theRegularParam->GetNoVoxelY();
-  nz = theRegularParam->GetNoVoxelZ();
+  nx = theRegularParam->GetNoVoxelsX();
+  ny = theRegularParam->GetNoVoxelsY();
+  nz = theRegularParam->GetNoVoxelsZ();
 
   for( G4int iz = 0; iz < nz; iz++ ){        
     for( G4int iy = 0; iy < ny; iy++ ){        

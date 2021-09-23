@@ -7,13 +7,11 @@
 #include "G4NeutrinoE.hh"
 #include "G4AntiNeutrinoE.hh"
 
-GmDummyPhysics::GmDummyPhysics(): G4VModularPhysicsList()
+GmDummyPhysics::GmDummyPhysics(): G4VUserPhysicsList()
 {
   // The threshold of production of secondaries is fixed to 10. mm
   // for all the particles, in all the experimental set-up
-  defaultCutValue = 1. * CLHEP::m;
-
-  ConstructParticles();
+  defaultCutValue = 1. * CLHEP::km;
 
 }
 
@@ -21,7 +19,7 @@ GmDummyPhysics::~GmDummyPhysics()
 { 
 }
 
-void GmDummyPhysics::ConstructParticles()
+void GmDummyPhysics::ConstructParticle()
 {
   G4BosonConstructor bosonC;
   bosonC.ConstructParticle();

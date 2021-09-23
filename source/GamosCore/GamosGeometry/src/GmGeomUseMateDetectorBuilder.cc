@@ -22,8 +22,7 @@ const G4tgrVolume* GmGeomUseMateDetectorBuilder::ReadDetector()
   // Get the file to include (containing description of materials)
   //------------------------------------------------ 
   G4String filename = GmParameterMgr::GetInstance()->GetStringValue("GmGeometryUseMaterials:FileName", "");
-  G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
-  filename = GmGenUtils::FileInPath( path, filename );
+  filename = GmGenUtils::FileInPath( filename );
   G4tgbVolumeMgr* volmgr = G4tgbVolumeMgr::GetInstance();
   volmgr->AddTextFile(filename);
 

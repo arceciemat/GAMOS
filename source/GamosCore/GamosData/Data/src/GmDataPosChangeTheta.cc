@@ -29,3 +29,4 @@ G4double GmDataPosChangeTheta::GetValueFromTrack( const G4Track* aTrack, G4int )
 {
   return (aTrack->GetPosition()-aTrack->GetVertexPosition()).theta()/CLHEP::deg;
 }
+

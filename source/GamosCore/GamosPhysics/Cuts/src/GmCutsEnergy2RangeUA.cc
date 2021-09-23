@@ -13,7 +13,6 @@
 #include "G4Positron.hh"
 #include "G4ProcessManager.hh"
 
-#define private public
 #include "G4RToEConvForGamma.hh"
 #include "G4RToEConvForElectron.hh"
 #include "G4RToEConvForPositron.hh"

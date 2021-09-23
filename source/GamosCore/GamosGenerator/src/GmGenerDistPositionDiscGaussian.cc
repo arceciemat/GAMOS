@@ -10,19 +10,26 @@
 #include "geomdefs.hh"
 
 //---------------------------------------------------------------------
+GmGenerDistPositionDiscGaussian::GmGenerDistPositionDiscGaussian()
+{
+  theCentre = G4ThreeVector(0., 0., 0.);
+  theRotation = G4RotationMatrix();
+  theSigmaM = -1.e-9;
+  theName = "GmGenerDistPositionDiscGaussian"; 
+}
+//---------------------------------------------------------------------
 G4ThreeVector GmGenerDistPositionDiscGaussian::GeneratePosition( const GmParticleSource* )
 {
   G4double val = sqrt(theSigmaM*log(1-CLHEP::RandFlat::shoot()) );
   G4double phi = 360.*CLHEP::deg*CLHEP::RandFlat::shoot();
-
   G4ThreeVector pos( val*cos(phi), val*sin(phi), 0.);
   //--- Place it and rotate it
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDiscGaussian::Generate pos before rotation " << pos << G4endl;
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDiscGaussian::Generate pos before rotation " << pos << " rotation " << theRotation << G4endl;
 #endif
   pos = theRotation * pos;
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDiscGaussian::Generate pos before traslation " << pos << G4endl;
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDiscGaussian::Generate pos before traslation " << pos <<" + " << theCentre << G4endl;
 #endif
   pos += theCentre;
 
@@ -54,28 +61,7 @@ void GmGenerDistPositionDiscGaussian::SetParams( const std::vector<G4String>& pa
   if( params.size() >= 7 ) {
     //normalize direction cosines
     G4ThreeVector dir(GmGenUtils::GetValue( params[4] ), GmGenUtils::GetValue( params[5] ), GmGenUtils::GetValue( params[6] ) );
-    if( fabs(dir.mag()-1.) > G4GeometryTolerance::GetInstance()->GetSurfaceTolerance() ) {
-      G4Exception("GmGenerDistPositionDiscGaussian::SetParams",
-		  "Warning",
-		  JustWarning,
-		  G4String("direction cosines are normalized to one, they were " + GmGenUtils::ftoa(dir.mag())).c_str());
-      dir /= dir.mag();
-    } 
-   G4double angx = -asin(dir.y());
-    // there are always two solutions angx, angy and PI-angx, PI+angy, choose first
-    G4double angy;
-    if( dir.y() == 1. ) {
-      angy = 0.;
-    } else if( dir.y() == 0. ) {
-      angy = 0.;
-    } else {
-      angy = asin( dir.x()/sqrt(1-dir.y()*dir.y()) );
-    }
-
-    // choose between  angy and PI-angy
-    if( dir.z() * cos(angx)*cos(angy) < 0 ) angy = M_PI - angy;
-    theRotation.rotateX( angx );
-    theRotation.rotateY( angy );
+    SetRotation( dir );
   }
 
 }

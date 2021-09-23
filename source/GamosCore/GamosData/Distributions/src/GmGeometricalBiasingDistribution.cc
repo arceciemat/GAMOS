@@ -12,8 +12,9 @@
 
 //---------------------------------------------------------------------
 GmGeometricalBiasingDistribution::GmGeometricalBiasingDistribution(G4String name)
-  : GmVStringDistribution(name)
 {
+  theName = name;
+  BuildData();
 }
 
 //---------------------------------------------------------------------
@@ -79,8 +80,10 @@ G4double GmGeometricalBiasingDistribution::GetValueFromStep(const G4Step* aStep)
 #ifndef GAMOS_NO_VERBOSE
     if( DistVerb(debugVerb)) {
       G4cout << "GmDistributionRatio::GetValueFromStep " << indexVal
-	     << " valuePost " << valuePost
+	     << " indexPre " << indexPre 
+	     << " indexPost " << indexPost
 	     << " valuePre " << valuePre 
+	     << " valuePost " << valuePost
 	     << G4endl;
     }
 #endif

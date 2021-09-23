@@ -5,7 +5,11 @@
 #include "G4MultiFunctionalDetector.hh"
 #include "G4SDManager.hh"
 
+#ifdef ROOT5
 #include "Reflex/PluginService.h"
+#else
+#include "GmPSPrinterFactory.hh"
+#endif
 
 GmPSPrinterMgr* GmPSPrinterMgr::theInstance = 0;
 
@@ -32,8 +36,12 @@ GmPSPrinterMgr::~GmPSPrinterMgr()
 //----------------------------------------------------------------------
 GmVPSPrinter* GmPSPrinterMgr::CreatePSPrinter( std::vector<G4String> params, G4bool bExists )
 {
+#ifdef ROOT5
   GmVPSPrinter* PSPrinter = Reflex::PluginService::Create<GmVPSPrinter*>(params[1],params[0]);
-
+#else
+  GmVPSPrinter* PSPrinter = GmPSPrinterFactory::get()->create(params[1],params[0]);
+#endif
+  
   if( PSPrinter != 0 ) {
     params.erase(params.begin()); 
     params.erase(params.begin());  

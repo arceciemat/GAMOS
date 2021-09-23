@@ -13,10 +13,6 @@ public:
   virtual ~GmVRecHitBuilderFromHits(){};
 
   virtual std::vector<GmRecHit*> ReconstructHits(const std::vector<GmHit*>*) = 0;
-  virtual void CleanRecHits();
-
-  virtual void DeleteHit( GmRecHit* rhit );
-
 };
 
 #endif

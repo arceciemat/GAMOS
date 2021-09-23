@@ -10,7 +10,6 @@ GmDataAccumulatedLength::GmDataAccumulatedLength()
   theHMax = 10.;
 
   theExcludedTypes.clear(); // delete DTRun
-  theExcludedTypes.insert(DTSeco);
 }
 
 //----------------------------------------------------------------
@@ -21,11 +20,18 @@ GmDataAccumulatedLength::~GmDataAccumulatedLength()
 //----------------------------------------------------------------
 void GmDataAccumulatedLength::Accumulate( const G4Step* aStep, G4int index )
 {
- theDataAccumulated[index] += aStep->GetStepLength();
+  //  G4cout << "  GmDataAccumulatedLength::Accumulate( " << G4endl; //GDEB
+  theDataAccumulated[index] += aStep->GetStepLength();
 }
 
 //----------------------------------------------------------------
 G4double GmDataAccumulatedLength::GetValueFromStep( const G4Step* aStep, G4int )
 {
   return aStep->GetStepLength();
+}
+
+//----------------------------------------------------------------
+G4double GmDataAccumulatedLength::GetValueFromSecoTrack( const G4Track* aTrack1 , const G4Track* , G4int )
+{ 
+  return GetValueFromTrack( aTrack1 );
 }

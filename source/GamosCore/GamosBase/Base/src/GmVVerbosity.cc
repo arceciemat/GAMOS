@@ -1,6 +1,9 @@
 #include "GmVVerbosity.hh"
+#ifdef ROOT5
 #include "Reflex/PluginService.h"
-
+#else
+#include "GmVerbosityFactory.hh"
+#endif
 /** Constructor   
  */
 std::map<G4String,GmVVerbosity*>  GmVVerbosity::theManagers;
@@ -36,7 +39,11 @@ void GmVVerbosity::SetVerbosityLevel( const G4String& verbName, const G4int verb
 
   GmVVerbosity* verbMgr = GmVVerbosity::FindManager( verbName, bMustExist );
   if( !verbMgr ) {
+#ifdef ROOT5
     verbMgr = Reflex::PluginService::Create<GmVVerbosity*>(verbName);
+#else
+    verbMgr = GmVerbosityFactory::get()->create(verbName);
+#endif
     GmVVerbosity::AddManager( verbName, verbMgr );
   }
   if( verbMgr == 0 ) {
@@ -49,4 +56,3 @@ void GmVVerbosity::SetVerbosityLevel( const G4String& verbName, const G4int verb
   verbMgr->SetFilterLevel( verbLevel );
   
 }
-

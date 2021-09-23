@@ -6,7 +6,7 @@
 #include <fstream>
 #include "globals.hh"
 class GmFileIn;
-#include "GmSqdoseHeader.hh"
+class GmSqdoseHeader;
 
 class Gm3ddoseHeader 
 {
@@ -22,42 +22,42 @@ public:
   
   // Get and Set methods
   float GetNumberOfEvents() const {
-    return fNoEvent; }
+    return theNoEvent; }
   
-  size_t GetNoVoxelX() const {
-    return fNoVoxelX; }
-  size_t GetNoVoxelY() const {
-    return fNoVoxelY; }
-  size_t GetNoVoxelZ() const {
-    return fNoVoxelZ; }
+  size_t GetNoVoxelsX() const {
+    return theNoVoxelsX; }
+  size_t GetNoVoxelsY() const {
+    return theNoVoxelsY; }
+  size_t GetNoVoxelsZ() const {
+    return theNoVoxelsZ; }
   std::vector<float> GetVoxelLimitsX() const {
-    return fVoxelLimitsX; }
+    return theVoxelLimitsX; }
   std::vector<float> GetVoxelLimitsY() const {
-    return fVoxelLimitsY; }
+    return theVoxelLimitsY; }
   std::vector<float> GetVoxelLimitsZ() const {
-    return fVoxelLimitsZ; }
+    return theVoxelLimitsZ; }
 
   void SetNumberOfEvents(float nev ) {
-    fNoEvent = nev; }
-  void SetNoVoxelX( size_t nv ) {
-    fNoVoxelX = nv; }
-  void SetNoVoxelY( size_t nv ) {
-    fNoVoxelY = nv; }
-  void SetNoVoxelZ( size_t nv ) {
-    fNoVoxelZ = nv; }
+    theNoEvent = nev; }
+  void SetNoVoxelsX( size_t nv ) {
+    theNoVoxelsX = nv; }
+  void SetNoVoxelsY( size_t nv ) {
+    theNoVoxelsY = nv; }
+  void SetNoVoxelsZ( size_t nv ) {
+    theNoVoxelsZ = nv; }
 
   void SetVoxelLimitsX( std::vector<float> vl ) {
-    fVoxelLimitsX = vl; }
+    theVoxelLimitsX = vl; }
   void SetVoxelLimitsY( std::vector<float> vl ) {
-    fVoxelLimitsY = vl; }
+    theVoxelLimitsY = vl; }
   void SetVoxelLimitsZ( std::vector<float> vl ) {
-    fVoxelLimitsZ = vl; }
+    theVoxelLimitsZ = vl; }
 
 private:
-  float fNoEvent;
-  size_t fNoVoxelX,fNoVoxelY,fNoVoxelZ;
+  float theNoEvent;
+  size_t theNoVoxelsX,theNoVoxelsY,theNoVoxelsZ;
   // Number of voxel in x, y and z dimensions.
-  std::vector<float> fVoxelLimitsX, fVoxelLimitsY, fVoxelLimitsZ;
+  std::vector<float> theVoxelLimitsX, theVoxelLimitsY, theVoxelLimitsZ;
   // List of voxel limits
 };
 

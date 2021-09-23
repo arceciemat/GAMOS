@@ -27,6 +27,8 @@ GmStepMgr::GmStepMgr()
   //  GmUserActionMgr::GetInstance()->RegisterEventAction( ffUA ); 
   //  GmUserActionMgr::GetInstance()->RegisterSteppingAction( ffUA );
   GmUserActionMgr::GetInstance()->PutSteppingActionFirst( ffUA ); 
+
+  theNTracksSavedInEvent = 0;
 }
 
 //------------------------------------------------------------------------
@@ -51,7 +53,7 @@ void GmStepMgr::SaveStep( const G4Step* aStep )
   G4Track* newTrack = SaveTrack( aStep->GetTrack() );
 
   G4Step* newStep = new G4Step();
-  G4cout << " NEW STEP " << newStep << G4endl;
+  //  G4cout << " NEW STEP " << newStep << G4endl; //GDEB
 
   G4StepPoint* preSP = new G4StepPoint( *(aStep->GetPreStepPoint()) );
   theNewStepPoints.push_back( preSP );
@@ -102,8 +104,39 @@ void GmStepMgr::SaveStep( const G4Step* aStep )
 //-----------------------------------------------------------------------
 G4Track* GmStepMgr::SaveTrack( const G4Track* aTrack )
 {
-  G4Track* newTrack = new G4Track( *aTrack );
-  
+	
+  G4Track* newTrack = 0;
+ if( G4int(theTracksSaved.size()) <= theNTracksSavedInEvent ) { 
+    newTrack = new G4Track( *aTrack );
+    theTracksSaved.push_back(newTrack);
+    //    G4cout << " ADDING theTracksSaved " << theTracksSaved.size() << G4endl;//GDEB
+    G4TouchableHistory* newTouchable = new G4TouchableHistory();
+    theNewTouchables.push_back( newTouchable );
+    newTrack->SetTouchableHandle( newTouchable );
+    G4TouchableHistory* newNextTouchable = new G4TouchableHistory();
+    theNewTouchables.push_back( newNextTouchable );
+    newTrack->SetNextTouchableHandle( newNextTouchable );
+    G4TouchableHistory* newOriginTouchable = new G4TouchableHistory();
+    theNewTouchables.push_back( newOriginTouchable );
+    newTrack->SetOriginTouchableHandle( newOriginTouchable ); 
+  } else {
+    newTrack = theTracksSaved[theNTracksSavedInEvent];
+    G4DynamicParticle* dp = const_cast<G4DynamicParticle*>(newTrack->GetDynamicParticle());
+    delete dp;
+#ifndef WIN32
+    *newTrack = *aTrack;
+#else
+    G4Exception("mStepMgr::SaveTrack",
+		"",
+		FatalException,
+		"GmStepMgr does not work OK for Windows, please contact GAMOS users ");
+    //  const G4Track* aTrackNC = const_cast<const G4Track*>(aTrack);
+    //	*newTrack = *aTrack;
+    //correct this
+#endif
+  }
+  theNTracksSavedInEvent++;
+ 
   newTrack->SetTrackID(aTrack->GetTrackID());
   newTrack->SetParentID(aTrack->GetParentID());
   newTrack->fCurrentStepNumber = aTrack->GetCurrentStepNumber();
@@ -112,22 +145,17 @@ G4Track* GmStepMgr::SaveTrack( const G4Track* aTrack )
   newTrack->SetWeight( aTrack->GetWeight() );
   newTrack->SetStepLength( aTrack->GetStepLength() );
 
-  G4TouchableHistory* newTouchable = new G4TouchableHistory();
-  newTouchable->UpdateYourself( aTrack->GetTouchable()->GetVolume(), aTrack->GetTouchable()->GetHistory() );
-  newTrack->SetTouchableHandle( newTouchable );
-  G4TouchableHistory* newNextTouchable = new G4TouchableHistory();
-  newNextTouchable->UpdateYourself( aTrack->GetNextTouchable()->GetVolume(), aTrack->GetNextTouchable()->GetHistory() );
-  newTrack->SetNextTouchableHandle( newNextTouchable );
-  theNewTouchables.push_back( newNextTouchable );
-  if( aTrack->GetOriginTouchable() ) {
-    G4TouchableHistory* newOriginTouchable = new G4TouchableHistory();
-    newOriginTouchable->UpdateYourself( aTrack->GetOriginTouchable()->GetVolume(), aTrack->GetOriginTouchable()->GetHistory() );
-    newTrack->SetOriginTouchableHandle( newOriginTouchable );     
-    theNewTouchables.push_back( newOriginTouchable );
+  G4VTouchable* touch = const_cast<G4VTouchable*>(aTrack->GetTouchable());
+  touch->UpdateYourself( aTrack->GetTouchable()->GetVolume(), aTrack->GetTouchable()->GetHistory() );
+  touch = const_cast<G4VTouchable*>(aTrack->GetNextTouchable());
+  touch->UpdateYourself( aTrack->GetNextTouchable()->GetVolume(), aTrack->GetNextTouchable()->GetHistory() );
+  touch = const_cast<G4VTouchable*>(aTrack->GetOriginTouchable());
+  if( touch ) {
+    touch->UpdateYourself( aTrack->GetOriginTouchable()->GetVolume(), aTrack->GetOriginTouchable()->GetHistory() );
   }
 
   theNewTracks[aTrack->GetTrackID()] = newTrack;
-
+ 
   return newTrack;
  }
 
@@ -139,16 +167,18 @@ std::vector<G4Step*> GmStepMgr::GetSteps( GmFutureFilter* filter, const G4Step* 
 #ifndef GAMOS_NO_VERBOSE
   if(  UAVerb(debugVerb)) G4cout << " GmStepMgr::GetSteps " << filter->GetName() << G4endl;
 #endif
-  if( !filter->IsFilterWithChildren() ) { // look only to current track
+  if( !filter->IsFilterWithChildren() ) { // look only to steps of current track
     mmis::const_iterator ites;
     for( ites = theNewSteps.begin(); ites != theNewSteps.end(); ites++ ){
       if( currentStep->GetTrack()->GetTrackID() == (*ites).first 
-	  && filter->AcceptPastStep( (*ites).second ) ) acceptedSteps.push_back( (*ites).second );
+	  && filter->AcceptPastStep( (*ites).second ) ) {
+	acceptedSteps.push_back( (*ites).second );
 #ifndef GAMOS_NO_VERBOSE
-      if(  UAVerb(debugVerb)) G4cout << " GmStepMgr::GetSteps Filter without children currentStep TrackID " << currentStep->GetTrack()->GetTrackID() << " =? step TrackID " << (*ites).first << " NacceptedSetps " << acceptedSteps.size() << G4endl;
+      if(  UAVerb(debugVerb)) G4cout << " GmStepMgr::GetSteps Filter without children ACCEPT STEP currentStep TrackID " << currentStep->GetTrack()->GetTrackID() << " =? step TrackID " << (*ites).first << " NacceptedSetps " << acceptedSteps.size() << G4endl;
 #endif
-
+      }
     }
+
   } else { // futureFilter is on children, so look to all ancestors too
     // build list of step ancestors of current step
     std::map<G4int,G4Track*>::const_iterator itet;
@@ -177,11 +207,24 @@ std::vector<G4Step*> GmStepMgr::GetSteps( GmFutureFilter* filter, const G4Step* 
 		  "Please contact GAMOS authors");
     }
 
+    // Look to steps of current track
     // Now look for parent steps
+    mmis::const_iterator ites;
+    for( ites = theNewSteps.begin(); ites != theNewSteps.end(); ites++ ){
+      if( currentStep->GetTrack()->GetTrackID() == (*ites).first 
+	&& filter->AcceptPastStep( (*ites).second ) ) {
+        acceptedSteps.push_back( (*ites).second );
+#ifndef GAMOS_NO_VERBOSE
+        if(  UAVerb(debugVerb)) G4cout << " GmStepMgr::GetSteps Filter with children ACCEPT STEP currentStep TrackID " << currentStep->GetTrack()->GetTrackID() << " =? step TrackID " << (*ites).first << " NacceptedSteps " << acceptedSteps.size() << G4endl;
+#endif
+      }
+    }
+
     G4Step* ancestorStep = const_cast<G4Step*>(currentStep);
     ancestorSteps.insert( ancestorStep );
-    for(;;) {
 
+    for(;;) { // go up in hierarchy of tracks
+      if( ancestorStep->GetTrack()->GetParentID() == 0 ) break; 
       //--- Loop to steps of parent track, the one closer in position
       std::pair<mmis::const_iterator,mmis::const_iterator> pite = theNewSteps.equal_range(ancestorStep->GetTrack()->GetParentID());
       mmis::const_iterator ite;
@@ -192,32 +235,44 @@ std::vector<G4Step*> GmStepMgr::GetSteps( GmFutureFilter* filter, const G4Step* 
 	//	G4cout << " DISTNEW " << distNew << " " << dist << " POS THIS STEP " << (*ite).second->GetPostStepPoint()->GetPosition() << " POS TRACK VERTEX " << trackVtxPos << G4endl; 
 	if( distNew < dist ) {
 	  dist = distNew;
-	  ancestorStep = (*ite).second;	 
+	  ancestorStep = (*ite).second;	 // now ancestorStep points to an step of parent
 	}
       }
+
       if( dist == DBL_MAX ) {
+	mmis::const_iterator ite1; 
+	G4cerr <<  "N STEPS " << theNewSteps.size() << " " << ancestorStep->GetTrack()->GetParentID() << " <- " <<      ancestorStep->GetTrack()->GetTrackID() << G4endl; 
+	for( ite1 = theNewSteps.begin(); ite1 != theNewSteps.end(); ite1++ ) {
+	  G4cerr << " STEP " << (*ite1).first << " " << (*ite1).second->GetPostStepPoint()->GetPosition() << G4endl; 
+      }
+
 	G4Exception("GmStepMgr::GetSteps",
 		    "Ancestor step not found",
 		    FatalException,
 		    "Please contact GAMOS authors");
       }
 
-      ancestorSteps.insert( ancestorStep );
-      G4Track* trk = ancestorStep->GetTrack();
+      ancestorSteps.insert( ancestorStep ); 
 #ifndef GAMOS_NO_VERBOSE
       if( UAVerb(debugVerb) ) {
-	G4cout << "GmStepMgr::GetSteps insert ancestor step track " << trk->GetTrackID() << " parent " << trk->GetParentID() << G4endl;
+	G4Track* trk2 = ancestorStep->GetTrack();
+	G4cout << " GmStepMgr::GetSteps Filter with children ACCEPT STEP ancestor TrackID " << ancestorStep->GetTrack()->GetTrackID() << " NacceptedSetps " << acceptedSteps.size() << G4endl;
+	G4cout << "GmStepMgr::GetSteps insert ancestor step track " << trk2->GetTrackID() << " parent " << trk->GetParentID() << G4endl;
       }
 #endif  
-      if( trk->GetParentID() == 0 ) break;
+      //      if( trk->GetParentID() == 0 ) break;
     }
   
-    // accept if current step is in the list of ancestors
-    std::set<G4Step*>::const_iterator ites;
-    for( ites = ancestorSteps.begin(); ites != ancestorSteps.end(); ites++ ){
-      if( filter->AcceptPastStep( *ites ) ) acceptedSteps.push_back( *ites );
-    } 
-    
+    //  already checked all steps of track // accept if current step is in the list of ancestors
+    std::set<G4Step*>::const_iterator iteas;
+    for( iteas = ancestorSteps.begin(); iteas != ancestorSteps.end(); iteas++ ){
+      if( filter->AcceptPastStep( *iteas ) ) {
+	acceptedSteps.push_back( *iteas );
+#ifndef GAMOS_NO_VERBOSE
+        if(  UAVerb(debugVerb)) G4cout << " GmStepMgr::GetSteps Filter without children ACCEPT STEP ancestor TrackID " << currentStep->GetTrack()->GetTrackID() << " FROM TrackID " << (*iteas)->GetTrack()->GetTrackID()  << " NacceptedSetps " << acceptedSteps.size() << G4endl;
+#endif
+      } 
+    }  
   } 
 #ifndef GAMOS_NO_VERBOSE
   if( UAVerb(debugVerb) ) {
@@ -241,17 +296,17 @@ void GmStepMgr::ClearObjects()
   // --- Delete all new objects   
   mmis::const_iterator ites;
   for( ites = theNewSteps.begin(); ites != theNewSteps.end(); ites++ ){
-    G4cout << " DELETE STEP  " << (*ites).second << G4endl;
+    //    G4cout << " DELETE STEP  " << (*ites).second << G4endl; //GDEB
     delete (*ites).second;
   }
   theNewSteps.clear();
 
   std::map<G4int,G4Track*>::const_iterator itet;
-  for( itet = theNewTracks.begin(); itet != theNewTracks.end(); itet++ ){
+  /*  for( itet = theNewTracks.begin(); itet != theNewTracks.end(); itet++ ){
     delete (*itet).second;
-  }
+    } */
   theNewTracks.clear();
-
+  theNTracksSavedInEvent = 0;
   /* Deleted by G4Step::~G4Step()
   std::vector<G4StepPoint*>::const_iterator itesp;
   for( itesp = theNewStepPoints.begin(); itesp != theNewStepPoints.end(); itesp++ ){
@@ -278,9 +333,9 @@ G4Step* GmStepMgr::GetAncestorStep( const G4Step* currentStep )
   for(;;) {
     std::map<G4int,G4Step*>::const_iterator ite = theCreatorStep.find(ancestorStep->GetTrack()->GetTrackID());
     if( ite == theCreatorStep.end() ){
-      for( ite = theCreatorStep.begin(); ite != theCreatorStep.end(); ite++ ) {
-	G4cout << currentStep->GetTrack()->GetTrackID() << " STEP " << (*ite).first << " " << (*ite).second->GetPostStepPoint()->GetPosition().z() << G4endl;
-      }
+      //      for( ite = theCreatorStep.begin(); ite != theCreatorStep.end(); ite++ ) {
+      //	G4cout << currentStep->GetTrack()->GetTrackID() << " STEP " << (*ite).first << " " << (*ite).second->GetPostStepPoint()->GetPosition().z() << G4endl; //GDEB
+      //      }
       G4Exception("GmStepMgr::GetAncestorStep",
 		  "Ancestor step not found",
 		  FatalException,

@@ -15,22 +15,22 @@ public: // with description
   GmClassifierByNumericData(G4String);
   virtual ~GmClassifierByNumericData();
   
-  virtual G4int GetIndexFromStep(const G4Step*);
-  virtual G4int GetIndexFromTrack(const G4Track*);
-  virtual G4int GetIndexFromSecoTrack(const G4Track* aTrack1, const G4Track* aTrack2);
-  G4int GetIndexFromValue(const G4double val );
+  virtual int64_t GetIndexFromStep(const G4Step*);
+  virtual int64_t GetIndexFromTrack(const G4Track*);
+  virtual int64_t GetIndexFromSecoTrack(const G4Track* aTrack1, const G4Track* aTrack2);
+  int64_t GetIndexFromValue(const G4double val );
 
   virtual void SetParameters( std::vector<G4String>& param );
 
-  virtual G4String GetIndexName(G4int);
+  virtual G4String GetIndexName(int64_t);
 
   virtual void SetIndices( std::vector<G4String> wl );
 
 private:
-  std::map<G4double,G4int> theIndexMap;
+  std::map<G4double,int64_t> theIndexMap;
   G4double theMin, theMax, theStep;
 
-  G4bool bAllowOutOfLimits;
+  G4int theAllowOutOfLimits;
 };
 
 #endif

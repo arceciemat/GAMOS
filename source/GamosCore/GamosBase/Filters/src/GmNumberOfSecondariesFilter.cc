@@ -45,3 +45,14 @@ void GmNumberOfSecondariesFilter::SetParameters( std::vector<G4String>& params)
   theNSecoMax = G4int(GmGenUtils::GetValue( params[1] ));
   
 }
+
+//-------------------------------------------------------------------------
+G4bool GmNumberOfSecondariesFilter::AcceptStackedTrack(const G4Track* )
+{
+  G4Exception(" GmNumberOfSecondariesFilter::AcceptStackedTrack",
+	      "",
+	      FatalException,
+	      "Cannot be called for a stacking action");
+
+  return FALSE;
+}

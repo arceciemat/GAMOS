@@ -39,7 +39,7 @@ G4String GmDataFinalTouchable::GetStringValueFromTrack( const G4Track* aTrack )
 //----------------------------------------------------------------
 G4String GmDataFinalTouchable::GetTouchableLongName( const G4VTouchable* touch )
 {
- if( touch ) { 
+  if( touch && touch->GetVolume(0) ) { 
    G4int nAnces = touch->GetHistoryDepth();
    G4String name;
    for( G4int ii = nAnces; ii >= 0; ii-- ) {
