@@ -737,7 +737,7 @@ void DicomVReaderImage::CheckIsEquivalent(const DicomVReaderImage *rhs, G4bool b
   
   //----- Check that the slices are contiguous in Z
   if( bContiguous ) {
-    if( std::fabs( theMinZ - rhs->GetMaxZ() ) > 1.e-5 
+    if( std::fabs( theMinZ - rhs->GetMaxZ() ) > 1.e-5 &&
 	std::fabs( theMaxZ - rhs->GetMinZ() ) > 1.e-5 ){
       G4cerr << "DicomVReaderImage error adding two slice headers: !!!\
         Slices are not contiguous in Z "
