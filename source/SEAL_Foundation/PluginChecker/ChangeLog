@@ -1,0 +1,25 @@
+2005-07-23  Lassi A. Tuura  <lat@iki.fi>
+
+	* SealModuleSymCheck: Accept more variety of output from "ldd".
+	On SuSE 9.3 "ldd" can output "libfoo.so => (hex-address)", without
+	path after the arrow, and "/lib/libfoo.so (hex-address)", without
+	arrow and just the lone full path name.  Reported by Zhen Xie and
+	Stephan Wynhoff.
+
+2004-08-16  Lassi A. Tuura  <lat@iki.fi>
+
+	* SealModuleSymCheck: Recognise symbols of type "?" and pretend
+	they are defined.  Occurs with certain GL libraries.  Simply be
+	be conservative when "nm" doesn't understand a binary.
+
+2004-05-28  Lassi A. Tuura  <lat@iki.fi>
+
+	* SealModuleSymCheck: Always ignore some internal symbols
+	that SealBase references but are only defined in binaries.
+	Filter out some common but harmless warnings from ldd.
+
+2003-10-16  Lassi A. Tuura  <lat@iki.fi>
+
+	* SealModuleSymCheck: warn if ignoring a symbol.
+
+	* New package for tools to verify plug-in modules.

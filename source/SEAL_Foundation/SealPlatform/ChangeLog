@@ -1,0 +1,125 @@
+2006-01-24  Lassi A. Tuura  <lat@iki.fi>
+
+	* configure.in, configure, nonstdint.h: Force C language in the
+	stdint.h checks.  Fix typo bugs in nonstdint.h branch for systems
+	without stdint.h.
+
+2006-01-23  Lassi A. Tuura  <lat@iki.fi>
+
+	* configure.in, configure, config.h, nonstdint.h: Rework stdint.h
+	checking to use new "nonstdint.h" header provided in the package,
+	we need same logic during real compilation.  An attempt to provide
+	the functionality lacking in MSVC++; passes on IA32 and AMD64, but
+	not yet tested on OS X.  SEAL_LIMIT_*_{MIN,MAX} macros renamed to
+	SEAL_*_{MIN,MAX} (SEAL_INT8_MAX etc).
+
+2006-01-19  Lassi A. Tuura  <lat@iki.fi>
+
+	* configure.in (lat_ticks_ia32_rdtsc_*): Break into using low/high
+	parts instead of trying to get 64-bit constant out in one go.  The
+	assembler on SLC3 AMD64 does not support "=A" constraint.
+
+	* configure.in, config.h.in
+	(SEAL_LIMIT_U/INT8/16/32/64_MIN/MAX): Define constants to values
+	identical to the standard constants in stdint.h by extracting the
+	values at configure-time, it is not practical to use them from
+	C++.
+
+2004-10-21  Lassi A. Tuura  <lat@iki.fi>
+
+	* config.h.in (_FILE_OFFSET_BITS): Remove definition here to avoid
+	changing system ABI silently for client packages.
+
+2004-06-29  Lassi A. Tuura  <lat@iki.fi>
+
+	* configure.in: Check for mach/mach_time.h for TimeInfo.
+	* config.h.in: Add corresponding macro.
+	* configure, aclocal.m4: Regenerate.
+
+2004-06-03  Lassi A. Tuura  <lat@iki.fi>
+
+	* io.m4: Use off_t *, not void *, for Linux sendfile() check.
+	Noticed in incorrect check result with GCC 3.4.
+	* aclocal.m4, configure: Regenerated.
+
+2004-05-28  Lassi A. Tuura  <lat@iki.fi>
+
+	* io.m4: New, sendfile() checks.
+	* configure.in: Use it.  Reshuffle to work around Linux sendfile()
+	brain damage, including enabling large file support later.
+	* config.h.in: Move forced API defines here so they come before
+	any headers are included from the system, and can be disabled
+	before system.h goes further with them.  Add sendfile() macros.
+	* system.h: Move system API defines to config.h.in.
+	* aclocal.m4, configure: Regenerate.
+
+2004-05-26  Lassi A. Tuura  <lat@iki.fi>
+
+	* network.m4: Try socklen_t first before other types when trying
+	to guess argument types (follow by size_t, int, in that order).
+	* aclocal.m4, configure: Regenerate.
+
+2004-05-24  Lassi A. Tuura  <lat@iki.fi>
+
+	* configure.in, configure, config.h.in, system.h:
+	Unconditionally enable large file support.  Check for
+	headers and symbols required to pick up system global
+	argc, argv.  For GCC-only stack trace, need GCC 3.4+.
+
+2003-11-25  Christian Arnault  <arnault@lal.in2p3.fr>
+
+	* cmt/fragments/runconfigure: Provide Standard Linux flavour of
+	the runconfigure make fragment.
+
+	* cmt/fragments/runconfigure_header: Provide Standard Linux
+	flavour of the runconfigure make fragment.
+
+2003-11-24  Lassi A. Tuura  <lat@iki.fi>
+
+	* BuildFile: Update order so own stuff comes first, then uses.
+
+2003-10-27  Lassi A. Tuura  <lat@iki.fi>
+
+	* system.h, config_win32.h: Undone as unacceptable.
+
+2003-10-7  Pere Mato
+
+	* config_win32.h : added into CVS from cygwin generation
+	* system.h : modified to include config_win.h for _WIN32
+	* /cmt : added directory for cmt builds
+
+2003-09-11  Lassi A. Tuura  <lat@iki.fi>
+
+	* system.h (HAVE_STACK_BACKTRACE): Enable with GCC 3.x+.
+
+2003-08-18  Lassi Tuura  <lassituura@pb-d-128-141-36-75.cern.ch>
+
+	* configure.in: Check for "dladdr" globally, it is useful in a
+	variety of contexts.  Check for OS X dynamic loader headers.
+
+	* config.h.in: Remove old copyright comment.  Add a comment that
+	may help people find the config.h.  Add define for OS X dynamic
+	loader headers.
+
+	* aclocal.m4: Regenerated.
+	* configure: Regenerated.
+
+2003-07-03  Lassi Tuura  <lat@pcitapi37.cern.ch>
+
+	* cpp.m4 (LAT_CHECK_INT64, LAT_CHECK_INT128): Need variable name.
+	* aclocal.m4: Regenerated.
+	* configure: Regenerated.
+
+2003-05-16  Lassi A. Tuura  <lat@iki.fi>
+
+	* configure, configure.in: No more need to generate system error
+	code database.
+
+2003-05-10  Lassi A. Tuura  <lat@iki.fi>
+
+	* Remove classlib copyrights.
+
+2003-05-09  Lassi A. Tuura  <lat@iki.fi>
+
+	* New foundation classes package, using classlib config as a
+	starting point.

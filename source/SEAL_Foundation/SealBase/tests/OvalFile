@@ -1,0 +1,180 @@
+=================================================
+================================================= 
+OvalFile: basic configuration file to run OVAL
+           validation and regression tool and/or:` 
+           CppUnit unit-test tool 
+           PyUnit unit-test tool 
+
+SPI project ->
+Software Development Infrastructure LCG project 
+=================================================
+=================================================
+
+
+=================================================
+ Error report concerning these tests will be send
+ to the following e-mail if -w option is used
+ Write here your e-mail and uncomment the line.
+=================================================
+<!watcher mail=name@cern.ch>
+
+=================================================
+ Standard OVAL environment to run test programs
+=================================================
+ For the diff command,define single lines to
+ compare, through a Perl regular expression. Oval
+ will find lines with "OVAL", but can be changed.
+<diffline expr="^\[OVAL">
+
+
+ Here we define a new environment
+<environment name=StandardOval-0>
+
+# This will run the pure Oval tests or Cppunit tests
+
+<script name="test_SealBase_Argz01"> cpp unit test </script>
+<script name="test_SealBase_BitIterator01"> cpp unit test </script>
+<script name="test_SealBase_BitOps01"> cpp unit test </script>
+<script name="test_SealBase_BitPattern01"> cpp unit test </script>
+<script name="test_SealBase_BitTraits01"> cpp unit test </script>
+<script name="test_SealBase_Callback01"> cpp unit test </script>
+<script name="test_SealBase_Debug01"> cpp unit test </script>    
+<script name="test_SealBase_DirIterator01"> cpp unit test </script>
+<script name="test_SealBase_DirIterator02"> cpp unit test </script>
+<script name="test_SealBase_DirIterator03"> cpp unit test </script>
+<script name="test_SealBase_DirIterator04"> cpp unit test </script>
+<script name="test_SealBase_Environment01"> cpp unit test </script>
+<script name="test_SealBase_File01"> cpp unit test </script>
+<script name="test_SealBase_File02"> cpp unit test </script>
+<script name="test_SealBase_File03"> cpp unit test </script>
+<script name="test_SealBase_File04"> cpp unit test </script>
+<script name="test_SealBase_File05"> cpp unit test </script>
+<script name="test_SealBase_File06"> cpp unit test </script>
+<script name="test_SealBase_FileAcl01"> cpp unit test </script>
+<script name="test_SealBase_FileLock01"> cpp unit test </script>
+<script name="test_SealBase_FileMapping01"> cpp unit test </script>
+<script name="test_SealBase_FileMapping02"> cpp unit test </script>
+<script name="test_SealBase_FileMapping03"> cpp unit test </script>
+<script name="test_SealBase_Filename000"> cpp unit test </script>
+<script name="test_SealBase_Filename01"> cpp unit test </script>
+<script name="test_SealBase_Filename02_01"> cpp unit test </script>
+<script name="test_SealBase_Filename02_02"> cpp unit test </script>
+<script name="test_SealBase_Filename02_03"> cpp unit test </script>
+<script name="test_SealBase_Filename02_04"> cpp unit test </script>
+<script name="test_SealBase_Filename02_05"> cpp unit test </script>
+<script name="test_SealBase_Filename02_06"> cpp unit test </script>
+<script name="test_SealBase_Filename02_07"> cpp unit test </script>
+<script name="test_SealBase_Filename02_08"> cpp unit test </script>
+<script name="test_SealBase_Filename02_09"> cpp unit test </script>
+<script name="test_SealBase_Filename02_10"> cpp unit test </script>
+<script name="test_SealBase_Filename02_11"> cpp unit test </script>
+<script name="test_SealBase_Filename02_12"> cpp unit test </script>
+<script name="test_SealBase_Filename02_13"> cpp unit test </script>
+<script name="test_SealBase_Filename03"> cpp unit test </script>
+<script name="test_SealBase_Filename04"> cpp unit test </script>
+<script name="test_SealBase_Filename05"> cpp unit test </script>
+<script name="test_SealBase_Filename06"> cpp unit test </script>
+<script name="test_SealBase_Filename07"> cpp unit test </script>
+<script name="test_SealBase_Filename08"> cpp unit test </script>
+<script name="test_SealBase_Filename09"> cpp unit test </script>
+<script name="test_SealBase_Hook01"> cpp unit test </script>
+<script name="test_SealBase_HookList01"> cpp unit test </script>
+<script name="test_SealBase_HostInfo01"> cpp unit test </script>
+<script name="test_SealBase_IOChannel01"> cpp unit test </script>
+<script name="test_SealBase_IOSelector01"> cpp unit test </script>
+<script name="test_SealBase_IOSelector02"> cpp unit test </script>
+<script name="test_SealBase_IOSelector03"> cpp unit test </script>
+<script name="test_SealBase_IOStatus01"> cpp unit test </script>
+<script name="test_SealBase_InetServerSocket01"> cpp unit test </script>
+<script name="test_SealBase_InetSocket01"> cpp unit test </script>
+<script name="test_SealBase_IntBits01"> cpp unit test </script>
+<script name="test_SealBase_LocalServerSocket01"> cpp unit test </script>
+<script name="test_SealBase_LocalSocket01"> cpp unit test </script>
+<script name="test_SealBase_Log01"> cpp unit test </script>
+<script name="test_SealBase_LogListener"> cpp unit test </script>
+<script name="test_SealBase_LowMemoryPool01"> cpp unit test </script>
+<script name="test_SealBase_MapIterator01"> cpp unit test </script>
+<script name="test_SealBase_MultiMethod01"> cpp unit test </script>
+<script name="test_SealBase_MultiMethod02"> cpp unit test </script>
+<script name="test_SealBase_MultiMethod03"> cpp unit test </script>
+<script name="test_SealBase_NamedPipeServer01"> cpp unit test </script>
+<script name="test_SealBase_Pipe01"> cpp unit test </script>
+<script name="test_SealBase_PipeCmd01"> cpp unit test </script>
+<script name="test_SealBase_ProcessInfo01"> cpp unit test </script>
+<script name="test_SealBase_Range01"> cpp unit test </script>
+<script name="test_SealBase_ResourceInfo01"> cpp unit test </script>
+<script name="test_SealBase_SaveErrno01"> cpp unit test </script>
+<script name="test_SealBase_SearchPath01"> cpp unit test </script>
+<script name="test_SealBase_SearchPath02"> cpp unit test </script>
+<script name="test_SealBase_Sequence01"> cpp unit test </script>
+<script name="test_SealBase_SharedLibrary01"> cpp unit test </script>
+<script name="test_SealBase_ShellEnvironment01"> cpp unit test </script>
+<script name="test_SealBase_Signal01"> cpp unit test </script>
+<script name="test_SealBase_Signal02"> cpp unit test </script>
+<script name="test_SealBase_Signal03"> cpp unit test </script>
+<script name="test_SealBase_SocketPair01"> cpp unit test </script>
+<script name="test_SealBase_StringFormat01_01"> cpp unit test </script>
+<script name="test_SealBase_StringFormat01_02"> cpp unit test </script>
+<script name="test_SealBase_StringFormat01_03"> cpp unit test </script>
+<script name="test_SealBase_StringFormat01_04"> cpp unit test </script>
+<script name="test_SealBase_StringFormat01_05"> cpp unit test </script>
+<script name="test_SealBase_StringFormat01_06"> cpp unit test </script>
+<script name="test_SealBase_StringFormat02_01"> cpp unit test </script>
+<script name="test_SealBase_StringFormat02_02"> cpp unit test </script>
+<script name="test_SealBase_StringFormat02_03"> cpp unit test </script>
+<script name="test_SealBase_StringFormat03_01"> cpp unit test </script>
+<script name="test_SealBase_StringFormat03_02"> cpp unit test </script>
+<script name="test_SealBase_StringFormat03_03"> cpp unit test </script>
+<script name="test_SealBase_StringFormat03_04"> cpp unit test </script>
+<script name="test_SealBase_StringFormat03_05"> cpp unit test </script>
+<script name="test_SealBase_StringFormat03_06"> cpp unit test </script>
+<script name="test_SealBase_StringFormat04_01"> cpp unit test </script>
+<script name="test_SealBase_StringOps01_01"> cpp unit test </script>
+<script name="test_SealBase_StringOps02_01"> cpp unit test </script>
+<script name="test_SealBase_StringOps02_02"> cpp unit test </script>
+<script name="test_SealBase_StringOps02_03"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_01a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_01b"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_02a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_02b"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_03a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_03b"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_04a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_04b"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_05a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_05b"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_06a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_06b"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_07a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_07b"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_08a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_08b"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_09a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_09b"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_10a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_10b"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_11a"> cpp unit test </script>
+<script name="test_SealBase_StringOps03_11b"> cpp unit test </script>
+<script name="test_SealBase_SubProcess01"> cpp unit test </script>
+<script name="test_SealBase_SubProcess02"> cpp unit test </script>
+<script name="test_SealBase_SubProcess03"> cpp unit test </script>
+<script name="test_SealBase_SubProcess04"> cpp unit test </script>
+<script name="test_SealBase_SystemInfo01"> cpp unit test </script>
+<script name="test_SealBase_Time01"> cpp unit test </script>
+<script name="test_SealBase_Time02"> cpp unit test </script>
+<script name="test_SealBase_Time03"> cpp unit test </script>
+<script name="test_SealBase_TimeInfo01"> cpp unit test </script>
+<script name="test_SealBase_TimeInfo02"> cpp unit test </script>
+<script name="test_SealBase_UUID01"> cpp unit test </script>
+<script name="test_SealBase_UUID02"> cpp unit test </script>
+<script name="test_SealBase_UUID03"> cpp unit test </script>
+<script name="test_SealBase_UUID04"> cpp unit test </script>
+<script name="test_SealBase_Unwind01"> cpp unit test </script>
+<script name="test_SealBase_UserInfo01"> cpp unit test </script>
+<script name="test_SealBase_XTypeInfo01"> cpp unit test </script>
+
+
+
+</environment>
+
+

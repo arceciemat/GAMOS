@@ -1,0 +1,1156 @@
+2006-01-23  Lassi A. Tuura  <lat@iki.fi>
+
+	* tests/TimeInfo01.cpp: Relax virtual time check so it works on
+	modern fast computers (slc3_amd64_*) and fix a type in that test.
+
+	* tests/IntBits02.cpp, tests/IntBits03.cpp, tests/BuildFile: New
+	tests for more extensive coverage of IntBits/IntTraits features.
+
+	* IntBits.h: Adapt to "nonstdint.h" in SealPlatform.  Remove
+	old commented-out code.
+
+2006-01-19  Lassi A. Tuura  <lat@iki.fi>
+
+	* BitPattern.h, BitOps.h, tests/BitPattern01.cpp: Add type to the
+	bit pattern template parameters so we can cast to the constants to
+	the correct width.  Otherwise for wide bit widths (64+ on AMD64)
+	the shifts may end up being zero.
+
+	* IntBits.h: Use new limit macros extracted at configure-time into
+	SealPlatform/config.h, instead of trying in vain to use the values
+	directly from stdint.h.
+
+	* TimeInfo.cpp (realCycles, virtualCycles): Use new asm patterns
+	guessed by SealPlatform, potentially requiring high/low parts
+	separately -- fixes SLC3 AMD64 assembler misunderstandings.
+
+2005-12-16  Lassi A. Tuura  <lat@iki.fi>
+
+	* IntTraits.cpp: Protect the static constants with the same
+	guard as in the header so MSVC++ won't see them when using
+	enums.
+
+	* IntTraits.h: Disable 64-bit enum constants for MSVC++ branch,
+	MSVC++ cannot handle them.
+
+2005-11-19  Lassi A. Tuura  <lat@iki.fi>
+
+	* IntTraits.h, IntTraits.cpp: Restore compile-time constant.
+	Avoid MSVC++ deficiencies by using enums instead of static const.
+
+	* IntBits.h: Base on stdint.h.
+
+	* DirIterator.h: Documentation tweak.
+
+2005-11-07  Lorenzo Moneta
+
+	* IntBits.h: LLONG_MAX is not defined on linux.  So change logic,
+	when LONG_MAX is larger than INT_MAX assume that can use LLONG_MAX
+	and check in that case if larger than LONG_MAX.  Otherwise if
+	LONG_MAX is the same as INT_MAX (32 bits machines) assume then
+	that LONG_LONG_MAX is larger than LONG_MAX.
+
+2005-11-07  Lorenzo Moneta
+
+	* IntBits.h: Use LLONG_MAX always. It is the C99 standard.
+
+2005-11-03  Lorenzo Moneta
+
+	* IntBits.h: Use LLONG_MAX when LONG_LONG_MAX is not defined.
+	This is for example the case on Tiger when compiled with -ansi
+	option.  Now SealBase is ported to Tiger.
+
+2005-11-03  Lorenzo Moneta
+
+	* IntBits.h: Add a check on LONG_LONG_MAX before instantiating the
+	template with long long.  For amd64 bit machine long long and long
+	are the same.
+
+	* SharedLibrary.cpp, ProcessInfo.cpp: Change from unsigned long to
+	unsigned int.  On MacOS 10.4 unsigned long and unsigned int are
+	different types
+
+	* tests/MultiMethod01.cpp (02,03), tests/XTypeInfo01.cpp: Remove
+	extra ";" required by gcc 3.4.
+
+2005-10-15  Pere Mato
+	
+	* IntTraits.h (cpp) moved the defintion of the static members to
+	the .cpp file.  This was causing multiple defined symbols on
+	windows.
+
+2005-09-20  Lassi A. Tuura  <lat@iki.fi>
+
+	* Regexp.cpp (destructor): Delete m_rep.
+
+	* SharedLibrary.h, SharedLibrary.cpp (abandon): New method to
+	clean up SharedLibrary object without unloading it.  Add more
+	documentation to the various methods.
+
+	* DirIterator.cpp, UnixDirIterator.cpp, WindowsDirIterator.cpp:
+	Add a try block around initialisation to avoid leaking memory
+	when the directory does not exist or some other error occurs.
+	Add documentation for methods.
+
+2005-09-02  Lassi A. Tuura  <lat@iki.fi>
+
+	* RegexpMatch.cpp (matchString): Fix off-by-one error in
+	assertion.
+
+2005-06-08  Lassi A. Tuura  <lat@iki.fi>
+
+	* Error.h: Fix documentation to throw-by-value.
+
+2005-03-04  Lassi A. Tuura  <lat@iki.fi>
+
+	* UUID.cpp: Cast time values to appropriate large types to
+	avoid accidental conversion to negative values.
+	* tests/UUID05.cpp: New test.
+	* tests/BuildFile: Build it.
+
+2005-01-25  Lassi A. Tuura  <lat@iki.fi>
+
+	* sysapi/IOTypes.h (IOSized): Fix maximum value logic bug on
+	systems where IOOffset and IOSize are the same size.  Found by
+	Rosa Maria Garcia Rioja (rioja@mail.cern.ch).
+
+2004-10-27  Lassi A. Tuura  <lat@iki.fi>
+
+	* PipeCmd.cpp: Now need to include Argz for Windows.
+
+	* PipeCmd.cpp (open (command)): The command must be sent for shell
+	to interpret instead of trying to execute it as a program.
+
+	* tests/IOSelector02.cpp: Implement test correctly.
+
+2004-10-11  Pere Mato <pere.mato@cern.ch>
+
+	* Windows.h(.cpp): Added seal:: namespace to make it compilable on vc++7.1
+	
+2004-10-21  Lassi A. Tuura  <lat@iki.fi>
+
+	* src/BuildFile (CPPFLAGS): Define _FILE_OFFSET_BITS here to get
+	us large-file clean system ABI internally.  SEAL ABI is already
+	large-file clean, so the flag doesn't need to be seen by clients.
+
+2004-10-14  Lassi A. Tuura  <lat@iki.fi>
+
+	* sysapi/Windows.h: Use AutoLoad.
+	* Windows.cpp: New, declare auto-load stubs.
+
+	* AutoLoad.h, AutoLoad.cpp, tests/AutoLoad01.cpp, tests/BuildFile:
+	New simpler interface to auto-load code at run-time, plus tests.
+
+2004-10-11  Pere Mato <pere.mato@cern.ch>
+
+	* Windows.h: Changed macro SEAL_WIN_TRAMPOLINE to include API.
+	Added definition of PROCESSOR_POWER_INFORMATION (missing in
+	winnt.h)
+	* TimeInfo.cpp: Corrected conversion factor from ns to ms.
+	* tests/SharedLibrary01.Lib.cpp: Rename to...
+	* tests/SharedLibrary01Lib.cpp: Avoid name problems on Windows.
+	* cmt/requirements: Added building the test shared library
+	SharedLibrary01Lib.
+
+2004-10-11  Lassi A. Tuura  <lat@iki.fi>
+
+	* ResourceInfo.cpp (info_self): __data_start and __bss_start don't
+	appear to be reliable enough symbols, disable their use for now.
+
+2004-09-23  Lassi A. Tuura  <lat@iki.fi>
+
+	* MapIterator.h (MapKeyIterator): Use key_type, not value_type.
+
+2004-09-23  Lassi A. Tuura  <lat@iki.fi>
+
+	* Log.h, Log.cpp: std::ostream output operator functions such as
+	"std::endl" come in three flavours, not just one; support all.
+	* tests/Log01.cpp: Test that we can output std::endl to logstream.
+
+2004-09-23  Lassi A. Tuura  <lat@iki.fi>
+
+	* tests/MapIterator02.cpp: Fix test name.
+
+2004-09-23  Lassi A. Tuura  <lat@iki.fi>
+
+	* sysapi/Windows.h: Fix API for CallNtPowerInformation.
+
+2004-09-23  Lassi A. Tuura  <lat@iki.fi>
+
+	* MapIterator.h: Add also MapKeyIterator for walking over keys.
+	* tests/MapIterator02.cpp: Test it.
+	* tests/BuildFile: Build the new test.
+
+2004-06-29  Lassi A. Tuura  <lat@iki.fi>
+
+	* tests/LogListener.cpp: Clean up recent changes.
+
+	* tests/File05.cpp, tests/File06.cpp: Undo more previous
+	unnecessary time changes that just masked the real problem.
+
+	* Time.cpp: Include iostream headers so the ostream output
+	adapters actually does something correct.
+	* tests/Time01.cpp, tests/Time02.cpp, tests/Time03.cpp: Undo
+	previous unnecessary changes that just masked the real problem.
+	
+	* TimeInfo.h, TimeInfo.cpp, sysapi/TimeInfo.h, sysapi/Windows.h:
+	Add support for high-resolution real-time clock on OS X.  Attempt
+	to fix CPU frequency determination for Windows and make cycles/ns
+	mapping correct with separate multiplier (also necessary for OS
+	X).  Define the special power-management stubs required for
+	Windows.  Restrict scope for variables currently only in use on
+	Linux.
+
+2003-06-17  mato & moneta
+
+	* PipeCmd.cpp: added initializers for all constructors. Was
+	failing test test_SealIOTools_BufferOutputStream01.
+
+2003-06-10  moneta
+
+	* tests/OvalFile: add same tests as in BuildFile.
+	* tests/LogListner: print message on std::cout and return 0 when
+	no socket is given.
+	
+2004-06-03  Lassi A. Tuura  <lat@iki.fi>
+
+	* sysapi/SharedLibrary.h, SharedLibrary.cpp (loaded): Get section
+	addresses on OS X, they are easily available.
+
+	* sysapi/ProcessInfo.h, ProcessInfo.cpp (fullProgramName): Use
+	dyld api function to get the full path to the executable on OS X.
+
+2004-06-02  Lassi A. Tuura  <lat@iki.fi>
+
+	* TimeSpan.h: Removed.
+	* Time.h: Merge TimeSpan and Time into one header.  Give Time and
+	TimeSpan constructors that convert one to the other.  Provide more
+	arithmetic operators for Time, resulting in TimeSpan.  Provide an
+	std::ostream output operator.
+	* FileNameLock.cpp, Time.cpp: Remove unnecessary ".ns()" calls.
+	* tests/File05.cpp, tests/File06.cpp, tests/Filename000.cpp,
+	tests/Filename02-00.h, tests/Time01.cpp, tests/Time02.cpp,
+	tests/Time03.cpp: Idem.
+
+2004-05-28  Lassi A. Tuura  <lat@iki.fi>
+
+	* UnixIOChannel.cpp, sysapi/IOChannel.h (transfer): Move
+	sendfile()-related stuff to separate source files.
+	* IOChannelTransfer.cpp, sysapi/IOChannelTransfer.h: New.
+	Kludge around sendfile() brain damage on Linux and support
+	a few more system variants.  While we are at it, implement
+	fallback for Windows as well.
+
+	* Signal.cpp (dumpInfo): Silence printf warnings.
+	* ProcessInfo.cpp (argc): Remove unused variable.
+	* FileNameLock.cpp (getBootTime): More Time adjustments.
+
+2004-05-26  Lassi A. Tuura  <lat@iki.fi>
+
+	* IOTypes.h: Now that IOSize is properly used everywhere,
+	alias it from size_t.
+
+2004-05-26  Lassi A. Tuura  <lat@iki.fi>
+
+	* SocketConst.cpp: Define away all missing MSG_* constants.
+
+	* SocketConst.h, SocketConst.cpp: New, define all socket-related
+	constants in a namespace, moved from Socket class declaration.
+	Define some new options, especially for TCP level.  Make sure
+	SOL_TCP and SOL_IP are properly set even if not defined on the
+	system.  Always define all option values whether the system
+	supports them or not, so clients won't have unsatisfied symbols
+	when using non-portable options.
+	* Socket.h, Socket.cpp: Use the new constants.  More method docs.
+	(hasopt): New method to tell whether an option is available.
+	* InetServerSocket.h, InetSocket.h, LocalServerSocket.h,
+	LocalSocket.h, LogSocket.cpp, UnixIOChannel.cpp: Use the new
+	constants namespace.
+
+	* SysErr.h: New, define all system error constants.
+	* SystemError.h, SystemError.cpp, FileNameLock.cpp, Filename.cpp,
+	WindowsFile.cpp, WindowsFileLock.cpp: Use the new system error
+	constants namespace.
+
+	* PipeCmd.cpp: Need to include SubProcess.h.
+
+	* IOFlags.h: Rearrange layout.
+
+2004-05-25  Lassi A. Tuura  <lat@iki.fi>
+
+	More fixes for warnings reported by Pere.
+	* StringFormat.h, StringFormat.cpp (value): New non-operator
+	function to get current pattern replacement result.
+	* SystemErorr.cpp, SystemInfo.cpp: Use it where MSVC++ complains
+	about implicit conversion of StringFormat to std::string.
+	* FileMapping.cpp (map): Use IOSized() in case file is large.
+
+	Fixes from Pere for problems detected on Windows.
+	* PipeCmd.h: Declare destructor.
+	* ProcessInfo.cpp: Fix typos in Windows-specific code.
+	* WindowsTempFile.cpp: Time update.
+
+2004-05-25  Lassi A. Tuura  <lat@iki.fi>
+
+	* IOInput.h, IOInput.cpp, IOOutput.h, IOOutput.cpp, IOChannel.h,
+	IOChannel.cpp, UnixIOChannel.cpp, WindowsIOChannel.cpp, File.h,
+	File.cpp, UnixFile.cpp, WindowsFile.cpp, InetSocket.h,
+	InetSocket.cpp, LocalSocket.h, LocalSocket.cpp, Socket.h,
+	Socket.cpp, Storage.h, Storage.cpp:
+	Big read()/write() rationalisation.  Make IOBuffer only a helper,
+	not the main virtual function.  Make other helpers non-virtual.
+	Separate read/write vs. readv/writev to separate functions to
+	avoid accidental cast risk if the argument is incorrect.  Document
+	risks of using read/write() functions in derived classes.  Remove
+	obsolete "using" workarounds.
+
+	* PipeCmd.h, PipeCmd.cpp: Re-implement using SubProcess.
+	* UnixPipeCmd.cpp, WindowsPipeCmd.cpp: Removed, now unnecessary.
+	* SubProcess.h: Move comments from PipeCmd on to-do items.
+
+	* tests/ProcessInfo01.cpp: Exercise new methods.
+
+2004-05-24  Lassi A. Tuura  <lat@iki.fi>
+
+	* SharedLibrary.cpp (symname): OS X 10.3+ doesn't require the name
+	to be mangled any more.  And 10.3 is minimum we support anyway...
+
+2004-05-24  Lassi A. Tuura  <lat@iki.fi>
+
+	* tests/File01.cpp, File02.cpp, File03.cpp, File04.cpp,
+	File05.cpp, File06.cpp, FileMapping01.cpp, FileMapping02.cpp,
+	FileMapping03.cpp, IOSelector01.cpp, Filename000.cpp,
+	Filename02-00.h, LogListener.cpp, Time01.cpp, Time02.cpp,
+	Time03.cpp: IOFlags and Time updates.  Remove bad/unnecessary
+	casts and fix broken indentation from previous changes.
+	* tests/IOSelector02.cpp, IOSelector03.cpp: Enable tests.
+
+	* TimeConst.h: New, move common constants here.  Add month consts.
+	* Time.h, TimeSpan.h, Time.cpp, TimeSpan.cpp: Work out to new
+	specifications: remove conversion operator to scalar type (add
+	ns() method instead), define operators for most common arithmetic
+	and boolean operations.  Use TimeConst for constants and types.
+	Fix bad indentation from previous changes.  Make month() return
+	zero-based value.  Remove bad type casts (truncated value).
+	* FileNameLock.cpp, UnixTempFile.cpp: Adjust to Time changes.
+
+	* sysapi/IOTypes.h: Add more documentation.
+	(IOSize): Correct type size.
+	(IOSized): New, easy conversion from offset to size.
+	* IOFlags.h: New, define common I/O flags here.
+	* IOInput.h, IOOutput.h, IOInput.cpp, IOOutput.cpp:
+	Remove "using" kludges.  Tidy up spacing.
+	* IOChannel.h, sysapi/IOChannel.h, IOChannel.cpp,
+	UnixIOChannel.cpp: Use IOFlags.  Expose old flags with
+	SEAL_DEPRECATED for transition.  Remove "using" kludges.
+	Implement transfer() with nicer semantics.
+	* WindowsIOStatus.cpp, WindowsFileLock.cpp: Remove bad type casts.
+	* File.h, File.cpp, UnixFile.cpp, WindowsFile.cpp: Remove bad
+	type casts from previous changes, they truncated values too early.
+	Use IOFlags.  Remove "using" kludges.
+	(setAutoClose, constructor): Allow control over auto-close.
+	* FileMapping.cpp, UnixFileMapping.cpp: Refer to IOFlags.
+	* InetSocket.h, LocalSocket.h, Socket.h: Remove "using" kludges.
+	* Storage.h, Storage.cpp: Fix typo in write() call.  Remove
+	"using" kludges.  Tidy up class declaration.
+	* PipeCmd.h, PipeCmd.cpp, UnixPipeCmd.cpp, WindowsPipeCmd.cpp: Use
+	common IOFlags.  Expose old flags with SEAL_DEPRECATED.
+	* Socket.cpp, SystemError.cpp, SystemInfo.cpp: Remove bad and
+	unnecessary type casts.
+	* LogPipe.cpp: Use IOFlags with PipeCmd.
+	* NamedPipeServer.h: Update documentation to use IOFlags.
+	* SubProcess.h: Add comment about merging flags to IOFlags.
+
+	* sysapi/DebugAids.h, DebugAids.cpp: Remove _Unwind_ForceUnwind,
+	it actually unwinds stack.  Use new _Unwind_Backtrace instead if
+	available.  Declare necessary stuff in DebugAids.cpp.
+	* sysapi/gcc-unwind.h: Removed.
+
+	* ProcessInfo.h, sysapi/ProcessInfo.h, ProcessInfo.cpp (argc,
+	argv, fullProgramName, shortProgramName): Provide access to
+	original program command line arguments if possible, as well as
+	the name of the program.
+	* CommandLine.h, CommandLine.cpp: Removed.
+
+	* Filename.h, Filename.cpp (name): New.  Provide a named function
+	in addition to the conversion operator to get the name string.
+
+	* DirIterator.h: Tidy up class declaration.
+	* IOSelectWindows.h: Tidy up spacing.
+	* Signal.cpp (dumpInfo, dumpContext): Fix format types.
+	
+2004-03-08  Lassi A. Tuura  <lat@iki.fi>
+
+	* SharedLibrary.cpp (self, load, data, function): Remove the
+	double dlerror() calls, crashes have been reported due to them.
+	Just live with the old garbled and corrupt error messages, it is
+	better to die in error reporting than in problem-free path.  The
+	only proper fix is to get the dynamic linker fixed.
+
+2004-02-06  Pere Mato
+
+	* Removed SEAL_BASE_API in class declarations to avoid many
+	  compilation warnings with vc++7.1. It is only kept for
+	  exporting/importing data items.
+
+	* Added explitit conversions between integer types (int, size_t,
+	  IOSize, etc.) to eliminated compilation warnings in many files.
+
+2004-01-12  Lassi A. Tuura  <lat@iki.fi>
+
+	* IOSelectKqueue.h, IOSelectKqueue.cpp: Yay, OS X has FreeBSD
+	kqueue()/kevent()!  Fix typos in the code so it compiles.
+
+2003-12-11 17:04  moneta
+
+	* src/SharedLibrary.cpp: make a call to dlopen before dlerror() in
+	self( ) and load( ) as it was for MacOS
+
+2003-11-24 18:32  mato
+
+	* cmt/requirements: Preparing SEAL_1_3_0
+
+2003-11-24 15:24  lat
+
+	* ChangeLog, src/StringOps.cpp, tests/BuildFile,
+	tests/StringOps03_09a.cpp, tests/StringOps03_09b.cpp,
+	tests/StringOps03_10a.cpp, tests/StringOps03_10b.cpp,
+	tests/StringOps03_11a.cpp, tests/StringOps03_11b.cpp: *
+	StringOps.cpp (splitpos (Regexp)): Do not use regex match data when
+	there is no match.  * tests/BuildFile, tests/StringOps03_09a.cpp,
+	tests/StringOps03_09b.cpp, tests/StringOps03_10a.cpp,
+	tests/StringOps03_10b.cpp, tests/StringOps03_11a.cpp,
+	tests/StringOps03_11b.cpp: New tests for "split()" with regular
+	expressions.
+
+2003-11-24 15:23  lat
+
+	* ChangeLog, src/SharedLibrary.cpp: * SharedLibrary.cpp: Work
+	around bugs in linux dynamic loader.
+
+2003-11-24 15:22  lat
+
+	* ChangeLog, SealBase/Environment.h, SealBase/ShellEnvironment.h,
+	src/Environment.cpp, src/ShellEnvironment.cpp: * Environment.h,
+	Environment.cpp, ShellEnvironment.h, ShellEnvironment.cpp (get,
+	has): Converge to a nicer access pattern and provide basic
+	implementations in the base class where possible.
+
+2003-11-24 15:21  lat
+
+	* BuildFile, ChangeLog: * BuildFile: Update so that own stuff comes
+	first, then uses.
+
+2003-11-04 18:53  mato
+
+	* cmt/requirements: Preparing for SEAL_1_3_0 (Windows)
+
+2003-11-03 15:01  moneta
+
+	* tests/Time01.cpp: fix test when daylight is off
+
+2003-11-03 12:25  moneta
+
+	* tests/File06.cpp: add input file
+
+2003-10-27 12:13  lat
+
+	* ChangeLog, SealBase/Environment.h, SealBase/ShellEnvironment.h,
+	src/ShellEnvironment.cpp: * Environment.h, ShellEnvironment.h,
+	ShellEnvironment.cpp (get): Add new overloaded variant that returns
+	the value instead of requiring at as a parameter, making it
+	possible to use in return value computations where the caller knows
+	that to be safe.
+
+2003-10-23 13:17  lat
+
+	* ChangeLog, tests/BuildFile, tests/TimeInfo02.cpp: *
+	tests/TimeInfo02.cpp: New more limited, simplified test.  *
+	tests/BuildFile: Add binary rule for SearchPath02.cpp, it should
+	not go into the test library.  Add binary rule for new test
+	TimeInfo02.cpp.
+
+2003-10-23 13:16  lat
+
+	* ChangeLog, src/Regexp.cpp, src/regex.h: * src/regex.h: Removed,
+	this broke every platform except Windows.  * Regexp.cpp: Change
+	back to <regex.h>.
+
+2003-10-14 10:51  moneta
+
+	* examples/: BuildFile, exa_ResourceInfo.cpp: add resource info
+	example
+
+2003-10-08 11:53  mato
+
+	* SealBase/: File.h, IOChannel.h, InetServerSocket.h, InetSocket.h,
+	LocalServerSocket.h, LocalSocket.h, PipeCmd.h: Changes required for
+	Windows build (using cmt)
+
+2003-10-07 19:13  mato
+
+	* ChangeLog, SealBase/HookList.h, cmt/requirements, src/Regexp.cpp,
+	src/regex.h, tests/Time01.cpp: Changes required for Windows build
+	(using cmt)
+
+2003-10-02 11:11  mato
+
+	* SealBase/TimeSpan.h: Change needed for Windows
+
+2003-10-02 11:05  mato
+
+	* src/Log.cpp: Change needed for Windows
+
+2003-09-11 21:46  lat
+
+	* ChangeLog, SealBase/sysapi/DebugAids.h,
+	SealBase/sysapi/gcc-unwind.h, src/DebugAids.cpp: *
+	sysapi/gcc-unwind.h: New, copy _Unwind* API from GCC.  *
+	sysapi/DebugAids.h: Include it with GCC 3.x+.  * DebugAids.cpp
+	(unwindWalkStack, unwindNoCleanup): New.  (stacktrace): Add case
+	for GCC 3.x+ using the built-in unwind API, using the above new
+	functions as unwinders.  Remove the old non-working code using GCC
+	builtins.
+
+2003-09-09 08:44  lat
+
+	* ChangeLog, SealBase/BitOps.h: * BitOps.h: Fix template lookup to
+	be standard conforming.  Required by icc, probably breaks other
+	compilers.
+
+2003-09-09 08:43  lat
+
+	* ChangeLog, SealBase/DebugAids.h: * DebugAids.h
+	(ASSERT_VALIDATOR): Add missing "seal" scope.:
+
+2003-09-09 08:42  lat
+
+	* ChangeLog: Add log title
+
+2003-09-04 17:26  moneta
+
+	* ChangeLog, tests/OvalFile: update ChangeLog
+
+2003-09-04 17:24  moneta
+
+	* tests/: Argz01.cpp, BitIterator01.cpp, BitOps01.cpp,
+	BitPattern01.cpp, BitTraits01.cpp, BuildFile, Callback01.cpp,
+	Debug01.cpp, DirIterator01.cpp, DirIterator02.cpp,
+	DirIterator03.cpp, DirIterator04.cpp, Environment01.cpp,
+	File01.cpp, File02.cpp, File03.cpp, File04.cpp, File05.cpp,
+	File06.cpp, FileAcl01.cpp, FileLock01.cpp, FileMapping01.cpp,
+	FileMapping02.cpp, FileMapping03.cpp, Filename000.cpp,
+	Filename01.cpp, Filename02-00.h, Filename02-01.cpp,
+	Filename02-02.cpp, Filename02-03.cpp, Filename02-04.cpp,
+	Filename02-05.cpp, Filename02-06.cpp, Filename02-07.cpp,
+	Filename02-08.cpp, Filename02-09.cpp, Filename02-10.cpp,
+	Filename02-11.cpp, Filename02-12.cpp, Filename02-13.cpp,
+	Filename02_01.cpp, Filename02_02.cpp, Filename02_03.cpp,
+	Filename02_04.cpp, Filename02_05.cpp, Filename02_06.cpp,
+	Filename02_07.cpp, Filename02_08.cpp, Filename02_09.cpp,
+	Filename02_10.cpp, Filename02_11.cpp, Filename02_12.cpp,
+	Filename02_13.cpp, Filename03.cpp, Filename04.cpp, Filename05.cpp,
+	Filename06.cpp, Filename07.cpp, Filename08.cpp, Filename09.cpp,
+	Hook01.cpp, HookList01.cpp, HostInfo01.cpp, IOChannel01.cpp,
+	IOSelector01.cpp, IOSelector02.cpp, IOSelector03.cpp,
+	IOStatus01.cpp, InetServerSocket01.cpp, InetSocket01.cpp,
+	IntBits01.cpp, LocalServerSocket01.cpp, LocalSocket01.cpp,
+	Log01.cpp, LogListener.cpp, LowMemoryPool01.cpp, MapIterator01.cpp,
+	MultiMethod01.cpp, MultiMethod02.cpp, MultiMethod03.cpp,
+	NamedPipeServer01.cpp, Pipe01.cpp, PipeCmd01.cpp,
+	ProcessInfo01.cpp, Range01.cpp, ResourceInfo01.cpp,
+	SaveErrno01.cpp, SearchPath01.cpp, Sequence01.cpp,
+	SharedLibrary01.cpp, ShellEnvironment01.cpp, Signal01.cpp,
+	Signal02.cpp, Signal03.cpp, SocketPair01.cpp,
+	StringFormat01-01.cpp, StringFormat01-02.cpp,
+	StringFormat01-03.cpp, StringFormat01-04.cpp,
+	StringFormat01-05.cpp, StringFormat01-06.cpp,
+	StringFormat01_01.cpp, StringFormat01_02.cpp,
+	StringFormat01_03.cpp, StringFormat01_04.cpp,
+	StringFormat01_05.cpp, StringFormat01_06.cpp,
+	StringFormat02-01.cpp, StringFormat02-02.cpp,
+	StringFormat02-03.cpp, StringFormat02_01.cpp,
+	StringFormat02_02.cpp, StringFormat02_03.cpp,
+	StringFormat03-01.cpp, StringFormat03-02.cpp,
+	StringFormat03-03.cpp, StringFormat03-04.cpp,
+	StringFormat03-05.cpp, StringFormat03-06.cpp,
+	StringFormat03_01.cpp, StringFormat03_02.cpp,
+	StringFormat03_03.cpp, StringFormat03_04.cpp,
+	StringFormat03_05.cpp, StringFormat03_06.cpp,
+	StringFormat04-01.cpp, StringFormat04_01.cpp, StringOps01-01.cpp,
+	StringOps01_01.cpp, StringOps02-01.cpp, StringOps02-02.cpp,
+	StringOps02-03.cpp, StringOps02_01.cpp, StringOps02_02.cpp,
+	StringOps02_03.cpp, StringOps03-01a.cpp, StringOps03-01b.cpp,
+	StringOps03-02a.cpp, StringOps03-02b.cpp, StringOps03-03a.cpp,
+	StringOps03-03b.cpp, StringOps03-04a.cpp, StringOps03-04b.cpp,
+	StringOps03-05a.cpp, StringOps03-05b.cpp, StringOps03-06a.cpp,
+	StringOps03-06b.cpp, StringOps03-07a.cpp, StringOps03-07b.cpp,
+	StringOps03-08a.cpp, StringOps03-08b.cpp, StringOps03_01a.cpp,
+	StringOps03_01b.cpp, StringOps03_02a.cpp, StringOps03_02b.cpp,
+	StringOps03_03a.cpp, StringOps03_03b.cpp, StringOps03_04a.cpp,
+	StringOps03_04b.cpp, StringOps03_05a.cpp, StringOps03_05b.cpp,
+	StringOps03_06a.cpp, StringOps03_06b.cpp, StringOps03_07a.cpp,
+	StringOps03_07b.cpp, StringOps03_08a.cpp, StringOps03_08b.cpp,
+	SubProcess01.cpp, SubProcess02.cpp, SubProcess03.cpp,
+	SubProcess04.cpp, SystemInfo01.cpp, Time01.cpp, Time02.cpp,
+	Time03.cpp, TimeInfo01.cpp, UUID01.cpp, UUID02.cpp, UUID03.cpp,
+	UUID04.cpp, Unwind01.cpp, UserInfo01.cpp, XTypeInfo01.cpp: port
+	tests to CPP unit using SealTest. Replace also std::cout with
+	seal_test::out which is defined in SealTest.h. Add OvalFile which
+	is used by qmtest to get name of executables. Rename files from *-*
+	to *_*
+
+2003-08-19 16:13  lat
+
+	* ChangeLog, SealBase/SearchPath.h, src/SearchPath.cpp,
+	tests/BuildFile, tests/SearchPath02.cpp: * SearchPath.h,
+	SearchPath.cpp: Document and tidy up.  Simplify code with StringOps
+	and Filename.  Handle empty path string.  * tests/SearchPath02.cpp:
+	Add test for empty path string.  * tests/BuildFile: Build it.
+
+2003-08-18 22:06  lat
+
+	* ChangeLog, SealBase/Kernel.h: * Kernel.h: Removed as obsolete.
+
+2003-08-18 22:05  lat
+
+	* ChangeLog, SealBase/SharedLibrary.h,
+	SealBase/sysapi/SharedLibrary.h, src/SharedLibrary.cpp: *
+	sysapi/SharedLibrary.h: Include OS X dyld headers.  *
+	SharedLibrary.h, SharedLibrary.cpp: (libname): It's ok to
+	dynamically load .dylib on OS X.  (symname): New, mangle symbol to
+	platform conventions.  (function, data): Use symname if new
+	optional argument allows.  (loaded): Implement for OS X.  Fix
+	mis-spellings in various apparently untested code paths.
+
+2003-08-18 22:05  lat
+
+	* ChangeLog, src/DebugAids.cpp: * DebugAids.cpp: Implement a simple
+	stack tracer for GCC using __builtin_return_address, but disable
+	it, the call interface is too flaky to work in practise.  Try to
+	implement something like this using the "new ABI" calls
+	(_Unwind_*).
+
+2003-08-18 22:04  lat
+
+	* ChangeLog, src/FileNameLock.cpp: * FileNameLock.cpp (locker):
+	Ignore sub-second component in boot ime comparison.  Some systems
+	provide sub-second boot time, but we only store seconds in the lock
+	name, so ignore the extra detail.  (tryLock): Stop after first
+	successful try and report success.
+
+2003-08-18 22:04  lat
+
+	* ChangeLog, src/Signal.cpp: * Signal.cpp (dumpContext): Implement
+	for OS X.
+
+2003-08-18 21:43  lat
+
+	* ChangeLog: Fix formatting
+
+2003-08-15 15:22  moneta
+
+	* BuildFile: update for lcg_
+
+2003-07-31 19:02  mato
+
+	* ChangeLog, src/CommandLine.cpp: fix compilation errors for
+	windows
+
+2003-07-11 18:38  mato
+
+	* ChangeLog, SealBase/CommandLine.h, src/CommandLine.cpp: Added
+	CommandLine class
+
+2003-07-11 16:47  moneta
+
+	* ChangeLog, SealBase/Kernel.h: add Kernel.h
+
+2003-07-11 10:48  moneta
+
+	* BuildFile: add lcg_ to lib names
+
+2003-07-11 00:28  lat
+
+	* ChangeLog, SealBase/sysapi/ResourceInfo.h,
+	SealBase/sysapi/Time.h: * sysapi/ResourceInfo.h, sysapi/Time.h:
+	Need errno.
+
+2003-07-11 00:28  lat
+
+	* ChangeLog, SealBase/BitOps.h, SealBase/BitPattern.h: * BitOps.h,
+	BitPattern.h: Need "template" keywords for nested template types. 
+	This probably breaks MSVC++ again, but can't test an alternative at
+	the moment.
+
+2003-07-02 23:49  lat
+
+	* ChangeLog, src/IOSelectWindows.h: * IOSelectWindows.h: Include
+	windows.h.
+
+2003-07-02 23:48  lat
+
+	* ChangeLog, src/UUID.cpp: * UUID.cpp: Include windows.h for
+	timeval.
+
+2003-07-02 23:48  lat
+
+	* ChangeLog, src/Signal.cpp: * Signal.cpp (kill, queue, wait): Add
+	return values for platforms where the function is unsupported.
+
+2003-07-02 23:47  lat
+
+	* ChangeLog, src/IOSelector.cpp: * IOSelector.cpp (attach, detach):
+	MSVC++ doesn't grok direct initialiser for IOSelectReq, so go
+	pedestrian.
+
+2003-07-02 23:47  lat
+
+	* ChangeLog, src/IOSelectWindows.cpp: * IOSelectWindows.cpp: Define
+	missing symbols to keep linker happy.
+
+2003-07-02 23:46  lat
+
+	* ChangeLog, SealBase/sysapi/Windows.h: * sysapi/Windows.h: Don't
+	rely on DDK headers, put the necessary content directly here. 
+	Define GetComputerNameEx only if not already in the system headers.
+
+2003-07-02 23:45  lat
+
+	* ChangeLog, SealBase/sysapi/Filename.h,
+	SealBase/sysapi/TempFile.h, SealBase/sysapi/WindowsIO.h: *
+	sysapi/WindowsIO.h: New, "access()" masks missing from MSVC++ io.h.
+	 * sysapi/Filename.h, sysapi/TempFile.h: Include it instead of
+	io.h.
+
+2003-07-02 23:45  lat
+
+	* ChangeLog, SealBase/SystemError.h, SealBase/sysapi/SystemError.h,
+	src/SystemError.cpp: * SystemError.h, sysapi/SystemError.h,
+	SystemError.cpp: Include system error headers in implementation,
+	not in the public header.  (translateFromErrno): Stick "ERROR_" in
+	front of all Windows errors, forgot to put it there.  Reindent
+	table.	(errorString): Fix variable name on Windows.
+
+2003-07-02 23:43  lat
+
+	* ChangeLog, SealBase/IOChannel.h: * IOChannel.h: Declare
+	IOSelectRequest as struct, MSVC++ mangles struct and class
+	differently so all declarations must match.
+
+2003-07-02 23:43  lat
+
+	* ChangeLog, SealBase/Filename.h: * Filename.h: Add DLL API to all
+	friend functions.
+
+2003-07-02 23:42  lat
+
+	* ChangeLog, SealBase/Callback.h: * Callback.h (CreateCallback):
+	Move DLL API to the front, MSVC++ apparently can't grok it
+	everywhere on the declaration.
+
+2003-07-02 23:42  lat
+
+	* ChangeLog, SealBase/BitOps.h, SealBase/BitPattern.h: * BitOps.h,
+	BitPattern.h: Avoid partial template specialisation for MSVC++, use
+	two nested classes as a workaround.
+
+2003-07-02 23:41  lat
+
+	* BuildFile, ChangeLog: * BuildFile: Refer to GNU rx for POSIX
+	regexs with MSVC++.
+
+2003-06-19 17:30  lat
+
+	* ChangeLog, src/Regexp.cpp: * Regexp.cpp
+	(Regexp::PCRERep::search): Fix match counting.
+
+2003-05-19 20:59  lat
+
+	* ChangeLog, src/BuildFile: * src/BuildFile: Adjust to build system
+	changes.
+
+2003-05-19 20:59  lat
+
+	* ChangeLog, src/Error.cpp: * Error.cpp: Defer sub-explanation to
+	the chained object.  Fixes also a bug of not progressing at all in
+	the chain.
+
+2003-05-16 19:36  lat
+
+	* ChangeLog, SealBase/Error.h, SealBase/FileError.h,
+	SealBase/FileMappingError.h, SealBase/FileSystemError.h,
+	SealBase/FilenameError.h, SealBase/IOError.h,
+	SealBase/NetworkError.h, SealBase/RegexpError.h,
+	SealBase/SharedLibraryError.h, SealBase/SubProcessError.h,
+	SealBase/SystemError.h, SealBase/UUIDError.h,
+	SealBase/sysapi/ResourceInfo.h, src/Error.cpp, src/File.cpp,
+	src/FileError.cpp, src/FileMappingError.cpp, src/FileNameLock.cpp,
+	src/FileSystemError.cpp, src/Filename.cpp, src/FilenameError.cpp,
+	src/IOChannel.cpp, src/IOError.cpp, src/IOInput.cpp,
+	src/IOOutput.cpp, src/IOSelectDevPoll.cpp, src/IOSelectKqueue.cpp,
+	src/IOSelectPoll.cpp, src/IOSelectSelect.cpp, src/IOSelectSig.cpp,
+	src/IOSelectSigFd.cpp, src/IOSelectWindows.cpp, src/InetSocket.cpp,
+	src/LogPipe.cpp, src/NetworkError.cpp, src/Regexp.cpp,
+	src/RegexpError.cpp, src/SharedLibrary.cpp,
+	src/SharedLibraryError.cpp, src/Signal.cpp, src/Socket.cpp,
+	src/SubProcessError.cpp, src/SystemError.cpp, src/TempFile.cpp,
+	src/Time.cpp, src/UUID.cpp, src/UUIDError.cpp,
+	src/UnixDirIterator.cpp, src/UnixFile.cpp, src/UnixFileLock.cpp,
+	src/UnixFileMapping.cpp, src/UnixFilename.cpp,
+	src/UnixIOChannel.cpp, src/UnixNamedPipeServer.cpp,
+	src/UnixPipe.cpp, src/UnixPipeCmd.cpp, src/UnixSocketPair.cpp,
+	src/UnixSubProcess.cpp, src/WindowsDirIterator.cpp,
+	src/WindowsFile.cpp, src/WindowsFileLock.cpp,
+	src/WindowsFileMapping.cpp, src/WindowsFilename.cpp,
+	src/WindowsIOChannel.cpp, src/WindowsNamedPipeServer.cpp,
+	src/WindowsPipe.cpp, src/WindowsPipeCmd.cpp, src/WindowsSocket.cpp,
+	src/WindowsSubProcess.cpp, src/WindowsUserInfo.cpp,
+	tests/LogListener.cpp, tests/SharedLibrary01.cpp: * Change
+	exception model to by-value instead of by-pointer.  Update all
+	exception types, throws and catches.  Change system errors to use a
+	single type with a translation to a portable code instead of a
+	separate type for every error code.  Provide mapping table for most
+	common UNIX and WIN32 error codes.  Allow exceptions to be
+	explained arbitrary levels deep.
+
+2003-05-15 23:42  moneta
+
+	* examples/BuildFile: remove dep on pcre
+
+2003-05-15 16:40  moneta
+
+	* examples/exa_Signal.cpp: add debug example
+
+2003-05-15 09:29  moneta
+
+	* examples/: BuildFile, exa_Signal.cpp: add Signal example
+
+2003-05-14 15:29  moneta
+
+	* examples/: BuildFile, exa_Log.cpp: add Log example
+
+2003-05-14 15:29  moneta
+
+	* examples/Log.html: add documentation for Log
+
+2003-05-14 11:38  moneta
+
+	* examples/: BuildFile, exa_Debug.cpp: add SealBase examples
+
+2003-05-10 09:14  lat
+
+	* ChangeLog, SealBase/Argz.h, SealBase/BitIterator.h,
+	SealBase/BitOps.h, SealBase/BitPattern.h, SealBase/BitTraits.h,
+	SealBase/Callback.h, SealBase/DebugAids.h, SealBase/DirIterator.h,
+	SealBase/Environment.h, SealBase/Error.h, SealBase/File.h,
+	SealBase/FileAcl.h, SealBase/FileError.h, SealBase/FileLock.h,
+	SealBase/FileMapping.h, SealBase/FileMappingError.h,
+	SealBase/FileNameLock.h, SealBase/FileSystemError.h,
+	SealBase/Filename.h, SealBase/FilenameError.h, SealBase/Hook.h,
+	SealBase/HookList.h, SealBase/HostInfo.h, SealBase/IOBuffer.h,
+	SealBase/IOChannel.h, SealBase/IOChannelPair.h, SealBase/IOError.h,
+	SealBase/IOInput.h, SealBase/IOOutput.h, SealBase/IOSelectCB.h,
+	SealBase/IOSelector.h, SealBase/IOStatus.h,
+	SealBase/InetServerSocket.h, SealBase/InetSocket.h,
+	SealBase/IntBits.h, SealBase/IntTraits.h,
+	SealBase/LocalServerSocket.h, SealBase/LocalSocket.h,
+	SealBase/Log.h, SealBase/LongLong.h, SealBase/LowMemoryPool.h,
+	SealBase/Macros.h, SealBase/MapIterator.h, SealBase/MultiMethod.h,
+	SealBase/NamedPipeServer.h, SealBase/NetworkError.h,
+	SealBase/PODVector.h, SealBase/Pipe.h, SealBase/PipeCmd.h,
+	SealBase/ProcessInfo.h, SealBase/Range.h, SealBase/Regexp.h,
+	SealBase/RegexpError.h, SealBase/RegexpMatch.h,
+	SealBase/ResourceInfo.h, SealBase/SaveErrno.h,
+	SealBase/SearchPath.h, SealBase/Sequence.h,
+	SealBase/SharedLibrary.h, SealBase/SharedLibraryError.h,
+	SealBase/ShellEnvironment.h, SealBase/Signal.h, SealBase/Socket.h,
+	SealBase/SocketPair.h, SealBase/Storage.h, SealBase/StringFormat.h,
+	SealBase/StringList.h, SealBase/StringOps.h, SealBase/SubProcess.h,
+	SealBase/SubProcessError.h, SealBase/SystemError.h,
+	SealBase/SystemInfo.h, SealBase/TempFile.h, SealBase/Time.h,
+	SealBase/TimeInfo.h, SealBase/TimeSpan.h, SealBase/UUID.h,
+	SealBase/UUIDError.h, SealBase/Unwind.h, SealBase/UserInfo.h,
+	SealBase/XTypeInfo.h, SealBase/iosfwd.h,
+	SealBase/sysapi/DebugAids.h, SealBase/sysapi/DirIterator.h,
+	SealBase/sysapi/ElfAbi.h, SealBase/sysapi/File.h,
+	SealBase/sysapi/FileAcl.h, SealBase/sysapi/FileLock.h,
+	SealBase/sysapi/FileMapping.h, SealBase/sysapi/FileNameLock.h,
+	SealBase/sysapi/Filename.h, SealBase/sysapi/HostInfo.h,
+	SealBase/sysapi/IOChannel.h, SealBase/sysapi/IOPlatformData.h,
+	SealBase/sysapi/IOStatus.h, SealBase/sysapi/IOTypes.h,
+	SealBase/sysapi/InetSocket.h, SealBase/sysapi/LocalSocket.h,
+	SealBase/sysapi/NamedPipeServer.h, SealBase/sysapi/Pipe.h,
+	SealBase/sysapi/PipeCmd.h, SealBase/sysapi/ProcessInfo.h,
+	SealBase/sysapi/ResourceInfo.h, SealBase/sysapi/SharedLibrary.h,
+	SealBase/sysapi/Signal.h, SealBase/sysapi/Socket.h,
+	SealBase/sysapi/SocketPair.h, SealBase/sysapi/SubProcess.h,
+	SealBase/sysapi/SystemError.h, SealBase/sysapi/SystemInfo.h,
+	SealBase/sysapi/TempFile.h, SealBase/sysapi/Time.h,
+	SealBase/sysapi/TimeInfo.h, SealBase/sysapi/UserInfo.h,
+	SealBase/sysapi/Windows.h, SealBase/sysapi/iosfwd.h, src/Argz.cpp,
+	src/DebugAids.cpp, src/DirIterator.cpp, src/Environment.cpp,
+	src/Error.cpp, src/File.cpp, src/FileAcl.cpp, src/FileError.cpp,
+	src/FileLock.cpp, src/FileMapping.cpp, src/FileMappingError.cpp,
+	src/FileNameLock.cpp, src/FileSystemError.cpp, src/Filename.cpp,
+	src/FilenameError.cpp, src/HostInfo.cpp, src/IOChannel.cpp,
+	src/IOChannelPair.cpp, src/IOError.cpp, src/IOInput.cpp,
+	src/IOOutput.cpp, src/IOSelectFdMap.cpp, src/IOSelectRequest.h,
+	src/IOSelector.cpp, src/IOStatus.cpp, src/InetServerSocket.cpp,
+	src/InetSocket.cpp, src/IntTraits.cpp, src/LocalServerSocket.cpp,
+	src/LocalSocket.cpp, src/Log.cpp, src/LogConsole.cpp,
+	src/LogFile.cpp, src/LogPipe.cpp, src/LogSink.cpp,
+	src/LogSocket.cpp, src/LogStderr.cpp, src/LongLong.cpp,
+	src/LowMemoryPool.cpp, src/MultiMethod.cpp,
+	src/NamedPipeServer.cpp, src/NetworkError.cpp, src/Pipe.cpp,
+	src/PipeCmd.cpp, src/ProcessInfo.cpp, src/RegexpError.cpp,
+	src/ResourceInfo.cpp, src/SearchPath.cpp, src/SharedLibrary.cpp,
+	src/SharedLibraryError.cpp, src/ShellEnvironment.cpp,
+	src/Signal.cpp, src/Socket.cpp, src/SocketPair.cpp,
+	src/Storage.cpp, src/StringHack.h, src/SubProcess.cpp,
+	src/SubProcessError.cpp, src/SystemError.cpp, src/SystemInfo.cpp,
+	src/TempFile.cpp, src/Time.cpp, src/TimeInfo.cpp, src/UUID.cpp,
+	src/UUIDError.cpp, src/UnixDirIterator.cpp, src/UnixFile.cpp,
+	src/UnixFileAcl.cpp, src/UnixFileLock.cpp, src/UnixFileMapping.cpp,
+	src/UnixFilename.cpp, src/UnixIOChannel.cpp, src/UnixIOStatus.cpp,
+	src/UnixNamedPipeServer.cpp, src/UnixPipe.cpp, src/UnixPipeCmd.cpp,
+	src/UnixSocket.cpp, src/UnixSocketPair.cpp, src/UnixSubProcess.cpp,
+	src/UnixTempFile.cpp, src/UnixUserInfo.cpp, src/UserInfo.cpp,
+	src/WindowsDirIterator.cpp, src/WindowsFile.cpp,
+	src/WindowsFileAcl.cpp, src/WindowsFileLock.cpp,
+	src/WindowsFileMapping.cpp, src/WindowsFilename.cpp,
+	src/WindowsIOChannel.cpp, src/WindowsIOStatus.cpp,
+	src/WindowsNamedPipeServer.cpp, src/WindowsPipe.cpp,
+	src/WindowsPipeCmd.cpp, src/WindowsSocket.cpp,
+	src/WindowsSocketPair.cpp, src/WindowsSubProcess.cpp,
+	src/WindowsTempFile.cpp, src/WindowsUserInfo.cpp,
+	src/XTypeInfo.cpp, tests/Argz01.cpp, tests/BitIterator01.cpp,
+	tests/BitOps01.cpp, tests/BitPattern01.cpp, tests/BitTraits01.cpp,
+	tests/Callback01.cpp, tests/Debug01.cpp, tests/DirIterator01.cpp,
+	tests/DirIterator02.cpp, tests/DirIterator03.cpp,
+	tests/DirIterator04.cpp, tests/Environment01.cpp, tests/File01.cpp,
+	tests/File02.cpp, tests/File03.cpp, tests/File04.cpp,
+	tests/File05.cpp, tests/File06.cpp, tests/FileAcl01.cpp,
+	tests/FileLock01.cpp, tests/FileMapping01.cpp,
+	tests/FileMapping02.cpp, tests/FileMapping03.cpp,
+	tests/Filename000.cpp, tests/Filename01.cpp, tests/Filename02-00.h,
+	tests/Filename02-01.cpp, tests/Filename02-02.cpp,
+	tests/Filename02-03.cpp, tests/Filename02-04.cpp,
+	tests/Filename02-05.cpp, tests/Filename02-06.cpp,
+	tests/Filename02-07.cpp, tests/Filename02-08.cpp,
+	tests/Filename02-09.cpp, tests/Filename02-10.cpp,
+	tests/Filename02-11.cpp, tests/Filename02-12.cpp,
+	tests/Filename02-13.cpp, tests/Filename03.cpp,
+	tests/Filename04.cpp, tests/Filename05.cpp, tests/Filename06.cpp,
+	tests/Filename07.cpp, tests/Filename08.cpp, tests/Filename09.cpp,
+	tests/Hook01.cpp, tests/HookList01.cpp, tests/HostInfo01.cpp,
+	tests/IOChannel01.cpp, tests/IOSelector01.cpp,
+	tests/IOSelector02.cpp, tests/IOSelector03.cpp,
+	tests/IOStatus01.cpp, tests/InetServerSocket01.cpp,
+	tests/InetSocket01.cpp, tests/IntBits01.cpp,
+	tests/LocalServerSocket01.cpp, tests/LocalSocket01.cpp,
+	tests/Log01.cpp, tests/LogListener.cpp, tests/LowMemoryPool01.cpp,
+	tests/MapIterator01.cpp, tests/MultiMethod01.cpp,
+	tests/MultiMethod02.cpp, tests/MultiMethod03.cpp,
+	tests/NamedPipeServer01.cpp, tests/Pipe01.cpp, tests/PipeCmd01.cpp,
+	tests/ProcessInfo01.cpp, tests/Range01.cpp,
+	tests/ResourceInfo01.cpp, tests/SaveErrno01.cpp,
+	tests/SearchPath01.cpp, tests/Sequence01.cpp,
+	tests/SharedLibrary01.Lib.cpp, tests/SharedLibrary01.cpp,
+	tests/ShellEnvironment01.cpp, tests/Signal01.cpp,
+	tests/Signal02.cpp, tests/Signal03.cpp, tests/SocketPair01.cpp,
+	tests/StringFormat01-01.cpp, tests/StringFormat01-02.cpp,
+	tests/StringFormat01-03.cpp, tests/StringFormat01-04.cpp,
+	tests/StringFormat01-05.cpp, tests/StringFormat01-06.cpp,
+	tests/StringFormat02-01.cpp, tests/StringFormat02-02.cpp,
+	tests/StringFormat02-03.cpp, tests/StringFormat03-01.cpp,
+	tests/StringFormat03-02.cpp, tests/StringFormat03-03.cpp,
+	tests/StringFormat03-04.cpp, tests/StringFormat03-05.cpp,
+	tests/StringFormat03-06.cpp, tests/StringFormat04-01.cpp,
+	tests/StringOps01-01.cpp, tests/StringOps02-01.cpp,
+	tests/StringOps02-02.cpp, tests/StringOps02-03.cpp,
+	tests/StringOps03-01a.cpp, tests/StringOps03-01b.cpp,
+	tests/StringOps03-02a.cpp, tests/StringOps03-02b.cpp,
+	tests/StringOps03-03a.cpp, tests/StringOps03-03b.cpp,
+	tests/StringOps03-04a.cpp, tests/StringOps03-04b.cpp,
+	tests/StringOps03-05a.cpp, tests/StringOps03-05b.cpp,
+	tests/StringOps03-06a.cpp, tests/StringOps03-06b.cpp,
+	tests/StringOps03-07a.cpp, tests/StringOps03-07b.cpp,
+	tests/StringOps03-08a.cpp, tests/StringOps03-08b.cpp,
+	tests/SubProcess01.cpp, tests/SubProcess02.cpp,
+	tests/SubProcess03.cpp, tests/SubProcess04.cpp,
+	tests/SystemInfo01.cpp, tests/Time01.cpp, tests/Time02.cpp,
+	tests/Time03.cpp, tests/TimeInfo01.cpp, tests/UUID01.cpp,
+	tests/UUID02.cpp, tests/UUID03.cpp, tests/UUID04.cpp,
+	tests/Unwind01.cpp, tests/UserInfo01.cpp, tests/XTypeInfo01.cpp: *
+	Remove classlib copyrights.  * Macros.h, sysapi/Windows.h: Remove
+	`_BASE' in general SEAL macros.  * MultiMethod.h: Use the shortened
+	form.
+
+2003-05-10 09:06  lat
+
+	* ChangeLog: Fix typo
+
+2003-05-09 21:41  lat
+
+	* BuildFile, ChangeLog, SealBase/Argz.h, SealBase/BitIterator.h,
+	SealBase/BitOps.h, SealBase/BitPattern.h, SealBase/BitTraits.h,
+	SealBase/Callback.h, SealBase/DebugAids.h, SealBase/DirIterator.h,
+	SealBase/Environment.h, SealBase/Error.h, SealBase/File.h,
+	SealBase/FileAcl.h, SealBase/FileError.h, SealBase/FileLock.h,
+	SealBase/FileMapping.h, SealBase/FileMappingError.h,
+	SealBase/FileNameLock.h, SealBase/FileSystemError.h,
+	SealBase/Filename.h, SealBase/FilenameError.h, SealBase/Hook.h,
+	SealBase/HookList.h, SealBase/HostInfo.h, SealBase/IOBuffer.h,
+	SealBase/IOChannel.h, SealBase/IOChannelPair.h, SealBase/IOError.h,
+	SealBase/IOInput.h, SealBase/IOOutput.h, SealBase/IOSelectCB.h,
+	SealBase/IOSelectEvent.h, SealBase/IOSelector.h,
+	SealBase/IOStatus.h, SealBase/InetServerSocket.h,
+	SealBase/InetSocket.h, SealBase/IntBits.h, SealBase/IntTraits.h,
+	SealBase/LocalServerSocket.h, SealBase/LocalSocket.h,
+	SealBase/Log.h, SealBase/LongLong.h, SealBase/LowMemoryPool.h,
+	SealBase/Macros.h, SealBase/MapIterator.h, SealBase/MultiMethod.h,
+	SealBase/NamedPipeServer.h, SealBase/NetworkError.h,
+	SealBase/PODVector.h, SealBase/Pipe.h, SealBase/PipeCmd.h,
+	SealBase/ProcessInfo.h, SealBase/Range.h, SealBase/Regexp.h,
+	SealBase/RegexpError.h, SealBase/RegexpMatch.h,
+	SealBase/ResourceInfo.h, SealBase/SaveErrno.h,
+	SealBase/SearchPath.h, SealBase/Sequence.h,
+	SealBase/SharedLibrary.h, SealBase/SharedLibraryError.h,
+	SealBase/ShellEnvironment.h, SealBase/Signal.h, SealBase/Socket.h,
+	SealBase/SocketPair.h, SealBase/Storage.h, SealBase/StringFormat.h,
+	SealBase/StringList.h, SealBase/StringOps.h, SealBase/SubProcess.h,
+	SealBase/SubProcessError.h, SealBase/SystemError.h,
+	SealBase/SystemInfo.h, SealBase/TempFile.h, SealBase/Time.h,
+	SealBase/TimeInfo.h, SealBase/TimeSpan.h, SealBase/UUID.h,
+	SealBase/UUIDError.h, SealBase/Unwind.h, SealBase/UserInfo.h,
+	SealBase/XTypeInfo.h, SealBase/config.h, SealBase/iosfwd.h,
+	SealBase/sysapi/DebugAids.h, SealBase/sysapi/DirIterator.h,
+	SealBase/sysapi/ElfAbi.h, SealBase/sysapi/File.h,
+	SealBase/sysapi/FileAcl.h, SealBase/sysapi/FileLock.h,
+	SealBase/sysapi/FileMapping.h, SealBase/sysapi/FileNameLock.h,
+	SealBase/sysapi/Filename.h, SealBase/sysapi/HostInfo.h,
+	SealBase/sysapi/IOChannel.h, SealBase/sysapi/IOPlatformData.h,
+	SealBase/sysapi/IOStatus.h, SealBase/sysapi/IOTypes.h,
+	SealBase/sysapi/InetSocket.h, SealBase/sysapi/LocalSocket.h,
+	SealBase/sysapi/NamedPipeServer.h, SealBase/sysapi/Pipe.h,
+	SealBase/sysapi/PipeCmd.h, SealBase/sysapi/ProcessInfo.h,
+	SealBase/sysapi/ResourceInfo.h, SealBase/sysapi/SharedLibrary.h,
+	SealBase/sysapi/Signal.h, SealBase/sysapi/Socket.h,
+	SealBase/sysapi/SocketPair.h, SealBase/sysapi/SubProcess.h,
+	SealBase/sysapi/SystemError.h, SealBase/sysapi/SystemInfo.h,
+	SealBase/sysapi/TempFile.h, SealBase/sysapi/Time.h,
+	SealBase/sysapi/TimeInfo.h, SealBase/sysapi/UserInfo.h,
+	SealBase/sysapi/Windows.h, SealBase/sysapi/iosfwd.h, src/Argz.cpp,
+	src/BuildFile, src/DebugAids.cpp, src/DirIterator.cpp,
+	src/Environment.cpp, src/Error.cpp, src/File.cpp, src/FileAcl.cpp,
+	src/FileError.cpp, src/FileLock.cpp, src/FileMapping.cpp,
+	src/FileMappingError.cpp, src/FileNameLock.cpp,
+	src/FileSystemError.cpp, src/Filename.cpp, src/FilenameError.cpp,
+	src/HostInfo.cpp, src/IOChannel.cpp, src/IOChannelPair.cpp,
+	src/IOError.cpp, src/IOInput.cpp, src/IOOutput.cpp,
+	src/IOSelectDevPoll.cpp, src/IOSelectDevPoll.h,
+	src/IOSelectFdMap.cpp, src/IOSelectFdMap.h, src/IOSelectKqueue.cpp,
+	src/IOSelectKqueue.h, src/IOSelectMethod.cpp, src/IOSelectMethod.h,
+	src/IOSelectPoll.cpp, src/IOSelectPoll.h, src/IOSelectRequest.h,
+	src/IOSelectSelect.cpp, src/IOSelectSelect.h, src/IOSelectSig.cpp,
+	src/IOSelectSig.h, src/IOSelectSigFd.cpp, src/IOSelectSigFd.h,
+	src/IOSelectWindows.cpp, src/IOSelectWindows.h, src/IOSelector.cpp,
+	src/IOStatus.cpp, src/InetServerSocket.cpp, src/InetSocket.cpp,
+	src/IntTraits.cpp, src/LocalServerSocket.cpp, src/LocalSocket.cpp,
+	src/Log.cpp, src/LogConsole.cpp, src/LogFile.cpp, src/LogPipe.cpp,
+	src/LogSink.cpp, src/LogSocket.cpp, src/LogStderr.cpp,
+	src/LongLong.cpp, src/LowMemoryPool.cpp, src/MultiMethod.cpp,
+	src/NamedPipeServer.cpp, src/NetworkError.cpp, src/Pipe.cpp,
+	src/PipeCmd.cpp, src/ProcessInfo.cpp, src/Regexp.cpp,
+	src/RegexpError.cpp, src/RegexpMatch.cpp, src/ResourceInfo.cpp,
+	src/SearchPath.cpp, src/SharedLibrary.cpp,
+	src/SharedLibraryError.cpp, src/ShellEnvironment.cpp,
+	src/Signal.cpp, src/Socket.cpp, src/SocketPair.cpp,
+	src/Storage.cpp, src/StringFormat.cpp, src/StringHack.h,
+	src/StringOps.cpp, src/SubProcess.cpp, src/SubProcessError.cpp,
+	src/SystemError.cpp, src/SystemInfo.cpp, src/TempFile.cpp,
+	src/Time.cpp, src/TimeInfo.cpp, src/UUID.cpp, src/UUIDError.cpp,
+	src/UnixDirIterator.cpp, src/UnixFile.cpp, src/UnixFileAcl.cpp,
+	src/UnixFileLock.cpp, src/UnixFileMapping.cpp,
+	src/UnixFilename.cpp, src/UnixIOChannel.cpp, src/UnixIOStatus.cpp,
+	src/UnixNamedPipeServer.cpp, src/UnixPipe.cpp, src/UnixPipeCmd.cpp,
+	src/UnixSocket.cpp, src/UnixSocketPair.cpp, src/UnixSubProcess.cpp,
+	src/UnixTempFile.cpp, src/UnixUserInfo.cpp, src/UserInfo.cpp,
+	src/WindowsDirIterator.cpp, src/WindowsFile.cpp,
+	src/WindowsFileAcl.cpp, src/WindowsFileLock.cpp,
+	src/WindowsFileMapping.cpp, src/WindowsFilename.cpp,
+	src/WindowsIOChannel.cpp, src/WindowsIOStatus.cpp,
+	src/WindowsNamedPipeServer.cpp, src/WindowsPipe.cpp,
+	src/WindowsPipeCmd.cpp, src/WindowsSocket.cpp,
+	src/WindowsSocketPair.cpp, src/WindowsSubProcess.cpp,
+	src/WindowsTempFile.cpp, src/WindowsUserInfo.cpp,
+	src/XTypeInfo.cpp, src/readme.notes, src/ext/aix-dlfcn/Makefile,
+	src/ext/aix-dlfcn/README, src/ext/aix-dlfcn/dl.exp,
+	src/ext/aix-dlfcn/dlfcn.c, src/ext/aix-dlfcn/dlfcn.h,
+	tests/Argz01.cpp, tests/BitIterator01.cpp, tests/BitOps01.cpp,
+	tests/BitPattern01.cpp, tests/BitTraits01.cpp, tests/BuildFile,
+	tests/Callback01.cpp, tests/Debug01.cpp, tests/DirIterator01.cpp,
+	tests/DirIterator02.cpp, tests/DirIterator03.cpp,
+	tests/DirIterator04.cpp, tests/Environment01.cpp, tests/File01.cpp,
+	tests/File02.cpp, tests/File03.cpp, tests/File04.cpp,
+	tests/File05.cpp, tests/File06.cpp, tests/FileAcl01.cpp,
+	tests/FileLock01.cpp, tests/FileMapping01.cpp,
+	tests/FileMapping02.cpp, tests/FileMapping03.cpp,
+	tests/Filename000.cpp, tests/Filename01.cpp, tests/Filename02-00.h,
+	tests/Filename02-01.cpp, tests/Filename02-02.cpp,
+	tests/Filename02-03.cpp, tests/Filename02-04.cpp,
+	tests/Filename02-05.cpp, tests/Filename02-06.cpp,
+	tests/Filename02-07.cpp, tests/Filename02-08.cpp,
+	tests/Filename02-09.cpp, tests/Filename02-10.cpp,
+	tests/Filename02-11.cpp, tests/Filename02-12.cpp,
+	tests/Filename02-13.cpp, tests/Filename03.cpp,
+	tests/Filename04.cpp, tests/Filename05.cpp, tests/Filename06.cpp,
+	tests/Filename07.cpp, tests/Filename08.cpp, tests/Filename09.cpp,
+	tests/Hook01.cpp, tests/HookList01.cpp, tests/HostInfo01.cpp,
+	tests/IOChannel01.cpp, tests/IOSelector01.cpp,
+	tests/IOSelector02.cpp, tests/IOSelector03.cpp,
+	tests/IOStatus01.cpp, tests/InetServerSocket01.cpp,
+	tests/InetSocket01.cpp, tests/IntBits01.cpp,
+	tests/LocalServerSocket01.cpp, tests/LocalSocket01.cpp,
+	tests/Log01.cpp, tests/LogListener.cpp, tests/LowMemoryPool01.cpp,
+	tests/MapIterator01.cpp, tests/MultiMethod01.cpp,
+	tests/MultiMethod02.cpp, tests/MultiMethod03.cpp,
+	tests/NamedPipeServer01.cpp, tests/Pipe01.cpp, tests/PipeCmd01.cpp,
+	tests/ProcessInfo01.cpp, tests/Range01.cpp,
+	tests/ResourceInfo01.cpp, tests/SaveErrno01.cpp,
+	tests/SearchPath01.cpp, tests/Sequence01.cpp,
+	tests/SharedLibrary01.Lib.cpp, tests/SharedLibrary01.cpp,
+	tests/ShellEnvironment01.cpp, tests/Signal01.cpp,
+	tests/Signal02.cpp, tests/Signal03.cpp, tests/SocketPair01.cpp,
+	tests/StringFormat01-01.cpp, tests/StringFormat01-02.cpp,
+	tests/StringFormat01-03.cpp, tests/StringFormat01-04.cpp,
+	tests/StringFormat01-05.cpp, tests/StringFormat01-06.cpp,
+	tests/StringFormat02-01.cpp, tests/StringFormat02-02.cpp,
+	tests/StringFormat02-03.cpp, tests/StringFormat03-01.cpp,
+	tests/StringFormat03-02.cpp, tests/StringFormat03-03.cpp,
+	tests/StringFormat03-04.cpp, tests/StringFormat03-05.cpp,
+	tests/StringFormat03-06.cpp, tests/StringFormat04-01.cpp,
+	tests/StringOps01-01.cpp, tests/StringOps02-01.cpp,
+	tests/StringOps02-02.cpp, tests/StringOps02-03.cpp,
+	tests/StringOps03-01a.cpp, tests/StringOps03-01b.cpp,
+	tests/StringOps03-02a.cpp, tests/StringOps03-02b.cpp,
+	tests/StringOps03-03a.cpp, tests/StringOps03-03b.cpp,
+	tests/StringOps03-04a.cpp, tests/StringOps03-04b.cpp,
+	tests/StringOps03-05a.cpp, tests/StringOps03-05b.cpp,
+	tests/StringOps03-06a.cpp, tests/StringOps03-06b.cpp,
+	tests/StringOps03-07a.cpp, tests/StringOps03-07b.cpp,
+	tests/StringOps03-08a.cpp, tests/StringOps03-08b.cpp,
+	tests/SubProcess01.cpp, tests/SubProcess02.cpp,
+	tests/SubProcess03.cpp, tests/SubProcess04.cpp,
+	tests/SystemInfo01.cpp, tests/Time01.cpp, tests/Time02.cpp,
+	tests/Time03.cpp, tests/TimeInfo01.cpp, tests/UUID01.cpp,
+	tests/UUID02.cpp, tests/UUID03.cpp, tests/UUID04.cpp,
+	tests/Unwind01.cpp, tests/UserInfo01.cpp, tests/XTypeInfo01.cpp: *
+	New foundation classes package, using classlib utils, iobase and
+	sysapi as a staring point.
+
+2003-05-09 21:40  lat
+
+	* ChangeLog: Adding new package
+

@@ -1,0 +1,24 @@
+use SealBase v* Foundation
+
+apply_pattern lcg_shared_library
+
+set SEAL_PLUGINS "$(CMTINSTALLAREA)/$(tag)/lib/modules"
+
+private
+macro lib_lcg_PluginManager_cppflags "" WIN32 "-DPLUGIN_MANAGER_BUILD_DLL"
+
+#---Tests----------------------------------------------------------------------
+use SealTest v* Foundation
+apply_pattern lcg_test_library     name=PluginFactory files=../tests/PluginFactory/*.cpp
+apply_pattern lcg_test_module      name=PluginSample files=../tests/PluginSample/*.cpp
+apply_pattern lcg_test_module      name=PluginInit files=../tests/PluginInit/*.cpp
+
+apply_pattern lcg_test_application name=PluginManager_PluginCreation files=../tests/PluginCreation/*.cpp
+apply_pattern lcg_test_application name=PluginManager_PluginArgs files=../tests/PluginFactoryArgs/*.cpp
+
+apply_pattern lcg_test_application name=PluginManager_NoPath files=../tests/PluginNullPath/NoPath.cpp
+apply_pattern lcg_test_application name=PluginManager_NullAllPath files=../tests/PluginNullPath/NullAllPath.cpp
+apply_pattern lcg_test_application name=PluginManager_NullMidPath files=../tests/PluginNullPath/NullMidPath.cpp
+apply_pattern lcg_test_application name=PluginManager_NullPrefixPath files=../tests/PluginNullPath/NullPrefixPath.cpp
+apply_pattern lcg_test_application name=PluginManager_NullSuffixPath files=../tests/PluginNullPath/NullSuffixPath.cpp
+
