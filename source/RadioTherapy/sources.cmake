@@ -1,0 +1,122 @@
+#------------------------------------------------------------------------------
+# Module : RadioTherapy
+# Package: RadioTherapy
+#
+#------------------------------------------------------------------------------
+#
+set(CMAKE_VERBOSE_MAKEFILE ON)
+include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+#
+# Define the GEANT4 Module.
+include(UseGamosAtGeant4)
+#
+GEANT4_DEFINE_MODULE(NAME RadioTherapy
+	 HEADERS
+		RTVClassifierByExtraInfo.hh
+		RTPhaseSpaceHistos.hh
+		iaea_config.hh
+		RTProdCutsStudyUA.hh
+		RTReuseAtZPlaneProcess.hh
+		RTZRLimitsAutoUA.hh
+		RTVExtraInfoProvider.hh
+		RTVExtraInfoProviderLong.hh
+		RTExtraInfoProviderZLastNoMaterial.hh
+		RTExtraInfoProviderCrossings.hh
+		RTGeneratorPSPenelope.hh
+		RTReuseAtZPlaneWithNVoxelUA.hh
+		iaea_utilities.hh
+		RTGeneratorPhaseSpace_EGS.hh
+		RTGeneratorPhaseSpace.hh
+		make_zlib.h
+		RTExtraInfoMgr.hh
+		RTReuseAtZPlaneMessenger.hh
+		RTCutsStudyFilter.hh
+		RTVExtraInfoProviderLongByRegion.hh
+		RTFilterByEILong.hh
+		RTVZRLimitsUA.hh
+		RTPhaseSpaceMessenger.hh
+		RTVerbosity.hh
+		RTReuseAtZPlaneTrackInfo.hh
+		RTMinRangeLimitsStudyUA.hh
+		RTPhaseSpaceGenerator.hh
+		RTExtraInfoTrackInfo.hh
+		RTPhaseSpace_EGSUA.hh
+		RTExtraInfoProviderZLast.hh
+		iaea_header.hh
+		RTPhaseSpaceUA.hh
+		RTPhaseSpace_extUA.hh
+		RTPSPDoseHistosVector.hh
+		RTExtraInfoProviderZOrigin.hh
+		RTExtraInfoProviderInteractions.hh
+		iaea_record.hh
+		RTExtraInfoProviderOrigin.hh
+		RTReuseAtZPlaneUA.hh
+		RTZRLimitsUA.hh
+		RTGeneratorPhaseSpaceRTPlan.hh
+		RTPSPDoseHistos.hh
+		RTVExtraInfoProviderFloat.hh
+		EGSPhspParticle.hh
+		RTClassifierByEILong.hh
+	 SOURCES
+		RTClassifierByEILong.cc
+		RTVerbosity.cc
+		plugin.cc
+		iaea_record.cc
+		zlib.h
+		RTPhaseSpaceUA.cc
+		RTExtraInfoMgr.cc
+		RTPhaseSpace_EGSUA.cc
+		RTGeneratorPhaseSpaceRTPlan.cc
+		RTVExtraInfoProvider.cc
+		RTGeneratorPhaseSpace_EGS.cc
+		RTReuseAtZPlaneMessenger.cc
+		RTGeneratorPhaseSpace.cc
+		RTCutsStudyFilter.cc
+		EGSPhspParticle.cc
+		RTExtraInfoProviderZOrigin.cc
+		RTVExtraInfoProviderFloat.cc
+		RTVClassifierByExtraInfo.cc
+		RTPhaseSpace_extUA.cc
+		iaea_header.cc
+		RTReuseAtZPlaneWithNVoxelUA.cc
+		iaea_utilities.cc
+		RTExtraInfoProviderZLastNoMaterial.cc
+		RTVExtraInfoProviderLongByRegion.cc
+		RTPSPDoseHistosVector.cc
+		RTExtraInfoProviderOrigin.cc
+		RTExtraInfoProviderZLast.cc
+		RTZRLimitsUA.cc
+		RTZRLimitsAutoUA.cc
+		RTProdCutsStudyUA.cc
+		RTGeneratorPSPenelope.cc
+		RTPSPDoseHistos.cc
+		RTVExtraInfoProviderLong.cc
+		RTExtraInfoProviderInteractions.cc
+		RTReuseAtZPlaneUA.cc
+		RTVZRLimitsUA.cc
+		RTPhaseSpaceHistos.cc
+		RTMinRangeLimitsStudyUA.cc
+		RTExtraInfoTrackInfo.cc
+		RTExtraInfoProviderCrossings.cc
+		RTReuseAtZPlaneTrackInfo.cc
+		RTFilterByEILong.cc
+		RTReuseAtZPlaneProcess.cc
+	 
+	 GRANULAR_DEPENDENCIES
+	 GLOBAL_DEPENDENCIES
+		${Geant4_libs} 
+		${ROOT_LIBRARIES} 
+	GamosCore_GamosBase_Base
+	GamosCore_GamosSD
+	GamosCore_GamosGenerator
+	GamosCore_GamosUserActionMgr
+	GamosCore_GamosUtils
+	GamosCore_GamosReadDICOM
+	GamosCore_GamosUtilsUA
+	GamosCore_GamosScoring_Management
+	GamosCore_GamosPhysics_Cuts
+		${SEAL_LIBRARIES} 
+
+	LINK_LIBRARIES
+)
