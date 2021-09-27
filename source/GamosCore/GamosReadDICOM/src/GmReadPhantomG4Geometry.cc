@@ -26,7 +26,7 @@
 //---------------------------------------------------------------------------
 GmReadPhantomG4Geometry::GmReadPhantomG4Geometry()
 {
-  thePhantomFileName = "test.g4dcm";
+  //  thePhantomFileName = "test.g4dcm";
 }
 
 //---------------------------------------------------------------------------

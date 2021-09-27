@@ -9,12 +9,12 @@ GmEmDNAPhysicsMessenger::GmEmDNAPhysicsMessenger(GmEmDNAPhysics * physList)
 {  
  listDir = new G4UIdirectory("/gamos/GmPhysics/");
 
- theGmPhysicsListCmd = new GmUIcmdWithAString("/gamos/GmPhysics/replacePhysics",this);  
+ theGmPhysicsListCmd = new GmUIcmdWithAString("/gamos/GmDNAPhysics/replacePhysics",this);  
  theGmPhysicsListCmd->SetGuidance("Replace a set of process models of a particle");
  theGmPhysicsListCmd->SetParameterName("physList",false);
  theGmPhysicsListCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
- theGmPhysicsListCmdOld = new GmUIcmdWithAString("/gamos/GmPhysics/addPhysics",this);  
+ theGmPhysicsListCmdOld = new GmUIcmdWithAString("/gamos/GmDNAPhysics/addPhysics",this);  
  theGmPhysicsListCmdOld->SetGuidance("Replace a set of process models of a particle");
  theGmPhysicsListCmdOld->SetParameterName("physList",false);
  theGmPhysicsListCmdOld->AvailableForStates(G4State_PreInit,G4State_Idle);

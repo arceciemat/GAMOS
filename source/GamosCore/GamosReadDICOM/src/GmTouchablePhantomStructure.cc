@@ -44,7 +44,7 @@ G4bool GmTouchablePhantomStructure::AcceptTouchable(const G4VTouchable* touch)
     G4int idx = touch->GetReplicaNumber();
     if( idx != -1 ) {
 #ifndef GAMOS_NO_VERBOSE
-      if( ReadDICOMVerb(debugVerb) ) G4cout << pv->GetCopyNo() << " GmTouchablePhantomStructure idx " << idx << G4endl;
+      if( ReadDICOMVerb(debugVerb) ) G4cout << pv->GetCopyNo() << " GmTouchablePhantomStructure idx " << idx << " " << theStructMgr->GetStNameList(idx) << G4endl;
 #endif
       if( CheckIndex(idx) ) {
 #ifndef GAMOS_NO_VERBOSE

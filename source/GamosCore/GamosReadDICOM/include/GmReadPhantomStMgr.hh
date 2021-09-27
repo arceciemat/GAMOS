@@ -27,6 +27,8 @@ public:
   std::map<G4int,G4String> GetStructs() const {
     return theStructs;
   }
+  G4String GetStName( size_t stId );
+  G4String GetStNameList( size_t voxelId );
 
   std::vector<G4int> GetStIDFromPhysVolName( G4String pvName );
 
@@ -34,7 +36,7 @@ private:
   static GmReadPhantomStMgr* theInstance;
 
   G4String* theStIDs;
-  std::map<G4int,G4String> theStructs; // the structure voxels
+  std::map<G4int,G4String> theStructs; // the structure names
 };
 
 #endif

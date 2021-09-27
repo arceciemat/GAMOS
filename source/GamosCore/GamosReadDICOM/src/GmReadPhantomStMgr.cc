@@ -150,7 +150,7 @@ std::set<size_t> GmReadPhantomStMgr::GetStIDList( size_t voxelID )
 
 }
 
-//---------------------------------------------------------------------------     
+//---------------------------------------------------------------------------   
 std::vector<G4int> GmReadPhantomStMgr::GetStIDFromPhysVolName( G4String pvName )
 {
   std::vector<G4int> stids;
@@ -173,4 +173,37 @@ std::vector<G4int> GmReadPhantomStMgr::GetStIDFromPhysVolName( G4String pvName )
   }
   
   return stids;
+}
+
+//---------------------------------------------------------------------------   
+G4String GmReadPhantomStMgr::GetStName( size_t stID )
+{
+  G4String stName = "NOT_FOUND";
+  for( std::map<G4int,G4String>::const_iterator ite = theStructs.begin(); ite != theStructs.end(); ite++ ) {
+    if( ite->first == stID ) {
+      return ite->second;
+    }
+  }
+
+  return stName;
+}
+
+//---------------------------------------------------------------------------   
+G4String GmReadPhantomStMgr::GetStNameList( size_t voxelID )
+{
+  G4String stName = "NO_STRUCT";
+  std::set<size_t> stIDList = GetStIDList(voxelID);
+  for( std::set<size_t>::const_iterator ite = stIDList.begin(); ite != stIDList.end(); ite++ ) {
+    size_t stID = *ite;
+    if( stID != 0 ) {
+      if( stName == "NO_STRUCT" ) {
+	stName = GetStName(stID);
+      } else {
+	stName += ":"+ GetStName(stID);
+      }
+    }
+  }
+
+  return stName;
+
 }
