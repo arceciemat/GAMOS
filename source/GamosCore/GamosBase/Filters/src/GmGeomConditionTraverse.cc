@@ -51,16 +51,12 @@ const G4VTouchable* GmGeomConditionTraverse::GetTouchableFromStep(const G4Step* 
   } else {
 #ifndef GAMOS_NO_VERBOSE
     if( FilterVerb(debugVerb) ) G4cout << " GmGeomConditionTraverse::GetTouchableFromStep return touchable ";
-#endif
     if( preSP->GetPhysicalVolume() && preSP->GetPhysicalVolume()->GetName() ) {
-#ifndef GAMOS_NO_VERBOSE
       if( FilterVerb(debugVerb) ) G4cout << preSP->GetPhysicalVolume()->GetName() << G4endl;
-#endif
     } else {
-#ifndef GAMOS_NO_VERBOSE
       if( FilterVerb(debugVerb) ) G4cout << " 0 " << G4endl;
-#endif
     }
+#endif
     return GetTouchableFromStepPoint( preSP );
   }
 }

@@ -124,7 +124,10 @@ public:
   void SetDefaultNormalize( G4bool bdn ) {
       bDefaultNormalize = bdn;
   }
-
+  size_t GetHistoNumber() const {
+    return theHistoNumber;
+  }
+  
 private:
   G4int BuildHistoNumber( const G4String& htyp);
   template< class TYP >
@@ -162,6 +165,7 @@ private:
 
   G4bool bNormalizeToNEvents;
   G4bool bDefaultNormalize;
+  size_t theHistoNumber;
 };
 
 #endif

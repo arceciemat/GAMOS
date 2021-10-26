@@ -180,7 +180,7 @@ G4String GmReadPhantomStMgr::GetStName( size_t stID )
 {
   G4String stName = "NOT_FOUND";
   for( std::map<G4int,G4String>::const_iterator ite = theStructs.begin(); ite != theStructs.end(); ite++ ) {
-    if( ite->first == stID ) {
+    if( ite->first == int(stID) ) {
       return ite->second;
     }
   }

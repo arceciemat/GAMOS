@@ -325,7 +325,6 @@ void DicomVReaderImage::ReadPixelData()
   // Access original data representation and get result within pixel sequence
   result = dpix->getEncapsulatedRepresentation(xferSyntax, rep, dseq);
   //  std::cout << dseq << " result getEncapsulatedRepresentation " << std::endl; //GDEB
-  theVoxelData = new std::vector<double>(theNoVoxelsX*theNoVoxelsY*theNoVoxelsZ);
   size_t theNoVoxelsXY = theNoVoxelsX*theNoVoxelsY;
   size_t theNoVoxels = theNoVoxelsXY*theNoVoxelsZ;
   //  std::cout << " theNoVoxelsZ; " << theNoVoxelsZ << theNoVoxelsXY << "*"<< theNoVoxelsZ << G4endl; //GDEB
@@ -404,14 +403,17 @@ void DicomVReaderImage::ReadPixelData()
     Uint32 pixLength = dpix->getLength();
     //    G4cout << "N VOX " << theNoVoxels << " !=? " << pixLength << G4endl; //GDEB
     if(theBitAllocated == 8) { // Case 8 bits :
+      theNoVoxelsZ = pixLength/theNoVoxelsXY;
+      theNoVoxels = theNoVoxelsXY*theNoVoxelsZ;
+      theVoxelData = new std::vector<double>(theNoVoxelsX*theNoVoxelsY*theNoVoxelsZ);
       if( theNoVoxels != pixLength ) {
 	G4Exception("ReadPixelData",
 		    "getUint16Array pixData, ",
 		    JustWarning,
 		    ("PixelData length="+GmGenUtils::itoa(pixLength)+" is not equal to NoVoxels= "+GmGenUtils::itoa(theNoVoxels)).c_str());
-	theNoVoxelsZ = pixLength/theNoVoxelsXY;
 	std::cerr << " NoVoxelZ changed to " << theNoVoxelsZ << std::endl;
-      }		
+      }
+      
       Uint8* pixData = NULL;
       if(! (element->getUint8Array(pixData)).good() ) {
 	G4Exception("ReadPixelData",
@@ -450,14 +452,17 @@ void DicomVReaderImage::ReadPixelData()
         }
       }
     } else if(theBitAllocated == 16) { // Case 16 bits :
+      theNoVoxelsZ = pixLength/theNoVoxelsXY/2;
+      theNoVoxels = theNoVoxelsXY*theNoVoxelsZ;
+      theVoxelData = new std::vector<double>(theNoVoxelsX*theNoVoxelsY*theNoVoxelsZ);
       if( theNoVoxels != pixLength/2 ) {
 	G4Exception("ReadPixelData",
 		    "getUint16Array pixData, ",
 		    JustWarning,
 		    ("PixelData length="+GmGenUtils::itoa(pixLength)+" is not equal to NoVoxels*2= "+GmGenUtils::itoa(theNoVoxels)).c_str());
-	theNoVoxelsZ = pixLength/theNoVoxelsXY/2;
 	std::cerr << " NoVoxelZ changed to " << theNoVoxelsZ << " " << theNoVoxelsX << " " << theNoVoxelsY << std::endl;
-      }		
+      }
+      
       Uint16* pixData = NULL;
       result = dpix->getUint16Array(pixData);
       //      Sint16* pixData = NULL;
@@ -506,14 +511,17 @@ void DicomVReaderImage::ReadPixelData()
 	}
       }
     } else if(theBitAllocated == 32) { // Case 32 bits :
+      theNoVoxelsZ = pixLength/theNoVoxelsXY/4;
+      theNoVoxels = theNoVoxelsXY*theNoVoxelsZ;
+      theVoxelData = new std::vector<double>(theNoVoxelsX*theNoVoxelsY*theNoVoxelsZ);
       if( theNoVoxels != pixLength/4 ) {
 	G4Exception("ReadPixelData",
 		    "getUint16Array pixData, ",
 		    JustWarning,
 		    ("PixelData length="+GmGenUtils::itoa(pixLength)+" is not equal to NoVoxels*4= "+GmGenUtils::itoa(theNoVoxels)).c_str());
-	theNoVoxelsZ = pixLength/theNoVoxelsXY/4;
 	std::cerr << " NoVoxelZ changed to " << theNoVoxelsZ << std::endl;
-      }		
+      }
+      
       Uint32* pixData = NULL;
       result = dpix->getUint32Array(pixData);
       if( result != EC_Normal ) {

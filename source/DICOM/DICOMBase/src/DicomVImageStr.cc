@@ -105,6 +105,7 @@ G4bool DicomVImageStr::ReadDataFromTextFile( std::ifstream& fin, G4bool bReadHea
   size_t nVox = GetNoVoxels();
   for( size_t ii = 0; ii < nVox; ii++ ) {
     fin >> dataStr;
+    if( ii == 0 && dataStr == "") return 1; // no data
     // look for old way to define structures
     if( GmGenUtils::IsInteger(dataStr) && GmGenUtils::GetInteger(dataStr) > 1000 ) G4cout <<theName << " OLD WAY TO DEFINE STRUCTURES in .g4dcm: NOW THEY MUST BE SEPARATED BY '\"' " << dataStr << G4endl; //GDEB
     theDataStr->at(ii) = dataStr;

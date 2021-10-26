@@ -23,7 +23,6 @@
 #include "GamosCore/GamosUtils/include/GmNumberOfEvent.hh"
 #include "GamosCore/GamosUserActionMgr/include/GmUserActionMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
-#include "iaea_header.hh"
 #include "iaea_record.hh"
 #include "iaea_utilities.hh"
 #include "RTVerbosity.hh"
@@ -149,7 +148,6 @@ void RTGeneratorPhaseSpace::Init()
 		G4String("Error file not found :  " + theFileName + ".IAEAphsp").c_str());
   }
 
-  iaea_header_type *p_iaea_header;
   p_iaea_header = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
 
   p_iaea_header->fheader = open_file(const_cast<char*>(theFileName.c_str()),(char *)(".IAEAheader"),(char *)("rb"));
@@ -226,8 +224,15 @@ RTGeneratorPhaseSpace::~RTGeneratorPhaseSpace()
 void RTGeneratorPhaseSpace::GeneratePrimaries(G4Event* evt)
 {
   if( bMaxNReuseAutomatic && evt->GetEventID() == 0 ) {
+    G4int nGammas = p_iaea_header->particle_number[0];
+    G4int nElectrons = p_iaea_header->particle_number[1];
+    G4int nPositrons = p_iaea_header->particle_number[2];
+    G4int nNeutrons = p_iaea_header->particle_number[3];
+    G4int nProtons = p_iaea_header->particle_number[4];
+      
     //set MaxNReuse, MaxNRecycle automatically for each run
-    theMaxNReuse = G4int( (G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed()-1) / theNEventsInFile ) + 1;
+    //    theMaxNReuse = G4int( (G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed()-1) / theNEventsInFile ) + 1;
+    theMaxNReuse = G4int( (G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed()-1 - nElectrons-nPositrons-nProtons) / (nGammas+nNeutrons) ) + 1;
     theMaxNRecycle = 1; 
 #ifndef GAMOS_NO_VERBOSE
     if( RTVerb(infoVerb) ) G4cout<< " RTGeneratorPhaseSpace::GeneratePrimaries automatic NReuse= " << theMaxNReuse << G4endl;

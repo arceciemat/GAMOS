@@ -1,14 +1,16 @@
 #ifndef RTGeneratorPhaseSpace_HH
 #define RTGeneratorPhaseSpace_HH
 
-class G4Event;
-class GmParticleSource;
-class GmIsotopeMgr;
-class iaea_record_type;
 #include "globals.hh"
 #include <iostream>
 #include <fstream>
 #include "GamosCore/GamosGenerator/include/GmGeneratorFromFile.hh"
+#include "iaea_header.hh"
+
+class G4Event;
+class GmParticleSource;
+class GmIsotopeMgr;
+class iaea_record_type;
 class G4ParticleDefinition;
 class RTPhaseSpaceHistos;
 class RTExtraInfoMgr;
@@ -65,6 +67,7 @@ protected:
   G4double theNOrigEvents;  
 
   G4double theMinPosX, theMaxPosX;
+  iaea_header_type *p_iaea_header;
 };
 
 #endif

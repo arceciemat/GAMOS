@@ -121,10 +121,10 @@ void SPECTEventClassifierUA::GetCollimatorCentres()
 
   G4String collimatorVol = paramMgr->GetStringValue("SPECT:EvtClass:CollimatorVolume","");
   if( collimatorVol == "" ) {
-    G4Exception("PECTEventClassifierUA::GetCollimatorCentre",
+    G4Exception("PECTEventClassifierUA::GetCollimatorCentres",
 		"No collimator point defined",
 		FatalErrorInArgument,
-		"Use command ' /gamos/setParam SPECT:EvtClass:CollimatorCentre X Y Z ' or ' /gamos/setParam SPECT:EvtClass:CollimatorVolume VOL_NAME ");
+		"Use command ' /gamos/setParam SPECT:EvtClass:CollimatorVolume VOL X Y Z ' or ' /gamos/setParam SPECT:EvtClass:CollimatorVolume VOL_NAME ");
   } 
   std::vector<GmTouchable*> touchs = GmGeometryUtils::GetInstance()->GetTouchables(collimatorVol);
   if( touchs.size() == 0 ) {

@@ -178,8 +178,8 @@ void GmGenerDistPositionInStPhantomVoxels::BuildVoxelPositions()
 	// check if voxels is in list of structures
 	std::set<size_t> stids = theReadPhantomStMgr->GetStIDList( copyNo );
 	G4bool bInSt = false;
-	for( std::set<size_t>::const_iterator ite = stids.begin(); ite != stids.end(); ite++ ){ 
-	  if( theStIDs.find(*ite) != theStIDs.end() ) {
+	for( std::set<size_t>::const_iterator ite2 = stids.begin(); ite2 != stids.end(); ite2++ ){ 
+	  if( theStIDs.find(*ite2) != theStIDs.end() ) {
 	    bInSt = true;
 	    break;
 	  }

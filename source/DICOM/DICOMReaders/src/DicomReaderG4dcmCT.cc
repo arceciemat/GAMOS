@@ -80,39 +80,39 @@ void DicomReaderG4dcmCT::ReadHeaderAndPixels( G4bool bReadPixelData )
     //    G4cout << theStructIDImage << " TO READ STRUCt " << G4endl;  //GDEB
     theStructIDImage = new DicomVImageStr(theMateIDImage,"G4dcmCT_StructID",DIM_G4dcmCT_StructID);
     //    G4cout << theStructIDImage << " TO READ STRUCT READ " << theStructIDImage->GetNoVoxels() << G4endl;  //GDEB
-    theStructIDImage->ReadDataFromTextFile( *fin, false );
-
-  size_t nVoxelX = theStructIDImage->GetNoVoxelsX();
-  size_t nVoxelY = theStructIDImage->GetNoVoxelsY();
-  size_t nVoxelXY = nVoxelX*nVoxelY;
-  size_t nVoxelZ = theStructIDImage->GetNoVoxelsZ();
-  size_t nVoxelXYZ = nVoxelXY*nVoxelZ;
-  //  float fWidthX = theStructIDImage->GetVoxelDimX();
-  float fWidthY = theStructIDImage->GetVoxelDimY();
-  //  float fWidthZ = theStructIDImage->GetVoxelDimZ();
-  //  G4double fMinX = theStructIDImage->GetMinX();
-  G4double fMinY = theStructIDImage->GetMinY();
-  //  G4double fMinZ = theStructIDImage->GetMinZ();
-  //  std::map<int,double> stMinY; // GDEB
-  std::set<G4int> ists;
-  /*  for( size_t ii = 0; ii < nVoxelXYZ; ii++ ){
+    G4bool bEOFSt = theStructIDImage->ReadDataFromTextFile( *fin, false );
+    if( bEOFSt ) return;
+    /*    size_t nVoxelX = theStructIDImage->GetNoVoxelsX();
+    size_t nVoxelY = theStructIDImage->GetNoVoxelsY();
+    size_t nVoxelXY = nVoxelX*nVoxelY;
+    size_t nVoxelZ = theStructIDImage->GetNoVoxelsZ();
+    size_t nVoxelXYZ = nVoxelXY*nVoxelZ;
+    //  float fWidthX = theStructIDImage->GetVoxelDimX();
+    float fWidthY = theStructIDImage->GetVoxelDimY();
+    //  float fWidthZ = theStructIDImage->GetVoxelDimZ();
+    //  G4double fMinX = theStructIDImage->GetMinX();
+    G4double fMinY = theStructIDImage->GetMinY();
+    //  G4double fMinZ = theStructIDImage->GetMinZ();
+    //  std::map<int,double> stMinY; // GDEB
+    std::set<G4int> ists;
+    /*  for( size_t ii = 0; ii < nVoxelXYZ; ii++ ){
     //    G4int ix = ii%nVoxelX;
-        G4int iy = (ii/nVoxelX)%nVoxelY;
+    G4int iy = (ii/nVoxelX)%nVoxelY;
     //    G4int iz = ii/nVoxelXY;
     //    G4ThreeVector voxelCentre( fMinX+(ix+0.5)*fWidthX, fMinY+(iy+0.5)*fWidthY, fMinZ+(iz+0.5)*fWidthZ );
     G4double posY = fMinY+(iy+0.5)*fWidthY;
     ists = theStructIDImage->GetIDList( ii );
     for( std::set<G4int>::const_iterator itest = ists.begin(); itest != ists.end(); itest++ ) {
-      size_t ist = *itest;
-      if( stMinY.find(ist) == stMinY.end() ) stMinY[ist] = -DBL_MIN;
-      stMinY[ist] = std::min( stMinY[ist], posY );
-      //      G4cout << ix <<":"<<iy<<":"<<iz << " " << ist << " stMinY " << stMinY[ist] << " " << posY << " " << fMinY <<"+("<<iy+0.5<<")*"<<fWidthY<< G4endl; //GDEB
-      }
-  }
+    size_t ist = *itest;
+    if( stMinY.find(ist) == stMinY.end() ) stMinY[ist] = -DBL_MIN;
+    stMinY[ist] = std::min( stMinY[ist], posY );
+    //      G4cout << ix <<":"<<iy<<":"<<iz << " " << ist << " stMinY " << stMinY[ist] << " " << posY << " " << fMinY <<"+("<<iy+0.5<<")*"<<fWidthY<< G4endl; //GDEB
+    }
+    }
     for( std::map<int,double>::iterator ite = stMinY.begin(); ite !=  stMinY.end(); ite++ ) {
     std::cout << " MINY " << ite->first << " = " << ite->second << std::endl; //GDEB
     }*/
-
+    
     G4int ist;
     G4String stName;
     for( ;; )  {

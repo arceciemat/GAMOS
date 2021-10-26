@@ -9,6 +9,7 @@
 #include "GamosCore/GamosUtils/include/GmNumberOfEvent.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
+#include "CLHEP/Random/RandFlat.h"
 
 
 #ifdef WIN32
@@ -66,6 +67,10 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
 #endif
   }
 
+
+  // assign a random histogram number
+  theHistoNumber = CLHEP::RandFlat::shoot()*INT_MAX/2;
+  
 }
  
 
