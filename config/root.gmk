@@ -1,0 +1,10 @@
+ifndef GAMOS_NO_ROOT
+INCFLAGS += -I$(ROOT_BASE_DIR)/include 
+
+ifndef EXTRALIBS
+EXTRALIBS := -L$(ROOT_BASE_DIR)/lib `root-config --libs | sed s/"-Lrootbuild\/lib"//g`
+else
+EXTRALIBS += -L$(ROOT_BASE_DIR)/lib `root-config --libs | sed s/"-Lrootbuild\/lib"//g`
+endif
+
+endif

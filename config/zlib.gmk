@@ -1,0 +1,12 @@
+setenv ZLIB_BASE_DIR /usr
+
+INCFLAGS += -I$(ZLIB_BASE_DIR)/include
+
+ifndef EXTRALIBS
+EXTRALIBS := -L$(ZLIB_BASE_DIR)/lib
+else
+EXTRALIBS += -L$(ZLIB_BASE_DIR)/lib
+endif
+
+EXTRALIBS += -lz
+

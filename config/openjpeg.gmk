@@ -1,0 +1,7 @@
+INCFLAGS += -I$(OPENJPEG_BASE_DIR)/src/lib/openjp2/
+
+ifndef EXTRALIBS
+ EXTRALIBS := -L$(OPENJPEG_BASE_DIR)/bin -lopenjp2
+else 
+ EXTRALIBS +=  -L$(OPENJPEG_BASE_DIR)/bin -lopenjp2
+endif

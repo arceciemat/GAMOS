@@ -1,0 +1,15 @@
+#   Guy Barrand, 20th Mai 2000
+#
+# Analysis variables...
+#
+
+ANALYSISLIBS := 
+
+ifdef G4ANALYSIS_USE
+  CPPFLAGS += -DG4ANALYSIS_USE
+  CPPFLAGS += $(G4ANALYSIS_AIDA_CONFIG_CFLAGS)
+  ANALYSISLIBS += $(G4ANALYSIS_AIDA_CONFIG_LIBS)
+endif
+
+
+

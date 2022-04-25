@@ -1,0 +1,11 @@
+
+INCFLAGS += -I$(FFTW_BASE_DIR)/include/
+
+ifndef EXTRALIBS
+EXTRALIBS := -L$(FFTW_BASE_DIR)/lib
+else 
+EXTRALIBS += -L$(FFTW_BASE_DIR)/lib
+endif
+
+EXTRALIBS += -lfftw3
+

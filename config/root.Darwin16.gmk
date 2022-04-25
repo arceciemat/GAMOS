@@ -1,0 +1,12 @@
+ifndef GAMOS_NO_ROOT
+ INCFLAGS += -I$(ROOT_BASE_DIR)/include/root 
+
+ ifndef EXTRALIBS
+  EXTRALIBS := -L$(ROOT_BASE_DIR)/lib/root
+ else
+  EXTRALIBS += -L$(ROOT_BASE_DIR)/lib/root
+ endif
+
+ EXTRALIBS += -lHist -lGpad -lGraf -lMatrix -lPhysics -lPostscript -lCint -lCore -lTree -lNet -lRIO -lMathCore -lThread -lReflex
+
+endif

@@ -1,0 +1,13 @@
+#G4LIBDIR := $(GAMOSINSTALL)/lib/$(G4SYSTEM)
+
+libseal: lib$(name).so
+#libseal:  $(G4LIBDIR)/lib$(name).so
+
+lib$(name).so :
+
+	@echo Compiling  $(G4LIBDIR)/lib$(name).so DDD  $(G4LIBDIR) ...
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) \
+	  -o  $(G4LIBDIR)/lib$(name).so  $(objects) $(LDFLAGS) \
+	  $(LDLIBS)
+
+

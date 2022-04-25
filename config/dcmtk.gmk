@@ -1,0 +1,10 @@
+
+INCFLAGS += -I$(DCMTK_BASE_DIR)/include
+
+ifndef EXTRALIBS
+ EXTRALIBS := -L$(DCMTK_BASE_DIR)/lib  -ldcmimgle -ldcmpstat -ldcmwlm -lijg8 -ldcmdata -ldcmjpeg -ldcmqrdb -li2d -loflog -ldcmdsig -ldcmjpls -ldcmsr -lijg12 -lofstd -ldcmimage -ldcmnet -ldcmtls -lijg16 -ldcmjpeg -ldcmrt -lcharls -lpthread -lpng -ltiff
+else 
+ EXTRALIBS += -L$(DCMTK_BASE_DIR)/lib  -ldcmimage -ldcmjpls -ldcmimgle -ldcmpstat -ldcmwlm -lijg8 -ldcmdata  -ldcmqrdb -li2d -loflog -ldcmdsig  -ldcmsr -lijg12 -lofstd -ldcmnet -ldcmtls -lijg16  -ldcmjpeg -ldcmrt -lcharls -lpthread -lpng -ltiff
+endif
+
+#CPPFLAGS += -DHAVE_CONFIG_H -DUSE_NULL_SAFE_OFSTRING -DWITH_ARITHMETIC_PATCH -DDEBUG -D_REENTRANT -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 -D_DEFAULT_SOURCE -D_BSD_COMPAT -D_OSF_SOURCE -D_POSIX_C_SOURCE=199506L -fPIC

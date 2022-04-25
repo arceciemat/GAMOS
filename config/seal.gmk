@@ -1,0 +1,12 @@
+INCFLAGS += -I$(GAMOSINSTALL)/source/SEAL_Foundation/PluginManager/ \
+ 	 -I$(GAMOSINSTALL)/source/SEAL_Foundation/SealPlatform/ \
+ 	 -I$(GAMOSINSTALL)/source/SEAL_Foundation/SealBase/
+
+ifndef EXTRALIBS
+EXTRALIBS := -L$(GAMOSINSTALL)/lib/$(G4SYSTEM)
+else 
+EXTRALIBS += -L$(GAMOSINSTALL)/lib/$(G4SYSTEM)
+endif
+
+
+EXTRALIBS += -llcg_PluginManager -llcg_SealBase
