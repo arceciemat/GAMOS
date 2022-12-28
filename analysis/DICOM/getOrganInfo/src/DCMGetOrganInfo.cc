@@ -3,6 +3,7 @@
 #include "TStyle.h"
 #include "TCanvas.h"
 #include "TH1F.h"
+#include "TLine.h"
 
 #include "DICOM/DICOMBase/include/DicomVImage.hh"
 #include "DICOM/DICOMBase/include/DicomMgr.hh"

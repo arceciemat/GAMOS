@@ -89,7 +89,7 @@ ScoreData ScoreData::operator+=( const ScoreData& ed2 )
   if( ScoreData::verbosity >= 2 ) {
     G4cout <<  " theScore " << theScore << " * " << GetNEvents() << " + " << ed2.GetScore() << " * " << ed2.GetNEvents() << G4endl; 
     G4cout << "   ScoreData::operator+=ed1 " << theName << " : " << theScore << " +- " << theScoreError << " ScoreSq " << theScoreSq << G4endl; 
-    G4cout << "   ScoreData::operator+=ed2 " << theName << " : " << ed2.GetScore() << " +- " << ed2.GetScoreError() << " ScoreSq " << ed2.GetScoreSq() << G4endl; 
+    G4cout << "   ScoreDatad::operator+=ed2 " << theName << " : " << ed2.GetScore() << " +- " << ed2.GetScoreError() << " ScoreSq " << ed2.GetScoreSq() << G4endl; 
   }
 
   theScore = (theScore*GetNEvents()+ed2.GetScore()*ed2.GetNEvents())/(GetNEvents()+ed2.GetNEvents());

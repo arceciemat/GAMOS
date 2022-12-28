@@ -5,7 +5,6 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosRunManager/include/GmRunManager.hh"
 #include "ROOTUtilities/PlotData/DrawHisto.C"
-#include "ROOTUtilities/PlotData/PlotUtils.C"
 #include "ROOTUtilities/Activation/readExemption.C"
 
 #include <fstream>
@@ -364,7 +363,7 @@ void PlotData()
 	DrawGlobalTitle(his, hisFileName);
 	DrawXTitle(his,"Time ("+theTimeUnit+")");
 	DrawYTitle(his,"Activity (decays/second)");
-	PrintGif(hisFileName);
+	PrintFig(hisFileName);
       }
     }
     /*    if( ii % theNPerPage != 0 ) {
@@ -373,7 +372,7 @@ void PlotData()
       PrintXTitle(his,"Time ("+theTimeUnit+")");
       PrintYTitle(his,"Activity (decays/second)");
       //PrintGlobalTitle(his, "TRYTRYTRY");
-      PrintGif(hisFileName);
+      PrintFig(hisFileName);
       } */
     //    isotSet->PrintData(out);
   }

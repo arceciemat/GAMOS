@@ -309,7 +309,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	//--- Draw Histos
 	if( bHistos ) {
 	  //	  canvas->Print((lineName+"."+theImageFormat).c_str());
-	  canvas->Print((lineName+".gif").c_str());
+	  canvas->Print((lineName+".jpg").c_str());
 	  TFile* foutR = new TFile(("his"+lineName+".root").c_str(),"RECREATE");
 	  foutR->cd();
 	  histo->Write();
@@ -340,7 +340,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	    }
 	  }
 	  //	  canvas->Print((lineName+"_ML."+theImageFormat).c_str());
-	  canvas->Print((lineName+"_ML.gif").c_str());
+	  canvas->Print((lineName+"_ML.jpg").c_str());
 	  */
 
 	}

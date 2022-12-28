@@ -629,7 +629,7 @@ void DCMDrawDICOM::PrintHelp()
 	 << " -nPixelsX VALUE   number of pixels used for each figure in the X axis. Default is 1000. " << G4endl
 	 << " -nPixelsY VALUE   number of pixels used for each figure in the Y axis. Default is 1000. " << G4endl
 	 << " -nPixelsZ VALUE   number of pixels used for each figure in the Z axis. Default is 1000. " << G4endl
-	 << " -imageFormat FORMAT   available format are gif (default), png, eps, ps, pdf, svg, xpm, jpg and tiff " << G4endl
+	 << " -imageFormat FORMAT   available format are jpg (default), png, eps, ps, pdf, svg, xpm, jpg and tiff " << G4endl
 	 << " -fDrawLines FILE_NAME   file where line format is defined (color, style, width, ...) " << G4endl
   	 << " -rotateXY DEGREES   figures are rotated by VAL in XY plane (=around Z axis)" << G4endl
 	 << " -printMax  0/1   prints the maximum value of any voxel in each image together with the X/Y/Z voxel id's and X/Y/Z position of the voxel center" << G4endl

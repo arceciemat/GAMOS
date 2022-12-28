@@ -1,0 +1,125 @@
+import sys
+
+#https://www.tutorialspoint.com/python/python_gui_programming.htm
+import matplotlib, sys
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+import numpy as np
+from checkPythonVersion import *
+from MyHistos import Histo1D
+from csvHistoReader import csvHistoReader
+
+###### -------------- main ----------- ######
+#histoData = pd.read_csv(sys.argv[1])
+checkPythonVersion()
+
+listofDict=[]
+# histype= sys.argv[1] #'Profile_X_at_Braggpeak'
+# path='/home/natalia/gamos/GAMOS.6.3.0/Scripts/RADPROTIM_20ene/'
+# files=sys.argv[2:]#[path+'analyseSqdose_xLETDose_80.2_1001_1000000_32.csv',path+'analyseSqdose_xLETDose_90.1_1001_1000000_32.csv']
+#añadir un modificador para que lo entienda como tipo de variable
+def GetValue(ii) :
+    if len(sys.argv) > ii+1 :
+        print("!!! ERROR no word after argument ",sys.argv[ii])
+        sys.exit()
+
+def CheckArgumentExists(ilen,ii) :
+    if ilen == 0 :
+        print("!!! ERROR no word after argument ",sys.argv[ii])
+        sys.exit()
+    
+#....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+if __name__ == "__main__":
+    theHisTypes = []
+    theHisFileNames = []
+    theHisFiles = []
+    theHisNames = set()
+    bErrors = 0
+    bNorm = 0
+
+    
+    iarg = 0
+    for ii in range(1,len(sys.argv)) :
+        print("LOOPING ",ii)
+        if sys.argv[ii] == "-t" :
+            iarg = iarg+1
+            for ii2 in range(ii+1,len(sys.argv)) :
+                if sys.argv[ii2][0] == "-" :
+                    continue
+                else :
+                    theHisTypes.append(sys.argv[ii2])
+                    ii = ii+1
+            CheckArgumentExists(len(theHisTypes),ii)
+        elif sys.argv[ii] == "-f" :
+            print(" ARG -f")
+            iarg = iarg+1
+            # check it is last argument
+            for ii2 in range(ii+1,len(sys.argv)) :
+                if sys.argv[ii2][0] == "-" :
+                    print("!!! ERROR -f MUST BE LAST ARGUMENT")
+                    sys.exit()
+                else :
+                    theHisFileNames.append(sys.argv[ii2])
+                    ii = ii+1
+                    print( ii,"theHisFileNames ",len(theHisFileNames))
+            CheckArgumentExists(len(theHisFileNames),ii)
+            
+        elif sys.argv[ii] == "-e" :
+            bErrors = int(GetValue(ii))
+            iarg = iarg+1
+            ii = ii+1
+            
+        elif sys.argv[ii] == "-b" :
+            bNorm = int(GetValue(ii))
+            iarg = iarg+1
+            ++iarg 
+            ii = ii+1 
+            
+        #Store info in a list of dictionaries:
+        print("N files ",len(theHisFiles))
+    
+        for filen in theHisFileNames:
+            hFile = csvHistoReader(filen)
+            theHisFiles.append(hFile)
+            #print("NHISTOS 1D=",len(hFile.fHistos1D))
+            for his1 in hFile.fHistos1D:
+                theHisNames.add(his1.name)
+        print("N histo Names ",len(theHisNames))
+        
+        for hisn in theHisNames :
+            bFound = False
+            print("start loop",hisn)
+            for hfile in theHisFiles :
+                for his1 in hfile.fHistos1D :
+                    print("CHECK name ",his1.name,"=?=",hisn)
+                    if his1.name == hisn :
+                        print("HISTO FOUND ",his1.name)
+                        # check equal 
+                        if not bFound :
+                            histo1st = his1
+                            bFound = True
+                        hX = his1.Xbins()
+                        hY = his1.data
+                        #    print(" HIS1 ",his1,":",his1.data,"+-",his1.dataErr," Xs=",hX)
+                        xStep = his1.Xstep(his1)
+                        plt.xlim(float(his1.xmin),float(his1.xmax))
+                        plt.xlabel(his1.name)
+                        plt.grid()
+                        if bErrors == 1 :
+                            plt.bar(hX,hY, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep)
+                        elif bErrors == 0 :
+                            plt.plot(hX,hY) #, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep) # !!! Does not resize well
+                        hX.clear()
+                        hY.clear()
+            if bFound :
+                plt.savefig("hist"+hisn+".jpg")    
+                plt.clf()
+
+#    plt.show()
+#    plt.savefig("histcomparison_"+types+".jpg")    
+#    plt.savefig("hist1.jpg")    
+#    print('xvalues:',xvalues,' yvalues:',yvalues)     
+sys.exit()
+    
+

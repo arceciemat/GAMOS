@@ -223,6 +223,9 @@ int main(int argc,char** argv)
     
     //----- Create PS printer
     RTPSPDoseHistos* doseHistos = new RTPSPDoseHistos("analyseSqdose",dose.GetHeader());
+    G4String rootFF = "root";
+    GmAnalysisMgr::GetInstance("dose_analyseSqdose")->AddFileFormat(rootFF);
+      
     //  doseHistos->SetScorer( doseScorer );
     //----- Call PS printer
     doseHistos->DumpAll( theRunMap, doseScorer );
@@ -233,7 +236,6 @@ int main(int argc,char** argv)
     //----- Create primitive scorer
     GmG4PSDoseDepositVector* doseScorer = new GmG4PSDoseDepositVector("analyseSqdose_DoseDepositScorer");
     std::vector<G4double>* theSumV2 = doseScorer->GetSumV2();
-
    
     if( theContainerType == 2 && nTotalVoxels == -1 ) {
     G4Exception("analyseSqdose",

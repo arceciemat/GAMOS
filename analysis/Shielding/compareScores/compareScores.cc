@@ -413,14 +413,14 @@ void PlotScorers( ScoreSet* doseSet, G4bool bLogX  )
       pad1->cd();
     //    TH1F* hist = new TH1F("test","test",100,0.,100.);
     //  hist->Draw();
-    //    PrintGif("h9057");
+    //    PrintFig("h9057");
       //  TH1F* hist2 = new TH1F("test2","test2",100,0.,200.);
       //    hist2->Draw();
       if( ScoreData::verbosity >= 2) G4cout << "@@@ bIsFirst DrawEmptyHistogram "<< G4endl;
       his = DrawEmptyHistogram( "", Definitions::xDataMin, Definitions::xDataMax, Definitions::yDataMin, Definitions::yDataMax, pad1 );
       //	  G4cout << " YDATAMIN0 " <<  Definitions::yDataMin << G4endl;
     }
-    //     PrintGif("h9057");
+    //     PrintFig("h9057");
     //     return;
     
     //--- SET COLOR FOR THESE DOSER FROM METADATA FILE
@@ -638,14 +638,14 @@ void PlotScorers( ScoreSet* doseSet, G4bool bLogX  )
     hisFileName[icc]='_';
     std::cout << "HISTOGRAM FILE NAME : DELETED " << icc << " " << hisFileName << std::endl;
   }
-  //    PrintGif(hisFileName);
+  //    PrintFig(hisFileName);
   //  std::cout << " BREAK " << std::endl;
   //  return;
   //#ifndef PAPER
-  //  PrintGif(hisFileName);
+  //  PrintFig(hisFileName);
   //#else 
 
-  PrintGif(hisFileName);
+  PrintFig(hisFileName);
 
 }
 

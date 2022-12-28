@@ -1,0 +1,36 @@
+canvas = Canvas(frame)
+figure = plt.figure(dpi=150, figsize=(4, 4))
+figure.add_subplot(111)
+figAgg = FigureCanvasTkAgg(figure, canvas)
+mplCanvas = figAgg.get_tk_widget()
+
+RESIZE:
+mplCanvas.config(width=wi, height=hi) ; printBboxes("A")
+canvas.itemconfigure(cwid, width=wi, height=hi) ; printBboxes("B")
+canvas.config(scrollregion=canvas.bbox(Tkconstants.ALL),width=200,height=200)
+figure.subplots_adjust(left=0.2, bottom=0.15, top=0.86)
+figure.canvas.draw() ; printBboxes("C")
+
+RESIZE:
+self.theFigureAgg.get_tk_widget().config(width=newWidth, height=newHeight)
+self.theCanvas.itemconfigure(self.theCanvasCwid, width=newWidth, height=newHeight)
+#       self.theCanvas.config(scrollregion=canvas.bbox(Tkconstants.ALL),width=200,height=200)
+self.theHistoFigure.subplots_adjust()
+self.theHistoFigure.canvas.draw()
+
+
+self.theHistoFigure = plt.figure(figsize = (7, 7), dpi = 100)
+self.theHistoFigure.subplots_adjust()
+self.theHistoFigure.canvas.draw()
+ 
+
+
+
+
+self.theHistoFigure = Figure(figsize = (7, 7), dpi = 100)
+self.theSubPlotArea = self.theHistoFigure.add_subplot(111)
+self.theCanvas = FigureCanvasTkAgg(self.theHistoFigure, master = self.theFrameHF)
+
+self.theCanvas.get_tk_widget().grid(column=0, row=0, sticky=tk.E+tk.W+tk.N+tk.S)
+
+

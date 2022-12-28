@@ -6,6 +6,7 @@
 #include "TMarker.h"
 #include "TH1F.h"
 #include "TH2F.h"
+#include "TLine.h"
 #include "TProfile.h"
 #include "TColor.h"
 #include "../Verbosity.C"
@@ -22,6 +23,7 @@ EColor GetColor( int icol )
   int icol1 = icol/14;
   int icol2 = icol%14;
 
+  std::cout << " GETCOLOR " << icol << " " << icol1 << " " << icol2 << std::endl; //GDEB
   switch (icol2)  {
     case 0:
       return EColor(kBlack+icol1);
@@ -106,6 +108,63 @@ int GetStyle( int isty ) //https://root.cern.ch/doc/master/classTAttMarker.html#
     return 48;
   case 20:
     return 40;
+  }
+
+  return 20;
+  
+}
+
+//--------------------------------------------------------------------------
+int GetStyleP( int isty ) //https://root.cern.ch/doc/master/classTAttMarker.html#ATTMARKER2
+{
+
+  int isty1 = 100*(isty>=100)+(isty%100)%12;
+  std::cout << " ISTY " << isty << " : " << isty1 << std::endl; //GDEB
+  switch (isty1)  {
+  case 0: 
+    return 24; // CIRCLE
+  case 100:
+    return 20;
+  case 1:
+    return 25; // SQUARE
+  case 101:
+    return 21;
+  case 2:
+    return 26; // TRIANGLE
+  case 102:
+    return 22;
+  case 3:
+    return 32; // INVERTED TRIANGLE
+  case 103:
+    return 23;
+  case 4:
+    return 28;  // CROSS
+  case 104:
+    return 34;
+  case 5:
+    return 27; // RHOMBUS
+  case 105:
+    return 33;
+  case 6:
+    return 30; // 5-POINT STAR
+  case 106:
+    return 29;
+  case 7:
+    return 46; // DIAGONAL CROSS
+  case 107:
+    return 47;
+  case 8:
+    return 44; // MALTESE DIAGONAL CROSS
+  case 108:
+    return 45;
+  case 9:
+    return 40; // INVERTED MALTESE DIAGONAL CROSS
+  case 109:
+    return 41;
+  case 10:
+    return 42; // 4-POINT STAR
+  case 110:
+    return 43;
   }
 
   return 20;
@@ -396,10 +455,19 @@ void DrawWordAndMarker( TH1F* his, std::string title, double& xInit, double& yIn
     //  yPos = GetYPos( yInit+ty*1., hyMin, hyWidth );
     yPos = GetYPos( yInit+ty*Definitions::markerTextDispY, hyMin, hyWidth ); //FINAL
     //  std::cout << " DrawWordAndMarker TMarker at " << xPos << " , " << yPos << " " << yInit << " + " << ty << " * " << Definitions::markerTextDispY << " , " << hyMin << " " << hyWidth << " max " << hyMax << std::endl; //GDEB
-    TMarker* marker = new TMarker(xPos, yPos, iMarker);
-    marker->SetMarkerColor(color);
-    marker->SetMarkerSize(Definitions::markerSize);
-    marker->Draw(); 
+    TMarker* marker;
+    std::cout << " DrawWordAndMarker TMarker " << iMarker << " " << Definitions::canvasSizeX << std::endl; //GDEB
+    if( iMarker >= 0 ) {
+      marker = new TMarker(xPos, yPos, iMarker);
+      marker->SetMarkerColor(color);
+      marker->SetMarkerSize(Definitions::markerSize);
+      marker->Draw();
+    } else {
+      TLine* line = new TLine(xPos-Definitions::canvasSizeX*0.002,yPos,xPos+Definitions::canvasSizeX*0.002,yPos);
+      line->SetLineColor(color);
+      line->SetLineWidth(3.);
+      line->Draw();      
+    }
   }
   
   if( title != "" ) {

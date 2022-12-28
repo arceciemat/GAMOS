@@ -4,6 +4,7 @@
 #include "DICOM/DICOMBase/include/DicomMgr.hh"
 #include "DICOM/DICOMBase/include/DicomParameterMgr.hh"
 #include "DICOM/DICOMBase/include/DicomVerbosity.hh"
+#include "DICOM/DICOMBase/include/DicomOperResize.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderMgr.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderCT.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderG4dcmCT.hh"
@@ -47,17 +48,24 @@ void DCMResizeImage::ProcessArguments(int argc,char** argv)
   }
   for( G4int ii = 1; ii < argc; ii++ ){
     G4String argvstr = argv[ii];
-    G4int iAddPar = theParamMgr->ReadParameter( argv, ii );
-    if( iAddPar == -1 ) {
-      PrintHelp();
-      G4Exception(theExeName.c_str(),
-		  "Wrong argument",
-		  FatalErrorInArgument,
-		  (G4String("ARGUMENT: ") + argv[ii]).c_str());
+    G4String argvstr1 = argv[ii+1];
+    G4String argvName = argvstr.substr(1,999);
+    if( argvstr == "-bInterpolate" ) {
+      theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
+      ii++;
+    } else {
+      G4int iAddPar = theParamMgr->ReadParameter( argv, ii );
+      if( iAddPar == -1 ) {
+	PrintHelp();
+	G4Exception(theExeName.c_str(),
+		    "Wrong argument",
+		    FatalErrorInArgument,
+		    (G4String("ARGUMENT: ") + argv[ii]).c_str());
+      }
+      ii += iAddPar;
     }
-    ii += iAddPar;
   }
-
+  
 }
 
 //---------------------------------------------------------------------------
@@ -72,7 +80,12 @@ void DCMResizeImage::ReadFilesAndGetImages()
   theReaderMgr->CreateReaders();
   theReaderMgr->SetCTOnlyHU(true);
   theReaderMgr->CreateImages();
-  
+
+  DicomOperResize* operResize = new DicomOperResize();  
+
+  G4bool bInterpolate = G4bool(theParamMgr->GetNumericValue("bInterpolate",1));
+  theParamMgr->AddParam("bInterpolate "+GmGenUtils::itoa(bInterpolate));
+
   //--- GET INPUT IMAGES AND WRITE NEW IMAGES
   std::vector<DicomVReaderImage*> imageReaders;
 /*  imageReaders =  theReaderMgr->GetImageReaders(DRM_CT,false);
@@ -123,8 +136,7 @@ void DCMResizeImage::ReadFilesAndGetImages()
   }
 
   imageReaders =  theReaderMgr->GetImageReaders(DRM_G4dcmCT,false);
-
-  G4cout << " N READERS " << imageReaders.size() << G4endl; //GDEB
+  //  G4cout << " N READERS CT " << imageReaders.size() << G4endl; //GDEB
   for( size_t ii = 0; ii < imageReaders.size(); ii++ ) {    
     DicomReaderG4dcmCT* readerCT = dynamic_cast<DicomReaderG4dcmCT*>(imageReaders[ii]);
     if( fileName == "" ) fileName = readerCT->GetFileName()+".new";
@@ -139,12 +151,27 @@ void DCMResizeImage::ReadFilesAndGetImages()
     }
         
     DicomVImage* image = readerCT->GetMateIDImage();
+    if( bInterpolate ) {
+      G4Exception("DCMResizeImage::ReadFilesAndGetImages",
+		  "",
+		  JustWarning,
+		  "No interpolation can be done for G4dcmCT images");
+    }
+    theParamMgr->AddParam("bInterpolate 0");
+    operResize->Operate(image);
     image->DumpHeaderToTextFile(fout);
     image->DumpDataToTextFile(fout);
     image = readerCT->GetMateDensImage();
-    image->DumpDataToTextFile(fout);
+    operResize->Operate(image);
+    image->DumpDataToTextFile(fout,true);
     image = readerCT->GetStructIDImage();
+    operResize->Operate(image);
     if( image ) image->DumpDataToTextFile(fout);
+    std::map<G4int,G4String> structNames = readerCT->GetStructNames();
+    for( std::map<G4int,G4String>::const_iterator itest = structNames.begin(); itest != structNames.end(); itest++ ) {
+      fout << itest->first << " \"" << itest->second << "\""<< G4endl;
+    }
+
   }
   
   imageReaders =  theReaderMgr->GetImageReaders(DRM_G4dcmNM,false);
