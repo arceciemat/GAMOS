@@ -32,4 +32,4 @@
 :PLACE room 1 wall_polyehtylene RM0 0. 0. 0. 
 
 :VOLU PDS_detector  ORB 0.001 G4_AIR 
-:PLACE PDS_detector 1 world RM0  $ROOM_WIDTH/2.+$POLY_WIDTH+$CONC_WIDTH+10.*cm 0. 0. 
+:PLACE PDS_detector 1 world RM0  $ROOM_WIDTH/2.+$POLY_WIDTH+$CONC_WIDTH+10.*cm 0. 0.

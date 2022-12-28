@@ -4,11 +4,13 @@
 ### Set geometry, physics and generator
 /gamos/setParam GmGeometryFromText:FileName detector.geom
 /gamos/geometry GmGeometryFromText
-/gamos/physicsList GmEMExtendedPhysics
+/gamos/physicsList G4QGSP_BIC #GmEMExtendedPhysics
 /gamos/generator GmGenerator
 
 ### Initialize Geant4 geometry and physics
 /run/initialize
+
+/gamos/physics/addPhysics radioactiveDecay
 
 ### Set generator particle distributions
 /gamos/generator/addSingleParticleSource source1 Co60[0.0] 0.
@@ -33,4 +35,4 @@
 #/gamos/userAction GmRadDecayGammaAngleCorrelationUA
 
 ### Run events
-/run/beamOn 100000
+/run/beamOn 10000
