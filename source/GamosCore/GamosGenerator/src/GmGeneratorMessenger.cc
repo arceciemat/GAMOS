@@ -66,6 +66,11 @@ GmGeneratorMessenger::GmGeneratorMessenger(GmGenerator* myua)
   DistDirectionCmd->SetParameterName("SOURCE_NAME DISTRIBUTION_TYPE (EXTRA_PARAMETERS)",false);
   DistDirectionCmd->AvailableForStates(G4State_Idle);
 
+  DistPositionDirectionCmd = new GmUIcmdWithAString("/gamos/generator/positionDirectionDist",this);
+  DistPositionDirectionCmd->SetGuidance("Sets the position distribution type for one source");
+  DistPositionDirectionCmd->SetParameterName("SOURCE_NAME DISTRIBUTION_TYPE (EXTRA_PARAMETERS)",false);
+  DistPositionDirectionCmd->AvailableForStates(G4State_Idle);
+
   PositionAddVolumeCmd = new GmUIcmdWithAString("/gamos/generator/GmPositionVolumesAndSurfaces/addVolumeOrSurface",this);
   PositionAddVolumeCmd->SetGuidance("Add a new volume to the position distribution of type GmPositionUserVolumes");
   PositionAddVolumeCmd->SetParameterName("NAME SOLID_TYPE POS_X POS_Y POS_Z ANG_X ANG_Y ANG_Z SOLID_PARAM_1 (SOLID_PARAM_2 ...)",false);
@@ -91,8 +96,10 @@ GmGeneratorMessenger::~GmGeneratorMessenger()
   if (DistEnergyCmd) delete DistEnergyCmd;
   if (DistPositionCmd) delete DistPositionCmd;
   if (DistDirectionCmd) delete DistDirectionCmd;
+  if (DistPositionDirectionCmd) delete DistPositionDirectionCmd;
   if (DirectionCmd) delete DirectionCmd;
   if (PositionCmd) delete PositionCmd;
+  if (DistDirectionCmd) delete DistDirectionCmd;
   if (EnergyCmd) delete EnergyCmd;
   if (ActivityCmd) delete ActivityCmd;
   if (PositionAddVolumeCmd) delete PositionAddVolumeCmd;
@@ -127,7 +134,7 @@ void GmGeneratorMessenger::SetNewValue(G4UIcommand * command,
     //    GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: name particle_name energy energy_unit"); 
     myAction->AddFromTextFileSource(newValues);
 
-  } else if (command == DistTimeCmd || command == DistEnergyCmd || command == DistPositionCmd || command == DistDirectionCmd ) {
+  } else if (command == DistTimeCmd || command == DistEnergyCmd || command == DistPositionCmd || command == DistDirectionCmd  || command == DistPositionDirectionCmd ) {
     std::vector<G4String> wordlist = GmGenUtils::GetWordsInString( newValues );
     if( wordlist.size() < 2 ) {
       G4Exception(" GmGeneratorMessenger::SetNewValue",
@@ -143,18 +150,19 @@ void GmGeneratorMessenger::SetNewValue(G4UIcommand * command,
       myAction->SetDistribution("position", wordlist );
     } else if (command == DistDirectionCmd) {
       myAction->SetDistribution("direction", wordlist );
+    } else if (command == DistPositionDirectionCmd) {
+      myAction->SetDistribution("positionDirection", wordlist );
+    } else if (command == PositionAddVolumeCmd ){
+      std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+      GmVGenerDistPosition* distPos = myAction->FindSource( wl[0] )->GetPositionDistribution();
+      if(  distPos->GetName() != "GmVGenerDistPositionVolumesAndSurfaces" ) {
+	G4Exception(" GmGeneratorMessenger::SetNewValue"
+		    ,"ERROR in command 'GmPositionVolumesAndSurfaces/addVolumeOrSurface'"
+		    ,FatalErrorInArgument
+		    ,("source is not of type 'GmVGenerDistPositionVolumesAndSurfaces', but "+distPos->GetName()).c_str());
+      }
+      distPos->SetParams(wl);
     }
-  } else if (command == PositionAddVolumeCmd ){
-    std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
-    GmVGenerDistPosition* distPos = myAction->FindSource( wl[0] )->GetPositionDistribution();
-    if(  distPos->GetName() != "GmVGenerDistPositionVolumesAndSurfaces" ) {
-      G4Exception(" GmGeneratorMessenger::SetNewValue"
-		  ,"ERROR in command 'GmPositionVolumesAndSurfaces/addVolumeOrSurface'"
-		  ,FatalErrorInArgument
-		  ,("source is not of type 'GmVGenerDistPositionVolumesAndSurfaces', but "+distPos->GetName()).c_str());
-    }
-    distPos->SetParams(wl);
-
   } else if (command == DistributionCmd ){
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
     if( wl.size() != 3 ) {
@@ -164,7 +172,6 @@ void GmGeneratorMessenger::SetNewValue(G4UIcommand * command,
 		  ,"There should be three arguments: SOURCE_NAME GENERATOR_DIST_TYPE BIAS_DIST_NAME");
     }
     myAction->AddBiasDistribution(wl[0],wl[1],wl[2]);
-
   }
 
   return;

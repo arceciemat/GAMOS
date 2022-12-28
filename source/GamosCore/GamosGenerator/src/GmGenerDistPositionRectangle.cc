@@ -9,7 +9,7 @@
 #include "geomdefs.hh"
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionRectangle::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionRectangle::GeneratePosition( GmParticleSource* )
 {
   G4double posX = 0;
   G4double posY = DBL_MAX;

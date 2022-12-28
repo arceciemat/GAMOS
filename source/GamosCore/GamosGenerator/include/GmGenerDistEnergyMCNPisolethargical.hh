@@ -5,7 +5,6 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 
-class G4ParticleGun;
 class G4Event;
 class GmAnalysisMgr;
 #include <map>

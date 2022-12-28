@@ -5,7 +5,7 @@ class DicomVImage;
 
 #include "globals.hh"
 #include "DicomVReaderImage.hh"
-class GmSqdose;
+class GmInterfileHeader;
 
 class DicomReaderInterfile : public DicomVReaderImage
 { 
@@ -22,12 +22,14 @@ public:
 
   void ReadHeader();
   virtual void ReadPixelData();
+  GmInterfileHeader* theInterfileHeader;
 
 protected:
 
   std::string theHeaderFileName;
   std::string theDataFileName;
   int theNBytesPerPixel;
+  std::string theNumberFormat;
 };
 
 #endif

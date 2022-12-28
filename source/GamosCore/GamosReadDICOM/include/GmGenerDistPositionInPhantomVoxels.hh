@@ -11,7 +11,7 @@ public:
   GmGenerDistPositionInPhantomVoxels();
   virtual ~GmGenerDistPositionInPhantomVoxels(){};
 
-  virtual G4ThreeVector GeneratePosition( const GmParticleSource* source );
+  virtual G4ThreeVector GeneratePosition( GmParticleSource* source );
 
 private:
   G4double theVoxelDimX;

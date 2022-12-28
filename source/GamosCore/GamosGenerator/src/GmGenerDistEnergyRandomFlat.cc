@@ -28,6 +28,6 @@ void GmGenerDistEnergyRandomFlat::SetParams( const std::vector<G4String>& params
   theEnergyMin = GmGenUtils::GetValue( params[0] );
   theEnergyMax = GmGenUtils::GetValue( params[1] );
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistEnergyRandomFlat::SetParams " << theEnergyMin << " " <<  params[0] << " " <<  G4UnitDefinition::GetValueOf(params[1]) << G4endl;
+  if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistEnergyRandomFlat::SetParams " << theEnergyMin << " " <<  params[0] << " " << params[1] << G4endl;
 #endif
 }

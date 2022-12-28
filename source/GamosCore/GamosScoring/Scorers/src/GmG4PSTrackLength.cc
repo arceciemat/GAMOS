@@ -1,4 +1,5 @@
 #include "GmG4PSTrackLength.hh"
+#include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
 
 #include "G4UnitsTable.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -24,6 +25,7 @@ G4bool GmG4PSTrackLength::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   if( !AcceptByFilter( aStep ) ) return false;
   
   G4double trklength  = aStep->GetStepLength();
+  if( ScoringVerb(debugVerb) ) G4cout << " GmG4PSTrackLength::ProcessHits trklength " <<trklength << " " <<multiplyKinE << " " << divideByVelocity << G4endl;
   if ( trklength == 0. ) return FALSE;
   
   if( !IsRegularScoring(aStep) ) {
@@ -31,7 +33,10 @@ G4bool GmG4PSTrackLength::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     if(divideByVelocity) trklength /= aStep->GetPreStepPoint()->GetVelocity();
     
     FillScorer( aStep, trklength, aStep->GetPreStepPoint()->GetWeight());
-    
+#ifndef GAMOS_NO_VERBOSE
+      if( ScoringVerb(debugVerb) ) G4cout << " GmG4PSTrackLength::ProcessHits trklength " <<trklength << " wei " << aStep->GetPreStepPoint()->GetWeight() << G4endl;
+#endif
+      
   } else {
     std::vector< std::pair<G4int,G4double> >::const_iterator ite;
     for( ite = G4RegularNavigationHelper::Instance()->theStepLengths.begin(); ite != G4RegularNavigationHelper::Instance()->theStepLengths.end(); ite++ ){
@@ -40,6 +45,9 @@ G4bool GmG4PSTrackLength::ProcessHits(G4Step* aStep,G4TouchableHistory*)
       if(divideByVelocity) trklength2 /= aStep->GetPreStepPoint()->GetVelocity();
       
       FillScorer( aStep, trklength2, aStep->GetPreStepPoint()->GetWeight());
+#ifndef GAMOS_NO_VERBOSE
+      if( ScoringVerb(debugVerb) ) G4cout << " GmG4PSTrackLength::ProcessHits trklength2 " <<trklength2 << " wei " << aStep->GetPreStepPoint()->GetWeight() << G4endl;
+#endif
     }
   }
   
@@ -63,12 +71,13 @@ void GmG4PSTrackLength::SetParameters( const std::vector<G4String>& params)
 
   if( params.size() >= 2 ){
     divideByVelocity = GmGenUtils::GetBoolean( params[1] );
+    multiplyKinE = GmGenUtils::GetBoolean( params[0] );
   } else if( params.size() >= 1 ){
     divideByVelocity = 0;
     multiplyKinE = GmGenUtils::GetBoolean( params[0] );
   } else {
     divideByVelocity = 0;
-    multiplyKinE = 1;
+    multiplyKinE = 0;
   }
 }
 

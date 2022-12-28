@@ -246,7 +246,7 @@ void GmPSPrinterSqdose::WriteSqdose( G4THitsMap<G4double>* RunMap, GmVPrimitiveS
 	if( ite != scorerMap->end() ){
 	  dose = (*(ite->second))*theUnitRatio;
 	  for ( ite = scorerMap->begin(); ite != scorerMap->end(); ite++ ) {
-	    G4cerr << " SCORE " << (*ite).first << " : " << (*ite).second << G4endl; 
+	    G4cerr << " SCORE " << (*ite).first << " : " << (*ite).second << G4endl; //GDEB
 	  }
 	  //	  if( dose != 0. ) {
 	  //	    G4cerr << " nx " << nx << " !=? " << nVoxelsXHalf << " && " << ny << " !=? " << nVoxelsYHalf << std::endl; //GDEB
@@ -267,6 +267,8 @@ void GmPSPrinterSqdose::WriteSqdose( G4THitsMap<G4double>* RunMap, GmVPrimitiveS
     } else {
       dose = 0.;
     }
+    //    G4cerr << " SCORE Sqdose " << (*ite).first << " : " <<  (*(ite->second))*theUnitRatio << G4endl; //GDEB
+    
     doses.push_back( dose );
     /*    G4int nx = ii % nVoxelsX;
     G4int ny = ii/nVoxelsX % nVoxelsY;

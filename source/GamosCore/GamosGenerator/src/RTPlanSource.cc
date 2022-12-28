@@ -32,6 +32,7 @@ RTPlanSource::RTPlanSource( const G4String& name, const G4String& partName): RTV
   theType = "RTPlanSource";
 
   GmParameterMgr* parMgr = GmParameterMgr::GetInstance();
+  G4cout << " RTPlanSource NAME " << theName << G4endl; //GDEB
   thePlanFileName = parMgr->GetStringValue(theName+":PlanFileNamePrefix","RTPlan"); 
   theBeamFileName = parMgr->GetStringValue(theName+":BeamFileNamePrefix","RTPlanBeam"); 
   theCPFileName = parMgr->GetStringValue(theName+":ControlPointFileNamePrefix","RTPlanControlPoint");

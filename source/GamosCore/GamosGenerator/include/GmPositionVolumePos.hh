@@ -49,7 +49,9 @@ public:
 
 private:
   G4ThreeVector GeneratePosInSolid( const G4VSolid* solid );
-
+  G4bool CheckPhiStartEnd(G4double& phiStart, G4double& phiEnd);
+  void CheckPhiPos( G4double& phi, G4bool bDisp360 );
+  
   std::map< G4String, std::vector<TRIdata> > MapTRI;
 
   GmParameterMgr* theParamMgr;

@@ -37,10 +37,12 @@ RTPlanControlPoint::RTPlanControlPoint( const G4String& fileName, RTPlanBeam* be
   //  theAccumulativeMeterset = GetParam("AccumulativeMeterset",1);
   theGantryAngle = GetParam("GantryAngle",1)*CLHEP::deg;
   theGantryPitchAngle = GetParam("GantryPitchAngle",0)*CLHEP::deg;
+  theLimitingDeviceAngle = GetParam("LimitingDeviceAngle",0)*CLHEP::deg;
   //  theIsocenterPosition = G4ThreeVector( GetParam("IsocenterPosition_X",1), GetParam("IsocenterPosition_Y",1), GetParam("IsocenterPosition_Z",1) );
   theNominalBeamEnergy = GetParam("NominalBeamEnergy",1);
   theSourceAxisDistanceX = theBeam->GetParam("SourceAxisDistance",1);
   theSourceAxisDistanceY = theBeam->GetParam("SourceAxisDistance",1);
+  theLimitingDeviceAngle = theBeam->GetParam("LimitingDeviceAngle",0.);
   theIndex = G4int(GetParam("ControlPointIndex",1));
   G4double metersetWeight = GetParam("MetersetWeight",-1);
   if( metersetWeight == -1 ) {
@@ -75,16 +77,15 @@ RTBeamStateData RTPlanControlPoint::GetBeamStateData(RTBeamStateData bsData)
   bsData.PositionY = 0.;
   bsData.PositionZ = theSourceAxisDistanceX;
   bsData.Energy = theNominalBeamEnergy;
-  bsData.RotAngleX = 0.;
   bsData.RotAngleY = theGantryAngle;
-  bsData.RotAngleZ = theGantryPitchAngle;
+  bsData.RotAngleX = theGantryPitchAngle;
+  bsData.RotAngleZ = theLimitingDeviceAngle;
   bsData.SpotSize = -DBL_MAX; // change it in PlanSource
   bsData.SourceAxisDistanceX = theSourceAxisDistanceX;
   bsData.SourceAxisDistanceY = theSourceAxisDistanceX;
   bsData.ControlPoint = this;
   bsData.Beam = theBeam;
   bsData.IsocenterPosition = G4ThreeVector(GetParam("IsocenterPosition_X"),GetParam("IsocenterPosition_Y"),GetParam("IsocenterPosition_Z"));
-  bsData.LimitingDeviceAngle = theLimitingDeviceAngle;
   
   return bsData;
 }

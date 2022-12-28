@@ -145,21 +145,21 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
 				    FatalErrorInArgument,
 				    G4String("/gamos/scoring/addScorer2MFD  needs only 2 arguments: ScorerName MFDname").c_str()); 
     
-    if( wl.size() > 2 ) G4Exception("GmScoringMessenger::SetNewVAlue",
+    if( wl.size() > 2 ) G4Exception("GmScoringMgr::SetNewVAlue",
 				    "Wrong argument",
 				    FatalErrorInArgument,
-				    G4String("/gamos/scoring/addScorer2MFD  needs only 2 arguments: ScorerName MFDname \n . If you need to give parameters to the scorers, use the command  /gamos/scoring/createScorer" ).c_str()); 
+				    G4String("/gamos/scoring/addScorer2MFD  used for attaching to a MFD an existing scorer needs only 2 arguments: ScorerName MFDname \n . If you need to give parameters to the scorers, use the command  /gamos/scoring/createScorer" ).c_str()); 
 
     scorer = (*itesco).second;
     MFDName = wl[1];
 
   //--- Create Scorer
   } else {
-    if( wl.size() < 3 ) G4Exception("GmScoringMessenger::SetNewVAlue",
+    if( wl.size() < 3 ) G4Exception("GmScoringMgr::SetNewVAlue",
 				    "Wrong argument",
 				    FatalErrorInArgument,
 				    G4String("/gamos/scoring/addScorer2MFD  needs only 3 arguments: ScorerName ScorerClass MFDname ").c_str()); 
-    if( wl.size() > 3 ) G4Exception("GmScoringMessenger::SetNewVAlue",
+    if( wl.size() > 3 ) G4Exception("GmScoringMgr::SetNewVAlue",
 				    "Wrong argument",
 				    FatalErrorInArgument,
 				    G4String("/gamos/scoring/addScorer2MFD  needs only 3 arguments: ScorerName ScorerClass MFDname \n . If you need to give parameters to the scorers, use the command  /gamos/scoring/createScorer" ).c_str()); 
@@ -389,9 +389,9 @@ void GmScoringMgr::AddPrintNEventsType2Scorer( const G4String& scorerName, G4Str
   if( val == "ByRun" ) {
     net = SNET_ByRun;
   } else if( val == "ByEvent" ) {
-    net = SNET_ByRun;
+    net = SNET_ByEvent;
   } else if( val == "ByNFilled" ) {
-    net = SNET_ByRun;
+    net = SNET_ByNFilled;
   } else {
     G4cerr << "!!! ERROR: at command /gamos/scoring/scoreNEventsType " << scorerName << std::endl;
     G4Exception("GmScoringMgr::AddScoreErrors2Scorer",

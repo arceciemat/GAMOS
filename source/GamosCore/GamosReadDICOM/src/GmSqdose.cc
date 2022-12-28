@@ -37,16 +37,30 @@ GmSqdose::~GmSqdose()
   // delete theHeader;
 }
 
+//Size of bool: 1
+//Size of char: 1
+//Size of unsigned short int: 2
+//Size of short int: 2
+//Size of unsigned long int: 4
+//Size of long: 4
+//Size of int: 4
+//Size of unsigned long long: 8
+//Size of long long: 8
+//Size of unsigned int: 4
+//Size of float: 4
+//Size of double: 8
+
+
 //-----------------------------------------------------------------------
 void GmSqdose::Print( FILE* out )
 {
   theHeader->Print(out);
 
 #ifndef GAMOS_NO_VERBOSE
-    if( ReadDICOMVerb(warningVerb) ) G4cout << " TYPE " << theType << G4endl;
+  if( ReadDICOMVerb(debugVerb) ) G4cout << "GmSqdose::Print TYPE " << theType << G4endl;
 #endif
-  if(fwrite(&theType,
-	    sizeof(size_t),1,out)!=1){
+  if(GmGenUtils::fwriteLittleEndian4(&theType,
+				     sizeof(size_t),1,out)!=1){
     G4Exception("GmSqdose::Print",
 		"Error",
 		FatalException,
@@ -67,8 +81,8 @@ void GmSqdose::Print( FILE* out )
     //    G4cout << "WRITE SQDOSE TYPE " << theType <<  "NVOXELS " << siz << G4endl; //GDEB
     for( size_t ii = 0; ii < siz; ii++ ) {
       float dose = theDoses[ii];
-      //      G4cout << "WRITE SQDOSE " << dose << " " << ii << G4endl; //GDEB
-      if(fwrite((float *) &dose,
+      //      G4cout << sizeof(dose) << " WRITE SQDOSE " << dose << " " << ii << G4endl; //GDEB
+      if(GmGenUtils::fwriteLittleEndian4(&dose,
 		sizeof(float),1,out)!=1) {
 	G4Exception("GmSqdose::Print",
 		    "Error",
@@ -79,8 +93,8 @@ void GmSqdose::Print( FILE* out )
     
     for( size_t ii = 0; ii < siz; ii++ ) {
       float dose2 = theDoseSqs[ii];
-      if(fwrite((float *) &dose2,
-		sizeof(float),1,out)!=1){
+      if(GmGenUtils::fwriteLittleEndian4(&dose2,
+			    sizeof(float),1,out)!=1){
 	G4Exception("GmSqdose::Print",
 		    "Error",
 		    FatalException,
@@ -96,21 +110,21 @@ void GmSqdose::Print( FILE* out )
     if( ReadDICOMVerb(warningVerb) ) if( ii%1000000 == 0 ) G4cout << " GmSqdose Print DOSE " << ii <<" " << dose << " " << dose2 << G4endl;
 #endif
       if( dose != 0. ) {
-	if(fwrite(&ii,
+	if(GmGenUtils::fwriteLittleEndian4(&ii,
 		  sizeof(size_t),1,out)!=1){
 	  G4Exception("GmSqdose::Print",
 		      "Error",
 		      FatalException,
 		      "Error writing index");
 	}
-	if(fwrite((float *) &dose,
+	if(GmGenUtils::fwriteLittleEndian4(&dose,
 		  sizeof(float),1,out)!=1){
 	  G4Exception("GmSqdose::Print",
 		    "Error",
 		    FatalException,
 		      "Error writing dose");
 	}
-	if(fwrite((float *) &dose2,
+	if(GmGenUtils::fwriteLittleEndian4(&dose2,
 		  sizeof(float),1,out)!=1){
 	  G4Exception("GmSqdose::Print",
 		    "Error",
@@ -160,14 +174,14 @@ void GmSqdose::Read( FILE* fin )
   theHeader = new GmSqdoseHeader;
   theHeader->Read( fin );
 
-  if( fread(&theType, sizeof(size_t), 1, fin) != 1) {
+  if( GmGenUtils::freadLittleEndian4(&theType, sizeof(size_t), 1, fin) != 1) {
     G4Exception("GmSqdose::Read",
 		    "Error",
 		    FatalException,
 		"Problem reading type ");
   }
 #ifndef GAMOS_NO_VERBOSE
-  if( ReadDICOMVerb(warningVerb) ) G4cout << " GmSqdose::Read type " << theType << G4endl;
+  if( ReadDICOMVerb(-warningVerb) ) G4cout << " GmSqdose::Read type " << theType << G4endl;
 #endif
 
   size_t nv = 0;
@@ -185,25 +199,27 @@ void GmSqdose::Read( FILE* fin )
   if( theType == SqTALL || theType == SqTCROSS_PHANTOM  ) {
     for( size_t iv = 0; iv < nv; iv++ ){
       float ftmp;
-      if( fread(&ftmp, sizeof(float), 1, fin) != 1) {
+      if( GmGenUtils::freadLittleEndian4(&ftmp, sizeof(float), 1, fin) != 1) {
 	G4Exception("GmSqdose::Read()",
 		    "Problem reading dose ",
 		    FatalErrorInArgument,
 		    G4String("Reading voxel number "+GmGenUtils::itoa(iv)).c_str());
       }
       theDoses.push_back( ftmp );
-      //      G4cout << " 1SQDOSE CROSS " << ftmp << " " << iv << G4endl; //GDEB
+      // G4cout << iv << " 1SQDOSE " << ftmp << G4endl; //GDEB
+      //      G4cout << " 1SQDOSE " << ftmp << " " << iv << G4endl; //GDEB
     }
       
     for( size_t iv = 0; iv < nv; iv++ ){
       float ftmp;
-      if( fread(&ftmp, sizeof(float), 1, fin) != 1) {
+      if( GmGenUtils::freadLittleEndian4(&ftmp, sizeof(float), 1, fin) != 1) {
 	G4Exception("GmSqdose::Read()",
 		    "Problem reading dose ",
 		    FatalErrorInArgument,
 		    G4String("Reading voxel number "+GmGenUtils::itoa(iv)).c_str());
       }
       theDoseSqs.push_back( ftmp );
+      // G4cout << iv << " 1SQDOSESQ " << ftmp << G4endl; //GDEB
       //      G4cout << " 2SQDOSE CROSS " << ftmp << " " << iv << G4endl; //GDEB
       //      if( theDoseSqs.size()%1000 == 1 ) G4cout << iv << " READ dose2 " << theDoseSqs.size() << " = " << theDoseSqs[theDoseSqs.size()-1] << G4endl;//GDEB
     }
@@ -213,7 +229,7 @@ void GmSqdose::Read( FILE* fin )
     size_t iv;
     for( iv = 0; iv < nv; iv++ ){
       size_t idNow;
-      if( fread(&idNow, sizeof(size_t), 1, fin) != 1) {
+      if( GmGenUtils::freadLittleEndian4(&idNow, sizeof(size_t), 1, fin) != 1) {
 	if(feof(fin)) {
 	  break;
 	} else {
@@ -221,7 +237,7 @@ void GmSqdose::Read( FILE* fin )
 	}
       }
       float ftmp;
-      if( fread(&ftmp, sizeof(float),  1, fin) != 1) {
+      if( GmGenUtils::freadLittleEndian4(&ftmp, sizeof(float),  1, fin) != 1) {
 	G4Exception("GmSqdose::Read()","Problem reading dose ",FatalErrorInArgument,G4String("Reading voxel number "+GmGenUtils::itoa(idNow)).c_str());
       }
       for( size_t ii = 0; ii < idNow-idPrev-1; ii++ ){
@@ -230,7 +246,7 @@ void GmSqdose::Read( FILE* fin )
       theDoses.push_back( ftmp );
       //      if( idNow%1000 == 0 ) G4cout << " 2READ dose " << theDoses.size() << " = " << theDoses[theDoses.size()-1] << G4endl;//GDEB
 
-      if( fread(&ftmp, sizeof(float),  1, fin) != 1) {
+      if( GmGenUtils::freadLittleEndian4(&ftmp, sizeof(float),  1, fin) != 1) {
 	G4Exception("GmSqdose::Read()","Problem reading dose ",FatalErrorInArgument,G4String("Reading voxel number "+GmGenUtils::itoa(idNow)).c_str());
       }
       for( size_t ii = 0; ii < idNow-idPrev-1; ii++ ){
@@ -362,7 +378,7 @@ void GmSqdose::CalculateErrors()
       error = std::sqrt(error);
     }
     
-    //     if(error != 0 ) G4cout << ii << " CalculateErrors error " << error << " = " << theDoseSqs[ii] << " * " << nEvents << " - " << theDoses[ii]*theDoses[ii] << " : " << theDoses[ii]<<  G4endl; // GDEB
+    //    if(error != 0 ) G4cout << ii << " CalculateErrors error " << error << " = " << theDoseSqs[ii] << " * " << nEvents << " - " << theDoses[ii]*theDoses[ii] << " : " << theDoses[ii]<<  G4endl; // GDEB
  
     theDoseErrors.push_back( error );
     //    if( ii%100000 == 1 ) G4cout << " DOSE GetError " << ii << " " << theDoses[ii] << " +- " << error << " " << theDoseSqs[ii] << " nev " << nEvents << G4endl;
@@ -396,6 +412,7 @@ GmSqdose::GmSqdose(const Gm3ddose& dose3d)
 
 }
 
+//-----------------------------------------------------------------------
 G4String GmSqdose::GetTypeStr() const
 {
   switch (theType) {
@@ -409,3 +426,138 @@ G4String GmSqdose::GetTypeStr() const
   return "NOTYPE";
 
 }
+
+
+//-----------------------------------------------------------------------
+void GmSqdose::Displace( G4ThreeVector theDisp ) 
+{
+  GmSqdoseHeader* head = GetHeader();    
+  head->Displace(theDisp);
+}
+
+//-----------------------------------------------------------------------
+void GmSqdose::SumDisplaced( GmSqdose* doseNew )
+{
+
+  GmSqdoseHeader* head1 = GetHeader();    
+  GmSqdoseHeader* head2 = doseNew->GetHeader();
+
+  //----- Check the two has same voxel width
+  G4double voxelWidthX1 = head1->GetVoxelHalfX()*2;
+  G4double voxelWidthX2 = head2->GetVoxelHalfX()*2;
+  G4double voxelWidthY1 = head1->GetVoxelHalfY()*2;
+  G4double voxelWidthY2 = head2->GetVoxelHalfY()*2;
+  G4double voxelWidthZ1 = head1->GetVoxelHalfZ()*2;
+  G4double voxelWidthZ2 = head2->GetVoxelHalfZ()*2;
+
+  if( voxelWidthX1 != voxelWidthX2 || voxelWidthY1 != voxelWidthY2 || voxelWidthZ1 != voxelWidthZ2 ) {
+    G4cerr << "  GmSqdose::SumDisplaced: voxelWidthX1/2 " <<  voxelWidthX1 << " " << voxelWidthX2
+	   << " voxelWidthY1/2 " <<  voxelWidthY1 << " " << voxelWidthY2
+	   << " voxelWidthZ1/2 " <<  voxelWidthZ1 << " " << voxelWidthZ2 << G4endl;
+    G4Exception("GmSqdose::SumDisplaced",
+		"",
+		FatalException,
+		"VoxelWidths are not the equal");
+  }
+  G4float nev1 = head1->GetNumberOfEvents();
+  G4float nev2 = head2->GetNumberOfEvents();
+  G4float nev1Sq = nev1*nev1;
+  G4float nev2Sq = nev2*nev2;
+  G4float nevT = nev1+nev2;
+  G4float nevTSq = nevT*nevT;
+
+  //----- Translate relative displacement to voxelIDs
+  G4double dispXMin = head2->GetMinX()-head1->GetMinX();
+  G4double dispXMax = head2->GetMaxX()-head1->GetMaxX();
+  G4double dispYMin = head2->GetMinY()-head1->GetMinY();
+  G4double dispYMax = head2->GetMaxY()-head1->GetMaxY();
+  G4double dispZMin = head2->GetMinZ()-head1->GetMinZ();
+  G4double dispZMax = head2->GetMaxZ()-head1->GetMaxZ();
+  G4int idxMin = int(dispXMin/voxelWidthX1);
+  G4int idyMin = int(dispYMin/voxelWidthY1);
+  G4int idzMin = int(dispZMin/voxelWidthZ1);
+  G4int idxMax = int(dispXMax/voxelWidthX1);
+  G4int idyMax = int(dispYMax/voxelWidthY1);
+  G4int idzMax = int(dispZMax/voxelWidthZ1);
+#ifndef GAMOS_NO_VERBOSE
+  if( ReadDICOMVerb(debugVerb) )
+    G4cout << " GmSqdose::SumDisplaced " 
+	   << " idxMin/Max " << idxMin <<"/"<< idxMax << " " << dispXMin << " " <<dispXMax << " " << voxelWidthX1 
+	   << " idyMin/Max " << idyMin <<"/"<< idyMax << " " << dispYMin << " " <<dispYMax << " " << voxelWidthY1 
+	   << " idzMin/Max " << idzMin <<"/"<< idzMax << " " << dispZMin << " " <<dispZMax << " " << voxelWidthZ1 << G4endl;
+#endif
+  
+  std::vector<float> dosesNew = doseNew->GetDoses();
+  std::vector<float> dosesSqNew = doseNew->GetDoseSqs();
+  G4int nVoxelsX1 = head1->GetNoVoxelsX();
+  G4int nVoxelsX2 = head2->GetNoVoxelsX();
+  G4int nVoxelsY1 = head1->GetNoVoxelsY();
+  G4int nVoxelsY2 = head2->GetNoVoxelsY();
+  G4int nVoxelsZ1 = head1->GetNoVoxelsZ();
+  G4int nVoxelsZ2 = head2->GetNoVoxelsZ();
+  G4int nVoxelsXY1 = nVoxelsX1*nVoxelsY1;
+  G4int nVoxelsXY2 = nVoxelsX2*nVoxelsY2;
+  
+  //----- Set voxel ID limits for loop
+  G4int ixmin = std::max(0,idxMin);
+  G4int ixmax = std::min(nVoxelsX1,nVoxelsX1+idxMax); ixmax = std::min(ixmax,nVoxelsX2+idxMax);
+  //  head1->SetNoVoxelsX(ixmax-ixmin);
+  G4int iymin = std::max(0,idyMin);
+  G4int iymax = std::min(nVoxelsY1,nVoxelsY1+idyMax); iymax = std::min(iymax,nVoxelsY2+idyMax);
+  //  head1->SetNoVoxelsY(iymax-iymin);
+  G4int izmin = std::max(0,idzMin);
+  G4int izmax = std::min(nVoxelsZ1,nVoxelsZ1+idzMax); izmax = std::min(izmax,nVoxelsZ2+idzMax);
+  //  head1->SetNoVoxelsZ(izmax-izmin);
+  head1->ChangeVoxelLimits(ixmin,ixmax,iymin,iymax,izmin,izmax);
+#ifndef GAMOS_NO_VERBOSE
+  if( ReadDICOMVerb(debugVerb) )
+    G4cout << " GmSqdose::SumDisplaced: ixmin/max " << ixmin<<"/"<<ixmax << " nVoxelsX1/2 " << nVoxelsX1<<"/"<<nVoxelsX2 
+	   << " iymin/max " << iymin<<"/"<<iymax << " nVoxelsY1/2 " << nVoxelsY1<<"/"<<nVoxelsY2
+	   << " izmin/max " << izmin<<"/"<<izmax << " nVoxelsZ1/2 " << nVoxelsZ1<<"/"<<nVoxelsZ2 << G4endl;
+#endif
+  std::vector<float> sumDoses(head1->GetNoVoxels());
+  std::vector<float> sumDoseSqs(head1->GetNoVoxels());
+
+  G4int copyNo = 0;
+  for( G4int iz = izmin; iz < izmax; iz++ ) {
+    for( G4int iy = iymin; iy < iymax; iy++ ) {
+      for( G4int ix = ixmin; ix < ixmax; ix++, copyNo++ ) {
+	G4int copyNo1 = ix + iy*nVoxelsY1 + iz*nVoxelsXY1;
+	G4int copyNo2 = ix-idxMin + (iy-idyMin)*nVoxelsY2 + (iz-idyMin)*nVoxelsXY2;
+	G4bool bError0 = 0; // if both errors are 0, set DosesSq so that new error is 0
+	G4double errd1 = theDoses[copyNo1]==0 ? 0 : theDoseSqs[copyNo1]*nev1 - theDoses[copyNo1]*theDoses[copyNo1];
+	//G4cout << copyNo1 << " errd1 " << errd1 << " = " << theDoseSqs[copyNo1] << " * " << nev1<< "  - " <<theDoses[copyNo1]*theDoses[copyNo1] <<  " : " << theDoses[copyNo1]  << " :: " <<  sqrt(fabs(errd1))/theDoses[copyNo1] << G4endl; //GDEB
+	if( theDoses[copyNo1] == 0 || fabs(errd1)/theDoses[copyNo1]/theDoses[copyNo1] < 5.e-07 ) {
+	  //	G4double errd2 = dosesNew[copyNo2]==0 ? 0 : dosesNewNew[copyNo2]*nev2 - dosesNew[copyNo2]*dosesNew[copyNo2];      
+	  G4double errd2 = dosesNew[copyNo2]*nev2 - dosesNew[copyNo2]*dosesNew[copyNo2];      
+	  //	G4cout << copyNo2 << " errd2 " << errd2 << " = " << dosesNewNew[copyNo2] << " * " << nev2<< "  - " <<dosesNew[copyNo2]*dosesNew[copyNo2] << " : " << dosesNew[copyNo2] << " :: " << sqrt(fabs(errd2))/dosesNew[copyNo2] << " ::: " << fabs(errd2)/dosesNew[copyNo2]/dosesNew[copyNo2] << G4endl; //GDEB
+	  if( dosesNew[copyNo2] == 0 || fabs(errd2)/dosesNew[copyNo2]/dosesNew[copyNo2] < 5.e-07 ) {
+	    bError0 = 1;
+	  }
+	}
+	//	if(theDoses[copyNo1] != 0. || dosesNew[copyNo2] != 0. ) G4cout << copyNo1 << copyNo2 << " BEF Dose1 " << theDoses[copyNo1] << " * " << nev1<< "  - " << dosesNew[copyNo2] <<  " * " << nev2 << " / " << nevT << G4endl; //GDEB
+	sumDoses[copyNo] = (theDoses[copyNo1]*nev1 + dosesNew[copyNo2]*nev2)/nevT;
+	//	G4cout  <<ix<<":"<<iy<<":"<<iz<< " " << copyNo << " " << copyNo1 << " " << copyNo2 << " FINAL Dose1 " << sumDoses[copyNo] << G4endl; //GDEB
+	if( bError0 ) {
+	  sumDoseSqs[copyNo] = theDoses[copyNo1]*theDoses[copyNo1]/nevT;
+	  //	  G4cout << copyNo1 << " NEW ERROR " << theDoseSqs[copyNo1] << " " << nevT << " " << theDoseSqs[copyNo1]*theHeader->GetNumberOfEvents()- theDoses[copyNo1]*theDoses[copyNo1] << " : " << theDoses[copyNo1] << G4endl; //GDEB
+	} else {
+	  sumDoseSqs[copyNo] = (theDoseSqs[copyNo1]*nev1Sq + dosesSqNew[copyNo2]*nev2Sq)/nevTSq;
+	  //	  G4cout <<ix<<":"<<iy<<":"<<iz<< " " << copyNo << " FINAL ERROR " << sumDoseSqs[copyNo] << " " << theDoseSqs[copyNo1] << "*" << nev1Sq << " +doseSq2 " << dosesSqNew[copyNo2] << "*" << nev2Sq << "/" << nevTSq << G4endl; //GDEB
+	}
+	// if error=0, make error of sum = 0
+	
+      }
+    }
+      //    if( theDoses[copyNo1] != 0 )  G4cout << copyNo1 << "summed dose1 " << theDoses[copyNo1] << " dose2 " << doses[copyNo1] << G4endl;
+    // if( copyNo1 == 0)  G4cout << "summed doseSq1 " << theDoseSqs[copyNo1] << " dose2 " << dosesNew[copyNo2] << G4endl;
+  }
+
+  theDoses.clear();
+  theDoses = sumDoses;
+  theDoseSqs.clear();
+  theDoseSqs = sumDoseSqs;
+  G4cout << "dose value sum " << theDoses[0] << G4endl;
+
+}
+

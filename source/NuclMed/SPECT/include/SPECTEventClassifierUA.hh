@@ -84,7 +84,8 @@ private:
 
   DetCountScatteringUA* theCountScattering;
 
-  G4bool bDump;
+  G4bool bDumpLM;
+  G4bool bDumpPD;
 
   G4double theComptonRecHitsDist;
 

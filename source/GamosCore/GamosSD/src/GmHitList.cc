@@ -191,7 +191,7 @@ void GmHitList::CleanHitsBefore( G4double tim, unsigned long long trigID )
   GmHitList::iterator iteh;
   //--- Loop to hits
   for( iteh = begin(); iteh != end(); iteh++ ){
-    unsigned long long hitTrigID = (*iteh)->GetDetUnitID() / G4int(pow(double(theNShift),int(theNTrigAncestors)));
+    unsigned long long hitTrigID = (*iteh)->GetDetUnitID() / (unsigned long long)(pow(double(theNShift),theNTrigAncestors));
     if( hitTrigID != trigID ) continue;
 
     if( (*iteh)->GetTime() < tim ){
@@ -471,11 +471,13 @@ void GmHitList::BuildHitsCompatibleInTimeTriggerIndependent( G4double currentTim
   std::set<unsigned long long> hitTrigIDInEvent;
   for( iteh = hitsInEvent.begin(); iteh != hitsInEvent.end(); iteh++ ) {
     if( (*iteh)->GetSDType() == theSDType ) {
-      unsigned long long hitTrigID = (*iteh)->GetDetUnitID() / G4int(pow(double(theNShift),theNTrigAncestors));
+      unsigned long long hitTrigID = (*iteh)->GetDetUnitID() / (unsigned long long)(pow(double(theNShift),theNTrigAncestors));
+      //      G4cout << theHitTrigIDs.size() << " HITTRIGID " << hitTrigID << " DetUnitID " <<  (*iteh)->GetDetUnitID() << "/" << (unsigned long long)(pow(double(theNShift),theNTrigAncestors)) << G4endl; //GDEB
       hitTrigIDInEvent.insert( hitTrigID );
       if( theHitTrigIDs.find( hitTrigID ) == theHitTrigIDs.end() ) {
 	theHitTrigIDs.insert( hitTrigID );
 	thePreviousEventIntervalTimes[hitTrigID] = -theMeasuringTime;
+	//	G4cout << hitTrigID << " SET thePreviousEventIntervalTimes " << thePreviousEventIntervalTimes[hitTrigID] << " " << G4endl; //GDEB
       }
       //      G4cout << " HITTRIGID " << hitTrigID << " DetUnitID " <<  (*iteh)->GetDetUnitID() << G4endl;
     }
@@ -505,25 +507,29 @@ void GmHitList::BuildHitsCompatibleInTimeTriggerIndependent( G4double currentTim
 				     << G4endl;
 #endif
       theCurrentIntervalStartTimes[trigID] = thePreviousEventIntervalTimes[trigID] + theMeasuringTime;
+      //      G4cout << trigID << " SET theCurrentIntervalStartTimes " << theCurrentIntervalStartTimes[trigID] << " " << G4endl; //GDEB
       if( hitTrigIDInEvent.find(trigID) != hitTrigIDInEvent.end() ) {
 #ifndef GAMOS_NO_VERBOSE
-      if( SDVerb(debugVerb) ) G4cout << "GmHitList::BuildHitsCompatibleInTimeTriggerIndependent trigID " << trigID 
-				     << "  change thePreviousEventIntervalTimes " << currentTime-1.E-6*theMeasuringTime
-				     << " old " << thePreviousEventIntervalTimes[trigID]
-				     << G4endl;
+	if( SDVerb(debugVerb) ) G4cout << "GmHitList::BuildHitsCompatibleInTimeTriggerIndependent trigID " << trigID 
+				       << "  change thePreviousEventIntervalTimes " << currentTime-1.E-6*theMeasuringTime
+				       << " old " << thePreviousEventIntervalTimes[trigID]
+				       << G4endl;
 #endif
 	thePreviousEventIntervalTimes[trigID] = currentTime-1.E-6*theMeasuringTime; // to avoid precision problems
+	if( theCurrentIntervalStartTimes[trigID] == 0 ) thePreviousEventIntervalTimes[trigID] = 0;
+	//	G4cout << trigID << " SET2 thePreviousEventIntervalTimes " << thePreviousEventIntervalTimes[trigID] << " " << G4endl; //GDEB
       }
     }
     
     G4double lowestTime = theCurrentIntervalStartTimes[trigID] - theMeasuringTime;
-    G4double highestTime = theCurrentIntervalStartTimes[trigID];
+    //    G4cout << trigID << " set lowestTime " << lowestTime << " theCurrentIntervalStartTimes " << theCurrentIntervalStartTimes[trigID] << " " << G4endl; //GDEB
+      G4double highestTime = theCurrentIntervalStartTimes[trigID];
 #ifndef GAMOS_NO_VERBOSE
   if( SDVerb(debugVerb) ) G4cout << "GmHitList::BuildHitsCompatibleInTimeTriggerIndependent  looking between times " << lowestTime << " - " << highestTime << G4endl;
 #endif
     //-  G4cout << " ABuildHitsCompatibleInTime " << size() << G4endl;
     for( iteh = begin(); iteh != end(); iteh++ ){
-      unsigned long long hitTrigID = (*iteh)->GetDetUnitID() / G4int(pow(double(theNShift),int(theNTrigAncestors)));
+      unsigned long long hitTrigID = (*iteh)->GetDetUnitID() / (unsigned long long)(pow(double(theNShift),theNTrigAncestors));
       if( hitTrigID != trigID ) continue;
 
       G4bool bOK = true;
@@ -604,7 +610,7 @@ G4double GmHitList::GetTriggerTime( G4double hitTime, unsigned long long detUnit
     std::set<unsigned long long> hitTrigIDInEvent;
     for( iteh = hitsInEvent.begin(); iteh != hitsInEvent.end(); iteh++ ) {
       if( (*iteh)->GetSDType() == theSDType ) {
-	unsigned long long hitTrigID = (*iteh)->GetDetUnitID() / G4int(pow(float(theNShift),int(theNTrigAncestors)));
+	unsigned long long hitTrigID = (*iteh)->GetDetUnitID() / (unsigned long long)(pow(double(theNShift),theNTrigAncestors));
 	hitTrigIDInEvent.insert( hitTrigID );
 	if( theHitTrigIDs.find( hitTrigID ) == theHitTrigIDs.end() ) {
 	  theHitTrigIDs.insert( hitTrigID );
@@ -613,7 +619,7 @@ G4double GmHitList::GetTriggerTime( G4double hitTime, unsigned long long detUnit
 	//      G4cout << " HITTRIGID " << hitTrigID << " DetUnitID " <<  (*iteh)->GetDetUnitID() << G4endl;
       }
     }
-    unsigned long long hitTrigID = detUnitID / G4int(pow(float(theNShift),int(theNTrigAncestors)));
+    unsigned long long hitTrigID = (*iteh)->GetDetUnitID() / (unsigned long long)(pow(double(theNShift),theNTrigAncestors));
 
     return theCurrentIntervalStartTimes[hitTrigID] - theMeasuringTime;
   }

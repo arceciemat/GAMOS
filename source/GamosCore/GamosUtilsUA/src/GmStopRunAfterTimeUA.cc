@@ -32,9 +32,9 @@ void GmStopRunAfterTimeUA::EndOfEventAction( const G4Event* )
   if(  theTimer->GetUserElapsed() > theTimeToStop ) {
 
 #ifndef GAMOS_NO_VERBOSE
-	  if (UtilsUAVerb(warningVerb)) G4cout << " GmStopRunAfterTimeUA::EndOfEventAction  currentTime= " << theTimer->GetUserElapsed()/CLHEP::ns << " Time to stop= " << theTimeToStop/CLHEP::ns << G4endl;
+    if (UtilsUAVerb(warningVerb)) G4cout << " GmStopRunAfterTimeUA::EndOfEventAction  currentTime= " << theTimer->GetUserElapsed()/CLHEP::ns << " Time to stop= " << theTimeToStop/CLHEP::ns << G4endl;
 #endif
-	  G4RunManager::GetRunManager()->AbortRun();
+    G4RunManager::GetRunManager()->AbortRun();
   }
 
 }

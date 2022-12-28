@@ -25,6 +25,8 @@
 #include "G4PhantomParameterisation.hh"
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <iomanip>
+
 GmGeometryUtils* GmGeometryUtils::theInstance = 0;
 
 //-----------------------------------------------------------------------
@@ -466,7 +468,7 @@ void GmGeometryUtils::DumpPV(G4VPhysicalVolume* pv, unsigned int leafDepth, std:
   }
   
   if( dumpVerbose >= 2) {
-    out << " at " << pv->GetTranslation();
+    out << std::setprecision(8) << " at " << pv->GetTranslation();
   }
 
   if( !pv->IsReplicated() ) {
@@ -1294,13 +1296,16 @@ G4String GmGeometryUtils::GetG4TouchableLongName(G4TouchableHistory* touch)
 {
   G4String tname = "";
 
-  for( G4int ii = touch->GetHistoryDepth(); ii >= 0; ii-- ){
-    G4VPhysicalVolume* pv = touch->GetVolume(ii);
-    tname += "/" + pv->GetName() + ":" + GmGenUtils::itoa(pv->GetCopyNo());
+  for( G4int ii = 0;; ii++ ){
+    //    G4cout << touch->GetHistoryDepth() << " GetG4TouchableLongName " << ii << " " <<  touch->GetVolume()->GetName() << " " << touch->GetReplicaNumber() << G4endl; //GDEB
+    tname = "/" +  touch->GetVolume()->GetName() + ":" + GmGenUtils::itoa(touch->GetReplicaNumber()) + tname;
+    if( touch->GetHistoryDepth() == 0 ) break;
+    touch->MoveUpHistory(1);
   }
 
   return tname;
 }
+
 
 
 //-----------------------------------------------------------------------
@@ -1422,7 +1427,7 @@ G4String GmGeometryUtils::BuildTouchableName( const G4ThreeVector& pos )
   if( !theTouchable ) theTouchable = new G4TouchableHistory;
 
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos, theTouchable, false );
-
+  
   G4String volName = "";
   unsigned int siz = theTouchable->GetHistoryDepth();
   for( int ii = siz; ii >= 0; ii-- ){
@@ -1478,13 +1483,13 @@ std::vector<G4PhantomParameterisation*> GmGeometryUtils::GetPhantomParams(G4bool
   G4PhysicalVolumeStore* pvs = G4PhysicalVolumeStore::GetInstance();
   std::vector<G4VPhysicalVolume*>::iterator cite;
   for( cite = pvs->begin(); cite != pvs->end(); cite++ ) {
-    G4cout << " PV  " << (*cite)->GetName() << " " << (*cite)->GetTranslation() << G4endl; //GDEB
+    //    G4cout << " PV  " << (*cite)->GetName() << " " << (*cite)->GetTranslation() << G4endl; //GDEB
     if( IsPhantomVolume( *cite ) ) {
       const G4PVParameterised* pvparam = static_cast<const G4PVParameterised*>(*cite);
       G4VPVParameterisation* param = pvparam->GetParameterisation();
       //    if( static_cast<const G4PhantomParameterisation*>(param) ){
       //    if( static_cast<const G4PhantomParameterisation*>(param) ){
-      G4cout << "G4PhantomParameterisation volume found  " << (*cite)->GetName() << G4endl; //GDEB
+      //      G4cout << "G4PhantomParameterisation volume found  " << (*cite)->GetName() << G4endl; //GDEB
       paramregs.push_back( static_cast<G4PhantomParameterisation*>(param) );
     }
   }

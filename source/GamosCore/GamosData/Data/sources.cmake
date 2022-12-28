@@ -27,7 +27,7 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosData_Data
 		GmDataFinalLocalDirPerp.hh
 		GmDataInitialMomX.hh
 		GmDataAccumulatedDose.hh
-		GmDataAccumulatedEnergyDeposited.hh
+		GmDataAccumulatedEnergyDeposit.hh
 		GmDataVertexPosY.hh
 		GmDataAccumulatedTrackLength.hh
 		GmDataDirChangePerp.hh
@@ -43,7 +43,7 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosData_Data
 		GmDataVertexMomMag.hh
 		GmDataNofSecondaries.hh
 		GmDataInitialPosPhi.hh
-		GmDataAccumulatedNonIonizingEnergyDeposited.hh
+		GmDataAccumulatedNonIonizingEnergyDeposit.hh
 		GmDataNofHits.hh
 		GmDataInitialLocalPosPhi.hh
 		GmDataPosChangePhi.hh
@@ -317,7 +317,7 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosData_Data
 		GmDataInitialVelocity.cc
 		GmDataInitialSolid.cc
 		GmDataFinalMomY.cc
-		GmDataAccumulatedEnergyDeposited.cc
+		GmDataAccumulatedEnergyDeposit.cc
 		GmDataNProcesses.cc
 		GmDataInitialNeutronEquivalentDose.cc
 		GmDataInitialPosZ.cc
@@ -459,7 +459,7 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosData_Data
 		GmDataInitialMomPhi.cc
 		GmDataFinalLocalInPreDirPerp.cc
 		GmDataFinalLocalInPreDirTheta.cc
-		GmDataAccumulatedNonIonizingEnergyDeposited.cc
+		GmDataAccumulatedNonIonizingEnergyDeposit.cc
 		GmDataNofHits.cc
 		GmDataFinalMomTheta.cc
 		GmDataInitialGammaEquivalentDose.cc

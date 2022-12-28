@@ -41,12 +41,12 @@ void GmVPSPrinter::SetUnit(GmVPrimitiveScorer* theScorer )
   if( theNewUnit == -1 ) {
     theNewUnit = theScorer->GetUnit();
     theUnitName = theScorer->GetUnitName();
-    G4cout << "SetUnit " <<  theName << " " << theNewUnit << " Name " << theUnitName << G4endl; //GDEB
+    //    G4cout << "SetUnit " <<  theName << " " << theNewUnit << " Name " << theUnitName << G4endl; //GDEB
   }
   theUnitRatio = theUnit/theNewUnit;
   theUnitRatio2 = theUnitRatio*theUnitRatio;
 #ifndef GAMOS_NO_VERBOSE
-  if( ScoringVerb(debugVerb) ) //GDEB
+  if( ScoringVerb(-debugVerb) ) 
     G4cout << " GmVPSPrinter::SetUnit " << theName << " " << theUnit << " New " << theNewUnit << " Ratio " << theUnitRatio << G4endl;
 #endif
 }

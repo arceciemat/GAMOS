@@ -27,7 +27,7 @@ public:
 
   virtual void SetParams( const std::vector<G4String>& params );
 
-  virtual G4ThreeVector GeneratePosition( const GmParticleSource* source );
+  virtual G4ThreeVector GeneratePosition( GmParticleSource* source );
 
 protected:
   std::vector<GVSTouchableInfo*> theTouchableInfos;

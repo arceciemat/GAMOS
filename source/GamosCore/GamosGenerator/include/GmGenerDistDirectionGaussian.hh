@@ -10,7 +10,7 @@ public:
   GmGenerDistDirectionGaussian(){};
   virtual ~GmGenerDistDirectionGaussian(){};
 
-  virtual G4ThreeVector GenerateDirection( const GmParticleSource* source );
+  virtual G4ThreeVector GenerateDirection( GmParticleSource* source );
 
   virtual void SetParams( const std::vector<G4String>& params );
 

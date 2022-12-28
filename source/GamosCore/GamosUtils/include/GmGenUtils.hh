@@ -52,11 +52,12 @@ public:
   static G4double GetKineticEnergy( G4double mass, G4double mom );
   
   static G4bool IsLittleEndian();
-  static short ShortEndianSwap( short s );
-  static int LongEndianSwap (int i);
-  static float FloatEndianSwap( float f );
-  static double DoubleEndianSwap( double d );
-  
+  template <typename TYP> static TYP reverseEndian(TYP val);
+  template <typename TYP> static TYP checkEndian(TYP val);
+  static size_t freadLittleEndian4( void * ptr, size_t size, size_t count, FILE * stream );
+  static size_t freadLittleEndian8( void * ptr, size_t size, size_t count, FILE * stream );
+  static size_t fwriteLittleEndian4( const void * ptr, size_t size, size_t count, FILE * stream ); // int / float  
+  static size_t fwriteLittleEndian8( const void * ptr, size_t size, size_t count, FILE * stream ); // size_t 
   static void ReadUnits();
   static G4bool IsUnit( const G4String str );
   static std::set<G4String> theUnits;
@@ -90,5 +91,33 @@ public:
   static std::string rtrim(const std::string &s);
   
 };
+
+//-----------------------------------------------------------------------
+template <typename TYP>
+TYP GmGenUtils::checkEndian(TYP val)
+{
+  if( IsLittleEndian() ) {
+    return val;
+  } else {
+    return reverseEndian(val);
+  }
+  return val;
+
+}
+
+//-----------------------------------------------------------------------
+template <typename TYP>
+TYP GmGenUtils::reverseEndian(TYP val)
+{
+    TYP retVal;
+    char *pVal = (char*) &val;
+    char *pRetVal = (char*)&retVal;
+    int size = sizeof(TYP);
+    for(int i=0; i<size; i++) {
+      pRetVal[size-1-i] = pVal[i];
+    }
+
+    return retVal;
+}
 
 #endif

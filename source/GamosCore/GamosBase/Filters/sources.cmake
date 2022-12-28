@@ -107,7 +107,7 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosBase_Filters
 		GmTraverseTouchableChildrenFilter.hh
 		GmDirectionPhiFilter.hh
 		GmEndParallelLogicalVolumeFilter.hh
-		GmDepositedEnergyFilter.hh
+		GmDepositEnergyFilter.hh
 		GmAncestorsFilter.hh
 		GmEnterLogicalVolumeChildrenFilter.hh
 		GmPositionPreZFilter.hh
@@ -275,7 +275,7 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosBase_Filters
 		GmGeomConditionEnter.cc
 		GmProdCutOutsideVoxelFilter.cc
 		GmTouchableFilterPhysicalVolumeReplicatedChildren.cc
-		GmDepositedEnergyFilter.cc
+		GmDepositEnergyFilter.cc
 		GmPrimaryOn1SecondaryFilter.cc
 		GmVANDFilter.cc
 		GmPositronFilter.cc

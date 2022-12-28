@@ -40,9 +40,9 @@ void GmModuleJaws::BuildObjects()
 		G4String("It is: "+theWords["ORIENTATION"]+" , while it should be X or Y").c_str());
   }  
   SetWord("JAWSTIPTYPE",ip++);
-  if( theWords["LEAFTIPTYPE"] == "ROUND_DISP_POSFILE" ) {
+  /*if( theWords["LEAFTIPTYPE"] == "ROUND_DISP_POSFILE" ) {
     theWords["LEAFTIPTYPE"] == "ROUND_POSFILE";
-  }
+    }*/
 #ifndef GAMOS_NO_VERBOSE
     if( GeomVerb(debugVerb) ) G4cout << " GmModuleJaws::BuildObjects " << PrintW("NAME") << PrintW("ORIENTATION") << PrintW("JAWSTIPTYPE") << G4endl;
 #endif
@@ -52,36 +52,43 @@ void GmModuleJaws::BuildObjects()
 #ifndef GAMOS_NO_VERBOSE
     if( GeomVerb(debugVerb) )  G4cout << " GmModuleJaws::BuildObjects " << PrintWVal("XHDIM") << PrintWVal("YHDIM") << PrintWVal("ZHDIM") << G4endl;
 #endif
-  G4double HVL = 0.;
   G4double posCircleZ = 0.;
   if( theWords["JAWSTIPTYPE"] == "ROUND" ) {
     SetWord("TIP_RADIUS",ip++);
     theWords["TIP_CIRCLE_Z"] = theWords["ZHDIM"];
-    SetWord("HVL",ip++); HVL = G4tgrUtils::GetDouble(theWords["HVL"]);
 #ifndef GAMOS_NO_VERBOSE
-    if( GeomVerb(debugVerb) ) G4cout << " GmModuleJaws::BuildObjects " << PrintWVal("TIP_RADIUS") << PrintWVal("HVL") << G4endl;
+    if( GeomVerb(debugVerb) ) G4cout << " GmModuleJaws::BuildObjects " << PrintWVal("TIP_RADIUS") << G4endl;
 #endif
   } else if( theWords["JAWSTIPTYPE"] == "ROUND_DISP" ) {
     SetWord("TIP_RADIUS",ip++);
     SetWord("TIP_CIRCLE_Z",ip++);
-    SetWord("HVL",ip++); HVL = G4tgrUtils::GetDouble(theWords["HVL"]);
 #ifndef GAMOS_NO_VERBOSE
-    if( GeomVerb(debugVerb) ) G4cout << " GmModuleJaws::BuildObjects " << PrintWVal("TIP_RADIUS") << PrintWVal("TIP_CIRCLE_Z") << PrintWVal("HVL") << G4endl;
+    if( GeomVerb(debugVerb) ) G4cout << " GmModuleJaws::BuildObjects " << PrintWVal("TIP_RADIUS") << PrintWVal("TIP_CIRCLE_Z") << theWords["TIP_POS_FILE"] << G4endl;
 #endif
-  } else if( theWords["JAWSTIPTYPE"] == "ROUND_POSFILE" ) {
+  } else if( theWords["JAWSTIPTYPE"] == "ROUND_DISP_POSFILE" ) {
     SetWord("TIP_RADIUS",ip++);
     SetWord("TIP_CIRCLE_Z",ip++);
     SetWord("TIP_POS_FILE",ip++);
 #ifndef GAMOS_NO_VERBOSE
-    if( GeomVerb(debugVerb) ) G4cout << " GmModuleJaws::BuildObjects " << PrintWVal("TIP_RADIUS") << PrintWVal("TIP_CIRCLE_Z") << theWords["TIP_POS_FILE"] << G4endl;
+    if( GeomVerb(debugVerb) ) G4cout << " GmModuleJaws::BuildObjects " << PrintWVal("TIP_RADIUS") << PrintWVal("TIP_CIRCLE_Z") << PrintWVal("TIP_POS_FILE") << G4endl;
 #endif
   } else if( theWords["JAWSTIPTYPE"].substr(0,8) == "STRAIGHT" ) {
   } else {
     G4Exception("GmModuleJaws:BuildObjects",
 		"MJ001",
 		FatalException,
-		("JAWS TYPE HAS TO BE STRAIGHT, STRAIGHT_HORIZ, ROUND, ROUND_DISP OR ROUND_POSFILE, WHILE IT IS "+theWords["JAWSTIPTYPE"]).c_str());
+		("JAWS TYPE HAS TO BE STRAIGHT, STRAIGHT_HORIZ, ROUND, ROUND_DISP OR ROUND_DISP_POSFILE, WHILE IT IS "+theWords["JAWSTIPTYPE"]).c_str());
   }
+  G4double HVL = 0.;
+  if( theWords["JAWSTIPTYPE"] == "ROUND" 
+      || theWords["JAWSTIPTYPE"] == "ROUND_DISP" ){
+    SetWord("HVL",ip++);
+    HVL = G4tgrUtils::GetDouble(theWords["HVL"]);
+#ifndef GAMOS_NO_VERBOSE
+    if( GeomVerb(debugVerb) ) G4cout << " GmModuleJaws::BuildObjects " << PrintWVal("HVL") << G4endl;
+  #endif
+  }
+  
   SetWord("Z_FOCUS",ip++); G4double Z_FOCUS    = G4tgrUtils::GetDouble(theWords["Z_FOCUS"]);
   if( theWords["JAWSTIPTYPE"].substr(0,8) == "STRAIGHT" ) {
     SetWord("RADIUS",ip++);
@@ -127,7 +134,7 @@ void GmModuleJaws::BuildObjects()
 	 << theWords["MATE"];
     BuildObject( fout );
   } else if( theWords["JAWSTIPTYPE"] == "ROUND" 
-	    || theWords["JAWSTIPTYPE"] == "ROUND_POSFILE" ) {
+	    || theWords["JAWSTIPTYPE"] == "ROUND_DISP_POSFILE" ) {
     
     fout << ":SOLID " << theWords["NAME"]+"_a" << " BOX " 
 	 << theWords["XHDIM"] << " " 
@@ -170,7 +177,7 @@ void GmModuleJaws::BuildObjects()
 	 << " "  << theWords["MATE"];
     BuildObject( fout );
 
-// define common things for ROUND and ROUND_POSFILE
+// define common things for ROUND and ROUND_DISP_POSFILE
     posCircleZ = posZ + G4tgrUtils::GetDouble(theWords["ZHDIM"]) - G4tgrUtils::GetDouble(theWords["TIP_CIRCLE_Z"]);
     //    G4cout << " posCircleZ " << posCircleZ << " = " << posZ << " + " << G4tgrUtils::GetDouble(theWords["ZHDIM"]) << " - " << G4tgrUtils::GetDouble(theWords["TIP_CIRCLE_Z"]) << G4endl; //GDEB
 
@@ -259,7 +266,7 @@ void GmModuleJaws::BuildObjects()
 		    G4String("It is: "+theWords["ORIENTATION"]+" , while it should be X or Y").c_str());
       }
      
-    } else if( theWords["JAWSTIPTYPE"] == "ROUND_POSFILE" ) {
+    } else if( theWords["JAWSTIPTYPE"] == "ROUND_DISP_POSFILE" ) {
       //    G4double profR = G4tgrUtils::GetDouble(theWords["TIP_RADIUS"]);
       
       GmParameterMgr::GetInstance()->AddParam("leafPosJawsDist:FileName " + theWords["TIP_POS_FILE"]);

@@ -191,6 +191,7 @@ G4double GmGenUtils::GetValue( const G4String& str )
 
 }
   
+//------------------------------------------------------------------------
 G4String GmGenUtils::CorrectByTime( const G4String& str, const G4String& timeStr, const G4String& nSeconds ) 
 {
   G4String strorig = str;
@@ -209,7 +210,6 @@ G4String GmGenUtils::CorrectByTime( const G4String& str, const G4String& timeStr
 
 }
 
-
 //------------------------------------------------------------------------
 G4bool GmGenUtils::IsFloat( const G4String& str ) 
 {
@@ -221,10 +221,10 @@ G4bool GmGenUtils::IsFloat( const G4String& str )
   //----- Check that it is not a float, no decimal or E-n
   G4bool isFloat = FALSE;
   G4int ch = str.find('.');
-  unsigned int ii = 0;
   if(ch != -1 ) {
     isFloat = TRUE;
-    /*-    for( ii = ch+1; ii < str.size(); ii++) {
+    /*-   unsigned int ii = 0;
+      for( ii = ch+1; ii < str.size(); ii++) {
       if( str[ii] != '0' ) isFloat = TRUE;
       } */
   }
@@ -630,76 +630,101 @@ G4bool GmGenUtils::IsLittleEndian()
     //  G4cout << " IT IS LITTLE ENDIAN " << G4endl;
     return TRUE;
   } else {  //  if( x == 256 ) { 
-    //    G4cout << " IT IS BIG ENDIAN " << G4endl;
+        G4cout << " IT IS BIG ENDIAN " << G4endl;
     return FALSE;
   }
 
 }
+
+//-----------------------------------------------------------------------
+size_t GmGenUtils::freadLittleEndian4 ( void * ptr, size_t size, size_t count, FILE * stream )
+{
+  fread(ptr, size, count, stream );
+  if( !IsLittleEndian() ) {
+    float* newVal = static_cast<float*>(ptr);
+    float newValE = reverseEndian(*newVal);
+    *newVal = newValE;
+  }
+  return count;
+}
+
+//-----------------------------------------------------------------------
+size_t GmGenUtils::freadLittleEndian8( void * ptr, size_t size, size_t count, FILE * stream )
+{
+  fread(ptr, size, count, stream );
+  if( !IsLittleEndian() ) {
+    size_t* newVal = static_cast<size_t*>(ptr);
+    size_t newValE = reverseEndian(*newVal);
+    *newVal = newValE;
+  }
+  return count;
+}
+
+//-----------------------------------------------------------------------
+size_t GmGenUtils::fwriteLittleEndian4( const void * ptr, size_t size, size_t count, FILE * stream )
+{
+  if( IsLittleEndian() ) {
+    fwrite(ptr,size,count,stream);
+  } else {
+    G4Exception("GmGenUtils::fwriteLittleEndian4",
+		"",
+		FatalException,
+		"BIG ENDIAN IS NOT SUPPORTED, please contact GAMOS authors");
+		/* THIS IS WRONG 
+    const float* newVal = static_cast<const float*>(ptr);
+    const float newValE = checkEndian(*newVal);
+    fwrite(&newValE,size,count,stream);
+		*/
+  }
+  return count;
+
+  /*
+  if( sizeof(ptr) == 1 ) {
+    //void *q = const_cast<void *>(p);
+    //char *r = static_cast<char *>(q);
+    const char* newVal = static_cast<const char*>(ptr);    
+    const char newValE = GmGenUtils::checkEndian(*newVal);
+    //    const char newVal2E = GmGenUtils::reverseEndian(*newVal);
+    fwrite(&newValE,size,count,stream);
+  } else if( sizeof(ptr) == 2 ) {
+    const short int* newVal = static_cast<const short int*>(ptr);
+    const short int newValE = GmGenUtils::checkEndian(*newVal);
+    fwrite(&newValE,size,count,stream);
+  } else if( sizeof(ptr) == 4 ) {
+    const int* newVal = static_cast<const int*>(ptr);
+    const int newValE = GmGenUtils::checkEndian(*newVal);
+    fwrite(&newValE,size,count,stream);
+    G4cout << " fwriteLE int/float " << newValE << G4endl; //GDEB
+  } else if( sizeof(ptr) == 8 ) {
+    const long long* newVal = static_cast<const long long*>(ptr);
+    const long long newValE = GmGenUtils::checkEndian(*newVal);
+    fwrite(&newValE,size,count,stream); 
+  } else {
+    return 0;
+  }
+  return count; 
+*/
+}
+
+//-----------------------------------------------------------------------
+size_t GmGenUtils::fwriteLittleEndian8( const void * ptr, size_t size, size_t count, FILE * stream )
+{
+  if( IsLittleEndian() ) {
+    fwrite(ptr,size,count,stream);
+  } else {
+    G4Exception("GmGenUtils::fwriteLittleEndian8",
+		"",
+		FatalException,
+		"BIG ENDIAN IS NOT SUPPORTED, please contact GAMOS authors");
+		/* THIS IS WRONG   const size_t* newVal = static_cast<const size_t*>(ptr);
+    const size_t newValE = GmGenUtils::checkEndian(*newVal);
+    fwrite(&newValE,size,count,stream); 
+    //    G4cout << " BIG ENDIAN fwriteLittleEndian8 " << ptr << " = " << newVal << " " << &newValE << " .:: " << newValE << " = " << *newVal << G4endl; //GDEB */
+  }
   
-
-//-----------------------------------------------------------------------
-short GmGenUtils::ShortEndianSwap( short s )
-{
-  unsigned char b1, b2;
+  return count;
+}
   
-  b1 = s & 255;
-  b2 = (s >> 8) & 255;
-
-  return (b1 << 8) + b2;
-}
-
-//-----------------------------------------------------------------------
-int GmGenUtils::LongEndianSwap (int i)
-{
-  unsigned char b1, b2, b3, b4;
-
-  b1 = i & 255;
-  b2 = ( i >> 8 ) & 255;
-  b3 = ( i>>16 ) & 255;
-  b4 = ( i>>24 ) & 255;
-
-  return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
-}
-
-//-----------------------------------------------------------------------
-float GmGenUtils::FloatEndianSwap( float f )
-{
-  union
-  {
-    float f;
-    unsigned char b[4];
-  } dat1, dat2;
-
-  dat1.f = f;
-  dat2.b[0] = dat1.b[3];
-  dat2.b[1] = dat1.b[2];
-  dat2.b[2] = dat1.b[1];
-  dat2.b[3] = dat1.b[0];
-  return dat2.f;
-}
-
-//-----------------------------------------------------------------------
-double GmGenUtils::DoubleEndianSwap( double d )
-{
-  union
-  {
-    double d;
-    unsigned char b[8];
-  } dat1, dat2;
-
-  dat1.d = d;
-  dat2.b[0] = dat1.b[7];
-  dat2.b[1] = dat1.b[6];
-  dat2.b[2] = dat1.b[5];
-  dat2.b[3] = dat1.b[4];
-  dat2.b[4] = dat1.b[3];
-  dat2.b[5] = dat1.b[2];
-  dat2.b[6] = dat1.b[1];
-  dat2.b[7] = dat1.b[0];
-  return dat2.d;
-}
-
-
 //------------------------------------------------------------------------
 void GmGenUtils::ReadUnits()
 {

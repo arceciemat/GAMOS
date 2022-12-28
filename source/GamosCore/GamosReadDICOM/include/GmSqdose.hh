@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "GmSqdoseHeader.hh"
+#include "G4ThreeVector.hh"
 class Gm3ddose;
 enum SqdoseType{ SqTALL, SqTFILLED, SqTCROSS_PHANTOM };
 
@@ -20,7 +21,9 @@ public:
   void Read( FILE* fin);
   void Print( FILE* fout );
   void CalculateErrors();
-
+  void Displace( G4ThreeVector theDisp );
+  void SumDisplaced( GmSqdose* doseNew );
+  
 public:
 
   GmSqdoseHeader* GetHeader() const {
@@ -62,6 +65,9 @@ private:
   SqdoseType theType;
 
   G4bool bBelowFloatPrecisionSetTo0;
+
+  size_t fwriteLittleEndian( const void * ptr, size_t size, size_t count, FILE * stream );
+
 };
 
 

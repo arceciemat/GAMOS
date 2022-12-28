@@ -113,7 +113,7 @@ void GmGenerDistPositionVoxelPhantomMaterials::SetParams( const std::vector<G4St
 
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionVoxelPhantomMaterials::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionVoxelPhantomMaterials::GeneratePosition( GmParticleSource* )
 {
   //----- Select randomly a voxel
   G4bool materialOK = false;

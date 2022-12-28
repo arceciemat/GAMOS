@@ -21,7 +21,6 @@ GmDataInitialLocalPos1Z::~GmDataInitialLocalPos1Z()
 {
 }
 
-
 //----------------------------------------------------------------
 G4double GmDataInitialLocalPos1Z::GetValueFromStep( const G4Step* aStep, G4int )
 {
@@ -38,7 +37,7 @@ G4double GmDataInitialLocalPos1Z::GetValueFromTrack( const G4Track* aTrack, G4in
   G4TouchableHistory* touch = new G4TouchableHistory;
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( pos, touch, false ); 
 
-  G4ThreeVector localPos = GmG4Utils::GetLocalNFromGlobalPos( pos+G4ThreeVector(1.,0.,0.), touch->GetHistory(), 1 );
+  G4ThreeVector localPos = GmG4Utils::GetLocalNFromGlobalPos( pos, touch->GetHistory(), 1 );
   delete touch;
   
   return localPos.z();

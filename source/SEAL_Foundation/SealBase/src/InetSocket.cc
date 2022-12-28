@@ -3,7 +3,9 @@
 #include "SealBase/InetSocket.h"
 #include "SealBase/NetworkError.h"
 #include "SealBase/HostInfo.h"
+#include "SealBase/Log.h"
 #include "SealBase/sysapi/InetSocket.h"
+#include <iostream>
 
 //<<<<<< PRIVATE DEFINES                                                >>>>>>
 //<<<<<< PRIVATE CONSTANTS                                              >>>>>>
@@ -29,6 +31,7 @@ extern "C" int inet_aton (const char *, struct in_addr *);
     @note   This implementation is a minimal one for losing platforms
     	    without an appropriate definition.  It doesn't handle all
 	    obscure cases or IPv6.  */
+
 static int
 inet_aton (const char *psz, struct in_addr *addr)
 {
@@ -230,12 +233,16 @@ InetAddress::port (void) const
 void
 InetAddress::address (const char *host)
 {
+logflag       LFInetSocket = { 0, "InetSocket", true, -1 };
     hostent *h;
     
     // FIXME: check against "255.255.255.255" for errors?
     // FIXME: h_errno vs errno
+    std::string name = "INETSOCKET";
+    LOG(-1, trace, LFInetSocket, "TEST inet_aton " << name << "'\n");
     if (::inet_aton (host, &m_address->sin_addr))
     {
+    LOG(-1, trace, LFInetSocket, "2TEST inet_aton " << name << "'\n");
 	if (! (h = ::gethostbyaddr ((const char *) &m_address->sin_addr,
 				    sizeof (m_address->sin_addr),
 				    family ())))

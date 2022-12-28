@@ -40,7 +40,9 @@ void GmTimeStudyUA::StartTimer( const G4Step* aStep )
   unsigned int timerID = 0; 
   G4Step* aStepnc = const_cast< G4Step*>(aStep);
 
-  timerID += theClassifier->GetIndexFromStep(aStepnc);
+  if( theClassifier ) {
+    timerID += theClassifier->GetIndexFromStep(aStepnc);
+  }
     //    G4cout << theName << " timerID " << timerID << " " << pow(theNShift,ii) << " " << theClassifiers[ii]->GetIndexFromStep(aStepnc) << G4endl;
 
   mut::const_iterator ite = fTimers.find(timerID);
@@ -100,7 +102,9 @@ void GmTimeStudyUA::Report()
     G4SliceTimer* stimer = (*ite).second;
     G4String cname = "";
     unsigned int indexID = (*ite).first;
-    cname += theClassifier->GetIndexName( indexID );
+    if( theClassifier ) {
+      cname += theClassifier->GetIndexName( indexID );
+    }
     fTimersByName[cname] = stimer;
   }
 

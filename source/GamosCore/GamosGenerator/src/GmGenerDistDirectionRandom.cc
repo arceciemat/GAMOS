@@ -6,7 +6,7 @@
 #include "CLHEP/Random/RandFlat.h"
 #include "CLHEP/Units/SystemOfUnits.h"
 
-G4ThreeVector GmGenerDistDirectionRandom::GenerateDirection( const GmParticleSource* )
+G4ThreeVector GmGenerDistDirectionRandom::GenerateDirection( GmParticleSource* )
 {
   //--- supplied direction is not used
   double costheta = 2*CLHEP::RandFlat::shoot()-1;

@@ -30,6 +30,8 @@ public:
     return theNoVoxelsY; }
   size_t GetNoVoxelsZ() const {
     return theNoVoxelsZ; }
+  size_t GetNoVoxels() const {
+    return theNoVoxelsX*theNoVoxelsY*theNoVoxelsZ; }
   std::vector<float> GetVoxelLimitsX() const {
     return theVoxelLimitsX; }
   std::vector<float> GetVoxelLimitsY() const {
@@ -81,6 +83,9 @@ public:
   void SetRotation( G4RotationMatrix rotmat ) {
     theRotationMatrix = rotmat; }
 
+  void Displace( G4ThreeVector theDisp );
+  void ChangeVoxelLimits( G4int ixmin, G4int ixmax, G4int iymin, G4int iymax, G4int izmin, G4int izmax );
+  
   void Print( FILE* fout );
 private:
   size_t theNoVoxelsX,theNoVoxelsY,theNoVoxelsZ;

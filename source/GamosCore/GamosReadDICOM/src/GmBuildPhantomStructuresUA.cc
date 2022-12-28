@@ -181,7 +181,7 @@ void GmBuildPhantomStructuresUA::BeginOfRunAction( const G4Run* )
   for( cite = pvs->begin(); cite != pvs->end(); cite++ ) {
 #ifndef GAMOS_NO_VERBOSE
     if( ReadDICOMVerb(debugVerb) ) 
-      G4cout << " PV " << (*cite)->GetName() << " " << (*cite)->GetTranslation() << G4endl;
+      G4cout << " PV " << (*cite)->GetName() << " " << (*cite)->GetTranslation() << G4endl; 
 #endif
     theRegularParam = GmRegularParamUtils::GetInstance()->GetPhantomParam( *cite, FALSE );
     if( theRegularParam != 0 ){

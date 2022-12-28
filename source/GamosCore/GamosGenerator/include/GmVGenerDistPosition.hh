@@ -12,7 +12,7 @@ public:
   GmVGenerDistPosition(){};
   virtual ~GmVGenerDistPosition(){};
 
-  virtual G4ThreeVector GeneratePosition( const GmParticleSource* source ) = 0;
+  virtual G4ThreeVector GeneratePosition( GmParticleSource* source ) = 0;
 
 };
 

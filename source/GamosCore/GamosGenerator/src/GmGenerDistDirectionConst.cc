@@ -9,7 +9,7 @@ GmGenerDistDirectionConst::GmGenerDistDirectionConst()
 }
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistDirectionConst::GenerateDirection( const GmParticleSource* )
+G4ThreeVector GmGenerDistDirectionConst::GenerateDirection( GmParticleSource* )
 {
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistDirectionConst::Generate  dir " << theDir << G4endl;

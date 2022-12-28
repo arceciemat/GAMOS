@@ -9,4 +9,4 @@ all: lib plugin
 include $(GAMOSINSTALL)/config/binmake.gmk
 include $(GAMOSINSTALL)/config/general.gmk
 
-EXTRALIBS += -lGamosCore_GamosBase_Base -lGamosCore_GamosData_Management
+EXTRALIBS += -lGamosCore_GamosBase_Base -lGamosCore_GamosData_Management 

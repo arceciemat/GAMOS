@@ -13,7 +13,7 @@ include(UseGamosAtGeant4)
 #
 GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Scorers
 	 HEADERS
-		GmG4PSEnergyLost.hh
+		GmG4PSEnergyLoss.hh
 		GmPSEnergyDeposit_VPrimaryGamma1stInter.hh
 		GmG4PSDoseDeposit_old.hh
 		GmG4PSPassageCellFlux.hh
@@ -24,14 +24,14 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Scorers
 		GmG4PSCellCharge.hh
 		GmPSSphericalDoseDeposit.hh
 		GmHistosAtCavityUA.hh
-		GmPSLET_LETByESpect.hh
-		GmPSLETBydEdxT.hh
+		GmPSLET_LETESpect.hh
+		GmPSLET_dEdxT.hh
 		GmPSEnergyDeposit_PrimaryGammaAnyInter.hh
 		GmG4PSDoseDepositVector.hh
 		GmG4PSDoseDeposit_SkipEqualMateSimple.hh
 		GmPSLET.hh
 		GmPSCylindricalRZDoseDeposit.hh
-		GmPSDose_LET.hh
+		GmPSDose_LET_EDepByEDep.hh
 		GmG4PSMinKinEAtGeneration.hh
 		GmG4PSNofSecondary.hh
 		GmG4PSPassageTrackLength.hh
@@ -39,10 +39,10 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Scorers
 		GmG4PSPopulation.hh
 		GmG4PSKerma.hh
 		GmPSCylindricalZPhiDoseDeposit.hh
-		GmPSLETBydEdxD.hh
-		GmPSDose_LETBydEdx.hh
+		GmPSLET_dEdxD.hh
+		GmPSDose_LET_EDepByEDepBydEdx.hh
 		GmVScoringSurfaceSolid.hh
-		GmPSLETBydEdx.hh
+		GmPSLET_dEdx.hh
 		GmPSVolumeFlux.hh
 		GmPSCavityKatt.hh
 		GmG4PSData.hh
@@ -54,38 +54,38 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Scorers
 		GmG4PSEnergyDeposit.hh
 		GmPSCavityKwall.hh
 		GmG4PSPassageCellCurrent.hh
-		GmPSLETByESpectD.hh
+		GmPSLET_ESpectD.hh
 		GmScoringSurfaceOrb.hh
-		GmPSLETEDepT.hh
+		GmPSLET_EDepT.hh
 		GmPSCavityKsc.hh
 		GmScoringSurfaceSphere.hh
-		GmPSLETByESpect.hh
+		GmPSLET_ESpect.hh
 		GmScoringSurfaceBox.hh
 		GmG4PSDoseDeposit_NoSkipEqualMate.hh
 		GmG4PSCellFlux.hh
 		GmScoringSurfaceTubs.hh
-		GmPSLETEDepD.hh
+		GmPSLET_EDepD.hh
 		GmG4PSNofStep.hh
-		GmPSLETByESpectT.hh
+		GmPSLET_ESpectT.hh
 		GmG4PSTrackLength.hh
 		GmG4PSNofCollision.hh
-		GmPSdx_LETBydEdx.hh
+		GmPSdx_LET_dEdx.hh
 	 SOURCES
 		GmG4PSDoseDeposit_NoSkipEqualMate.cc
 		dd
 		GmPSEnergyDeposit_PrimaryGamma1stInterAttenuation.cc
 		GmPSEnergyDeposit_PrimaryGamma1stInter.cc
 		plugin.cc
-		GmPSdx_LETBydEdx.cc
-		GmPSLETBydEdx.cc
-		GmPSLET_LETByESpect.cc
-		GmPSLETByESpectD.cc
+		GmPSdx_LET_dEdx.cc
+		GmPSLET_dEdx.cc
+		GmPSLET_LETESpect.cc
+		GmPSLET_ESpectD.cc
 		GmPSLET.cc
-		GmPSLETBydEdxD.cc
+		GmPSLET_dEdxD.cc
 		GmG4PSPassageCellFlux.cc
 		GmG4PSPopulation.cc
-		GmPSLETEDepT.cc
-		GmPSLETEDepD.cc
+		GmPSLET_EDepT.cc
+		GmPSLET_EDepD.cc
 		GmG4PSCellCharge.cc
 		GmG4PSNofSecondary.cc
 		GmScoringSurfaceSphere.cc
@@ -93,10 +93,10 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Scorers
 		GmHistosAtCavityUA.cc
 		GmG4PSDoseDeposit.cc
 		GmScoringSurfaceTubs.cc
-		GmG4PSEnergyLost.cc
+		GmG4PSEnergyLoss.cc
 		GmVScoringSurfaceSolid.cc
 		GmG4PSDoseDeposit_old.cc
-		GmPSDose_LET.cc
+		GmPSDose_LET_EDepByEDep.cc
 		GmPSWithDirection.cc
 		GmPSCylindricalRPhiDoseDeposit.cc
 		GmPSCylindricalRZDoseDeposit.cc
@@ -106,11 +106,11 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Scorers
 		GmG4PSData.cc
 		GmPSSurfaceFlux.cc
 		GmG4PSPassageCellCurrent.cc
-		GmPSLETByESpect.cc
+		GmPSLET_ESpect.cc
 		GmG4PSDoseDeposit_SkipEqualMateSimple.cc
 		GmPSEnergyDeposit_PrimaryGammaAnyInter.cc
 		GmPSSphericalDoseDeposit.cc
-		GmPSLETBydEdxT.cc
+		GmPSLET_dEdxT.cc
 		GmPSCavityKatt.cc
 		GmPSEnergyDeposit_VPrimaryGamma1stInter.cc
 		GmG4PSPassageTrackLength.cc
@@ -118,7 +118,7 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Scorers
 		GmG4PSTermination.cc
 		GmScoringSurfaceOrb.cc
 		GmPSCylindricalZPhiDoseDeposit.cc
-		GmPSDose_LETBydEdx.cc
+		GmPSDose_LET_EDepByEDepBydEdx.cc
 		GmG4PSKerma.cc
 		GmPSCavityKsc.cc
 		GmG4PSMinKinEAtGeneration.cc
@@ -129,7 +129,7 @@ GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Scorers
 		GmPSVolumeFlux.cc
 		GmG4PSDoseDepositVector.cc
 		GmScoringSurfaceBox.cc
-		GmPSLETByESpectT.cc
+		GmPSLET_ESpectT.cc
 	 
 	 GRANULAR_DEPENDENCIES
 	 GLOBAL_DEPENDENCIES

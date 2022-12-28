@@ -10,7 +10,7 @@
 #include "geomdefs.hh"
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionSquare::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionSquare::GeneratePosition( GmParticleSource* )
 {
   G4double posX = 0;
   G4double posY = DBL_MAX;

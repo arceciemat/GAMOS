@@ -83,7 +83,8 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
 {
   thePatientPosition = G4String(Read1DataStr(theDataset, DCM_PatientPosition).c_str());
   if( DicomVerb(infoVerb) ) G4cout << " DicomVReaderImage::ReadHeaderAndPixels thePatientPosition " <<  thePatientPosition << G4endl; 
-  
+  //  if( thePatientPosition != "" ) theCodeMeaning = G4String(Read1DataStr(theDataset, DCM_CodeMeaning).c_str());
+
   std::vector<double> dImagePositionPatient = Read1Data(theDataset, DCM_ImagePositionPatient,3); // center of first voxel read
   std::vector<double> dImageOrientationPatient = Read1Data(theDataset, DCM_ImageOrientationPatient,6);
 
@@ -132,29 +133,49 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
     theOrientationRows = G4ThreeVector(1,0,0);
     theOrientationColumns = G4ThreeVector(0,1,0);
   } else {
-    theOrientationRows = G4ThreeVector(dImageOrientationPatient[0],dImageOrientationPatient[1],dImageOrientationPatient[2]);
-    theOrientationColumns = G4ThreeVector(dImageOrientationPatient[3],dImageOrientationPatient[4],dImageOrientationPatient[5]);
+    if( dImageOrientationPatient.size() == 0 ) {
+      G4Exception("DicomVReaderImage::ReadHeaderAndPixels",
+		  "",
+		  JustWarning,
+		  "No ImageOrientationPatient TAG in DICOM file");
+      theOrientationRows = G4ThreeVector(1,0,0);
+      theOrientationColumns = G4ThreeVector(0,1,0);
+    } else {
+      theOrientationRows = G4ThreeVector(dImageOrientationPatient[0],dImageOrientationPatient[1],dImageOrientationPatient[2]);
+      theOrientationColumns = G4ThreeVector(dImageOrientationPatient[3],dImageOrientationPatient[4],dImageOrientationPatient[5]);
+    }
   }
   
-  if( theOrientationRows != G4ThreeVector(1,0,0)
-      || theOrientationColumns != G4ThreeVector(0,1,0) ) {
-    G4cerr << " OrientationRows " << theOrientationRows << " OrientationColumns " << theOrientationColumns << G4endl;
-    G4Exception("DicomVReaderImage::ReadHeaderAndPixels",
-		"DFCT0002",
-		JustWarning,
-		"OrientationRows must be (1,0,0) and OrientationColumns (0,1,0), please contact GAMOS authors");
+  if( thePatientPosition == "HFS" || thePatientPosition == "FFS" ) {
+    if( theOrientationRows != G4ThreeVector(1,0,0)
+	|| theOrientationColumns != G4ThreeVector(0,1,0) ) {
+      G4cerr << " OrientationRows " << theOrientationRows << " OrientationColumns " << theOrientationColumns << G4endl;
+      G4Exception("DicomVReaderImage::ReadHeaderAndPixels",
+		  "DFCT0002",
+		  JustWarning,
+		  "OrientationRows must be (1,0,0) and OrientationColumns (0,1,0), please contact GAMOS authors");
+    }
+  } else if( thePatientPosition == "HFP" || thePatientPosition == "FFP" ) {
+    if( theOrientationRows != G4ThreeVector(-1,0,0)
+	|| theOrientationColumns != G4ThreeVector(0,-1,0) ) {
+      G4cerr << " OrientationRows " << theOrientationRows << " OrientationColumns " << theOrientationColumns << G4endl;
+      G4Exception("DicomVReaderImage::ReadHeaderAndPixels",
+		  "DFCT0002",
+		  JustWarning,
+		  "OrientationRows must be (-1,0,0) and OrientationColumns (0,-1,0), please contact GAMOS authors");
+    }
   }
-
 
   G4int numberOfFrames = 1;
   OFString dModality = Read1DataStr(theDataset, DCM_Modality);
   std::vector<double> gridFrameOffsets;
   std::vector<double> numberOfFramesV = Read1Data(theDataset, DCM_NumberOfFrames,1);
+  //  G4cout << " DCM_NUMBEROFFRAMES " << numberOfFrames << " " << numberOfFramesV.size() << G4endl; //GDEB
   if( numberOfFramesV.size() == 0 ) {
     numberOfFramesV = Read1Data(theDataset, DCM_NumberOfSlices,1);
-  } else {
-    numberOfFrames = numberOfFramesV[0];
+    //    G4cout << " DCM_NUMBEROFSLICES NV " << numberOfFramesV.size() << G4endl; //GDEB
   }
+  if( numberOfFramesV.size() != 0 ) numberOfFrames = numberOfFramesV[0];
   //  G4cout << " NUMBEROFFRAMES " << numberOfFrames << " " << numberOfFramesV.size() << G4endl; //GDEB
   /*
   Sint16 datai;
@@ -226,8 +247,9 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
     theMaxY = dImagePositionPatient[1]+(dRows[0]-0.5)*dPixelSpacing[1];
     
     theMinZ = dImagePositionPatient[2]-dSliceThickness[0]*0.5;
-    //    G4cout << " theMinZ= " << theMinZ << " " << dImagePositionPatient[2] << " - " <<dSliceThickness[0] << "*0.5" <<  G4endl; //GDEB
+    G4cout << " theMinZ= " << theMinZ << " " << dImagePositionPatient[2] << " - " <<dSliceThickness[0] << "*0.5" <<  G4endl; //GDEB
     theMaxZ = dImagePositionPatient[2]+dSliceThickness[0]*(numberOfFrames-0.5);
+    G4cout << " theMaxZ= " << theMaxZ << " " << dImagePositionPatient[2] << " + " <<dSliceThickness[0] << "*" << numberOfFrames << "-0.5" <<  G4endl; //GDEB
   } else {
   // image position are coordinates of the upper left hand corner of the image;
   // it is the corner of the first voxel transmitted. !!!
@@ -496,12 +518,16 @@ void DicomVReaderImage::ReadPixelData()
 	    if( thePatientPosition == "HFS" || thePatientPosition == "" ) {
 	      newCopyNo = ic+ir*theNoVoxelsX+iz*theNoVoxelsXY;
 	    } else if( thePatientPosition == "FFS" ) {
-	      newCopyNo = ic+ir*theNoVoxelsX+(theNoVoxelsZ-1-iz)*theNoVoxelsXY;
+	      newCopyNo = (theNoVoxelsX-1-ic)+ir*theNoVoxelsX+(theNoVoxelsZ-1-iz)*theNoVoxelsXY;
+	    } else if( thePatientPosition == "HFP" ) {
+	      newCopyNo = (theNoVoxelsX-1-ic)+(theNoVoxelsY-1-ir)*theNoVoxelsX+iz*theNoVoxelsXY;
+	    } else if( thePatientPosition == "FFP" ) {
+	      newCopyNo = ic+(theNoVoxelsY-1-ir)*theNoVoxelsX+(theNoVoxelsZ-1-iz)*theNoVoxelsXY;
 	    } else { 
 	      G4Exception("DicomVReaderImage::ReadPixelData",
 			  "",
 			  FatalException,
-			  ("Only DICOM PatientPosition's implemented are HFS and FFS, while it is"+G4String(thePatientPosition)+"\n Please contact GAMOS authors").c_str());
+			  ("Only DICOM PatientPosition's implemented HFS, FFS, HFP and FFP, while it is"+G4String(thePatientPosition)+"\n Please contact GAMOS authors").c_str());
 	    }
 	    theVoxelData->at(newCopyNo) = val;
 	    if( DicomVerb(testVerb) ) {
@@ -553,12 +579,16 @@ void DicomVReaderImage::ReadPixelData()
 	    if( thePatientPosition == "HFS" || thePatientPosition == "" ) {
 	      newCopyNo = ic+ir*theNoVoxelsX+iz*theNoVoxelsXY;
 	    } else if( thePatientPosition == "FFS" ) {
-	      newCopyNo = ic+ir*theNoVoxelsX+(theNoVoxelsZ-1-iz)*theNoVoxelsXY;
-	    } else {
+	      newCopyNo = (theNoVoxelsX-1-ic)+ir*theNoVoxelsX+(theNoVoxelsZ-1-iz)*theNoVoxelsXY;
+	    } else if( thePatientPosition == "HFP" ) {
+	      newCopyNo = (theNoVoxelsX-1-ic)+(theNoVoxelsY-1-ir)*theNoVoxelsX+iz*theNoVoxelsXY;
+	    } else if( thePatientPosition == "FFP" ) {
+	      newCopyNo = ic+(theNoVoxelsY-1-ir)*theNoVoxelsX+(theNoVoxelsZ-1-iz)*theNoVoxelsXY;
+	    } else { 
 	      G4Exception("DicomVReaderImage::ReadPixelData",
 			  "",
 			  FatalException,
-			  ("Only DICOM PatientPosition's implemented are HFS and FFS, while it is"+G4String(thePatientPosition)+"\n Please contact GAMOS authors").c_str());
+			  ("Only DICOM PatientPosition's implemented HFS, FFS, HFP and FFP, while it is"+G4String(thePatientPosition)+"\n Please contact GAMOS authors").c_str());
 	    }
 	    theVoxelData->at(newCopyNo) = val;
 	    if( DicomVerb(testVerb) ) {

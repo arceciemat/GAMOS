@@ -31,16 +31,38 @@ void DicomOperResize::Operate( DicomVImage* image )
   G4double newMinZ = paramMgr->GetNumericValue("minZ",image->GetMinZ());
   G4double newMaxZ = paramMgr->GetNumericValue("maxZ",image->GetMaxZ());
   size_t newNoVoxelsZ = paramMgr->GetNumericValue("nVoxZ",image->GetNoVoxelsZ()); 
-  G4bool bResizeFitOld = G4bool(paramMgr->GetNumericValue("resizeFitOld",1));
-
+  G4bool bInterpolate = G4bool(paramMgr->GetNumericValue("bInterpolate",1));
+  
   G4double PRECISION = std::min(1e-4,2*image->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
   //  G4cout << " 1PRECISION " << PRECISION << " " << image->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
 
-  if( bResizeFitOld ) {
-    if( DicomVerb(warningVerb) ) G4cout << "DicomOperResize Min/MaxX/Z may be changed to include the totality of the voxel that is cut by the new value, unless you change the number of voxels (use -resizeFitOld 0  if you do not want this change) " << G4endl; 
+  G4bool bChangeNX = newNoVoxelsX == image->GetNoVoxelsX();
+  G4bool bChangeNY = newNoVoxelsY == image->GetNoVoxelsY();
+  G4bool bChangeNZ = newNoVoxelsZ == image->GetNoVoxelsZ();
+  //----- DO NOT INTERPOLATE: MOVE MIN/MAX TO VOXEL EDGES
+  if( !bInterpolate ) {
+    if( bChangeNX ) {
+      G4Exception("DicomOperResize::Operate",
+		  "",
+		  FatalException,
+		  "No interpolation: nVoxX will be calculated as (newMaxX - newMinX)/stepX, it cannot be set by the user");
+    }
+    if( bChangeNY ) {
+      G4Exception("DicomOperResize::Operate",
+		  "",
+		  FatalException,
+		  "No interpolation: nVoxY will be calculated as (newMaxY - newMinY)/stepY, it cannot be set by the user");
+    }
+    if( bChangeNZ ) {
+      G4Exception("DicomOperResize::Operate",
+		  "",
+		  FatalException,
+		  "No interpolation: nVoxZ will be calculated as (newMaxZ - newMinZ)/stepZ, it cannot be set by the user");
+    }
+    
+    //    if( DicomVerb(warningVerb) ) G4cout << "DicomOperResize Min/MaxX/Z may be changed to include the totality of the voxel that is cut by the new value, unless you change the number of voxels (use -resizeFitOld 0  if you do not want this change) " << G4endl; 
     //-- if nVoxX is not changed, use minX, maxX to cut the image: if it cuts a voxel, include it also
     //  G4cout << " NEWMINX " << newMinX << " != " << image->GetMinX() << " && " << paramMgr->IsParameterInScript("nVoxX") << G4endl; //GDEB
-    G4bool bChangeNX = newNoVoxelsX == image->GetNoVoxelsX();
     if( newMinX != image->GetMinX() && bChangeNX ) {
       int ibinX = GmGenUtils::GetBelowInt((newMinX-image->GetMinX())/image->GetVoxelDimX(),PRECISION);
       if( ibinX < 0 ) ibinX = 0;
@@ -57,7 +79,7 @@ void DicomOperResize::Operate( DicomVImage* image )
     
     if( newMaxX != image->GetMaxX() && bChangeNX ) {
       int ibinX = GmGenUtils::GetAboveInt((newMaxX-image->GetMinX())/image->GetVoxelDimX(),PRECISION);
-      if( ibinX >= G4int(image->GetNoVoxelsX()) )  ibinX = image->GetNoVoxelsX();
+      if( ibinX >= G4int(image->GetNoVoxelsX()) ) ibinX = image->GetNoVoxelsX();
 #ifndef GAMOS_NO_VERBOSE
       if( DicomVerb(infoVerb) ) {
 	G4cout << " DicomOperResize MAXX " << newMaxX << " ->IBINX " << ibinX << " = (" << newMaxX << " - " << image->GetMaxX() << " )/ " << image->GetVoxelDimX() << " " << (newMaxX-image->GetMaxX())/image->GetVoxelDimX() << " " << GmGenUtils::GetBelowInt((newMaxX-image->GetMaxX())/image->GetVoxelDimX(),PRECISION) << G4endl;
@@ -69,7 +91,6 @@ void DicomOperResize::Operate( DicomVImage* image )
     }
     //  G4cout << " XLIM " << newNoVoxelsX << " " << newMinX << " " << newMaxX << G4endl; //GDEB
     
-    G4bool bChangeNY = newNoVoxelsY == image->GetNoVoxelsY();
     if( newMinY != image->GetMinY() && bChangeNY ) {
       int ibinY = GmGenUtils::GetBelowInt((newMinY-image->GetMinY())/image->GetVoxelDimY(),PRECISION);
 #ifndef GAMOS_NO_VERBOSE
@@ -99,7 +120,6 @@ void DicomOperResize::Operate( DicomVImage* image )
     }
     //    if( DicomVerb(infoVerb) ) G4cout << " YLIM " << newNoVoxelsY << " " << newMinY << " " << newMaxY << G4endl; //GDEB
         
-    G4bool bChangeNZ = newNoVoxelsZ == image->GetNoVoxelsZ();
     if( newMinZ != image->GetMinZ() && bChangeNZ ) {
       int ibinZ = GmGenUtils::GetBelowInt((newMinZ-image->GetMinZ())/image->GetVoxelDimZ(),PRECISION);
 #ifndef GAMOS_NO_VERBOSE
@@ -125,7 +145,22 @@ void DicomOperResize::Operate( DicomVImage* image )
       if( ibinZ < G4int(image->GetNoVoxelsZ()) && bChangeNZ ) newNoVoxelsZ -= image->GetNoVoxelsZ() - ibinZ;
     }
     //    G4cout << " ZLIM " << newNoVoxelsZ << " " << newMinZ << " " << newMaxZ << G4endl; //GDEB
-  }				
+  }
+  
+    //  G4cout << " NEWMINX " << newMinX << " != " << image->GetMinX() << " && " << paramMgr->IsParameterInScript("nVoxX") << G4endl; //GDEB
+      if( newMinX != image->GetMinX() && bChangeNX ) {
+	int ibinX = GmGenUtils::GetBelowInt((newMinX-image->GetMinX())/image->GetVoxelDimX(),PRECISION);
+	if( ibinX < 0 ) ibinX = 0;
+#ifndef GAMOS_NO_VERBOSE
+      if( DicomVerb(infoVerb) ) {
+	G4cout << " DicomOperResize MINX " << newMinX << " ->IBINX " << ibinX << " = (" << newMinX << " - " << image->GetMinX() << " )/ " << image->GetVoxelDimX() << " " << (newMinX-image->GetMinX())/image->GetVoxelDimX() << " " << GmGenUtils::GetBelowInt((newMinX-image->GetMinX())/image->GetVoxelDimX(),PRECISION) << G4endl;
+	G4cout << " DicomOperResize NEW MINX " << image->GetMinX()+ibinX*image->GetVoxelDimX() << G4endl;
+      }
+#endif      
+      newMinX = image->GetMinX()+ibinX*image->GetVoxelDimX();
+      if( ibinX >= 0 && bChangeNX ) newNoVoxelsX -= ibinX;
+    }
+    //  G4cout << " XLIM " << newNoVoxelsX << " " << newMinX << " " << newMaxX << G4endl; //GDEB
 				
   return Operate( image, newNoVoxelsX, newMinX, newMaxX, newNoVoxelsY, newMinY, newMaxY, newNoVoxelsZ, newMinZ, newMaxZ);
   
@@ -266,8 +301,8 @@ void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double 
     G4double minXn = newMinX+ixn*theVoxelDimX; // left wall of new voxel
     G4double maxXn = newMinX+(ixn+1)*theVoxelDimX; // right wall of new voxel
     size_t im1stVoxX = GmGenUtils::GetBelowInt((minXn-imMinX)/imVoxDimX,PRECISION); // image ID of voxel corresponding to minXn
-    G4double imVoxMinX;
-    G4double imVoxMaxX;
+    G4double imVoxMinX = 0;
+    G4double imVoxMaxX = image->GetNoVoxelsX();
     /*t
 #ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(testVerb) ) {
@@ -280,8 +315,8 @@ void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double 
       G4double minYn = newMinY+iyn*theVoxelDimY; // left wall of new voxel
       G4double maxYn = newMinY+(iyn+1)*theVoxelDimY; // right wall of new voxel
       size_t im1stVoxY = GmGenUtils::GetBelowInt((minYn-imMinY)/imVoxDimY,PRECISION); // image ID of voxel corresponding to minYn      
-      G4double imVoxMinY;
-      G4double imVoxMaxY;
+      G4double imVoxMinY = 0;
+      G4double imVoxMaxY = image->GetNoVoxelsY();
       /*t
 #ifndef GAMOS_NO_VERBOSE
       if( DicomVerb(testVerb) ) {
@@ -295,8 +330,8 @@ void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double 
 	size_t im1stVoxZ = GmGenUtils::GetBelowInt((minZn-imMinZ)/imVoxDimZ,PRECISION); // image ID of voxel corresponding to minZn
 	//	G4cout << " im1stVoxZ " << im1stVoxZ << " " << (minZn-imMinZ)/imVoxDimZ << " -64 " << (minZn-imMinZ)/imVoxDimZ -64 << " minZn " << minZn << " imMinZ " <<imMinZ << " newMinZ " << newMinZ <<  G4endl; //GDEB
 	//-	G4cout << " im1stVoxZ " << im1stVoxZ << " " << minZn << " " << imMinZ << " " << imVoxDimZ << " : " << (minZn-imMinZ) << " " << (minZn-imMinZ)/imVoxDimZ << G4endl;
-	G4double imVoxMinZ;
-	G4double imVoxMaxZ;
+	G4double imVoxMinZ = 0;
+	G4double imVoxMaxZ = image->GetNoVoxelsZ();
 	/*t 
 #ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(testVerb) ) {

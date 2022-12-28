@@ -18,7 +18,7 @@ GmGenerDistPositionDisc::GmGenerDistPositionDisc()
 }
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionDisc::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionDisc::GeneratePosition( GmParticleSource* )
 {
   int iii=0;
   G4double x = 0;

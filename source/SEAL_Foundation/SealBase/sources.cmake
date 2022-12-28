@@ -172,7 +172,7 @@ GEANT4_DEFINE_MODULE(NAME SEAL_Foundation_SealBase
 		FileAcl.cc
 		ProcessInfo.cc
 		SharedLibraryError.cc
-		IOSelectFdMap.cc
+		IOSelec tFdMap.cc
 		LogPipe.cc
 		WindowsUserInfo.cc
 		IOSelectDevPoll.cc

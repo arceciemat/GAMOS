@@ -20,6 +20,11 @@ GmScoringMessenger::GmScoringMessenger()
   PrinterCmd->SetParameterName("choice",true);
   PrinterCmd->AvailableForStates(G4State_Idle);
 
+  PrinterCmd2 = new GmUIcmdWithAString("/gamos/scoring/createPrinter",this);
+  PrinterCmd2->SetGuidance("Creates a printer of one of the predefined classs (GmScorerPrinterFactory plug-in's) assigning parameters: PRINTER_NAME PRINTER_CLASS PARAMETERS");
+  PrinterCmd2->SetParameterName("choice",true);
+  PrinterCmd2->AvailableForStates(G4State_Idle);
+
   MFDetectorCmd = new GmUIcmdWithAString("/gamos/scoring/createMFDetector",this);
   MFDetectorCmd->SetGuidance("Creates a multi functional detector and associates it to one or several logical volumes. It must have as arguments the MFD name and then the list of LV names");
   MFDetectorCmd->SetParameterName("choice",true);
@@ -83,6 +88,7 @@ GmScoringMessenger::~GmScoringMessenger()
 {
   if (MFDetectorCmd) delete MFDetectorCmd;
   if (PrinterCmd) delete PrinterCmd;
+  if (PrinterCmd2) delete PrinterCmd2;
   if (Scorer2MFDCmd) delete Scorer2MFDCmd;
   if (ScorerCmd) delete ScorerCmd;
   if (FilterCmd) delete FilterCmd;
@@ -99,7 +105,8 @@ GmScoringMessenger::~GmScoringMessenger()
 void GmScoringMessenger::SetNewValue(G4UIcommand * command,
 						   G4String newValues)    
 { 
-  if (command == PrinterCmd) {
+  if (command == PrinterCmd ||
+      command == PrinterCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
     if( wl.size() < 2 ) G4Exception("GmScoringMessenger::SetNewVAlue",
 				    "Wrong argument",

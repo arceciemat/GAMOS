@@ -220,7 +220,7 @@ void GmGenerDistPositionInStPhantomVoxels::BuildVoxelPositions()
 
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionInStPhantomVoxels::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionInStPhantomVoxels::GeneratePosition( GmParticleSource* )
 {
   //----- Select randomly a voxel
   G4int voxelID = CLHEP::RandFlat::shoot() * theVoxelPositions.size();

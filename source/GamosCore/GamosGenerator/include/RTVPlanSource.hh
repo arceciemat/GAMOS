@@ -33,6 +33,7 @@ public:
     return theParticleDef->GetParticleName(); }
 
   virtual void AssociatePlanVolumes( std::vector<G4String> wl );
+  virtual void AssociatePlanLimitingDeviceAngle( std::vector<G4String> wl );
   virtual void DefineAcceleratorVolume( std::vector<G4String> wl );
 
   size_t GetNoBeams() const {
@@ -105,6 +106,8 @@ protected:
   std::map<G4String,GmVModule*> theRTPlanGmModuleAssoc; 
   std::map<G4String,G4String> theRTPlanVoluAssoc;
   std::map<G4String,std::vector<G4VPhysicalVolume*> > theRTPlanG4PVsAssoc;
+  G4String theLDAVolu;
+  G4VPhysicalVolume* theLDAG4PV;
   G4String theAcceleratorVolume;
   G4VPhysicalVolume* theAcceleratorPV;
   G4ThreeVector theAcceleratorInitialPos;
@@ -128,7 +131,7 @@ protected:
   RTPlanMgr* theRTPlanMgr;
 
   G4bool bRTHistoControlPoint;
-
+  G4double theLastLimitingDeviceAngle;
 };
 
 #endif // RTVPlanSource_H

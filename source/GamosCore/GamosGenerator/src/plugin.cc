@@ -29,18 +29,22 @@
 #include "GmGenerDistPositionDisc.hh"
 #include "GmGenerDistPositionDiscGaussian.hh"
 #include "GmGenerDistPositionDiscFromFile.hh"
+#include "GmGenerDistPosition2DDoubleGaussian.hh"
 #include "GmGenerDistDirectionRandom.hh"
 #include "GmGenerDistDirectionConst.hh"
 #include "GmGenerDistDirectionCone.hh"
 #include "GmGenerDistDirectionCone2D.hh"
 #include "GmGenerDistDirectionConeGaussian.hh"
 #include "GmGenerDistDirectionCone2DGaussian.hh"
+#include "GmGenerDistDirectionConicalRing.hh"
 #include "GmGenerDistDirectionGaussian.hh"
+#include "GmGenerDistPositionDirectionTowardsBox.hh"
 #include "GmGenerDistDirectionThetaFromFile.hh"
 #include "GmGenerDistPositionDirectionInVolumeSurface.hh"
 #include "GmGenerDistPositionVoxelPhantomMaterials.hh"
 #include "GmGenerDistPositionInVoxelsFromFile.hh"
-#include "GmGenerDistPositionDirectionTowardsBox.hh"
+#include "GmGenerDistPositionDirection2DCorrelGaussian.hh"
+#include "GmGenerDistPositionDirection2DCorrelDoubleGaussian.hh"
 #include "GmGenerDistPositionDirectionInUserSurfaces.hh"
 #include "GmGenerDistEnergyIsolethargical.hh"
 #include "GmGenerDistEnergyMCNPisolethargical.hh"
@@ -82,6 +86,7 @@ PLUGINSVC_FACTORY(GmGenerDistPositionRectangle,GmVGenerDistPosition*())
 PLUGINSVC_FACTORY(GmGenerDistPositionDisc,GmVGenerDistPosition*())
 PLUGINSVC_FACTORY(GmGenerDistPositionDiscGaussian,GmVGenerDistPosition*())
 PLUGINSVC_FACTORY(GmGenerDistPositionDiscFromFile,GmVGenerDistPosition*())
+PLUGINSVC_FACTORY(GmGenerDistPosition2DDoubleGaussian,GmVGenerDistPosition*())
 PLUGINSVC_FACTORY(GmGenerDistPositionVoxelPhantomMaterials,GmVGenerDistPosition*())
 PLUGINSVC_FACTORY(GmGenerDistPositionInVoxelsFromFile,GmVGenerDistPosition*())
 
@@ -92,7 +97,12 @@ PLUGINSVC_FACTORY(GmGenerDistDirectionCone,GmVGenerDistDirection*())
 PLUGINSVC_FACTORY(GmGenerDistDirectionCone2D,GmVGenerDistDirection*())
 PLUGINSVC_FACTORY(GmGenerDistDirectionConeGaussian,GmVGenerDistDirection*())
 PLUGINSVC_FACTORY(GmGenerDistDirectionCone2DGaussian,GmVGenerDistDirection*())
+PLUGINSVC_FACTORY(GmGenerDistDirectionConicalRing,GmVGenerDistDirection*())
 PLUGINSVC_FACTORY(GmGenerDistDirectionGaussian,GmVGenerDistDirection*())
+PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelGaussian,GmVGenerDistPosition*())
+PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelGaussian,GmVGenerDistDirection*())
+PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelDoubleGaussian,GmVGenerDistPosition*())
+PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelDoubleGaussian,GmVGenerDistDirection*())
 
 PLUGINSVC_FACTORY(GmGenerDistPositionDirectionInVolumeSurface,GmVGenerDistPosition*())
 PLUGINSVC_FACTORY(GmGenerDistPositionDirectionInVolumeSurface,GmVGenerDistDirection*())
@@ -147,6 +157,7 @@ DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionRectangle);
 DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDisc);
 DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDiscGaussian);
 DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDiscFromFile);
+DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPosition2DDoubleGaussian);
 DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionVoxelPhantomMaterials);
 DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionInVoxelsFromFile);
 
@@ -157,7 +168,12 @@ DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionCone);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionCone2D);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionConeGaussian);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionCone2DGaussian);
+DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionConicalRing);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionGaussian);
+DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDirection2DCorrelGaussian);
+DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistPositionDirection2DCorrelGaussian);
+DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDirection2DCorrelDoubleGaussian);
+DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistPositionDirection2DCorrelDoubleGaussian);
 
 DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDirectionInVolumeSurface);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistPositionDirectionInVolumeSurface);

@@ -427,7 +427,7 @@ void GmGeneratorScanVisUA::EndOfEventAction(const G4Event* event)
     break;
   }
   
-  G4String figName = "ScanVis"+thePlaneFigName+"."+posTransvStr+".gif";
+  G4String figName = "ScanVis"+thePlaneFigName+"."+posTransvStr+".jpg";
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << " EndOfEventAction " << figName << G4endl;
 #endif

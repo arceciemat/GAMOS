@@ -9,7 +9,9 @@
 #include "G4ProcessManager.hh"
 #include "G4ParticleTable.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
-
+#include "G4EmCalculator.hh"
+#include "G4Proton.hh"
+#include "G4NistManager.hh"
 //#define DEBUG
 
 //-----------------------------------------------------------------
@@ -185,7 +187,6 @@ void GmCountProcessesUA::EndOfRunAction(const G4Run* )
   DumpParticleCount();
   DumpProcessCount();
   DumpCreatorProcessCount();
-  
 }
 
 

@@ -60,7 +60,7 @@ void GmGenerDistPositionInG4VolumesGeneral::SetWorldDimensions()
 }
 
 //------------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionInG4VolumesGeneral::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionInG4VolumesGeneral::GeneratePosition( GmParticleSource* )
 {
   G4ThreeVector pos;
   G4bool inVolumes = false;

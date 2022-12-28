@@ -6,7 +6,7 @@
 
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionPoint::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionPoint::GeneratePosition( GmParticleSource* )
 {
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistPositionPoint::Generate pos " << thePoint << G4endl;

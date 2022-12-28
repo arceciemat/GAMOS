@@ -21,7 +21,7 @@ GmGenerDistPositionDirectionTowardsBox::GmGenerDistPositionDirectionTowardsBox()
 }
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionDirectionTowardsBox::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionDirectionTowardsBox::GeneratePosition( GmParticleSource* )
 {
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirectionTowardsBox::GeneratePosition " << thePoint << G4endl;
@@ -30,10 +30,10 @@ G4ThreeVector GmGenerDistPositionDirectionTowardsBox::GeneratePosition( const Gm
 }
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionDirectionTowardsBox::GenerateDirection( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionDirectionTowardsBox::GenerateDirection( GmParticleSource* )
 {
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirectionTowardsBox::Generate " << G4endl;
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirectionTowardsBox::GenerateDirection " << G4endl;
 #endif
   
   //----- Select touchable

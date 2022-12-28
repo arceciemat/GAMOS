@@ -127,12 +127,19 @@ void RTIonPlanScanSpotSource::SetSpotSize( GmVGenerDistPosition2D* , const RTBea
     if( posD->GetName() == "GmGenerDistPositionDisc" ) {
       GmGenerDistPositionDisc* posDD = dynamic_cast<GmGenerDistPositionDisc*>(posD);
       posDD->SetRadius(GetSpotSize(spdata));
+#ifndef GAMOS_NO_VERBOSE
+      if( GenerVerb(debugVerb) ) {
+	G4cout << "  RTIonPlanScanSpotSource::SetSpotSize " << posD->GetName() << " : " << GetSpotSize(spdata) << G4endl;
+      }
+#endif
     } else if( posD->GetName() == "GmGenerDistPositionDiscGaussian" ) {
       GmGenerDistPositionDiscGaussian* posDD = dynamic_cast<GmGenerDistPositionDiscGaussian*>(posD);
       posDD->SetSigma(GetSpotSize(spdata));
-    }
-    if( GenerVerb(debugVerb) ) {
-      G4cout << "  RTIonPlanScanSpotSource::SetSpotSize " << posD->GetName() << " : " << GetSpotSize(spdata) << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+      if( GenerVerb(debugVerb) ) {
+	G4cout << "  RTIonPlanScanSpotSource::SetSpotSize " << posD->GetName() << " : " << GetSpotSize(spdata) << G4endl;
+      }
+#endif
     }
   }
 

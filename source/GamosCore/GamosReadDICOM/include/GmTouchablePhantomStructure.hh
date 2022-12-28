@@ -13,7 +13,6 @@ class G4VTouchable;
 //  This class filters touchables by G4VPhysicalVolume
 // 
 ///////////////////////////////////////////////////////////////////////////////
-class GmRegularParamUtils;
 class GmReadPhantomStMgr;
 
 class GmTouchablePhantomStructure : public GmVTouchableFilterVolume 
@@ -35,7 +34,6 @@ public: // with description
 protected:
   std::set<G4int> theIndices;
 
-  GmRegularParamUtils* theRegularUtils;
   GmReadPhantomStMgr* theStructMgr;
 
 };

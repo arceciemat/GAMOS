@@ -10,7 +10,7 @@
 #include "geomdefs.hh"
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionInVoxelsFromFile::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionInVoxelsFromFile::GeneratePosition( GmParticleSource* )
 {
 
   G4double rnd = CLHEP::RandFlat::shoot();

@@ -34,7 +34,7 @@ void GmGenerDistPositionDirectionInUserSurfaces::SetParams( const std::vector<G4
 } 
 
 //------------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionDirectionInUserSurfaces::GenerateDirection( const GmParticleSource* source)
+G4ThreeVector GmGenerDistPositionDirectionInUserSurfaces::GenerateDirection( GmParticleSource* source)
 {
   G4ThreeVector dir = -source->GetPosition();
   if( theRotation ) {

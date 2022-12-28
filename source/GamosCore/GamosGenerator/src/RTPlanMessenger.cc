@@ -18,12 +18,17 @@ RTPlanMessenger::RTPlanMessenger(RTVPlanSource* myua)
    : myAction(myua) 
 {
   AssociatePlanVolumesCmd = new GmUIcmdWithAString("/gamos/generator/RTPlan/associatePlanVolumes",this);
-  AssociatePlanVolumesCmd->SetParameterName("PARTICLE_SOURCE NAME_AT_RTPlan NAME_AT_GEOM",false);
+  AssociatePlanVolumesCmd->SetParameterName("SOURCE_NAME RTPlanControlPoint_NAME GEOMETRY_NAME",false);
   AssociatePlanVolumesCmd->AvailableForStates(G4State_Idle,G4State_PreInit);
 
   DefineAcceleratorVolumeCmd = new GmUIcmdWithAString("/gamos/generator/RTPlan/defineAcceleratorVolume",this);
-  DefineAcceleratorVolumeCmd->SetParameterName("PARTICLE_SOURCE VOLUME_NAME",false);
+  DefineAcceleratorVolumeCmd->SetParameterName("NAME PARTICLE_NAME ENERGY",false);
   DefineAcceleratorVolumeCmd->AvailableForStates(G4State_Idle,G4State_PreInit);
+
+  AssociatePlanLDACmd = new GmUIcmdWithAString("/gamos/generator/RTPlan/associatePlanLimitingDeviceAngle",this);
+  AssociatePlanLDACmd->SetParameterName("SOURCE_NAME GEOMETRY_NAME",false);
+  AssociatePlanLDACmd->AvailableForStates(G4State_Idle,G4State_PreInit);
+
 }
 
 //------------------------------------------------------------------------
@@ -31,6 +36,7 @@ RTPlanMessenger::~RTPlanMessenger()
 {
   if (AssociatePlanVolumesCmd) delete AssociatePlanVolumesCmd;
   if (DefineAcceleratorVolumeCmd) delete DefineAcceleratorVolumeCmd;
+  if (AssociatePlanLDACmd) delete AssociatePlanLDACmd;
 }
 
 
@@ -45,6 +51,9 @@ void RTPlanMessenger::SetNewValue(G4UIcommand * command,
   } else if (command == DefineAcceleratorVolumeCmd) {
     //    GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: name particle_name energy energy_unit"); 
     myAction->DefineAcceleratorVolume(wl);
+  } else if (command == AssociatePlanLDACmd) {
+    //    GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: name particle_name energy energy_unit"); 
+    myAction->AssociatePlanLimitingDeviceAngle(wl);
   }
 
   return;

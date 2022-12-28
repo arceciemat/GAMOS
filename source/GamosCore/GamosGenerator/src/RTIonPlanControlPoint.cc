@@ -68,6 +68,7 @@ RTIonPlanControlPoint::RTIonPlanControlPoint( const G4String& fileName, RTIonPla
   //  theAccumulativeMeterset = GetParam("AccumulativeMeterset",1);
   theGantryAngle = GetParam("GantryAngle",1)*CLHEP::deg;
   theGantryPitchAngle = GetParam("GantryPitchAngle",1)*CLHEP::deg;
+  theLimitingDeviceAngle = GetParam("LimitingDeviceAngle",1)*CLHEP::deg;
   //  theIsocenterPosition = G4ThreeVector( GetParam("IsocenterPosition_X",1), GetParam("IsocenterPosition_Y",1), GetParam("IsocenterPosition_Z",1) );
   theNominalBeamEnergy = GetParam("NominalBeamEnergy",1);
   theNumberOfPaintings = GetParam("NumberOfPaintings",1);
@@ -122,7 +123,8 @@ RTBeamStateData RTIonPlanControlPoint::GetBeamStateData(RTBeamStateData bsData)
   bsData.Energy = theNominalBeamEnergy;
   bsData.RotAngleX = 0.;
   bsData.RotAngleY = theGantryAngle;
-  bsData.RotAngleZ = theGantryPitchAngle;
+  bsData.RotAngleX = theGantryPitchAngle;
+  bsData.RotAngleZ = theLimitingDeviceAngle;
   bsData.SpotSize = theScanningSpotSize;
   bsData.SourceAxisDistanceX = theSourceAxisDistanceX;
   bsData.SourceAxisDistanceY = theSourceAxisDistanceY;

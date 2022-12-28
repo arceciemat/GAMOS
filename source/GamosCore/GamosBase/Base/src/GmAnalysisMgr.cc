@@ -61,7 +61,8 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
 
   if( theFileFormats.size() == 0 ){
 #ifndef GAMOS_NO_ROOT
-    theFileFormats.insert("root");
+    //    theFileFormats.insert("root");
+    theFileFormats.insert("csv");
 #else
     theFileFormats.insert("csv");
 #endif
@@ -535,7 +536,7 @@ bool GmAnalysisMgr::CreateHisto2D(const G4String & pathAndTitle, int nBinsX, dou
       lowerEdgeX = (*ite).second;
     }
   }
-  ite = theHisto2MinX.begin(); //GDEB
+  ite = theHisto2MinX.begin(); 
   for( ite = theHisto2MaxX.begin(); ite != theHisto2MaxX.end(); ite++ ){
     if( GmGenUtils::AreWordsEquivalent( (*ite).first, pathAndTitle ) ) {
       upperEdgeX = (*ite).second;
@@ -909,12 +910,12 @@ GmHistoProfile2* GmAnalysisMgr::GetHistoProf2( const G4String& hnam, bool itExis
 void GmAnalysisMgr::HistoDoesNotExists( int ih, const G4String& histype, bool itExists )
 {
   if( itExists ){
-    G4Exception("GmAnalysMgr::GetHisto",
+    G4Exception("GmAnalysisMgr::GetHisto",
 		"Wrong internal argument",
 		FatalException,
 		G4String("Histogram "+histype+" number "+ GmGenUtils::itoa(ih) + " does not exist ").c_str());
     /* } else {
-    G4Exception("GmAnalysMgr::GetHisto",
+    G4Exception("GmAnalysisMgr::GetHisto",
 		"Warning",
 		JustWarning,
 		G4String("Histogram "+histype+" number "+ GmGenUtils::itoa(ih) + " does not exist ").c_str()); */
@@ -925,12 +926,12 @@ void GmAnalysisMgr::HistoDoesNotExists( int ih, const G4String& histype, bool it
 void GmAnalysisMgr::HistoDoesNotExists( const G4String& hnam, const G4String& histype, bool itExists )
 {
   if( itExists ){
-    G4Exception("GmAnalysMgr::GetHisto",
+    G4Exception("GmAnalysisMgr::GetHisto",
 		"Wrong internal argument",
 		FatalException,
 		G4String("Histogram "+histype+" number "+ hnam + " does not exist ").c_str());
     /*  } else {
-    G4Exception("GmAnalysMgr::GetHisto",
+    G4Exception("GmAnalysisMgr::GetHisto",
 		"Warning",
 		JustWarning,
 		G4String("Histogram "+histype+" number "+ hnam + " does not exist ").c_str()); */

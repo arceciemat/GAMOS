@@ -8,7 +8,7 @@
 #include "GmVertexKineticEnergyFilter.hh"
 #include "GmDeltaEnergyFilter.hh"
 #include "GmEnergyChangeFilter.hh"
-#include "GmDepositedEnergyFilter.hh"
+#include "GmDepositEnergyFilter.hh"
 #include "GmInMassLogicalVolumeFilter.hh"
 #include "GmInMassPhysicalVolumeFilter.hh"
 #include "GmInMassPhysicalVolumeReplicatedFilter.hh"
@@ -219,7 +219,7 @@ PLUGINSVC_FACTORY(GmPostKineticEnergyFilter,GmVFilter*(G4String))
 PLUGINSVC_FACTORY(GmVertexKineticEnergyFilter,GmVFilter*(G4String))
 PLUGINSVC_FACTORY(GmDeltaEnergyFilter,GmVFilter*(G4String))
 PLUGINSVC_FACTORY(GmEnergyChangeFilter,GmVFilter*(G4String))
-PLUGINSVC_FACTORY(GmDepositedEnergyFilter,GmVFilter*(G4String))
+PLUGINSVC_FACTORY(GmDepositEnergyFilter,GmVFilter*(G4String))
 PLUGINSVC_FACTORY(GmPrimaryFilter,GmVFilter*(G4String))
 PLUGINSVC_FACTORY(GmSecondaryFilter,GmVFilter*(G4String))
 PLUGINSVC_FACTORY(GmGammaFilter,GmVFilter*(G4String))
@@ -408,7 +408,8 @@ DEFINE_GAMOS_FILTER(GmPostKineticEnergyFilter);
 DEFINE_GAMOS_FILTER(GmVertexKineticEnergyFilter);
 DEFINE_GAMOS_FILTER(GmDeltaEnergyFilter);
 DEFINE_GAMOS_FILTER(GmEnergyChangeFilter);
-DEFINE_GAMOS_FILTER(GmDepositedEnergyFilter);
+DEFINE_GAMOS_FILTER(GmDepositEnergyFilter);
+DEFINE_SEAL_PLUGIN(GmFilterFactory,GmDepositEnergyFilter,"GmDepositedEnergyFilter");
 DEFINE_GAMOS_FILTER(GmPrimaryFilter);
 DEFINE_GAMOS_FILTER(GmSecondaryFilter);
 DEFINE_GAMOS_FILTER(GmGammaFilter);

@@ -191,6 +191,9 @@ void GmGenerator::SetDistribution( const G4String& distType, std::vector<G4Strin
     source->SetDistributionPosition( wl[1], extraParams );
   } else if( distType == "direction" ) {
     source->SetDistributionDirection( wl[1], extraParams );
+  } else if( distType == "positionDirection" ) {
+    source->SetDistributionPosition( wl[1], extraParams );
+    source->SetDistributionDirection( wl[1], extraParams );
   }
 }
 

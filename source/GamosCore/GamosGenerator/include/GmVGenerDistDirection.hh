@@ -12,9 +12,14 @@ public:
   GmVGenerDistDirection(){};
   virtual ~GmVGenerDistDirection(){};
 
-  virtual G4ThreeVector GenerateDirection( const GmParticleSource* source ) = 0;
+  virtual G4ThreeVector GenerateDirection( GmParticleSource* source ) = 0;
 
-
+  virtual void SetDirection( G4ThreeVector ) {
+    G4Exception("GmVGenerDistDirection::SetDirection",
+		"",
+		FatalException,
+		("Direction distribution "+GetName()+" dose not have a SetDirection(G4ThreeVector) method").c_str());
+  }
 };
 
 #endif

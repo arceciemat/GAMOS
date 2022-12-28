@@ -120,7 +120,7 @@ void GmGenerDistPositionNMImage::SetParams( const std::vector<G4String>& params 
 
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionNMImage::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionNMImage::GeneratePosition( GmParticleSource* )
 {
   
   //----- Get x,y,z coordinates in voxel
