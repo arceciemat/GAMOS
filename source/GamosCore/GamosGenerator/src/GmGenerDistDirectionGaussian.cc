@@ -4,7 +4,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "CLHEP/Random/RandGauss.h"
 
-G4ThreeVector GmGenerDistDirectionGaussian::GenerateDirection( const GmParticleSource* )
+G4ThreeVector GmGenerDistDirectionGaussian::GenerateDirection( GmParticleSource* )
 {
   G4double dirX = CLHEP::RandGauss::shoot( 0., theSigmaX );
   G4double dirY = CLHEP::RandGauss::shoot( 0., theSigmaY );

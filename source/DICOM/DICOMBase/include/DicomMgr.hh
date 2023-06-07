@@ -11,8 +11,6 @@ class DicomVOperator;
 class DcmDataset;
 typedef std::multimap<DIModality,DicomVImage*> mmmodi;
 
-#include "TColor.h"
-
 typedef std::map<G4String,DicomLineDrawingOptions*> msldo;
 
 class DicomMgr 

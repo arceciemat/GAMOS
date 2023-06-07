@@ -2,7 +2,7 @@
 #define GmDataNProcesses_hh
 
 #include "GamosCore/GamosData/Management/include/GmVDataAccumulated.hh"
-
+class G4EventManager;
 class GmDataNProcesses : public GmVDataAccumulated
 {
 public:
@@ -14,5 +14,9 @@ public:
 
 private:
   std::vector<G4String> theProcessesNames;
+  G4int thePrevTrackID;
+  G4int thePrevEventID;
+  std::map<G4int,G4int> theNSteps;
+  G4EventManager* theEventManager;
 };
 #endif

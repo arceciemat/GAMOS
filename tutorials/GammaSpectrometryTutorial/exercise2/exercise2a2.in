@@ -10,8 +10,10 @@
 ### Initialize Geant4 geometry and physics
 /run/initialize
 
+/gamos/physics/addPhysics radioactiveDecay
+
 ### Set generator particle distributions
-/gamos/generator/addSingleParticleSource source Co60[0.0] 0*MeV
+/gamos/generator/addSingleParticleSource source Co60 0*MeV
 ## place source inside the water solution
 /gamos/generator/positionDist source GmGenerDistPositionInG4Volumes SOLUTION_*
 

@@ -147,15 +147,14 @@ TH1F* DrawEmptyHistogram( std::string histoName, double HXMin, double HXMax, dou
   pad->cd();
 
   //Draw empty histogram
-  /*  gStyle->SetPadRightMargin(Definitions::padRightMargin);
+  gStyle->SetPadRightMargin(Definitions::padRightMargin);
   gStyle->SetPadLeftMargin(Definitions::padLeftMargin);
-  pad->cd();
-  TPad* pad = new TPad("pad","pad",Definitions::padLeftMargin,0.0,1.-Definitions::padRightMargin,1.);
-  pad->SetLeftMargin(Definitions::padLeftMargin); // does not work
-  pad->SetLeftMargin(Definitions::padRightMargin);
+  TPad* pad2 = new TPad("pad","pad",Definitions::padLeftMargin,0.0,1.-Definitions::padRightMargin,1.);
+  pad2->SetLeftMargin(Definitions::padLeftMargin); 
+  pad2->SetLeftMargin(Definitions::padRightMargin);
   std::cout << " SetPadLeftMargin " << Definitions::padLeftMargin << std::endl; //GDEB
-  pad->Draw();
-  pad->cd(); */
+  pad2->Draw();
+  pad2->cd(); 
   TH1F* his = new TH1F( histoName.c_str(), histoName.c_str(),100,HXMin,HXMax);
   his->SetTitle(histoName.c_str());
   his->SetMinimum(HYMin);
@@ -181,7 +180,7 @@ TH1F* DrawEmptyHistogram( std::string histoName, double HXMin, double HXMax, dou
   */
   his->Draw("");
   if( verbose >= 1 ) std::cout << "DRAW EMPTY HISTO " << histoName << " XMIN " << HXMin << " XMAX " << HXMax << " YMIN= " << his->GetMinimum() << " YMAX= " << his->GetMaximum() << " HYMin " << HYMin << " HYMax " << HYMax << std::endl;
-  if( verbose >= 1 ) std::cout << "XYDRAW EMPTY HISTO " << histoName << " X " << his->GetXaxis()->GetTitle() << " Y= " << his->GetYaxis()->GetTitle() << " XSIZE " << his->GetXaxis()->GetTitleSize() << " YSIZE= " << his->GetYaxis()->GetTitleSize() << std::endl; //GDEB
+  if( verbose >= 1 ) std::cout << "XYDRAW EMPTY HISTO " << histoName << " X " << his->GetXaxis()->GetTitle() << " Y= " << his->GetYaxis()->GetTitle() << " XSIZE " << his->GetXaxis()->GetTitleSize() << " YSIZE= " << his->GetYaxis()->GetTitleSize() << std::endl; 
 
   return his;
 }
@@ -395,10 +394,10 @@ void DrawHistoRatio( mdpdd* DataVal1, mdpdd* DataVal2, std::string name1, std::s
   }
 }
 
-void PrintGif( std::string hisname )
+void PrintFig( std::string hisname )
 {
   theCanvas->Draw();
-  theCanvas->Print( (hisname+".gif").c_str() );
+  theCanvas->Print( (hisname+".jpg").c_str() );
 }
 
 #endif

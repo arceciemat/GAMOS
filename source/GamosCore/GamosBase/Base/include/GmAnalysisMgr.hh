@@ -38,7 +38,7 @@ public:
 
   ~GmAnalysisMgr();
   void Save( const G4String& name, const G4String& format );
-	void SaveAllFormats(const G4String& name);
+  void SaveAllFormats(const G4String& name);
 
   static GmAnalysisMgr* GetInstance(const G4String& filename);
 #ifdef WIN32  //WINDEB                                                                                           
@@ -85,8 +85,8 @@ public:
 
   static void DeleteInstances();
 
-  static void AddFileFormat( G4String& ff );
-  static void SetFileFormat( G4String& ff );
+  static void AddFileFormat( G4String ff );
+  static void SetFileFormat( G4String ff );
 
   static void AddHisto1NBins(G4String values);
   static void AddHisto1Min(G4String values);

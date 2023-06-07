@@ -238,8 +238,8 @@ void RTPhaseSpaceHistos::FillHistos( EGSPhspParticle *particle, G4double zstop )
 #endif
 }
 
-//---------------------------------------------------------------------
-void RTPhaseSpaceHistos::FillHistos( EGSPhspParticle *particle, G4int hid, G4int zstopID, G4int index )
+//----------------------------------------------------- ----------------
+void RTPhaseSpaceHistos::FillHistos( EGSPhspParticle * particle, G4int hid,              G4int zstopID, G4int index )
 {
   G4double posX = particle->thePosX;
   G4double posY = particle->thePosY;
@@ -318,7 +318,7 @@ G4String RTPhaseSpaceHistos::GetHistoName(G4int index)
   std::map<G4String,G4int>::const_iterator ite;
   for( ite = theParticleHistoIDs.begin(); ite != theParticleHistoIDs.end(); ite++ ){
     if( (*ite).second == index ) {
-      return (*ite).second;
+      return GmGenUtils::itoa((*ite).second);
     }
   }
 

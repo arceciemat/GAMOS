@@ -242,7 +242,7 @@ void GmGenerDistPositionInMaterialPhantomVoxels::BuildVoxelPositions()
 
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionInMaterialPhantomVoxels::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionInMaterialPhantomVoxels::GeneratePosition( GmParticleSource* )
 {
   if( !bInitialised ) {
       BuildVoxelPositions();

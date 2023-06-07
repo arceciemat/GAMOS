@@ -22,7 +22,6 @@
 #include "G4RadioactiveDecay.hh"
 #include "G4Nucleus.hh"
 #include "G4HadronicProcess.hh"
-#include "G4RadioactiveDecayBase.hh"
 #include "G4DecayTable.hh"
 
 std::map<const G4ParticleDefinition*,G4DecayTable*> GmG4Utils::thePartDecayTable;
@@ -703,7 +702,7 @@ G4DecayTable* GmG4Utils::FindOrBuildDecayTable( const G4ParticleDefinition* part
     G4ProcessManager* pmanager = part->GetProcessManager();
     G4ProcessVector* procList = pmanager->GetProcessList();
     for( size_t ii = 0; ii < procList->size(); ii++) {
-      G4RadioactiveDecayBase* decayProc = dynamic_cast<G4RadioactiveDecayBase*>((*procList)[ii]);
+      G4RadioactiveDecay* decayProc = dynamic_cast<G4RadioactiveDecay*>((*procList)[ii]);
       if( decayProc ) {
 	decayTable = decayProc->GetDecayTable(part);
 	thePartDecayTable[part] = decayTable;

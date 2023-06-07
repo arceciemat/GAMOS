@@ -18,7 +18,7 @@ GmGenerDistPositionDiscGaussian::GmGenerDistPositionDiscGaussian()
   theName = "GmGenerDistPositionDiscGaussian"; 
 }
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionDiscGaussian::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionDiscGaussian::GeneratePosition( GmParticleSource* )
 {
   G4double val = sqrt(theSigmaM*log(1-CLHEP::RandFlat::shoot()) );
   G4double phi = 360.*CLHEP::deg*CLHEP::RandFlat::shoot();
@@ -49,7 +49,7 @@ void GmGenerDistPositionDiscGaussian::SetParams( const std::vector<G4String>& pa
     G4Exception(" GmGenerDistPositionDiscGaussian::SetParams",
 		"Wrong argument",
 		FatalErrorInArgument,
-		"To set point you have to add 1, 4 or 7 parameters: SIGMA (POS_X POS_Y POS_Z) (DIR_X DIR_Y DIR_Z");
+		"To set point you have to add 1, 4 or 7 parameters: SIGMA (POS_X POS_Y POS_Z) (DIR_X DIR_Y DIR_Z)");
   }
   if( params.size() >= 1 ) {
     G4double sigma = GmGenUtils::GetValue( params[0] )*sqrt(2.);

@@ -542,6 +542,7 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	for( std::map<G4int,G4String>::const_iterator itesn = stNames.begin(); itesn != stNames.end(); itesn++ ) {
 	  //      G4cout << " theOnly1StID Names " << theOnly1StName << " " << itesn->second << " : " << GmGenUtils::AreWordsEquivalent(theOnly1StName,itesn->second) << " =? " << GmGenUtils::AreWordsEquivalent(itesn->second,theOnly1StName) << G4endl; //GDEB
 	  G4String stName = itesn->second;
+	  //	  G4cout << " STNAME " << theOnly1StName << " =?= " << stName << G4endl;//GDEB
 	  if( stName.substr(stName.length()-2,2) == "_2" ) continue; // some patients have repeated structure: "GTV_50%EX" "GTV_50%EX_2"
 	  if( GmGenUtils::AreWordsEquivalent(theOnly1StName,itesn->second) ) {
 	    if( theOnly1StID != -1 ) {
@@ -551,6 +552,7 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 			  ("TWO only1St structures found: "+theOnly1StName+" : "+GmGenUtils::itoa(theOnly1StID)+" "+GmGenUtils::itoa(itesn->first)).c_str());
 	    }
 	    theOnly1StID = itesn->first;
+	    if( DicomVerb(debugVerb) )  G4cout << theOnly1StID << " STNAME  FOUND " << theOnly1StName << " =?= " << stName << G4endl;
 	  }
 	}
 	//loop to voxels and make them 0 if not in structure
@@ -572,9 +574,9 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	    size_t ist = *itest;
 	    //	if( iid % 100000 == 0 ) G4cout << iid << " Only1St " << ist << " ID " << theOnly1StID << " " << theOnly1StName << G4endl; //GDEB
 	    if( G4int(ist) == theOnly1StID ) {
-	  bStFound = true;
-	  nVoxSt0 ++;
-	  break;
+	      bStFound = true;
+	      nVoxSt0 ++;
+	      break;
 	    }
 	  }
 	  if( !bStFound ) {
@@ -599,7 +601,7 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	  theDicomMgr->OperateAll(giImage);
 	  if( bMaxGammaValue ) SetImageMaxValue(giImage, theMaxGammaValue);
 	  G4String extraFileName = "_"+GmGenUtils::ftoa((*itepdd).first)+"_"+GmGenUtils::ftoa((*itepdd).second)+"_2D";  
-	  if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".root");
+	  if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".XY.root");
 	  theDrawer->DrawXY(giImage,theLineSets, extraFileName);
 	  //	    operGammaIndex->OperateXY( image1Mod, image2Mod, (*itepdd).first, (*itepdd).second, 1., giImage);
 	  //?? just calling OperateXY, even if imageOut is not touched!!	    theDrawer->DrawXY(giImage,theLineSets);
@@ -614,7 +616,7 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	  theDicomMgr->OperateAll(giImage);
 	  if( bMaxGammaValue ) SetImageMaxValue(giImage, theMaxGammaValue);  
 	  G4String extraFileName = "_"+GmGenUtils::ftoa((*itepdd).first)+"_"+GmGenUtils::ftoa((*itepdd).second)+"_2D"; 
-	  if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".root");
+	  if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".XZ.root");
 	  theDrawer->DrawXZ(giImage,theLineSets,extraFileName);
 	}
 	if( bDrawYZ ) {
@@ -623,8 +625,8 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	  operGammaIndex->OperateYZ( image1Mod, image2Mod, (*itepdd).first, (*itepdd).second, 1., giImage);
 	  theDicomMgr->OperateAll(giImage);
 	  if( bMaxGammaValue ) SetImageMaxValue(giImage, theMaxGammaValue);  
-	  G4String extraFileName = "_"+GmGenUtils::ftoa((*itepdd).first)+"_"+GmGenUtils::ftoa((*itepdd).second)+"_2D"; 
-	  if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".root");
+	  G4String extraFileName = "_"+GmGenUtils::ftoa((*itepdd).first)+"_"+GmGenUtils::ftoa((*itepdd).second)+"_2D";
+	  if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".YZ.root");
 	  theDrawer->DrawYZ(giImage,theLineSets,extraFileName);
 	}
       }

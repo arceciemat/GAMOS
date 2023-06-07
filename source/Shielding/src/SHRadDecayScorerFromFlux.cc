@@ -101,7 +101,7 @@ void SHRadDecayScorerFromFlux::ProcessHits(const G4Step* aStep)
 #endif
       //--- loop to elements 
       for (size_t iele=0; iele<numberOfElem; iele++) {
-	G4Element* elem = (*elementVector)[iele];
+	const G4Element* elem = (*elementVector)[iele];
 	G4double nAtomsPermm3 = atomNumDensityVector[iele];
 	G4int index = elem->GetIndex();
 	

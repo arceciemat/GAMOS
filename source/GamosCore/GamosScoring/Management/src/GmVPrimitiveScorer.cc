@@ -37,7 +37,7 @@ GmVPrimitiveScorer::GmVPrimitiveScorer(G4String name)
   : G4VPrimitiveScorer( name, 0 )
 { 
 #ifndef GAMOS_NO_VERBOSE
-  if( ScoringVerb(debugVerb) ) G4cout << "GmVPrimitiveScorer::GmVPrimitiveScorer " << name << G4endl;
+  if( ScoringVerb(debugVerb) ) G4cout << this << " GmVPrimitiveScorer::GmVPrimitiveScorer " << name << G4endl;
 #endif
 
   sumALL = 0.;
@@ -298,6 +298,7 @@ void GmVPrimitiveScorer::ClearNFilled_tmp()
 
 //--------------------------------------------------------------------
 G4double GmVPrimitiveScorer::GetNEvents( G4int index ){
+  //  G4cout << index << " GmVPrimitiveScorer::GetNEvents( " << theNEventsType << G4endl; //GDEB
   switch (theNEventsType) {
     case SNET_ByRun:
       return 1;
@@ -324,7 +325,7 @@ void GmVPrimitiveScorer::Normalize(G4THitsMap<G4double>* RunMap)
     theSumV2[index] = theSumV2[index] / (normFactor*normFactor);
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(debugVerb) ) G4cout << GetName() << " " << index << " Normalize " << (*(ite->second)) << " " << sumX*normFactor << " / " << normFactor << " nev " << nev << " unit " << theUnit << G4endl;
-    if( ScoringVerb(debugVerb) ) G4cout << GetName() << " " << index << " Normalize SUMV2 " << theSumV2[index] << G4endl;
+    if( ScoringVerb(debugVerb) ) G4cout << GetName() << " " << index << " Normalize SUMV2_aft " << theSumV2[index] << G4endl;
 #endif
   }
   
@@ -342,7 +343,7 @@ void GmVPrimitiveScorer::CalculateErrors(G4THitsMap<G4double>* RunMap)
     theError[index] = GetError( index, sumWX, nev );
 #ifndef GAMOS_NO_VERBOSE
     //    if( ScoringVerb(debugVerb) ) G4cout << GetName() << " " << ite->first << " CalculateError " << theError[ index ] << G4endl;
-    if( ScoringVerb(debugVerb) ) G4cout << GetName() << " " << index << " CalculateError " << theError[ index ] << " sumWX " << sumWX << G4endl;
+    if( ScoringVerb(debugVerb) ) G4cout << GetName() << " " << index << " CalculateError " << theError[ index ] << " sumWX " << sumWX << " nev " << nev <<G4endl;
 #endif
   }
   
@@ -369,7 +370,8 @@ G4double GmVPrimitiveScorer::GetError( G4int index, G4double sumWX, G4double nEv
 #endif
   
   if( error <= 0. ) {
-    if( error < -1.E-15 ) G4cerr << " !!WARNING  Error squared in scorer " << GetName() << " index= " << index << " is negative: " << error << G4endl;
+    if( error/sumWX < -1.E-3 ) G4cerr << " !!WARNING  Error squared in scorer " << GetName() << " index= " << index << " is negative: " << error << " value " << sumWX << G4endl;
+    //    if( error < -1.E-15 ) G4cerr << " !!WARNING  Error squared in scorer " << GetName() << " index= " << index << " is negative: " << error << G4endl;
     error = 0.;
   } else {
     error = std::sqrt(error);
@@ -381,7 +383,7 @@ G4double GmVPrimitiveScorer::GetError( G4int index, G4double sumWX, G4double nEv
 #endif
   //  if( index%1000 == 0 ) G4cout   << " GetError " << index << " e= " << error << " e2= " << error*error << " nev " << nEvents << " sumWX " << sumWX << " sumW2 " << theSumV2[index] << G4endl; //GDEB 
  
-  //  G4cout << " GmVPrimitiveScorer::GetError " << index << " = " << error << " sumW " << sumWX << " sumW2 " << theSumV2[index] << " nEvents " << nEvents << G4endl;
+  //  G4cout << " GmVPrimitiveScorer::GetError " << index << " = " << error << " sumW " << sumWX << " sumW2 " << theSumV2[indqex] << " nEvents " << nEvents << G4endl;
   return error;
 }
 

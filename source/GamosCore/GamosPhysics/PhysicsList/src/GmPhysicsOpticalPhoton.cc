@@ -26,8 +26,9 @@ void GmPhysicsOpticalPhoton::ConstructProcess()
   // Add processes for optical gammas
   
   G4Scintillation* theScintillationProcess = new G4Scintillation();
-  G4double yieldFactor = GmParameterMgr::GetInstance()->GetNumericValue("GmPhysicsOpticalPhoton:YieldFactor",1.);
+  /*t  G4double yieldFactor = GmParameterMgr::GetInstance()->GetNumericValue("GmPhysicsOpticalPhoton:YieldFactor",1.);
   theScintillationProcess->SetScintillationYieldFactor(yieldFactor);
+  */
   theScintillationProcess->SetFiniteRiseTime(true);
 
   G4bool bTrackSeco1st = G4bool( GmParameterMgr::GetInstance()->GetNumericValue("GmPhysicsOpticalPhoton:TrackSecondariesFirst",1));

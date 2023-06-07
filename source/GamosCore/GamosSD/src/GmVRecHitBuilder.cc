@@ -169,7 +169,7 @@ void GmVRecHitBuilder::SmearRecHitsEnergy(std::vector<GmRecHit*>& recHits)
     G4double ran = CLHEP::RandGauss::shoot(0., theEnergyResol );
     G4double factor = ran;
 #ifndef GAMOS_NO_VERBOSE
-    if( SDVerb(debugVerb) ) G4cout << " GmVRecHitBuilder::SmearRecHitsEnergy factor " << factor << " " << ran << " Resol " << theEnergyResol << G4endl;
+    if( SDVerb(debugVerb) ) G4cout << " GmVRecHitBuilder::SmearRecHitsEnergy factor " << factor << " Resol " << theEnergyResol << G4endl;
 #endif
     if( theEnergyResolFluct != 0. ) {
       G4double ran2 = CLHEP::RandGauss::shoot(0., theEnergyResolFluct );

@@ -1,5 +1,6 @@
 #ifndef DicomDrawerROOT__HH
 #define DicomDrawerROOT__HH
+#ifndef GAMOS_NO_ROOT
 
 #include "DicomVDrawer.hh"
 #include "DicomMgr.hh"
@@ -81,5 +82,6 @@ private:
   TFile* theOutputFile;
 };
 
+#endif
 #endif
   

@@ -1,48 +1,46 @@
-#------------------------------------------------------------------------------
-# Module : GamosMovement
-# Package: GamosCore_GamosMovement
-#
-#------------------------------------------------------------------------------
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GEANT4 Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME GamosCore_GamosMovement
-	 HEADERS
-		GmVMovement.hh
-		GmMovementNEvents.hh
-		GmMovementDisplacement.hh
-		GmMovementFromFile.hh
-		GmMovementRotation.hh
-		GmMovementEventAction.hh
-		GmMovementTime.hh
-		GmMovementMgr.hh
-		GmMovementVerbosity.hh
-		GmMovementMessenger.hh
-	 SOURCES
-		plugin.cc
-		GmVMovement.cc
-		GmMovementFromFile.cc
-		GmMovementVerbosity.cc
-		GmMovementMgr.cc
-		GmMovementDisplacement.cc
-		GmMovementRotation.cc
-		GmMovementMessenger.cc
-		GmMovementEventAction.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_libs} 
-		${ROOT_LIBRARIES} 
-	GamosCore_GamosUtils
-	GamosCore_GamosUserActionMgr
-	GamosCore_GamosGeometry
-	GamosCore_GamosGenerator
-		${SEAL_LIBRARIES} 
+# - GamosCore_GamosMovement module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(GamosCore_GamosMovement
+  PUBLIC_HEADERS
+    GmMovementNEvents.hh
+    GmMovementFromFile.hh
+    GmMovementVerbosity.hh
+    GmVMovement.hh
+    GmMovementMgr.hh
+    GmMovementRotation.hh
+    GmMovementTime.hh
+    GmMovementDisplacement.hh
+    GmMovementMessenger.hh
+    GmMovementEventAction.hh
+  SOURCES
+    GmMovementFromFile.cc
+    GmMovementVerbosity.cc
+    plugin.cc
+    GmMovementMgr.cc
+    GmMovementRotation.cc
+    GmVMovement.cc
+    GmMovementMessenger.cc
+    GmMovementDisplacement.cc
+    GmMovementEventAction.cc
+)
+# - Add path to generated header
+geant4_module_include_directories(GamosCore_GamosMovement
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
+ PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
+
+geant4_module_link_libraries(GamosCore_GamosMovement
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
+    GamosCore_GamosUtils
+    GamosCore_GamosUserActionMgr
+    GamosCore_GamosGeometry
+    GamosCore_GamosGenerator
 )

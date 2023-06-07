@@ -1,122 +1,121 @@
-#------------------------------------------------------------------------------
-# Module : RadioTherapy
-# Package: RadioTherapy
-#
-#------------------------------------------------------------------------------
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GEANT4 Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME RadioTherapy
-	 HEADERS
-		RTVClassifierByExtraInfo.hh
-		RTPhaseSpaceHistos.hh
-		iaea_config.hh
-		RTProdCutsStudyUA.hh
-		RTReuseAtZPlaneProcess.hh
-		RTZRLimitsAutoUA.hh
-		RTVExtraInfoProvider.hh
-		RTVExtraInfoProviderLong.hh
-		RTExtraInfoProviderZLastNoMaterial.hh
-		RTExtraInfoProviderCrossings.hh
-		RTGeneratorPSPenelope.hh
-		RTReuseAtZPlaneWithNVoxelUA.hh
-		iaea_utilities.hh
-		RTGeneratorPhaseSpace_EGS.hh
-		RTGeneratorPhaseSpace.hh
-		make_zlib.h
-		RTExtraInfoMgr.hh
-		RTReuseAtZPlaneMessenger.hh
-		RTCutsStudyFilter.hh
-		RTVExtraInfoProviderLongByRegion.hh
-		RTFilterByEILong.hh
-		RTVZRLimitsUA.hh
-		RTPhaseSpaceMessenger.hh
-		RTVerbosity.hh
-		RTReuseAtZPlaneTrackInfo.hh
-		RTMinRangeLimitsStudyUA.hh
-		RTPhaseSpaceGenerator.hh
-		RTExtraInfoTrackInfo.hh
-		RTPhaseSpace_EGSUA.hh
-		RTExtraInfoProviderZLast.hh
-		iaea_header.hh
-		RTPhaseSpaceUA.hh
-		RTPhaseSpace_extUA.hh
-		RTPSPDoseHistosVector.hh
-		RTExtraInfoProviderZOrigin.hh
-		RTExtraInfoProviderInteractions.hh
-		iaea_record.hh
-		RTExtraInfoProviderOrigin.hh
-		RTReuseAtZPlaneUA.hh
-		RTZRLimitsUA.hh
-		RTGeneratorPhaseSpaceRTPlan.hh
-		RTPSPDoseHistos.hh
-		RTVExtraInfoProviderFloat.hh
-		EGSPhspParticle.hh
-		RTClassifierByEILong.hh
-	 SOURCES
-		RTClassifierByEILong.cc
-		RTVerbosity.cc
-		plugin.cc
-		iaea_record.cc
-		zlib.h
-		RTPhaseSpaceUA.cc
-		RTExtraInfoMgr.cc
-		RTPhaseSpace_EGSUA.cc
-		RTGeneratorPhaseSpaceRTPlan.cc
-		RTVExtraInfoProvider.cc
-		RTGeneratorPhaseSpace_EGS.cc
-		RTReuseAtZPlaneMessenger.cc
-		RTGeneratorPhaseSpace.cc
-		RTCutsStudyFilter.cc
-		EGSPhspParticle.cc
-		RTExtraInfoProviderZOrigin.cc
-		RTVExtraInfoProviderFloat.cc
-		RTVClassifierByExtraInfo.cc
-		RTPhaseSpace_extUA.cc
-		iaea_header.cc
-		RTReuseAtZPlaneWithNVoxelUA.cc
-		iaea_utilities.cc
-		RTExtraInfoProviderZLastNoMaterial.cc
-		RTVExtraInfoProviderLongByRegion.cc
-		RTPSPDoseHistosVector.cc
-		RTExtraInfoProviderOrigin.cc
-		RTExtraInfoProviderZLast.cc
-		RTZRLimitsUA.cc
-		RTZRLimitsAutoUA.cc
-		RTProdCutsStudyUA.cc
-		RTGeneratorPSPenelope.cc
-		RTPSPDoseHistos.cc
-		RTVExtraInfoProviderLong.cc
-		RTExtraInfoProviderInteractions.cc
-		RTReuseAtZPlaneUA.cc
-		RTVZRLimitsUA.cc
-		RTPhaseSpaceHistos.cc
-		RTMinRangeLimitsStudyUA.cc
-		RTExtraInfoTrackInfo.cc
-		RTExtraInfoProviderCrossings.cc
-		RTReuseAtZPlaneTrackInfo.cc
-		RTFilterByEILong.cc
-		RTReuseAtZPlaneProcess.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_libs} 
-		${ROOT_LIBRARIES} 
-	GamosCore_GamosBase_Base
-	GamosCore_GamosSD
-	GamosCore_GamosGenerator
-	GamosCore_GamosUserActionMgr
-	GamosCore_GamosUtils
-	GamosCore_GamosReadDICOM
-	GamosCore_GamosUtilsUA
-	GamosCore_GamosScoring_Management
-	GamosCore_GamosPhysics_Cuts
-		${SEAL_LIBRARIES} 
+# - RadioTherapy module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(RadioTherapy
+  PUBLIC_HEADERS
+    RTExtraInfoProviderCrossings.hh
+    RTPhaseSpaceHistos.hh
+    EGSPhspParticle.hh
+    RTZRLimitsUA.hh
+    RTExtraInfoProviderInteractions.hh
+    RTVerbosity.hh
+    RTVExtraInfoProviderLong.hh
+    RTPSPDoseHistos.hh
+    RTReuseAtZPlaneMessenger.hh
+    RTGeneratorPSPenelope.hh
+    RTMinRangeLimitsStudyUA.hh
+    RTProdCutsStudyUA.hh
+    iaea_record.hh
+    RTCutsStudyFilter.hh
+    RTReuseAtZPlaneWithNVoxelUA.hh
+    RTGeneratorPhaseSpaceRTPlan.hh
+    RTReuseAtZPlaneTrackInfo.hh
+    RTExtraInfoProviderZLastNoMaterial.hh
+    make_zlib.h
+    RTGeneratorPhaseSpace_EGS.hh
+    RTReuseAtZPlaneUA.hh
+    RTExtraInfoProviderZLast.hh
+    iaea_utilities.hh
+    RTClassifierByEILong.hh
+    RTVZRLimitsUA.hh
+    iaea_config.hh
+    RTExtraInfoTrackInfo.hh
+    RTExtraInfoProviderOrigin.hh
+    RTPhaseSpaceMessenger.hh
+    RTGeneratorPhaseSpace.hh
+    RTPhaseSpaceGenerator.hh
+    RTExtraInfoProviderZOrigin.hh
+    RTVExtraInfoProvider.hh
+    RTPhaseSpace_EGSUA.hh
+    RTReuseAtZPlaneProcess.hh
+    RTVExtraInfoProviderFloat.hh
+    RTPSPDoseHistosVector.hh
+    iaea_header.hh
+    RTVClassifierByExtraInfo.hh
+    RTZRLimitsAutoUA.hh
+    RTPhaseSpaceUA.hh
+    RTFilterByEILong.hh
+    RTVExtraInfoProviderLongByRegion.hh
+    RTExtraInfoMgr.hh
+    RTPhaseSpace_extUA.hh
+  SOURCES
+    RTPSPDoseHistos.cc
+    RTReuseAtZPlaneMessenger.cc
+    RTExtraInfoProviderZOrigin.cc
+    RTReuseAtZPlaneProcess.cc
+    RTClassifierByEILong.cc
+    RTPhaseSpaceUA.cc
+    RTZRLimitsAutoUA.cc
+    iaea_utilities.cc
+    RTFilterByEILong.cc
+    RTGeneratorPhaseSpace_EGS.cc
+    RTExtraInfoProviderZLastNoMaterial.cc
+    RTReuseAtZPlaneWithNVoxelUA.cc
+    EGSPhspParticle.cc
+    RTPhaseSpace_EGSUA.cc
+    RTPhaseSpace_extUA.cc
+    RTPhaseSpaceHistos.cc
+    zlib.h
+    RTExtraInfoProviderCrossings.cc
+    RTVerbosity.cc
+    iaea_header.cc
+    plugin.cc
+    RTReuseAtZPlaneTrackInfo.cc
+    RTPSPDoseHistos.cc.old
+    RTExtraInfoProviderInteractions.cc
+    RTVExtraInfoProviderFloat.cc
+    RTProdCutsStudyUA.cc
+    RTPSPDoseHistosVector.cc
+    RTGeneratorPSPenelope.cc
+    RTVExtraInfoProviderLong.cc
+    RTVExtraInfoProviderLongByRegion.cc
+    RTGeneratorPhaseSpaceRTPlan.cc
+    RTMinRangeLimitsStudyUA.cc
+    RTReuseAtZPlaneUA.cc
+    RTExtraInfoProviderOrigin.cc
+    RTVExtraInfoProvider.cc
+    RTCutsStudyFilter.cc
+    RTExtraInfoMgr.cc
+    RTExtraInfoProviderZLast.cc
+    RTZRLimitsUA.cc
+    RTGeneratorPhaseSpace.cc
+    iaea_record.cc
+    RTVZRLimitsUA.cc
+    RTExtraInfoTrackInfo.cc
+    RTVClassifierByExtraInfo.cc
+)
+# - Add path to generated header
+geant4_module_include_directories(RadioTherapy
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
+ PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
+
+geant4_module_link_libraries(RadioTherapy
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
+    GamosCore_GamosBase_Base
+    GamosCore_GamosSD
+    GamosCore_GamosGenerator
+    GamosCore_GamosUserActionMgr
+    GamosCore_GamosUtils
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtilsUA
+    GamosCore_GamosScoring_Management
+    GamosCore_GamosPhysics_Cuts
 )

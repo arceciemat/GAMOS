@@ -1,3 +1,4 @@
+//t process/em/QuantumEntanglement
 #include "GmAcollinearEplusAnnihilation.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4MaterialCutsCouple.hh"
@@ -14,7 +15,7 @@ GmAcollinearEplusAnnihilation::GmAcollinearEplusAnnihilation(const G4String& nam
   : G4VEmProcess(name), isInitialised(false)
 {
   theGamma = G4Gamma::Gamma();
-  SetIntegral(true);
+  // SetIntegral(true);
   SetBuildTableFlag(false);
   SetStartFromNullFlag(false);
   SetSecondaryParticle(theGamma);

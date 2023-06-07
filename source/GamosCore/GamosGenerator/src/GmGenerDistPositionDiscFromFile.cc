@@ -173,7 +173,7 @@ void GmGenerDistPositionDiscFromFile::ReadPositionDist()
 }
 
 //-----------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionDiscFromFile::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionDiscFromFile::GeneratePosition( GmParticleSource* )
 {
   G4double radius;
   G4double pv = CLHEP::RandFlat::shoot();

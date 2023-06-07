@@ -1,5 +1,4 @@
 #include "GmOpticalPropertiesMgr.hh"
-#include "GmRegionData.hh"
 #include "GmGeometryUtils.hh"
 #include "GmGeomVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -91,6 +90,9 @@ void GmOpticalPropertiesMgr::AddWavelengthsToTable( std::vector<G4String> wl )
 //-----------------------------------------------------------------------
 void GmOpticalPropertiesMgr::AddPropertyToTable( const std::vector<G4String> wl )
 {
+  for( size_t ii = 0; ii < wl.size(); ii++ ) {
+    G4cout << ii << " AddPropertyToTable " << wl[ii] << G4endl;
+  }
   G4bool bFound = false;
   for( msmpt::const_iterator itet = theMatPropTables.begin(); itet != theMatPropTables.end(); itet++ ) {
     if( GmGenUtils::AreWordsEquivalent(wl[1], itet->first) ) {
@@ -99,10 +101,10 @@ void GmOpticalPropertiesMgr::AddPropertyToTable( const std::vector<G4String> wl 
   }
   if( bFound ) {      
     // check if a map of properties for this table exists or not
-    bFound = false; 
+    G4bool bFound2 = false; 
     for( msmsvd::const_iterator itep = theMPTProperties.begin(); itep != theMPTProperties.end(); itep++ ) {
       if( GmGenUtils::AreWordsEquivalent(wl[1], itep->first) ) {
-	bFound = true;
+	bFound2 = true;
 	//It exists: 1. check that vector has same length as other vectors in table
 	// get first vector
 	std::map<G4String,std::vector<G4double> >* firstProp = (*itep).second;
@@ -123,25 +125,22 @@ void GmOpticalPropertiesMgr::AddPropertyToTable( const std::vector<G4String> wl 
 	}
       }
     }
-    if( !bFound ) {
+    if( !bFound2 ) {
       //It does not exists: create map of properties for this table
       theMPTProperties[ wl[1] ] = new std::map<G4String,std::vector<G4double> >;
     }
 
     // 2. use the map(s)
-    for( msmsvd::const_iterator itep = theMPTProperties.begin(); itep != theMPTProperties.end(); itep++ ) {
-      if( GmGenUtils::AreWordsEquivalent(wl[1], itep->first) ) {
-	std::map<G4String,std::vector<G4double> >* mpvect = (*itep).second;
-	std::vector<G4double> properties;
-	for( unsigned int ii = 3; ii < wl.size(); ii++ ) {
-	  properties.push_back( GmGenUtils::GetValue( wl[ii] ) );
-	}
-	(*mpvect)[wl[2]] = properties; 
-#ifndef GAMOS_NO_VERBOSE
-	if( GeomVerb(debugVerb) )  G4cout << " added to table " << wl[1] << " a property= " << wl[2] << " of size " << properties.size() << G4endl;
-#endif
-      }
+    std::map<G4String,std::vector<G4double> >* mpvect = theMPTProperties[ wl[1] ];
+    std::vector<G4double> properties;
+    for( unsigned int ii = 3; ii < wl.size(); ii++ ) {
+      properties.push_back( GmGenUtils::GetValue( wl[ii] ) );
     }
+    (*mpvect)[wl[2]] = properties; 
+#ifndef GAMOS_NO_VERBOSE
+    if( GeomVerb(debugVerb) )  G4cout << "GmOpticalPropertiesMgr::AddPropertyToTable( added to table " << wl[1] << " a property= " << wl[2] << " of size " << properties.size() << G4endl;
+#endif
+    
   } else {
     G4Exception(" GmOpticalPropertiesMgr::AddPropertyToTable",
 		" Trying to add a property to a non existing material properties table",
@@ -162,25 +161,26 @@ void GmOpticalPropertiesMgr::AddConstPropertyToTable( const std::vector<G4String
     }
   }
   if( bFound ) {
-    bFound = false;
+    G4bool bFound2 = false;
     // check if a property for this table exists or not
-    for( msmsvd::const_iterator itep = theMPTProperties.begin(); itep != theMPTProperties.end(); itep++ ) {
+    for( msmsd::const_iterator itep = theMPTConstProperties.begin(); itep != theMPTConstProperties.end(); itep++ ) {
       if( GmGenUtils::AreWordsEquivalent(wl[1], itep->first) ) {
-	bFound = false;
+	bFound2 = true;
       }
     }
     
-    if( !bFound ) {
+    if( !bFound2 ) {
       //It does not exists: create properties for this table
       theMPTConstProperties[ wl[1] ] = new std::map<G4String,G4double>;
     }
 
-    for(  msmsd::const_iterator itep = theMPTConstProperties.find(wl[1]); itep != theMPTConstProperties.end(); itep++ ) {
-      if( GmGenUtils::AreWordsEquivalent(wl[1], itep->first) ) {
-	std::map<G4String,G4double>* mpd = (*itep).second;
-	(*mpd)[wl[2]] = GmGenUtils::GetValue(wl[3]);
-      }
-    }
+    std::map<G4String,G4double>* mpd = theMPTConstProperties[ wl[1] ];
+   
+    (*mpd)[wl[2]] = GmGenUtils::GetValue(wl[3]);
+
+#ifndef GAMOS_NO_VERBOSE
+    if( GeomVerb(debugVerb) ) G4cout << "GmOpticalPropertiesMgr::AddConstPropertyToTable(  added to table " << wl[1] << " a property= " << wl[2] << " value= " << wl[3] << " N=" << mpd->size() << G4endl;
+#endif
 
   } else {
     G4Exception(" GmOpticalPropertiesMgr::AddConstPropertyToTable",
@@ -189,7 +189,6 @@ void GmOpticalPropertiesMgr::AddConstPropertyToTable( const std::vector<G4String
 		G4String("Looking for table : " + wl[1] ));
   }
 }
-
 
 //-----------------------------------------------------------------------
 void GmOpticalPropertiesMgr::AttachTableToMaterial( const std::vector<G4String> wl )
@@ -427,7 +426,7 @@ void GmOpticalPropertiesMgr::CreateLogicalSkinSurface( const std::vector<G4Strin
     // Check if optical surface exists
   G4bool bFound = false;
   for( msos::const_iterator ite = theOpticalSurfaces.begin(); ite != theOpticalSurfaces.end(); ite++ ) {
-    if( GmGenUtils::AreWordsEquivalent(wl[4], ite->first) ) {
+    if( GmGenUtils::AreWordsEquivalent(wl[3], ite->first) ) {
       bFound = true;
       struct LogicalSkinSurfaceData lss;
       lss.LVname = wl[2];
@@ -441,7 +440,7 @@ void GmOpticalPropertiesMgr::CreateLogicalSkinSurface( const std::vector<G4Strin
     G4Exception(" GmOpticalPropertiesMgr::CreateLogicalSkinSurface",
 		  " Optical surface does not exists",
 		  FatalErrorInArgument,
-		G4String("optical surface: " + wl[4] + " in logical skin surface " + wl[1]));
+		G4String("optical surface: " + wl[3] + " in logical skin surface " + wl[1]));
   }
 
   

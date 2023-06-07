@@ -93,7 +93,6 @@ void GmPrintEMParamsUA::BeginOfRunAction(const G4Run*)
   G4cout << "# EM PARAM # ELoss LPM : " << param->LPM() << G4endl; 
   //  G4cout << "# EM PARAM # ELoss useAngGeneratorForIonisation : " << param->useAngGeneratorForIonisation() << G4endl; 
   G4cout << "# EM PARAM # ELoss UseCutAsFinalRange : " << param->UseCutAsFinalRange() << G4endl; 
-  G4cout << "# EM PARAM # ELoss Spline : " << param->Spline() << G4endl; 
   G4cout << "# EM PARAM # ApplyCuts : " << param->ApplyCuts() << G4endl; 
   G4cout << "# EM PARAM # Fluo " << param->Fluo() << G4endl; 
   G4cout << "# EM PARAM # BeardenFluoDir :" << param->BeardenFluoDir() << G4endl; 
@@ -105,7 +104,6 @@ void GmPrintEMParamsUA::BeginOfRunAction(const G4Run*)
   G4cout << "# EM PARAM # Msc MuHadLateralDisplacement : " << param->MuHadLateralDisplacement() << G4endl; 
   //  G4cout << "# EM PARAM # Msc LatDisplacementBeyondSafety : " << param->LatDisplacementBeyondSafety() << G4endl; 
   G4cout << "# EM PARAM # UseMottCorrection : " << param->UseMottCorrection() << G4endl; // for Ioni
-  G4cout << "# EM PARAM # Eloss MinSubRange : " << param->MinSubRange() << G4endl; 
   G4cout << "# EM PARAM # ELoss MaxEnergyForCSDARange : " << param->MaxEnergyForCSDARange() << G4endl; 
   G4cout << "# EM PARAM # ELoss LowestElectronEnergy : " << param->LowestElectronEnergy() << G4endl; 
   G4cout << "# EM PARAM # ELoss LowestMuHadEnergy : " << param->LowestMuHadEnergy() << G4endl; 
@@ -152,10 +150,8 @@ std::map<G4String, std::map<G4String,double>* > GmPrintEMParamsUA::GetIoniParams
 	} else {
 	  ioniParams = (*ite).second;
 	}
-	(*ioniParams)["RoverRange"] = procEL->dRoverRange;					
-	(*ioniParams)["finalRange"] = procEL->finalRange;					
-	(*ioniParams)["subsecID"] = procEL->subsecID;					
-	(*ioniParams)["IsIntegral"] = procEL->IsIntegral();					
+	(*ioniParams)["RoverRange"] = procEL->dRoverRange;    
+	(*ioniParams)["finalRange"] = procEL->finalRange;		
       }
     }
     

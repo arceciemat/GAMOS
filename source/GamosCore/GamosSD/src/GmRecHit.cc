@@ -22,7 +22,6 @@ GmRecHit::GmRecHit( GmHit* hit )
   theMaxSimHitEnergy = theEnergy;
   
   G4String sdtype = theSDType.substr(1,theSDType.size()-2);
-
   bPosAtBarycentre = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("SD:RecHit:PosAtBarycentre:"+sdtype,0));
 
   theHitsTimeType = GmHitsEventMgr::GetInstance()->GetHitsTimeType();
@@ -49,7 +48,8 @@ GmRecHit::GmRecHit( GmRecHit* rh )
   theMaxSimHitEnergy = rh->GetMaxSimHitEnergy();
   theSDType = rh->GetSDType();
 
-  bPosAtBarycentre = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("SD:RecHit:PosAtBarycentre:"+theSDType,0));
+  G4String sdtype = theSDType.substr(1,theSDType.size()-2);
+  bPosAtBarycentre = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("SD:RecHit:PosAtBarycentre:"+sdtype,0));
   theHitsTimeType = GmHitsEventMgr::GetInstance()->GetHitsTimeType();
   theHitsTimeType = 1;
 #ifndef GAMOS_NO_VERBOSE

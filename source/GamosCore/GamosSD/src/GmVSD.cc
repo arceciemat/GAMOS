@@ -64,7 +64,7 @@ void GmVSD::SetName(G4String name)
   ROgeometry = nullptr;
   filter = nullptr;
 
-  size_t sLast = name.last('/');
+  size_t sLast = name.find_last_of('/');
   if(sLast==std::string::npos)
     { // detector name only
       SensitiveDetectorName = name;
@@ -73,10 +73,10 @@ void GmVSD::SetName(G4String name)
   else
     { // name conatin the directory path
       SensitiveDetectorName = name;
-      SensitiveDetectorName.remove(0,sLast+1);
+      SensitiveDetectorName.erase(0,sLast+1);
       thePathName = name;
-      thePathName.remove(sLast+1,name.length()-sLast);
-      if(thePathName(0)!='/') thePathName.prepend("/");
+      thePathName.erase(sLast+1,name.length()-sLast);
+      if(thePathName[0]!='/') thePathName.insert(0,"/");
     }
   fullPathName = thePathName + SensitiveDetectorName;
 }

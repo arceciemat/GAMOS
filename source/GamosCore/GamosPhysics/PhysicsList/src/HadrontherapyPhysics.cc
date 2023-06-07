@@ -23,29 +23,17 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// This is the *BASIC* version of Hadrontherapy, a Geant4-based application
-// See more at: http://g4advancedexamples.lngs.infn.it/Examples/hadrontherapy
-//
-// Visit the Hadrontherapy web site (http://www.lns.infn.it/link/Hadrontherapy) to request 
-// the *COMPLETE* version of this program, together with its documentation;
-// Hadrontherapy (both basic and full version) are supported by the Italian INFN
-// Institute in the framework of the MC-INFN Group
+// Hadrontherapy advanced example for Geant4
+// See more at: https://twiki.cern.ch/twiki/bin/view/Geant4/AdvancedExamplesHadrontherapy
 //
 //
-// Hadrontherapy Users are recommended to use the prepared macro files in order to activate the 
-// most appropriate physics for hadrontherapy applications.
-// As one can easily see the physics we suggest is contained in the
-// 'QGSP_BIC_EMY' list adding to the decay processes (activated as default).
+//    ******      SUGGESTED PHYSICS FOR ACCURATE SIMULATIONS    *********
+//    ******            IN MEDICAL PHYSICS APPLICATIONS         *********
 //
-//
-//    ******                     SUGGESTED PHYSICS                 *********
-//
-//    AT MOMENT, IF ACCURATE RESULTS ARE NEEDED, WE STRONGLY RECOMMEND: 
-//    1. The use of the macro 'hadron_therapy.mac', that is connected with the HadrontherapyPhysics.cc file.
-//    2. the QGSP_BIC_EMY Reference Physics Lists (define the PHYSLIST eviroment variable):
-//       export PHYSLIST=QGSP_BIC_EMY
-//       User must considered that, in this second case, radioactive processes are not activated 
- 
+// 'HADRONTHERAPY_1' and 'HADRONTHERAPY_2' are both suggested;
+// It can be activated inside any macro file using the command:
+// /Physics/addPhysics HADRONTHERAPY_1 (HADRONTHERAPY_2)
+
 #include "G4SystemOfUnits.hh"
 #include "G4RunManager.hh"
 #include "G4Region.hh"
@@ -55,15 +43,10 @@
 #include "HadrontherapyStepMax.hh"
 #include "G4PhysListFactory.hh"
 #include "G4VPhysicsConstructor.hh"
-
-// Local physic directly implemented in the Hadronthrapy directory
-#include "LocalIonIonInelasticPhysic.hh"             // Physic dedicated to the ion-ion inelastic processes
-
-// Physic lists (contained inside the Geant4 source code, in the 'physicslists folder')
+#include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4HadronPhysicsQGSP_BIC.hh"
-#include "G4EmStandardPhysics_option3.hh"
-#include "G4EmLivermorePhysics.hh"
-#include "G4EmPenelopePhysics.hh"
+#include "G4EmStandardPhysics_option4.hh"
+#include "G4EmStandardPhysics.hh"
 #include "G4EmExtraPhysics.hh"
 #include "G4StoppingPhysics.hh"
 #include "G4DecayPhysics.hh"
@@ -78,193 +61,158 @@
 #include "G4ProcessManager.hh"
 #include "G4IonFluctuations.hh"
 #include "G4IonParametrisedLossModel.hh"
-#include "G4EmProcessOptions.hh"
 #include "G4ParallelWorldPhysics.hh"
+#include "G4EmLivermorePhysics.hh"
+#include "G4AutoDelete.hh"
+#include "G4HadronPhysicsQGSP_BIC_AllHP.hh"
 
 /////////////////////////////////////////////////////////////////////////////
 HadrontherapyPhysics::HadrontherapyPhysics() : G4VModularPhysicsList()
 {
-  G4LossTableManager::Instance();
-  defaultCutValue = 1.*mm;
-  cutForGamma     = defaultCutValue;
-  cutForElectron  = defaultCutValue;
-  cutForPositron  = defaultCutValue;
-
-  helIsRegistered  = false;
-  bicIsRegistered  = false;
-  biciIsRegistered = false;
-  locIonIonInelasticIsRegistered = false;
-  radioactiveDecayIsRegistered = false;
-
-  stepMaxProcess  = 0;
-
-  pMessenger = new HadrontherapyPhysicsMessenger(this);
-
-  SetVerboseLevel(1);
-
-  // ******     Definition of some defaults for the physics     *****
-  // ******     in case no physics is called by the macro file  *****
-  // EM physics
-  emPhysicsList = new G4EmStandardPhysics_option3(1);
-  emName = G4String("emstandard_opt3");
-
-  // Decay physics and all particles
-  decPhysicsList = new G4DecayPhysics();
-  raddecayList = new G4RadioactiveDecayPhysics();
+    G4LossTableManager::Instance();
+    defaultCutValue = 1.*mm;
+    cutForGamma     = defaultCutValue;
+    cutForElectron  = defaultCutValue;
+    cutForPositron  = defaultCutValue;
+    
+    pMessenger = new HadrontherapyPhysicsMessenger(this);
+    SetVerboseLevel(1);
+    decay_List = new G4DecayPhysics();
+    // Elecromagnetic physics
+    //
+    emPhysicsList = new G4EmStandardPhysics_option4();
+    
 }
 
 /////////////////////////////////////////////////////////////////////////////
 HadrontherapyPhysics::~HadrontherapyPhysics()
 {
-  delete pMessenger;
-  delete emPhysicsList;
-  delete decPhysicsList;
-  delete raddecayList;
-
-  for(size_t i=0; i<hadronPhys.size(); i++) {delete hadronPhys[i];}
+    delete pMessenger;
+    delete emPhysicsList;
+    delete decay_List;
+    //delete radioactiveDecay_List;
+    hadronPhys.clear();
+    for(size_t i=0; i<hadronPhys.size(); i++)
+    {
+        delete hadronPhys[i];
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void HadrontherapyPhysics::ConstructParticle()
 {
-  decPhysicsList->ConstructParticle();
+    decay_List -> ConstructParticle();
+    
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void HadrontherapyPhysics::ConstructProcess()
 {
-  // transportation
-  AddTransportation();
-
-  // electromagnetic physics list
-  emPhysicsList->ConstructProcess();
-  em_config.AddModels();
-
-  // decay physics list
-  decPhysicsList->ConstructProcess();
-  raddecayList->ConstructProcess();
-
-  // hadronic physics lists
-  for(size_t i=0; i<hadronPhys.size(); i++) {
-    hadronPhys[i] -> ConstructProcess();
-  }
-
-  // step limitation (as a full process)
-  //
-  AddStepMax();
-
-  return;
+    // Transportation
+    //
+    AddTransportation();
+    
+    decay_List -> ConstructProcess();
+    emPhysicsList -> ConstructProcess();
+    
+    
+    //em_config.AddModels();
+    
+    // Hadronic physics
+    //
+    for(size_t i=0; i < hadronPhys.size(); i++)
+    {
+        hadronPhys[i] -> ConstructProcess();
+    }
+    
+    // step limitation (as a full process)
+    //
+    AddStepMax();
+    
+    //Parallel world sensitivity
+    //
+    G4ParallelWorldPhysics* pWorld = new G4ParallelWorldPhysics("DetectorROGeometry");
+    pWorld->ConstructProcess();
+    
+    return;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void HadrontherapyPhysics::AddPhysicsList(const G4String& name)
 {
-
-  if (verboseLevel>1) {
-    G4cout << "PhysicsList::AddPhysicsList: <" << name << ">" << G4endl;
-  }
-  if (name == emName) return;
-
-  /////////////////////////////////////////////////////////////////////////////
-  //   ELECTROMAGNETIC MODELS
-  /////////////////////////////////////////////////////////////////////////////
-  if (name == "standard_opt3") {
-    emName = name;
-    delete emPhysicsList;
-    emPhysicsList = new G4EmStandardPhysics_option3();
-    G4RunManager::GetRunManager() -> PhysicsHasBeenModified();
-    G4cout << "THE FOLLOWING ELECTROMAGNETIC PHYSICS LIST HAS BEEN ACTIVATED: G4EmStandardPhysics_option3" << G4endl;
-
-  } else if (name == "LowE_Livermore") {
-    emName = name;
-    delete emPhysicsList;
-    emPhysicsList = new G4EmLivermorePhysics();
-    G4RunManager::GetRunManager()-> PhysicsHasBeenModified();
-    G4cout << "THE FOLLOWING ELECTROMAGNETIC PHYSICS LIST HAS BEEN ACTIVATED: G4EmLivermorePhysics" << G4endl;
-
-  } else if (name == "LowE_Penelope") {
-    emName = name;
-    delete emPhysicsList;
-    emPhysicsList = new G4EmPenelopePhysics();
-    G4RunManager::GetRunManager()-> PhysicsHasBeenModified();
-    G4cout << "THE FOLLOWING ELECTROMAGNETIC PHYSICS LIST HAS BEEN ACTIVATED: G4EmPenelopePhysics" << G4endl;
+    if (verboseLevel>1) {
+        G4cout << "PhysicsList::AddPhysicsList: <" << name << ">" << G4endl;
+    }
+    if (name == emName) return;
     
-  } else if (name == "local_ion_ion_inelastic") {
-    hadronPhys.push_back(new LocalIonIonInelasticPhysic());
-    locIonIonInelasticIsRegistered = true;
-
-  } else if (name == "QGSP_BIC_EMY") {
-    AddPhysicsList("emstandard_opt3");
-    hadronPhys.push_back( new G4HadronPhysicsQGSP_BIC());
-    hadronPhys.push_back( new G4EmExtraPhysics());
-    hadronPhys.push_back( new G4HadronElasticPhysics());
-    hadronPhys.push_back( new G4StoppingPhysics());
-    hadronPhys.push_back( new G4IonBinaryCascadePhysics());
-    hadronPhys.push_back( new G4NeutronTrackingCut());
+    ///////////////////////////////////
+    //   ELECTROMAGNETIC MODELS
+    ///////////////////////////////////
+    if (name == "standard_opt4") {
+        emName = name;
+        delete emPhysicsList;
+        hadronPhys.clear();
+        emPhysicsList = new G4EmStandardPhysics_option4();
+        G4RunManager::GetRunManager() -> PhysicsHasBeenModified();
+        G4cout << "THE FOLLOWING ELECTROMAGNETIC PHYSICS LIST HAS BEEN ACTIVATED: G4EmStandardPhysics_option4" << G4endl;
+        
+        ////////////////////////////////////////
+        //   ELECTROMAGNETIC + HADRONIC MODELS
+        ////////////////////////////////////////
+        
+    }  else if (name == "HADRONTHERAPY_1") {
+        
+        AddPhysicsList("standard_opt4");
+        hadronPhys.push_back( new G4DecayPhysics());
+        hadronPhys.push_back( new G4RadioactiveDecayPhysics());
+        hadronPhys.push_back( new G4IonBinaryCascadePhysics());
+        hadronPhys.push_back( new G4EmExtraPhysics());
+        hadronPhys.push_back( new G4HadronElasticPhysicsHP());
+        hadronPhys.push_back( new G4StoppingPhysics());
+        hadronPhys.push_back( new G4HadronPhysicsQGSP_BIC_HP());
+        hadronPhys.push_back( new G4NeutronTrackingCut());
+        
+        G4cout << "HADRONTHERAPY_1 PHYSICS LIST has been activated" << G4endl;
+    }
     
-  } else { 
-    G4cout << "PhysicsList::AddPhysicsList: <" << name << ">"
-	   << " is not defined"
-	   << G4endl;
-  }
+    else if (name == "HADRONTHERAPY_2") {
+        // HP models are switched off
+        AddPhysicsList("standard_opt4");
+        hadronPhys.push_back( new G4DecayPhysics());
+        hadronPhys.push_back( new G4RadioactiveDecayPhysics());
+        hadronPhys.push_back( new G4IonBinaryCascadePhysics());
+        hadronPhys.push_back( new G4EmExtraPhysics());
+        hadronPhys.push_back( new G4HadronElasticPhysics());
+        hadronPhys.push_back( new G4StoppingPhysics());
+        hadronPhys.push_back( new G4HadronPhysicsQGSP_BIC());
+        hadronPhys.push_back( new G4NeutronTrackingCut());
+        
+        G4cout << "HADRONTHERAPY_2 PHYSICS LIST has been activated" << G4endl;    }
+    else {
+        G4cout << "PhysicsList::AddPhysicsList: <" << name << ">"
+        << " is not defined"
+        << G4endl;
+    }
+    
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void HadrontherapyPhysics::AddStepMax()
 {
-  // Step limitation seen as a process
-  stepMaxProcess = new HadrontherapyStepMax();
-
-  auto particleIterator=GetParticleIterator();
-  particleIterator->reset();
-  while ((*particleIterator)()){
-    G4ParticleDefinition* particle = particleIterator->value();
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-
-    if (stepMaxProcess->IsApplicable(*particle) && pmanager)
-      {
-	pmanager ->AddDiscreteProcess(stepMaxProcess);
-      }
-  }
+    // Step limitation seen as a process
+    // This process must exist in all threads.
+    //
+    HadrontherapyStepMax* stepMaxProcess  = new HadrontherapyStepMax();
+    
+    auto particleIterator = GetParticleIterator();
+    particleIterator->reset();
+    while ((*particleIterator)()){
+        G4ParticleDefinition* particle = particleIterator->value();
+        G4ProcessManager* pmanager = particle->GetProcessManager();
+        
+        if (stepMaxProcess->IsApplicable(*particle) && pmanager)
+        {
+            pmanager ->AddDiscreteProcess(stepMaxProcess);
+        }
+    }
 }
-
-/////////////////////////////////////////////////////////////////////////////
-void HadrontherapyPhysics::SetCuts()
-{
-
-  if (verboseLevel >0){
-    G4cout << "PhysicsList::SetCuts:";
-    G4cout << "CutLength : " << G4BestUnit(defaultCutValue,"Length") << G4endl;
-  }
-
-  // set cut values for gamma at first and for e- second and next for e+,
-  // because some processes for e+/e- need cut values for gamma
-  SetCutValue(cutForGamma, "gamma");
-  SetCutValue(cutForElectron, "e-");
-  SetCutValue(cutForPositron, "e+");
-
-  if (verboseLevel>0) DumpCutValuesTable();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void HadrontherapyPhysics::SetCutForGamma(G4double cut)
-{
-  cutForGamma = cut;
-  SetParticleCuts(cutForGamma, G4Gamma::Gamma());
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void HadrontherapyPhysics::SetCutForElectron(G4double cut)
-{
-  cutForElectron = cut;
-  SetParticleCuts(cutForElectron, G4Electron::Electron());
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void HadrontherapyPhysics::SetCutForPositron(G4double cut)
-{
-  cutForPositron = cut;
-  SetParticleCuts(cutForPositron, G4Positron::Positron());
-}
-
-

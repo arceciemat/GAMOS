@@ -52,7 +52,7 @@ void GmReadPhantomG4BinGeometry::ReadPhantomData()
 		    FatalException,
 		    "Problem reading material name");
       }
-      stemp += G4String(sc);
+      stemp += G4String(1,sc);
       //      G4cout << jj << " " << sc << " nmate " << ii << " mate " << stemp << G4endl;
     }
     G4int jj;
@@ -72,7 +72,7 @@ void GmReadPhantomG4BinGeometry::ReadPhantomData()
 		  FatalException,
 		  "Problem reading patient position");
     }
-    thePatientPosition += G4String(sc);
+    thePatientPosition += G4String(1,sc);
   }
   if( fread(&nVoxelX, sizeof(size_t),  1, fin) != 1) {
     G4Exception(" GmReadPhantomG4BinGeometry::ReadPhantomData",

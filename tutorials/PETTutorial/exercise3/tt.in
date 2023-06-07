@@ -1,3 +1,4 @@
+/gamos/verbosity GmSDVerbosity debug 
 /gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise3c
 /gamos/setParam GmGeometryFromText:FileName ../exercise1/pet.geom
 /gamos/geometry GmGeometryFromText
@@ -9,9 +10,7 @@
 
 /gamos/userAction GmCountProcessesUA
 /gamos/userAction GmHistosGammaAtSD
-/P  SD:GmHitsWriteUA:BinFile 0
 /gamos/userAction GmHitsHistosUA
-/gamos/userAction GmHitsWriteUA
 /gamos/userAction GmRecHitsHistosUA
 /gamos/userAction PETEventClassifierUA
 
@@ -26,9 +25,6 @@
 
 /gamos/generator/addIsotopeSource source F18 1.E-4*curie
 /gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
-/gamos/generator/timeDist source GmGenerDistTimeConstantChange 14338919*second
 
-/run/beamOn 10000
-
-/gamos/base/printParametersUsage 999
+/run/beamOn 100
 

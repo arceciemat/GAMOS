@@ -88,16 +88,16 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
 
     G4double radO = sphe->GetOuterRadius();
     G4double radO2 = radO * radO;
-    G4double radI2 = sphe->GetInsideRadius() * sphe->GetInsideRadius();
+    G4double radI2 = sphe->GetInnerRadius() * sphe->GetInnerRadius();
     G4double phiStart = sphe->GetStartPhiAngle();
     G4double phiEnd = sphe->GetStartPhiAngle() + sphe->GetDeltaPhiAngle();
-    if( phiEnd < 0. || phiEnd > CLHEP::twopi ) phiEnd = fmod(phiEnd+CLHEP::twopi,2*CLHEP::pi);
+    G4bool bDisp360 = CheckPhiStartEnd(phiStart,phiEnd);
+    //    if( phiEnd < 0. || phiEnd > CLHEP::twopi ) phiEnd = fmod(phiEnd+CLHEP::twopi,2*CLHEP::pi);
     G4double thetaS = sphe->GetStartThetaAngle();
     G4double thetaE = sphe->GetStartThetaAngle() + sphe->GetDeltaThetaAngle();
     if( thetaE < 0. || thetaE > CLHEP::pi ) thetaE = fmod(thetaE+CLHEP::pi,CLHEP::pi);
     //----- most cases it will be a full sphere, and not checking will spare some time
     G4bool bFullSphere = (radI2 == 0. && phiStart == 0. && fabs(phiEnd-2*CLHEP::pi) < angTolerance && thetaS == 0. && fabs(thetaE - 2*CLHEP::pi) < angTolerance);
-
 
 #ifndef GAMOS_NO_VERBOSE
     if( !bFullSphere && GenerVerb(debugVerb) ) G4cout << "GmPositionVolumePos::GeneratePosInSolid solid is sphere but not full " << solid->GetName() << G4endl;
@@ -113,7 +113,8 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
 	continue;
       } else if( !bFullSphere ){
 	G4ThreeVector pos = G4ThreeVector(x,y,z);
-	G4double phi = fmod(pos.phi()+CLHEP::twopi,CLHEP::twopi); 
+	G4double phi = pos.phi();
+	CheckPhiPos( phi, bDisp360 );
 	G4double theta = fmod(pos.theta()+CLHEP::pi,CLHEP::pi);
 	if( pos.mag2() < radI2 ||
 	    theta < thetaS || theta > thetaE || 
@@ -160,8 +161,10 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
     G4double zlength = tub->GetZHalfLength();
     G4double phiStart = tub->GetStartPhiAngle();
     G4double phiEnd = tub->GetStartPhiAngle() + tub->GetDeltaPhiAngle();
-    if( phiEnd < 0. || phiEnd > CLHEP::twopi ) phiEnd = fmod(phiEnd+CLHEP::twopi,CLHEP::twopi);
+    G4bool bDisp360 = CheckPhiStartEnd(phiStart,phiEnd);
 
+    //    if( phiEnd > 180.*CLHEP::deg ) phiEnd -=  180.*CLHEP::deg;
+    //    if( phiEnd < 0. || phiEnd > CLHEP::twopi ) phiEnd = fmod(phiEnd+CLHEP::twopi,CLHEP::twopi);
     //----- most cases it will be a full tube section, and not checking will spare some time
     G4bool bFullTubs = (radI2 == 0. && phiStart == 0. && fabs(phiEnd - CLHEP::twopi) < angTolerance );
 #ifndef GAMOS_NO_VERBOSE
@@ -176,25 +179,26 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
 #ifndef GAMOS_NO_VERBOSE
       if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid try x " << x << " y " << y << " x*x+y*y " <<  x*x+y*y << " radO2 " << radO2 << G4endl;
 #endif
-
+      
       if( x*x+y*y > radO2 ) {
 #ifndef GAMOS_NO_VERBOSE
-      if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid too big posPerp " << x*x+y*y << " > " << radO2 << G4endl;
+	if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid too big posPerp " << x*x+y*y << " > " << radO2 << G4endl;
 #endif
 	continue;
       } else if( !bFullTubs ){
 	G4ThreeVector pos = G4ThreeVector(x,y,z);
-	G4double phi = fmod(pos.phi()+CLHEP::twopi,CLHEP::twopi); 
+	G4double phi = pos.phi();
+	CheckPhiPos( phi, bDisp360 );
 #ifndef GAMOS_NO_VERBOSE
-	if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid try  pos " << pos << " mag2 " << pos.mag2() << " phi " << phi << G4endl;
+	if( GenerVerb(debugVerb) ) G4cout << "GmPositionVolumePos::GeneratePosInSolid try  pos " << pos << " mag2 " << pos.mag2() << " phi " << phi << G4endl;
 #endif
 	if( pos.mag2() < radI2 ||
 	    phi < phiStart || phi > phiEnd ) {
 #ifndef GAMOS_NO_VERBOSE
-	  if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid small radius " << pos.mag2() << " <? " << radI2 << " phi out " << phiStart/CLHEP::deg << " <? " << phi/CLHEP::deg << " <? " << phiEnd/CLHEP::deg << G4endl;
+	  if( GenerVerb(debugVerb) ) G4cout  << x << " " << y << " BAD GmPositionVolumePos::GeneratePosInSolid small radius " << pos.mag2() << " <? " << radI2 << " phi out " << phiStart/CLHEP::deg << " <? " << phi/CLHEP::deg << " <? " << phiEnd/CLHEP::deg << G4endl;
 #endif
 	  continue;
-	}
+	} 
       }
       z = -zlength+2*zlength*CLHEP::RandFlat::shoot();
       break;
@@ -213,8 +217,9 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
     G4double zlength = solidc->GetZHalfLength();
     G4double phiStart = solidc->GetStartPhiAngle();
     G4double phiEnd = solidc->GetStartPhiAngle() + solidc->GetDeltaPhiAngle();
-    if( phiEnd < 0. || phiEnd > CLHEP::twopi ) phiEnd = fmod(phiEnd+CLHEP::twopi,CLHEP::twopi);
-    
+    G4bool bDisp360 = CheckPhiStartEnd(phiStart,phiEnd);
+    //    if( phiEnd < 0. || phiEnd > CLHEP::twopi ) phiEnd = fmod(phiEnd+CLHEP::twopi,CLHEP::twopi);
+
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(debugVerb) ) G4cout  << "GmPositionVolumePos::GeneratePosInSolid radO " << G4endl;
 #endif
@@ -241,7 +246,8 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
 	continue;
       } else if( !bFullCons ){
 	G4ThreeVector pos = G4ThreeVector(x,y,z);
-	G4double phi = fmod(pos.phi()+CLHEP::twopi,CLHEP::twopi); 
+	G4double phi = pos.phi();
+	CheckPhiPos( phi, bDisp360 );
 	if( phi < 0. ) phi += CLHEP::pi;
 	if( pos.mag2() < radI*radI ||
 	    phi < phiStart || phi > phiEnd ) continue;
@@ -267,7 +273,7 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
 
 	G4double phiStart    = polycone->GetStartPhi();	
 	G4double phiEnd      = polycone->GetEndPhi();
-	if( phiEnd < 0. || phiEnd > CLHEP::twopi ) phiEnd = fmod(phiEnd+CLHEP::twopi,CLHEP::twopi);
+	//if( phiEnd < 0. || phiEnd > CLHEP::twopi ) phiEnd = fmod(phiEnd+CLHEP::twopi,CLHEP::twopi);
 
         std::vector<TRIdata> ListTRI;
 #ifndef GAMOS_NO_VERBOSE
@@ -515,6 +521,7 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
   
 }
 
+//------------------------------------------------------------------------
 G4double GmPositionVolumePos::areaTRI(G4double r1, G4double z1, G4double r2, G4double z2, G4double r3, G4double z3)
 {
   G4double area=0.5*fabs((r1*z2+r3*z1+r2*z3-z2*r3-z1*r2-z3*r1));
@@ -522,6 +529,7 @@ G4double GmPositionVolumePos::areaTRI(G4double r1, G4double z1, G4double r2, G4d
 }
 
 
+//------------------------------------------------------------------------
 G4double GmPositionVolumePos::areaPOND(G4double Arr, G4double Azz, G4double Brr, G4double Bzz, G4double Crr, G4double Czz)
 {
   
@@ -586,8 +594,7 @@ G4double GmPositionVolumePos::areaPOND(G4double Arr, G4double Azz, G4double Brr,
 }
 
 
-
-
+//------------------------------------------------------------------------
 std::vector<TRIdata> GmPositionVolumePos::trianguliza(std::vector<Vpoint> vect_p, std::vector<TRIdata> list_tr)
 {
   std::vector<Vpoint> new_vect_p;
@@ -674,6 +681,7 @@ std::vector<TRIdata> GmPositionVolumePos::trianguliza(std::vector<Vpoint> vect_p
 }
 
 
+//------------------------------------------------------------------------
 G4double GmPositionVolumePos::find_R(G4double a, G4double b, G4double c, G4double d, G4double Rmin, G4double Rmax)
 {
 
@@ -711,11 +719,35 @@ G4double GmPositionVolumePos::find_R(G4double a, G4double b, G4double c, G4doubl
  else if ( (ceros[0].real() >= Rmin  && ceros[0].real() <= Rmax ) && (fabs(ceros[0].imag())<1e-10) ) {the_R=ceros[0].real();}
  else if ( ( ceros[1].real() >= Rmin  && ceros[1].real() <= Rmax )  && (fabs(ceros[1].imag())<1e-10) ) {the_R=ceros[1].real();}
  else if ( ( ceros[2].real() >= Rmin  && ceros[2].real() <= Rmax )  && (fabs(ceros[2].imag())<1e-10) ) {the_R=ceros[2].real();}
- else {G4Exception("GmPositionVolumePos::GeneratePosInSolid",
+ else {G4Exception("GmPositionVolumePos::find_R",
 		    "Wrong argument",
 		    FatalErrorInArgument,
 		   "Mcc2010:Polycone(caseAMB): Polycone.Random_Radial not found!");}
  
  return the_R;
  
+}
+
+
+//------------------------------------------------------------------------
+G4bool GmPositionVolumePos::CheckPhiStartEnd(G4double& phiStart, G4double& phiEnd)
+{
+  G4bool bDisp360 = false;
+  if( phiStart < 0. || phiEnd < 0. ) {
+    phiStart += 360.*CLHEP::deg;
+    phiEnd += 360.*CLHEP::deg;
+    bDisp360 = true;
+  }
+
+  return bDisp360;
+}
+
+//------------------------------------------------------------------------
+void GmPositionVolumePos::CheckPhiPos( G4double &phi, G4bool bDisp360 )
+{
+  if( bDisp360 ) {
+    phi += 360.*CLHEP::deg;
+  } else if( phi < 0. ) {
+    phi += 360.*CLHEP::deg;
+  }
 }

@@ -9,7 +9,9 @@ DicomLineDrawingOptions::DicomLineDrawingOptions()
 {
   theName = "";
   theOption = 2;
+#ifndef GAMOS_NO_ROOT
   theTColor = kBlack;
+#endif
   theStyle = 1;
   theWidth = 1;
   theTextSize = 0.01;
@@ -33,11 +35,13 @@ DicomLineDrawingOptions::DicomLineDrawingOptions( std::vector<G4String> wl )
   
   theName = wl[0];
   theOption = GmGenUtils::GetInteger(wl[1]); // 0: no drawing, 1: draw line, 2: draw also value
+#ifndef GAMOS_NO_ROOT
   if( wl.size() >= 3 ) {
     theTColor = GetColor(GmGenUtils::GetInteger(wl[2]));
   } else {
     theTColor = kBlack;
   }
+#endif
   if( wl.size() >= 4 ) {
     theStyle = GmGenUtils::GetInteger(wl[3]);
   } else {
@@ -58,6 +62,7 @@ DicomLineDrawingOptions::DicomLineDrawingOptions( std::vector<G4String> wl )
 
 }
 
+#ifndef GAMOS_NO_ROOT
 EColor DicomLineDrawingOptions::GetColor( int icol )
 {
   // kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
@@ -101,3 +106,4 @@ EColor DicomLineDrawingOptions::GetColor( int icol )
   return EColor(kBlack);
   
 }
+#endif

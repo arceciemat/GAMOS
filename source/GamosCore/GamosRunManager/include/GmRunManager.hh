@@ -21,6 +21,7 @@ public:
   void SelectPhysicsList( const G4String& );
   void SelectGenerator( const G4String& );
   void SelectUserAction( const G4String& );
+  void SelectUserTimeStepAction( const G4String& values );
   void SelectVerbosity( const G4String& );
   void SetRandomSeeds( G4int index, G4int nTries );
   void RestoreRandomSeeds( G4int index, G4int nTries );

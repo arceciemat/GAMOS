@@ -205,6 +205,8 @@ void GmScoringRun::DumpAllScorers()
 
   std::map<G4String,GmVPrimitiveScorer*> scorers = theScoringMgr->GetScorers();
 
+  if( scorers.size() == 0 ) return; // somebody has initialized a G4Run
+  
   // - Number of HitsMap in this RUN.
   G4int n = GetNumberOfHitsMap();
   //  G4cout << " GmScoringRun::DumpAllScorer() " << n << " " << theRunMap.size() << G4endl;

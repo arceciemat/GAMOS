@@ -3,7 +3,9 @@
 #include "GmPDSScore.hh"
 #include "GmPDSUtils.hh"
 #include "GmPDSDetector.hh"
+#ifndef WIN32
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
+#endif
 
 #include "GamosCore/GamosBase/Base/include/GmTrackInfo.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
@@ -34,8 +36,10 @@ GmPDSProcessHelper::GmPDSProcessHelper(PDS1aryType ptype )
   : the1aryType( ptype )
 //GmPDSProcessHelper::GmPDSProcessHelper(const G4String& name, G4SteppingManager* fpSM ): G4VDiscreteProcess( name )5~, fpSteppingManager(fpSM)
 {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if(ScoringVerb( testVerb) ) G4cout << " GmPDSProcessHelper::GmPDSProcessHelper " << this << G4endl;
+#endif
 #endif
   switch (the1aryType) {
   case PDSNeutron:
@@ -101,8 +105,10 @@ void GmPDSProcessHelper::SetDetectors( std::map<G4int, GmPDSDetector*> dets )
   std::map<G4int, GmPDSDetector*>::const_iterator itedet;
   for( itedet = theDetectors.begin(); itedet != theDetectors.end(); itedet++ ){
     theDetectorCentres[(*itedet).first] = (*itedet).second->GetCentrePoint();
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(debugVerb) ) G4cout << "GmPDSProcessHelper::SetDetector det " << (*itedet).first << " " << (*itedet).second->GetName() << " centre = " << theDetectorCentres[(*itedet).first] << " detID " << (*itedet).second->GetID() << G4endl;
+#endif
 #endif
     theDetectorIDs[(*itedet).first] = (*itedet).second->GetID();
   }
@@ -123,8 +129,10 @@ void GmPDSProcessHelper::BookHistos(G4int index)
   // for 91,92,93  100* detector ID
 
   bControlHistos = G4bool( GetPDSNumericParameter("ControlHistograms",theOriginalParticleName,1) );
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(warningVerb) ) G4cout << "GmPDSProcessHelper::BookHistos " << index << " " << bControlHistos << G4endl;
+#endif
 #endif
 
   if( bControlHistos ) {
@@ -389,8 +397,10 @@ void GmPDSProcessHelper::BuildEnergies()
     }
     std::map<G4double,Flux2Dose>::const_iterator ite, ite2;
     ite2 = theFlux2Dose.begin();
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(debugVerb) ) G4cout << "GmPDSProcessHelper::BuildEnergiesSetFlux2Dose  " << theFlux2Dose.size() << G4endl;
+#endif
 #endif
     for( ite = theFlux2Dose.begin(); ite != theFlux2Dose.end(); ite++ ){
 		 ite2++;
@@ -419,8 +429,10 @@ void GmPDSProcessHelper::BuildEnergies()
 //------------------------------------------------------------------
 void GmPDSProcessHelper::AddScore(const G4String& name, G4int detID )
 {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout <<"  GmPDSProcessHelper::AddScore " << name << " detID " << detID << G4endl;
+#endif
 #endif
   (*theScores)[name] = new GmPDSScore(name, detID, theEnergies);
 }
@@ -449,18 +461,20 @@ G4int GmPDSProcessHelper::DetectorReached(const G4Step& aStep)
   //  G4cout << " PV " << pv << " " << pv->GetCopyNo() << " size " << theDetectors.size() << G4endl;
   //  G4cout << " PV " << pv << " " << pv->GetName() << " " << pv->GetCopyNo() << " size " << G4endl;
   GmTouchable touch( aStep.GetPostStepPoint()->GetTouchable() );
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   //  if( ScoringVerb(debugVerb) ) G4cout <<"  GmPDSProcessHelper::DetectorReached " << touch.GetLongName() << G4endl;
+#endif
 #endif
 
   //  if( touch.GetLongName() == theDetector->GetName()  || aTrack->GetNextVolume()->GetName() == "sphDBlock" ){
   //  G4cout <<this << " DetectorReached " << (*(theDetectors.begin())).second << " " << theDetectors[1] << " " << theDetectors.size() <<  G4endl;
   if( pv->GetName() == (*theDetectors.begin()).second->GetName() ){ // all detectors have the same name
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     //    if( ScoringVerb(debugVerb) ) G4cout <<"  GmPDSProcessHelper::DetectorReached " << pv->GetName() << " =? " << theDetectors[pv->GetCopyNo()]->GetName() << G4endl;
-#endif
-#ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(debugVerb) ) G4cout <<"  GmPDSProcessHelper::DetectorReached returns TRUE " << G4endl;
+#endif
 #endif
     //-    G4cout << "PD reached " << G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID() << " " << aStep.GetTrack()->GetTrackID() << " " << aStep.GetTrack()->GetParentID() << G4endl;
     return pv->GetCopyNo(); 
@@ -485,8 +499,10 @@ void GmPDSProcessHelper::FillScores( const G4Track& aTrack, G4bool bGeantino,G4i
 
   std::set<G4double>::difference_type diffs = std::distance(theEnergies.begin(), itee);
   size_t enerID = G4int(diffs);
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << " GmPDSProcessHelper::FillScores ener " << ener << " set to energy bin " << (*itee) << " enerID " << enerID << G4endl;
+#endif
 #endif
 
   Flux2Dose flux2Dose = GetFlux2Dose( ener );
@@ -555,8 +571,10 @@ Flux2Dose GmPDSProcessHelper::GetFlux2Dose( G4double ener )
 {
   // it should be an extrapolation of order 4th
   std::map<G4double,Flux2Dose>::const_iterator itee = theFlux2Dose.upper_bound(ener);
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << " GmPDSProcessHelper::GetFlux2DoseID ener " << ener << " flux2dose Hstar " << (*itee).second.Hstar << G4endl;
+#endif
 #endif
 
   return (*itee).second;
@@ -583,8 +601,10 @@ void GmPDSProcessHelper::FillControlHistos( G4double ener, G4double wei, G4bool 
   //  theAnaMgr->GetHisto2(nh+12)->Fill(log10(ener),float(evtid));
   //  theAnaMgr->GetHisto2(nh+13)->Fill(log10(wei),float(evtid));
 
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << " GmPDSProcessHelper::FillScore1Set log10(ener) " << log10(ener) << " ener " << ener << " weight " << wei << G4endl;
+#endif
 #endif
 
 }
@@ -612,8 +632,10 @@ void GmPDSProcessHelper::StoreNeutronProcesses()
     G4HadronicProcess* prochad = dynamic_cast<G4HadronicProcess*>(proc);
     if( prochad ) {
       theNeutronProcesses[prochad->GetProcessName()] = prochad;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(infoVerb) ) G4cout << "GmPDSGeantinoProcess::StoreNeutronProcesses proc= " << prochad->GetProcessName() << G4endl;     
+#endif
 #endif
     }
   }
@@ -631,8 +653,10 @@ void GmPDSProcessHelper::StoreGammaProcesses()
       G4VEmProcess* procEM = (G4VEmProcess*)(proc);
       theGammaProcesses[proc->GetProcessName()] = procEM;
       //    theGammaProcesses.push_back(proc->GetProcessName());
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(infoVerb) ) G4cout << "GmPDSGeantinoProcess::StoreGammaProcesses proc= " << proc->GetProcessName() << G4endl;
+#endif
 #endif
     }
   }
@@ -652,8 +676,10 @@ void GmPDSProcessHelper::StoreOpticalPhotonProcesses()
       if( ! procDis ) continue;
       theOpticalPhotonProcesses[proc->GetProcessName()] = procDis;
       //    theOpticalPhotonProcesses.push_back(proc->GetProcessName());
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(infoVerb) ) G4cout << "GmPDSGeantinoProcess::StoreOpticalPhotonProcesses proc= " << proc->GetProcessName() << G4endl;
+#endif
 #endif
     }
 #endif
@@ -724,12 +750,16 @@ G4double GmPDSProcessHelper::GetCrossSectionForNeutron( const G4Step* aStep )
     for( G4int ii=0; ii<nElements; ii++ ) {
       G4double mcs = ((*iten).second)->GetMicroscopicCrossSection( dynParticle, (*aMaterial->GetElementVector())[ii], aMaterial);
       xSection += mcs * atomsPerVolumeVector[ii];
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout << "GmPDSProcessHelper::GetCrossSectionForNeutron ELEMENT " << ii << " MicroscopicXS = " << mcs << " process " << (*iten).first << " E= " << aTrackNeutron.GetKineticEnergy() << " MATE= " << aTrackNeutron.GetMaterial()->GetName() << G4endl;
 #endif
+#endif
     }
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(debugVerb) ) G4cout << "GmPDSProcessHelper::GetCrossSectionForNeutron  MicroscopicXS = " << xSection << " process " << (*iten).first << " E= " << aTrackNeutron.GetKineticEnergy() << " MATE= " << aTrackNeutron.GetMaterial()->GetName() << G4endl;
+#endif
 #endif
     xSectionAll += xSection;
   }
@@ -761,8 +791,10 @@ G4double GmPDSProcessHelper::GetCrossSectionForGamma( const G4Step* aStep )
     //      G4cout << "GmPDSProcessHelper::GetCrossSectionForGamma  CrossSection EM = " << procEM->CrossSectionPerVolume( energy, lv->GetMaterialCutsCouple() ) 
     //    << " ener " << energy 
     //     << " mate " << lv->GetMaterial()->GetName() << " process " << (*iteg).first << G4endl;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << "GmPDSProcessHelper::GetCrossSectionForGamma  CrossSection = " << XS << " ener " << energy << " mate " << lv->GetMaterial()->GetName() << " process " << (*iteg).first << G4endl;
+#endif
 #endif
 
   }
@@ -792,8 +824,10 @@ G4double GmPDSProcessHelper::GetCrossSectionForOpticalPhoton( const G4Step* aSte
     //      G4cout << "GmPDSProcessHelper::GetCrossSectionForOpticalPhoton  CrossSection EM = " << procEM->CrossSectionPerVolume( energy, lv->GetMaterialCutsCouple() ) 
     //    << " ener " << energy 
     //     << " mate " << lv->GetMaterial()->GetName() << " process " << (*iteg).first << G4endl;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << "GmPDSProcessHelper::GetCrossSectionForOpticalPhoton  CrossSection = " << XS << " ener " << energy << " mate " << lv->GetMaterial()->GetName() << " process " << (*iteg).first << G4endl;
+#endif
 #endif
   }
   

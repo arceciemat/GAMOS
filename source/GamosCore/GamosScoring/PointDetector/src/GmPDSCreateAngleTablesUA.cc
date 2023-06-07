@@ -1,7 +1,9 @@
 #include <math.h>
 
 #include "GmPDSCreateAngleTablesUA.hh"
+#ifndef WIN32
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
+#endif
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -47,13 +49,17 @@ void GmPDSCreateAngleTablesUA::BeginOfEventAction( const G4Event* evt )
     if( item == theMaterialIDs.end() ) {
       theCurrentMateID = theMaterialIDs.size();
       theMaterialIDs[mate] = theCurrentMateID;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout << "GmPDSCreateAngleTablesUA::BeginOfEventAction new material " << mate->GetName() << " N mates = " << theMaterialIDs.size() << " theCurrentMateID " << theCurrentMateID << G4endl;
 #endif
+#endif
     } else {
       theCurrentMateID = (*item).second;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout << "GmPDSCreateAngleTablesUA::BeginOfEventAction old material theCurrentMateID " << theCurrentMateID << G4endl;
+#endif
 #endif
     }
   }
@@ -70,13 +76,17 @@ void GmPDSCreateAngleTablesUA::BeginOfEventAction( const G4Event* evt )
     if( itee == theEnergyIDs.end() ) {
       theCurrentEnergyID = theEnergyIDs.size();
       theEnergyIDs[energy] = theCurrentEnergyID;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout << "GmPDSCreateAngleTablesUA::BeginOfEventAction new energy " << energy << " N energies = " << theEnergyIDs.size() << " theCurrentEnergyID " << theCurrentEnergyID << G4endl;
 #endif
+#endif
     } else {
       theCurrentEnergyID = (*itee).second;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout << "GmPDSCreateAngleTablesUA::BeginOfEventAction old energy " << energy << " theCurrentEnergyID " << theCurrentEnergyID << G4endl;
+#endif
 #endif
     }
     G4double val = energy*1.000001;
@@ -115,10 +125,12 @@ void GmPDSCreateAngleTablesUA::Initialise( const G4Event* evt )
   while( (*itepar)() ){
     G4ParticleDefinition* particle = itepar->value();
     if( particle->GetParticleName() == thePrimaryParticleName ){
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
      if( ScoringVerb(debugVerb) ) G4cout << "GmPDSCreateAngleTablesUA:  PARTICLE is " << particle->GetParticleName() << G4endl;
 #endif
-      pmanager = particle->GetProcessManager();
+#endif
+     pmanager = particle->GetProcessManager();
       break;
     }
   }
@@ -128,14 +140,15 @@ void GmPDSCreateAngleTablesUA::Initialise( const G4Event* evt )
   bInitialised = true;
 }
 
-
 //------------------------------------------------------------------
 void GmPDSCreateAngleTablesUA::BookHistos(G4String energyName, G4String mateName )
 {
   theHistos.insert(energyName+mateName);
 
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout << " GmPDSCreateAngleTablesUA::BookHistos " << energyName << " " << mateName << G4endl;
+#endif
 #endif
   std::string hnam,hnam0,hnam1;
   std::string procName;
@@ -174,8 +187,10 @@ void GmPDSCreateAngleTablesUA::UserSteppingAction(const G4Step* aStep)
     G4Track* seco = GetSecondaryTrackSameType();
     if( seco == 0 ) {
       //----- Get current track unless it is stopped (case of inelastic)
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout  << " GmPDSCreateAngleTablesUA::UserSteppingAction track status when no good seco " << aTrack->GetTrackStatus() << G4endl;
+#endif
 #endif
       //      G4cout << " old mom " << aTracknc->GetStep()->GetPreStepPoint()->GetMomentumDirection() << " new mom " << aTracknc->GetStep()->GetPostStepPoint()->GetMomentumDirection() << G4endl;
 
@@ -190,21 +205,27 @@ void GmPDSCreateAngleTablesUA::UserSteppingAction(const G4Step* aStep)
       } else if( aTrack->GetDefinition()->GetParticleName() == theSecondaryParticleName ) {
 	if( aTracknc->GetStep()->GetPreStepPoint()->GetMomentumDirection() != aTracknc->GetStep()->GetPostStepPoint()->GetMomentumDirection() ) {
 	  seco = aTracknc; // track has already changed direction (neutron: in LElastic this track is suspended and a new track with same direction is created, in hElastic, track continues, but in both cases it has changed direction 
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	  if( ScoringVerb(debugVerb) ) G4cout << " GmPDSCreateAngleTablesUA::UserSteppingAction  change of direction " << G4endl;
 #endif
-	} else {
+#endif
+    } else {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	  if( ScoringVerb(warningVerb) ) G4cerr << " GmPDSCreateAngleTablesUA::UserSteppingAction no seco and no change direction!!?!?  PROCESS= " << aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() << " momPre " << aTracknc->GetStep()->GetPreStepPoint()->GetMomentumDirection() << " momPost " << aTracknc->GetStep()->GetPostStepPoint()->GetMomentumDirection() << G4endl;
 #endif
-	  seco = aTracknc; 
+#endif
+      seco = aTracknc;
 	}
       }
     }
 
     if( seco != 0 ) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       //  if( procName != "LElastic" &&  procName != "hElastic" && procName != "inelastic" && procName != "NeutronInelastic" ) if( ScoringVerb(debugVerb) ) G4cout << " neutron from process " << procName << G4endl;
+#endif
 #endif
       //-      G4double cosAngle = (aStep->GetPreStepPoint()->GetMomentumDirection() * seco->GetMomentumDirection() );
       // for charged particles, msc is applied at AlongStepDoIt changing the direction and secondary emission at process PostStepDoIt, using the direction at post step
@@ -219,8 +240,10 @@ void GmPDSCreateAngleTablesUA::UserSteppingAction(const G4Step* aStep)
 
       G4double ener = aStep->GetPreStepPoint()->GetKineticEnergy();
       G4double dist = aStep->GetStepLength()/CLHEP::cm;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout << " direction change " << cosAngle << " distance " << dist << " in material " << aStep->GetTrack()->GetMaterial()->GetName() << " energy " << ener << G4endl;
+#endif
 #endif
       std::map<G4String,int>::iterator itep = theProcesses.find( procName );
       if( itep == theProcesses.end() ){
@@ -233,8 +256,10 @@ void GmPDSCreateAngleTablesUA::UserSteppingAction(const G4Step* aStep)
       G4int nproc = (*itep).second;
 
       G4int nh = 5000000+nproc*100000+theCurrentEnergyID*1000+theCurrentMateID*10;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout << " filling histo " << nh << " " << theAnaMgr->GetHisto1(nh+1)->GetName() << G4endl;
+#endif
 #endif
 
       theAnaMgr->GetHisto1(nh+1)->Fill( cosAngle );
@@ -243,8 +268,10 @@ void GmPDSCreateAngleTablesUA::UserSteppingAction(const G4Step* aStep)
       aTracknc->SetTrackStatus( fStopAndKill);
       
     } else {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout << " GmPDSCreateAngleTablesUA::UserSteppingAction no seco produced " << G4endl;
+#endif
 #endif
     }
   } else {
@@ -254,10 +281,12 @@ void GmPDSCreateAngleTablesUA::UserSteppingAction(const G4Step* aStep)
   if(  aStep->GetPreStepPoint()->GetKineticEnergy() !=  aStep->GetPostStepPoint()->GetKineticEnergy() )  {
     aTracknc->SetTrackStatus( fStopAndKill);
   } else {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(infoVerb) ) G4cerr << " No different energy and no Transportation " << aStep->GetPostStepPoint()->GetProcessDefinedStep() << G4endl;
 #endif
-  }      
+#endif
+  }
 
 }
 

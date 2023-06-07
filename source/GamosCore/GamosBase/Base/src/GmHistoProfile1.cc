@@ -36,7 +36,7 @@ void GmHistoProfile1::Fill( double valueX, double valueY, double weight )
   if( valueX >= theLowerEdge && valueX <= theUpperEdge ) {
     theSumWX += valueX*weight; 
     theSumWX2 += valueX*valueX*weight; 
-    std::cout << theName << " theSumWX " << theSumWX << " theSumWX2 " << theSumWX2 << std::endl;
+    //    std::cout << theName << " theSumWX " << theSumWX << " theSumWX2 " << theSumWX2 << std::endl;
     theSumW += weight;
     theSumW2 += weight*weight;
   }
@@ -58,7 +58,7 @@ double GmHistoProfile1::GetBinContent(int ibin) const
   std::map<int,double>::const_iterator iteV = theBinSumW.find(ibin);
   std::map<int,int>::const_iterator iteN = theBinN.find(ibin);
   if( iteV != theBinSumW.end() ) {
-    std::cout << " GmHistoProfile1::GetBinContent " << ibin << " " << (*iteV).second/(*iteN).second << " " <<  (*iteV).second << " "<< (*iteN).second << std::endl; 
+    //    std::cout << " GmHistoProfile1::GetBinContent " << ibin << " " << (*iteV).second/(*iteN).second << " " <<  (*iteV).second << " "<< (*iteN).second << std::endl; 
     return (*iteV).second/(*iteN).second;
   } else {
     return 0.;
@@ -82,7 +82,7 @@ double GmHistoProfile1::GetBinError(int ibin) const
   std::map<int,double>::const_iterator iteV2 = theBinSumW2.find(ibin);
 
    if( iteV2 != theBinSumW2.end() ) {
-     std::cout <<  " GmHistoProfile1::GetBinError " << sqrt( ((*iteV2).second*(*iteN).second - (*iteV).second*(*iteV).second )/((*iteN).second) ) / (*iteN).second << " " << (*iteV2).second << " " << (*iteV).second << " " << (*iteN).second << std::endl;
+     //     std::cout <<  " GmHistoProfile1::GetBinError " << sqrt( ((*iteV2).second*(*iteN).second - (*iteV).second*(*iteV).second )/((*iteN).second) ) / (*iteN).second << " " << (*iteV2).second << " " << (*iteV).second << " " << (*iteN).second << std::endl;
     return sqrt( ((*iteV2).second*(*iteN).second - (*iteV).second*(*iteV).second )/((*iteN).second) ) / (*iteN).second;
   } else {
     return 0.;

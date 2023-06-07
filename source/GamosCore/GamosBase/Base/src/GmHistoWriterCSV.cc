@@ -31,6 +31,7 @@ void GmHistoWriterCSV::SaveHisto1( const GmHisto1* his )
 #endif
 {
   SaveHisto1D("1D", his );
+
 }
 
 

@@ -1,6 +1,7 @@
 #include "SPECTEventClassifierUA.hh"
 #include "SPECTVerbosity.hh"
 #include "SPECTIOMgr.hh"
+#include "SPECTProjDataMgr.hh"
 #include "NuclMed/Base/include/DetV1stHitAlgorithm.hh"
 #include "NuclMed/Base/include/DetComptonStudyHistosUA.hh"
 #include "NuclMed/Base/include/DetCountScatteringUA.hh"
@@ -34,8 +35,11 @@ SPECTEventClassifierUA::SPECTEventClassifierUA()
 {
   GmParameterMgr* paramMgr = GmParameterMgr::GetInstance();
 
-  bDump = G4bool(paramMgr->GetNumericValue("SPECT:EvtClass:DumpEvent",0));
-  if( bDump ) SPECTIOMgr::GetInstance()->OpenFileOut();
+  bDumpLM = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("SPECT:EvtClass:DumpEventListMode",0));
+  if( bDumpLM ) SPECTIOMgr::GetInstance()->OpenFileOut();
+
+  // MCC 2011. Project Data (STIR or CIEMAT format: more details in SPECTProjDataMgr class)
+  bDumpPD = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("SPECT:EvtClass:DumpProjData",0));
 
   BookHistos();
 
@@ -274,7 +278,7 @@ int64_t SPECTEventClassifierUA::ClassifySPECT( gamosRecHitList& rhitList, const 
     
     if( bComptonStudyHistos ) theComptonStudyHistos->FillDist511RecHits(theGoodRecHits);
 
-   theAnaMgr->GetHisto1(320000+5)->Fill( theGoodRecHits[0].GetEnergy()/CLHEP::keV );
+    theAnaMgr->GetHisto1(320000+5)->Fill( theGoodRecHits[0].GetEnergy()/CLHEP::keV );
     
     theEventClass += 1;
 
@@ -297,12 +301,16 @@ int64_t SPECTEventClassifierUA::ClassifySPECT( gamosRecHitList& rhitList, const 
   
     if( theEventClass != 0 ) {
       theEventClassifierMap[9999] ++;
-      if( bDump ) {
+      if( bDumpLM ) {
 	SPECTIOMgr::GetInstance()->WriteEvent( G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0)->GetPosition(), 
 					       theGoodRecHits[0].GetPosition(), 
 					       collimatorCentre,
 					       theGoodRecHits[0].GetEnergy(),
 					       theEventClass);
+      }
+      if( bDumpPD ) {
+	SPECTProjDataMgr::GetInstance()->AddEvent( collimatorCentre,
+						 theGoodRecHits[1].GetPosition() );
       }
     }
   }
@@ -709,7 +717,9 @@ void SPECTEventClassifierUA::EndOfRunAction(const G4Run* aRun )
 
   PrintSPECTClassificationTable( nevt );
 
-  if( bDump ) SPECTIOMgr::GetInstance()->CloseFileOut();
+  if( bDumpLM ) SPECTIOMgr::GetInstance()->CloseFileOut();
+  
+  if( bDumpPD ) SPECTProjDataMgr::GetInstance()->WriteInterfile();
 
 }
 

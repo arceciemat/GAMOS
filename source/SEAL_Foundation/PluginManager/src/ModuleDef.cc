@@ -69,27 +69,28 @@ void
 SimpleModuleDef::query (void)
 {
     std::for_each (onQueryMD.begin (), onQueryMD.end (),
-		   std::bind2nd (std::mem_fun_ref (&MDAction::operator()), this));
+		   std::bind (std::mem_fn (&MDAction::operator()),std::placeholders::_1, this));
+    //		   std::bind2nd (std::mem_fn (&MDAction::operator()), this));
     std::for_each (onQuery.begin (), onQuery.end (),
-		   std::mem_fun_ref (&Action::operator()));
+		   std::mem_fn (&Action::operator()));
 }
 
 void
 SimpleModuleDef::attach (void)
 {
     std::for_each (onAttachMD.begin (), onAttachMD.end (),
-		   std::bind2nd (std::mem_fun_ref (&MDAction::operator()), this));
+		   std::bind (std::mem_fn (&MDAction::operator()),std::placeholders::_1, this));
     std::for_each (onAttach.begin (), onAttach.end (),
-		   std::mem_fun_ref (&Action::operator()));
+		   std::mem_fn (&Action::operator()));
 }
 
 void
 SimpleModuleDef::detach (void)
 {
     std::for_each (onDetachMD.begin (), onDetachMD.end (),
-		   std::bind2nd (std::mem_fun_ref (&MDAction::operator()), this));
+		   std::bind (std::mem_fn (&MDAction::operator()),std::placeholders::_1, this));
     std::for_each (onDetach.begin (), onDetach.end (),
-		   std::mem_fun_ref (&Action::operator()));
+		   std::mem_fn (&Action::operator()));
 }
 
 } // namespace seal

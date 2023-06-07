@@ -1,33 +1,21 @@
-#------------------------------------------------------------------------------
-# Module : getGammaIndex
-# Package: DICOM_getGammaIndex
-#
-#------------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME getGammaIndex
-	 HEADERS
-		DCMGetGammaIndex.hh
-		DCM2DOperGammaIndex.hh
-	 SOURCES
-		DCM2DOperGammaIndex.cc
-		DCMGetGammaIndex.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-		${DCMTK_LIBRARIES} 
-	DICOMBase
-	DICOM2G4
-	DICOMReaders
+# - GAMOS_analysis_DICOM_getGammaIndex module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+
+geant4_add_module(GAMOS_analysis_DICOM_getGammaIndex
+  PUBLIC_HEADERS
+    DCM2DOperGammaIndex.hh
+    DCMGetGammaIndex.hh
+  SOURCES
+    DCMGetGammaIndex.cc
+    DCM2DOperGammaIndex.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_DICOM_getGammaIndex
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    DICOMBase
+    DICOM2G4
+    DICOMReaders
+    ${SEAL_LIBRARIES} 
 )

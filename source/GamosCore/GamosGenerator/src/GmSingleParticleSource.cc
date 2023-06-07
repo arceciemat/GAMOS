@@ -109,7 +109,7 @@ G4PrimaryVertex* GmSingleParticleSource::GenerateVertex( G4double time )
 
   G4ThreeVector mom = theDirection * std::sqrt(theEnergy*theEnergy + 2.*theParticleDef->GetPDGMass()*theEnergy);
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(infoVerb) ) G4cout << " GmSingleParticleSource::GenerateVertex  mom " << mom << " theEnergy " << theEnergy << G4endl;
+  if( GenerVerb(infoVerb) ) G4cout << " GmSingleParticleSource::GenerateVertex  mom " << mom << " theEnergy " << theEnergy << " " << theDirection<<"+"<<theEnergy*theEnergy  << "+"<<theParticleDef->GetPDGMass()<<"*"<<theEnergy <<G4endl;
 #endif
   G4PrimaryParticle* particle = new G4PrimaryParticle( theParticleDef, mom.x(), mom.y(), mom.z() );
 

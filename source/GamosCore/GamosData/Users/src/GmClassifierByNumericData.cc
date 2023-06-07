@@ -44,6 +44,8 @@ void GmClassifierByNumericData::SetParameters( std::vector<G4String>& params)
   theMax = GmGenUtils::GetValue( params[3] );
   theStep = (theMax-theMin)/nBins;
 
+  G4int nMaxClass = GmParameterMgr::GetInstance()->GetNumericValue(theName+":MaxNClass",10000);
+  //  G4cout << theName << " nMaxClass " << nMaxClass << G4endl; //GDEB
   G4double dd= theMin;
   G4int ii = 0;
   for( ;; ) {
@@ -54,9 +56,9 @@ void GmClassifierByNumericData::SetParameters( std::vector<G4String>& params)
 #endif
     if( (dd - theMax) > -1.E-9/(theMax-theMin) )break;
     dd += theStep;
-    if(ii > 10000) {
+    if(ii > nMaxClass) {
       G4Exception(G4String(theName+"::SetParameters").c_str(),
-		  "More than 10000 classifications",
+		  ("More than "+GmGenUtils::itoa(nMaxClass)+"classifications").c_str(),
 		  FatalErrorInArgument,
 		  G4String("Check your parameters: min= " + GmGenUtils::ftoa(theMin)+ 
 			    " max= " + GmGenUtils::ftoa(theMax)+
@@ -112,8 +114,9 @@ int64_t GmClassifierByNumericData::GetIndexFromValue(const G4double val )
     }
   }
 
-  std::map<G4double,int64_t>::const_iterator ite = theIndexMap.lower_bound(val);
+  std::map<G4double,int64_t>::iterator ite = theIndexMap.lower_bound(val);
   int64_t index = (*ite).second;
+  //  G4cout <<" GETINDEX " << val << " = " << index << " = " << std::distance(theIndexMap.begin(),ite) << G4endl; //GDEB
   // Check for precision problems
   if( index == 0 && fabs(val-(*ite).second) < 1.E-6 ) index = 1;
 
@@ -153,7 +156,7 @@ GmClassifierByNumericData::~GmClassifierByNumericData()
     ite2++;
     G4int ii = 0;
     for(  ; ite2 != theIndexMap.end(); ite1++,ite2++,ii++ ){
-      G4cout << theName << " = " << (*ite2).second << ": " << (*ite1).first << " - " << (*ite2).first << G4endl;
+      G4cout << theName << " = " << (*ite2).second << ": " << (*ite1).first << " - " << (*ite2).first-ii << G4endl;
     }
   }
 #endif

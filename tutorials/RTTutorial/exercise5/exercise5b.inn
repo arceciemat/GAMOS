@@ -2,7 +2,7 @@
 
 /tracking/verbose 1
 
-/gamos/setParam GmPhysicsParallel:LayeredMaterial 0
+/gamos/setParam GmPhysicsParallel:LayeredMaterial 1
 /gamos/setParam GmReadPhantomGeometry:FileName world.geom
 /gamos/setParam GmReadPhantomGeometry:FileNameParallel brachy_source.geom 1
 /gamos/setParam GmReadPhantomGeometry:Phantom:FileName ../exercise3/exercise3_64x64x39.g4dcm
@@ -20,7 +20,7 @@
 /gamos/physics/addPhysics radioactiveDecay
 
 #  I125 source
-/gamos/generator/addSingleParticleSource I125_source I125[0.0] 0.*keV
+/gamos/generator/addSingleParticleSource I125_source I125 0.*keV
 /gamos/generator/positionDist  I125_source GmGenerDistPositionInG4Volumes I-125_SOURCE
 # copy it to the parallel world to navigate in both geometries (seed and phantom) at the same time
 #/gamos/geometry/copyParallelToMassGeom BRACHY_SOURCE 0. 0. 200.

@@ -75,7 +75,7 @@ void SHMetastableIsotMgr::ReadData()
     
     // convert name to Z and and A
     G4int nl = md.name.length();
-    if( md.name(nl-1) != 'm' ) {
+    if( md.name[nl-1] != 'm' ) {
       G4Exception("SHMetastableIsotMgr::ReadData",
 		  "Wrong argument",
 		  FatalErrorInArgument,
@@ -142,7 +142,7 @@ std::pair<G4Ions*,G4double> SHMetastableIsotMgr::FindIsomere( G4ParticleDefiniti
   G4int nl = metaName.length();
   // Find last number
   for( G4int ii = 0; ii < nl; ii++ ){
-    if( metaName(ii) == '[' ) {
+    if( metaName[ii] == '[' ) {
       inum = ii;
       break;
     }

@@ -176,7 +176,7 @@ void SHPrintPHPChannelXSUA::BeginOfEventAction(const G4Event* evt)
 	  //--- loop to elements 
 	  G4double XSSUM = 0;
 	  for (size_t iele=0; iele<nelm; iele++) {
-	    G4Element* elem = (*elementVector)[iele];
+	    const G4Element* elem = (*elementVector)[iele];
 	    //    G4cout << " STOREXS " << store->GetInelasticCrossSectionPerAtom(G4Proton::Proton(),ener,elem)/barn << G4endl;
 	    //	    G4cout << " LOOPING ELEMENT " << elem->GetName() << G4endl;
 	    G4int index = elem->GetIndex();
@@ -412,7 +412,7 @@ void SHPrintPHPChannelXSUA::BeginOfEventAction(const G4Event* evt)
 	  G4double XSSUM = 0;
 	  for (size_t iele=0; iele<nelm; iele++) {
 	    G4double XSSUM_ELE = 0;
-	    G4Element* elem = (*elementVector)[iele];
+	    const G4Element* elem = (*elementVector)[iele];
 
 	    G4ParticleHPCapture* HPcapt = (G4ParticleHPCapture*)(hadModel);
 

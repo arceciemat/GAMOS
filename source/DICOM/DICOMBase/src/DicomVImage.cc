@@ -273,12 +273,13 @@ G4bool DicomVImage::ReadDataFromTextFile( std::ifstream& fin, G4bool bReadHeader
     double posY = theMinY+(iy+0.5)*voxelDimY;
     double posZ = theMinZ+(iz+0.5)*voxelDimZ;
     G4ThreeVector pos(posX,posY,posZ);
+    if( DicomVerb(debugVerb) ) G4cout << GetName() << " " << ii << " " << iz << " " << ix << " " << iy << " : " << pos << " DATA= " <<data << G4endl;  //GDEB
     //    G4ThreeVector posPrint(-50.,-192.242,-880.);
     //    G4ThreeVector posPrint(-50.1255,-192.242,-879.8);
     //    if( (pos-posPrint).mag() < 0.5 ) G4cout << " PRINT VOXEL " << GetName() << " " << (pos-posPrint).mag() << " " << pos << " : " << data << G4endl;  //GDEB
     //    if( DicomVerb(debugVerb) && ii%1000 == 0 ) G4cout << GetName() << " " << ii << " " << iz << " " << ix << " " << iy << " : " << data << G4endl;  //GDEB
-    if( posZ < -867 && posZ > -871 && posY < -100 && posY > -140 )
-      G4cout << pos << " DATA " << ii << " = " << data << G4endl;
+    //    if( posZ < -867 && posZ > -871 && posY < -100 && posY > -140 )
+    //      G4cout << pos << " DATA " << ii << " = " << data << G4endl; //GDEB
     if( DicomVerb(testVerb) && ii%1 == 0 ) G4cout << GetName() << " : " << ii << " " << ix << " " << iy << " " << iz << " = " << data << G4endl; 
   }
 
@@ -328,9 +329,9 @@ void DicomVImage::DumpDataToTextFile(std::ostream& fout, G4bool bFloat)
 	//	  G4cout << ic+ir*fNoVoxelsX << " pixdata " << ir << " " << ic << " = " << pixData[ic+ir*fNoVoxelsX] << G4endl; //GDEB
 	//	G4cout << ix+iy*theNoVoxelsX+iz*theNoVoxelsX*theNoVoxelsY << " : " << ix << " " << iy << " " << iz << " " << theMinX+GetVoxelDimX()*(ix+0.5) << " " << theMinY+GetVoxelDimY()*(iy+0.5) << " " << theMinZ+GetVoxelDimZ()*(iz+0.5) << " DATA_TO_TEXT " << theData->at(copyNo) << G4endl; //GDEB
 	if( bFloat ) {
-	  fout << std::setprecision(10) << theData->at(copyNo) << " ";
+	  fout << std::setprecision(8) << std::setw(10) << theData->at(copyNo) << " ";
 	} else {
-	  fout << std::setprecision(24) << theData->at(copyNo) << " "; // precision to write a size_t (=64 bits) (pow(2,64)=1,844674407e19
+	  fout << std::setprecision(10)  << std::setw(12) << theData->at(copyNo) << " "; // precision to write a size_t (=64 bits) (pow(2,64)=1,844674407e19
 	}
 	copyNo++;
 	//-       	if( !bFloat ) fout << " " << copyNo << " D=" << *data++ << G4endl;
@@ -753,7 +754,13 @@ G4double DicomVImage::GetMaxValue()
   for( size_t ii = 0; ii < nvox; ii++ ) {
     G4double data = theData->at(ii);    
     if( data > maxV ) {
-      //      G4cout << " DicomVImage::GetMaxValue() " << data << " > " << maxV << G4endl; //GDEB
+      if( DicomVerb(debugVerb) ) {
+	size_t ix = ii%theNoVoxelsX;
+	size_t iy = ii/theNoVoxelsX%theNoVoxelsY;
+	size_t iz = ii/theNoVoxelsX/theNoVoxelsY;
+	G4ThreeVector ptMax(theMinX+(ix+0.5)*GetVoxelDimX(),theMinY+(iy+0.5)*GetVoxelDimY(),theMinZ+(iz+0.5)*GetVoxelDimZ());
+	G4cout << GetName() << " DicomVImage::GetMaxValue() " << maxV << " at " << ptMax << " " << ix<<":"<<iy<<":"<<iz << G4endl;
+      }
       maxV = data;
     }
   }

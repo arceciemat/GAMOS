@@ -1,3 +1,5 @@
+#ifndef GAMOS_NO_ROOT
+
 #include "DicomDrawerROOT.hh"
 #include "DicomVImage.hh"
 #include "DicomVLineSet.hh"
@@ -28,7 +30,7 @@
 //-----------------------------------------------------------------------------
 DicomDrawerROOT::DicomDrawerROOT()
 {
-  theImageFormat = "gif";
+  theImageFormat = "jpg";
   
   theCanvasNPixelsX = G4int(DicomParameterMgr::GetInstance()->GetNumericValue("nPixelsX",1000));
   theCanvasNPixelsY = G4int(DicomParameterMgr::GetInstance()->GetNumericValue("nPixelsY",1000));
@@ -296,7 +298,7 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
   size_t copyNo = 0;
   for( size_t iz = 0; iz < imNVoxZ; iz++ ) {
     G4String zstr = GmGenUtils::ftoa(imMinZ+(iz+0.5)*imWidthZ);
-    theImageFormat = DicomParameterMgr::GetInstance()->GetStringValue("imageFormat","gif");
+    theImageFormat = DicomParameterMgr::GetInstance()->GetStringValue("imageFormat","jpg");
     std::string hisName = image->GetName()+"_XY"+extraFileName+"_"+zstr;
     TH2F* his = new TH2F(hisName.c_str(), hisName.c_str(), imNVoxX, imMinX, imMaxX, imNVoxY, imMinY, imMaxY );
     gStyle->SetOptTitle(bShowTitle);
@@ -305,6 +307,7 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
 	//	if( *imgData > -60 )
 	//	G4cout << "XYDATA " << (ix-1)+(iy-1)*imNVoxX+iz*imNVoxX*imNVoxY << ": " << *imgData << " " << ix-1 << " " << iy-1 << " " << iz << " : " << imMinX+(ix-0.5)*image->GetVoxelDimX() << "  " << imMinY+(iy-0.5)*image->GetVoxelDimY() << "  " << imMinZ+(iz+0.5)*image->GetVoxelDimZ() << G4endl; //GDEB
 	G4double data = *imgData;
+	//	if( iz == 50 ) G4cout << "XYDATA " << (ix-1)+(iy-1)*imNVoxX+iz*imNVoxX*imNVoxY << " data= " << *imgData << " " << ix-1 << " " << iy-1 << " " << iz << " : " << imMinX+(ix-0.5)*image->GetVoxelDimX() << "  " << imMinY+(iy-0.5)*image->GetVoxelDimY() << "  " << imMinZ+(iz+0.5)*image->GetVoxelDimZ() << G4endl; //GDEB
 	if( bAverageSurroundingBig ) {
 	  data = GetValueSurrounding(ix-1,iy-1,iz, data, image, imgDatap);
 	}
@@ -420,9 +423,9 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
       DrawLinesXY( lineSet, imMinZ+iz*imWidthZ, imMinZ+(iz+1)*imWidthZ);
     }
     
-    theImageFormat = DicomParameterMgr::GetInstance()->GetStringValue("imageFormat","gif");
-    std::string gifName = "his"+hisName+"."+theImageFormat;
-    canvas->Print(gifName.c_str());
+    theImageFormat = DicomParameterMgr::GetInstance()->GetStringValue("imageFormat","jpg");
+    std::string jpgName = "his"+hisName+"."+theImageFormat;
+    canvas->Print(jpgName.c_str());
 
     delete his;
   }
@@ -548,8 +551,8 @@ void DicomDrawerROOT::DrawXZ( DicomVImage* image, std::vector<DicomVLineSet*> li
       DrawLinesXZ( lineSets[ils], imMinY+iy*imWidthY, imMinY+(iy+1)*imWidthY);
     }
     
-    std::string gifName = "his"+hisName+"."+theImageFormat;
-    canvas->Print(gifName.c_str());
+    std::string jpgName = "his"+hisName+"."+theImageFormat;
+    canvas->Print(jpgName.c_str());
     if( theOutputFile ) {
       theOutputFile->cd();
       his->Write();
@@ -682,8 +685,8 @@ void DicomDrawerROOT::DrawYZ( DicomVImage* image, std::vector<DicomVLineSet*> li
       DrawLinesYZ( lineSets[ils], imMinX+ix*imWidthX, imMinX+(ix+1)*imWidthX);
     }
     
-    std::string gifName = "his"+hisName+"."+theImageFormat;
-    canvas->Print(gifName.c_str());
+    std::string jpgName = "his"+hisName+"."+theImageFormat;
+    canvas->Print(jpgName.c_str());
     if( theOutputFile ) {
       theOutputFile->cd();
       his->Write();
@@ -854,3 +857,4 @@ void DicomDrawerROOT::DrawWithLinesXZ( DicomVImage*, DicomVLine* ){}
 //-----------------------------------------------------------------------------
 void DicomDrawerROOT::DrawWithLinesYZ( DicomVImage*, DicomVLine* ){}
 
+#endif

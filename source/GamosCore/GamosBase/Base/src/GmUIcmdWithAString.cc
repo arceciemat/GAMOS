@@ -27,13 +27,13 @@ G4int GmUIcmdWithAString::DoIt(G4String parameterList)
 	      correctParameters.append(" ");
 	    }
 	  aToken = parameterToken();
-	  if( aToken.length()>0 && aToken(0)=='"' )
+	  if( aToken.length()>0 && aToken[0]=='"' )
 	    {
-	      while( aToken(aToken.length()-1) != '"'
-		     || ( aToken.length()==1 && aToken(0)=='"' ))
+	      while( aToken[aToken.length()-1] != '"'
+		     || ( aToken.length()==1 && aToken[0]=='"' ))
 		{
 		  G4String additionalToken = parameterToken();
-		  if( additionalToken.isNull() )
+		  if( additionalToken.empty() )
 		    { return fParameterUnreadable+i_thParameter; }
 		  aToken += " ";
 		  aToken += additionalToken;
@@ -43,9 +43,9 @@ G4int GmUIcmdWithAString::DoIt(G4String parameterList)
 	  if(i_thParameter==n_parameterEntry-1 && parameter[i_thParameter]->GetParameterType()=='s')
 	    {
 	      G4String anotherToken;
-	      while(!((anotherToken=parameterToken()).isNull()))
+	      while(!((anotherToken=parameterToken()).empty()))
 		{
-		  G4int idxs = anotherToken.index("#");
+		  G4int idxs = anotherToken.find("#");
 		  if(idxs==G4int(std::string::npos))
 		    {
 		      aToken += " ";
@@ -54,7 +54,7 @@ G4int GmUIcmdWithAString::DoIt(G4String parameterList)
 		  else if(idxs>0)
 		    {
 		      aToken += " ";
-		      aToken += anotherToken(0,idxs);
+		      aToken += anotherToken.substr(0,idxs);
 		      break;
 		    }
 		  else
@@ -62,7 +62,7 @@ G4int GmUIcmdWithAString::DoIt(G4String parameterList)
 		}
 	    }
 
-	  if( aToken.isNull() || aToken == "!" )
+	  if( aToken.empty() || aToken == "!" )
 	    {
 
 	      if(parameter[i_thParameter]->IsOmittable())
@@ -74,12 +74,12 @@ G4int GmUIcmdWithAString::DoIt(G4String parameterList)
 		      for(G4int ii=0;ii<i_thParameter;ii++)
 			{
 			  parVal = cvSt();
-			  if (parVal(0)=='"')
+			  if (parVal[0]=='"')
 			    {
-			      while( parVal(parVal.length()-1) != '"' )
+			      while( parVal[parVal.length()-1] != '"' )
 				{
 				  G4String additionalToken = cvSt();
-				  if( additionalToken.isNull() )
+				  if( additionalToken.empty() )
 				    { return fParameterUnreadable+i_thParameter; }
 				  parVal += " ";
 				  parVal += additionalToken;
@@ -87,12 +87,12 @@ G4int GmUIcmdWithAString::DoIt(G4String parameterList)
 			    }
 			}
 		      G4String aCVToken = cvSt();
-		      if (aCVToken(0)=='"')
+		      if (aCVToken[0]=='"')
 			{
-			  while( aCVToken(aCVToken.length()-1) != '"' )
+			  while( aCVToken[aCVToken.length()-1] != '"' )
 			    {
 			      G4String additionalToken = cvSt();
-			      if( additionalToken.isNull() )
+			      if( additionalToken.empty() )
 				{ return fParameterUnreadable+i_thParameter; }
 			      aCVToken += " ";
 			      aCVToken += additionalToken;

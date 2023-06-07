@@ -59,7 +59,7 @@ void GmSDVirtSegmentedSphereRThetaPhi::DefineRSegmentation(const G4String& sdtyp
 		"For a volume that it is not an sphere ");
   }
   G4Sphere* sphere = (G4Sphere*)(theLogVol->GetSolid());
-  theRadius = sphere->GetInsideRadius();
+  theRadius = sphere->GetInnerRadius();
   float ndivr = (sphere->GetOuterRadius() - theRadius)/cellR;
 #ifndef GAMOS_NO_VERBOSE
   if( SDVerb(infoVerb) ) G4cout << " sphere R length  " << ndivr*cellR << " ndivR " << ndivr << G4endl;

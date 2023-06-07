@@ -36,7 +36,7 @@ int main(int argc,char** argv)
   G4String theFileType = "GAMOS";
   G4String theFileNameOut = "sumScores.out";
 
-  G4bool bPlotData = true;
+  G4bool bHistosData = true;
 
   if( argc == 2 ) {
     if( G4String(argv[1]) == "-h" || G4String(argv[1]) == "-help" ) {
@@ -118,8 +118,8 @@ int main(int argc,char** argv)
 		      FatalErrorInArgument,
 		      (G4String("Wrong index val type, it can be upper/UPPER, middle/MIDDLE or lower/LOWER, while it is") + idxstr).c_str());
 	}
-      } else if( argvstr == "-bPlot" ) {
-	bPlotData = G4bool(GmGenUtils::GetValue(argv[ii+1]));
+      } else if( argvstr == "-bHistos" ) {
+	bHistosData = G4bool(GmGenUtils::GetValue(argv[ii+1]));
       } else {
 	PrintHelp();
 	G4Exception("sumScores",
@@ -176,11 +176,12 @@ int main(int argc,char** argv)
   for( ite = theFileData.begin(); ite != theFileData.end(); ite++ ) {
     if( theFileType == "GAMOS" ){
       GAMOSFileData* fd = static_cast<GAMOSFileData*>(*ite);
+      if( ScoreData::verbosity >= -2 ) G4cout << " ADDING FILE " << fd->GetFileName() << G4endl;
       if( ite == theFileData.begin() ) {
 	fdAVE = new GAMOSFileData(*fd);
-	if( ScoreData::verbosity >= 2 ) G4cout << " NSCORES " << fd->GetNumberOfScorers() << " -> " << fdAVE->GetNumberOfScorers() << G4endl;
+	if( ScoreData::verbosity >= -2 ) G4cout << " NSCORERS " << fd->GetNumberOfScorers() << " -> " << fdAVE->GetNumberOfScorers() << G4endl;
       } else {
-	fdAVE->Add(fd);
+	fdAVE->Add(fd);	
       }
     } else if( theFileType == "MCNP" ){
       MCNPFileData* fd = static_cast<MCNPFileData*>(*ite);
@@ -204,7 +205,7 @@ int main(int argc,char** argv)
   
   fdAVE->Print(fout);
 
-  if( bPlotData ) PlotData(fdAVE);
+  if( bHistosData ) PlotData(fdAVE);
  
   /*t 
 // PRINT ONE MCNP SCORER  
@@ -236,6 +237,7 @@ void PrintHelp()
 	 << " -hLogY      Histogram Y axis in logarithmic scale (1) or linear (0)" << G4endl
 	 << " -verb       verbosity: sets the ShieldingVerbosity" << G4endl
 	 << " -indexValType  Type of treatment of score index (get upper limit, lower limit or average " << G4endl
+	 << " -bHistos    Draw histograms or not (1)" << G4endl
 	 << " -help       prints the set of arguments " << G4endl;
 }
 
@@ -313,7 +315,7 @@ void PlotData( FileData* fd )
     DrawGlobalTitle(his, hisFileName);
     DrawXTitle(his,"Energy");
     DrawYTitle(his,"Score");
-    PrintGif(hisFileName);
+    PrintFig(hisFileName);
 
     G4bool bHistoFile = false;
     if( bHistoFile ) {

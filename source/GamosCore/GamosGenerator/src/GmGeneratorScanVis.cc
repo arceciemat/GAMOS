@@ -33,9 +33,10 @@ GmGeneratorScanVis::GmGeneratorScanVis()
 
   
   //----- Create user action that will draw the intersection points
+#ifndef GAMOS_NO_ROOT
   theGeneratorUA = new GmGeneratorScanVisUA();
   theGeneratorUA->SetGenerator(this);
-  
+#endif  
 }
 
 

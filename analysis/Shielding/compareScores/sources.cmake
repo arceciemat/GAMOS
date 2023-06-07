@@ -1,50 +1,37 @@
-#------------------------------------------------------------------------------
-# Module : Shielding
-# Package: Shielding_compareScores
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME compareScores
-	 HEADERS
-		TextFileData.hh
-		ScoreSet.hh
-		ROOTScoreData.hh
-		TextScorerData.hh
-		ROOTFileData.hh
-		ROOTScorerData.hh
-		FileData.hh
-		ScoreData.hh
-		ScorerData.hh
-		TextScoreData.hh
-		ReadScores.icc
-	 SOURCES
-		ScoreData.cc
-		ROOTScoreData.cc
-		FileData.cc
-		ScorerData.cc
-		TextScorerData.cc
-		ROOTScorerData.cc
-		ScoreSet.cc
-		TextScoreData.cc
-		ROOTFileData.cc
-		TextFileData.cc
-		#DoseData.cc#
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-	sumScores
-	GamosCore_GamosUtils
+# - GAMOS_analysis_Shielding_compareScores module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+
+geant4_add_module(GAMOS_analysis_Shielding_compareScores
+  PUBLIC_HEADERS
+    ReadScores.icc
+    FileData.hh
+    TextScorerData.hh
+    ROOTScoreData.hh
+    TextFileData.hh
+    ROOTFileData.hh
+    ScoreData.hh
+    ScorerData.hh
+    ROOTScorerData.hh
+    TextScoreData.hh
+    ScoreSet.hh
+  SOURCES
+    TextScoreData.cc
+    ScoreData.cc
+    ScorerData.cc
+    ScoreSet.cc
+    ROOTScoreData.cc
+    TextScorerData.cc
+    ROOTFileData.cc
+    ROOTScorerData.cc
+    FileData.cc
+    TextFileData.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_Shielding_compareScores
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    sumScores
+    GamosCore_GamosUtils
+    ${SEAL_LIBRARIES} 
 )

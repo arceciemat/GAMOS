@@ -5,7 +5,7 @@
 #include "CLHEP/Random/RandFlat.h"
 
 //---------------------------------------------------------------------
-G4ThreeVector Exer2GenerDistPosition::GeneratePosition( const GmParticleSource* )
+G4ThreeVector Exer2GenerDistPosition::GeneratePosition( GmParticleSource* )
 {
   G4double phi = CLHEP::RandFlat::shoot() * M_PI;
   

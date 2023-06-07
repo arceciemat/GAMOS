@@ -49,6 +49,14 @@ ifndef INCFLAGS
  else
   INCFLAGS := \
               -I.\
+              -I$(G4BASE)/analysis/g4tools/include \
+              -I$(G4BASE)/analysis/management/include \
+              -I$(G4BASE)/analysis/hntools/include \
+              -I$(G4BASE)/analysis/csv/include \
+              -I$(G4BASE)/analysis/root/include \
+              -I$(G4BASE)/analysis/xml/include \
+              -I$(G4BASE)/analysis/factory/include \
+              -I$(G4BASE)/analysis/accumulables/include \
 	      -I$(G4BASE)/global/management/include \
               -I$(G4BASE)/global/HEPRandom/include \
               -I$(G4BASE)/global/HEPGeometry/include \
@@ -254,7 +262,8 @@ ifdef GLOBALLIBS
   endif
 
   LDLIBS2 += -L$(G4INSTALL)/lib/Linux-g++ \
-  	     -lG4interfaces    -lG4persistency   -lG4analysis   -lG4error_propagation   -lG4readout   -lG4physicslists   -lG4run   -lG4event   -lG4tracking   -lG4parmodels   -lG4processes   -lG4digits_hits   -lG4track   -lG4particles   -lG4geometry   -lG4materials   -lG4graphics_reps   -lG4intercoms   -lG4global   -lG4FR   -lG4GMocren   -lG4OpenGL   -lG4RayTracer   -lG4Tree   -lG4VRML   -lG4clhep   -lG4gl2ps   -lG4visHepRep   -lG4visXXX   -lG4vis_management   -lG4modeling   -lG4zlib
+  	     -lG4interfaces    -lG4persistency   -lG4analysis   -lG4error_propagation   -lG4readout   -lG4physicslists   -lG4run   -lG4event   -lG4tracking   -lG4parmodels   -lG4processes   -lG4digits_hits   -lG4track   -lG4particles   -lG4geometry   -lG4materials   -lG4graphics_reps   -lG4intercoms   -lG4global   -lG4FR   -lG4GMocren   -lG4OpenGL   -lG4RayTracer   -lG4Tree   -lG4VRML   -lG4clhep   -lG4gl2ps   -lG4visHepRep   -lG4vis_management   -lG4modeling   -lG4zlib
+#  	     -lG4interfaces    -lG4persistency   -lG4analysis   -lG4error_propagation   -lG4readout   -lG4physicslists   -lG4run   -lG4event   -lG4tracking   -lG4parmodels   -lG4processes   -lG4digits_hits   -lG4track   -lG4particles   -lG4geometry   -lG4materials   -lG4graphics_reps   -lG4intercoms   -lG4global   -lG4FR   -lG4GMocren   -lG4OpenGL   -lG4RayTracer   -lG4Tree   -lG4VRML   -lG4clhep   -lG4gl2ps   -lG4visHepRep   -lG4visXXX   -lG4vis_management   -lG4modeling   -lG4zlib
 else
 # The next lines specifically should read LDLIBS2 = , not LDLIBS2 :=, so
 # that it is not expanded until the directory G4TMPDIR is created.

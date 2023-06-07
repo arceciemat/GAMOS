@@ -1,61 +1,59 @@
-#------------------------------------------------------------------------------
-# Module : PointDetector
-# Package: GamosCore_GamosScoring_PointDetector
-#
-#------------------------------------------------------------------------------
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GEANT4 Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_PointDetector
-	 HEADERS
-		GmPDSInvertGeantinoStackUA.hh
-		GmPDSDetector.hh
-		GmPDSOpticalPhotonProcess.hh
-		GmPDSCreateAngleTablesUA.hh
-		GmPDSNeutronProcess.hh
-		GmPDSInteractionAngleManager.hh
-		GmPDSGeantinoProcess.hh
-		GmPDSVProcess.hh
-		GmPDSUtils.hh
-		GmPDSScoringTrackInfo.hh
-		GmPDSProcessHelper.hh
-		GmPDSUA.hh
-		GmPDSGammaProcess.hh
-		GmPDSScore.hh
-	 SOURCES
-		plugin.cc
-		GmPDSProcessHelper.cc
-		GmPDSUA.cc
-		GmPDSGeantinoProcess.cc
-		GmPDSUtils.cc
-		GmPDSVProcess.cc
-		GmPDSNeutronProcess.cc
-		GmPDSCreateAngleTablesUA.cc
-		GmPDSGammaProcess.cc
-		GmPDSInvertGeantinoStackUA.cc
-		GmPDSOpticalPhotonProcess.cc
-		GmPDSInteractionAngleManager.cc
-		GmPDSScore.cc
-		GmPDSDetector.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_libs} 
-		${ROOT_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		GamosCore_GamosUtils
-		GamosCore_GamosBase_Base
-		GamosCore_GamosGeometry
-		GamosCore_GamosReadDICOM
-		GamosCore_GamosGenerator
-		GamosCore_GamosData_Management
-		GamosCore_GamosData_Users
-		GamosCore_GamosScoring_Management
+# - GamosCore_GamosScoring_PointDetector module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(GamosCore_GamosScoring_PointDetector
+  PUBLIC_HEADERS
+    GmPDSInteractionAngleManager.hh
+    GmPDSDetector.hh
+    GmPDSGammaProcess.hh
+    GmPDSCreateAngleTablesUA.hh
+    GmPDSScoringTrackInfo.hh
+    GmPDSProcessHelper.hh
+    GmPDSScore.hh
+    GmPDSOpticalPhotonProcess.hh
+    GmPDSNeutronProcess.hh
+    GmPDSVProcess.hh
+    GmPDSGeantinoProcess.hh
+    GmPDSUtils.hh
+    GmPDSInvertGeantinoStackUA.hh
+    GmPDSUA.hh
+  SOURCES
+    GmPDSOpticalPhotonProcess.cc
+    GmPDSGammaProcess.cc
+    GmPDSGeantinoProcess.cc
+    GmPDSCreateAngleTablesUA.cc
+    GmPDSUA.cc
+    plugin.cc
+    GmPDSNeutronProcess.cc
+    GmPDSInvertGeantinoStackUA.cc
+    GmPDSInteractionAngleManager.cc
+    GmPDSDetector.cc
+    GmPDSVProcess.cc
+    GmPDSScore.cc
+    GmPDSProcessHelper.cc
+    GmPDSUtils.cc
+)
+# - Add path to generated header
+geant4_module_include_directories(GamosCore_GamosScoring_PointDetector
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
+ PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
+
+geant4_module_link_libraries(GamosCore_GamosScoring_PointDetector
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
+    GamosCore_GamosUtils
+    GamosCore_GamosBase_Base
+    GamosCore_GamosGeometry
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosGenerator
+    GamosCore_GamosData_Management
+    GamosCore_GamosData_Users
+    GamosCore_GamosScoring_Management
 )

@@ -1,45 +1,43 @@
-#------------------------------------------------------------------------------
-# Module : GamosUtils
-# Package: GamosCore_GamosUtils
-#
-#------------------------------------------------------------------------------
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GEANT4 Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME GamosCore_GamosUtils
-	 HEADERS
-		GmVerbosity.hh
-		GmGenUtils.hh
-		GmCylindricalSurface.hh
-		GmG4Utils.hh
-		GmLine.hh
-		GmNumberOfEvent.hh
-		GmFileIn.hh
-		GmPlane.hh
-		GmMovementUtils.hh
-		GmCone.hh
-	 SOURCES
-		GmLine.cc
-		GmNumberOfEvent.cc
-		GmCone.cc
-		GmMovementUtils.cc
-		GmCylindricalSurface.cc
-		GmVerbosity.cc
-		GmG4Utils.cc
-		GmPlane.cc
-		GmFileIn.cc
-		GmGenUtils.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_libs} 
-		${ROOT_LIBRARIES} 
-		${Boost_LIBRARIES} 
+# - GamosCore_GamosUtils module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(GamosCore_GamosUtils
+  PUBLIC_HEADERS
+    GmG4Utils.hh
+    GmNumberOfEvent.hh
+    GmPlane.hh
+    GmGenUtils.hh
+    GmCone.hh
+    GmMovementUtils.hh
+    GmCylindricalSurface.hh
+    GmVerbosity.hh
+    GmLine.hh
+    GmFileIn.hh
+  SOURCES
+    GmFileIn.cc
+    GmVerbosity.cc
+    GmPlane.cc
+    GmNumberOfEvent.cc
+    GmMovementUtils.cc
+    GmCone.cc
+    GmLine.cc
+    GmG4Utils.cc
+    GmGenUtils.cc
+    GmCylindricalSurface.cc
+)
+# - Add path to generated header
+geant4_module_include_directories(GamosCore_GamosUtils
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
+ PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
+
+geant4_module_link_libraries(GamosCore_GamosUtils
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
 )

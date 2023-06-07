@@ -3,7 +3,7 @@
 
 import sys
 def usage():
-    print 'Usage: runtests.py [-h] [-V] [--list] [--colors] [-g pdfname] [-H -T] conffile inputfile referencefile'
+    print('Usage: runtests.py [-h] [-V] [--list] [--colors] [-g pdfname] [-H -T] conffile inputfile referencefile')
     print ' Performs statistical tests for distributions contained in inputfile'
     print ' tests are configured in conffile'
     print '    conffile : configuration file'

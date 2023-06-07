@@ -1,47 +1,35 @@
-#------------------------------------------------------------------------------
-# Module : RTDose
-# Package: RTDose_compareDoses
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME compareDoses
-	 HEADERS
-		TextFileData.hh
-		DoseData.hh
-		ROOTDoserData.hh
-		ROOTFileData.hh
-		DoseSet.hh
-		TextDoseData.hh
-		FileData.hh
-		TextDoserData.hh
-		ReadDoses.icc
-		DoserData.hh
-		ROOTDoseData.hh
-	 SOURCES
-		FileData.cc
-		DoseData.cc
-		DoserData.cc
-		ROOTFileData.cc
-		TextDoserData.cc
-		ROOTDoseData.cc
-		ROOTDoserData.cc
-		DoseSet.cc
-		TextFileData.cc
-		TextDoseData.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
+# - GAMOS_analysis_RTDose_compareDoses module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+
+geant4_add_module(GAMOS_analysis_RTDose_compareDoses
+  PUBLIC_HEADERS
+    FileData.hh
+    ReadDoses.icc
+    ROOTDoseData.hh
+    TextFileData.hh
+    ROOTFileData.hh
+    TextDoserData.hh
+    ROOTDoserData.hh
+    DoserData.hh
+    TextDoseData.hh
+    DoseSet.hh
+    DoseData.hh
+  SOURCES
+    TextDoseData.cc
+    DoseSet.cc
+    ROOTDoserData.cc
+    DoserData.cc
+    ROOTFileData.cc
+    TextDoserData.cc
+    FileData.cc
+    TextFileData.cc
+    DoseData.cc
+    ROOTDoseData.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_RTDose_compareDoses
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
 )

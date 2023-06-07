@@ -1,63 +1,61 @@
-#------------------------------------------------------------------------------
-# Module : Cuts
-# Package: GamosCore_GamosPhysics_Cuts
-#
-#------------------------------------------------------------------------------
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GEANT4 Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME GamosCore_GamosPhysics_Cuts
-	 HEADERS
-		GmCSTrackStepInfo.hh
-		GmProdCutsStudyUA.hh
-		GmMinRangeLimitsStudyCreateInfoUA.hh
-		GmUserLimitsMessenger.hh
-		GmCutsTrackInfo.hh
-		GmUserLimitsMgr.hh
-		GmCutsStudyMgr.hh
-		GmProdCutsForAllProcessesUA.hh
-		GmUserSpecialCuts.hh
-		GmCutsEnergy2Range.hh
-		GmStepLimiter.hh
-		GmRangeFilter.hh
-		GmCSTrackInfo.hh
-		GmInitialRangeFilter.hh
-		GmRangeRejectionUA.hh
-		GmCutsEnergy2RangeUA.hh
-		GmMinRangeLimitsStudyUA.hh
-	 SOURCES
-		GmCutsTrackInfo.cc
-		GmProdCutsStudyUA.cc
-		plugin.cc
-		GmInitialRangeFilter.cc
-		GmCSTrackInfo.cc
-		GmProdCutsForAllProcessesUA.cc
-		GmCutsEnergy2Range.cc
-		GmRangeFilter.cc
-		GmCSTrackStepInfo.cc
-		GmCutsStudyMgr.cc
-		GmUserLimitsMessenger.cc
-		GmUserSpecialCuts.cc
-		GmMinRangeLimitsStudyUA.cc
-		GmUserLimitsMgr.cc
-		GmMinRangeLimitsStudyCreateInfoUA.cc
-		GmStepLimiter.cc
-		GmRangeRejectionUA.cc
-		GmCutsEnergy2RangeUA.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_libs} 
-		${ROOT_LIBRARIES} 
-	GamosCore_GamosUtils
-	GamosCore_GamosGeometry
-	GamosCore_GamosPhysics_PhysicsList
-		${SEAL_LIBRARIES} 
+# - GamosCore_GamosPhysics_Cuts module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(GamosCore_GamosPhysics_Cuts
+  PUBLIC_HEADERS
+    GmMinRangeLimitsStudyUA.hh
+    GmRangeRejectionUA.hh
+    GmUserLimitsMessenger.hh
+    GmCSTrackStepInfo.hh
+    GmStepLimiter.hh
+    GmProdCutsForAllProcessesUA.hh
+    GmUserSpecialCuts.hh
+    GmCutsEnergy2RangeUA.hh
+    GmProdCutsStudyUA.hh
+    GmCutsEnergy2Range.hh
+    GmInitialRangeFilter.hh
+    GmMinRangeLimitsStudyCreateInfoUA.hh
+    GmUserLimitsMgr.hh
+    GmCSTrackInfo.hh
+    GmCutsTrackInfo.hh
+    GmRangeFilter.hh
+    GmCutsStudyMgr.hh
+  SOURCES
+    GmRangeFilter.cc
+    GmInitialRangeFilter.cc
+    GmCSTrackInfo.cc
+    GmCutsEnergy2Range.cc
+    GmRangeRejectionUA.cc
+    GmCutsEnergy2RangeUA.cc
+    GmCutsTrackInfo.cc
+    GmProdCutsStudyUA.cc
+    GmMinRangeLimitsStudyCreateInfoUA.cc
+    GmCSTrackStepInfo.cc
+    GmUserSpecialCuts.cc
+    GmCutsStudyMgr.cc
+    plugin.cc
+    GmStepLimiter.cc
+    GmMinRangeLimitsStudyUA.cc
+    GmUserLimitsMessenger.cc
+    GmUserLimitsMgr.cc
+    GmProdCutsForAllProcessesUA.cc
+)
+# - Add path to generated header
+geant4_module_include_directories(GamosCore_GamosPhysics_Cuts
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
+ PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
+
+geant4_module_link_libraries(GamosCore_GamosPhysics_Cuts
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
+    GamosCore_GamosUtils
+    GamosCore_GamosGeometry
+    GamosCore_GamosPhysics_PhysicsList
 )

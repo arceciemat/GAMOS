@@ -104,8 +104,9 @@ void GmParticleSource::SetDistributionPosition( const G4String& distName, const 
   thePositionDistribution->CopyParams( wl );
   thePositionDistribution->SetParams( wl );
 
+  //  G4cout << this << " thePositionDistribution" << thePositionDistribution << " " << thePositionDistribution->GetParticleSource() <<  G4endl; //GDEB
+  
 }
-
 
 //-----------------------------------------------------------------------
 void GmParticleSource::SetDistributionDirection( const G4String& distName, const std::vector<G4String>& wl )
@@ -116,7 +117,7 @@ void GmParticleSource::SetDistributionDirection( const G4String& distName, const
   theDirectionDistribution = GmGenerDistDirectionFactory::get()->create(distName);
 #endif
   if(  !theDirectionDistribution ) {
-    G4Exception("GmParticleSource::SetDistributionDirection","Fatal error in argument",FatalErrorInArgument,G4String(" Distribution does not exist, check documentaiton ").c_str());
+    G4Exception("GmParticleSource::SetDistributionDirection","Fatal error in argument",FatalErrorInArgument,G4String(" Distribution does not exist, check documentation ").c_str());
   }
   theDirectionDistribution->SetName(distName);
 
@@ -124,6 +125,7 @@ void GmParticleSource::SetDistributionDirection( const G4String& distName, const
   theDirectionDistribution->CopyParams( wl );
   theDirectionDistribution->SetParams( wl );
 
+  // G4cout << this << " theDirectionDistribution" << theDirectionDistribution << " " << theDirectionDistribution->GetParticleSource() <<  G4endl; //GDEB
 }
 //-----------------------------------------------------------------------
 G4double GmParticleSource::GenerateTime()
@@ -186,10 +188,13 @@ void GmParticleSource::AddBiasDistribution( const G4String& varName, const G4Str
   distNames.push_back(distName);
   GmVDistribution* distrib = GmDistributionMgr::GetInstance()->FindOrBuildDistribution( distNames, true );
   distrib->Normalize();
-
+ 
   GmVNumericDistribution* distribN = (GmVNumericDistribution*)distrib;
   theBiasDistributions[varName] = distribN;
 
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) ) G4cout << "GmParticleSource::AddBiasDistribution " << varName << " DIST " << distName << G4endl; 
+#endif
   bBiasDistributions = true;
 }
 
@@ -388,13 +393,15 @@ void GmParticleSource::BiasDirection()
     
   }
 
-
   ite = theBiasDistributions.find("DirPhi");
   if( ite != theBiasDistributions.end() ) {
     G4int ii = 0;
     for( ;; ) {
       G4double val = (*ite).second->GetNumericValueFromIndex( theDirection.phi() );
       G4double rnd = CLHEP::RandFlat::shoot();
+#ifndef GAMOS_NO_VERBOSE
+      if( GenerVerb(testVerb) ) G4cout << "GmParticleSource::BiasDirection DirPhi " << rnd << " < " << val << G4endl; //GDEB
+#endif
       if( rnd < val ) {
 	theWeight /= val;	
 	break;

@@ -1,7 +1,6 @@
 #ifndef GmGeneratorIsotope_HH
 #define GmGeneratorIsotope_HH
 
-class G4ParticleGun;
 class G4Event;
 class GmIsotope;
 class G4PrimaryVertex;

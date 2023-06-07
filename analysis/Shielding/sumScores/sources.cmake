@@ -1,64 +1,43 @@
-#------------------------------------------------------------------------------
-# Module : Shielding
-# Package: Shielding_sumScores
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME sumScores
-	 HEADERS
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME sumScores
-	 HEADERS
-		TextFileData.hh
-		MCNPVTallierData.hh
-		MCNPFileData.hh
-		GAMOSFileData.hh
-		MCNPTallierFNData.hh
-		MCNPTallierF5Data.hh
-		TextScorerData.hh
-		GAMOSScoreData.hh
-		GAMOSScorerData.hh
-		MCNPTallyData.hh
-		FileData.hh
-		ScoreData.hh
-		ScorerData.hh
-		TextScoreData.hh
-		ReadScores.icc
-	 SOURCES
-		MCNPTallierF5Data.cc
-		ScoreData.cc
-		GAMOSScoreData.cc
-		FileData.cc
-		ScorerData.cc
-		TextScorerData.cc
-		TextScoreData.cc
-		GAMOSScorerData.cc
-		MCNPVTallierData.cc
-		MCNPTallierFNData.cc
-		TextFileData.cc
-		MCNPTallyData.cc
-		GAMOSFileData.cc
-		MCNPFileData.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
+# - GAMOS_analysis_Shielding_sumScores module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+
+geant4_add_module(GAMOS_analysis_Shielding_sumScores
+  PUBLIC_HEADERS
+    ReadScores.icc
+    FileData.hh
+    TextScorerData.hh
+    MCNPFileData.hh
+    TextFileData.hh
+    ScoreData.hh
+    MCNPTallyData.hh
+    MCNPVTallierData.hh
+    MCNPTallierFNData.hh
+    ScorerData.hh
+    GAMOSFileData.hh
+    GAMOSScoreData.hh
+    TextScoreData.hh
+    MCNPTallierF5Data.hh
+    GAMOSScorerData.hh
+  SOURCES
+    TextScoreData.cc
+    MCNPTallierFNData.cc
+    ScoreData.cc
+    ScorerData.cc
+    GAMOSScoreData.cc
+    GAMOSScorerData.cc
+    TextScorerData.cc
+    MCNPTallyData.cc
+    MCNPTallierF5Data.cc
+    MCNPVTallierData.cc
+    MCNPFileData.cc
+    GAMOSFileData.cc
+    FileData.cc
+    TextFileData.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_Shielding_sumScores
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
 )

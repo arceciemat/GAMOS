@@ -1,58 +1,45 @@
-#------------------------------------------------------------------------------
-# Module : DICOM2G4
-# Package: DICOM_DICOM2G4
-#
-#------------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME DICOM2G4
-	 HEADERS
-		DicomBeamDevice.hh
-		DicomBeamWedge.hh
-		DicomBeamDeviceBLD.hh
-		DicomBeamCompensator.hh
-		DicomReaderRTIonPlan.hh
-		Dicom2G4FileMgr.hh
-		DicomBeamDevicePos.hh
-		DicomBeam.hh
-		DicomBeamBlock.hh
-		DicomBeamRTIonControlPoint.hh
-		DicomVBeamRTControlPoint.hh
-		DicomVBeamDevice.hh
-		DicomBeamRTControlPoint.hh
-		DicomReaderRTPlan.hh
-	 SOURCES
-		DicomReaderRTIonPlan.cc
-		DicomBeam.cc
-		Dicom2G4FileMgr.cc
-		DicomBeamBlock.cc
-		DicomBeamDevice.cc
-		DicomReaderNM.cc.old
-		DicomVBeamRTControlPoint.cc
-		DicomBeamDevicePos.cc
-		DicomBeamDeviceBLD.cc
-		DicomBeamRTControlPoint.cc
-		DicomVBeamDevice.cc
-		DicomBeamCompensator.cc
-		DicomReaderRTPlan.cc
-		DicomBeamWedge.cc
-		DicomBeamRTIonControlPoint.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-		${DCMTK_LIBRARIES} 
-	DICOMReaders
-	DICOMBase
+# - GAMOS_analysis_DICOM_DICOM2G4 module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+
+geant4_add_module(GAMOS_analysis_DICOM_DICOM2G4
+  PUBLIC_HEADERS
+    DicomBeamDevicePos.hh
+    DicomBeamCompensator.hh
+    DicomReaderRTPlan.hh
+    DicomBeamWedge.hh
+    DicomBeamDevice.hh
+    DicomBeamRTControlPoint.hh
+    DicomBeamDeviceBLD.hh
+    Dicom2G4FileMgr.hh
+    DicomVBeamDevice.hh
+    DicomVBeamRTControlPoint.hh
+    DicomReaderRTIonPlan.hh
+    DicomBeamRTIonControlPoint.hh
+    DicomBeamBlock.hh
+    DicomBeam.hh
+  SOURCES
+    DicomBeamBlock.cc
+    DicomBeam.cc
+    DicomBeamDevice.cc
+    DicomBeamCompensator.cc
+    DicomVBeamDevice.cc
+    DicomReaderNM.cc.old
+    DicomBeamWedge.cc
+    DicomBeamDeviceBLD.cc
+    DicomReaderRTIonPlan.cc
+    DicomReaderRTPlan.cc
+    DicomBeamRTIonControlPoint.cc
+    DicomBeamDevicePos.cc
+    DicomBeamRTControlPoint.cc
+    DicomVBeamRTControlPoint.cc
+    Dicom2G4FileMgr.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_DICOM_DICOM2G4
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    DICOMReaders
+    DICOMBase
+    ${SEAL_LIBRARIES} 
 )

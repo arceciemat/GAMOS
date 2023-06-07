@@ -4,6 +4,8 @@
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
+#include "GamosCore/GamosReadDICOM/include/GmInterfile.hh"
+#include "GamosCore/GamosReadDICOM/include/GmInterfileHeader.hh"
 
 #include <fstream>
 #include <map>
@@ -63,108 +65,46 @@ void DicomReaderInterfile::ReadHeader()
   theRescaleIntercept = 0;
   const G4int NMAXLIN = 10000;
   char ltemp[NMAXLIN]; //there won't be lines longer than NMAXLIN characters
-  std::ifstream fin(theHeaderFileName);
-  if( !fin.is_open()) {
-    G4Exception("DicomReaderInterfile::ReadHeader",
-		  "",
-		  FatalException,
-		  (G4String("!!!! Input file does not exist: ")+theHeaderFileName).c_str());
+  theInterfileHeader = new GmInterfileHeader();
+  theInterfileHeader->Read(theHeaderFileName);
+  //  G4double theOffsetX = 0, theOffsetY = 0., theOffsetZ = 0.;
+  theNoVoxelsX = theInterfileHeader->GetNoVoxelsX();
+  theNoVoxelsY = theInterfileHeader->GetNoVoxelsY();
+  theNoVoxelsZ = theInterfileHeader->GetNoVoxelsZ();
+  theVoxelDimX = theInterfileHeader->GetVoxelDimX();
+  theVoxelDimY = theInterfileHeader->GetVoxelDimY();
+  theVoxelDimZ = theInterfileHeader->GetVoxelDimZ();
+  theMinX = theInterfileHeader->GetMinX();
+  theMinY = theInterfileHeader->GetMinY();
+  theMinZ = theInterfileHeader->GetMinZ();
+  theMaxX = theMinX+theVoxelDimX*theNoVoxelsX;
+  theMaxY = theMinY+theVoxelDimY*theNoVoxelsY;
+  theMaxZ = theMinZ+theVoxelDimZ*theNoVoxelsZ;
+  theNBytesPerPixel = theInterfileHeader->GetNoBytesPerPixel(); // TO BE IMPLEMENTED
+  theNumberFormat = theInterfileHeader->GetNumberFormat();
+  theDataFileName = theInterfileHeader->GetDataFileName();
+  
+  //        signed integer|unsigned integer
+  //        |long float|short float|bit|ASCII
+  /*
+  //      theByteOrder = getSVal(stemp); // TO BE IMPLEMENTED
+  } else if( stemp.find("data compression") != std::string::npos ) {
+  G4Exception("DicomReaderInterfile::ReadHeader",
+  "",
+  FatalException,
+  G4String("!!!! data compression is not supported: "+sVal).c_str());
+  
+  } else if( stemp.find("patient orientation") != std::string::npos ) {
+  thePatientOrientation = getSVal(stemp);
+  } else if( stemp.find("patient rotation") != std::string::npos ) {
+  thePatientRotation = getSVal(stemp);
+  } else if( stemp.find("rescale slope") != std::string::npos ) {
+  theRescaleSlope = getDVal(stemp);
+  } else if( stemp.find("rescale intercept") != std::string::npos ) {
+  theRescaleIntercept = getDVal(stemp);
+  } else if( stemp.find("name of data file") != std::string::npos ) {
+  theDataFileName = getSVal(stemp);
   }
-  G4double theOffsetX = 0, theOffsetY = 0., theOffsetZ = 0.;
-  //  G4cout << " OPENING HEADER FILE " << theHeaderFileName << G4endl; //GDEB
-  for( int ii = 0; ii < 100 ;ii++ ) {
-    fin.getline( ltemp, NMAXLIN );
-    if( fin.eof() ) break;
-    std::string stemp(ltemp);
-#ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(infoVerb) )G4cout << ii << " DicomReaderInterfile::ReadHeader " << stemp << G4endl;
-#endif  
-    if( stemp.find("matrix axis label [") != std::string::npos ) {
-      idSVal = getIdSVal(stemp);
-      if( axisIds[idSVal.first] != idSVal.second ) {
-	G4Exception("DicomReaderInterfile",
-		    "",
-		    FatalException,
-		    ("FILE "+theHeaderFileName+" !!! axis labels are not 1:x 2:y 3:z , but "+GmGenUtils::itoa(idSVal.first)+":"+idSVal.second+":").c_str());	
-      }
-    } else if( stemp.find("matrix size [") != std::string::npos ){
-      idDVal = getIdDVal(stemp);
-      if( idDVal.first == 1 ) {
-	theNoVoxelsX = idDVal.second;
-      } else if( idDVal.first == 2 ) {
-	theNoVoxelsY = idDVal.second;
-      } else if( idDVal.first == 3 ) {
-	theNoVoxelsZ = idDVal.second;
-      }
-    } else if( stemp.find("scaling factor (mm/pixel) [") != std::string::npos ) {
-      idDVal = getIdDVal(stemp);
-      if( idDVal.first == 1 ) {
-	theVoxelDimX = idDVal.second;
-      } else if( idDVal.first == 2 ) {
-	theVoxelDimY = idDVal.second;
-      } else if( idDVal.first == 3 ) {
-	theVoxelDimZ = idDVal.second;
-      }      
-    } else if( stemp.find("offset [") != std::string::npos ) {
-      idDVal = getIdDVal(stemp);
-      if( idDVal.first == 1 ) {
-	theOffsetX = idDVal.second;
-      } else if( idDVal.first == 2 ) {
-	theOffsetY = idDVal.second;
-      } else if( idDVal.first == 3 ) {
-	theOffsetZ = idDVal.second;
-      }
-    } else if( stemp.find("imagedata byte order") != std::string::npos ) {
-      theByteOrder = getSVal(stemp); // TO BE IMPLEMENTED
-    } else if( stemp.find("number of bytes per pixel") != std::string::npos ) {
-      theNBytesPerPixel = getDVal(stemp); // TO BE IMPLEMENTED
-    } else if( stemp.find("data encode") != std::string::npos ) {
-      sVal = getSVal(stemp);
-      if( sVal != "none" )  {
-	G4Exception("DicomReaderInterfile::ReadHeader",
-		    "",
-		    FatalException,
-		    G4String("!!!! data encode is not supported: "+sVal).c_str());
-      }
-    } else if( stemp.find("number format") != std::string::npos ) {
-      sVal = getSVal(stemp);
-      if( sVal != "float" && sVal != "signed integer"
-	  && sVal != "signed integer" )  {
-	G4Exception("DicomReaderInterfile::ReadHeader",
-		    "",
-		    FatalException,
-		    G4String("!!! number format not supported "+sVal).c_str());
-      }
-      //!number format := <ASCIIlist> unsigned integer
-      //        signed integer|unsigned integer
-      //        |long float|short float|bit|ASCII
-    } else if( stemp.find("data compression") != std::string::npos ) {
-      sVal = getSVal(stemp);
-      if( sVal != "none" )  {
-	G4Exception("DicomReaderInterfile::ReadHeader",
-		    "",
-		    FatalException,
-		    G4String("!!!! data compression is not supported: "+sVal).c_str());
-      }
-    } else if( stemp.find("patient orientation") != std::string::npos ) {
-      thePatientOrientation = getSVal(stemp);
-    } else if( stemp.find("patient rotation") != std::string::npos ) {
-      thePatientRotation = getSVal(stemp);
-    } else if( stemp.find("rescale slope") != std::string::npos ) {
-      theRescaleSlope = getDVal(stemp);
-    } else if( stemp.find("rescale intercept") != std::string::npos ) {
-      theRescaleIntercept = getDVal(stemp);
-    } else if( stemp.find("name of data file") != std::string::npos ) {
-      theDataFileName = getSVal(stemp);
-    }
-  }
-  //--- Figure is always centered at (0,0,0). Construct limits
-  theMinX = -theVoxelDimX*theNoVoxelsX/2.+theOffsetX;
-  theMaxX = theVoxelDimX*theNoVoxelsX/2.+theOffsetX;
-  theMinY = -theVoxelDimY*theNoVoxelsY/2.+theOffsetY;
-  theMaxY = theVoxelDimY*theNoVoxelsY/2.+theOffsetY;
-  theMinZ = -theVoxelDimZ*theNoVoxelsZ/2.+theOffsetZ;
-  theMaxZ = theVoxelDimZ*theNoVoxelsZ/2.+theOffsetZ;
   G4cout << " MINY = " << theMinY << " = " <<  -theVoxelDimY << " * " << theNoVoxelsY/2. << " + "<< theOffsetY<< G4endl; //GDEB
   if( thePatientOrientation == "head_in" ) {
     if( thePatientRotation == "supine" ) {
@@ -195,19 +135,12 @@ void DicomReaderInterfile::ReadHeader()
 		("!!!! patient orientation is not supported: "+thePatientOrientation+" PatientPosition will be set to HFS").c_str()); 
   }
 
-  if( theDataFileName == "" ) {
-    G4Exception("DicomReaderInterfile::ReadHeader",
-		"",
-		FatalException,
-		"!!!! No name of data file tag found");
-  }
-  
   Print(std::cout);
-
+  */
   
 }
 
-//----------------------------------------------------------------------------
+ //----------------------------------------------------------------------------
 std::pair<int,std::string> DicomReaderInterfile::getIdSVal(std::string stemp)
 {
   //  std::remove( stemp.begin(), stemp.end(), '\r');
@@ -253,7 +186,7 @@ std::pair<int,double> DicomReaderInterfile::getIdDVal(std::string stemp)
   return idDVal;
 }
 
- 
+
 //----------------------------------------------------------------------------
 std::string DicomReaderInterfile::getSVal(std::string stemp)
 {
@@ -286,24 +219,16 @@ double DicomReaderInterfile::getDVal(std::string stemp)
 //----------------------------------------------------------------------------
 void DicomReaderInterfile::ReadPixelData()
 {
+  GmInterfile* interfile = new GmInterfile();
+  interfile->SetHeader(theInterfileHeader);
+  interfile->Read(theDataFileName);
 
-  FILE* inputV=fopen((theDataFileName).c_str(), "rb");
-  if( inputV == 0 ) {
-    G4Exception("DicomReaderInterfile::ReadPixelData",
-		"",
-		FatalException,
-		("File "+theDataFileName+" NOT FOUND").c_str());
-  }
-  size_t nVoxels = GetNoVoxels();
-  float *fData;
-  //theData = calloc( nVoxels,sizeof(float));
-  fData = (float*) malloc(nVoxels*sizeof(float));
-  
-  fread(fData,1,nVoxels*theNBytesPerPixel, inputV);
-
+  size_t nVoxels = theInterfileHeader->GetNoVoxels();
+  std::vector<float> DataRead = interfile->GetData();
   theVoxelData = new std::vector<G4double>;
   for( size_t ii = 0; ii < nVoxels; ii++ ) {
-    theVoxelData->push_back(fData[ii]*theRescaleSlope + theRescaleIntercept);
+    theVoxelData->push_back(DataRead[ii]*theRescaleSlope + theRescaleIntercept);
+    G4cout << " DicomReaderInterfile DATA " << ii << " : " << DataRead[ii]*theRescaleSlope + theRescaleIntercept << " " << DataRead[ii]<<"*"<<theRescaleSlope<<"+"<<theRescaleIntercept << G4endl; //GDEB
   }
   theDicomImage = CreateImage("Interfile", DIM_Interfile, true, true );
   

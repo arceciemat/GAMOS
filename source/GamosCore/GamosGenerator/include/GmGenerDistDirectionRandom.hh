@@ -10,7 +10,7 @@ public:
   GmGenerDistDirectionRandom(){};
   virtual ~GmGenerDistDirectionRandom(){};
 
-  virtual G4ThreeVector GenerateDirection( const GmParticleSource* source );
+  virtual G4ThreeVector GenerateDirection( GmParticleSource* source );
 
 };
 

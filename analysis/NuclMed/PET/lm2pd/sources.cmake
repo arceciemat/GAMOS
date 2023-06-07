@@ -1,29 +1,16 @@
-#------------------------------------------------------------------------------
-# Module : Detector
-# Package: Detector_PET_lm2pd
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${PROJECT_SOURCE_DIR}/include)
+# - GAMOS_analysis_NuclMed_PET_lm2pd module build definition
 
-#
-# Define the GAMOS Module.
 include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME lm2pd
-	 HEADERS
-		lm2pd.hh
-	 SOURCES
-		dummy.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
 
-	LINK_LIBRARIES
+geant4_add_module(GAMOS_analysis_NuclMed_PET_lm2pd
+  PUBLIC_HEADERS
+    lm2pd.hh
+  SOURCES
+    dummy.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_NuclMed_PET_lm2pd
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
 )

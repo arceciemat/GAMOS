@@ -29,6 +29,11 @@ GmFactoriesMessenger::GmFactoriesMessenger(GmRunManager* myua):
   userActionsFCmd->SetParameterName("choice",true);
   userActionsFCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  userTimeStepActionsFCmd = new GmUIcmdWithAString("/gamos/userTimeStepAction",this);
+  userTimeStepActionsFCmd->SetGuidance("Enable one userTimeStepAction by its plugin name");
+  userTimeStepActionsFCmd->SetParameterName("choice",true);
+  userTimeStepActionsFCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   verbosityFCmd = new GmUIcmdWithAString("/gamos/verbosity",this);
   verbosityFCmd->SetGuidance("Set the verbosity level for a certain verbosity typel: verbType verbValue (-1,0,1,2,3,4) or (silent,error,warning,info,debug,test)");
   verbosityFCmd->SetParameterName("choice",true);
@@ -51,6 +56,7 @@ GmFactoriesMessenger::~GmFactoriesMessenger()
   if (physicsListFCmd) delete physicsListFCmd;
   if (generatorFCmd) delete generatorFCmd;
   if (userActionsFCmd) delete userActionsFCmd;
+  if (userTimeStepActionsFCmd) delete userTimeStepActionsFCmd;
   if (verbosityFCmd) delete verbosityFCmd;
   if (digitizerFCmd) delete digitizerFCmd;
   if (rechitBuilderFCmd) delete rechitBuilderFCmd;
@@ -67,6 +73,8 @@ void GmFactoriesMessenger::SetNewValue(G4UIcommand * command,
     myAction->SelectGenerator(newValues);
   }else if (command == userActionsFCmd) {
     myAction->SelectUserAction(newValues);
+  }else if (command == userTimeStepActionsFCmd) {
+    myAction->SelectUserTimeStepAction(newValues);
   }else if (command == verbosityFCmd) {
     myAction->SelectVerbosity(newValues);
   }else if (command == digitizerFCmd) {

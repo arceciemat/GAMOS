@@ -1,105 +1,104 @@
-#------------------------------------------------------------------------------
-# Module : MagFieldManager
-# Package: MagFieldManager
-#
-#------------------------------------------------------------------------------
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GEANT4 Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME MagFieldManager
-	 HEADERS
-		IdealToroidWithCircularCoil.hh
-		ParametrizedFieldCreator.hh
-		MagFieldModManMessenger.hh
-		MagneticFieldModelManager.hh
-		CurvedSegment.hh
-		MagneticDipoleCreator.hh
-		LinearSegment.hh
-		special_functions.hh
-		LinearSegmentCreator.hh
-		InterpolatedFieldCreator.hh
-		MagneticDipole.hh
-		RacetrackCoilCreator.hh
-		InterpolatedField.hh
-		ReplicateFieldCreator.hh
-		ReplicateField.hh
-		IdealToroidWithRectangularCoilCreator.hh
-		CircularSolenoidCreator.hh
-		CircularCoilCreator.hh
-		BiotSavartIntegrator.hh
-		CircularSolenoid.hh
-		MultiplyField.hh
-		IdealToroidWithRectangularCoil.hh
-		ConfinedFieldCreator.hh
-		CoilType3.hh
-		CircularCoil.hh
-		UniformFieldCreator.hh
-		TransformationManager.hh
-		TransManMessenger.hh
-		MagneticEquationOfMotion.hh
-		IdealToroidWithCircularCoilCreator.hh
-		CoilType3Creator.hh
-		ConfinedField.hh
-		CompoundFieldCreator.hh
-		JCurrentCalculator.hh
-		MultiplyFieldCreator.hh
-		CompoundField.hh
-		RacetrackCoil.hh
-		CurvedSegmentCreator.hh
-		CoilType2Creator.hh
-		CoilType2.hh
-	 SOURCES
-		IdealToroidWithRectangularCoil.cc
-		MagneticDipole.cc
-		LinearSegmentCreator.cc
-		plugin.cc
-		CurvedSegmentCreator.cc
-		ConfinedFieldCreator.cc
-		IdealToroidWithCircularCoil.cc
-		MagneticEquationOfMotion.cc
-		MagneticFieldModelManager.cc
-		RacetrackCoilCreator.cc
-		CurvedSegment.cc
-		CoilType2Creator.cc
-		IdealToroidWithCircularCoilCreator.cc
-		JCurrentCalculator.cc
-		ReplicateFieldCreator.cc
-		LinearSegment.cc
-		TransManMessenger.cc
-		special_functions.cc
-		BiotSavartIntegrator.cc
-		MultiplyFieldCreator.cc
-		CircularSolenoid.cc
-		ReplicateField.cc
-		UniformFieldCreator.cc
-		CompoundFieldCreator.cc
-		CoilType3.cc
-		CircularCoil.cc
-		InterpolatedField.cc
-		InterpolatedFieldCreator.cc
-		CoilType2.cc
-		ConfinedField.cc
-		MultiplyField.cc
-		CoilType3Creator.cc
-		CircularCoilCreator.cc
-		CircularSolenoidCreator.cc
-		IdealToroidWithRectangularCoilCreator.cc
-		RacetrackCoil.cc
-		ParametrizedFieldCreator.cc
-		TransformationManager.cc
-		CompoundField.cc
-		MagneticDipoleCreator.cc
-		MagFieldModManMessenger.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_libs} 
-		${ROOT_LIBRARIES} 
+# - MagFieldManager module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(MagFieldManager
+  PUBLIC_HEADERS
+    IdealToroidWithCircularCoil.hh
+    CoilType2.hh
+    JCurrentCalculator.hh
+    ParametrizedFieldCreator.hh
+    LinearSegment.hh
+    CurvedSegmentCreator.hh
+    MagFieldModManMessenger.hh
+    MagneticFieldModelManager.hh
+    ConfinedFieldCreator.hh
+    CoilType3Creator.hh
+    LinearSegmentCreator.hh
+    IdealToroidWithCircularCoilCreator.hh
+    MultiplyField.hh
+    ReplicateFieldCreator.hh
+    CircularSolenoidCreator.hh
+    MagneticDipole.hh
+    RacetrackCoil.hh
+    RacetrackCoilCreator.hh
+    IdealToroidWithRectangularCoil.hh
+    CurvedSegment.hh
+    UniformFieldCreator.hh
+    CircularCoilCreator.hh
+    BiotSavartIntegrator.hh
+    special_functions.hh
+    ReplicateField.hh
+    CircularCoil.hh
+    InterpolatedField.hh
+    CompoundFieldCreator.hh
+    TransManMessenger.hh
+    MagneticEquationOfMotion.hh
+    MultiplyFieldCreator.hh
+    ConfinedField.hh
+    CoilType3.hh
+    CoilType2Creator.hh
+    CircularSolenoid.hh
+    MagneticDipoleCreator.hh
+    IdealToroidWithRectangularCoilCreator.hh
+    TransformationManager.hh
+    InterpolatedFieldCreator.hh
+    CompoundField.hh
+  SOURCES
+    IdealToroidWithCircularCoilCreator.cc
+    ReplicateFieldCreator.cc
+    CircularSolenoidCreator.cc
+    ParametrizedFieldCreator.cc
+    CircularCoilCreator.cc
+    InterpolatedFieldCreator.cc
+    CompoundFieldCreator.cc
+    CompoundField.cc
+    MagneticDipole.cc
+    JCurrentCalculator.cc
+    CoilType2Creator.cc
+    RacetrackCoil.cc
+    CoilType2.cc
+    special_functions.cc
+    LinearSegment.cc
+    CoilType3.cc
+    TransManMessenger.cc
+    InterpolatedField.cc
+    ConfinedFieldCreator.cc
+    TransformationManager.cc
+    CurvedSegment.cc
+    MagneticDipoleCreator.cc
+    ConfinedField.cc
+    plugin.cc
+    CoilType3Creator.cc
+    MagFieldModManMessenger.cc
+    CurvedSegmentCreator.cc
+    LinearSegmentCreator.cc
+    IdealToroidWithCircularCoil.cc
+    MultiplyFieldCreator.cc
+    MultiplyField.cc
+    UniformFieldCreator.cc
+    ReplicateField.cc
+    CircularSolenoid.cc
+    CircularCoil.cc
+    BiotSavartIntegrator.cc
+    IdealToroidWithRectangularCoil.cc
+    MagneticFieldModelManager.cc
+    RacetrackCoilCreator.cc
+    IdealToroidWithRectangularCoilCreator.cc
+    MagneticEquationOfMotion.cc
+)
+# - Add path to generated header
+geant4_module_include_directories(MagFieldManager
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
+ PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
+
+geant4_module_link_libraries(MagFieldManager
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
 )

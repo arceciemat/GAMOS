@@ -29,6 +29,7 @@ private:
   GmUIcmdWithAString*        physicsListFCmd;
   GmUIcmdWithAString*        generatorFCmd;
   GmUIcmdWithAString*        userActionsFCmd;
+  GmUIcmdWithAString*        userTimeStepActionsFCmd;
   GmUIcmdWithAString*        verbosityFCmd;
   GmUIcmdWithAString*        digitizerFCmd;
   GmUIcmdWithAString*        rechitBuilderFCmd;

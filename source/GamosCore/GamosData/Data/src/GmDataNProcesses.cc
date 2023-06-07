@@ -5,6 +5,8 @@
 #include "G4Step.hh"
 #include "G4Track.hh"
 #include "G4VProcess.hh"
+#include "G4Event.hh"
+#include "G4EventManager.hh"
 
 //----------------------------------------------------------------
 GmDataNProcesses::GmDataNProcesses()
@@ -22,6 +24,8 @@ GmDataNProcesses::GmDataNProcesses()
 		FatalException,
 		"No process name given, please use '/gamos/setParam GmDataNProcesses:Processes PROC_NAME_1 PROC_NAME_2 ...'");
   }
+
+  theEventManager = G4EventManager::GetEventManager();
 }
 
 //----------------------------------------------------------------
@@ -34,7 +38,7 @@ void GmDataNProcesses::Accumulate( const G4Step* aStep, G4int index )
 {
   G4String procName = aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
   for( size_t ii = 0; ii < theProcessesNames.size(); ii++ ) {
-    if( GmGenUtils::AreWordsEquivalent(procName,theProcessesNames[ii]) ) {
+    if( GmGenUtils::AreWordsEquivalent(theProcessesNames[ii],procName) ) {
       theDataAccumulated[index] += 1;
     }
 #ifndef WIN32
@@ -47,19 +51,25 @@ void GmDataNProcesses::Accumulate( const G4Step* aStep, G4int index )
 //----------------------------------------------------------------
 G4double GmDataNProcesses::GetValueFromStep( const G4Step* aStep, G4int index )
 {
-  G4double nStep = 0;
+  G4int evtID = theEventManager->GetConstCurrentEvent()->GetEventID();
+  // Check track to start new counter
+  G4int trkID = aStep->GetTrack()->GetTrackID();
+  if( trkID != thePrevTrackID || evtID != thePrevEventID ) theNSteps.clear();
+  thePrevTrackID = trkID;
+  thePrevEventID = evtID;
+  
   G4String procName = aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
   for( size_t ii = 0; ii < theProcessesNames.size(); ii++ ) {
     if( GmGenUtils::AreWordsEquivalent(procName,theProcessesNames[ii]) ) {
-      nStep = 1;
+      theNSteps[index] += 1;
       break;
     }
   }
 
 #ifndef WIN32
-  if( DataVerb(debugVerb) ) G4cout << " GmDataNProcesses::GetValueFromStep " << nStep << " " << index << " : " <<  theDataAccumulated[index] << G4endl; 
+  if( DataVerb(debugVerb) ) G4cout << " GmDataNProcesses::GetValueFromStep " << theNSteps[index] << " " << index << " : " <<  theDataAccumulated[index] << G4endl; 
 #endif
 
-  return nStep;
+  return theNSteps[index];
 }
 

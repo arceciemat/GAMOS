@@ -6,7 +6,9 @@
 #endif
 #include "GmPDSGeantinoProcess.hh"
 #include "GmPDSScore.hh"
+#ifndef WIN32
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
+#endif
 #include "GmPDSProcessHelper.hh"
 #include "GmPDSDetector.hh"
 #include "GmPDSUtils.hh"
@@ -132,10 +134,12 @@ std::map<G4int,GmPDSDetector*> GmPDSUA::BuildDetectors()
   //-- Set detector from touchable name
   G4String detName = GmParameterMgr::GetInstance()->GetStringValue("GmPDS:DetectorName","");
   
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << "GmPDSUA::BuildDetectors = " << detName << G4endl;
 #endif
-  
+#endif
+
   std::vector<GmTouchable*> touchs = GmGeometryUtils::GetInstance()->GetTouchables(detName, 0);
   if(touchs.size() == 0 ){
     GmGeometryUtils::GetInstance()->DumpG4PVLVTree( G4cerr );
@@ -150,8 +154,10 @@ std::map<G4int,GmPDSDetector*> GmPDSUA::BuildDetectors()
   std::vector<GmTouchable*>::const_iterator ite;
   for( ite = touchs.begin(); ite != touchs.end(); ite++ ){
     GmTouchable* touch = *ite;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(debugVerb) ) G4cout << "GmPDSUA::BuildDetectors building detector " << touch->GetLongName() << G4endl;
+#endif
 #endif
     // PD identification is based on PV copyNo> it cannot be repeated
     if( pvCopyNos.find( touch->GetCopyNo() ) != pvCopyNos.end() ) {
@@ -189,8 +195,10 @@ void GmPDSUA::AddNeutronScoringProcess()
     pmanagerN->AddProcess( theNeutronScoringProcess, 20, -1, 20 );
     pmanagerN->SetProcessOrderingToLast(theNeutronScoringProcess,idxPostStep);
     pmanagerN->SetProcessOrderingToLast(theNeutronScoringProcess,idxAtRest);
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << " GmPDSUA::AddScoringProcess added NeutronScoringProcess to particle " << particle->GetParticleName() << G4endl;
+#endif
 #endif
   }
 
@@ -221,8 +229,10 @@ void GmPDSUA::AddGammaScoringProcess()
     pmanagerN->AddProcess( theGammaScoringProcess, 2, -1, 2 );
     pmanagerN->SetProcessOrderingToLast(theGammaScoringProcess,idxPostStep);
     pmanagerN->SetProcessOrderingToLast(theGammaScoringProcess,idxAtRest);
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << " GmPDSUA::AddScoringProcess added GammaScoringProcess to particle " << particle->GetParticleName() << G4endl;
+#endif
 #endif
   }
 
@@ -258,8 +268,10 @@ void GmPDSUA::AddOpticalPhotonScoringProcess()
     pmanagerN->AddProcess( theOpticalPhotonScoringProcess, 2, -1, 2 );
     pmanagerN->SetProcessOrderingToLast(theOpticalPhotonScoringProcess,idxPostStep);
     pmanagerN->SetProcessOrderingToLast(theOpticalPhotonScoringProcess,idxAtRest);
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << " GmPDSUA::AddScoringProcess added OpticalPhotonScoringProcess to particle " << particle->GetParticleName() << G4endl;
+#endif
 #endif
   }
 

@@ -29,7 +29,7 @@ public:
 
   virtual void BuildCompoundScores();
 
-  GmVPrimitiveScorer* FindOrCreateScorer(G4String scorerClass,G4String scorerName );
+  GmVPrimitiveScorer* FindOrCreateScorer(G4String scorerClass,G4String &scorerName );
 
   virtual void SetParameters( const std::vector<G4String>& params );
   void SetNameSuffix( G4String ns ) {
@@ -46,7 +46,6 @@ public:
   void SetExtraParams( const std::vector< std::vector<G4String> > ep ) {
     theExtraParams = ep;
   }
-  
 
 protected:
 

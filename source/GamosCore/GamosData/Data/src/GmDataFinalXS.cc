@@ -1,4 +1,5 @@
 #include "GmDataFinalXS.hh"
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
 #include "G4Step.hh"
 #include "G4Track.hh"
@@ -51,7 +52,7 @@ G4String GmDataFinalXS::GetStringValueFromStep( const G4Step* aStep )
     
   }
 
-  return totalXS;
+  return GmGenUtils::ftoa(totalXS);
 }
 
 //----------------------------------------------------------------

@@ -1,38 +1,17 @@
-#------------------------------------------------------------------------------
-# Module : RTDose
-# Package: RTDose_sumSqdose
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME sumSqdose
-	 HEADERS
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME sumSqdose
-	 HEADERS
-		Merge3ddoseUA.hh
-	 SOURCES
-		dummy.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-	RadioTherapy
+# - GAMOS_analysis_RTDose_sumSqdose module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+
+geant4_add_module(GAMOS_analysis_RTDose_sumSqdose
+  PUBLIC_HEADERS
+    Merge3ddoseUA.hh
+  SOURCES
+    dummy.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_RTDose_sumSqdose
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    RadioTherapy
+    ${SEAL_LIBRARIES} 
 )

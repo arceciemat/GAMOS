@@ -5,7 +5,6 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 
-class G4ParticleGun;
 class G4Event;
 class GmAnalysisMgr;
 #include <map>
@@ -19,7 +18,7 @@ public:
   GmGenerDistPositionDiscFromFile();
   virtual ~GmGenerDistPositionDiscFromFile(){};
 
-  virtual G4ThreeVector GeneratePosition( const GmParticleSource* source );
+  virtual G4ThreeVector GeneratePosition( GmParticleSource* source );
 
   virtual void SetParams( const std::vector<G4String>& params );
 

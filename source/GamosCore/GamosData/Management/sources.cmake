@@ -1,54 +1,52 @@
-#------------------------------------------------------------------------------
-# Module : Management
-# Package: GamosCore_GamosData_Management
-#
-#------------------------------------------------------------------------------
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GEANT4 Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME GamosCore_GamosData_Management
-	 HEADERS
-		GmDataAncestorStepStringData.hh
-		GmVData.hh
-		GmVDataProf1DHisto.hh
-		GmDataFactory.hh
-		GmDataAncestorStepNumericData.hh
-		GmVDataProf2DHisto.hh
-		GmDataMgr.hh
-		GmDataVerbosity.hh
-		GmVDataNon1DHisto.hh
-		GmVDataString.hh
-		GmVData2DHisto.hh
-		GmVDataAccumulated.hh
-		GmVDataInt.hh
-	 SOURCES
-		GmVDataNon1DHisto.cc
-		GmVDataString.cc
-		plugin.cc
-		GmVDataInt.cc
-		GmDataMgr.cc
-		GmVData.cc
-		GmDataVerbosity.cc
-		GmVData2DHisto.cc
-		GmDataAncestorStepNumericData.cc
-		GmVDataProf2DHisto.cc
-		GmVDataAccumulated.cc
-		GmVDataProf1DHisto.cc
-		GmDataAncestorStepStringData.cc
-		GmDataFactory.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_libs} 
-		${ROOT_LIBRARIES} 
-	GamosCore_GamosBase_Base
-	GamosCore_GamosUserActionMgr
-		${SEAL_LIBRARIES} 
+# - GamosCore_GamosData_Management module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(GamosCore_GamosData_Management
+  PUBLIC_HEADERS
+    GmDataMgr.hh
+    GmVDataAccumulated.hh
+    GmVDataProf1DHisto.hh
+    GmVDataString.hh
+    GmVDataInt.hh
+    GmVData2DHisto.hh
+    GmDataAncestorStepStringData.hh
+    GmVData.hh
+    GmDataAncestorStepNumericData.hh
+    GmVDataNon1DHisto.hh
+    GmVDataProf2DHisto.hh
+    GmDataVerbosity.hh
+    GmDataFactory.hh
+  SOURCES
+    GmDataFactory.cc
+    GmDataVerbosity.cc
+    GmVData2DHisto.cc
+    plugin.cc
+    GmVData.cc
+    GmVDataProf1DHisto.cc
+    GmDataAncestorStepNumericData.cc
+    GmDataAncestorStepStringData.cc
+    GmVDataAccumulated.cc
+    GmVDataProf2DHisto.cc
+    GmVDataString.cc
+    GmDataMgr.cc
+    GmVDataNon1DHisto.cc
+    GmVDataInt.cc
+)
+# - Add path to generated header
+geant4_module_include_directories(GamosCore_GamosData_Management
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
+ PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
+
+geant4_module_link_libraries(GamosCore_GamosData_Management
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
+    GamosCore_GamosBase_Base
+    GamosCore_GamosUserActionMgr
 )

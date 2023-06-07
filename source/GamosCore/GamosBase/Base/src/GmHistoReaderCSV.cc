@@ -75,6 +75,11 @@ void GmHistoReaderCSV::FillHisto1D( std::vector<G4String>& wl, GmHisto1* his )
   G4double hmax = GmGenUtils::GetValue(wl[4]);
   G4double hstep = (hmax-hmin)/nbins; 
   G4bool bHistoCSVErrors = (G4int(wl.size()) > nbins+8);
+#ifdef GAMOS_NO_ROOT
+  if( bHistoCSVErrors ) {
+    his->SetUseErrors(true);
+  }
+#endif
   G4int ii = 5;
   for( ; ii < 5+nbins+1; ii++ ) {
     G4double valX = hmin + (ii-0.5) * hstep;

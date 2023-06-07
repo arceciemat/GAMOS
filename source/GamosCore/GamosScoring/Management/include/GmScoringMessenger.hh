@@ -16,6 +16,7 @@ public:
   
 private:
   GmUIcmdWithAString* PrinterCmd;
+  GmUIcmdWithAString* PrinterCmd2;
   GmUIcmdWithAString* MFDetectorCmd;
   GmUIcmdWithAString* AssocMFD2LVCmd;
   GmUIcmdWithAString* Scorer2MFDCmd;

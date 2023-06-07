@@ -67,7 +67,7 @@ void GmVGenerDistPositionVolumesAndSurfaces::SetParams( const std::vector<G4Stri
 }
 
 //------------------------------------------------------------------------
-G4ThreeVector GmVGenerDistPositionVolumesAndSurfaces::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmVGenerDistPositionVolumesAndSurfaces::GeneratePosition( GmParticleSource* )
 {
   //--------- Select an object
   unsigned int siz = theTotalObjectDimensions.size();
@@ -100,6 +100,7 @@ G4ThreeVector GmVGenerDistPositionVolumesAndSurfaces::GeneratePosition( const Gm
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(infoVerb) ) G4cout << " GmVGenerDistPositionVolumesAndSurfaces::Generate pos " << pos << " touchable global pos " <<currentTouchableInfo->pos  << G4endl;
 #endif
+   
     volName = theGeomUtils->BuildTouchableName( pos );
     
   } while(volName != currentTouchableInfo->name && bOnlyVolume );

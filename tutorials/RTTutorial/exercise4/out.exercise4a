@@ -1,7 +1,9 @@
 @@@@@ Running GAMOS with script: exercise4a.in
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
 
 **************************************************************
- Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+ Geant4 version Name: geant4-11-00-patch-03    (16-September-2022)
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -15,20 +17,13 @@ Visualization Manager initialising...
 Registering graphics systems...
 
 You have successfully registered the following graphics systems.
-Current available graphics systems are:
-ASCIITree (ATree)
-DAWNFILE (DAWNFILE)
-G4HepRep (HepRepXML)
-G4HepRepFile (HepRepFile)
-RayTracer (RayTracer)
-VRML1FILE (VRML1FILE)
-VRML2FILE (VRML2FILE)
-gMocrenFile (gMocrenFile)
-FukuiRenderer (DAWN)
-VRML1 (VRML1)
-VRML2 (VRML2)
-OpenGLImmediateX (OGLIX, OGLI)
-OpenGLStoredX (OGLSX, OGL, OGLS)
+Registered graphics systems are:
+  ASCIITree (ATree)
+  DAWNFILE (DAWNFILE)
+  G4HepRepFile (HepRepFile)
+  RayTracer (RayTracer)
+  VRML2FILE (VRML2FILE)
+  gMocrenFile (gMocrenFile)
 
 Registering model factories...
 
@@ -41,12 +36,18 @@ Registered model factories:
   drawByParticleID
   drawByEncounteredVolume
 
+Registered models:
+  None
+
 Registered filter factories:
   attributeFilter
   chargeFilter
   originVolumeFilter
   particleFilter
   encounteredVolumeFilter
+
+Registered filters:
+  None
 
 You have successfully registered the following user vis actions.
 Run Duration User Vis Actions: none
@@ -76,8 +77,6 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /run/setCut 0.01
 /gamos/userAction GmCountTracksUA
 /run/initialize
-100 ANGLEN_ROT 0.333412 0: -0.233743 N: 0.0996687   -100 141.295
-GmPhysicsGammaLowEner::ConstructProcess 
 Warning : Region <targetReg> does not have specific production cuts,
 even though it appears in the current tracking world.
 Default cuts are used for this region.
@@ -93,13 +92,78 @@ Default cuts are used for this region.
 Warning : Region <jawsReg> does not have specific production cuts,
 even though it appears in the current tracking world.
 Default cuts are used for this region.
-/gamos/userAction GmTimeStudyUA GmClassifierByRegion
 /gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-7 1.E1 10.
 /gamos/classifier ClassifierParticleAndKinEnergy GmCompoundClassifier GmClassifierByParticle energyClassifier
-/gamos/userAction GmTimeStudyUA ClassifierParticleAndKinEnergy
 /gamos/generator/addSingleParticleSource source e- 6.*MeV
 /gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
 /run/beamOn 200
+=======================================================================
+======                 Electromagnetic Physics Parameters      ========
+=======================================================================
+LPM effect enabled                                 1
+Enable creation and use of sampling tables         0
+Apply cuts on all EM processes                     0
+Use general process                                0
+Enable linear polarisation for gamma               0
+Enable sampling of quantum entanglement            0
+X-section factor for integral approach             0.8
+Min kinetic energy for tables                      100 eV 
+Max kinetic energy for tables                      100 TeV
+Number of bins per decade of a table               7
+Verbose level                                      1
+Verbose level for worker thread                    0
+Bremsstrahlung energy threshold above which 
+  primary e+- is added to the list of secondary    100 TeV
+Bremsstrahlung energy threshold above which primary
+  muon/hadron is added to the list of secondary    100 TeV
+Lowest triplet kinetic energy                      1 MeV
+Enable sampling of gamma linear polarisation       0
+5D gamma conversion model type                     0
+5D gamma conversion model on isolated ion          0
+Livermore data directory                           livermore
+=======================================================================
+======                 Ionisation Parameters                   ========
+=======================================================================
+Step function for e+-                              (0.2, 1 mm)
+Step function for muons/hadrons                    (0.2, 0.1 mm)
+Step function for light ions                       (0.2, 0.1 mm)
+Step function for general ions                     (0.2, 0.1 mm)
+Lowest e+e- kinetic energy                         1 keV
+Lowest muon/hadron kinetic energy                  1 keV
+Fluctuations of dE/dx are enabled                  1
+Use ICRU90 data                                    0
+Use built-in Birks satuaration                     0
+Build CSDA range enabled                           0
+Use cut as a final range enabled                   0
+Enable angular generator interface                 0
+Max kinetic energy for CSDA tables                 1 GeV
+Max kinetic energy for NIEL computation            0 eV 
+Linear loss limit                                  0.01
+Read data from file for e+e- pair production by mu 0
+=======================================================================
+======                 Multiple Scattering Parameters          ========
+=======================================================================
+Type of msc step limit algorithm for e+-           1
+Type of msc step limit algorithm for muons/hadrons 0
+Msc lateral displacement for e+- enabled           1
+Msc lateral displacement for muons and hadrons     0
+Urban msc model lateral displacement alg96         1
+Range factor for msc step limit for e+-            0.04
+Range factor for msc step limit for muons/hadrons  0.2
+Geometry factor for msc step limitation of e+-     2.5
+Safety factor for msc step limit for e+-           0.6
+Skin parameter for msc step limitation of e+-      1
+Lambda limit for msc step limit for e+-            1 mm
+Use Mott correction for e- scattering              0
+Factor used for dynamic computation of angular 
+  limit between single and multiple scattering     1
+Fixed angular limit between single 
+  and multiple scattering                          3.1416 rad
+Upper energy limit for e+- multiple scattering     100 MeV
+Type of electron single scattering model           0
+Type of nuclear form-factor                        1
+Screening factor                                   1
+=======================================================================
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 6 regions:
           DefaultRegionForTheWorld  1  1  0
@@ -108,27 +172,24 @@ Default cuts are used for this region.
           filterReg  1  1  0
           monitorReg  1  1  0
           jawsReg  1  1  0
-### ===  Auger cascade flag: 0
+### ===  Auger flag: 1
 ### ===  Ignore cuts flag:   0
 
 phot:  for gamma SubType=12 BuildTable=0
       LambdaPrime table from 200 keV to 100 TeV in 61 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
-       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
 
 compt:  for gamma SubType=13 BuildTable=1
       Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
       LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
-       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+       Klein-Nishina : Emin=    0 eV  Emax=  100 TeV
 
 conv:  for gamma SubType=14 BuildTable=1
       Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
-     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+     BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
       Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
@@ -139,35 +200,16 @@ Rayl:  for gamma SubType=11 BuildTable=1
 msc:  for e-  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+          StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
-        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
-
-eBrem:  for e-  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-msc:  for e+  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e+  SubType=2
+eIoni:  for e-  XStype:1  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
-eBrem:  for e+  SubType=3
+eBrem:  for e-  XStype:4  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
@@ -175,11 +217,19 @@ eBrem:  for e+  SubType=3
              eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
             eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
 
-annihil:  for e+, integral:1  SubType=5 BuildTable=0
+msc:  for e+  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+          StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-========= Table of registered couples ==============================
+eIoni:  for e+  XStype:1  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : Yes
  Material : G4_AIR
@@ -193,14 +243,14 @@ Index : 0     used in the geometry : Yes
 Index : 1     used in the geometry : Yes
  Material : G4_Cu
  Range cuts        :  gamma  10 um     e-  10 um     e+  10 um  proton 10 um 
- Energy thresholds :  gamma  2.15864 keV    e-  61.3176 keV    e+  60.499 keV proton -1 MeV
+ Energy thresholds :  gamma  2.16217 keV    e-  61.5477 keV    e+  60.6073 keV proton -1 MeV
  Region(s) which use this couple : 
     targetReg
 
 Index : 2     used in the geometry : Yes
  Material : G4_W
  Range cuts        :  gamma  10 um     e-  10 um     e+  10 um  proton 10 um 
- Energy thresholds :  gamma  7.73912 keV    e-  81.8616 keV    e+  80.2277 keV proton -1 MeV
+ Energy thresholds :  gamma  7.70222 keV    e-  81.4923 keV    e+  79.8329 keV proton -1 MeV
  Region(s) which use this couple : 
     collimatorReg
     jawsReg
@@ -208,63 +258,62 @@ Index : 2     used in the geometry : Yes
 Index : 3     used in the geometry : Yes
  Material : SiFeMn
  Range cuts        :  gamma  10 um     e-  10 um     e+  10 um  proton 10 um 
- Energy thresholds :  gamma  1.7293 keV    e-  60.9069 keV    e+  60.0938 keV proton -1 MeV
+ Energy thresholds :  gamma  1.72708 keV    e-  60.7862 keV    e+  59.923 keV proton -1 MeV
  Region(s) which use this couple : 
     filterReg
 
-====================================================================
+==================================================================
 
 G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
 See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
  CreateHisto1D N trackInfos per Track in target = 980091
  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
- %%% EVENT 0 NTRACKS 12 TOTAL NTRACKS 12
+ %%% EVENT 0 NTRACKS 16 TOTAL NTRACKS 16
  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Range) = 1020011
  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Energy) = 1020012
  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: eBrem:  Safety-Range vs Range) = 1020013
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: phot:  log10(Range) = 1030021
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: phot:  log10(Energy) = 1030022
+ CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: phot:  Safety-Range vs Range) = 1030023
+ CreateHisto1D GmProdCutsStudyUA: targetReg: e-: eIoni:  log10(Range) = 1020031
+ CreateHisto1D GmProdCutsStudyUA: targetReg: e-: eIoni:  log10(Energy) = 1020032
+ CreateHisto2D GmProdCutsStudyUA: targetReg: e-: eIoni:  Safety-Range vs Range) = 1020033
  Run terminated.
 Run Summary
   Number of events processed : 200
-  User=0.150000s Real=0.166427s Sys=0.020000s
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020021
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020022
- CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020023
+  User=0.990000s Real=1.009896s Sys=0.000000s
+ CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020041
+ CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020042
+ CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020043
+ CreateHisto1D GmProdCutsStudyUA: targetReg: e-: ALL:  log10(Range) = 1020051
+ CreateHisto1D GmProdCutsStudyUA: targetReg: e-: ALL:  log10(Energy) = 1020052
+ CreateHisto2D GmProdCutsStudyUA: targetReg: e-: ALL:  Safety-Range vs Range) = 1020053
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  log10(Range) = 1030041
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  log10(Energy) = 1030042
+ CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  Safety-Range vs Range) = 1030043
 
  %%%%% PRODUCTION CUTS STUDY RESULTS 
-GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 48.957
-GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 48.957
+GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 0.134781
+GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 0.134781
+GmProdCutsStudyUA: REGION= targetReg PARTICLE= e- PROCESS= ALL MIN RANGE= 1.68645
+GmProdCutsStudyUA: REGION= targetReg PARTICLE= e- PROCESS= eIoni MIN RANGE= 1.68645
+GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 0.210899
+GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= phot MIN RANGE= 0.210899
 
  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
 RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
 RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
-NUMBER OF TRACKS ACCEPTED 14 N ANCESTORS 2
-
-%%%%% TIMING RESULTS for timer GmTimeStudyUA_GmClassifierByRegion
-DefaultRegionForTheWorld:   User=0.01  Real=0.04  Sys=0
-collimatorReg:   User=0.02  Real=0  Sys=0
-filterReg:   User=0  Real=0  Sys=0
-jawsReg:   User=0  Real=0  Sys=0
-monitorReg:   User=0.01  Real=0  Sys=0
-targetReg:   User=0.05  Real=0.05  Sys=0
-
-
-%%%%% TIMING RESULTS for timer GmTimeStudyUA_ClassifierParticleAndKinEnergy
-"e+ 0.01:0.1":   User=0  Real=0  Sys=0
-"e+ 0.1:1":   User=0  Real=0  Sys=0
-"e- 0.0001:0.001":   User=0  Real=0  Sys=0
-"e- 0.001:0.01":   User=0.01  Real=0.01  Sys=0
-"e- 0.01:0.1":   User=0  Real=0.01  Sys=0
-"e- 0.1:1":   User=0.01  Real=0.02  Sys=0
-"e- 1:10":   User=0.04  Real=0.04  Sys=0
-"e- 1e-05:0.0001":   User=0  Real=0  Sys=0
-"gamma 0.001:0.01":   User=0  Real=0  Sys=0
-"gamma 0.01:0.1":   User=0  Real=0  Sys=0
-"gamma 0.1:1":   User=0.02  Real=0.01  Sys=0
-"gamma 1:10":   User=0  Real=0  Sys=0
-
+RangeRejection: REGION= targetReg PARTICLE= e- PROCESS= ALL NTRACKS= 0
+RangeRejection: REGION= targetReg PARTICLE= e- PROCESS= eIoni NTRACKS= 0
+RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
+RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= phot NTRACKS= 0
+NUMBER OF TRACKS ACCEPTED 17 N ANCESTORS 10
+0 events have been kept for refreshing and/or reviewing.
+  "/vis/reviewKeptEvents" to review them one by one.
+  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 prodcuts.exercise4a:NormalizeToNEvents
-=== saving histograms in file === prodcuts.exercise4a.root
+=== saving histograms in file === prodcuts.exercise4a.csv
 %%%%% Compound classifier using indices from 2

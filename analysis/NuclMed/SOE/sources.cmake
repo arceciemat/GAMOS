@@ -1,61 +1,40 @@
-#------------------------------------------------------------------------------
-# Module : Detector
-# Package: Detector_SOE
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME SOE
-	 HEADERS
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME SOE
-	 HEADERS
-		CDataSetManager.h
-		CDensityMatrix.h
-		CConeExtension.h
-		CHit.h
-		CEventManager.h
-		CEvent.h
-		C3Vector.h
-		CCurrentState.h
-		constants.h
-		CCone.h
-		CUserParameters.h
-		C3Matrix.h
-		CPETLine.h
-	 SOURCES
-		CConeExtension.cc
-		CEvent.cc
-		CUserParameters.cc
-		CDataSetManager.cc
-		constants.cc
-		CDensityMatrix.cc
-		CHit.cc
-		CCone.cc
-		CPETLine.cc
-		C3Vector.cc
-		CEventManager.cc
-		C3Matrix.cc
-		CCurrentState.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
+# - GAMOS_analysis_NuclMed_SOE module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+
+geant4_add_module(GAMOS_analysis_NuclMed_SOE
+  PUBLIC_HEADERS
+    CHit.h
+    CUserParameters.h
+    C3Vector.h
+    CDensityMatrix.h
+    CEventManager.h
+    CCurrentState.h
+    CDataSetManager.h
+    C3Matrix.h
+    constants.h
+    CConeExtension.h
+    CEvent.h
+    CCone.h
+    CPETLine.h
+  SOURCES
+    constants.cc
+    CConeExtension.cc
+    CEvent.cc
+    CPETLine.cc
+    CEventManager.cc
+    CHit.cc
+    C3Vector.cc
+    C3Matrix.cc
+    CCone.cc
+    CUserParameters.cc
+    CCurrentState.cc
+    CDensityMatrix.cc
+    CDataSetManager.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_NuclMed_SOE
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
 )

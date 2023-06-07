@@ -93,7 +93,7 @@ std::vector<G4double> DicomVReader::Read1Data( DcmDataset * dset, DcmTagKey tagK
 OFString DicomVReader::Read1DataStr( DcmDataset * dset, DcmTagKey tagKey, G4bool bExists )
 {
   //  const char* data = "";
-  OFString data;  
+  OFString data = "";  
   // see  http://support.dcmtk.org/docs/classDcmItem.html for types
   //  G4cout << " Read1DataStr dset " << dset << G4endl; //GDEB
   if (dset->findAndGetOFString(tagKey, data).good() ) {

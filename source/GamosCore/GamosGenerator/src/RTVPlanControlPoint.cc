@@ -13,6 +13,8 @@ G4bool RTVPlanControlPoint::operator==( const RTVPlanControlPoint& right ) const
 {
   if( GetParam("DoseRateSet") == right.GetParam("DoseRateSet") &&
       GetParam("GantryAngle") == right.GetParam("GantryAngle") &&
+      GetParam("GantryPitchAngle") == right.GetParam("GantryPitchAngle") &&
+      GetParam("LimitingDeviceAngle") == right.GetParam("LimitingDeviceAngle") &&
       GetParam("IsocenterPosition_X") == right.GetParam("IsocenterPosition_X") &&
       GetParam("IsocenterPosition_Y") == right.GetParam("IsocenterPosition_Y") &&
       GetParam("IsocenterPosition_Z") == right.GetParam("IsocenterPosition_Z") &&
@@ -47,6 +49,7 @@ std::ostream& operator<<(std::ostream& out, const RTVPlanControlPoint& cp)
   out << " NominalBeamEnergy= " << cp.GetNominalBeamEnergy()
       << " GantryAngle= " << cp.GetGantryAngle()/CLHEP::deg
       << " GantryPitchAngle= " << cp.GetGantryPitchAngle()/CLHEP::deg
+      << " LimitingDeviceAngle= " << cp.GetLimitingDeviceAngle()/CLHEP::deg
       << " ScanningSpotSize= " << cp.GetScanningSpotSize()
       << " NumberOfPaintings= " << cp.GetNumberOfPaintings()
       << " SourceAxisDistanceX= " << cp.GetSourceAxisDistanceX()

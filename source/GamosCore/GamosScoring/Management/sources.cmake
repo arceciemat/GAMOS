@@ -1,62 +1,59 @@
-#------------------------------------------------------------------------------
-# Module : Management
-# Package: GamosCore_GamosScoring_Management
-#
-#------------------------------------------------------------------------------
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GEANT4 Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME GamosCore_GamosScoring_Management
-	 HEADERS
-		GmPrimitiveScorerFactory.hh
-		GmVChangeWorldAndSource.hh
-		GmScoringMessenger.hh
-		GmVPSPrinter.hh
-		GmVPrimitiveScorer.hh
-		GmScoringVerbosity.hh
-		GmEnergySplitter.icc
-		GmPSPrinterFactory.hh
-		GmPSPrinterMgr.hh
-		GmVPrimitiveScorerVector.hh
-		GmScoringRun.hh
-		GmEnergySplitter.hh
-		GmScoringUA.hh
-		GmCompoundScorer.hh
-		GmScoringMgr.hh
-	 SOURCES
-		GmPSPrinterMgr.cc
-		plugin.cc
-		GmScoringUA.cc
-		GmVChangeWorldAndSource.cc
-		GmEnergySplitter.cc
-		GmCompoundScorer.cc
-		GmVPrimitiveScorerVector.cc
-		GmVPrimitiveScorer.cc
-		GmScoringVerbosity.cc
-		GmScoringRun.cc
-		GmScoringMgr.cc
-		GmPrimitiveScorerFactory.cc
-		GmPSPrinterFactory.cc
-		GmVPSPrinter.cc
-		GmScoringMessenger.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_libs} 
-		${ROOT_LIBRARIES} 
-	GamosCore_GamosUtils
-	GamosCore_GamosBase_Base
-	GamosCore_GamosBase_Filters
-	GamosCore_GamosGeometry
-	GamosCore_GamosReadDICOM
-	GamosCore_GamosGenerator
-	GamosCore_GamosData_Management
-		${SEAL_LIBRARIES} 
+# - GamosCore_GamosScoring_Management module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(GamosCore_GamosScoring_Management
+  PUBLIC_HEADERS
+    GmEnergySplitter.hh
+    GmVPrimitiveScorerVector.hh
+    GmScoringRun.hh
+    GmVPSPrinter.hh
+    GmScoringUA.hh
+    GmScoringMgr.hh
+    GmPSPrinterMgr.hh
+    GmVPrimitiveScorer.hh
+    GmScoringVerbosity.hh
+    GmCompoundScorer.hh
+    GmEnergySplitter.icc
+    GmPrimitiveScorerFactory.hh
+    GmPSPrinterFactory.hh
+    GmScoringMessenger.hh
+  SOURCES
+    GmScoringRun.cc
+    GmPSPrinterFactory.cc
+    GmScoringMgr.cc
+    GmScoringUA.cc
+    GmVPSPrinter.cc
+    GmEnergySplitter.cc
+    GmPrimitiveScorerFactory.cc
+    GmPSPrinterMgr.cc
+    plugin.cc
+    GmVPrimitiveScorerVector.cc
+    GmScoringMessenger.cc
+    GmVPrimitiveScorer.cc
+    GmCompoundScorer.cc
+    GmScoringVerbosity.cc
+)
+# - Add path to generated header
+geant4_module_include_directories(GamosCore_GamosScoring_Management
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
+ PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
+
+geant4_module_link_libraries(GamosCore_GamosScoring_Management
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
+    GamosCore_GamosUtils
+    GamosCore_GamosBase_Base
+    GamosCore_GamosBase_Filters
+    GamosCore_GamosGeometry
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosGenerator
+    GamosCore_GamosData_Management
+    GamosCore_GamosData_Users
 )

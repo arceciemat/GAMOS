@@ -1,5 +1,7 @@
 #include "GmPDSInteractionAngleManager.hh"
+#ifndef WIN32
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
+#endif
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
@@ -61,8 +63,10 @@ GmPDSInteractionAngleManager::GmPDSInteractionAngleManager( const G4String& file
       G4double xmax = histo->GetXaxis()->GetXmax();
       G4int nbins = histo->GetXaxis()->GetNbins();
       G4double binstep = (xmax-xmin)/nbins;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(infoVerb) ) G4cout << histo->GetName() << " xmin " << xmin << " xmax " << xmax << " binstep " << theBinStep << " nbins" << nbins << " integral " << nent << G4endl;
+#endif
 #endif
       if( nh != 1 ) {
 	if( xmin != theXmin || xmax != theXmax || binstep != theBinStep ){
@@ -88,8 +92,12 @@ GmPDSInteractionAngleManager::GmPDSInteractionAngleManager( const G4String& file
       msmds::const_iterator itepe = theEnergies.find(procname);
       if( itepe == theEnergies.end() ) {
 	theEnergies[procname] = new std::map<G4double,G4String>;
-	if( ScoringVerb(infoVerb) ) G4cout << " probE filling procname " << procname << G4endl;
-	itepe = theEnergies.find(procname);
+#ifndef WIN32
+#ifndef GAMOS_NO_VERBOSE
+    if( ScoringVerb(infoVerb) ) G4cout << " probE filling procname " << procname << G4endl;
+#endif
+#endif
+    itepe = theEnergies.find(procname);
       } 
       energies = (*itepe).second;
       if( bEnergyLog ) {
@@ -99,8 +107,10 @@ GmPDSInteractionAngleManager::GmPDSInteractionAngleManager( const G4String& file
       }
 
       theHistoEntries[hisname.substr(0,ic4-1)] = hent;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
        if( ScoringVerb(infoVerb) )G4cout << " GmPDSInteractionAngleManager histo entries =  " << hisname.substr(0,ic3-1) << G4endl;
+#endif
 #endif
     }
 
@@ -115,99 +125,110 @@ GmPDSInteractionAngleManager::GmPDSInteractionAngleManager( const G4String& file
 }
 
 //------------------------------------------------------------------
-G4double GmPDSInteractionAngleManager::GetHistoValue(const G4String& procname, const G4String& matname, G4double ener, const G4double cosang )
+G4double GmPDSInteractionAngleManager::GetHistoValue(const G4String& procname, const G4String& matname, G4double ener, const G4double cosang)
 {
-  msmds::const_iterator itepe = theEnergies.find(procname);
-  if( itepe == theEnergies.end() ) {
+    msmds::const_iterator itepe = theEnergies.find(procname);
+    if (itepe == theEnergies.end()) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(infoVerb) ) {
-      G4cerr << " GmPDSInteractionAngleManager::GetHistoValue:  no histogram found with enough entries, RETURNING 0.5 " << procname << " " << theEnergies.size() << G4endl;
-      for( itepe = theEnergies.begin() ; itepe != theEnergies.end(); itepe++ ) {
-	G4cerr << " ENERGIES " << (*itepe).first << " = " << procname << G4endl;
-      }
+        if (ScoringVerb(infoVerb)) {
+            G4cerr << " GmPDSInteractionAngleManager::GetHistoValue:  no histogram found with enough entries, RETURNING 0.5 " << procname << " " << theEnergies.size() << G4endl;
+            for (itepe = theEnergies.begin(); itepe != theEnergies.end(); itepe++) {
+                G4cerr << " ENERGIES " << (*itepe).first << " = " << procname << G4endl;
+            }
+        }
+#endif
+#endif
+        return 0.5;
     }
-#endif
-    return 0.5;
-  }
-  
-  std::map<G4double,G4String>* energies = (*itepe).second;
-  if( energies->size() == 0 ) {
+
+    std::map<G4double, G4String>* energies = (*itepe).second;
+    if (energies->size() == 0) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb) ) G4cerr << " GmPDSInteractionAngleManager::GetHistoValue:  no histogram found with enough entries, RETURNING 0.5 " << energies->size() << G4endl;
+        if (ScoringVerb(debugVerb)) G4cerr << " GmPDSInteractionAngleManager::GetHistoValue:  no histogram found with enough entries, RETURNING 0.5 " << energies->size() << G4endl;
 #endif
-    return 0.5;
-  }
-
-  std::map<G4double,G4String>::iterator ite1 = GetEnergyRange( energies, ener );
-  std::map<G4double,G4String>::iterator ite2 = ite1; ite2++;
-
-  G4String hisname = procname + " : " + matname + " : " + (*ite1).second;
-  G4int nbin = int((cosang-theXmin)/theBinStep);
-  //  G4cout << "NBIN " << nbin << " " << (cosang-theXmin) << " " << cosang << " - " << theXmin << " / " << theBinStep << G4endl;
-
-  std::map<G4String, std::vector<G4double> >::iterator itee = theHistoEntries.find( hisname );
-  if( itee == theHistoEntries.end() ){
-    /*    for( itee = theHistoEntries.begin(); itee != theHistoEntries.end(); itee++) {
-      G4cerr << " HISTO: " << (*itee).first << "ZZ" << G4endl;
-      }*/
-#ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb) ) G4cerr << " GmPDSInteractionAngleManager::GetHistoValue:   histo not found: " << hisname << " RETURNING 0.5 " << G4endl;
 #endif
-    return 0.5;
-    //    G4Exception( "GmPDSInteractionAngleManager::GetHistoValue histo nof found: " + hisname );
-  }
-
-  G4double binCEN1 = ((*itee).second)[nbin];
-
-  G4double binCEN2 = -9999.;
-  //t should get interpolation   G4double binPOS = theHistoEntries[hisname][nbin];
-  if( ite2 != energies->end() ){
-    hisname = procname + " : " + matname + " : " + (*ite2).second;
-    itee = theHistoEntries.find( hisname );
-    if( itee != theHistoEntries.end() ){
-      //      G4cout << " GmPDSInteractionAngleManager::GetHistoValue(  hisname2 " << hisname << G4endl;
-      binCEN2 = theHistoEntries[hisname][nbin];
-#ifndef GAMOS_NO_VERBOSE
-      if( ScoringVerb(debugVerb) ) G4cout << " GmPDSInteractionAngleManager::GetHistoValue:  hisname2 " << hisname << " nbin " << nbin << " = " << binCEN2 << G4endl;
-#endif
+        return 0.5;
     }
-  }
 
+    std::map<G4double, G4String>::iterator ite1 = GetEnergyRange(energies, ener);
+    std::map<G4double, G4String>::iterator ite2 = ite1; ite2++;
+
+    G4String hisname = procname + " : " + matname + " : " + (*ite1).second;
+    G4int nbin = int((cosang - theXmin) / theBinStep);
+    //  G4cout << "NBIN " << nbin << " " << (cosang-theXmin) << " " << cosang << " - " << theXmin << " / " << theBinStep << G4endl;
+
+    std::map<G4String, std::vector<G4double> >::iterator itee = theHistoEntries.find(hisname);
+    if (itee == theHistoEntries.end()) {
+        /*    for( itee = theHistoEntries.begin(); itee != theHistoEntries.end(); itee++) {
+          G4cerr << " HISTO: " << (*itee).first << "ZZ" << G4endl;
+          }*/
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
-  if( ScoringVerb(debugVerb) ) G4cout << " GmPDSInteractionAngleManager::GetHistoValue:  hisname1 " << hisname << " nbin " << nbin << " = " << binCEN1 << " , " << binCEN2 << "  ENERS " << ener << " " << (*ite1).first << " " << (*ite2).first << G4endl;
+        if (ScoringVerb(debugVerb)) G4cerr << " GmPDSInteractionAngleManager::GetHistoValue:   histo not found: " << hisname << " RETURNING 0.5 " << G4endl;
+#endif
+#endif
+        return 0.5;
+        //    G4Exception( "GmPDSInteractionAngleManager::GetHistoValue histo nof found: " + hisname );
+    }
+
+    G4double binCEN1 = ((*itee).second)[nbin];
+
+    G4double binCEN2 = -9999.;
+    //t should get interpolation   G4double binPOS = theHistoEntries[hisname][nbin];
+    if (ite2 != energies->end()) {
+        hisname = procname + " : " + matname + " : " + (*ite2).second;
+        itee = theHistoEntries.find(hisname);
+        if (itee != theHistoEntries.end()) {
+            //      G4cout << " GmPDSInteractionAngleManager::GetHistoValue(  hisname2 " << hisname << G4endl;
+            binCEN2 = theHistoEntries[hisname][nbin];
+#ifndef WIN32
+#ifndef GAMOS_NO_VERBOSE
+            if (ScoringVerb(debugVerb)) G4cout << " GmPDSInteractionAngleManager::GetHistoValue:  hisname2 " << hisname << " nbin " << nbin << " = " << binCEN2 << G4endl;
+#endif
+#endif
+        }
+    }
+
+#ifndef WIN32
+#ifndef GAMOS_NO_VERBOSE
+    if (ScoringVerb(debugVerb)) G4cout << " GmPDSInteractionAngleManager::GetHistoValue:  hisname1 " << hisname << " nbin " << nbin << " = " << binCEN1 << " , " << binCEN2 << "  ENERS " << ener << " " << (*ite1).first << " " << (*ite2).first << G4endl;
+#endif
 #endif
 
-
-  if( binCEN2 != -9999. ) {
-    G4double diffE = (*ite2).first - (*ite1).first;
-    //linear interpolation 
-    G4double val;
-    if( bEnergyLog ) { 
-      val = binCEN1 +  ( log10(ener) - (*ite1).first )/diffE *(binCEN2-binCEN1);
-      //      G4cout << "log_VAL_NOTNORM " << val << " " << binCEN1 << " + " << (log10(ener) - (*ite1).first) << " / " << diffE << " * " << (binCEN2-binCEN1) << G4endl;  //GDEB
-    } else {
-      val = binCEN1 +  ( ener - (*ite1).first )/diffE *(binCEN2-binCEN1);
-      //      G4cout << "lin_VAL_NOTNORM " << val << " " << binCEN1 << " + " << (ener - (*ite1).first) << " / " << diffE << " * " << (binCEN2-binCEN1) << G4endl; //GDEB
-    }
-    val /= theBinStep; 
-    //-    val = ( binCEN1 * ( ener - (*ite1).first ) + binCEN2 * ( (*ite2).first - ener ) ) 
-    if( val < 0 ) {
-      G4Exception("GmPDSInteractionAngleManager::GetHistoValue",
-		  "",
-		  JustWarning,
-		  "NEGATIVE ANGLE PROBABILITY, SHOULD NOT HAPPEN, PROBABLY ANGLE HISTOGRAMS DO NOT HAVE ENOUGH ENTRIES.Try changing parameter /gamos/setParam GmPDS:InteractionAngleManager:MinimumNumberOfEntries VAL (default is 1000)");
-    }
+    if (binCEN2 != -9999.) {
+        G4double diffE = (*ite2).first - (*ite1).first;
+        //linear interpolation 
+        G4double val;
+        if (bEnergyLog) {
+            val = binCEN1 + (log10(ener) - (*ite1).first) / diffE * (binCEN2 - binCEN1);
+            //      G4cout << "log_VAL_NOTNORM " << val << " " << binCEN1 << " + " << (log10(ener) - (*ite1).first) << " / " << diffE << " * " << (binCEN2-binCEN1) << G4endl;  //GDEB
+        }
+        else {
+            val = binCEN1 + (ener - (*ite1).first) / diffE * (binCEN2 - binCEN1);
+            //      G4cout << "lin_VAL_NOTNORM " << val << " " << binCEN1 << " + " << (ener - (*ite1).first) << " / " << diffE << " * " << (binCEN2-binCEN1) << G4endl; //GDEB
+        }
+        val /= theBinStep;
+        //-    val = ( binCEN1 * ( ener - (*ite1).first ) + binCEN2 * ( (*ite2).first - ener ) ) 
+        if (val < 0) {
+            G4Exception("GmPDSInteractionAngleManager::GetHistoValue",
+                "",
+                JustWarning,
+                "NEGATIVE ANGLE PROBABILITY, SHOULD NOT HAPPEN, PROBABLY ANGLE HISTOGRAMS DO NOT HAVE ENOUGH ENTRIES.Try changing parameter /gamos/setParam GmPDS:InteractionAngleManager:MinimumNumberOfEntries VAL (default is 1000)");
+        }
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb) ) G4cout << " GmPDSInteractionAngleManager::GetHistoValue " << val << " proc " << procname << " mat " << matname << " ener " << ener << " cosang " << cosang << " binstep " << theBinStep << " ENERS " <<  ener <<  " " << (*ite1).first << " " << (*ite2).first <<  G4endl;
+        if (ScoringVerb(debugVerb)) G4cout << " GmPDSInteractionAngleManager::GetHistoValue " << val << " proc " << procname << " mat " << matname << " ener " << ener << " cosang " << cosang << " binstep " << theBinStep << " ENERS " << ener << " " << (*ite1).first << " " << (*ite2).first << G4endl;
 #endif
-    return val;
-//    return ( binCEN1 * fabs( ener - (*ite1).first ) +  binCEN2 * fabs( ener - (*ite2).first ) ) / theBinStep;
-  } else {
-    return  binCEN1 / theBinStep; 
-  }
-
+#endif
+        return val;
+        //    return ( binCEN1 * fabs( ener - (*ite1).first ) +  binCEN2 * fabs( ener - (*ite2).first ) ) / theBinStep;
+    }
+    else {
+        return  binCEN1 / theBinStep;
+    }
 }
-
 
 //------------------------------------------------------------------
 std::map<G4double,G4String>::iterator GmPDSInteractionAngleManager::GetEnergyRange( mds* energies, G4double ener )
@@ -222,6 +243,7 @@ std::map<G4double,G4String>::iterator GmPDSInteractionAngleManager::GetEnergyRan
   }
 
   if( ite == energies->end() ) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(infoVerb) ) {
       G4cerr << "LOOKING FOR ENERGY: " << pow(10.,ener) << " log " << ener << G4endl;
@@ -233,10 +255,11 @@ std::map<G4double,G4String>::iterator GmPDSInteractionAngleManager::GetEnergyRan
 		  JustWarning,
 		  ("Energy is bigger than maximum energy" + GmGenUtils::ftoa( (*(--ite)).first) ).c_str());
 #endif
+#endif
     }
     ite--;
   } 
   
   return ite;
-
+  
 }

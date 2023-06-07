@@ -7,7 +7,9 @@
 #include "GmPDSProcessHelper.hh"
 #include "GmPDSDetector.hh"
 #include "GmPDSUtils.hh"
+#ifndef WIN32
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
+#endif
 #include "GamosCore/GamosBase/Base/include/GmTrackInfo.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
@@ -129,8 +131,10 @@ G4VParticleChange* GmPDSVProcess::AtRestDoIt(const G4Track& aTrack, const G4Step
   if( !aStep.GetPostStepPoint()->GetProcessDefinedStep() ) { // should not be the first process called
     aStep.GetPostStepPoint()->SetProcessDefinedStep(this);
   }
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(testVerb) ) G4cout << " GmPDSVProcess::AtRestDoIt weight " << GetWeight(&aTrack, FALSE) << " = " << aTrack.GetWeight() << " " << aTrack.GetUserInformation() << " pos " << aTrack.GetVertexPosition() << G4endl;
+#endif
 #endif
   return CheckSecondaries( aTrack, aStep );
   
@@ -140,8 +144,10 @@ G4VParticleChange* GmPDSVProcess::AtRestDoIt(const G4Track& aTrack, const G4Step
 //------------------------------------------------------------------
 G4VParticleChange* GmPDSVProcess::PostStepDoIt( const G4Track& aTrack, const G4Step& aStep)
 {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(testVerb) ) G4cout << " GmPDSVProcess::PostStepDoIt weight " << GetWeight(&aTrack, FALSE) << " = " << aTrack.GetWeight() << " " << aTrack.GetUserInformation() << " pos " << aStep.GetPreStepPoint()->GetPosition() << " TO " << aStep.GetPostStepPoint()->GetPosition() << G4endl;
+#endif
 #endif
   return CheckSecondaries( aTrack, aStep );
 }
@@ -152,8 +158,10 @@ G4VParticleChange* GmPDSVProcess::CheckSecondaries( const G4Track& aTrack, const
   aParticleChange.Initialize(aTrack);
   const G4ParticleDefinition* particle = aTrack.GetDefinition();
 
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(testVerb) ) G4cout << " GmPDSVProcess::CheckSecondaries weight " << GetWeight(&aTrack, FALSE) << " = " << aTrack.GetWeight() << " " << aTrack.GetUserInformation() << " pos " << aTrack.GetVertexPosition() << " OK particle " << (particle == theOriginalParticle) << G4endl;
+#endif
 #endif
   
   //---- Check if detector has been reached
@@ -171,8 +179,10 @@ G4VParticleChange* GmPDSVProcess::CheckSecondaries( const G4Track& aTrack, const
 	aTrackNC->SetUserInformation(trkInfo);
 	SetWeight(aTrackNC, aTrack.GetWeight());
       }
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt Detector REACHED  Fill scores" << G4endl;
+#endif
 #endif
       theCurrentHelper->FillScores(aTrack, FALSE,DR);
 
@@ -191,8 +201,10 @@ G4VParticleChange* GmPDSVProcess::CheckSecondaries( const G4Track& aTrack, const
     std::vector< G4Track*>::const_iterator itetrk;
     
     //---- Get process defining step
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt N SECOTRACK " << secoTracks.size() << G4endl;
+#endif
 #endif
     G4String procDefStepName = GetProcessDefiningStepName(aStep);
     for( iteid = detIDs.begin(); iteid != detIDs.end(); iteid++ ){
@@ -202,49 +214,63 @@ G4VParticleChange* GmPDSVProcess::CheckSecondaries( const G4Track& aTrack, const
 	std::vector<GmVFilter*>::const_iterator itef;
 	G4bool bAccepted = true;
 	for( itef = theFilters.begin(); itef != theFilters.end(); itef++ ) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	  if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt checking filter " << (*itef)->GetName()  << " : " << theOriginalParticle->GetParticleName() << G4endl;
 #endif
+#endif
 	  if( bFiltersOnTrack ) {
 	    if( !(*itef)->AcceptTrack( &aTrack ) ) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	      if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt track rejected by filter " << (*itef)->GetName() << G4endl;
 #endif
-	      bAccepted = false; 
+#endif
+		  bAccepted = false;
 	      break;
 	    }
 	  } else {
 	    if( !(*itef)->AcceptStep( &aStep ) ) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	      if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt step rejected by filter " << (*itef)->GetName() << G4endl;
 #endif
-	      bAccepted = false; 
+#endif
+		  bAccepted = false;
 	      break;
 	    }
 	  }
 	}
 	
 	if( bAccepted) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	  if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt accepted by all filters : " << theOriginalParticle->GetParticleName() << G4endl;
+#endif
 #endif
 	  //--- Get the classification index
 	  G4int index = -1;
 	  if( theClassifier) {
 	    if(bClassifierOnTrack ) {
 	      index = theClassifier->GetIndexFromTrack(&aTrack); // beware which classifier can be applied, as some of these are secondary tracks
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	      if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt track classified by " << theClassifier->GetName() << " = " << index << G4endl;
 #endif
-	    } else {
+#endif
+		} else {
 	      index = theClassifier->GetIndexFromStep(&aStep); // beware which classifier can be applied, as some of these are secondary tracks
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	      if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt step classified by " << theClassifier->GetName() << " = " << index << G4endl;
 #endif
-	    }
+#endif
+		}
 	  }
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	  if( ScoringVerb(debugVerb) )   G4cout <<"  CreateGeantino STEP " << secoTracks.size() << " " << aTrack.GetCurrentStepNumber () << " CreateGeantino  SECOTRK " << aStep.GetPreStepPoint()->GetKineticEnergy() << " " << aStep.GetPostStepPoint() << " " << (*itetrk)->GetKineticEnergy() << " " <<(*iteid).second << " " << procDefStepName << "  " << index << G4endl; 
+#endif
 #endif
 	  CreateGeantino( aTrack, aStep.GetPreStepPoint()->GetKineticEnergy(), aStep.GetPostStepPoint(), (*itetrk)->GetKineticEnergy() ,(*iteid).second, procDefStepName, index );
 	}
@@ -259,22 +285,28 @@ G4VParticleChange* GmPDSVProcess::CheckSecondaries( const G4Track& aTrack, const
 	  std::vector<GmVFilter*>::const_iterator itef;
 	  G4bool bAccepted = true;
 	  for( itef = theFilters.begin(); itef != theFilters.end(); itef++ ) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	    if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt checking filter " << (*itef)->GetName() << " : " << theOriginalParticle->GetParticleName() << G4endl;
+#endif
 #endif
 	    if( bFiltersOnTrack ) {
 	      if( !(*itef)->AcceptTrack( &aTrack ) ) {
 		bAccepted = false; 
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 		if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt track rejected by filter " << (*itef)->GetName() << G4endl;
+#endif
 #endif
 		break;
 	      }
 	    } else {
 	      if( !(*itef)->AcceptStep( &aStep ) ) {
 		bAccepted = false; 
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 		if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt step rejected by filter " << (*itef)->GetName() << G4endl;
+#endif
 #endif
 		break;
 	      }
@@ -282,29 +314,37 @@ G4VParticleChange* GmPDSVProcess::CheckSecondaries( const G4Track& aTrack, const
 	  }
 	  
 	  if( bAccepted) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	    if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt accepted by all filters : " << theOriginalParticle->GetParticleName() << G4endl;
 #endif
-	    //--- Get the classification index
+#endif
+		//--- Get the classification index
 	    G4int index = -1;
 	    if( theClassifier) {
 	      if(bClassifierOnTrack ) {
 		index = theClassifier->GetIndexFromTrack(&aTrack); // beware which classifier can be applied, as some of these are secondary tracks
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 		if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt track classified by " << theClassifier->GetName() << " = " << index << G4endl;
 #endif
-	      } else {
+#endif
+		  } else {
 		index = theClassifier->GetIndexFromStep(&aStep); // beware which classifier can be applied, as some of these are secondary tracks
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 		if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt step classified by " << theClassifier->GetName() << " = " << index << G4endl;
 #endif
-	      }
+#endif
+		  }
 	    }
 	    
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	    if( ScoringVerb(debugVerb) ) G4cout << " CreateGeantino PRIM " << aStep.GetPreStepPoint()->GetKineticEnergy() << " " << aStep.GetPreStepPoint() << " " <<  aStep.GetPreStepPoint()->GetKineticEnergy() << " " << (*iteid).second<<  " Primary " << index << G4endl;
 #endif
-	    CreateGeantino( aTrack, aStep.GetPreStepPoint()->GetKineticEnergy(), aStep.GetPreStepPoint(), aStep.GetPreStepPoint()->GetKineticEnergy(), (*iteid).second, "Primary", index );
+#endif
+		CreateGeantino( aTrack, aStep.GetPreStepPoint()->GetKineticEnergy(), aStep.GetPreStepPoint(), aStep.GetPreStepPoint()->GetKineticEnergy(), (*iteid).second, "Primary", index );
 	  }
 	  
 	}
@@ -325,8 +365,10 @@ G4VParticleChange* GmPDSVProcess::CheckSecondaries( const G4Track& aTrack, const
 void GmPDSVProcess::CreateGeantino( const G4Track& aTrack, const G4double primPreEner, const G4StepPoint* stepPoint2, const G4double secoEner, const G4int detID, const G4String procDefStepName, G4int classifierIndex )
 {
 
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::CreateGeantino  ENERGY= " << secoEner << " AT POSITION " <<  stepPoint2->GetPosition() << G4endl;
+#endif
 #endif
   G4double dist = theCurrentHelper->GetDistanceToDetectorIncm(stepPoint2->GetPosition(), detID);
   G4double wei = GetWeight(&aTrack,FALSE);
@@ -336,12 +378,16 @@ void GmPDSVProcess::CreateGeantino( const G4Track& aTrack, const G4double primPr
     if( dist > theMaximumDistance ) {
       if( CLHEP::RandFlat::shoot() < theInvMaximumDistanceRR ) {
 	wei /= theInvMaximumDistanceRR;
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::CreateGeantino big distance " << dist << " weight increased by Russian Roulette to " << wei << G4endl;
 #endif
-      } else {
+#endif
+	  } else {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
 	if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::CreateGeantino big distance " << dist << " killed by Russian Roulette " << G4endl;
+#endif
 #endif
 	return;
       }
@@ -351,18 +397,22 @@ void GmPDSVProcess::CreateGeantino( const G4Track& aTrack, const G4double primPr
   //----- Get angle between current track direction and line to detector point
   //--- Get point in detector
   G4Point3D point = theCurrentHelper->GetDetector(detID)->GetCentrePoint();
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::CreateGeantino  det point = " << point << " detID " << detID << G4endl;
+#endif
 #endif
   
   //--- Get direction to point
   G4ThreeVector trkpos  = stepPoint2->GetPosition();
   G4ThreeVector stepPtDir = point - trkpos;
   stepPtDir *= 1./stepPtDir.mag();
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::CreateGeantino  dir to point = " << stepPtDir << " trkpos " << trkpos << G4endl;
 #endif
-  
+#endif
+
   //--- Get angle between two directions
   //t  G4ThreeVector secoTrkDir2 = aTrack.GetStep()->GetPreStepPoint()->GetMomentumDirection();
   G4ThreeVector secoTrkDir2 = aTrack.GetStep()->GetPostStepPoint()->GetMomentumDirection();
@@ -388,21 +438,27 @@ void GmPDSVProcess::CreateGeantino( const G4Track& aTrack, const G4double primPr
   //    probEmiss = 0.5;
   //  } else {
   probEmiss = theInteractionAngleManager->GetHistoValue( particle->GetParticleName() + " - " + theOriginalParticle->GetParticleName() + " : " + procDefStepName, stepPoint2->GetMaterial()->GetName(), primPreEner, emissionCosAngle );
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::CreateGeantino ener(pre) " << primPreEner  << " emissionCosAngle = " << emissionCosAngle << " prob " << probEmiss << " secoTrkDir2 "<< secoTrkDir2 << " stepPtDir " << stepPtDir << " primTrkDir " << aTrack.GetMomentumDirection() << G4endl;
 #endif
+#endif
   //  }
   if( probEmiss == 0 ) {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(infoVerb) ) G4cout << "GmPDSVProcess::CreateGeantino ener(pre) " << primPreEner << " emissionCosAngle = " << emissionCosAngle << " prob " << probEmiss << G4endl;
 #endif
-    return;
+#endif
+	return;
   }
 
   //------ Create a geantino to be tracked until detector
   G4Track* geantino = new G4Track( new G4DynamicParticle( G4Geantino::Geantino(), stepPtDir, secoEner ), stepPoint2->GetGlobalTime(), trkpos );
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt  new G4Track: dir " << stepPtDir << " pos " << trkpos << " ener " << secoEner << " time " << stepPoint2->GetGlobalTime() << G4endl;
+#endif
 #endif
   //  G4Track* geantino = new G4Track( new G4DynamicParticle( G4Geantino::Geantino(), stepPoint2->GetMomentumDirection(), stepPoint2->GetKineticEnergy() ), 
   
@@ -433,11 +489,16 @@ void GmPDSVProcess::CreateGeantino( const G4Track& aTrack, const G4double primPr
   //SetWeight( geantino, 1. / (2.*M_PI*pow( dist,2 ) ) );
   // SetWeight( geantino, 1. );
   
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt  probEmiss = " << probEmiss << " dist (cm) " << dist << " weight old " << wei << " weight new " << wei * probEmiss / (2.*M_PI*sqr(dist) ) << G4endl;
 #endif
+#endif
+  aParticleChange.AddSecondary(geantino); 
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
-  aParticleChange.AddSecondary(geantino);  if( ScoringVerb(infoVerb) ) G4cout << " n secondaries " << aParticleChange.GetNumberOfSecondaries() << G4endl;
+  if( ScoringVerb(infoVerb) ) G4cout << " n secondaries " << aParticleChange.GetNumberOfSecondaries() << G4endl;
+#endif
 #endif
 }
  
@@ -483,10 +544,12 @@ std::vector<G4Track*> GmPDSVProcess::GetSecondaryAndPrimaryTracks( const G4Track
     //    G4cout << theOriginalParticle << " NEWSECO " << (*ite)->GetDefinition()->GetParticleName() << " " << (*ite)->GetKineticEnergy() << G4endl; //GDEB
     if( (*ite)->GetDefinition() == theOriginalParticle ){
       secos.push_back(*ite);
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
      if( ScoringVerb(debugVerb) ) G4cout << " GmPDSVProcess::GetSecondaryAndPrimaryTracks  new seco " << theOriginalParticle->GetParticleName() << " ENER " <<  (*ite)->GetKineticEnergy() << G4endl;    
 #endif
-    }
+#endif
+	}
   }
 
   //----- Get current track unless it is stopped (case of inelastic)
@@ -495,8 +558,10 @@ std::vector<G4Track*> GmPDSVProcess::GetSecondaryAndPrimaryTracks( const G4Track
       && aTrack->GetTrackStatus() != fStopButAlive
       && aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() != "Transportation" ) {
     secos.push_back( const_cast<G4Track*>(aTrack) );
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(debugVerb) ) G4cout << " GmPDSVProcess::GetSecondaryAndPrimaryTracks  process deviates particle " << aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() << G4endl;    
+#endif
 #endif
   }
 
@@ -518,8 +583,10 @@ G4String GmPDSVProcess::GetProcessDefiningStepName(const G4Step& aStep)
                 FatalErrorInArgument,
                 "Step has no process defining it");
    }
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(testVerb) ) G4cout << "GmPDSVProcess::GetProcessDefiningStepName  " << procName << G4endl;
+#endif
 #endif
 
   return procName;

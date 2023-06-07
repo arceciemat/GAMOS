@@ -69,7 +69,7 @@ void GmSDVirtSegmentedSphereThetaPhi::DefineThetaPhiSegmentation(const G4String&
 		"For a volume that it is not an sphere ");
   }
   G4Sphere* sphere = (G4Sphere*)(theLogVol->GetSolid());
-  theRadius = sphere->GetInsideRadius();
+  theRadius = sphere->GetInnerRadius();
 
   //- Get first angle as the one that make a casquette of L*L
   //-  ang.push_back( acos(cellThetaPhi*cellThetaPhi/(2*M_PI*R*R) ) );
@@ -165,7 +165,7 @@ void GmSDVirtSegmentedSphereThetaPhi::CalculateAndSetPosition( GmHit* hit, G4Ste
   // check it is not outside SD volumen
   G4Sphere* sphere = (G4Sphere*)(theLogVol->GetSolid());
   if( rad > sphere->GetOuterRadius() ) rad = sphere->GetOuterRadius();
-  if( rad < sphere->GetInsideRadius() ) rad = sphere->GetInsideRadius();
+  if( rad < sphere->GetInnerRadius() ) rad = sphere->GetInnerRadius();
 
   G4ThreeVector pos(rad, 0., 0. );
 

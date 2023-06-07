@@ -21,10 +21,10 @@
 
 /run/initialize
 
-/gamos/userAction GmTimeStudyUA GmClassifierByRegion
+#/gamos/userAction GmTimeStudyUA GmClassifierByRegion
 /gamos/classifier energyClassifier GmClassifierByKineticEnergy  1.E-8 1.E1 10.
 /gamos/classifier particleAndEnergyClassifier GmCompoundClassifier GmClassifierByLogicalVolume  energyClassifier
-/gamos/userAction GmTimeStudyUA particleAndEnergyClassifier
+#/gamos/userAction GmTimeStudyUA particleAndEnergyClassifier
 
 /gamos/generator/addSingleParticleSource source e- 6.*MeV
 /gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.

@@ -1,34 +1,19 @@
-#------------------------------------------------------------------------------
-# Module : AnalyseOutput
-# Package: AnalyseOutput
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-#include_directories(${PROJECT_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME AnalyseOutput
-	 HEADERS
-		GmAODataSearch.hh
-		GmAOData.hh
-		GmAOParam.hh
-	 SOURCES
-		GmAOData.cc
-		GmAODataSearch.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
+# - GAMOS_analysis_AnalyseOutput module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+
+geant4_add_module(GAMOS_analysis_AnalyseOutput
+  PUBLIC_HEADERS
+    GmAOData.hh
+    GmAOParam.hh
+    GmAODataSearch.hh
+  SOURCES
+    GmAOData.cc
+    GmAODataSearch.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_AnalyseOutput
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
 )

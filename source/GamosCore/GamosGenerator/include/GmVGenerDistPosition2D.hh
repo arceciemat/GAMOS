@@ -12,10 +12,10 @@ public:
   GmVGenerDistPosition2D(){};
   virtual ~GmVGenerDistPosition2D(){};
 
-  virtual G4ThreeVector GeneratePosition( const GmParticleSource* source ) = 0;
+  virtual G4ThreeVector GeneratePosition( GmParticleSource* source ) = 0;
 
   virtual G4ThreeVector RotateAndTranslate( G4ThreeVector& posini );
-  void SetCentre( G4ThreeVector centre ) {
+  virtual void SetCentre( G4ThreeVector centre ) {
     theCentre = centre;
   }
 

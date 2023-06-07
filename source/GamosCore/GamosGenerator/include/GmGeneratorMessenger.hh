@@ -38,6 +38,7 @@ private:
   GmUIcmdWithAString* DistEnergyCmd;
   GmUIcmdWithAString* DistPositionCmd;
   GmUIcmdWithAString* DistDirectionCmd;
+  GmUIcmdWithAString* DistPositionDirectionCmd;
   GmUIcmdWithAString* DirectionCmd;
   G4UIcmdWithADoubleAndUnit* PositionCmd;
   G4UIcmdWithADoubleAndUnit* EnergyCmd;

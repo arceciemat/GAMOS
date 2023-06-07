@@ -14,7 +14,8 @@ namespace seal {
 //<<<<<< PUBLIC FUNCTIONS                                               >>>>>>
 //<<<<<< CLASS DECLARATIONS                                             >>>>>>
 
-class PLUGIN_MANAGER_API PluginParserError : public Error
+//t class PLUGIN_MANAGER_API PluginParserError : public Error
+class PluginParserError : public Error
 {
 public:
     PluginParserError (const std::string &reason);

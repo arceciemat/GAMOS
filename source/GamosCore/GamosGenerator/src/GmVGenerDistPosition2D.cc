@@ -44,10 +44,14 @@ void GmVGenerDistPosition2D::SetRotation( G4ThreeVector dir )
 #endif
   theRotation = G4RotationMatrix();
   if( fabs(dir.mag()-1.) > G4GeometryTolerance::GetInstance()->GetSurfaceTolerance() ) {
-    G4Exception("GmVGenerDistPosition2D::SetParams",
-		"Warning",
-		JustWarning,
-		G4String("direction cosines are normalized to one, they were " + GmGenUtils::ftoa(dir.mag())).c_str());
+#ifndef GAMOS_NO_VERBOSE
+    if( GenerVerb(debugVerb) ) {
+      G4Exception("GmVGenerDistPosition2D::SetParams",
+		  "Warning",
+		  JustWarning,
+		  G4String("direction cosines are normalized to one, they were " + GmGenUtils::ftoa(dir.mag())).c_str());
+    }
+#endif
     dir /= dir.mag();
   } 
   G4double angx;

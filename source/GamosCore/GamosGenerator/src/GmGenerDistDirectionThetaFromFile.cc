@@ -159,7 +159,7 @@ void GmGenerDistDirectionThetaFromFile::ReadThetaDist()
 }
 
 //-----------------------------------------------------------------------
-G4ThreeVector GmGenerDistDirectionThetaFromFile::GenerateDirection( const GmParticleSource* )
+G4ThreeVector GmGenerDistDirectionThetaFromFile::GenerateDirection( GmParticleSource* )
 {
   G4double theta;
   G4double pv = CLHEP::RandFlat::shoot();

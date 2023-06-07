@@ -143,7 +143,7 @@ void GmVNumericDistribution::CheckOtherFileNames( G4String& fileNameROOT, G4Stri
 
   G4bool bDuplicated = false;
   for( unsigned int ii = 0; ii < 3; ii++ ){
-    if( fileNames[ii] != "" && fileNames[ii] != fNumber ) {
+    if( fileNames[ii] != G4String("") && fileNames[ii] != GmGenUtils::itoa(fNumber) ) {
       bDuplicated = true;
     }
   }

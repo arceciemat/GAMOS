@@ -357,7 +357,7 @@ double GmHisto2::GetEffectiveEntries() const
    // have the same statistical power as this histogram with possibly 
    // weighted entries 
 
-  std::cout << theName << "  GmHisto2::GetEffectiveEntries " << theSumW*theSumW/theSumW2 << " " << theSumW<< " " << theSumW2 << std::endl;
+  //  std::cout << theName << "  GmHisto2::GetEffectiveEntries " << theSumW*theSumW/theSumW2 << " " << theSumW<< " " << theSumW2 << std::endl; //GDEB
    return (theSumW2 ? theSumW*theSumW/theSumW2 : 0.);
 }
 
@@ -379,7 +379,7 @@ double GmHisto2::GetMeanError( int axis ) const
  
   double rms = GetRMS(axis);
   double neff = GetEffectiveEntries();
-  std::cout << theName << " GmHisto2::GetMeanError " << rms/sqrt(neff) << " " << rms << " " << neff << std::endl;
+  //  std::cout << theName << " GmHisto2::GetMeanError " << rms/sqrt(neff) << " " << rms << " " << neff << std::endl; //GDEB
   return ( neff > 0 ? rms/sqrt(neff) : 0. ); 
 }
 

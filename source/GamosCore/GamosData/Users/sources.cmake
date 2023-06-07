@@ -1,99 +1,97 @@
-#------------------------------------------------------------------------------
-# Module : Users
-# Package: GamosCore_GamosData_Users
-#
-#------------------------------------------------------------------------------
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GEANT4 Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME GamosCore_GamosData_Users
-	 HEADERS
-		GmStackDataCoutUA.hh
-		GmStepDataTextFileUA.hh
-		GmStepDataCoutUA.hh
-		GmEventDataBinFileUA.hh
-		GmVDataUserTextFile.hh
-		GmSecondaryTrackDataTextFileUA.hh
-		GmTrackDataCoutUA.hh
-		GmTrackDataTextFileUA.hh
-		GmSecondaryTrackDataHistosUA.hh
-		GmStackDataBinFileUA.hh
-		GmNumericDataFilter.hh
-		GmClassifierByDistribution.hh
-		GmStepDataBinFileUA.hh
-		GmVDataUserHistos.hh
-		GmSecondaryTrackDataBinFileUA.hh
-		GmClassifierByNumericData.hh
-		GmRunDataTextFileUA.hh
-		GmRunDataHistosUA.hh
-		GmEventDataCoutUA.hh
-		GmTrackDataBinFileUA.hh
-		GmStackDataTextFileUA.hh
-		GmEventDataHistosUA.hh
-		GmRunDataCoutUA.hh
-		GmEventDataTextFileUA.hh
-		GmDataTTreeUA.hh
-		GmTrackDataHistosUA.hh
-		GmClassifierByStringData.hh
-		GmSecondaryTrackDataCoutUA.hh
-		GmStringDataFilter.hh
-		GmVDataUserBinFile.hh
-		GmRunDataBinFileUA.hh
-		GmStackDataHistosUA.hh
-		GmStepDataHistosUA.hh
-		GmVDataUser.hh
-	 SOURCES
-		GmTrackDataCoutUA.cc
-		GmTrackDataHistosUA.cc
-		plugin.cc
-		GmEventDataHistosUA.cc
-		GmDataTTreeUA.cc
-		GmStackDataBinFileUA.cc
-		GmStepDataHistosUA.cc
-		GmRunDataTextFileUA.cc
-		GmEventDataCoutUA.cc
-		GmStackDataHistosUA.cc
-		GmClassifierByNumericData.cc
-		GmTrackDataTextFileUA.cc
-		GmClassifierByDistribution.cc
-		GmRunDataHistosUA.cc
-		GmClassifierByStringData.cc
-		GmVDataUser.cc
-		GmVDataUserTextFile.cc
-		GmSecondaryTrackDataCoutUA.cc
-		GmSecondaryTrackDataTextFileUA.cc
-		GmEventDataBinFileUA.cc
-		GmStackDataCoutUA.cc
-		GmStepDataTextFileUA.cc
-		GmTrackDataBinFileUA.cc
-		GmSecondaryTrackDataBinFileUA.cc
-		GmNumericDataFilter.cc
-		GmVDataUserBinFile.cc
-		GmEventDataTextFileUA.cc
-		GmVDataUserHistos.cc
-		GmSecondaryTrackDataHistosUA.cc
-		GmStringDataFilter.cc
-		GmRunDataBinFileUA.cc
-		GmStepDataBinFileUA.cc
-		GmRunDataCoutUA.cc
-		GmStepDataCoutUA.cc
-		GmStackDataTextFileUA.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_libs} 
-		${ROOT_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		GamosCore_GamosBase_Base
-		GamosCore_GamosData_Management
-		GamosCore_GamosAnalysis
-		GamosCore_GamosBase_Classifiers
-		GamosCore_GamosBase_Filters
+# - GamosCore_GamosData_Users module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(GamosCore_GamosData_Users
+  PUBLIC_HEADERS
+    GmRunDataTextFileUA.hh
+    GmStepDataCoutUA.hh
+    GmTrackDataBinFileUA.hh
+    GmRunDataHistosUA.hh
+    GmStackDataHistosUA.hh
+    GmTrackDataTextFileUA.hh
+    GmSecondaryTrackDataBinFileUA.hh
+    GmRunDataBinFileUA.hh
+    GmRunDataCoutUA.hh
+    GmVDataUserTextFile.hh
+    GmClassifierByStringData.hh
+    GmVDataUserBinFile.hh
+    GmStepDataBinFileUA.hh
+    GmClassifierByNumericData.hh
+    GmEventDataHistosUA.hh
+    GmVDataUser.hh
+    GmStringDataFilter.hh
+    GmTrackDataHistosUA.hh
+    GmSecondaryTrackDataCoutUA.hh
+    GmClassifierByDistribution.hh
+    GmStackDataTextFileUA.hh
+    GmVDataUserHistos.hh
+    GmSecondaryTrackDataHistosUA.hh
+    GmNumericDataFilter.hh
+    GmEventDataCoutUA.hh
+    GmTrackDataCoutUA.hh
+    GmDataTTreeUA.hh
+    GmStepDataTextFileUA.hh
+    GmStepDataHistosUA.hh
+    GmEventDataTextFileUA.hh
+    GmStackDataCoutUA.hh
+    GmStackDataBinFileUA.hh
+    GmSecondaryTrackDataTextFileUA.hh
+    GmEventDataBinFileUA.hh
+  SOURCES
+    GmEventDataCoutUA.cc
+    GmVDataUserBinFile.cc
+    GmStackDataCoutUA.cc
+    GmTrackDataHistosUA.cc
+    GmSecondaryTrackDataBinFileUA.cc
+    GmStepDataHistosUA.cc
+    GmNumericDataFilter.cc
+    GmClassifierByDistribution.cc
+    GmTrackDataBinFileUA.cc
+    GmSecondaryTrackDataTextFileUA.cc
+    GmStackDataTextFileUA.cc
+    GmRunDataBinFileUA.cc
+    GmSecondaryTrackDataHistosUA.cc
+    GmEventDataBinFileUA.cc
+    plugin.cc
+    GmVDataUser.cc
+    GmStepDataCoutUA.cc
+    GmSecondaryTrackDataCoutUA.cc
+    GmVDataUserTextFile.cc
+    GmEventDataTextFileUA.cc
+    GmStackDataBinFileUA.cc
+    GmTrackDataCoutUA.cc
+    GmStackDataHistosUA.cc
+    GmEventDataHistosUA.cc
+    GmVDataUserHistos.cc
+    GmStringDataFilter.cc
+    GmDataTTreeUA.cc
+    GmStepDataTextFileUA.cc
+    GmRunDataHistosUA.cc
+    GmClassifierByStringData.cc
+    GmClassifierByNumericData.cc
+    GmTrackDataTextFileUA.cc
+    GmRunDataTextFileUA.cc
+    GmRunDataCoutUA.cc
+    GmStepDataBinFileUA.cc
+)
+# - Add path to generated header
+geant4_module_include_directories(GamosCore_GamosData_Users
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
+ PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
+
+geant4_module_link_libraries(GamosCore_GamosData_Users
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
+    GamosCore_GamosBase_Base
+    GamosCore_GamosData_Management
+    GamosCore_GamosAnalysis
+    GamosCore_GamosBase_Classifiers
+    GamosCore_GamosBase_Filters
 )

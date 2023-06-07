@@ -21,7 +21,6 @@
 #include "G4Positron.hh"
 #include "G4NeutrinoE.hh"
 #include "G4AntiNeutrinoE.hh"
-#include "G4EmProcessOptions.hh"
 #include "G4VAtomDeexcitation.hh"
 #include "G4UAtomicDeexcitation.hh"
 #include "G4LossTableManager.hh"
@@ -149,9 +148,6 @@ void GmEMPhysics::ConstructProcess()
   for (itr = physicsVector->begin()WLWLS; itr!= physicsVector->end(); ++itr) {
     (*itr)->ConstructProcess();
     } */
-
-  //  G4EmProcessOptions popt;
-  // popt.SetApplyCuts(true);
 
   // Deexcitation
   GmParameterMgr* theParamMgr = GmParameterMgr::GetInstance();

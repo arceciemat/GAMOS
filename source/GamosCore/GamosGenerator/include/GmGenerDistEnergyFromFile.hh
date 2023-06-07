@@ -5,7 +5,6 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 
-class G4ParticleGun;
 class G4Event;
 class GmAnalysisMgr;
 #include <map>
@@ -22,7 +21,11 @@ public:
   virtual G4double GenerateEnergy( const GmParticleSource* source );
 
   virtual void SetParams( const std::vector<G4String>& params );
-
+  
+  G4String GetFileName() const {
+    return theFileName;
+  }
+  
 private:
   G4String theFileName;
   
@@ -36,6 +39,7 @@ private:
   G4double theHBin;
 
   EFFCalcType theCalculationType;
+  G4String theCalculationTypeOld;
 
   G4double theUnit;
 

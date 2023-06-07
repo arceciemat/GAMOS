@@ -12,6 +12,7 @@
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Cons.hh"
+#include "G4Torus.hh"
 
 //------------------------------------------------------------------------
 GmPositionUserVolumes::GmPositionUserVolumes()
@@ -70,6 +71,7 @@ std::vector<GVSTouchableInfo*> GmPositionUserVolumes::AddTouchableInfos( const s
       CheckNoSolidParams(params[6],12,params.size());
       G4VSolid* solid = new G4Tubs( "DUMMY_VOLUME", GmGenUtils::GetValue(params[7]), GmGenUtils::GetValue(params[8]), GmGenUtils::GetValue(params[9]), GmGenUtils::GetValue(params[10]), GmGenUtils::GetValue(params[11]) );
       tinfo = AddVolume( solid, params, iSolid );
+      G4cout << " USER VOLUME " << solid->GetEntityType() << " " << *solid << " DELTA PHI " << params[11] << " = " << GmGenUtils::GetValue(params[11]) <<G4endl; //GDEB
       
     } else if( params[6] == "CONE" ){
       CheckNoSolidParams(params[6],12,params.size());
@@ -96,8 +98,12 @@ std::vector<GVSTouchableInfo*> GmPositionUserVolumes::AddTouchableInfos( const s
       G4VSolid* solid = new G4Ellipsoid( "DUMMY_VOLUME", GmGenUtils::GetValue(params[7]), GmGenUtils::GetValue(params[8]), GmGenUtils::GetValue(params[9]), GmGenUtils::GetValue(params[10]), GmGenUtils::GetValue(params[11]) );
       tinfo = AddVolume( solid, params, iSolid );
       
+    } else if( params[6] == "TORUS" ){
+      CheckNoSolidParams(params[6],12,params.size());
+      G4VSolid* solid = new G4Torus( "DUMMY_VOLUME", GmGenUtils::GetValue(params[7]), GmGenUtils::GetValue(params[8]), GmGenUtils::GetValue(params[9]), GmGenUtils::GetValue(params[10]) , GmGenUtils::GetValue(params[11]));
+      tinfo = AddVolume( solid, params, iSolid );
     } else {
-      G4Exception("GmPositionUserVolumes::SetParams"," The only solid types currently supported are: BOX, TUBE, TUBS, CONE, CONS, SPHERE, ORB, ELLIPSOID",FatalErrorInArgument,G4String("You have used solid type = " + params[6]).c_str());
+      G4Exception("GmPositionUserVolumes::SetParams"," The only solid types currently supported are: BOX, TUBE, TUBS, CONE, CONS, SPHERE, ORB, ELLIPSOID, TORUS",FatalErrorInArgument,G4String("You have used solid type = " + params[6]).c_str());
     }
 
   } else if( iSolid == 1 ) {
@@ -141,8 +147,13 @@ std::vector<GVSTouchableInfo*> GmPositionUserVolumes::AddTouchableInfos( const s
       G4VSolid* solid = new G4Ellipsoid( params[0], GmGenUtils::GetValue(params[8]), GmGenUtils::GetValue(params[9]), GmGenUtils::GetValue(params[10]), GmGenUtils::GetValue(params[11]), GmGenUtils::GetValue(params[12]) );
       tinfo = AddVolume( solid, params, iSolid );
       
+    } else if( params[6] == "TORUS" ){
+      CheckNoSolidParams(params[1],13,params.size());
+      G4VSolid* solid = new G4Torus( "DUMMY_VOLUME", GmGenUtils::GetValue(params[8]), GmGenUtils::GetValue(params[9]), GmGenUtils::GetValue(params[10]), GmGenUtils::GetValue(params[11]) , GmGenUtils::GetValue(params[12]));
+      tinfo = AddVolume( solid, params, iSolid );
+
     } else {
-      G4Exception("GmPositionUserVolumes::SetParams"," The only solid types currently supported are: BOX, TUBE, TUBS, CONE, CONS, SPHERE, ORB, ELLIPSOID",FatalErrorInArgument,G4String("You have used solid type = " + params[1]).c_str());
+      G4Exception("GmPositionUserVolumes::SetParams"," The only solid types currently supported are: BOX, TUBE, TUBS, CONE, CONS, SPHERE, ORB, ELLIPSOID, TORUS",FatalErrorInArgument,G4String("You have used solid type = " + params[1]).c_str());
     }
   }
   

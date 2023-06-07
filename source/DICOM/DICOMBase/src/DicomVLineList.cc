@@ -49,9 +49,9 @@ void DicomVLineList::AddLine( DicomVLine* line )
   }
   theLines.push_back(line);
   line->SetLineList( this );
-  if( theName.find("Bolus") != std::string::npos ) { // == "Bolus Couch" ) {
+  /*  if( theName.find("Bolus") != std::string::npos ) { // == "Bolus Couch" ) {
     G4cout << line->GetPoints()[0].z() << "  DicomVLineList::AddLine " << theName << " " << theLines.size() << " ORIENT=" << theOrientation << G4endl; //GDEB
-  }
+    }*/
 }
 
 //-----------------------------------------------------------------------------

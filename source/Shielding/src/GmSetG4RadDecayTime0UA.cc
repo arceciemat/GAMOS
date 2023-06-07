@@ -12,7 +12,7 @@
 #include "G4EventManager.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4RadioactiveDecay.hh"
-#include "G4RadioactiveDecayBase.hh"
+#include "G4RadioactiveDecay.hh"
 
 //---------------------------------------------------------------------------
 GmSetG4RadDecayTime0UA::GmSetG4RadDecayTime0UA()
@@ -34,9 +34,9 @@ void GmSetG4RadDecayTime0UA::UserSteppingAction(const G4Step* aStep)
   //  const G4RadioactiveDecay* procDec = dynamic_cast<const G4RadioactiveDecay*>(aTrack->GetCreatorProcess());
   const G4RadioactiveDecay* procDec = dynamic_cast<const G4RadioactiveDecay*>(aStep->GetPostStepPoint()->GetProcessDefinedStep());
   //  G4cout << " GmSetG4RadDecayTime0UA::UserSteppingAction Creator rad " << procDec << G4endl; //GDEB
-  const G4RadioactiveDecayBase* procDecN;
+  const G4RadioactiveDecay* procDecN;
   if (procDec == 0) {
-    procDecN = dynamic_cast<const G4RadioactiveDecayBase*>(aStep->GetPostStepPoint()->GetProcessDefinedStep());
+    procDecN = dynamic_cast<const G4RadioactiveDecay*>(aStep->GetPostStepPoint()->GetProcessDefinedStep());
   }
   if ( procDec == 0 && procDecN == 0) return; // only when radioactive decay happens
     

@@ -12,8 +12,6 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 
-#include "TStyle.h"
-
 //---------------------------------------------------------------------------
 DicomJobUtils::DicomJobUtils()
 {

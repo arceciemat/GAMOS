@@ -16,7 +16,7 @@ GmHisto1::GmHisto1( const std::string& name, int nBins, double lowerEdge, double
 
   //-- Check consistency of data
   if(theBinWidth == 0.) {
-    std::cerr << "!!! ERROR creating GmHisto1: " << name << "     The lower and upper edges are equal " << std::endl;
+    std::cerr << "!!! ERROR creating Gmisto1: " << name << "     The lower and upper edges are equal " << std::endl;
     std::exception();
   }
   if(theBinWidth < 0.) {
@@ -33,6 +33,7 @@ GmHisto1::GmHisto1( const std::string& name, int nBins, double lowerEdge, double
   theSumW = 0.; 
   theSumW2 = 0.; 
   theEntries = 0;
+  bUseErrors = false;
 }
 
 //----------------------------------------------------------------------
@@ -66,8 +67,33 @@ GmHisto1::GmHisto1( const std::string& name, const std::string& , int nBins, dou
   theSumW = 0.; 
   theSumW2 = 0.; 
   theEntries = 0;
+  bUseErrors = false;
 }
 
+//----------------------------------------------------------------------
+GmHisto1::GmHisto1( GmHisto1& his )
+{
+  theName = his.GetName();
+  theNBins = his.GetNbins();
+  theLowerEdge = his.GetLowerEdge();
+  theUpperEdge = his.GetUpperEdge();
+  theBinWidth = (theUpperEdge-theLowerEdge)/theNBins;
+  //-- Check consistency of data
+  if(theBinWidth == 0.) {
+    std::cerr << "!!! ERROR creating Gmisto1: " << GetName() << "     The lower and upper edges are equal " << std::endl;
+    std::exception();
+  }
+
+  theEntries = his.GetEntries();
+  theBinN = his.GetBinN();
+  theBinSumW = his.GetBinSumW();
+  theBinSumW2 = his.GetBinSumW2();
+  theSumW = his.GetSumW();
+  theSumW2 = his.GetSumW2();
+  theSumWX = his.GetSumWX();
+  theSumWX2 = his.GetSumWX2();
+  bUseErrors = his.UseErrors();
+}
 
 //----------------------------------------------------------------------
 void GmHisto1::Fill( double value, double weight )
@@ -103,7 +129,7 @@ double GmHisto1::GetBinContent(int ibin) const
     std::cerr << "GmHisto1::GetBinContent bin " << ibin << "  is less than 0 " << std::endl;
     std::exception();
   }
-  if( ibin > int(theNBins+1) ) {
+  if( ibin > theBinSumW.size()+1 ) {
     std::cerr << "GmHisto1::GetBinContent bin " << ibin << "  is too big ( > " << theNBins+1 << std::endl;
     std::exception();
   }
@@ -117,7 +143,7 @@ double GmHisto1::GetBinContent(int ibin) const
 }
 
 //----------------------------------------------------------------------
-double GmHisto1::GetBinError(int ibin) const 
+double GmHisto1::GetBinError(int ibin) const
 {
   if( ibin < 0 ) {
     std::cerr << "GmHisto1::GetBinError bin " << ibin << "  is less than 0 " << std::endl;
@@ -128,11 +154,26 @@ double GmHisto1::GetBinError(int ibin) const
     std::exception();
   }
   
-  std::map<int,double>::const_iterator ite = theBinSumW2.find(ibin);
-  if( ite != theBinSumW2.end() ) {
-    return sqrt((*ite).second);
+  if( bUseErrors ) {
+    std::map<int,double>::const_iterator ite = theBinError.find(ibin);
+    if( ite != theBinSumW2.end() ) {
+      return ite->second;
+    } else {
+      return 0.;
+    }
   } else {
-    return 0.;
+    std::map<int,double>::const_iterator ite = theBinSumW2.find(ibin);
+    std::map<int,double>::const_iterator ite1 = theBinSumW.find(ibin);
+    std::map<int,int>::const_iterator iteN = theBinN.find(ibin);
+    if( ite != theBinSumW2.end() ) {
+      if (iteN->second == 1 ) {
+	return ite1->second; // only 1  particle, error = value
+            } else {
+        return sqrt((*ite).second*iteN->second-ite1->second*ite1->second/(iteN->second-1));
+      }
+    } else {
+      return 0.;
+    }
   }
 }
 
@@ -166,7 +207,7 @@ int GmHisto1::GetEntries() const
 //----------------------------------------------------------------------
 double GmHisto1::GetMean() const
 {
-  std::cout << theName << " GmHisto1::GetMean() " <<  theSumWX / theSumW << " " << theSumWX << " " << theSumW << std::endl;
+  //  std::cout << theName << " GmHisto1::GetMean() " <<  theSumWX / theSumW << " " << theSumWX << " " << theSumW << std::endl;
   return ( theSumW ? theSumWX / theSumW : 0. );
 }
 
@@ -244,15 +285,15 @@ GmHisto1 operator+(const GmHisto1 &h1, const GmHisto1 &h2)
 //----------------------------------------------------------------------
 void GmHisto1::SetBinContent(int ibin, double val)
 {
-  double oldVal =  theBinN[ibin];
+  double oldVal =  theBinSumW[ibin];
 
-  theBinN[ibin] = val;
+  theBinSumW[ibin] = val;
   if( theBinSumW[ibin] == 0 ){ // not set before
     theSumW += 1;
     theSumW2 += 1;
   }
   theBinSumW[ibin] = val;
-  //   std::cout << " FILL GmHISTO1 " << ibin << " = " << weight << std::endl;
+ //   std::cout << " FILL GmHISTO1 " << ibin << " = " << weight << std::endl;
   theBinSumW2[ibin] = val*val;
 
   theSumWX += -oldVal + val; 
@@ -264,12 +305,11 @@ void GmHisto1::SetBinContent(int ibin, double val)
 //----------------------------------------------------------------------
 void GmHisto1::AddBinContent(int ibin, double val)
 {
-  double newVal = theBinN[ibin] + val;
-  theBinN[ibin] = newVal;
   if( theBinSumW[ibin] == 0 ){ // not set before
     theSumW += 1;
     theSumW2 += 1;
   }
+  double newVal = theBinSumW[ibin] + val;
   theBinSumW[ibin] = newVal;
   //   std::cout << " FILL GmHISTO1 " << ibin << " = " << weight << std::endl;
   theBinSumW2[ibin] += newVal*newVal;
@@ -277,22 +317,13 @@ void GmHisto1::AddBinContent(int ibin, double val)
   theSumWX += val; 
   theSumWX2 += val*val; 
   //  std::cout << " theSumWX2 " << theSumWX2 << " " << theSumWX2/theBinN[ibin] << std::endl;
-
 }
 
 //----------------------------------------------------------------------
 void GmHisto1::SetBinError(int ibin, double val)
 {
-  double oldVal =  theBinSumW[ibin];
-  theBinSumW[ibin] = val;
   //   std::cout << " FILL GmHISTO1 " << ibin << " = " << weight << std::endl;
-  theBinSumW2[ibin] = val*val;
-
-  theSumWX += -oldVal + val; 
-  theSumWX2 += -oldVal*oldVal+val*val; 
-  //  std::cout << " theSumWX2 " << theSumWX2 << " " << theSumWX2/theBinN[ibin] << std::endl;
-  theSumW = -oldVal + val;
-  theSumW2 +=  -oldVal*oldVal+val*val; 
+  theBinError[ibin] = val;
 }
 
 //----------------------------------------------------------------------
@@ -303,17 +334,17 @@ double GmHisto1::GetBinCenter( int ibin ) const
 }
 
 
-//----------------------------------------------------------------------                                         
+//----------------------------------------------------------------------       
 void GmHisto1::Reset()
 {
-	theEntries = 0;
-	theBinN.clear();
-	theBinSumW.clear();
-	theBinSumW2.clear();
+  theEntries = 0;
+  theBinN.clear();
+  theBinSumW.clear();
+  theBinSumW2.clear();
 
-	theSumW = 0;
-	theSumW2 = 0;
-	theSumWX = 0;
-	theSumWX2 = 0;
+  theSumW = 0;
+  theSumW2 = 0;
+  theSumWX = 0;
+  theSumWX2 = 0;
 }
 #endif

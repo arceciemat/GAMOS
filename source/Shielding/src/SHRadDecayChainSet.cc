@@ -207,9 +207,6 @@ void SHRadDecayChainSet::StoreParentChildren(const G4Track* aTrack, G4bool bAlso
 
 }
 
-#include "G4RadioactiveDecayBase.hh"
-#include "G4ProcessManager.hh"
-
 //---------------------------------------------------------------------------
 void SHRadDecayChainSet::StoreDecayBranchingRatios( const G4Track* aTrack )
 {

@@ -31,9 +31,6 @@
 #include "GmDataRandomPosTheta.hh"
 
 //-- Local position
-#include "GmDataInitialLocalPos1X.hh"
-#include "GmDataInitialLocalPos1Y.hh"
-#include "GmDataInitialLocalPos1Z.hh"
 #include "GmDataInitialLocalPosX.hh"
 #include "GmDataInitialLocalPosY.hh"
 #include "GmDataInitialLocalPosZ.hh"
@@ -41,6 +38,15 @@
 #include "GmDataInitialLocalPosPerp.hh"
 #include "GmDataInitialLocalPosPhi.hh"
 #include "GmDataInitialLocalPosTheta.hh"
+#include "GmDataInitialLocalPos1X.hh"
+#include "GmDataInitialLocalPos1Y.hh"
+#include "GmDataInitialLocalPos1Z.hh"
+#include "GmDataFinalLocalPos1X.hh"
+#include "GmDataFinalLocalPos1Y.hh"
+#include "GmDataFinalLocalPos1Z.hh"
+#include "GmDataVertexLocalPos1X.hh"
+#include "GmDataVertexLocalPos1Y.hh"
+#include "GmDataVertexLocalPos1Z.hh"
 
 #include "GmDataFinalLocalPosX.hh"
 #include "GmDataFinalLocalPosY.hh"
@@ -66,6 +72,7 @@
 #include "GmDataPosChangePerp.hh"
 #include "GmDataPosChangePhi.hh"
 #include "GmDataPosChangeTheta.hh"
+#include "GmDataTrackPosChangeMag.hh"
 
 //--- MOMENTUM DATA
 #include "GmDataInitialMomX.hh"
@@ -161,7 +168,7 @@
 #include "GmDataInitialTotalEnergy.hh"
 #include "GmDataFinalTotalEnergy.hh"
 #include "GmDataAccumulatedEnergyLost.hh"
-#include "GmDataAccumulatedEnergyDeposited.hh"
+#include "GmDataAccumulatedEnergyDeposit.hh"
 #include "GmDataKineticEnergyChange.hh"
 #include "GmDataAccumulatedDose.hh"
 #include "GmDataAccumulatedKerma.hh"
@@ -193,6 +200,8 @@
 #include "GmDataFinalSolidType.hh"
 #include "GmDataInitialPVCopyNumber.hh"
 #include "GmDataFinalPVCopyNumber.hh"
+#include "GmDataInitialPhantomStruct.hh"
+#include "GmDataFinalPhantomStruct.hh"
 
 //--- PARTICLE AND PROCESS DATA
 #include "GmDataParticle.hh"
@@ -213,9 +222,8 @@
 //--- MATERIAL DATA
 #include "GmDataInitialMaterial.hh"
 #include "GmDataFinalMaterial.hh"
-
-#include "GmDataInitialMaterial.hh"
-#include "GmDataFinalMaterial.hh"
+#include "GmDataInitialMeanIoniPot.hh"
+#include "GmDataFinalMeanIoniPot.hh"
 #include "GmDataInitialPressure.hh"
 #include "GmDataInitialTemperature.hh"
 #include "GmDataInitialDensity.hh"
@@ -338,6 +346,7 @@ PLUGINSVC_FACTORY(GmDataPosChangeMag,GmVData*())
 PLUGINSVC_FACTORY(GmDataPosChangePerp,GmVData*())
 PLUGINSVC_FACTORY(GmDataPosChangePhi,GmVData*())
 PLUGINSVC_FACTORY(GmDataPosChangeTheta,GmVData*())
+PLUGINSVC_FACTORY(GmDataTrackPosChangeMag,GmVData*())
 
 //--- MOMENTUM DATA
 PLUGINSVC_FACTORY(GmDataInitialMomX,GmVData*())
@@ -433,7 +442,7 @@ PLUGINSVC_FACTORY(GmDataVertexKineticEnergy,GmVData*())
 PLUGINSVC_FACTORY(GmDataInitialTotalEnergy,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalTotalEnergy,GmVData*())
 PLUGINSVC_FACTORY(GmDataAccumulatedEnergyLost,GmVData*())
-PLUGINSVC_FACTORY(GmDataAccumulatedEnergyDeposited,GmVData*())
+PLUGINSVC_FACTORY(GmDataAccumulatedEnergyDeposit,GmVData*())
 PLUGINSVC_FACTORY(GmDataKineticEnergyChange,GmVData*())
 PLUGINSVC_FACTORY(GmDataAccumulatedDose,GmVData*())
 PLUGINSVC_FACTORY(GmDataAccumulatedKerma,GmVData*())
@@ -465,6 +474,10 @@ PLUGINSVC_FACTORY(GmDataInitialSolidType,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalSolidType,GmVData*())
 PLUGINSVC_FACTORY(GmDataInitialPVCopyNumber,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalPVCopyNumber,GmVData*())
+PLUGINSVC_FACTORY(GmDataInitialCopyNo,GmVData*())
+PLUGINSVC_FACTORY(GmDataFinalCopyNo,GmVData*())
+PLUGINSVC_FACTORY(GmDataInitialPhantomStruct,GmVData*())
+PLUGINSVC_FACTORY(GmDataFinalPhantomStruct,GmVData*())
 
 //--- PARTICLE AND PROCESS DATA
 PLUGINSVC_FACTORY(GmDataParticle,GmVData*())
@@ -486,6 +499,8 @@ PLUGINSVC_FACTORY(GmDataNProcesses,GmVData*())
 //--- MATERIAL DATA
 PLUGINSVC_FACTORY(GmDataInitialMaterial,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalMaterial,GmVData*())
+PLUGINSVC_FACTORY(GmDataInitialMeanIoniPot,GmVData*())
+PLUGINSVC_FACTORY(GmDataFinalMeanIoniPot,GmVData*())
 PLUGINSVC_FACTORY(GmDataInitialPressure,GmVData*())
 PLUGINSVC_FACTORY(GmDataInitialTemperature,GmVData*())
 PLUGINSVC_FACTORY(GmDataInitialDensity,GmVData*())
@@ -579,9 +594,6 @@ DEFINE_GAMOS_DATA(GmDataRandomPosPhi);
 DEFINE_GAMOS_DATA(GmDataRandomPosTheta);
 
 //-- Local position
-DEFINE_GAMOS_DATA(GmDataInitialLocalPos1X);
-DEFINE_GAMOS_DATA(GmDataInitialLocalPos1Y);
-DEFINE_GAMOS_DATA(GmDataInitialLocalPos1Z);
 DEFINE_GAMOS_DATA(GmDataInitialLocalPosX);
 DEFINE_GAMOS_DATA(GmDataInitialLocalPosY);
 DEFINE_GAMOS_DATA(GmDataInitialLocalPosZ);
@@ -589,6 +601,15 @@ DEFINE_GAMOS_DATA(GmDataInitialLocalPosMag);
 DEFINE_GAMOS_DATA(GmDataInitialLocalPosPerp);
 DEFINE_GAMOS_DATA(GmDataInitialLocalPosPhi);
 DEFINE_GAMOS_DATA(GmDataInitialLocalPosTheta);
+DEFINE_GAMOS_DATA(GmDataInitialLocalPos1X);
+DEFINE_GAMOS_DATA(GmDataInitialLocalPos1Y);
+DEFINE_GAMOS_DATA(GmDataInitialLocalPos1Z);
+DEFINE_GAMOS_DATA(GmDataFinalLocalPos1X);
+DEFINE_GAMOS_DATA(GmDataFinalLocalPos1Y);
+DEFINE_GAMOS_DATA(GmDataFinalLocalPos1Z);
+DEFINE_GAMOS_DATA(GmDataVertexLocalPos1X);
+DEFINE_GAMOS_DATA(GmDataVertexLocalPos1Y);
+DEFINE_GAMOS_DATA(GmDataVertexLocalPos1Z);
 
 DEFINE_GAMOS_DATA(GmDataFinalLocalPosX);
 DEFINE_GAMOS_DATA(GmDataFinalLocalPosY);
@@ -614,6 +635,7 @@ DEFINE_GAMOS_DATA(GmDataPosChangeMag);
 DEFINE_GAMOS_DATA(GmDataPosChangePerp);
 DEFINE_GAMOS_DATA(GmDataPosChangePhi);
 DEFINE_GAMOS_DATA(GmDataPosChangeTheta);
+DEFINE_GAMOS_DATA(GmDataTrackPosChangeMag);
 
 //--- MOMENTUM DATA
 DEFINE_GAMOS_DATA(GmDataInitialMomX);
@@ -709,7 +731,8 @@ DEFINE_GAMOS_DATA(GmDataVertexKineticEnergy);
 DEFINE_GAMOS_DATA(GmDataInitialTotalEnergy);
 DEFINE_GAMOS_DATA(GmDataFinalTotalEnergy);
 DEFINE_GAMOS_DATA(GmDataAccumulatedEnergyLost);
-DEFINE_GAMOS_DATA(GmDataAccumulatedEnergyDeposited);
+DEFINE_GAMOS_DATA(GmDataAccumulatedEnergyDeposit);
+DEFINE_SEAL_PLUGIN(GmDataFactory, GmDataAccumulatedEnergyDeposit, "GmDataAccumulatedEnergyDeposited");
 DEFINE_GAMOS_DATA(GmDataKineticEnergyChange);
 DEFINE_GAMOS_DATA(GmDataAccumulatedDose);
 DEFINE_GAMOS_DATA(GmDataAccumulatedKerma);
@@ -741,6 +764,10 @@ DEFINE_GAMOS_DATA(GmDataInitialSolidType);
 DEFINE_GAMOS_DATA(GmDataFinalSolidType);
 DEFINE_GAMOS_DATA(GmDataInitialPVCopyNumber);
 DEFINE_GAMOS_DATA(GmDataFinalPVCopyNumber);
+DEFINE_SEAL_PLUGIN(GmDataFactory, GmDataInitialPVCopyNumber, "GmDataInitialCopyNo");
+DEFINE_SEAL_PLUGIN(GmDataFactory, GmDataFinalPVCopyNumber, "GmDataFinalCopyNo");
+DEFINE_GAMOS_DATA(GmDataInitialPhantomStruct);
+DEFINE_GAMOS_DATA(GmDataFinalPhantomStruct);
 
 //--- PARTICLE AND PROCESS DATA
 DEFINE_GAMOS_DATA(GmDataParticle);
@@ -761,6 +788,8 @@ DEFINE_GAMOS_DATA(GmDataNProcesses);
 //--- MATERIAL DATA
 DEFINE_GAMOS_DATA(GmDataInitialMaterial);
 DEFINE_GAMOS_DATA(GmDataFinalMaterial);
+DEFINE_GAMOS_DATA(GmDataInitialMeanIoniPot);
+DEFINE_GAMOS_DATA(GmDataFinalMeanIoniPot);
 DEFINE_GAMOS_DATA(GmDataInitialPressure);
 DEFINE_GAMOS_DATA(GmDataInitialTemperature);
 DEFINE_GAMOS_DATA(GmDataInitialDensity);

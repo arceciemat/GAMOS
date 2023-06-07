@@ -13,7 +13,7 @@ public:
   GmGenerDistPositionInG4VolumesGeneral();
   virtual ~GmGenerDistPositionInG4VolumesGeneral(){delete theTouchable;};
 
-  virtual G4ThreeVector GeneratePosition( const GmParticleSource* source );
+  virtual G4ThreeVector GeneratePosition( GmParticleSource* source );
 
   virtual void SetParams( const std::vector<G4String>& params );
 

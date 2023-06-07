@@ -49,7 +49,7 @@ private:
   G4double lowEnergyLimit;  
 
   static G4int maxZ;
-  static G4LPhysicsFreeVector* dataCS[101];
+  static G4PhysicsFreeVector* dataCS[101];
 
   G4ParticleChangeForGamma* fParticleChange;
 

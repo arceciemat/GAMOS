@@ -8,11 +8,11 @@ GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
 GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/GmPhysics/replacePhysics gamma-lowener
 GmEMPhysics::Replaceing PhysicsList component gamma-lowener
-G4VModularPhysicsList::ReplacePhysics: gamma-standardwith type : 22  is replaces with gamma-lowener
+G4VModularPhysicsList::ReplacePhysics: gamma-standard with type : 22 is replaced with gamma-lowener
 GmEMPhysics::ReplacePhysicsList: gamma-lowener is registered
 /gamos/GmPhysics/replacePhysics electron-lowener
 GmEMPhysics::Replaceing PhysicsList component electron-lowener
-G4VModularPhysicsList::ReplacePhysics: electron-standardwith type : 11  is replaces with electron-lowener
+G4VModularPhysicsList::ReplacePhysics: electron-standard with type : 11 is replaced with electron-lowener
 GmEMPhysics::ReplacePhysicsList: electron-lowener is registered
 /gamos/generator GmGenerator
 /gamos/userAction GmCountProcessesUA
@@ -173,10 +173,77 @@ GmPhysicsGammaLowEner::ConstructProcess
 /gamos/generator/addIsotopeSource source F18 1.E-3*curie
 /gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
 /run/beamOn 10000
+=======================================================================
+======                 Electromagnetic Physics Parameters      ========
+=======================================================================
+LPM effect enabled                                 1
+Enable creation and use of sampling tables         0
+Apply cuts on all EM processes                     0
+Use general process                                0
+Enable linear polarisation for gamma               0
+Enable sampling of quantum entanglement            0
+X-section factor for integral approach             0.8
+Min kinetic energy for tables                      100 eV 
+Max kinetic energy for tables                      100 TeV
+Number of bins per decade of a table               7
+Verbose level                                      1
+Verbose level for worker thread                    0
+Bremsstrahlung energy threshold above which 
+  primary e+- is added to the list of secondary    100 TeV
+Bremsstrahlung energy threshold above which primary
+  muon/hadron is added to the list of secondary    100 TeV
+Lowest triplet kinetic energy                      1 MeV
+Enable sampling of gamma linear polarisation       0
+5D gamma conversion model type                     0
+5D gamma conversion model on isolated ion          0
+Livermore data directory                           livermore
+=======================================================================
+======                 Ionisation Parameters                   ========
+=======================================================================
+Step function for e+-                              (0.2, 1 mm)
+Step function for muons/hadrons                    (0.2, 0.1 mm)
+Step function for light ions                       (0.2, 0.1 mm)
+Step function for general ions                     (0.2, 0.1 mm)
+Lowest e+e- kinetic energy                         1 keV
+Lowest muon/hadron kinetic energy                  1 keV
+Fluctuations of dE/dx are enabled                  1
+Use ICRU90 data                                    0
+Use built-in Birks satuaration                     0
+Build CSDA range enabled                           0
+Use cut as a final range enabled                   0
+Enable angular generator interface                 0
+Max kinetic energy for CSDA tables                 1 GeV
+Max kinetic energy for NIEL computation            0 eV 
+Linear loss limit                                  0.01
+Read data from file for e+e- pair production by mu 0
+=======================================================================
+======                 Multiple Scattering Parameters          ========
+=======================================================================
+Type of msc step limit algorithm for e+-           3
+Type of msc step limit algorithm for muons/hadrons 0
+Msc lateral displacement for e+- enabled           1
+Msc lateral displacement for muons and hadrons     0
+Urban msc model lateral displacement alg96         1
+Range factor for msc step limit for e+-            0.04
+Range factor for msc step limit for muons/hadrons  0.2
+Geometry factor for msc step limitation of e+-     2.5
+Safety factor for msc step limit for e+-           0.6
+Skin parameter for msc step limitation of e+-      1
+Lambda limit for msc step limit for e+-            1 mm
+Use Mott correction for e- scattering              0
+Factor used for dynamic computation of angular 
+  limit between single and multiple scattering     1
+Fixed angular limit between single 
+  and multiple scattering                          3.1416 rad
+Upper energy limit for e+- multiple scattering     100 MeV
+Type of electron single scattering model           0
+Type of nuclear form-factor                        1
+Screening factor                                   1
+=======================================================================
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
-### ===  Auger cascade flag: 0
+### ===  Auger flag: 1
 ### ===  Ignore cuts flag:   0
 
 phot:  for gamma SubType=12 BuildTable=0
@@ -195,7 +262,7 @@ compt:  for gamma SubType=13 BuildTable=1
 conv:  for gamma SubType=14 BuildTable=1
       Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
+ LivermoreConversion : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
      BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
@@ -207,16 +274,17 @@ Rayl:  for gamma SubType=11 BuildTable=1
 msc:  for e-  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+          StepLim=DistanceToBoundary Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  SubType=2
+eIoni:  for e-  XStype:1  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
        LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
         MollerBhabha : Emin=    1 GeV Emax=  100 TeV
 
-eBrem:  for e-  SubType=3
+eBrem:  for e-  XStype:4  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
@@ -227,27 +295,16 @@ eBrem:  for e-  SubType=3
 msc:  for e+  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+          StepLim=DistanceToBoundary Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  SubType=2
+eIoni:  for e+  XStype:1  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
-eBrem:  for e+  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-annihil:  for e+, integral:1  SubType=5 BuildTable=0
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
-
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : Yes
  Material : G4_AIR
@@ -259,25 +316,25 @@ Index : 0     used in the geometry : Yes
 Index : 1     used in the geometry : Yes
  Material : G4_Al
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  2.3478 keV    e-  131.031 keV    e+  128.416 keV proton -1 MeV
+ Energy thresholds :  gamma  2.34157 keV    e-  131.218 keV    e+  128.746 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
 Index : 2     used in the geometry : Yes
  Material : LSO
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  15.1545 keV    e-  205.548 keV    e+  200.096 keV proton -1 MeV
+ Energy thresholds :  gamma  15.1371 keV    e-  206.06 keV    e+  200.344 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
 Index : 3     used in the geometry : Yes
  Material : G4_WATER
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.10981 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Energy thresholds :  gamma  1.11075 keV    e-  85.0445 keV    e+  83.9021 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
-====================================================================
+==================================================================
 
 G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
 See commands in /vis/modeling/trajectories/ for other options.
@@ -315,65 +372,61 @@ See commands in /vis/modeling/trajectories/ for other options.
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=4.890000s Real=4.889432s Sys=0.000000s
+  User=1.350000s Real=1.369881s Sys=0.000000s
 @@@@ GmCountProcessesUA
  PART_COUNT: e+ = 10000
- PART_COUNT: e- = 80241
- PART_COUNT: gamma = 28549
- PROC_COUNT e+ : Transportation = 21
- PROC_COUNT e+ : annihil = 10004
- PROC_COUNT e+ : eBrem = 125
- PROC_COUNT e+ : eBrem_NoSeco = 1
- PROC_COUNT e+ : eIoni = 463
- PROC_COUNT e+ : eIoni_NoSeco = 10142
- PROC_COUNT e+ : msc = 1309
- PROC_COUNT e+ : ALL = 22065
- PROC_COUNT e- : Transportation = 203
- PROC_COUNT e- : eBrem = 791
- PROC_COUNT e- : eBrem_NoSeco = 42
- PROC_COUNT e- : eIoni = 1236
- PROC_COUNT e- : eIoni_NoSeco = 121556
- PROC_COUNT e- : msc = 11709
- PROC_COUNT e- : ALL = 135537
- PROC_COUNT gamma : Rayl = 3482
- PROC_COUNT gamma : Transportation = 70392
- PROC_COUNT gamma : compt = 58736
- PROC_COUNT gamma : phot = 19804
-PROC_COUNT gamma : ALL = 152414
+ PART_COUNT: e- = 80844
+ PART_COUNT: gamma = 28527
+ PROC_COUNT e+ : Transportation = 16
+ PROC_COUNT e+ : annihil = 10000
+ PROC_COUNT e+ : eBrem = 128
+ PROC_COUNT e+ : eIoni = 454
+ PROC_COUNT e+ : eIoni_NoSeco = 10120
+ PROC_COUNT e+ : msc = 431
+ PROC_COUNT e+ : ALL = 21149
+ PROC_COUNT e- : Transportation = 263
+ PROC_COUNT e- : eBrem = 792
+ PROC_COUNT e- : eBrem_NoSeco = 55
+ PROC_COUNT e- : eIoni = 1388
+ PROC_COUNT e- : eIoni_NoSeco = 82414
+ PROC_COUNT e- : msc = 5260
+ PROC_COUNT e- : ALL = 90172
+ PROC_COUNT gamma : Rayl = 3414
+ PROC_COUNT gamma : Transportation = 69713
+ PROC_COUNT gamma : compt = 59199
+ PROC_COUNT gamma : phot = 19803
+PROC_COUNT gamma : ALL = 152129
 PROC_CREATOR_COUNT e+ : Primary = 10000
-PROC_CREATOR_COUNT e- : compt = 58736
-PROC_CREATOR_COUNT e- : eIoni = 1699
-PROC_CREATOR_COUNT e- : phot = 19806
+PROC_CREATOR_COUNT e- : compt = 59199
+PROC_CREATOR_COUNT e- : eIoni = 1842
+PROC_CREATOR_COUNT e- : phot = 19803
 PROC_CREATOR_COUNT gamma : annihil = 20000
-PROC_CREATOR_COUNT gamma : compt = 58
-PROC_CREATOR_COUNT gamma : eBrem = 916
-PROC_CREATOR_COUNT gamma : phot = 7575
+PROC_CREATOR_COUNT gamma : compt = 71
+PROC_CREATOR_COUNT gamma : eBrem = 920
+PROC_CREATOR_COUNT gamma : phot = 7536
 
  $$$$$$$$$$ Classification of Gamma Interactions in SD $$$$$$$$ 
  $$GSD: n Events      : 10000
- $$GSD: n gamma in SD : 10340 : 51.7 % 
- $$GSD:  n PE         : 9983 : 96.5474 % 
- $$GSD:    PE 0 COMP    : 6031 : 60.4127 % 
- $$GSD:    PE 1 COMP    : 2492 : 24.9624 % 
- $$GSD:    PE 2 COMP    : 1007 : 10.0871 % 
- $$GSD:    PE >2 COMP   : 377 : 3.77642 % 
- $$GSD: No PE 0 COMP    : 114 : 31.9328 % 
- $$GSD: No PE 1 COMP    : 187 : 52.381 % 
- $$GSD: No PE 2 COMP    : 50 : 14.0056 % 
- $$GSD: No PE >2 COMP   : 6 : 1.68067 % 
- $$GSD:  n COMP       : 4119 : 39.8356 % 
- $$GSD:    1 COMP       : 2679 : 65.0401 % 
- $$GSD:    2 COMP       : 1057 : 25.6616 % 
- $$GSD:    >2 COMP      : 383 : 9.29837 % 
- $$GSD: nCOMP/gamma     : 0.584139
- $$GSD: n RAYL        : 928 : 8.97485 % 
+ $$GSD: n gamma in SD : 10275 : 51.375 % 
+ $$GSD:  n PE         : 9895 : 96.3017 % 
+ $$GSD:    PE 0 COMP    : 5984 : 60.475 % 
+ $$GSD:    PE 1 COMP    : 2559 : 25.8615 % 
+ $$GSD:    PE 2 COMP    : 928 : 9.37847 % 
+ $$GSD:    PE >2 COMP   : 362 : 3.65841 % 
+ $$GSD: No PE 0 COMP    : 178 : 46.8421 % 
+ $$GSD: No PE 1 COMP    : 158 : 41.5789 % 
+ $$GSD: No PE 2 COMP    : 38 : 10 % 
+ $$GSD: No PE >2 COMP   : 6 : 1.57895 % 
+ $$GSD:  n COMP       : 4051 : 39.4258 % 
+ $$GSD:    1 COMP       : 2717 : 67.0699 % 
+ $$GSD:    2 COMP       : 966 : 23.846 % 
+ $$GSD:    >2 COMP      : 368 : 9.08418 % 
+ $$GSD: nCOMP/gamma     : 0.569927
+ $$GSD: n RAYL        : 908 : 8.83698 % 
  $$GSD: n CONV        : 0 : 0 % 
- $$GSD:  0 Gamma in event : 2463 : 24.63 % 
- $$GSD:  1 Gamma in event : 4734 : 47.34 % 
- $$GSD:  2 Gamma in event : 2803 : 28.03 % 
-Graphics systems deleted.
-Visualization Manager deleting...
- GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 gammaSD.exercise2b:NormalizeToNEvents
-=== saving histograms in file === gammaSD.exercise2b.root
- GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 hits.exercise2b:NormalizeToNEvents
-=== saving histograms in file === hits.exercise2b.root
+ $$GSD:  0 Gamma in event : 2493 : 24.93 % 
+ $$GSD:  1 Gamma in event : 4739 : 47.39 % 
+ $$GSD:  2 Gamma in event : 2768 : 27.68 % 
+0 events have been kept for refreshing and/or reviewing.
+  "/vis/reviewKeptEvents" to review them one by one.
+  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.

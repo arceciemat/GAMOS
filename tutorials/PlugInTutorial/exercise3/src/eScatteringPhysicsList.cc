@@ -38,13 +38,11 @@
 #include "G4HadronElasticPhysics.hh"
 #include "G4NeutronTrackingCut.hh"
 
-#include "G4DataQuestionaire.hh"
 #include "G4HadronPhysicsQGSP_BERT.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 eScatteringPhysicsList::eScatteringPhysicsList():  G4VModularPhysicsList()
 {
-  G4DataQuestionaire it(photon);
   G4cout << "<<< Geant4 Physics List simulation engine: QGSP_BERT 3.4"<<G4endl;
   G4cout <<G4endl;
 

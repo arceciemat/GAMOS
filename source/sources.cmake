@@ -1,9 +1,7 @@
-#------------------------------------------------------------------------------
-# 
-# Module : 
-# Package: 
-#
-#------------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include(GamosMacroLibraryTargets)
-GAMOS_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
+# -  module build definition
+
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(
+  PUBLIC_HEADERS

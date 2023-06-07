@@ -1,35 +1,22 @@
-#------------------------------------------------------------------------------
-# Module : Detector
-# Package: Detector_PET_ssrb_fbp
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+# - GAMOS_analysis_NuclMed_PET_ssrb_fbp module build definition
 
-include_directories(${CMAKE_SOURCE_DIR}/source)
-# Define the GAMOS Module.
 include(UseGamosAtGeant4)
-include(UseFFTW)
-#
-GEANT4_DEFINE_MODULE(NAME ssrb_fbp
-	 HEADERS
-		VIP_lm2pd.hh
-		VIP_ssrb_fbp.hh
-		ssrb_fbp.hh
-	 SOURCES
-		VIP_lm2pd.cxx
-		dummy.cc
-		VIP_ssrb_fbp.cxx
-		extra_TXT2FBP_outfile.cxx
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-	fftw3
-	m
 
-	LINK_LIBRARIES
+geant4_add_module(GAMOS_analysis_NuclMed_PET_ssrb_fbp
+  PUBLIC_HEADERS
+    VIP_lm2pd.hh
+    VIP_ssrb_fbp.hh
+    ssrb_fbp.hh
+  SOURCES
+    extra_TXT2FBP_outfile.cxx
+    VIP_lm2pd.cxx
+    dummy.cc
+    VIP_ssrb_fbp.cxx
+)
+geant4_module_link_libraries(GAMOS_analysis_NuclMed_PET_ssrb_fbp
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    fftw3
+    ${SEAL_LIBRARIES} 
 )

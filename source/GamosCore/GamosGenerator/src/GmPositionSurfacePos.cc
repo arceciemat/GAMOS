@@ -58,7 +58,7 @@ G4ThreeVector GmPositionSurfacePos::GeneratePosInSolidSurface( const G4VSolid* s
 
   } else if( solid->GetEntityType() == "G4Sphere" ) {
     G4Sphere* solidc = (G4Sphere*)solid;
-    G4double radiusI = solidc->GetInsideRadius();
+    G4double radiusI = solidc->GetInnerRadius();
     G4double radiusO = solidc->GetOuterRadius();
 
     //----- Generate (x,y,z) in sphere surface
@@ -301,7 +301,7 @@ void GmPositionSurfacePos::BuildSurfaceAreas( const G4VSolid* solid )
   } else if( solid->GetEntityType() == "G4Sphere" ) {
     G4Sphere* solidc = (G4Sphere*)solid;
     // better than repeating a few dozen lines....
-    G4Sphere* spherein = new G4Sphere("TEMP", 0., solidc->GetInsideRadius(), solidc->GetStartPhiAngle(), solidc->GetDeltaPhiAngle(), solidc->GetStartThetaAngle(), solidc->GetDeltaThetaAngle() );
+    G4Sphere* spherein = new G4Sphere("TEMP", 0., solidc->GetInnerRadius(), solidc->GetStartPhiAngle(), solidc->GetDeltaPhiAngle(), solidc->GetStartThetaAngle(), solidc->GetDeltaThetaAngle() );
     area = spherein->GetSurfaceArea();
     areas.push_back( area );
     G4Sphere* sphereout = new G4Sphere("TEMP", 0., solidc->GetOuterRadius(), solidc->GetStartPhiAngle(), solidc->GetDeltaPhiAngle(), solidc->GetStartThetaAngle(), solidc->GetDeltaThetaAngle() );

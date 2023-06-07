@@ -1,6 +1,3 @@
-#include "G4VEmProcess.hh"
-#include "G4VEnergyLossProcess.hh"
-#include "G4EmModelManager.hh"
 #include "GmExtraPhysicsMessenger.hh"
 #include "GmPhysicsVerbosity.hh"
 #include "GmPhysicsParallel.hh"
@@ -18,11 +15,14 @@
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosGenerator/include/GmGeneratorMgr.hh"
+#include "GamosCore/GamosBase/Base/include/GmUIcmdWithAString.hh"
 
+#include "G4VEmProcess.hh"
+#include "G4VEnergyLossProcess.hh"
+#include "G4EmModelManager.hh"
+#include "G4EmParameters.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithoutParameter.hh"
-#include "GamosCore/GamosBase/Base/include/GmUIcmdWithAString.hh"
-#include "G4EmProcessOptions.hh"
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
 #include "G4RadioactiveDecay.hh"
@@ -139,8 +139,8 @@ GmExtraPhysicsMessenger::~GmExtraPhysicsMessenger()
 void GmExtraPhysicsMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
   if (command == theApplyCutsCmd){
-    G4EmProcessOptions popt;
-    popt.SetApplyCuts(GmGenUtils::GetBoolean(newValue));
+    G4EmParameters* empar = G4EmParameters::Instance();
+    empar->SetApplyCuts(GmGenUtils::GetBoolean(newValue));
     
   } else if (command == theParallelPhysCmd){
     GmPhysicsParallel* parallelPhys = new GmPhysicsParallel;

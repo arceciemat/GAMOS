@@ -46,10 +46,10 @@ void GmModuleMLC::BuildObjects()
 		FatalErrorInArgument,
 		G4String("It is: "+theWords["ORIENTATION"]+" , while it should be X or Y").c_str());
   }  
-  SetWord("LEAFTIPTYPE",ip++);  // ROUND, ROUND, ROUND_POSFILE or STRAIGHT end leaf
-  if( theWords["LEAFTIPTYPE"] == "ROUND_DISP_POSFILE" ) {
+  SetWord("LEAFTIPTYPE",ip++);  // ROUND, ROUND_DISP, ROUND_DISP_POSFILE or STRAIGHT end leaf
+  /*  if( theWords["LEAFTIPTYPE"] == "ROUND_DISP_POSFILE" ) {
     theWords["LEAFTIPTYPE"] == "ROUND_POSFILE";
-  }
+    }*/
   
 #ifndef GAMOS_NO_VERBOSE
   if( GeomVerb(debugVerb) ) G4cout << " GmModuleMLC::BuildObjects " << PrintW("NAME") << PrintW("TYPE") << PrintW("ORIENTATION")  << PrintW("LEAFTIPTYPE") << G4endl;
@@ -65,17 +65,13 @@ void GmModuleMLC::BuildObjects()
   G4double TIP_RADIUS;
   //  SetWord("TIP_CIRCLE_Z",-1);
   G4double TIP_CIRCLE_Z = 0.;
-  G4double HVL = 0.;
   if( theWords["LEAFTIPTYPE"] == "ROUND" 
       || theWords["LEAFTIPTYPE"] == "ROUND_DISP" ) {
     SetWord("TIP_RADIUS",ip++);
     TIP_RADIUS  = G4tgrUtils::GetDouble(theWords["TIP_RADIUS"]);
-    SetWord("HVL",ip++);
-    HVL = G4tgrUtils::GetDouble(theWords["HVL"]);
 #ifndef GAMOS_NO_VERBOSE
     if( GeomVerb(debugVerb) ) {
-      G4cout << " GmModuleMLC::BuildObjects " << PrintWVal("TIP_RADIUS") << G4endl
-	     << " GmModuleMLC::BuildObjects " << PrintWVal("HVL") << G4endl;
+      G4cout << " GmModuleMLC::BuildObjects " << PrintWVal("TIP_RADIUS") << G4endl;
     }
 #endif
     if( theWords["LEAFTIPTYPE"] == "ROUND_DISP" ) {
@@ -87,7 +83,7 @@ void GmModuleMLC::BuildObjects()
       }
 #endif
     }
-  } else if( theWords["LEAFTIPTYPE"] == "ROUND_POSFILE" ) {
+  } else if( theWords["LEAFTIPTYPE"] == "ROUND_DISP_POSFILE" ) {
     SetWord("TIP_RADIUS",ip++);
     TIP_RADIUS  = G4tgrUtils::GetDouble(theWords["TIP_RADIUS"]);
 #ifndef GAMOS_NO_VERBOSE
@@ -98,7 +94,6 @@ void GmModuleMLC::BuildObjects()
 #ifndef GAMOS_NO_VERBOSE
     if( GeomVerb(debugVerb) ) G4cout << " GmModuleMLC::BuildObjects " << PrintWVal("TIP_CIRCLE_Z") << G4endl;
 #endif  
-    
     SetWord("TIP_POS_FILE",ip++);
 #ifndef GAMOS_NO_VERBOSE
     if( GeomVerb(debugVerb) ) G4cout << " GmModuleMLC::BuildObjects " << theWords["TIP_POS_FILE"] << G4endl;
@@ -119,8 +114,19 @@ void GmModuleMLC::BuildObjects()
     G4Exception("GmModuleMLC:BuildObjects",
 		"M001",
 		FatalException,
-		("MLC TYPE HAS TO BE STRAIGHT, STRAIGHT_HORIZ, ROUND, ROUND_DISP or ROUND_POSFILE, WHILE IT IS "+theWords["LEAFTIPTYPE"]).c_str());
+		("MLC TYPE HAS TO BE STRAIGHT, STRAIGHT_HORIZ, ROUND, ROUND_DISP or ROUND_DISP_POSFILE, WHILE IT IS "+theWords["LEAFTIPTYPE"]).c_str());
   }
+  G4double HVL = 0.;
+  if( theWords["LEAFTIPTYPE"] == "ROUND" 
+       || theWords["LEAFTIPTYPE"] == "ROUND_DISP" ){
+     SetWord("HVL",ip++);
+     HVL = G4tgrUtils::GetDouble(theWords["HVL"]);
+#ifndef GAMOS_NO_VERBOSE
+    if( GeomVerb(debugVerb) ) {
+      G4cout << " GmModuleMLC::BuildObjects " << PrintWVal("HVL") << G4endl;
+    }    
+#endif
+   }
   
   SetWord("Z_FOCUS",ip++);  G4double Z_FOCUS    = G4tgrUtils::GetDouble(theWords["Z_FOCUS"]);
   SetWord("C_FOCUS",ip++); G4double C_FOCUS        = G4tgrUtils::GetDouble(theWords["C_FOCUS"]);
@@ -129,7 +135,7 @@ void GmModuleMLC::BuildObjects()
   if( GeomVerb(debugVerb) ) G4cout << " GmModuleMLC::BuildObjects " << PrintWVal("Z_FOCUS") << PrintWVal("C_FOCUS") << PrintWVal("Z_ISOCENTRE") << G4endl;
 #endif  
     
-SetWord("Z_TOP",ip++);  G4double Z_TOP      = G4tgrUtils::GetDouble(theWords["Z_TOP"]);
+  SetWord("Z_TOP",ip++);  G4double Z_TOP      = G4tgrUtils::GetDouble(theWords["Z_TOP"]);
 #ifndef GAMOS_NO_VERBOSE
   if( GeomVerb(debugVerb) ) G4cout << " GmModuleMLC::BuildObjects " << PrintWVal("Z_TOP") << G4endl;
 #endif  
@@ -257,7 +263,8 @@ SetWord("Z_TOP",ip++);  G4double Z_TOP      = G4tgrUtils::GetDouble(theWords["Z_
   Z_GAP += Z_TOP;
   //@@@@@ Loop to leaves
   GmNumericDistributionLinLin* posLeafDist = 0;
-  if( theWords["LEAFTIPTYPE"]=="ROUND_POSFILE"){    	std::vector<G4String> paramDist;
+  if( theWords["LEAFTIPTYPE"]=="ROUND_DISP_POSFILE"){
+    std::vector<G4String> paramDist;
     GmParameterMgr::GetInstance()->AddParam("leafPosMLCDist:FileName "+ theWords["TIP_POS_FILE"], PTstring);
     GmParameterMgr::GetInstance()->AddParam("leafPosMLCDist:Data InitialPosX", PTstring); // dummy data
     paramDist.push_back("leafPosMLCDist");
@@ -350,7 +357,8 @@ SetWord("Z_TOP",ip++);  G4double Z_TOP      = G4tgrUtils::GetDouble(theWords["Z_
       if( GeomVerb(testVerb) ) G4cout << ii << " " << jj << " FINAL LEAF POS " << z1 << " , " << c1 << " FROM " << G4tgrUtils::GetDouble(theWords["z["+leaf_type+","+GmGenUtils::itoa(jj)+"]"]) << " , " << G4tgrUtils::GetDouble(theWords["c["+leaf_type+","+GmGenUtils::itoa(jj)+"]"]) << G4endl;
 #endif
       
-      if( theWords["LEAFTIPTYPE"]=="ROUND" || theWords["LEAFTIPTYPE"]=="ROUND_POSFILE"){
+      if( theWords["LEAFTIPTYPE"]=="ROUND" || theWords["LEAFTIPTYPE"]=="ROUND_DISP"
+	  || theWords["LEAFTIPTYPE"]=="ROUND_DISP_POSFILE"){
 	output_line_text+=" "+GmGenUtils::ftoa(z1)+" "+GmGenUtils::ftoa(c1)+" ";
       } else if (theWords["LEAFTIPTYPE"].substr(0,8)=="STRAIGHT"){
 	output_line_text+=" "+GmGenUtils::ftoa(z1)+" "+GmGenUtils::ftoa(c1)+" ";		
@@ -378,7 +386,8 @@ SetWord("Z_TOP",ip++);  G4double Z_TOP      = G4tgrUtils::GetDouble(theWords["Z_
     }
 #endif
     ///---- ROUNDER BORDER    
-    if( theWords["LEAFTIPTYPE"]=="ROUND" || theWords["LEAFTIPTYPE"]=="ROUND_POSFILE"){    
+    if( theWords["LEAFTIPTYPE"]=="ROUND" || theWords["LEAFTIPTYPE"]=="ROUND_DISP"
+	|| theWords["LEAFTIPTYPE"]=="ROUND_DISP_POSFILE"){    
       //@@@ UNION OF LEAF PROFILE AND TUBE FOR ROUNDED EDGE
       //@@ PROFILE:
       text_aux=":SOLID "+theWords["NAME"]+"_Leaf_"+GmGenUtils::itoa(ii)+"_BASE_POS  EXTRUDED "+theWords[text_aux0]+" "+output_line_text +" 2 "
@@ -478,7 +487,8 @@ SetWord("Z_TOP",ip++);  G4double Z_TOP      = G4tgrUtils::GetDouble(theWords["Z_
       G4double posCircleZ = Z_TOP+TIP_CIRCLE_Z;
 #endif
       
-      if( theWords["LEAFTIPTYPE"]=="ROUND"){
+      if( theWords["LEAFTIPTYPE"]=="ROUND"
+	  || theWords["LEAFTIPTYPE"]=="ROUND_DISP"){
       
 	G4double profR = G4tgrUtils::GetDouble(theWords["TIP_RADIUS"]);
 	//	G4double hvlXP = HVL*sin(atan(1./fabs(slopeP)));
@@ -559,7 +569,7 @@ SetWord("Z_TOP",ip++);  G4double Z_TOP      = G4tgrUtils::GetDouble(theWords["Z_
 	//		system("sleep 2");
 	//	G4cout << "DONE" << G4endl;
       
-      } else if( theWords["LEAFTIPTYPE"]=="ROUND_POSFILE"){
+      } else if( theWords["LEAFTIPTYPE"]=="ROUND_DISP_POSFILE"){
 	//-	G4double profR = G4tgrUtils::GetDouble(theWords["TIP_RADIUS"]);
 	
 	G4double z_centre = posCircleZ;
@@ -746,7 +756,7 @@ SetWord("Z_TOP",ip++);  G4double Z_TOP      = G4tgrUtils::GetDouble(theWords["Z_
 	  BuildObject( fout );
 	  
 	} else {
-	  G4Exception("GmModuleJaws::BuildObjects",
+	  G4Exception("GmModuleLeaf::BuildObjects",
 		      "Wrong orientation type of MLC",
 		      FatalErrorInArgument,
 		      G4String("It is: "+theWords["ORIENTATION"]+" , while it should be X or Y").c_str());

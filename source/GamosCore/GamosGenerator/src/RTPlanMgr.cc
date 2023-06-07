@@ -141,31 +141,38 @@ void RTPlanMgr::CalculateMetersetEvts()
     beamAccumMS += beamMS;
     
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(debugVerb) ) G4cout << "ACCUMULATING BEAM METERSETS " << iib << " = " << beamAccumMS << " <- " << theBeams[iib]->GetParam("FinalCumulativeMetersetWeight",1) << " NCPS " << CPs.size() << " " << bMSEnough << G4endl;
-#endif
+    if( GenerVerb(debugVerb) ) G4cout << "ACCUMULATING BEAM METERSETS " << iib << " = " << beamAccumMS << " <- " << theBeams[iib]->GetParam("FinalCumulativeMetersetWeight",1) << " NControlPoints " << CPs.size() << " Enough? " << bMSEnough << G4endl;
+#endif 
     if( !bMSEnough ) { // ONLY Accumate beamAccumMS
       for( size_t iicp = 0; iicp < CPs.size(); iicp++ ) {
 	std::vector<RTVPlanSubControlPoint*> subCPs = CPs[iicp]->GetSubCPs();      
 	G4double numberOfPaintings = CPs[iicp]->GetNumberOfPaintings();
-	//      G4cout << iib << " " << iicp << " nPaintins " << numberOfPaintings << G4endl; //GDEB
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(debugVerb) ) G4cout << "LOOP beam: "<< iib << " CP: " << iicp << " nPaintings " << numberOfPaintings << G4endl; //GDEB	
+#endif
 	for( size_t iiscp = 0; iiscp < subCPs.size(); iiscp++ ) {
+#ifndef GAMOS_NO_VERBOSE
+	  if( GenerVerb(debugVerb) ) G4cout << "LOOP beam: "<< iib << " CP: " << iicp << " subCP(ScanSpot): " << iiscp << " nPaintings " << numberOfPaintings << G4endl; //GDEB	
+#endif
 	  G4double meterSet = subCPs[iiscp]->GetMeterset();
 	  CPAccumMS += meterSet;
-	  if( GenerVerb(debugVerb) ) G4cout << "CPAccumMSPrev=" << CPAccumMSPrev << " CPAccumMS=" << CPAccumMS << " theMSUnitsToSkip=" << theMSUnitsToSkip << " Skip+theMSUnitsToRun=" << MSUnitsTOTAL << G4endl; 
+	  if( GenerVerb(debugVerb) ) G4cout << "CPAccumMSPrev=" << CPAccumMSPrev << " CPAccumMS=" << CPAccumMS << " theMSUnitsToSkip=" << theMSUnitsToSkip << " Skip+Run=" << MSUnitsTOTAL << G4endl; 
 	  if( CPAccumMSPrev < theMSUnitsToSkip ) {  
 	    if( CPAccumMS < theMSUnitsToSkip ) { // MS interval before Skip
 	      meterSetFraction = 0.;
-	      if( GenerVerb(debugVerb) ) G4cout << "@@@ meterSetFraction= " << meterSetFraction << " MS before Skip " << G4endl; 
+#ifndef GAMOS_NO_VERBOSE
+	      if( GenerVerb(debugVerb) ) G4cout << " meterSetFraction= " << meterSetFraction << " MS before Skip " << G4endl; 
+#endif
 	      //	      break; 
 	    } else {
 	      if( CPAccumMS < MSUnitsTOTAL ) {
 		meterSetFraction = CPAccumMS-theMSUnitsToSkip; // MS interval starts before Skip & ends before Run
 #ifndef GAMOS_NO_VERBOSE
-		if( GenerVerb(debugVerb) ) G4cout << "@@@ meterSetFraction= " << meterSetFraction << " ="<<CPAccumMS<<"-"<<theMSUnitsToSkip<<"  MS starts before Skip & ends before Run " << G4endl;
+		if( GenerVerb(debugVerb) ) G4cout << " meterSetFraction= " << meterSetFraction << " ="<<CPAccumMS<<"-"<<theMSUnitsToSkip<<"  MS starts before Skip & ends before Run " << G4endl;
 #endif
 	      } else {
 		meterSetFraction = theMSUnitsToRun; // MS interval starts before Skip & ends after Run
-		if( GenerVerb(debugVerb) ) G4cout << "@@@ meterSetFraction= " << meterSetFraction << " =" <<MSUnitsTOTAL<<"-"<<theMSUnitsToSkip<<"  MS starts before Skip & ends after Run" <<  G4endl; 
+		if( GenerVerb(debugVerb) ) G4cout << " meterSetFraction= " << meterSetFraction << " =" <<MSUnitsTOTAL<<"-"<<theMSUnitsToSkip<<"  MS starts before Skip & ends after or = Run" <<  G4endl; 
 	      }
 	    }
 	  } else {
@@ -203,8 +210,8 @@ void RTPlanMgr::CalculateMetersetEvts()
 	    theSubCPEvt.push_back((RTVPlanSubControlPoint*)(0));
 	  }
 #ifndef GAMOS_NO_VERBOSE
-	  if( GenerVerb(testVerb) ) G4cout << iib << " : " << iicp << " : " << iiscp << " METERSET=" << meterSetFraction << " <- " << meterSet << G4endl;
-	  if( GenerVerb(testVerb) ) G4cout << "ACCUMULATING CONTROL POINT METERSETS " << iib << " : " << iicp << " : " << iiscp << " = " << "N: " << Meterset.size() << "MSUsedProt= " << std::setprecision(11) << MSUsedProt << " <-MSUsed " << MSUsed << " CPAccumMS " << CPAccumMS << " " << G4endl; 
+	  if( GenerVerb(testVerb) ) G4cout << " METERSET=" << meterSetFraction << " <- " << meterSet << G4endl;
+	  if( GenerVerb(testVerb) ) G4cout << "ACCUMULATING CONTROL POINT METERSETS " << iib<<":"<<iicp<<":"<<iiscp << " = " << "Nmetersets= " << Meterset.size() << " MSUsedProt= " << std::setprecision(11) << MSUsedProt << " MSUsed " << MSUsed << " CPAccumMS " << CPAccumMS << " " << G4endl; 
 #endif
       	  CPAccumMSPrev += meterSet;
 	}
@@ -221,7 +228,7 @@ void RTPlanMgr::CalculateMetersetEvts()
   }
   
   //----- Calculate event corresponding to each subCPs, accumulating meterset
-  //----- Associate to each change of meterset the correspoing sub control point
+  //----- Associate to each change of meterset the corresponding sub control point
   G4int nEventsTotal = theG4RunManager->GetNumberOfEventsToBeProcessed();
   G4double EvtPerMSUnitProt = nEventsTotal / MSUsedProt;
 #ifndef GAMOS_NO_VERBOSE
@@ -231,7 +238,7 @@ void RTPlanMgr::CalculateMetersetEvts()
   for( size_t ii = 0; ii < MetersetProt.size(); ii++ ) {
     theMetersetEvt.push_back( G4int(MetersetProt[ii]*EvtPerMSUnitProt+0.50001));
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(debugVerb) ) G4cout << ii << " METERSET EVTS= " << theMetersetEvt[theMetersetEvt.size()-1] << " = MS= " << MetersetProt[ii]*EvtPerMSUnitProt << " =" << MetersetProt[ii] << "*" << EvtPerMSUnitProt << G4endl;
+    if( GenerVerb(debugVerb) ) G4cout << " SubControlPoint " << ii << " Event= " << theMetersetEvt[theMetersetEvt.size()-1] << " = MS= " << MetersetProt[ii]*EvtPerMSUnitProt << " =" << MetersetProt[ii] << "*" << EvtPerMSUnitProt << G4endl;
     //    if( GenerVerb(debugVerb) ) G4cout << theMetersetEvt.size() << " METERSET EVTS " << iib << " : " << iicp << " : " << iiscp << " = " << theMetersetEvt[theMetersetEvt.size()-1] << " = MS= " << theMetersetEvt[ii] << " = " << MetersetProt[ii] << "*" << EvtPerMSUnitProt << G4endl;
 #endif
   }
@@ -299,7 +306,7 @@ RTBeamStateData RTPlanMgr::GetRTBeamStateData( G4double& time, G4Event* evt, G4b
   if( theEventID == 0 
       || theEventID >= theMetersetEvt[ie] ) { // change event bsdata (may be bigger if eventID are not continous, like for RTGeneratorPhaseSpaceRTPlan)
 #ifndef GAMOS_NO_VERBOSE   
-    if( GenerVerb(testVerb) && theSubCPEvt[0] ) G4cout << " CHANGING EVENT DATA Evt " << theEventID << " Beam: " << theSubCPEvt[ie]->GetBeam()->GetIndex() <<G4endl;
+    if( GenerVerb(testVerb) && theSubCPEvt[0] ) G4cout << "@@ RTPlanMgr::GenerateVertex  CHANGING EVENT DATA Evt " << theEventID << " Beam: " << theSubCPEvt[ie]->GetBeam()->GetIndex() <<G4endl;
 #endif
     /*    if( theCurrentMetersetEvtID != 0 ){
       G4Exception("RTPlanMgr::GenerateVertex",
@@ -596,14 +603,23 @@ void RTPlanMgr::FillRTHistoControlPoint( G4int hNum, const RTBeamStateData& bsda
       }
   }
       
-  //----- FILL HISTOGRAMS 
-  TH2F* histo2 = theAnaMgr->GetHisto2D(hNum);
+  //----- FILL HISTOGRAMS
+  GmHisto2* histo2 = theAnaMgr->GetHisto2D(hNum);
+#ifdef GAMOS_NO_ROOT
+  G4int hisNBinsX = histo2->GetNbinsX();
+  G4double hisMinX = histo2->GetLowerEdgeX();
+  G4double hisWidthX = histo2->GetBinWidthX(1);
+  G4int hisNBinsY = histo2->GetNbinsY();
+  G4double hisMinY = histo2->GetLowerEdgeY();
+  G4double hisWidthY = histo2->GetBinWidthY(1);
+#else
   G4int hisNBinsX = histo2->GetXaxis()->GetNbins();
-  G4double hisMinX = histo2->GetXaxis()->GetXmin();
+  G4double hisMinX = histo2->GetXaxis()->GetBinLowEdge(1);
   G4double hisWidthX = histo2->GetXaxis()->GetBinWidth(1);
   G4int hisNBinsY = histo2->GetYaxis()->GetNbins();
-  G4double hisMinY = histo2->GetYaxis()->GetXmin();
+  G4double hisMinY = histo2->GetYaxis()->GetBinLowEdge(1);
   G4double hisWidthY = histo2->GetYaxis()->GetBinWidth(1);
+#endif
   for( int iix = 0; iix < hisNBinsX; iix++ ) {
     G4double histoX = hisMinX+(iix+0.5)*hisWidthX;
     //    G4cout << " FILLHISTO histoX= " << histoX << " " << (*(theRTHistosYFields.begin())).first << G4endl; //GDEB

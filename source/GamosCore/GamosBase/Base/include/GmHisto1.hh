@@ -13,6 +13,7 @@ class GmHisto1
 public:
   GmHisto1( const std::string& name, int nBins, double lowerEdge, double upperEdge );
   GmHisto1( const std::string& name, const std::string& title, int nBins, double lowerEdge, double upperEdge );
+  GmHisto1( GmHisto1& his );
   ~GmHisto1(){};
   
   void Fill( double value, double weight = 1. );
@@ -64,6 +65,30 @@ public:
   //   virtual Int_t    GetMinimumBin() const;
   double GetEffectiveEntries() const;
 
+  virtual void Reset();
+  std::map<int,int> GetBinN() const {
+    return theBinN; 
+  }
+  std::map<int,double> GetBinSumW() const {
+    return theBinSumW;
+  }
+  std::map<int,double> GetBinSumW2() const {
+    return theBinSumW2;
+  }
+  bool UseErrors() const {
+    return bUseErrors;
+  }
+  void SetUseErrors( bool val ) {
+#ifdef GAMOS_NO_RROT
+    bUseErrors = val;
+#else 
+    G4Exception("GmHisto1::SetUseErrors cannot be called if ROOT histograms are used",
+		"",
+		FatalException,
+		"GmHisto1::SetUseErrors cannot be called if ROOT histograms are used");
+#endif
+  }
+  
 protected:
   std::string theName;
   int theNBins;
@@ -75,12 +100,14 @@ protected:
   std::map<int,int> theBinN;
   std::map<int,double> theBinSumW;
   std::map<int,double> theBinSumW2;
+  std::map<int,double> theBinError;
 
   double theSumW;
   double theSumW2;
   double theSumWX;
   double theSumWX2;
 
+  bool bUseErrors;
   friend  GmHisto1 operator+(const GmHisto1 &h1, const GmHisto1 &h2);
   
 };

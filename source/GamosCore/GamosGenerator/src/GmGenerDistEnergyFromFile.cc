@@ -22,7 +22,8 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
 
   std::vector<G4String> wl;
   G4int ii = 1;
-  for( ;; ){
+  //  G4cout << " GmGenerDistEnergyFromFile::ReadEnergyDist() START " << theFileName << G4endl; //GDEB
+  for( ;; ){    
     if(! fin.GetWordsInLine( wl ) ) break;
     if( wl.size() != 2) {
       G4Exception("GmGenerDistEnergyFromFile::ReadEnergyDist",
@@ -33,7 +34,7 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
 			   + " All lines must have two words: ENERGY PROBABILITY").c_str());
     }
     theEnerProb[ GmGenUtils::GetValue( wl[0] ) * theUnit ] = GmGenUtils::GetValue( wl[1] );
-    //    G4cout << " ENERPROB  READ " <<  GmGenUtils::GetValue( wl[0] ) * theUnit << " =" <<  GmGenUtils::GetValue( wl[1] ) << G4endl;
+    //    G4cout << ii << " ENERPROB  READ " <<  GmGenUtils::GetValue( wl[0] ) * theUnit << " =" <<  GmGenUtils::GetValue( wl[1] ) << G4endl; //GDEB
 
     ii++;
   }
@@ -263,28 +264,38 @@ void GmGenerDistEnergyFromFile::SetParams( const std::vector<G4String>& params )
   G4int nParams = params.size();
   theUnit = 1.;
   G4String calcType = "histogram";
-
-	switch (nParams) {
-	case 3:
-		theUnit = GmGenUtils::GetValue(params[2]);
+  //  G4cout << "File PARAMS " << params[0] << " " << params[1] << G4endl; //GDEB
+    
+  switch (nParams) {
+  case 3:
+    theUnit = GmGenUtils::GetValue(params[2]);
 #ifndef WIN32
-		[[fallthrough]];
+    [[fallthrough]];
 #endif
-	case 2:
-		calcType = params[1];
+  case 2:
+    calcType = params[1];
 #ifndef WIN32
-		[[fallthrough]];
+    [[fallthrough]];
 #endif
-	case 1:
-		theFileName = params[0];
-		break;
-	default:
-		G4Exception("GmGenerDistEnergyFromFile::SetParams",
-			"Wrong number of parameters",
-			FatalErrorInArgument,
-			G4String("There should be 1, 2 or 3 parameters: FILE_NAME CALCULATION_TYPE UNIT, there are " + GmGenUtils::itoa(nParams)).c_str());
-	}
+  case 1:
+    theFileName = params[0];
+    break;
+  default:
+    G4Exception("GmGenerDistEnergyFromFile::SetParams",
+		"Wrong number of parameters",
+		FatalErrorInArgument,
+		G4String("There should be 1, 2 or 3 parameters: FILE_NAME CALCULATION_TYPE UNIT, there are " + GmGenUtils::itoa(nParams)).c_str());
+  }
 
+  //  G4cout << this << " calcType " << calcType << "==" << theCalculationTypeOld << " filename " <<theFileName << "==" << params[0] << G4endl; //GDEB
+  
+  if( calcType == theCalculationTypeOld && theFileName == params[0] ){
+#ifndef GAMOS_NO_VERBOSE
+    if( GenerVerb(warningVerb) ) G4cout << " GmGenerDistEnergyFromFile::SetParams: same parameters as last time, do not read file again " << G4endl;
+#endif
+    return;
+  }
+    
   if( calcType == "fixed" ) {
     theCalculationType = EFFCT_Fixed;
   } else if( calcType == "histogram" ) {
@@ -299,7 +310,8 @@ void GmGenerDistEnergyFromFile::SetParams( const std::vector<G4String>& params )
 		  FatalErrorInArgument,
 		  G4String("only options supported: fixed , histogram, interpolate, interpolate_log,  you have selected " + calcType).c_str());
   }
-
+  theCalculationTypeOld = calcType;
+  
   ReadEnergyDist();
 
 }

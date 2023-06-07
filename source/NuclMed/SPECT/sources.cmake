@@ -1,34 +1,33 @@
-#------------------------------------------------------------------------------
-# Module : SPECT
-# Package: NuclMed_SPECT
-#
-#------------------------------------------------------------------------------
-#
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GEANT4 Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME NuclMed_SPECT
-	 HEADERS
-		SPECTIOMgr.hh
-		SPECTVerbosity.hh
-		SPECTEventClassifierUA.hh
-	 SOURCES
-		plugin.cc
-		SPECTIOMgr.cc
-		SPECTEventClassifierUA.cc
-		SPECTVerbosity.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_libs} 
-		${ROOT_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${Gamos_LIBRARIES} 
-		NuclMed_Base
+# - NuclMed_SPECT module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+include(UseROOT)
+
+geant4_add_module(NuclMed_SPECT
+  PUBLIC_HEADERS
+    SPECTVerbosity.hh
+    SPECTIOMgr.hh
+    SPECTEventClassifierUA.hh
+    SPECTProjDataMgr.hh
+  SOURCES
+    SPECTEventClassifierUA.cc
+    SPECTProjDataMgr.cc
+    SPECTVerbosity.cc
+    plugin.cc
+    SPECTIOMgr.cc
+)
+# - Add path to generated header
+geant4_module_include_directories(NuclMed_SPECT
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
+ PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
+ PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
+
+geant4_module_link_libraries(NuclMed_SPECT
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    ${SEAL_LIBRARIES} 
+    NuclMed_Base
 )

@@ -1,36 +1,25 @@
-#------------------------------------------------------------------------------
-# Module : dcmcjp2k
-# Package: DICOM_fmjpeg2koj_dcmcjp2k
-#
-#------------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME dcmcjp2k
-	 HEADERS
-	 SOURCES
-		djdecode.cc
-		djcodecd.cc
-		djencode.cc
-		djrparam.cc
-		djutils.cc
-		djcparam.cc
-		memory_file.cc
-		djcodece.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-		${DCMTK_LIBRARIES} 
-	XTRALIBS
-	tiff
+# - GAMOS_analysis_DICOM_fmjpeg2koj_dcmcjp2k module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+
+geant4_add_module(GAMOS_analysis_DICOM_fmjpeg2koj_dcmcjp2k
+  PUBLIC_HEADERS
+    fmjpeg2k
+  SOURCES
+    djutils.cc
+    memory_file.cc
+    djcodecd.cc
+    djcodece.cc
+    djencode.cc
+    djrparam.cc
+    djcparam.cc
+    djdecode.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_DICOM_fmjpeg2koj_dcmcjp2k
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    XTRALIBS
+    tiff
+    ${SEAL_LIBRARIES} 
 )

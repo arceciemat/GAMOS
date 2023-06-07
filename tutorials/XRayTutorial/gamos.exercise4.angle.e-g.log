@@ -14,15 +14,14 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/setParam GmCountTracksUA:EachNEvent 10000
 /gamos/userAction GmCountTracksUA
 /run/initialize
-Checking overlaps for volume Shield (G4Tubs) ... OK! 
-Checking overlaps for volume XRayTube (G4Tubs) ... OK! 
-Checking overlaps for volume XRayTube_In (G4Tubs) ... OK! 
-Checking overlaps for volume Anode (G4Tubs) ... OK! 
-Checking overlaps for volume Source (G4Tubs) ... OK! 
-Checking overlaps for volume WindowHole_Glass1 (G4Tubs) ... OK! 
-Checking overlaps for volume WindowHole_Glass2 (G4Tubs) ... OK! 
-Checking overlaps for volume WindowHole_Shield (G4Tubs) ... OK! 
-GmPhysicsGammaLowEner::ConstructProcess 
+Checking overlaps for volume Shield:1 (G4Tubs) ... OK! 
+Checking overlaps for volume XRayTube:1 (G4Tubs) ... OK! 
+Checking overlaps for volume XRayTube_In:1 (G4Tubs) ... OK! 
+Checking overlaps for volume Anode:1 (G4Tubs) ... OK! 
+Checking overlaps for volume Source:1 (G4Tubs) ... OK! 
+Checking overlaps for volume WindowHole_Glass1:1 (G4Tubs) ... OK! 
+Checking overlaps for volume WindowHole_Glass2:1 (G4Tubs) ... OK! 
+Checking overlaps for volume WindowHole_Shield:1 (G4Tubs) ... OK! 
 /gamos/generator/addSingleParticleSource source e- 1.*MeV
 /gamos/setParam GmPDSCreateAngleTablesUA:SecondaryParticleName gamma
 /gamos/setParam GmPDSCreateAngleTablesUA:HistoFileName angleDeviation.e-.gamma
@@ -31,30 +30,94 @@ GmPhysicsGammaLowEner::ConstructProcess
 /process/msc/StepLimit Minimal
 /run/physicsModified
 /run/beamOn 100000000
+=======================================================================
+======                 Electromagnetic Physics Parameters      ========
+=======================================================================
+LPM effect enabled                                 1
+Enable creation and use of sampling tables         0
+Apply cuts on all EM processes                     0
+Use general process                                0
+Enable linear polarisation for gamma               0
+Enable sampling of quantum entanglement            0
+X-section factor for integral approach             0.8
+Min kinetic energy for tables                      100 eV 
+Max kinetic energy for tables                      100 TeV
+Number of bins per decade of a table               7
+Verbose level                                      1
+Verbose level for worker thread                    0
+Bremsstrahlung energy threshold above which 
+  primary e+- is added to the list of secondary    100 TeV
+Bremsstrahlung energy threshold above which primary
+  muon/hadron is added to the list of secondary    100 TeV
+Lowest triplet kinetic energy                      1 MeV
+Enable sampling of gamma linear polarisation       0
+5D gamma conversion model type                     0
+5D gamma conversion model on isolated ion          0
+Livermore data directory                           livermore
+=======================================================================
+======                 Ionisation Parameters                   ========
+=======================================================================
+Step function for e+-                              (0.2, 1 mm)
+Step function for muons/hadrons                    (0.2, 0.1 mm)
+Step function for light ions                       (0.2, 0.1 mm)
+Step function for general ions                     (0.2, 0.1 mm)
+Lowest e+e- kinetic energy                         1 keV
+Lowest muon/hadron kinetic energy                  1 keV
+Fluctuations of dE/dx are enabled                  1
+Use ICRU90 data                                    0
+Use built-in Birks satuaration                     0
+Build CSDA range enabled                           0
+Use cut as a final range enabled                   0
+Enable angular generator interface                 0
+Max kinetic energy for CSDA tables                 1 GeV
+Max kinetic energy for NIEL computation            0 eV 
+Linear loss limit                                  0.01
+Read data from file for e+e- pair production by mu 0
+=======================================================================
+======                 Multiple Scattering Parameters          ========
+=======================================================================
+Type of msc step limit algorithm for e+-           0
+Type of msc step limit algorithm for muons/hadrons 0
+Msc lateral displacement for e+- enabled           1
+Msc lateral displacement for muons and hadrons     0
+Urban msc model lateral displacement alg96         1
+Range factor for msc step limit for e+-            0.04
+Range factor for msc step limit for muons/hadrons  0.2
+Geometry factor for msc step limitation of e+-     2.5
+Safety factor for msc step limit for e+-           0.6
+Skin parameter for msc step limitation of e+-      1
+Lambda limit for msc step limit for e+-            1 mm
+Use Mott correction for e- scattering              0
+Factor used for dynamic computation of angular 
+  limit between single and multiple scattering     1
+Fixed angular limit between single 
+  and multiple scattering                          3.1416 rad
+Upper energy limit for e+- multiple scattering     100 MeV
+Type of electron single scattering model           0
+Type of nuclear form-factor                        1
+Screening factor                                   1
+=======================================================================
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
-### ===  Auger cascade flag: 0
+### ===  Auger flag: 1
 ### ===  Ignore cuts flag:   0
 
 phot:  for gamma SubType=12 BuildTable=0
       LambdaPrime table from 200 keV to 100 TeV in 61 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
-       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
 
 compt:  for gamma SubType=13 BuildTable=1
       Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
       LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
-       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+       Klein-Nishina : Emin=    0 eV  Emax=  100 TeV
 
 conv:  for gamma SubType=14 BuildTable=1
       Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
-     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+     BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
       Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
@@ -65,35 +128,16 @@ Rayl:  for gamma SubType=11 BuildTable=1
 msc:  for e-  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+          StepLim=Minimal Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
-        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
-
-eBrem:  for e-  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-msc:  for e+  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e+  SubType=2
+eIoni:  for e-  XStype:1  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
-eBrem:  for e+  SubType=3
+eBrem:  for e-  XStype:4  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
@@ -101,11 +145,19 @@ eBrem:  for e+  SubType=3
              eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
             eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
 
-annihil:  for e+, integral:1  SubType=5 BuildTable=0
+msc:  for e+  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+          StepLim=Minimal Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-========= Table of registered couples ==============================
+eIoni:  for e+  XStype:1  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : Yes
  Material : G4_AIR
@@ -117,14 +169,14 @@ Index : 0     used in the geometry : Yes
 Index : 1     used in the geometry : Yes
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
 Index : 2     used in the geometry : Yes
  Material : G4_Pyrex_Glass
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
@@ -138,16 +190,16 @@ Index : 3     used in the geometry : Yes
 Index : 4     used in the geometry : Yes
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
-====================================================================
+==================================================================
 
 G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
 See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
-0x559a90fd84b0 GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromGe 5
+0x5625ed751320 GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromGe 5
 G4GeometryManager::ReportVoxelStats -- Voxel Statistics
 
     Total memory consumed for geometry optimisation:   0 kByte
@@ -169,78 +221,10 @@ G4GeometryManager::ReportVoxelStats -- Voxel Statistics
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
-### ===  Auger cascade flag: 0
+### ===  Auger flag: 1
 ### ===  Ignore cuts flag:   0
 
-phot:  for gamma SubType=12 BuildTable=0
-      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
-       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
-
-compt:  for gamma SubType=13 BuildTable=1
-      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
-      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
-       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
-
-conv:  for gamma SubType=14 BuildTable=1
-      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
-     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
-
-msc:  for e-  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e-  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
-        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
-
-eBrem:  for e-  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-msc:  for e+  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e+  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
-
-eBrem:  for e+  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-annihil:  for e+, integral:1  SubType=5 BuildTable=0
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
-
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : Yes
  Material : G4_AIR
@@ -252,12 +236,12 @@ Index : 0     used in the geometry : Yes
 Index : 1     used in the geometry : No 
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
 
 Index : 2     used in the geometry : No 
  Material : G4_Pyrex_Glass
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
 
 Index : 3     used in the geometry : No 
  Material : G4_Galactic
@@ -267,12 +251,12 @@ Index : 3     used in the geometry : No
 Index : 4     used in the geometry : No 
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
 
-====================================================================
+==================================================================
 
 
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : Yes
  Material : G4_AIR
@@ -284,12 +268,12 @@ Index : 0     used in the geometry : Yes
 Index : 1     used in the geometry : No 
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
 
 Index : 2     used in the geometry : No 
  Material : G4_Pyrex_Glass
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
 
 Index : 3     used in the geometry : No 
  Material : G4_Galactic
@@ -299,9 +283,9 @@ Index : 3     used in the geometry : No
 Index : 4     used in the geometry : No 
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
 
-====================================================================
+==================================================================
 
  CreateHisto1D e- - gamma : msc : G4_AIR : 1E-2 : cos Deviation Angle = 5100001
  CreateHisto1D e- - gamma : msc : G4_AIR : 1E-2 : log10 Interaction Distance (cm) = 5100002
@@ -1164,95 +1148,27 @@ G4GeometryManager::ReportVoxelStats -- Voxel Statistics
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
-### ===  Auger cascade flag: 0
+### ===  Auger flag: 1
 ### ===  Ignore cuts flag:   0
 
-phot:  for gamma SubType=12 BuildTable=0
-      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
-       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
-
-compt:  for gamma SubType=13 BuildTable=1
-      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
-      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
-       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
-
-conv:  for gamma SubType=14 BuildTable=1
-      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
-     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
-
-msc:  for e-  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e-  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
-        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
-
-eBrem:  for e-  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-msc:  for e+  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e+  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
-
-eBrem:  for e+  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-annihil:  for e+, integral:1  SubType=5 BuildTable=0
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
-
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : No 
  Material : G4_AIR
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
  Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
 
-Index : 1     used in the geometry : Yes
+Index : 1     used in the geometry : No 
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
- Region(s) which use this couple : 
-    DefaultRegionForTheWorld
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
 
-Index : 2     used in the geometry : No 
+Index : 2     used in the geometry : Yes
  Material : G4_Pyrex_Glass
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
 
 Index : 3     used in the geometry : No 
  Material : G4_Galactic
@@ -1262,29 +1178,29 @@ Index : 3     used in the geometry : No
 Index : 4     used in the geometry : No 
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
 
-====================================================================
+==================================================================
 
 
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : No 
  Material : G4_AIR
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
  Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
 
-Index : 1     used in the geometry : Yes
+Index : 1     used in the geometry : No 
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
- Region(s) which use this couple : 
-    DefaultRegionForTheWorld
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
 
-Index : 2     used in the geometry : No 
+Index : 2     used in the geometry : Yes
  Material : G4_Pyrex_Glass
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
 
 Index : 3     used in the geometry : No 
  Material : G4_Galactic
@@ -1294,16 +1210,16 @@ Index : 3     used in the geometry : No
 Index : 4     used in the geometry : No 
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
 
-====================================================================
+==================================================================
 
- CreateHisto1D e- - gamma : msc : G4_Pb : 1E-2 : cos Deviation Angle = 5100011
- CreateHisto1D e- - gamma : msc : G4_Pb : 1E-2 : log10 Interaction Distance (cm) = 5100012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 1E-2 : cos Deviation Angle = 5200011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 1E-2 : log10 Interaction Distance (cm) = 5200012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 1E-2 : cos Deviation Angle = 5300011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 1E-2 : log10 Interaction Distance (cm) = 5300012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 1E-2 : cos Deviation Angle = 5100011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 1E-2 : log10 Interaction Distance (cm) = 5100012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 1E-2 : cos Deviation Angle = 5200011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 1E-2 : log10 Interaction Distance (cm) = 5200012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 1E-2 : cos Deviation Angle = 5300011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 1E-2 : log10 Interaction Distance (cm) = 5300012
  %%% EVENT 7500000 NTRACKS 1 TOTAL NTRACKS 7.5e+06
  %%% EVENT 7510000 NTRACKS 1 TOTAL NTRACKS 7.51e+06
  %%% EVENT 7520000 NTRACKS 1 TOTAL NTRACKS 7.52e+06
@@ -1354,12 +1270,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 7970000 NTRACKS 1 TOTAL NTRACKS 7.97e+06
  %%% EVENT 7980000 NTRACKS 1 TOTAL NTRACKS 7.98e+06
  %%% EVENT 7990000 NTRACKS 1 TOTAL NTRACKS 7.99e+06
- CreateHisto1D e- - gamma : msc : G4_Pb : 2E-2 : cos Deviation Angle = 5101011
- CreateHisto1D e- - gamma : msc : G4_Pb : 2E-2 : log10 Interaction Distance (cm) = 5101012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 2E-2 : cos Deviation Angle = 5201011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 2E-2 : log10 Interaction Distance (cm) = 5201012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 2E-2 : cos Deviation Angle = 5301011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 2E-2 : log10 Interaction Distance (cm) = 5301012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 2E-2 : cos Deviation Angle = 5101011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 2E-2 : log10 Interaction Distance (cm) = 5101012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 2E-2 : cos Deviation Angle = 5201011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 2E-2 : log10 Interaction Distance (cm) = 5201012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 2E-2 : cos Deviation Angle = 5301011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 2E-2 : log10 Interaction Distance (cm) = 5301012
  %%% EVENT 8000000 NTRACKS 1 TOTAL NTRACKS 8e+06
  %%% EVENT 8010000 NTRACKS 1 TOTAL NTRACKS 8.01e+06
  %%% EVENT 8020000 NTRACKS 1 TOTAL NTRACKS 8.02e+06
@@ -1410,12 +1326,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 8470000 NTRACKS 1 TOTAL NTRACKS 8.47e+06
  %%% EVENT 8480000 NTRACKS 1 TOTAL NTRACKS 8.48e+06
  %%% EVENT 8490000 NTRACKS 1 TOTAL NTRACKS 8.49e+06
- CreateHisto1D e- - gamma : msc : G4_Pb : 3E-2 : cos Deviation Angle = 5102011
- CreateHisto1D e- - gamma : msc : G4_Pb : 3E-2 : log10 Interaction Distance (cm) = 5102012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 3E-2 : cos Deviation Angle = 5202011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 3E-2 : log10 Interaction Distance (cm) = 5202012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 3E-2 : cos Deviation Angle = 5302011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 3E-2 : log10 Interaction Distance (cm) = 5302012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 3E-2 : cos Deviation Angle = 5102011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 3E-2 : log10 Interaction Distance (cm) = 5102012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 3E-2 : cos Deviation Angle = 5202011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 3E-2 : log10 Interaction Distance (cm) = 5202012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 3E-2 : cos Deviation Angle = 5302011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 3E-2 : log10 Interaction Distance (cm) = 5302012
  %%% EVENT 8500000 NTRACKS 1 TOTAL NTRACKS 8.5e+06
  %%% EVENT 8510000 NTRACKS 1 TOTAL NTRACKS 8.51e+06
  %%% EVENT 8520000 NTRACKS 1 TOTAL NTRACKS 8.52e+06
@@ -1466,12 +1382,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 8970000 NTRACKS 1 TOTAL NTRACKS 8.97e+06
  %%% EVENT 8980000 NTRACKS 1 TOTAL NTRACKS 8.98e+06
  %%% EVENT 8990000 NTRACKS 1 TOTAL NTRACKS 8.99e+06
- CreateHisto1D e- - gamma : msc : G4_Pb : 4E-2 : cos Deviation Angle = 5103011
- CreateHisto1D e- - gamma : msc : G4_Pb : 4E-2 : log10 Interaction Distance (cm) = 5103012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 4E-2 : cos Deviation Angle = 5203011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 4E-2 : log10 Interaction Distance (cm) = 5203012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 4E-2 : cos Deviation Angle = 5303011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 4E-2 : log10 Interaction Distance (cm) = 5303012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 4E-2 : cos Deviation Angle = 5103011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 4E-2 : log10 Interaction Distance (cm) = 5103012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 4E-2 : cos Deviation Angle = 5203011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 4E-2 : log10 Interaction Distance (cm) = 5203012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 4E-2 : cos Deviation Angle = 5303011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 4E-2 : log10 Interaction Distance (cm) = 5303012
  %%% EVENT 9000000 NTRACKS 1 TOTAL NTRACKS 9e+06
  %%% EVENT 9010000 NTRACKS 1 TOTAL NTRACKS 9.01e+06
  %%% EVENT 9020000 NTRACKS 1 TOTAL NTRACKS 9.02e+06
@@ -1522,12 +1438,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 9470000 NTRACKS 1 TOTAL NTRACKS 9.47e+06
  %%% EVENT 9480000 NTRACKS 1 TOTAL NTRACKS 9.48e+06
  %%% EVENT 9490000 NTRACKS 1 TOTAL NTRACKS 9.49e+06
- CreateHisto1D e- - gamma : msc : G4_Pb : 5E-2 : cos Deviation Angle = 5104011
- CreateHisto1D e- - gamma : msc : G4_Pb : 5E-2 : log10 Interaction Distance (cm) = 5104012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 5E-2 : cos Deviation Angle = 5204011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 5E-2 : log10 Interaction Distance (cm) = 5204012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 5E-2 : cos Deviation Angle = 5304011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 5E-2 : log10 Interaction Distance (cm) = 5304012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 5E-2 : cos Deviation Angle = 5104011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 5E-2 : log10 Interaction Distance (cm) = 5104012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 5E-2 : cos Deviation Angle = 5204011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 5E-2 : log10 Interaction Distance (cm) = 5204012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 5E-2 : cos Deviation Angle = 5304011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 5E-2 : log10 Interaction Distance (cm) = 5304012
  %%% EVENT 9500000 NTRACKS 1 TOTAL NTRACKS 9.5e+06
  %%% EVENT 9510000 NTRACKS 1 TOTAL NTRACKS 9.51e+06
  %%% EVENT 9520000 NTRACKS 1 TOTAL NTRACKS 9.52e+06
@@ -1578,12 +1494,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 9970000 NTRACKS 1 TOTAL NTRACKS 9.97e+06
  %%% EVENT 9980000 NTRACKS 1 TOTAL NTRACKS 9.98e+06
  %%% EVENT 9990000 NTRACKS 1 TOTAL NTRACKS 9.99e+06
- CreateHisto1D e- - gamma : msc : G4_Pb : 6E-2 : cos Deviation Angle = 5105011
- CreateHisto1D e- - gamma : msc : G4_Pb : 6E-2 : log10 Interaction Distance (cm) = 5105012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 6E-2 : cos Deviation Angle = 5205011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 6E-2 : log10 Interaction Distance (cm) = 5205012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 6E-2 : cos Deviation Angle = 5305011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 6E-2 : log10 Interaction Distance (cm) = 5305012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 6E-2 : cos Deviation Angle = 5105011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 6E-2 : log10 Interaction Distance (cm) = 5105012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 6E-2 : cos Deviation Angle = 5205011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 6E-2 : log10 Interaction Distance (cm) = 5205012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 6E-2 : cos Deviation Angle = 5305011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 6E-2 : log10 Interaction Distance (cm) = 5305012
  %%% EVENT 10000000 NTRACKS 1 TOTAL NTRACKS 1e+07
  %%% EVENT 10010000 NTRACKS 1 TOTAL NTRACKS 1.001e+07
  %%% EVENT 10020000 NTRACKS 1 TOTAL NTRACKS 1.002e+07
@@ -1634,12 +1550,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 10470000 NTRACKS 1 TOTAL NTRACKS 1.047e+07
  %%% EVENT 10480000 NTRACKS 1 TOTAL NTRACKS 1.048e+07
  %%% EVENT 10490000 NTRACKS 1 TOTAL NTRACKS 1.049e+07
- CreateHisto1D e- - gamma : msc : G4_Pb : 7E-2 : cos Deviation Angle = 5106011
- CreateHisto1D e- - gamma : msc : G4_Pb : 7E-2 : log10 Interaction Distance (cm) = 5106012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 7E-2 : cos Deviation Angle = 5206011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 7E-2 : log10 Interaction Distance (cm) = 5206012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 7E-2 : cos Deviation Angle = 5306011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 7E-2 : log10 Interaction Distance (cm) = 5306012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 7E-2 : cos Deviation Angle = 5106011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 7E-2 : log10 Interaction Distance (cm) = 5106012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 7E-2 : cos Deviation Angle = 5206011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 7E-2 : log10 Interaction Distance (cm) = 5206012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 7E-2 : cos Deviation Angle = 5306011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 7E-2 : log10 Interaction Distance (cm) = 5306012
  %%% EVENT 10500000 NTRACKS 1 TOTAL NTRACKS 1.05e+07
  %%% EVENT 10510000 NTRACKS 1 TOTAL NTRACKS 1.051e+07
  %%% EVENT 10520000 NTRACKS 1 TOTAL NTRACKS 1.052e+07
@@ -1690,12 +1606,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 10970000 NTRACKS 1 TOTAL NTRACKS 1.097e+07
  %%% EVENT 10980000 NTRACKS 1 TOTAL NTRACKS 1.098e+07
  %%% EVENT 10990000 NTRACKS 1 TOTAL NTRACKS 1.099e+07
- CreateHisto1D e- - gamma : msc : G4_Pb : 8E-2 : cos Deviation Angle = 5107011
- CreateHisto1D e- - gamma : msc : G4_Pb : 8E-2 : log10 Interaction Distance (cm) = 5107012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 8E-2 : cos Deviation Angle = 5207011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 8E-2 : log10 Interaction Distance (cm) = 5207012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 8E-2 : cos Deviation Angle = 5307011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 8E-2 : log10 Interaction Distance (cm) = 5307012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 8E-2 : cos Deviation Angle = 5107011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 8E-2 : log10 Interaction Distance (cm) = 5107012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 8E-2 : cos Deviation Angle = 5207011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 8E-2 : log10 Interaction Distance (cm) = 5207012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 8E-2 : cos Deviation Angle = 5307011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 8E-2 : log10 Interaction Distance (cm) = 5307012
  %%% EVENT 11000000 NTRACKS 1 TOTAL NTRACKS 1.1e+07
  %%% EVENT 11010000 NTRACKS 1 TOTAL NTRACKS 1.101e+07
  %%% EVENT 11020000 NTRACKS 1 TOTAL NTRACKS 1.102e+07
@@ -1746,12 +1662,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 11470000 NTRACKS 1 TOTAL NTRACKS 1.147e+07
  %%% EVENT 11480000 NTRACKS 1 TOTAL NTRACKS 1.148e+07
  %%% EVENT 11490000 NTRACKS 1 TOTAL NTRACKS 1.149e+07
- CreateHisto1D e- - gamma : msc : G4_Pb : 9E-2 : cos Deviation Angle = 5108011
- CreateHisto1D e- - gamma : msc : G4_Pb : 9E-2 : log10 Interaction Distance (cm) = 5108012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 9E-2 : cos Deviation Angle = 5208011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 9E-2 : log10 Interaction Distance (cm) = 5208012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 9E-2 : cos Deviation Angle = 5308011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 9E-2 : log10 Interaction Distance (cm) = 5308012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 9E-2 : cos Deviation Angle = 5108011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 9E-2 : log10 Interaction Distance (cm) = 5108012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 9E-2 : cos Deviation Angle = 5208011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 9E-2 : log10 Interaction Distance (cm) = 5208012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 9E-2 : cos Deviation Angle = 5308011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 9E-2 : log10 Interaction Distance (cm) = 5308012
  %%% EVENT 11500000 NTRACKS 1 TOTAL NTRACKS 1.15e+07
  %%% EVENT 11510000 NTRACKS 1 TOTAL NTRACKS 1.151e+07
  %%% EVENT 11520000 NTRACKS 1 TOTAL NTRACKS 1.152e+07
@@ -1802,12 +1718,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 11970000 NTRACKS 1 TOTAL NTRACKS 1.197e+07
  %%% EVENT 11980000 NTRACKS 1 TOTAL NTRACKS 1.198e+07
  %%% EVENT 11990000 NTRACKS 1 TOTAL NTRACKS 1.199e+07
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.1E0 : cos Deviation Angle = 5109011
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.1E0 : log10 Interaction Distance (cm) = 5109012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.1E0 : cos Deviation Angle = 5209011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.1E0 : log10 Interaction Distance (cm) = 5209012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.1E0 : cos Deviation Angle = 5309011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.1E0 : log10 Interaction Distance (cm) = 5309012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.1E0 : cos Deviation Angle = 5109011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.1E0 : log10 Interaction Distance (cm) = 5109012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.1E0 : cos Deviation Angle = 5209011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.1E0 : log10 Interaction Distance (cm) = 5209012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.1E0 : cos Deviation Angle = 5309011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.1E0 : log10 Interaction Distance (cm) = 5309012
  %%% EVENT 12000000 NTRACKS 1 TOTAL NTRACKS 1.2e+07
  %%% EVENT 12010000 NTRACKS 1 TOTAL NTRACKS 1.201e+07
  %%% EVENT 12020000 NTRACKS 1 TOTAL NTRACKS 1.202e+07
@@ -1858,12 +1774,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 12470000 NTRACKS 1 TOTAL NTRACKS 1.247e+07
  %%% EVENT 12480000 NTRACKS 1 TOTAL NTRACKS 1.248e+07
  %%% EVENT 12490000 NTRACKS 1 TOTAL NTRACKS 1.249e+07
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.11E0 : cos Deviation Angle = 5110011
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.11E0 : log10 Interaction Distance (cm) = 5110012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.11E0 : cos Deviation Angle = 5210011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.11E0 : log10 Interaction Distance (cm) = 5210012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.11E0 : cos Deviation Angle = 5310011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.11E0 : log10 Interaction Distance (cm) = 5310012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.11E0 : cos Deviation Angle = 5110011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.11E0 : log10 Interaction Distance (cm) = 5110012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.11E0 : cos Deviation Angle = 5210011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.11E0 : log10 Interaction Distance (cm) = 5210012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.11E0 : cos Deviation Angle = 5310011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.11E0 : log10 Interaction Distance (cm) = 5310012
  %%% EVENT 12500000 NTRACKS 1 TOTAL NTRACKS 1.25e+07
  %%% EVENT 12510000 NTRACKS 1 TOTAL NTRACKS 1.251e+07
  %%% EVENT 12520000 NTRACKS 1 TOTAL NTRACKS 1.252e+07
@@ -1914,12 +1830,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 12970000 NTRACKS 1 TOTAL NTRACKS 1.297e+07
  %%% EVENT 12980000 NTRACKS 1 TOTAL NTRACKS 1.298e+07
  %%% EVENT 12990000 NTRACKS 1 TOTAL NTRACKS 1.299e+07
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.12E0 : cos Deviation Angle = 5111011
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.12E0 : log10 Interaction Distance (cm) = 5111012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.12E0 : cos Deviation Angle = 5211011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.12E0 : log10 Interaction Distance (cm) = 5211012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.12E0 : cos Deviation Angle = 5311011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.12E0 : log10 Interaction Distance (cm) = 5311012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.12E0 : cos Deviation Angle = 5111011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.12E0 : log10 Interaction Distance (cm) = 5111012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.12E0 : cos Deviation Angle = 5211011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.12E0 : log10 Interaction Distance (cm) = 5211012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.12E0 : cos Deviation Angle = 5311011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.12E0 : log10 Interaction Distance (cm) = 5311012
  %%% EVENT 13000000 NTRACKS 1 TOTAL NTRACKS 1.3e+07
  %%% EVENT 13010000 NTRACKS 1 TOTAL NTRACKS 1.301e+07
  %%% EVENT 13020000 NTRACKS 1 TOTAL NTRACKS 1.302e+07
@@ -1970,12 +1886,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 13470000 NTRACKS 1 TOTAL NTRACKS 1.347e+07
  %%% EVENT 13480000 NTRACKS 1 TOTAL NTRACKS 1.348e+07
  %%% EVENT 13490000 NTRACKS 1 TOTAL NTRACKS 1.349e+07
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.13E0 : cos Deviation Angle = 5112011
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.13E0 : log10 Interaction Distance (cm) = 5112012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.13E0 : cos Deviation Angle = 5212011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.13E0 : log10 Interaction Distance (cm) = 5212012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.13E0 : cos Deviation Angle = 5312011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.13E0 : log10 Interaction Distance (cm) = 5312012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.13E0 : cos Deviation Angle = 5112011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.13E0 : log10 Interaction Distance (cm) = 5112012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.13E0 : cos Deviation Angle = 5212011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.13E0 : log10 Interaction Distance (cm) = 5212012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.13E0 : cos Deviation Angle = 5312011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.13E0 : log10 Interaction Distance (cm) = 5312012
  %%% EVENT 13500000 NTRACKS 1 TOTAL NTRACKS 1.35e+07
  %%% EVENT 13510000 NTRACKS 1 TOTAL NTRACKS 1.351e+07
  %%% EVENT 13520000 NTRACKS 1 TOTAL NTRACKS 1.352e+07
@@ -2026,12 +1942,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 13970000 NTRACKS 1 TOTAL NTRACKS 1.397e+07
  %%% EVENT 13980000 NTRACKS 1 TOTAL NTRACKS 1.398e+07
  %%% EVENT 13990000 NTRACKS 1 TOTAL NTRACKS 1.399e+07
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.14E0 : cos Deviation Angle = 5113011
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.14E0 : log10 Interaction Distance (cm) = 5113012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.14E0 : cos Deviation Angle = 5213011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.14E0 : log10 Interaction Distance (cm) = 5213012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.14E0 : cos Deviation Angle = 5313011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.14E0 : log10 Interaction Distance (cm) = 5313012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.14E0 : cos Deviation Angle = 5113011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.14E0 : log10 Interaction Distance (cm) = 5113012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.14E0 : cos Deviation Angle = 5213011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.14E0 : log10 Interaction Distance (cm) = 5213012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.14E0 : cos Deviation Angle = 5313011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.14E0 : log10 Interaction Distance (cm) = 5313012
  %%% EVENT 14000000 NTRACKS 1 TOTAL NTRACKS 1.4e+07
  %%% EVENT 14010000 NTRACKS 1 TOTAL NTRACKS 1.401e+07
  %%% EVENT 14020000 NTRACKS 1 TOTAL NTRACKS 1.402e+07
@@ -2082,12 +1998,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 14470000 NTRACKS 1 TOTAL NTRACKS 1.447e+07
  %%% EVENT 14480000 NTRACKS 1 TOTAL NTRACKS 1.448e+07
  %%% EVENT 14490000 NTRACKS 1 TOTAL NTRACKS 1.449e+07
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.15E0 : cos Deviation Angle = 5114011
- CreateHisto1D e- - gamma : msc : G4_Pb : 0.15E0 : log10 Interaction Distance (cm) = 5114012
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.15E0 : cos Deviation Angle = 5214011
- CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.15E0 : log10 Interaction Distance (cm) = 5214012
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.15E0 : cos Deviation Angle = 5314011
- CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.15E0 : log10 Interaction Distance (cm) = 5314012
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.15E0 : cos Deviation Angle = 5114011
+ CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.15E0 : log10 Interaction Distance (cm) = 5114012
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.15E0 : cos Deviation Angle = 5214011
+ CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.15E0 : log10 Interaction Distance (cm) = 5214012
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.15E0 : cos Deviation Angle = 5314011
+ CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.15E0 : log10 Interaction Distance (cm) = 5314012
  %%% EVENT 14500000 NTRACKS 1 TOTAL NTRACKS 1.45e+07
  %%% EVENT 14510000 NTRACKS 1 TOTAL NTRACKS 1.451e+07
  %%% EVENT 14520000 NTRACKS 1 TOTAL NTRACKS 1.452e+07
@@ -2159,95 +2075,27 @@ G4GeometryManager::ReportVoxelStats -- Voxel Statistics
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
-### ===  Auger cascade flag: 0
+### ===  Auger flag: 1
 ### ===  Ignore cuts flag:   0
 
-phot:  for gamma SubType=12 BuildTable=0
-      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
-       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
-
-compt:  for gamma SubType=13 BuildTable=1
-      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
-      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
-       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
-
-conv:  for gamma SubType=14 BuildTable=1
-      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
-     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
-
-msc:  for e-  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e-  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
-        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
-
-eBrem:  for e-  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-msc:  for e+  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e+  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
-
-eBrem:  for e+  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-annihil:  for e+, integral:1  SubType=5 BuildTable=0
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
-
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : No 
  Material : G4_AIR
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
  Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
 
-Index : 1     used in the geometry : No 
+Index : 1     used in the geometry : Yes
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
-
-Index : 2     used in the geometry : Yes
- Material : G4_Pyrex_Glass
- Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : No 
+ Material : G4_Pyrex_Glass
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
 
 Index : 3     used in the geometry : No 
  Material : G4_Galactic
@@ -2257,29 +2105,29 @@ Index : 3     used in the geometry : No
 Index : 4     used in the geometry : No 
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
 
-====================================================================
+==================================================================
 
 
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : No 
  Material : G4_AIR
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
  Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
 
-Index : 1     used in the geometry : No 
+Index : 1     used in the geometry : Yes
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
-
-Index : 2     used in the geometry : Yes
- Material : G4_Pyrex_Glass
- Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : No 
+ Material : G4_Pyrex_Glass
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
 
 Index : 3     used in the geometry : No 
  Material : G4_Galactic
@@ -2289,16 +2137,16 @@ Index : 3     used in the geometry : No
 Index : 4     used in the geometry : No 
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
 
-====================================================================
+==================================================================
 
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 1E-2 : cos Deviation Angle = 5100021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 1E-2 : log10 Interaction Distance (cm) = 5100022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 1E-2 : cos Deviation Angle = 5200021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 1E-2 : log10 Interaction Distance (cm) = 5200022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 1E-2 : cos Deviation Angle = 5300021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 1E-2 : log10 Interaction Distance (cm) = 5300022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 1E-2 : cos Deviation Angle = 5100021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 1E-2 : log10 Interaction Distance (cm) = 5100022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 1E-2 : cos Deviation Angle = 5200021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 1E-2 : log10 Interaction Distance (cm) = 5200022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 1E-2 : cos Deviation Angle = 5300021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 1E-2 : log10 Interaction Distance (cm) = 5300022
  %%% EVENT 15000000 NTRACKS 1 TOTAL NTRACKS 1.5e+07
  %%% EVENT 15010000 NTRACKS 1 TOTAL NTRACKS 1.501e+07
  %%% EVENT 15020000 NTRACKS 1 TOTAL NTRACKS 1.502e+07
@@ -2349,12 +2197,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 15470000 NTRACKS 1 TOTAL NTRACKS 1.547e+07
  %%% EVENT 15480000 NTRACKS 1 TOTAL NTRACKS 1.548e+07
  %%% EVENT 15490000 NTRACKS 1 TOTAL NTRACKS 1.549e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 2E-2 : cos Deviation Angle = 5101021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 2E-2 : log10 Interaction Distance (cm) = 5101022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 2E-2 : cos Deviation Angle = 5201021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 2E-2 : log10 Interaction Distance (cm) = 5201022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 2E-2 : cos Deviation Angle = 5301021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 2E-2 : log10 Interaction Distance (cm) = 5301022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 2E-2 : cos Deviation Angle = 5101021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 2E-2 : log10 Interaction Distance (cm) = 5101022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 2E-2 : cos Deviation Angle = 5201021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 2E-2 : log10 Interaction Distance (cm) = 5201022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 2E-2 : cos Deviation Angle = 5301021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 2E-2 : log10 Interaction Distance (cm) = 5301022
  %%% EVENT 15500000 NTRACKS 1 TOTAL NTRACKS 1.55e+07
  %%% EVENT 15510000 NTRACKS 1 TOTAL NTRACKS 1.551e+07
  %%% EVENT 15520000 NTRACKS 1 TOTAL NTRACKS 1.552e+07
@@ -2405,12 +2253,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 15970000 NTRACKS 1 TOTAL NTRACKS 1.597e+07
  %%% EVENT 15980000 NTRACKS 1 TOTAL NTRACKS 1.598e+07
  %%% EVENT 15990000 NTRACKS 1 TOTAL NTRACKS 1.599e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 3E-2 : cos Deviation Angle = 5102021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 3E-2 : log10 Interaction Distance (cm) = 5102022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 3E-2 : cos Deviation Angle = 5202021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 3E-2 : log10 Interaction Distance (cm) = 5202022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 3E-2 : cos Deviation Angle = 5302021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 3E-2 : log10 Interaction Distance (cm) = 5302022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 3E-2 : cos Deviation Angle = 5102021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 3E-2 : log10 Interaction Distance (cm) = 5102022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 3E-2 : cos Deviation Angle = 5202021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 3E-2 : log10 Interaction Distance (cm) = 5202022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 3E-2 : cos Deviation Angle = 5302021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 3E-2 : log10 Interaction Distance (cm) = 5302022
  %%% EVENT 16000000 NTRACKS 1 TOTAL NTRACKS 1.6e+07
  %%% EVENT 16010000 NTRACKS 1 TOTAL NTRACKS 1.601e+07
  %%% EVENT 16020000 NTRACKS 1 TOTAL NTRACKS 1.602e+07
@@ -2461,12 +2309,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 16470000 NTRACKS 1 TOTAL NTRACKS 1.647e+07
  %%% EVENT 16480000 NTRACKS 1 TOTAL NTRACKS 1.648e+07
  %%% EVENT 16490000 NTRACKS 1 TOTAL NTRACKS 1.649e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 4E-2 : cos Deviation Angle = 5103021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 4E-2 : log10 Interaction Distance (cm) = 5103022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 4E-2 : cos Deviation Angle = 5203021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 4E-2 : log10 Interaction Distance (cm) = 5203022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 4E-2 : cos Deviation Angle = 5303021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 4E-2 : log10 Interaction Distance (cm) = 5303022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 4E-2 : cos Deviation Angle = 5103021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 4E-2 : log10 Interaction Distance (cm) = 5103022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 4E-2 : cos Deviation Angle = 5203021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 4E-2 : log10 Interaction Distance (cm) = 5203022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 4E-2 : cos Deviation Angle = 5303021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 4E-2 : log10 Interaction Distance (cm) = 5303022
  %%% EVENT 16500000 NTRACKS 1 TOTAL NTRACKS 1.65e+07
  %%% EVENT 16510000 NTRACKS 1 TOTAL NTRACKS 1.651e+07
  %%% EVENT 16520000 NTRACKS 1 TOTAL NTRACKS 1.652e+07
@@ -2517,12 +2365,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 16970000 NTRACKS 1 TOTAL NTRACKS 1.697e+07
  %%% EVENT 16980000 NTRACKS 1 TOTAL NTRACKS 1.698e+07
  %%% EVENT 16990000 NTRACKS 1 TOTAL NTRACKS 1.699e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 5E-2 : cos Deviation Angle = 5104021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 5E-2 : log10 Interaction Distance (cm) = 5104022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 5E-2 : cos Deviation Angle = 5204021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 5E-2 : log10 Interaction Distance (cm) = 5204022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 5E-2 : cos Deviation Angle = 5304021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 5E-2 : log10 Interaction Distance (cm) = 5304022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 5E-2 : cos Deviation Angle = 5104021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 5E-2 : log10 Interaction Distance (cm) = 5104022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 5E-2 : cos Deviation Angle = 5204021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 5E-2 : log10 Interaction Distance (cm) = 5204022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 5E-2 : cos Deviation Angle = 5304021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 5E-2 : log10 Interaction Distance (cm) = 5304022
  %%% EVENT 17000000 NTRACKS 1 TOTAL NTRACKS 1.7e+07
  %%% EVENT 17010000 NTRACKS 1 TOTAL NTRACKS 1.701e+07
  %%% EVENT 17020000 NTRACKS 1 TOTAL NTRACKS 1.702e+07
@@ -2573,12 +2421,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 17470000 NTRACKS 1 TOTAL NTRACKS 1.747e+07
  %%% EVENT 17480000 NTRACKS 1 TOTAL NTRACKS 1.748e+07
  %%% EVENT 17490000 NTRACKS 1 TOTAL NTRACKS 1.749e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 6E-2 : cos Deviation Angle = 5105021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 6E-2 : log10 Interaction Distance (cm) = 5105022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 6E-2 : cos Deviation Angle = 5205021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 6E-2 : log10 Interaction Distance (cm) = 5205022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 6E-2 : cos Deviation Angle = 5305021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 6E-2 : log10 Interaction Distance (cm) = 5305022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 6E-2 : cos Deviation Angle = 5105021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 6E-2 : log10 Interaction Distance (cm) = 5105022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 6E-2 : cos Deviation Angle = 5205021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 6E-2 : log10 Interaction Distance (cm) = 5205022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 6E-2 : cos Deviation Angle = 5305021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 6E-2 : log10 Interaction Distance (cm) = 5305022
  %%% EVENT 17500000 NTRACKS 1 TOTAL NTRACKS 1.75e+07
  %%% EVENT 17510000 NTRACKS 1 TOTAL NTRACKS 1.751e+07
  %%% EVENT 17520000 NTRACKS 1 TOTAL NTRACKS 1.752e+07
@@ -2629,12 +2477,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 17970000 NTRACKS 1 TOTAL NTRACKS 1.797e+07
  %%% EVENT 17980000 NTRACKS 1 TOTAL NTRACKS 1.798e+07
  %%% EVENT 17990000 NTRACKS 1 TOTAL NTRACKS 1.799e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 7E-2 : cos Deviation Angle = 5106021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 7E-2 : log10 Interaction Distance (cm) = 5106022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 7E-2 : cos Deviation Angle = 5206021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 7E-2 : log10 Interaction Distance (cm) = 5206022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 7E-2 : cos Deviation Angle = 5306021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 7E-2 : log10 Interaction Distance (cm) = 5306022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 7E-2 : cos Deviation Angle = 5106021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 7E-2 : log10 Interaction Distance (cm) = 5106022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 7E-2 : cos Deviation Angle = 5206021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 7E-2 : log10 Interaction Distance (cm) = 5206022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 7E-2 : cos Deviation Angle = 5306021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 7E-2 : log10 Interaction Distance (cm) = 5306022
  %%% EVENT 18000000 NTRACKS 1 TOTAL NTRACKS 1.8e+07
  %%% EVENT 18010000 NTRACKS 1 TOTAL NTRACKS 1.801e+07
  %%% EVENT 18020000 NTRACKS 1 TOTAL NTRACKS 1.802e+07
@@ -2685,12 +2533,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 18470000 NTRACKS 1 TOTAL NTRACKS 1.847e+07
  %%% EVENT 18480000 NTRACKS 1 TOTAL NTRACKS 1.848e+07
  %%% EVENT 18490000 NTRACKS 1 TOTAL NTRACKS 1.849e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 8E-2 : cos Deviation Angle = 5107021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 8E-2 : log10 Interaction Distance (cm) = 5107022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 8E-2 : cos Deviation Angle = 5207021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 8E-2 : log10 Interaction Distance (cm) = 5207022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 8E-2 : cos Deviation Angle = 5307021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 8E-2 : log10 Interaction Distance (cm) = 5307022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 8E-2 : cos Deviation Angle = 5107021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 8E-2 : log10 Interaction Distance (cm) = 5107022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 8E-2 : cos Deviation Angle = 5207021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 8E-2 : log10 Interaction Distance (cm) = 5207022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 8E-2 : cos Deviation Angle = 5307021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 8E-2 : log10 Interaction Distance (cm) = 5307022
  %%% EVENT 18500000 NTRACKS 1 TOTAL NTRACKS 1.85e+07
  %%% EVENT 18510000 NTRACKS 1 TOTAL NTRACKS 1.851e+07
  %%% EVENT 18520000 NTRACKS 1 TOTAL NTRACKS 1.852e+07
@@ -2741,12 +2589,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 18970000 NTRACKS 1 TOTAL NTRACKS 1.897e+07
  %%% EVENT 18980000 NTRACKS 1 TOTAL NTRACKS 1.898e+07
  %%% EVENT 18990000 NTRACKS 1 TOTAL NTRACKS 1.899e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 9E-2 : cos Deviation Angle = 5108021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 9E-2 : log10 Interaction Distance (cm) = 5108022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 9E-2 : cos Deviation Angle = 5208021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 9E-2 : log10 Interaction Distance (cm) = 5208022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 9E-2 : cos Deviation Angle = 5308021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 9E-2 : log10 Interaction Distance (cm) = 5308022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 9E-2 : cos Deviation Angle = 5108021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 9E-2 : log10 Interaction Distance (cm) = 5108022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 9E-2 : cos Deviation Angle = 5208021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 9E-2 : log10 Interaction Distance (cm) = 5208022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 9E-2 : cos Deviation Angle = 5308021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 9E-2 : log10 Interaction Distance (cm) = 5308022
  %%% EVENT 19000000 NTRACKS 1 TOTAL NTRACKS 1.9e+07
  %%% EVENT 19010000 NTRACKS 1 TOTAL NTRACKS 1.901e+07
  %%% EVENT 19020000 NTRACKS 1 TOTAL NTRACKS 1.902e+07
@@ -2797,12 +2645,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 19470000 NTRACKS 1 TOTAL NTRACKS 1.947e+07
  %%% EVENT 19480000 NTRACKS 1 TOTAL NTRACKS 1.948e+07
  %%% EVENT 19490000 NTRACKS 1 TOTAL NTRACKS 1.949e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.1E0 : cos Deviation Angle = 5109021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.1E0 : log10 Interaction Distance (cm) = 5109022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.1E0 : cos Deviation Angle = 5209021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.1E0 : log10 Interaction Distance (cm) = 5209022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.1E0 : cos Deviation Angle = 5309021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.1E0 : log10 Interaction Distance (cm) = 5309022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.1E0 : cos Deviation Angle = 5109021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.1E0 : log10 Interaction Distance (cm) = 5109022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.1E0 : cos Deviation Angle = 5209021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.1E0 : log10 Interaction Distance (cm) = 5209022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.1E0 : cos Deviation Angle = 5309021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.1E0 : log10 Interaction Distance (cm) = 5309022
  %%% EVENT 19500000 NTRACKS 1 TOTAL NTRACKS 1.95e+07
  %%% EVENT 19510000 NTRACKS 1 TOTAL NTRACKS 1.951e+07
  %%% EVENT 19520000 NTRACKS 1 TOTAL NTRACKS 1.952e+07
@@ -2853,12 +2701,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 19970000 NTRACKS 1 TOTAL NTRACKS 1.997e+07
  %%% EVENT 19980000 NTRACKS 1 TOTAL NTRACKS 1.998e+07
  %%% EVENT 19990000 NTRACKS 1 TOTAL NTRACKS 1.999e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.11E0 : cos Deviation Angle = 5110021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.11E0 : log10 Interaction Distance (cm) = 5110022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.11E0 : cos Deviation Angle = 5210021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.11E0 : log10 Interaction Distance (cm) = 5210022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.11E0 : cos Deviation Angle = 5310021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.11E0 : log10 Interaction Distance (cm) = 5310022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.11E0 : cos Deviation Angle = 5110021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.11E0 : log10 Interaction Distance (cm) = 5110022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.11E0 : cos Deviation Angle = 5210021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.11E0 : log10 Interaction Distance (cm) = 5210022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.11E0 : cos Deviation Angle = 5310021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.11E0 : log10 Interaction Distance (cm) = 5310022
  %%% EVENT 20000000 NTRACKS 1 TOTAL NTRACKS 2e+07
  %%% EVENT 20010000 NTRACKS 1 TOTAL NTRACKS 2.001e+07
  %%% EVENT 20020000 NTRACKS 1 TOTAL NTRACKS 2.002e+07
@@ -2909,12 +2757,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 20470000 NTRACKS 1 TOTAL NTRACKS 2.047e+07
  %%% EVENT 20480000 NTRACKS 1 TOTAL NTRACKS 2.048e+07
  %%% EVENT 20490000 NTRACKS 1 TOTAL NTRACKS 2.049e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.12E0 : cos Deviation Angle = 5111021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.12E0 : log10 Interaction Distance (cm) = 5111022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.12E0 : cos Deviation Angle = 5211021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.12E0 : log10 Interaction Distance (cm) = 5211022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.12E0 : cos Deviation Angle = 5311021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.12E0 : log10 Interaction Distance (cm) = 5311022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.12E0 : cos Deviation Angle = 5111021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.12E0 : log10 Interaction Distance (cm) = 5111022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.12E0 : cos Deviation Angle = 5211021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.12E0 : log10 Interaction Distance (cm) = 5211022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.12E0 : cos Deviation Angle = 5311021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.12E0 : log10 Interaction Distance (cm) = 5311022
  %%% EVENT 20500000 NTRACKS 1 TOTAL NTRACKS 2.05e+07
  %%% EVENT 20510000 NTRACKS 1 TOTAL NTRACKS 2.051e+07
  %%% EVENT 20520000 NTRACKS 1 TOTAL NTRACKS 2.052e+07
@@ -2965,12 +2813,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 20970000 NTRACKS 1 TOTAL NTRACKS 2.097e+07
  %%% EVENT 20980000 NTRACKS 1 TOTAL NTRACKS 2.098e+07
  %%% EVENT 20990000 NTRACKS 1 TOTAL NTRACKS 2.099e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.13E0 : cos Deviation Angle = 5112021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.13E0 : log10 Interaction Distance (cm) = 5112022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.13E0 : cos Deviation Angle = 5212021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.13E0 : log10 Interaction Distance (cm) = 5212022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.13E0 : cos Deviation Angle = 5312021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.13E0 : log10 Interaction Distance (cm) = 5312022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.13E0 : cos Deviation Angle = 5112021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.13E0 : log10 Interaction Distance (cm) = 5112022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.13E0 : cos Deviation Angle = 5212021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.13E0 : log10 Interaction Distance (cm) = 5212022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.13E0 : cos Deviation Angle = 5312021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.13E0 : log10 Interaction Distance (cm) = 5312022
  %%% EVENT 21000000 NTRACKS 1 TOTAL NTRACKS 2.1e+07
  %%% EVENT 21010000 NTRACKS 1 TOTAL NTRACKS 2.101e+07
  %%% EVENT 21020000 NTRACKS 1 TOTAL NTRACKS 2.102e+07
@@ -3021,12 +2869,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 21470000 NTRACKS 1 TOTAL NTRACKS 2.147e+07
  %%% EVENT 21480000 NTRACKS 1 TOTAL NTRACKS 2.148e+07
  %%% EVENT 21490000 NTRACKS 1 TOTAL NTRACKS 2.149e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.14E0 : cos Deviation Angle = 5113021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.14E0 : log10 Interaction Distance (cm) = 5113022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.14E0 : cos Deviation Angle = 5213021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.14E0 : log10 Interaction Distance (cm) = 5213022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.14E0 : cos Deviation Angle = 5313021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.14E0 : log10 Interaction Distance (cm) = 5313022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.14E0 : cos Deviation Angle = 5113021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.14E0 : log10 Interaction Distance (cm) = 5113022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.14E0 : cos Deviation Angle = 5213021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.14E0 : log10 Interaction Distance (cm) = 5213022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.14E0 : cos Deviation Angle = 5313021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.14E0 : log10 Interaction Distance (cm) = 5313022
  %%% EVENT 21500000 NTRACKS 1 TOTAL NTRACKS 2.15e+07
  %%% EVENT 21510000 NTRACKS 1 TOTAL NTRACKS 2.151e+07
  %%% EVENT 21520000 NTRACKS 1 TOTAL NTRACKS 2.152e+07
@@ -3077,12 +2925,12 @@ Index : 4     used in the geometry : No
  %%% EVENT 21970000 NTRACKS 1 TOTAL NTRACKS 2.197e+07
  %%% EVENT 21980000 NTRACKS 1 TOTAL NTRACKS 2.198e+07
  %%% EVENT 21990000 NTRACKS 1 TOTAL NTRACKS 2.199e+07
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.15E0 : cos Deviation Angle = 5114021
- CreateHisto1D e- - gamma : msc : G4_Pyrex_Glass : 0.15E0 : log10 Interaction Distance (cm) = 5114022
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.15E0 : cos Deviation Angle = 5214021
- CreateHisto1D e- - gamma : eIoni : G4_Pyrex_Glass : 0.15E0 : log10 Interaction Distance (cm) = 5214022
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.15E0 : cos Deviation Angle = 5314021
- CreateHisto1D e- - gamma : eBrem : G4_Pyrex_Glass : 0.15E0 : log10 Interaction Distance (cm) = 5314022
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.15E0 : cos Deviation Angle = 5114021
+ CreateHisto1D e- - gamma : msc : G4_Pb : 0.15E0 : log10 Interaction Distance (cm) = 5114022
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.15E0 : cos Deviation Angle = 5214021
+ CreateHisto1D e- - gamma : eIoni : G4_Pb : 0.15E0 : log10 Interaction Distance (cm) = 5214022
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.15E0 : cos Deviation Angle = 5314021
+ CreateHisto1D e- - gamma : eBrem : G4_Pb : 0.15E0 : log10 Interaction Distance (cm) = 5314022
  %%% EVENT 22000000 NTRACKS 1 TOTAL NTRACKS 2.2e+07
  %%% EVENT 22010000 NTRACKS 1 TOTAL NTRACKS 2.201e+07
  %%% EVENT 22020000 NTRACKS 1 TOTAL NTRACKS 2.202e+07
@@ -3154,78 +3002,10 @@ G4GeometryManager::ReportVoxelStats -- Voxel Statistics
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
-### ===  Auger cascade flag: 0
+### ===  Auger flag: 1
 ### ===  Ignore cuts flag:   0
 
-phot:  for gamma SubType=12 BuildTable=0
-      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
-       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
-
-compt:  for gamma SubType=13 BuildTable=1
-      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
-      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
-       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
-
-conv:  for gamma SubType=14 BuildTable=1
-      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
-     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
-
-msc:  for e-  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e-  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
-        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
-
-eBrem:  for e-  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-msc:  for e+  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e+  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
-
-eBrem:  for e+  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-annihil:  for e+, integral:1  SubType=5 BuildTable=0
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
-
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : No 
  Material : G4_AIR
@@ -3235,12 +3015,12 @@ Index : 0     used in the geometry : No
 Index : 1     used in the geometry : No 
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
 
 Index : 2     used in the geometry : No 
  Material : G4_Pyrex_Glass
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
 
 Index : 3     used in the geometry : Yes
  Material : G4_Galactic
@@ -3252,12 +3032,12 @@ Index : 3     used in the geometry : Yes
 Index : 4     used in the geometry : No 
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
 
-====================================================================
+==================================================================
 
 
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : No 
  Material : G4_AIR
@@ -3267,12 +3047,12 @@ Index : 0     used in the geometry : No
 Index : 1     used in the geometry : No 
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
 
 Index : 2     used in the geometry : No 
  Material : G4_Pyrex_Glass
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
 
 Index : 3     used in the geometry : Yes
  Material : G4_Galactic
@@ -3284,9 +3064,9 @@ Index : 3     used in the geometry : Yes
 Index : 4     used in the geometry : No 
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
 
-====================================================================
+==================================================================
 
  CreateHisto1D e- - gamma : msc : G4_Galactic : 1E-2 : cos Deviation Angle = 5100031
  CreateHisto1D e- - gamma : msc : G4_Galactic : 1E-2 : log10 Interaction Distance (cm) = 5100032
@@ -4149,78 +3929,10 @@ G4GeometryManager::ReportVoxelStats -- Voxel Statistics
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
-### ===  Auger cascade flag: 0
+### ===  Auger flag: 1
 ### ===  Ignore cuts flag:   0
 
-phot:  for gamma SubType=12 BuildTable=0
-      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
-       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
-
-compt:  for gamma SubType=13 BuildTable=1
-      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
-      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
-       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
-
-conv:  for gamma SubType=14 BuildTable=1
-      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
-     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
-
-msc:  for e-  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e-  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
-        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
-
-eBrem:  for e-  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-msc:  for e+  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e+  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
-
-eBrem:  for e+  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-annihil:  for e+, integral:1  SubType=5 BuildTable=0
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
-
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : No 
  Material : G4_AIR
@@ -4230,12 +3942,12 @@ Index : 0     used in the geometry : No
 Index : 1     used in the geometry : No 
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
 
 Index : 2     used in the geometry : No 
  Material : G4_Pyrex_Glass
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
 
 Index : 3     used in the geometry : No 
  Material : G4_Galactic
@@ -4245,14 +3957,14 @@ Index : 3     used in the geometry : No
 Index : 4     used in the geometry : Yes
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
-====================================================================
+==================================================================
 
 
-========= Table of registered couples ==============================
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : No 
  Material : G4_AIR
@@ -4262,12 +3974,12 @@ Index : 0     used in the geometry : No
 Index : 1     used in the geometry : No 
  Material : G4_Pb
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  29.4761 keV    e-  241.522 keV    e+  231.977 keV proton -1 MeV
+ Energy thresholds :  gamma  29.3967 keV    e-  240.662 keV    e+  232.588 keV proton -1 MeV
 
 Index : 2     used in the geometry : No 
  Material : G4_Pyrex_Glass
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.89989 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  1.89322 keV    e-  121.85 keV    e+  119.747 keV proton -1 MeV
 
 Index : 3     used in the geometry : No 
  Material : G4_Galactic
@@ -4277,11 +3989,11 @@ Index : 3     used in the geometry : No
 Index : 4     used in the geometry : Yes
  Material : WRe
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  33.9436 keV    e-  331.226 keV    e+  316.006 keV proton -1 MeV
+ Energy thresholds :  gamma  34.1348 keV    e-  329.855 keV    e+  317.266 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
-====================================================================
+==================================================================
 
  CreateHisto1D e- - gamma : msc : WRe : 1E-2 : cos Deviation Angle = 5100041
  CreateHisto1D e- - gamma : msc : WRe : 1E-2 : log10 Interaction Distance (cm) = 5100042
@@ -5126,8 +4838,7 @@ Index : 4     used in the geometry : Yes
  Run terminated.
 Run Summary
   Run Aborted after 37500000 events processed.
-  User=862.630000s Real=862.793068s Sys=0.130000s
-Graphics systems deleted.
-Visualization Manager deleting...
- GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 angleDeviation.e-.gamma:NormalizeToNEvents
-=== saving histograms in file === angleDeviation.e-.gamma.root
+  User=269.490000s Real=269.823108s Sys=0.060000s
+0 events have been kept for refreshing and/or reviewing.
+  "/vis/reviewKeptEvents" to review them one by one.
+  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.

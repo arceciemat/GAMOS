@@ -9,7 +9,7 @@ using namespace std;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 G4int GmLivermoreRayleighModel_XSChangeNEW::maxZ = 100;
-G4LPhysicsFreeVector* GmLivermoreRayleighModel_XSChangeNEW::dataCS[] = {0};
+G4PhysicsFreeVector* GmLivermoreRayleighModel_XSChangeNEW::dataCS[] = {0};
 
 GmLivermoreRayleighModel_XSChangeNEW::GmLivermoreRayleighModel_XSChangeNEW()
   : G4LivermoreRayleighModel(), GmXSChange_DistributionUser("XS_Change")
@@ -136,7 +136,7 @@ void GmLivermoreRayleighModel_XSChangeNEW::ReadData(size_t Z, const char* path)
 
   //
   
-  dataCS[Z] = new G4LPhysicsFreeVector();
+  dataCS[Z] = new G4PhysicsFreeVector();
   
   // Activation of spline interpolation
   //dataCS[Z] ->SetSpline(true);
@@ -185,7 +185,7 @@ G4double GmLivermoreRayleighModel_XSChangeNEW::ComputeCrossSectionPerAtom(
 
   if(intZ < 1 || intZ > maxZ) { return xs; }
 
-  G4LPhysicsFreeVector* pv = dataCS[intZ];
+  G4PhysicsFreeVector* pv = dataCS[intZ];
 
   // if element was not initialised
   // do initialisation safely for MT mode

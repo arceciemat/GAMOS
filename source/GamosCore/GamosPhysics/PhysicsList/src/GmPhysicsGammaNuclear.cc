@@ -1,7 +1,7 @@
 #include "GmPhysicsGammaNuclear.hh"
 #include "G4ProcessManager.hh"
 #include "G4Gamma.hh"
-#include "G4PhotoNuclearProcess.hh"
+#include "G4HadronInelasticProcess.hh"
 #include "G4CascadeInterface.hh"
 #include "G4TheoFSGenerator.hh"
 #include "G4GeneratorPrecompoundInterface.hh"
@@ -35,7 +35,8 @@ void GmPhysicsGammaNuclear::ConstructProcess()
   
   G4ProcessManager * pmanager=G4Gamma::GammaDefinition()->GetProcessManager();
   if( GmG4Utils::CheckProcessExists( pmanager, "" )) return;
-  G4PhotoNuclearProcess * photoNuclearProcess(new G4PhotoNuclearProcess);
+ 
+  G4HadronInelasticProcess* photoNuclearProcess = new G4HadronInelasticProcess( "photonNuclear", G4Gamma::Definition() );
   photoNuclearProcess->RegisterMe(lowEGammaModel);
   photoNuclearProcess->RegisterMe(highEGammaModel);
   pmanager->AddDiscreteProcess(photoNuclearProcess);

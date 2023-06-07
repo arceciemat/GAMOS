@@ -52,7 +52,7 @@ G4bool GmCompoundScorer::ProcessHits(G4Step* ,G4TouchableHistory*)
     bInitialized = true;
   }
 
-  // subscorers already called by MFD
+  // subscorers already called by MFD 
   /*  std::vector<GmVPrimitiveScorer*>::const_iterator ite;
   for( ite = theSubScorers.begin(); ite != theSubScorers.end(); ite++ ){
     (*ite)->ProcessHits(aStep, (G4TouchableHistory*)0 );
@@ -80,7 +80,7 @@ void GmCompoundScorer::DrawAll()
 void GmCompoundScorer::AddSubScorer(GmVPrimitiveScorer* scorer )
 {
 #ifndef GAMOS_NO_VERBOSE
-  if( ScoringVerb(debugVerb) ) G4cout << " GmCompoundScorer::AddSubScorer " << theSubScorers.size() << " scorer " << scorer->GetName() << G4endl; 
+  if( ScoringVerb(debugVerb) ) G4cout << " GmCompoundScorer::AddSubScorer " << scorer->GetName() << " N= " << theSubScorers.size() << G4endl; 
 #endif
 
   theSubScorers.push_back( scorer );
@@ -198,7 +198,18 @@ void GmCompoundScorer::SetParameters( const std::vector<G4String>& params )
 {
   std::map<G4String,GmVPrimitiveScorer*> theScorers = theScoringMgr->GetScorers();
 
-  if( params.size() == 0 ) return; // GmPSLETD creates parameters itself
+  if( params.size() == 0 ) {
+    G4Exception("GmCompoundScorer::SetParameters",
+		"",
+		FatalException,
+		"Cannot create a GmCompoundScorer without parameters (for example passing 3 scorers to /gamos/scoring/addScorerToMFD");
+  }
+  
+  if( ScoringVerb(infoVerb) ) {
+    for( size_t ii = 0; ii < params.size(); ii++ ) {
+      G4cout << ii << " GmCompoundScorer:SetParameters PARAM " << params[ii] << G4endl;
+    }
+  }
 
   if( params.size() != 1 ){
     G4String parastr;
@@ -211,11 +222,12 @@ void GmCompoundScorer::SetParameters( const std::vector<G4String>& params )
   
   G4String scorerClass = params[0];
   G4int iSeparator = GmGenUtils::GetNextSeparator( 0, scorerClass );
-  //  G4cout << " CS: iSeparator " << iSeparator << " " << scorerClass << G4endl; //GDEB
+  //   G4cout << " CS: iSeparator " << iSeparator << " " << scorerClass << G4endl; //GDEB
   if( iSeparator == G4int(std::string::npos) ) {
-    //    G4cout << " !!! CALL  GmCompoundScorer::FindOrCreateScorer " << scorerClass << " " << scorerClass+theNameSuffix << G4endl; //GDEB
-    GmVPrimitiveScorer* subScorer = FindOrCreateScorer(scorerClass,scorerClass+theNameSuffix);
-    theScoringMgr->AddScorer( scorerClass+theNameSuffix, subScorer );
+    //    G4cout << " !!! CALL  GmCompoundScorer::FindOrCreateScorer " << scorerClass << " " << scorerClass<<"+"<<theNameSuffix << G4endl; //GDEB
+    G4String scorerName = scorerClass+theNameSuffix;
+    GmVPrimitiveScorer* subScorer = FindOrCreateScorer(scorerClass,scorerName);
+    theScoringMgr->AddScorer( scorerName, subScorer );
     subScorer->SetDefaultPrinter(false);
     AddSubScorer( subScorer );
     theSubScorerClasses.push_back(scorerClass);
@@ -248,7 +260,7 @@ void GmCompoundScorer::SetParameters( const std::vector<G4String>& params )
       isSeparator.push_back(1);
     }
     //    G4cout << " FIRST WORDS " << words.size() << G4endl; //GDEB
-    //    G4cout << " FIRST WORDS " << words[0] << " " << words[1] << " " << words[2] << G4endl;  //GDEB
+    //      G4cout << " FIRST WORDS " << words[0] << " " << words[1] << " " << words[2] << G4endl;  //GDEB
     
     G4int iSeparatorNew;
     for( ;; ){
@@ -279,7 +291,7 @@ void GmCompoundScorer::SetParameters( const std::vector<G4String>& params )
     std::vector<G4String> subExpressions;
     for( unsigned int ii = 0; ii < words.size(); ii++ ){
 #ifndef GAMOS_NO_VERBOSE
-      if( ScoringVerb(infoVerb) ) G4cout << "GmCompoundScorer::CreateScorer WORD " << words[ii] << " " << isSeparator[ii] << G4endl;
+      if( ScoringVerb(debugVerb) ) G4cout << "GmCompoundScorer::CreateScorer WORD " << words[ii] << " " << isSeparator[ii] << G4endl;
 #endif
       if( isSeparator[ii] ) {
 	if( ii && isSeparator[ii-1] ) {
@@ -290,15 +302,17 @@ void GmCompoundScorer::SetParameters( const std::vector<G4String>& params )
 	}
       } else {
 #ifndef GAMOS_NO_VERBOSE
-	if( ScoringVerb(infoVerb) ) G4cout << "GmCompoundScorer::CreateScorer  AddSubScorer " << words[ii] << " ii " << ii << G4endl;
+	if( ScoringVerb(debugVerb) ) G4cout << "GmCompoundScorer::CreateScorer  AddSubScorer " << words[ii] << " ii " << ii << G4endl;
 #endif
 	//----- Check that Scorer exists
 	//	G4String subScorerClass = words[ii].split;std::getline(ss, item, delimeter)
 	G4String subScorerClass = words[ii];
-	//	G4cout << GetName() << " !!! CALL2  GmCompoundScorer::FindOrCreateScorer " << subScorerClass << " " << subScorerClass+theNameSuffix << " FROM word " << words[0] << G4endl; //GDEB
-	GmVPrimitiveScorer* subScorer = FindOrCreateScorer(subScorerClass,subScorerClass+theNameSuffix);
+	//	G4cout << GetName() << " !!! CALL2  GmCompoundScorer::FindOrCreateScorer " << subScorerClass << " " << subScorerClass<<"+"<<theNameSuffix << " FROM word " << words[0] << G4endl; //GDEB
+	G4String scorerName = subScorerClass+theNameSuffix;
+	GmVPrimitiveScorer* subScorer = FindOrCreateScorer(subScorerClass,scorerName);
 	std::vector<G4String> wl;
-	theScoringMgr->AddScorer( subScorerClass+theNameSuffix, subScorer );
+	//	G4cout << " COMP theScoringMgr->AddScored " << scorerName << G4endl; //GDEB
+	theScoringMgr->AddScorer( scorerName, subScorer );
 	subScorer->SetDefaultPrinter(false);
 	AddSubScorer( subScorer );
 	theSubScorerClasses.push_back(words[ii]);
@@ -308,7 +322,7 @@ void GmCompoundScorer::SetParameters( const std::vector<G4String>& params )
       
     for( unsigned int ii2 = 0; ii2 < subExpressions.size(); ii2++ ){
 #ifndef GAMOS_NO_VERBOSE
-      if( ScoringVerb(infoVerb) ) G4cout << " GmCompoundScorer:SetParameters  AddSubExpression " << subExpressions[ii2] << " ii " << ii2 << G4endl;
+      if( ScoringVerb(-infoVerb) ) G4cout << " GmCompoundScorer:SetParameters  AddSubExpression " << subExpressions[ii2] << " ii " << ii2 << G4endl;
 #endif
       AddSubExpression( subExpressions[ii2] );
     }
@@ -334,19 +348,34 @@ void GmCompoundScorer::SetParameters( const std::vector<G4String>& params )
 }
 
 //--------------------------------------------------------------------
-GmVPrimitiveScorer* GmCompoundScorer::FindOrCreateScorer(G4String scorerClass,G4String scorerName )
+GmVPrimitiveScorer* GmCompoundScorer::FindOrCreateScorer(G4String scorerClass,G4String& scorerName )
 {
-  //  G4cout << " !!!  GmCompoundScorer::FindOrCreateScorer " << scorerClass << " " << scorerName << G4endl; //GDEB
+#ifndef GAMOS_NO_VERBOSE
+  if( ScoringVerb(debugVerb) )  G4cout << " !! GmCompoundScorer::FindOrCreateScorer " << scorerClass << " " << scorerName << G4endl; 
+#endif
   GmVPrimitiveScorer* scorer = 0;
 
-  std::map<G4String,GmVPrimitiveScorer*> theScorers = theScoringMgr->GetScorers();
-
   //----- Check that Scorer exists
+  std::map<G4String,GmVPrimitiveScorer*> theScorers = theScoringMgr->GetScorers();
   std::map<G4String,GmVPrimitiveScorer*>::iterator itesco = theScorers.find(scorerName);
-  //  if( itesco != theScorers.end() ) {
-  // scorer = (*itesco).second;
-  //  } else {
-  //--- Create Scorer
+  G4int iFound = 0;
+  for( itesco == theScorers.begin(); itesco != theScorers.end(); itesco++ ) { // scorer already created with same name, change name
+    G4String scorerName_short = itesco->first;
+    size_t ius = scorerName_short.find("_");
+    if( ius != std::string::npos && GmGenUtils::IsInteger(scorerName_short.substr(ius+1,scorerName_short.length())) ) {
+      //      G4cout << scorerName_short << " IUS " << ius << " " << GmGenUtils::IsInteger(scorerName_short.substr(ius+1,scorerName.length())) << G4endl; //GDEB
+      scorerName_short = scorerName_short.substr(0,ius);
+    }
+    if(scorerName_short == scorerName ) iFound++;
+      
+  }
+  //--- Change scorer name to avoid name repetition
+  if( iFound != 0 ) {
+#ifndef GAMOS_NO_VERBOSE
+    if( ScoringVerb(debugVerb) )  G4cout << " !! GmCompoundScorer::FindOrCreateScorer SCORER NAME FOUND " << scorerName << " CHANGE IT TO " << scorerName+"_"+GmGenUtils::itoa( iFound+1 ) << G4endl;
+    scorerName += "_"+GmGenUtils::itoa( iFound+1 );
+  }
+#endif
 #ifdef ROOT5
     scorer = Reflex::PluginService::Create<GmVPrimitiveScorer*>(scorerClass,scorerName);
 #else
@@ -372,7 +401,7 @@ void GmCompoundScorer::PropagateMFDToSubScorers()
     GmVPrimitiveScorer* subScorer = theSubScorers[ii];
     mfd->RegisterPrimitive(subScorer);   
     subScorer->RegisterMFD( mfd );
-    //    G4cout << ii << " GmCompoundScorer::PropagateMFDToSubScorers " << subScorer->GetName() << G4endl; //GDEB
+    if( ScoringVerb(debugVerb) ) G4cout << ii << " GmCompoundScorer::PropagateMFDToSubScorers " << mfd->GetName() << " FROM " << GetName() << " TO " << subScorer->GetName() << G4endl; 
   }
 
   //--- Call subScorer SetParameters, in case it is compound itself 
@@ -445,22 +474,23 @@ void GmCompoundScorer::PropagateScoreErrorsToSubScorers()
 //--------------------------------------------------------------------
 G4double GmCompoundScorer::GetNEvents( G4int index )
 {
+  //  G4cout << this << " " << GetName() << "  GmCompoundScorer::GetNEvents theNEventsType " << theNEventsType << G4endl; //GDEB
   switch (theNEventsType) {
     case SNET_ByRun:
       return 1;
     case SNET_ByEvent:
       return GmNumberOfEvent::GetNumberOfEvent();
     case SNET_ByNFilled:
-      for( size_t ii = 0; ii < theSubScorers.size(); ii++ ) {
-	//	G4int nev = theSubScorers[ii]->GetNFilled(index);
-	//	G4cout << "  GmCompoundScorer::GetNEvents " << index << " = " << nev << G4endl; //GDEB
+      //      for( size_t ii = 0; ii < theSubScorers.size(); ii++ ) { //GDEB
+	// G4int nev = theSubScorers[ii]->GetNFilled(index);
+	//	G4cout << "  GmCompoundScorer::GetNEvents theNEventsType " << theNEventsType << " = " << theSubScorers[ii]->GetName() << " : " << theNFilled[index] << G4endl; //GDEB
 	/*	if( nev == -1 ) {
 	  G4Exception("GmVPrimitiveScorer::GetNEvents",
 		      "",
 		      JustWarning,
 		      ("Scorer " + theSubScorers[ii]->GetName() + " : score does not exist for index " + GmGenUtils::itoa(index)).c_str());
 		      }*/
-      }
+      //      }
       return theNFilled[index];
   }
   

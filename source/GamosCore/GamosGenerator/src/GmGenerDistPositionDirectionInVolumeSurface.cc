@@ -66,7 +66,7 @@ void GmGenerDistPositionDirectionInVolumeSurface::SetParams( const std::vector<G
 }
   
 //------------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionDirectionInVolumeSurface::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionDirectionInVolumeSurface::GeneratePosition( GmParticleSource* )
 {
   thePosition = G4ThreeVector();
 
@@ -131,7 +131,7 @@ G4ThreeVector GmGenerDistPositionDirectionInVolumeSurface::GeneratePosition( con
 }
 
 //------------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionDirectionInVolumeSurface::GenerateDirection( const GmParticleSource* source)
+G4ThreeVector GmGenerDistPositionDirectionInVolumeSurface::GenerateDirection( GmParticleSource* source)
 {
   G4ThreeVector dir = -source->GetPosition();
   if( theRotation ) {

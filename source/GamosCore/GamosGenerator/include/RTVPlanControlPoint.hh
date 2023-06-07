@@ -50,6 +50,9 @@ public:
   G4double GetGantryPitchAngle() const {
     return theGantryPitchAngle;
   }
+  G4double GetLimitingDeviceAngle() const {
+    return theLimitingDeviceAngle;
+  }
   G4double GetScanningSpotSize() const {
     return theScanningSpotSize;
   }
@@ -76,6 +79,7 @@ protected:
   G4double theNumberOfPaintings;
   G4double theSourceAxisDistanceX;
   G4double theSourceAxisDistanceY;
+  G4double theLimitingDeviceAngle;
   G4int theIndex;
   RTVPlanBeam* theBeam;
   

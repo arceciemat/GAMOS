@@ -31,7 +31,9 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4Run.hh"
 #include "G4EmParameters.hh"
-
+#include "G4DNAChemistryManager.hh"
+#include "G4Scheduler.hh"
+#include "G4UserTimeStepAction.hh"
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
 #else
@@ -40,6 +42,7 @@
 #include "GamosCore/GamosGenerator/include/GmGeneratorFactory.hh"
 #include "GamosCore/GamosPhysics/PhysicsList/include/GmPhysicsFactory.hh"
 #include "GamosCore/GamosUserActionMgr/include/GmUserActionFactory.hh"
+#include "GamosCore/GamosUserActionMgr/include/GmUserTimeStepActionFactory.hh"
 #include "GamosCore/GamosBase/Base/include/GmVerbosityFactory.hh"
 #endif
 
@@ -256,6 +259,44 @@ void GmRunManager::SelectUserAction( const G4String& values )
     }
     userAction->InitialiseHistoNames();
   }
+}
+
+//----------------------------------------------------------------------
+void GmRunManager::SelectUserTimeStepAction( const G4String& values )
+{
+  std::vector<G4String> wl = GmGenUtils::GetWordsInString( values );
+  G4String name = wl[0];
+  //-  G4cout << " GmRunManager::selectUserAction "<< name << G4endl;
+#ifdef ROOT5
+  Reflex::PluginService::SetDebug(21);  
+  G4UserTimeStepAction* userAction = Reflex::PluginService::Create<GmUserTimeStepAction*>(name);
+#else
+  G4UserTimeStepAction* userAction = GmUserTimeStepActionFactory::get()->create(name);
+#endif
+  if( userAction == 0 ) {
+    G4Exception("GmRunManager::SelectUserTimeStepAction",
+		"user action does not exist",
+		FatalErrorInArgument,
+		G4String(" User action " + name).c_str());
+  } else {
+    //    userAction->SetName( name );
+//    if( UAVerb(infoVerb) ) G4cout << " GmRunManager::SelectUserAction user action added: " << name << G4endl;
+    GmUserActionMgr::GetInstance()->CheckIfRepeated( name );
+    /*    for( unsigned int ii = 1; ii < wl.size(); ii++ ){
+      userAction->SetFilterOrClassifier(wl[ii]);
+    }
+    userAction->InitialiseHistoNames(); */
+  }
+   if(G4DNAChemistryManager::IsActivated())  {
+     G4Scheduler::Instance()->
+       SetUserAction(userAction);
+   } else {
+     G4Exception("GmRunManager::SelectUserTimeStepAction",
+		 "",
+		 FatalException,
+		 "G4DNAChemistryManager is not activated, check your physics list");
+   }
+//stop at this time
 }
 
 

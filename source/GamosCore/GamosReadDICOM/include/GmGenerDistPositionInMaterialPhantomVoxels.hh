@@ -13,7 +13,7 @@ public:
   GmGenerDistPositionInMaterialPhantomVoxels();
   virtual ~GmGenerDistPositionInMaterialPhantomVoxels(){};
 
-  virtual G4ThreeVector GeneratePosition( const GmParticleSource* source );
+  virtual G4ThreeVector GeneratePosition( GmParticleSource* source );
   void SetParams( const std::vector<G4String>& params );
   
 private:

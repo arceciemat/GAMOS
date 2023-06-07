@@ -1,7 +1,7 @@
 @@@@@ Running GAMOS with script: exercise2.in
 
 **************************************************************
- Geant4 version Name: geant4-10-06-patch-02    (29-May-2020)
+ Geant4 version Name: geant4-11-00-patch-03    (16-September-2022)
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -15,20 +15,15 @@ Visualization Manager initialising...
 Registering graphics systems...
 
 You have successfully registered the following graphics systems.
-Current available graphics systems are:
-ASCIITree (ATree)
-DAWNFILE (DAWNFILE)
-G4HepRep (HepRepXML)
-G4HepRepFile (HepRepFile)
-RayTracer (RayTracer)
-VRML1FILE (VRML1FILE)
-VRML2FILE (VRML2FILE)
-gMocrenFile (gMocrenFile)
-FukuiRenderer (DAWN)
-VRML1 (VRML1)
-VRML2 (VRML2)
-OpenGLImmediateX (OGLIX, OGLI)
-OpenGLStoredX (OGLSX, OGL, OGLS)
+Registered graphics systems are:
+  ASCIITree (ATree)
+  DAWNFILE (DAWNFILE)
+  G4HepRepFile (HepRepFile)
+  RayTracer (RayTracer)
+  VRML2FILE (VRML2FILE)
+  gMocrenFile (gMocrenFile)
+  OpenGLImmediateX (OGLIX, OGLI)
+  OpenGLStoredX (OGLSX, OGL, OGLS)
 
 Registering model factories...
 
@@ -41,12 +36,18 @@ Registered model factories:
   drawByParticleID
   drawByEncounteredVolume
 
+Registered models:
+  None
+
 Registered filter factories:
   attributeFilter
   chargeFilter
   originVolumeFilter
   particleFilter
   encounteredVolumeFilter
+
+Registered filters:
+  None
 
 You have successfully registered the following user vis actions.
 Run Duration User Vis Actions: none
@@ -65,11 +66,10 @@ GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
 GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/generator GmGenerator
 /run/initialize
-Checking overlaps for volume source (G4Tubs) ... OK! 
-Checking overlaps for volume container (G4Box) ... OK! 
-Checking overlaps for volume detector (G4Tubs) ... OK! 
-Checking overlaps for volume container (G4Box) ... OK! 
-GmPhysicsGammaLowEner::ConstructProcess 
+Checking overlaps for volume source:1 (G4Tubs) ... OK! 
+Checking overlaps for volume container:1 (G4Box) ... OK! 
+Checking overlaps for volume detector:1 (G4Tubs) ... OK! 
+Checking overlaps for volume container:2 (G4Box) ... OK! 
 /gamos/generator/addSingleParticleSource source gamma 1.*MeV
 /gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
 /gamos/filter containerInFilter GmInLogicalVolumeFilter container
@@ -128,41 +128,107 @@ WARNING: The vis manager will keep up to 100 events.
 /vis/viewer/update
 /vis/viewer/flush
 ===========================================
-Output VRML 2.0 file: g4_04.wrl
+Output VRML 2.0 file: g4_02.wrl
 Maximum number of files in the destination directory: 100
   (Customizable with the environment variable: G4VRMLFILE_MAX_FILE_NUM) 
 ===========================================
-*** VRML 2.0 File  g4_04.wrl  is generated.
+*** VRML 2.0 File  g4_02.wrl  is generated.
 MESSAGE from VRML2FILE driver:
     Set an environmental variable  G4VRMLFILE_VIEWER
     if you want to visualize the generated VRML file
     automatically.  For example, 
     setenv  G4VRMLFILE_VIEWER  vrwave 
+ALSO you may change the file header with G4VRMLFILE_HEADER
+    or the whole filename with G4VRMLFILE_FILE_NAME
 /run/beamOn 10000
+=======================================================================
+======                 Electromagnetic Physics Parameters      ========
+=======================================================================
+LPM effect enabled                                 1
+Enable creation and use of sampling tables         0
+Apply cuts on all EM processes                     0
+Use general process                                0
+Enable linear polarisation for gamma               0
+Enable sampling of quantum entanglement            0
+X-section factor for integral approach             0.8
+Min kinetic energy for tables                      100 eV 
+Max kinetic energy for tables                      100 TeV
+Number of bins per decade of a table               7
+Verbose level                                      1
+Verbose level for worker thread                    0
+Bremsstrahlung energy threshold above which 
+  primary e+- is added to the list of secondary    100 TeV
+Bremsstrahlung energy threshold above which primary
+  muon/hadron is added to the list of secondary    100 TeV
+Lowest triplet kinetic energy                      1 MeV
+Enable sampling of gamma linear polarisation       0
+5D gamma conversion model type                     0
+5D gamma conversion model on isolated ion          0
+Livermore data directory                           livermore
+=======================================================================
+======                 Ionisation Parameters                   ========
+=======================================================================
+Step function for e+-                              (0.2, 1 mm)
+Step function for muons/hadrons                    (0.2, 0.1 mm)
+Step function for light ions                       (0.2, 0.1 mm)
+Step function for general ions                     (0.2, 0.1 mm)
+Lowest e+e- kinetic energy                         1 keV
+Lowest muon/hadron kinetic energy                  1 keV
+Fluctuations of dE/dx are enabled                  1
+Use ICRU90 data                                    0
+Use built-in Birks satuaration                     0
+Build CSDA range enabled                           0
+Use cut as a final range enabled                   0
+Enable angular generator interface                 0
+Max kinetic energy for CSDA tables                 1 GeV
+Max kinetic energy for NIEL computation            0 eV 
+Linear loss limit                                  0.01
+Read data from file for e+e- pair production by mu 0
+=======================================================================
+======                 Multiple Scattering Parameters          ========
+=======================================================================
+Type of msc step limit algorithm for e+-           1
+Type of msc step limit algorithm for muons/hadrons 0
+Msc lateral displacement for e+- enabled           1
+Msc lateral displacement for muons and hadrons     0
+Urban msc model lateral displacement alg96         1
+Range factor for msc step limit for e+-            0.04
+Range factor for msc step limit for muons/hadrons  0.2
+Geometry factor for msc step limitation of e+-     2.5
+Safety factor for msc step limit for e+-           0.6
+Skin parameter for msc step limitation of e+-      1
+Lambda limit for msc step limit for e+-            1 mm
+Use Mott correction for e- scattering              0
+Factor used for dynamic computation of angular 
+  limit between single and multiple scattering     1
+Fixed angular limit between single 
+  and multiple scattering                          3.1416 rad
+Upper energy limit for e+- multiple scattering     100 MeV
+Type of electron single scattering model           0
+Type of nuclear form-factor                        1
+Screening factor                                   1
+=======================================================================
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
-### ===  Auger cascade flag: 0
+### ===  Auger flag: 1
 ### ===  Ignore cuts flag:   0
 
 phot:  for gamma SubType=12 BuildTable=0
       LambdaPrime table from 200 keV to 100 TeV in 61 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermorePhElectric : Emin=    0 eV  Emax=    1 GeV  SauterGavrila Fluo
-       PhotoElectric : Emin=    1 GeV Emax=  100 TeV  SauterGavrila Fluo
+       PhotoElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
 
 compt:  for gamma SubType=13 BuildTable=1
       Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
       LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-    LivermoreCompton : Emin=    0 eV  Emax=    1 GeV Fluo
-       Klein-Nishina : Emin=    1 GeV Emax=  100 TeV
+       Klein-Nishina : Emin=    0 eV  Emax=  100 TeV
 
 conv:  for gamma SubType=14 BuildTable=1
       Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
- LivermoreConversion : Emin=    0 eV  Emax=    1 GeV
-     BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+     BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
       Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
@@ -173,35 +239,16 @@ Rayl:  for gamma SubType=11 BuildTable=1
 msc:  for e-  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+          StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  SubType=2
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-       LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
-        MollerBhabha : Emin=    1 GeV Emax=  100 TeV
-
-eBrem:  for e-  SubType=3
-      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-           LowEnBrem : Emin=    0 eV  Emax=    1 GeV  AngularGen2BS
-            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
-
-msc:  for e+  SubType= 10
-      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
-
-eIoni:  for e+  SubType=2
+eIoni:  for e-  XStype:1  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
-eBrem:  for e+  SubType=3
+eBrem:  for e-  XStype:4  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
@@ -209,11 +256,19 @@ eBrem:  for e+  SubType=3
              eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
             eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
 
-annihil:  for e+, integral:1  SubType=5 BuildTable=0
+msc:  for e+  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+          StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-========= Table of registered couples ==============================
+eIoni:  for e+  XStype:1  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ============================
 
 Index : 0     used in the geometry : Yes
  Material : G4_AIR
@@ -225,49 +280,48 @@ Index : 0     used in the geometry : Yes
 Index : 1     used in the geometry : Yes
  Material : G4_WATER
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  1.10981 keV    e-  84.6589 keV    e+  83.5287 keV proton -1 MeV
+ Energy thresholds :  gamma  1.11075 keV    e-  85.0445 keV    e+  83.9021 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
 Index : 2     used in the geometry : Yes
  Material : G4_Al
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  2.3478 keV    e-  131.031 keV    e+  128.416 keV proton -1 MeV
+ Energy thresholds :  gamma  2.34157 keV    e-  131.218 keV    e+  128.746 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
 Index : 3     used in the geometry : Yes
  Material : G4_Si
  Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
- Energy thresholds :  gamma  2.32425 keV    e-  121.694 keV    e+  120.07 keV proton -1 MeV
+ Energy thresholds :  gamma  2.3205 keV    e-  121.85 keV    e+  119.642 keV proton -1 MeV
  Region(s) which use this couple : 
     DefaultRegionForTheWorld
 
-====================================================================
+==================================================================
 
 /vis/scene/notifyHandlers scene-0
 G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
 See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
+ CreateHisto1D GmStepDataHistosUA_containerInFilter_GmClassifierByPhysicalVolume:container:2:AccumulatedEnergyDeposited = 130000101
+ CreateHisto1D GmStepDataHistosUA_detector2EnterFilter_GmPrimaryFilter:log10(FinalKineticEnergy) = 112000001
+ CreateHisto1D GmStepDataHistosUA_detectorInFilter_ancestorsClassifier:container:2/detector:1:AccumulatedEnergyDeposited = 995002101
 ===========================================
-Output VRML 2.0 file: g4_05.wrl
+Output VRML 2.0 file: g4_03.wrl
 Maximum number of files in the destination directory: 100
   (Customizable with the environment variable: G4VRMLFILE_MAX_FILE_NUM) 
 ===========================================
- CreateHisto1D GmStepDataHistosUA_containerInFilter_GmClassifierByPhysicalVolume:container:1:AccumulatedEnergyDeposited = 617000101
- CreateHisto1D GmStepDataHistosUA_detectorInFilter_ancestorsClassifier:container:1/detector:1:AccumulatedEnergyDeposited = 216001101
- CreateHisto1D GmStepDataHistosUA_containerInFilter_GmClassifierByPhysicalVolume:container:2:AccumulatedEnergyDeposited = 617000201
- CreateHisto1D GmStepDataHistosUA_detector2EnterFilter_GmPrimaryFilter:log10(FinalKineticEnergy) = 785000001
- CreateHisto1D GmStepDataHistosUA_detectorInFilter_ancestorsClassifier:container:2/detector:1:AccumulatedEnergyDeposited = 216002101
+ CreateHisto1D GmStepDataHistosUA_containerInFilter_GmClassifierByPhysicalVolume:container:1:AccumulatedEnergyDeposited = 130000201
+ CreateHisto1D GmStepDataHistosUA_detectorInFilter_ancestorsClassifier:container:1/detector:1:AccumulatedEnergyDeposited = 995001101
 WARNING: G4VisManager::EndOfEvent: Automatic event keeping suspended.
   The number of events exceeds the maximum, 100, that may be kept by
   the vis manager.
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=0.910000s Real=0.919179s Sys=0.010000s
+  User=0.280000s Real=0.291207s Sys=0.010000s
 100 events have been kept for refreshing and/or reviewing.
-
   "/vis/reviewKeptEvents" to review them one by one.
   "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
 WARNING: G4VisManager::EndOfRun: Automatic event keeping was suspended.
@@ -276,17 +330,19 @@ WARNING: G4VisManager::EndOfRun: Automatic event keeping was suspended.
   The number of events kept by the vis manager can be changed with
   "/vis/scene/endOfEventAction accumulate <N>", where N is the
   maximum number you wish to allow.  N < 0 means "unlimited".
-*** VRML 2.0 File  g4_05.wrl  is generated.
+*** VRML 2.0 File  g4_03.wrl  is generated.
 MESSAGE from VRML2FILE driver:
     Set an environmental variable  G4VRMLFILE_VIEWER
     if you want to visualize the generated VRML file
     automatically.  For example, 
     setenv  G4VRMLFILE_VIEWER  vrwave 
+ALSO you may change the file header with G4VRMLFILE_HEADER
+    or the whole filename with G4VRMLFILE_FILE_NAME
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 GmStepDataHistosUA_containerInFilter_GmClassifierByPhysicalVolume.exercise2:NormalizeToNEvents
-=== saving histograms in file === GmStepDataHistosUA_containerInFilter_GmClassifierByPhysicalVolume.exercise2.root
+=== saving histograms in file === GmStepDataHistosUA_containerInFilter_GmClassifierByPhysicalVolume.exercise2.csv
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 GmStepDataHistosUA_detector2EnterFilter_GmPrimaryFilter.exercise2:NormalizeToNEvents
-=== saving histograms in file === GmStepDataHistosUA_detector2EnterFilter_GmPrimaryFilter.exercise2.root
+=== saving histograms in file === GmStepDataHistosUA_detector2EnterFilter_GmPrimaryFilter.exercise2.csv
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 GmStepDataHistosUA_detectorInFilter_ancestorsClassifier.exercise2:NormalizeToNEvents
-=== saving histograms in file === GmStepDataHistosUA_detectorInFilter_ancestorsClassifier.exercise2.root
+=== saving histograms in file === GmStepDataHistosUA_detectorInFilter_ancestorsClassifier.exercise2.csv

@@ -7,6 +7,8 @@
 #include "GmGenerDistDirectionCone2D.hh"
 #include "GmGenerDistDirectionConeGaussian.hh"
 #include "GmGenerDistDirectionCone2DGaussian.hh"
+#include "GmGenerDistPositionDirection2DCorrelGaussian.hh"
+#include "GmGenerDistPositionDirection2DCorrelDoubleGaussian.hh"
 #include "GmGenerDistPositionDisc.hh" 
 #include "GmGenerDistPositionDiscGaussian.hh" 
 #include "GmGenerDistEnergyConstant.hh"
@@ -98,13 +100,13 @@ void RTVPlanSource::Initialize( const G4String& partName)
 void RTVPlanSource::InitializeDistributions()
 {
 
-  theTimeDistribution = new GmGenerDistTimeConstant;
+  SetDistributionTime(new GmGenerDistTimeConstant);
 
   theParamMgr = GmParameterMgr::GetInstance();
   theActivity = 1.*CLHEP::becquerel;
   thePositionDistribution2D = 0;  
   if( !thePositionDistribution ) {
-    thePositionDistribution = new GmGenerDistPositionDisc;
+    SetDistributionPosition(new GmGenerDistPositionDisc);
     static_cast<GmGenerDistPositionDisc*>(thePositionDistribution)->SetRadius(1.);
     G4Exception("RTVPlanSource::RTVPlanSource",
 		"",
@@ -120,7 +122,7 @@ void RTVPlanSource::InitializeDistributions()
 		  ("Position distribution must be a 2D one (Disc, DiscGaussian, Square, Rectangle) while it is of type " + thePositionDistribution->GetName()).c_str() );
   }
   if( !theDirectionDistribution ) {
-    theDirectionDistribution = new GmGenerDistDirectionConst;
+    SetDistributionDirection(new GmGenerDistDirectionConst); // set also ParticleSource pointer
     std::vector<G4String> paramsD;
     paramsD.push_back("0.");
     paramsD.push_back("0.");
@@ -136,10 +138,10 @@ void RTVPlanSource::InitializeDistributions()
   if( theEnergySigma == 0. ) {
     bEGauss = false;
     //dummy distribution, not used
-    theEnergyDistribution = new GmGenerDistEnergyConstant;
+    SetDistributionEnergy(new GmGenerDistEnergyConstant);
   } else {
     bEGauss = true;
-    theEnergyDistribution = new GmGenerDistEnergyGaussian;
+    SetDistributionEnergy(new GmGenerDistEnergyGaussian);
   }
 
   bIsocenterAtZero = G4bool(theParamMgr->GetNumericValue(theName+":IsocenterAtZero",1));
@@ -201,9 +203,9 @@ G4PrimaryVertex* RTVPlanSource::GenerateVertex( G4double time )
   if( theRTPlanMgr->IsChangedBeamState() ) {
     //---- New BeamState data
     std::vector<G4String> paramsE;
-    //    G4ThreeVector position = G4ThreeVecor(bsdata.PositionX,bsdata.PositionY,bsdata.PositionZ);
+    //    G4ThreeVector position = G4ThreeVector(bsdata.PositionX,bsdata.PositionY,bsdata.PositionZ);
     
-    theEnergy = bsdata.Energy;
+    theEnergy = bsdata.Energy;    
     if( bEGauss ) { 
       paramsE.push_back(GmGenUtils::ftoa(theEnergy));
       paramsE.push_back(GmGenUtils::ftoa(theEnergySigma));
@@ -211,6 +213,14 @@ G4PrimaryVertex* RTVPlanSource::GenerateVertex( G4double time )
       paramsE.push_back(GmGenUtils::ftoa(theEnergy));
     }
     theEnergyDistribution->SetParams( paramsE );
+
+    //    G4cout << " CHANGED BEAM STATE " << bsdata.Energy << G4endl; //GDEB
+    if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(thePositionDistribution) != 0 ) {
+      GmGenerDistPositionDirection2DCorrelDoubleGaussian* posDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution);
+      posDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy));
+    }
+      
+      
     MoveBeam( bsdata );
     SetSpotSize( thePositionDistribution2D, bsdata );
     
@@ -225,7 +235,7 @@ G4PrimaryVertex* RTVPlanSource::GenerateVertex( G4double time )
 	G4Exception("",
 		    "",
 		    FatalException,
-		    ("Time distribution : "+theTimeDistribution->GetName()+" must be of type GmGenerDistTimeConstantChange").c_str());
+		    ("Time distribution : "+theTimeDistribution->GetName()+" must be of type GmGenerDistTimeConstantChange if '/P PTBeamProtonsPerMU:FileName' is used").c_str());
       }
       timeDistCC->SetInterval(CLHEP::second/theTimeEnergyDataDistribution->GetNumericValueFromIndex(bsdata.Energy));
       time += GenerateTime();
@@ -286,6 +296,23 @@ void RTVPlanSource::AssociatePlanVolumes( std::vector<G4String> wl )
   }
 
   theRTPlanVoluAssoc[wl[1]] = wl[2];
+  
+}
+
+//------------------------------------------------------------------------
+void RTVPlanSource::AssociatePlanLimitingDeviceAngle( std::vector<G4String> wl )
+{
+  if( wl.size() != 2 ) {
+    G4Exception("RTVPlanSource::AssociatePlanLimitingDeviceAngle",
+		"",
+		FatalException,
+		("Command should have twowords: SOURCE_NAME GEOMETRY_VOLUME_NAME , while it has " + GmGenUtils::itoa(wl.size())).c_str());
+  }
+
+  theLDAVolu = wl[1];
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) ) G4cout << " RTVPlanSource::AssociatePlanLimitingDeviceAngle" << theLDAVolu << G4endl;
+#endif
   
 }
 
@@ -409,6 +436,23 @@ void RTVPlanSource::BuildRTPlan2G4Associations()
 		"It is requested to move accelerator, but theres is no accelerator volume. Please use /gamos/generator/RTPlan/defineAcceleratorVolume");
     */
   }
+
+
+  if( theLDAVolu != "" ) {
+    std::vector<G4VPhysicalVolume*> PVs = GmGeometryUtils::GetInstance()->GetPhysicalVolumes(theLDAVolu);
+    if( PVs.size() != 1 ) {
+      G4Exception("RTVPlanSource::AssociatePlanVolumes",
+		  "",
+		  FatalException,
+		  ("There can only be one physical volume associated to LimitingDeviceAngle "+theLDAVolu).c_str());
+    }
+    theLDAG4PV = PVs[0];
+  } else {
+    G4Exception("RTVPlanSource::AssociatePlanVolumes",
+		"",
+		JustWarning,
+		"No volume associated to LimitingDeviceAngle, use /gamos/generator/RTPlan/associatePlanLimitingDeviceAngle <VOLUME_NAME> ");
+  }
   
 }
 
@@ -448,7 +492,7 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
       if( pname.substr(0,4) == "BLD_" && pname.substr(pname.length()-2,2) == "_Z" ) {
 	G4String rtVName = pname.substr(4,pname.length()-6);
 	if( rtVName == rtVol2G4Name ) {
-	  posZ = -(*itep).second; // DICOM gives Positions of botomm of JAWS/MLC as a positive number (distance to origin)
+	  posZ = -(*itep).second; // DICOM gives Positions of botomm of JAWS/MLC as a positive number  (distance to origin)
 #ifndef GAMOS_NO_VERBOSE
 	  if( GenerVerb(debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator " << rtVol2G4Name << " position Z " << posZ << G4endl;
 #endif
@@ -590,6 +634,7 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
 
       //----- REPLACE Z POSITION IN GmModuleMLC
       posZ -= GmGenUtils::GetValue(gmModule->GetParam("Z_GAP"));// substract length_Z (Z_GAP is interpreted to be = leaf length !!! (Z_GAP is negative and position in RTPlanBeam is of bottom=farthest to beam)
+      
       gmModule->ReplaceParam("Z_TOP", GmGenUtils::ftoa(posZ)); 
       
       //----- BUILD G4tgr OBJECTS
@@ -691,24 +736,30 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
   //-- Rotate and move Accelerator
   if( bIsocenterAtZero && theAcceleratorPV ) { // beam is rotated, rotate also accelerator
     G4double angleGantry = bsdata.RotAngleY;
-    G4double pitchAngleGantry = bsdata.RotAngleZ;
+    G4double pitchAngleGantry = bsdata.RotAngleX;
+    G4double limitingDeviceAngle = bsdata.RotAngleZ;
     G4ThreeVector accelPos = G4ThreeVector(0.,0.,bsdata.SourceAxisDistanceX);
-    if( angleGantry*pitchAngleGantry != 0 ) {
+    //??    if( angleGantry*pitchAngleGantry != 0 ) {
       accelPos += theAcceleratorInitialPos;
       G4RotationMatrix* accelRM = new G4RotationMatrix();
       if( angleGantry != 0 ) {
 	accelPos.rotateY(angleGantry);
 	accelRM->rotateY(-angleGantry);
       }
-      if( angleGantry*pitchAngleGantry != 0 ) {
-	accelPos.rotateZ(pitchAngleGantry);
-	accelRM->rotateZ(-pitchAngleGantry);
-      }
+      // ??     if( angleGantry*pitchAngleGantry != 0 ) {
+      accelPos.rotateX(pitchAngleGantry);
+      accelRM->rotateX(-pitchAngleGantry);
+      //  }
+      //??  if( angleGantry*pitchAngleGantry != 0 ) {
+      accelPos.rotateZ(limitingDeviceAngle-theLastLimitingDeviceAngle);
+      accelRM->rotateZ(-limitingDeviceAngle+theLastLimitingDeviceAngle);
+      theLastLimitingDeviceAngle = limitingDeviceAngle;
+      // }
       theAcceleratorPV->SetRotation(accelRM);
 #ifndef GAMOS_NO_VERBOSE
       if( GenerVerb(debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator initial Accelerator new rotation " << *accelRM << G4endl;
 #endif
-    }
+      //??    }
     theAcceleratorPV->SetTranslation(accelPos);
 #ifndef GAMOS_NO_VERBOSE
       if( GenerVerb(debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator initial Accelerator position " << theAcceleratorInitialPos << " + " << G4ThreeVector(0.,0.,bsdata.SourceAxisDistanceX) << " new " << accelPos << G4endl;
@@ -717,7 +768,7 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
   }
 
   //---- Rotate around accelerator axis
-  G4double limitingDeviceAngle = bsdata.LimitingDeviceAngle*CLHEP::deg;
+  G4double limitingDeviceAngle = bsdata.LimitingDeviceAngle; //??*CLHEP::deg;
   if( theAcceleratorPV && limitingDeviceAngle != 0. ) {
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(-debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator limitingDeviceAngle " << limitingDeviceAngle/CLHEP::deg << G4endl;
@@ -726,15 +777,31 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
     G4RotationMatrix* accelRM = theAcceleratorPV->GetRotation();
     accelAxis *= *accelRM;
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(-debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator initial accelAxis after accelRM " << accelAxis << " " << *accelRM << G4endl;
+    if( GenerVerb(debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator initial accelAxis after accelRM " << accelAxis << " " << *accelRM << G4endl;
 #endif
-    accelRM->rotate(-limitingDeviceAngle,accelAxis);
+    accelRM->rotate(-limitingDeviceAngle+theLastLimitingDeviceAngle,accelAxis);
+    theLastLimitingDeviceAngle = limitingDeviceAngle;
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator accelRM after limitingDeviceAngle " << *accelRM << G4endl;
 #endif
     theAcceleratorPV->SetRotation(accelRM);
   }
   
+
+  G4RotationMatrix* rotmat = const_cast<G4RotationMatrix*>(theLDAG4PV->GetFrameRotation());
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(testVerb) ) G4cout << " theLDAG4PV rotmat " << *rotmat << G4endl; 
+#endif
+  //-  G4double limitingDeviceAngle = bsdata.ControlPoint->GetParam("LimitingDeviceAngle");
+  rotmat->rotateZ(limitingDeviceAngle-theLastLimitingDeviceAngle);
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(testVerb) ) G4cout << " theLDAG4PV rotmat AFTER " << (limitingDeviceAngle-theLastLimitingDeviceAngle)/CLHEP::deg << " " << *rotmat << G4endl;
+#endif
+  theLastLimitingDeviceAngle = limitingDeviceAngle;
+  theLDAG4PV->SetRotation(rotmat);
+
+  geomMgr->CloseGeometry();
+
   // Notify the VisManager as well
   G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
   if(pVVisManager) pVVisManager->GeometryHasChanged();
@@ -815,7 +882,7 @@ void RTVPlanSource::MovePhantom(const RTBeamStateData& bsdata )
       rotMatGA.rotate(-bsdata.RotAngleZ,direcPerp);
       //      rotMatGA.rotateX(bsdata.RotAngleZ);
 #ifndef GAMOS_NO_VERBOSE
-      if( GenerVerb(testVerb) ) G4cout << "RTVPlanSource::MovePhantom unit rotMat after rotation GantryPitchAngle   " << bsdata.RotAngleZ/CLHEP::deg << " direcPerp " << direcPerp << "  " << rotMatGA << G4endl;
+      if( GenerVerb(testVerb) ) G4cout << "RTVPlanSource::MovePhantom unit rotMat after rotation GantryPitchAngle   " << bsdata.RotAngleX/CLHEP::deg << " direcPerp " << direcPerp << "  " << rotMatGA << G4endl;
 #endif
     }
     //  phantomRotMat->rotateY(-bsdata.RotAngleY);
@@ -940,25 +1007,39 @@ void RTVPlanSource::MoveBeam(const RTBeamStateData& bsdata)
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam position rotated Gantry Angle " << bsdata.RotAngleY/CLHEP::deg << " " << position << G4endl;
 #endif
-    if( bsdata.RotAngleZ != 0. ) { 
+    if( bsdata.RotAngleX != 0. ) { 
       G4ThreeVector direcPerp = direction.cross(G4ThreeVector(0.,1.,0.));
-      position.rotate(bsdata.RotAngleZ,direcPerp); // GantryPitchAngle
+      position.rotate(bsdata.RotAngleX,direcPerp); // GantryPitchAngle
 #ifndef GAMOS_NO_VERBOSE
       if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam position rotated Gantry Pitch Angle " << bsdata.RotAngleZ/CLHEP::deg << " " << position << G4endl;
 #endif
     }
+    if( bsdata.RotAngleZ != 0. ) { 
+      G4ThreeVector dirGantry = G4ThreeVector(0.,0.,-1.);
+#ifndef GAMOS_NO_VERBOSE
+      if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction Perp " << dirGantry << G4endl;
+#endif
+      direction.rotate(bsdata.RotAngleZ,dirGantry); // LimitingDeviceAngle
+#ifndef GAMOS_NO_VERBOSE
+      if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction rotated divergence+LimitingDeviceAngle " << bsdata.RotAngleZ/CLHEP::deg << " " << direction << G4endl;
+#endif
+    }
+
   }
 
   pos2D->SetCentre( position );
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam centre " << position << G4endl;
+#endif
   
   //@@@@@ SET BEAM DIRECTION
   //--- Beam divergence: it starts at PosX/Y = 0 and reaches bsdata.PositionX/Y after SourceAxisDistance
   G4double rotDivergY = -(bsdata.PositionX/bsdata.SourceAxisDistanceX); 
   G4double rotDivergZ = -(bsdata.PositionY/bsdata.SourceAxisDistanceY);
-  //  G4cout << "@@@@  RTVPlanSource::MoveBeam rotDivergY= " << rotDivergY << " rotDivergZ " << rotDivergZ << G4endl;  //GDEB
+  //  G4cout << "@@@@  RTVPlanSource::MoveBeam rotDivergY " << rotDivergY << " rotDivergZ " << rotDivergZ << G4endl;  //GDEB
 
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction as IEC 61217 " << direction << G4endl;
+  if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction as IEC 61217 " << direction << " rotDivergY " << rotDivergY << " rotDivergZ " << rotDivergZ << G4endl<< G4endl;
 #endif
   /*  if( !bIsocenterAtZero ) {
     angleY = rotDivergY;
@@ -981,7 +1062,7 @@ void RTVPlanSource::MoveBeam(const RTBeamStateData& bsdata)
     G4double diry = rotDivergZ*dirz;
     direction = G4ThreeVector(dirx,diry,dirz).unit();
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction rotated divergence Y & Z " << rotDivergY << " " << rotDivergZ << " = " << direction << G4endl;
+    if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction rotated divergence Y & Z " << rotDivergY << " " << rotDivergZ << " dir= " << direction << G4endl;
 #endif
   }
 
@@ -994,16 +1075,26 @@ void RTVPlanSource::MoveBeam(const RTBeamStateData& bsdata)
 #endif
     }
     
-    if( bsdata.RotAngleZ != 0. ) { // not very likely ...
+    if( bsdata.RotAngleX != 0. ) { 
       G4ThreeVector dirGantry = G4ThreeVector(0.,0.,-1.).rotateY(bsdata.RotAngleY);
       G4ThreeVector direcPerp = dirGantry.cross(G4ThreeVector(0.,1.,0.)); 
 #ifndef GAMOS_NO_VERBOSE
       if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction Perp " << direcPerp << G4endl;
 #endif
-      direction.rotate(bsdata.RotAngleZ,direcPerp); // GantryPitchAngle
+      direction.rotate(bsdata.RotAngleX,direcPerp); // GantryPitchAngle
       //      rotMatPosition.rotateZ(angleZ);
 #ifndef GAMOS_NO_VERBOSE
-      if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction rotated divergence+GantryPitchAngle " << bsdata.RotAngleZ/CLHEP::deg << " " << direction << G4endl;
+      if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction rotated divergence+GantryPitchAngle " << bsdata.RotAngleX/CLHEP::deg << " " << direction << G4endl;
+#endif
+    }
+    if( bsdata.RotAngleZ != 0. ) { 
+      G4ThreeVector dirGantry = G4ThreeVector(0.,0.,-1.);
+#ifndef GAMOS_NO_VERBOSE
+      if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction Perp " << dirGantry << G4endl;
+#endif
+      direction.rotate(bsdata.RotAngleZ,dirGantry); // LimitingDeviceAngle
+#ifndef GAMOS_NO_VERBOSE
+      if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam direction rotated divergence+LimitingDeviceAngle " << bsdata.RotAngleZ/CLHEP::deg << " " << direction << G4endl;
 #endif
     }
   }
@@ -1014,10 +1105,28 @@ void RTVPlanSource::MoveBeam(const RTBeamStateData& bsdata)
   pos2D->SetRotation( direction180Y );
   */
   //  pos2D->SetRotation( rotMatPosition );
-  pos2D->SetRotation( direction );
+  //t  pos2D->SetRotation( direction );
   
   //@@@ Set direction of direction distribution
-  GmGenerDistDirectionConst* dirConst = dynamic_cast< GmGenerDistDirectionConst*>(theDirectionDistribution);
+  G4bool bDirOK = false;
+  if( dynamic_cast< GmGenerDistDirectionConst*>(theDirectionDistribution) != 0 ||
+      dynamic_cast< GmGenerDistDirectionCone*>(theDirectionDistribution) != 0 ||
+      dynamic_cast< GmGenerDistDirectionCone2D*>(theDirectionDistribution) != 0 || 
+      dynamic_cast< GmGenerDistDirectionConeGaussian*>(theDirectionDistribution) != 0 || 
+      dynamic_cast< GmGenerDistDirectionCone2DGaussian*>(theDirectionDistribution) != 0 ||
+      dynamic_cast< GmGenerDistDirectionCone*>(theDirectionDistribution) != 0 ||
+      dynamic_cast< GmGenerDistPositionDirection2DCorrelGaussian*>(theDirectionDistribution) != 0 || 
+      dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution) ) { 
+    GmVGenerDistDirection* dirDist = dynamic_cast< GmVGenerDistDirection*>(theDirectionDistribution);
+    dirDist->SetDirection( direction );
+  } else {
+    G4Exception("RTVPlanSource::MoveBeam",
+		"",
+		FatalException,
+		G4String(" Direction distribution is not of type GmGenerDistDirectionConst/GmGenerDistDirectionCone/GmGenerDistDirectionCone2D/GmGenerDistDirectionConeGaussian/GmGenerDistDirectionCone2DGaussian/GmGenerDistPositionDirection2DCorrelGaussian/GmGenerDistPositionDirection2DCorrelDoubleGaussian").c_str());
+  }
+
+/*  GmGenerDistDirectionConst* dirConst = dynamic_cast< GmGenerDistDirectionConst*>(theDirectionDistribution);
   if( dirConst ) {
     dirConst->SetDirection(direction);
   } else {
@@ -1045,8 +1154,8 @@ void RTVPlanSource::MoveBeam(const RTBeamStateData& bsdata)
 	}
       }
     }
-  }
-  
+    }*/
+
 }
 
 //------------------------------------------------------------------------

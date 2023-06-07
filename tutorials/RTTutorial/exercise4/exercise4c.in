@@ -21,10 +21,10 @@
 
 /run/initialize
 
-/gamos/userAction GmTimeStudyUA GmClassifierByRegion
+#/gamos/userAction GmTimeStudyUA GmClassifierByRegion
 /gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-7 1.E1 10.
 /gamos/classifier ClassifierParticleAndKinEnergy GmCompoundClassifier GmClassifierByParticle energyClassifier
-/gamos/userAction GmTimeStudyUA  ClassifierParticleAndKinEnergy 
+#/gamos/userAction GmTimeStudyUA  ClassifierParticleAndKinEnergy 
 
 /gamos/scoring/createMFDetector doseDet phantom
 /gamos/scoring/addScorer2MFD doseScorerTotal GmG4PSDoseDeposit doseDet

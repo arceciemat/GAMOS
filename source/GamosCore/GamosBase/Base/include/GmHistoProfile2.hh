@@ -16,6 +16,8 @@ public:
   double GetBinContent(int ibinX, int ibinY) const;
   double GetBinError(int ibinX, int ibinY) const;
 
+  virtual void Reset();
+
 private:
   friend GmHistoProfile2 operator+(const GmHistoProfile2 &h1, const GmHistoProfile2 &h2);
   

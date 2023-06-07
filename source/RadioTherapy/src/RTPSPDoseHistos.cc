@@ -218,7 +218,7 @@ void RTPSPDoseHistos::FillHisto1N_Z( std::vector<G4String>& wl  )
 void RTPSPDoseHistos::FillHisto1N_X( const G4String& hisName, G4double nXmin, G4double nXmax, G4double nYmin, G4double nYmax, G4double nZmin, G4double nZmax, G4double )
 { 
 #ifndef GAMOS_NO_VERBOSE
-  if( RTVerb(debugVerb) ) G4cout << " FillHisto1N_X " << hisName 
+  if( RTVerb(-debugVerb) ) G4cout << " FillHisto1N_X " << hisName 
 	 << " nXmin " << nXmin << " nXmax " << nXmax 
 	 << " nYmin " << nYmin << " nYmax " << nYmax 
 	 << " nZmin " << nZmin << " nZmax " << nZmax 
@@ -276,7 +276,7 @@ void RTPSPDoseHistos::FillHisto1N_X( const G4String& hisName, G4double nXmin, G4
     }
     dose *= fraction;
     doseError *= fraction;
-    //    G4cout << " FILLX " << copyNo << " " << ix << " " << iy << " " << iz << " hx " << hx << " = " << dose << " +- " << doseError << G4endl; //GDEB
+    //    if( fraction != 0 ) G4cout << " FILLX " << copyNo << " " << ix << " " << iy << " " << iz << " hx " << hx << " = " << dose << " +- " << doseError << " REL " << G4endl; //GDEB
     G4double hError = his->GetBinError(ix+1);
     his->Fill( hx, dose );
     his->SetBinError(ix+1, sqrt(sqr(hError)+sqr(doseError)));

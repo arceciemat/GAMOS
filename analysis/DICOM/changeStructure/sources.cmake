@@ -1,31 +1,19 @@
-#------------------------------------------------------------------------------
-# Module : changeStructure
-# Package: DICOM_changeStructure
-#
-#------------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME changeStructure
-	 HEADERS
-		DCMChangeStructure.hh
-	 SOURCES
-		DCMChangeStructure.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-		${DCMTK_LIBRARIES} 
-	DICOMBase
-	DICOMReaders
-	DICOM2G4
+# - GAMOS_analysis_DICOM_changeStructure module build definition
 
-	LINK_LIBRARIES
+include(UseGamosAtGeant4)
+
+geant4_add_module(GAMOS_analysis_DICOM_changeStructure
+  PUBLIC_HEADERS
+    DCMChangeStructure.hh
+  SOURCES
+    DCMChangeStructure.cc
+)
+geant4_module_link_libraries(GAMOS_analysis_DICOM_changeStructure
+  PUBLIC
+    ${Geant4_libs}
+    ${ROOT_LIBRARIES}
+    DICOMBase
+    DICOMReaders
+    DICOM2G4
+    ${SEAL_LIBRARIES} 
 )

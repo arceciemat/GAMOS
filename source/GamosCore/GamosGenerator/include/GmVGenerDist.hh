@@ -10,7 +10,9 @@ enum EFFCalcType { EFFCT_Fixed, EFFCT_Histogram, EFFCT_Interpolate, EFFCT_Interp
 class GmVGenerDist
 {
 public:
-  GmVGenerDist(){};
+  GmVGenerDist(){
+    theParticleSource = 0;
+  };
   virtual ~GmVGenerDist(){};
 
   virtual void SetParams( const std::vector<G4String>& wl ){

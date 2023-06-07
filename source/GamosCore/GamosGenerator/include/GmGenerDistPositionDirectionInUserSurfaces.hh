@@ -13,7 +13,7 @@ public:
   virtual ~GmGenerDistPositionDirectionInUserSurfaces(){};
 
   void SetParams( const std::vector<G4String>& params );
-  virtual G4ThreeVector GenerateDirection( const GmParticleSource* source );
+  virtual G4ThreeVector GenerateDirection( GmParticleSource* source );
 
 private:
 

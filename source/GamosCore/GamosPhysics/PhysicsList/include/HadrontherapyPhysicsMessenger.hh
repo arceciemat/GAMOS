@@ -23,14 +23,8 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// This is the *BASIC* version of Hadrontherapy, a Geant4-based application
-// See more at: http://g4advancedexamples.lngs.infn.it/Examples/hadrontherapy
-//
-// Visit the Hadrontherapy web site (http://www.lns.infn.it/link/Hadrontherapy) to request 
-// the *COMPLETE* version of this program, together with its documentation;
-// Hadrontherapy (both basic and full version) are supported by the Italian INFN
-// Institute in the framework of the MC-INFN Group
-//
+// Hadrontherapy advanced example for Geant4
+// See more at: https://twiki.cern.ch/twiki/bin/view/Geant4/AdvancedExamplesHadrontherapy
 
 #ifndef HadrontherapyPhysicsMessenger_h
 #define HadrontherapyPhysicsMessenger_h 1
@@ -59,12 +53,7 @@ private:
   HadrontherapyPhysics* pPhysicsList;
     
   G4UIdirectory*             physDir;        
-  G4UIcmdWithADoubleAndUnit* gammaCutCmd;
-  G4UIcmdWithADoubleAndUnit* electCutCmd;
-  G4UIcmdWithADoubleAndUnit* protoCutCmd;    
-  G4UIcmdWithADoubleAndUnit* allCutCmd;    
-  G4UIcmdWithADoubleAndUnit* allDetectorCmd;    
-  G4UIcmdWithAString*        pListCmd;
+    G4UIcmdWithAString*      pListCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -43,7 +43,6 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
   theFileName = fileName;
   bDefaultNormalize = true;  
   bNormalizeToNEvents = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theFileName+":NormalizeToNEvents",bDefaultNormalize));
-  //  G4cout << " NormalizeToNEvents " << theFileName+":NormalizeToNEvents = " <<bNormalizeToNEvents << G4endl; //GDEB
   
   G4String prefix = GmParameterMgr::GetInstance()->GetStringValue("GmAnalysisMgr:FileNamePrefix","");
   theFileName = prefix + theFileName;
@@ -61,7 +60,8 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
 
   if( theFileFormats.size() == 0 ){
 #ifndef GAMOS_NO_ROOT
-    theFileFormats.insert("root");
+    //    theFileFormats.insert("root");
+    theFileFormats.insert("csv");
 #else
     theFileFormats.insert("csv");
 #endif
@@ -86,7 +86,7 @@ GmAnalysisMgr::~GmAnalysisMgr()
 { 
 
   G4cout << " GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents " << bNormalizeToNEvents << " " << theFileName+":NormalizeToNEvents" << G4endl;
-  Normalize();
+  //  Normalize();
 
   if( G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theFileName+":DeleteEmptyHistos",0)) ) DeleteEmptyHistos();
 
@@ -151,14 +151,14 @@ void GmAnalysisMgr::Normalize()
 }
 
 //----------------------------------------------------------------------
-void GmAnalysisMgr::SetFileFormat( G4String& ff ) 
+void GmAnalysisMgr::SetFileFormat( G4String ff ) 
 {
   theFileFormats.clear();
   AddFileFormat( ff ); 
 }
  
 //----------------------------------------------------------------------
-void GmAnalysisMgr::AddFileFormat( G4String& ff ) 
+void GmAnalysisMgr::AddFileFormat( G4String ff ) 
 {
   for( unsigned int ii = 0; ii < ff.length(); ii++ ){
     ff[ii] = tolower(ff[ii]);
@@ -166,13 +166,12 @@ void GmAnalysisMgr::AddFileFormat( G4String& ff )
   theFileFormats.insert(ff); 
 }
 
-
 //----------------------------------------------------------------------
 void GmAnalysisMgr::SaveAllFormats(const G4String& name)
 {
-	for (std::set<G4String>::const_iterator ite = theFileFormats.begin(); ite != theFileFormats.end(); ite++) {
-		Save(name, *ite);	
-	}
+  for (std::set<G4String>::const_iterator ite = theFileFormats.begin(); ite != theFileFormats.end(); ite++) {
+    Save(name, *ite);	
+  }
 }
 
 //----------------------------------------------------------------------
@@ -226,7 +225,7 @@ void GmAnalysisMgr::Save( const G4String& name, const G4String& format)
       delete hisN;
     }else {
       hisWriter->SaveHisto1( his );
-    }
+    } 
   }
   for( ite2 = theHistos2.begin(); ite2 != theHistos2.end(); ite2++ ){
     GmHisto2* his = (*ite2).second;
@@ -535,7 +534,7 @@ bool GmAnalysisMgr::CreateHisto2D(const G4String & pathAndTitle, int nBinsX, dou
       lowerEdgeX = (*ite).second;
     }
   }
-  ite = theHisto2MinX.begin(); //GDEB
+  ite = theHisto2MinX.begin(); 
   for( ite = theHisto2MaxX.begin(); ite != theHisto2MaxX.end(); ite++ ){
     if( GmGenUtils::AreWordsEquivalent( (*ite).first, pathAndTitle ) ) {
       upperEdgeX = (*ite).second;
@@ -909,12 +908,12 @@ GmHistoProfile2* GmAnalysisMgr::GetHistoProf2( const G4String& hnam, bool itExis
 void GmAnalysisMgr::HistoDoesNotExists( int ih, const G4String& histype, bool itExists )
 {
   if( itExists ){
-    G4Exception("GmAnalysMgr::GetHisto",
+    G4Exception("GmAnalysisMgr::GetHisto",
 		"Wrong internal argument",
 		FatalException,
 		G4String("Histogram "+histype+" number "+ GmGenUtils::itoa(ih) + " does not exist ").c_str());
     /* } else {
-    G4Exception("GmAnalysMgr::GetHisto",
+    G4Exception("GmAnalysisMgr::GetHisto",
 		"Warning",
 		JustWarning,
 		G4String("Histogram "+histype+" number "+ GmGenUtils::itoa(ih) + " does not exist ").c_str()); */
@@ -925,12 +924,12 @@ void GmAnalysisMgr::HistoDoesNotExists( int ih, const G4String& histype, bool it
 void GmAnalysisMgr::HistoDoesNotExists( const G4String& hnam, const G4String& histype, bool itExists )
 {
   if( itExists ){
-    G4Exception("GmAnalysMgr::GetHisto",
+    G4Exception("GmAnalysisMgr::GetHisto",
 		"Wrong internal argument",
 		FatalException,
 		G4String("Histogram "+histype+" number "+ hnam + " does not exist ").c_str());
     /*  } else {
-    G4Exception("GmAnalysMgr::GetHisto",
+    G4Exception("GmAnalysisMgr::GetHisto",
 		"Warning",
 		JustWarning,
 		G4String("Histogram "+histype+" number "+ hnam + " does not exist ").c_str()); */

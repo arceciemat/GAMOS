@@ -1,7 +1,9 @@
 #include "GmPDSScore.hh"
 #include "GmPDSDetector.hh"
 
+#ifndef WIN32
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
+#endif
 
 #include "GamosCore/GamosUtils/include/GmNumberOfEvent.hh"
 #include "GamosCore/GamosBase/Base/include/GmConvergenceTester.hh"
@@ -27,8 +29,10 @@ GmPDSScore::GmPDSScore( G4String name, G4int detID, std::set<G4double>& energies
   theID = GmPDSScore::theNumberOfScores++;
   G4int nEnergies = theEnergies.size();
 
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << " GmPDSScore::GmPDSScore " << name << " detID " << detID << " setID " << theID << G4endl;
+#endif
 #endif
   theFluxes = std::vector<G4double>(nEnergies,0.);
   theFluxesPrevEvent = std::vector<G4double>(nEnergies,0.);
@@ -62,8 +66,10 @@ GmPDSScore::~GmPDSScore()
 //-----------------------------------------------------------------------
 void GmPDSScore::FillEnergy( G4double wei, const Flux2Dose& flux2Dose, G4int enerID )
 {
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << "GmPDSScore::FillEnergy " << theName << " enerID " << enerID << " wei " << wei << G4endl;
+#endif
 #endif
   theFluxes[enerID] += wei;
   theFluxCounts[enerID] += 1;
@@ -104,15 +110,19 @@ void GmPDSScore::UpdateFluxErrorsThisEvent()
   std::vector<G4double>::iterator itef4 = theFluxes4.begin();
   G4double eventSum = 0.;
   for( ; itef != theFluxes.end(); itef++,itefp++,itef2++,itef3++,itef4++){
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     //    if( ScoringVerb(debugVerb) ) G4cout << "GmPDSScore " << theName << " To fill flux2 = " <<  pow((*itef) - (*itefp),2) << " = " << (*itef) << " - " << (*itefp) << G4endl;
+#endif
 #endif
     G4double fluxInEvent = (*itef) - (*itefp);
     (*itef2) += pow(fluxInEvent,2);
     (*itef3) += pow(fluxInEvent,3);
     (*itef4) += pow(fluxInEvent,4);
+#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(testVerb) ) G4cout << "GmPDSScore::UpdateFluxErrorsThisEvent " << theName << " filling flux in Event : " << fluxInEvent << " f2= " << (*itef2) << " prev= " << (*itefp) << G4endl;
+#endif
 #endif
     *itefp = *itef;
     if( theConvergenceTester ) {

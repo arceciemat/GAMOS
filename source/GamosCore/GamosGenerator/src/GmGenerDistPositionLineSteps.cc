@@ -12,7 +12,7 @@ GmGenerDistPositionLineSteps::GmGenerDistPositionLineSteps()
 }
 
 //---------------------------------------------------------------------
-G4ThreeVector GmGenerDistPositionLineSteps::GeneratePosition( const GmParticleSource* )
+G4ThreeVector GmGenerDistPositionLineSteps::GeneratePosition( GmParticleSource* )
 {
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistPositionLineSteps::Generate pos " << thePoint + theDirection * theStep * nSteps << G4endl;

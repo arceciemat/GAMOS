@@ -1,6 +1,5 @@
 #include "GmTouchablePhantomStructure.hh"
 #include "GmReadPhantomStMgr.hh"
-#include "GmRegularParamUtils.hh"
 #include "GmReadDICOMVerbosity.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -13,7 +12,6 @@
 //---------------------------------------------------------------------
 GmTouchablePhantomStructure::GmTouchablePhantomStructure()
 {
-  theRegularUtils = GmRegularParamUtils::GetInstance();
   theStructMgr = GmReadPhantomStMgr::GetInstance();
   if( theStructMgr->GetStructs().size() == 0 ) {
     G4Exception("GmTouchablePhantomStructure::GmTouchablePhantomStructure",
@@ -106,7 +104,7 @@ void GmTouchablePhantomStructure::SetParameters( std::vector<G4String>& params)
     for( size_t jj = 0; jj < stids.size(); jj++ ) {
       theIndices.insert( stids[jj] );
 #ifndef GAMOS_NO_VERBOSE
-      if( ReadDICOMVerb(-debugVerb) )  G4cout << ii << " GmTouchablePhantomStructure theIndices " << stids[jj] << G4endl;
+      if( ReadDICOMVerb(-debugVerb) )  G4cout << ii << " GmTouchablePhantomStructure theIndices " << stids[jj] << " OF STRUCTURE " << params[ii] << G4endl;
 #endif
     }
   }
