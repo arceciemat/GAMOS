@@ -1,0 +1,24 @@
+/control/verbose 1
+/run/verbose 1
+/tracking/verbose 1
+
+/gamos/setParam GmGeometryFromText:FileName test.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/verbosity GmBaseVerbosity debug
+
+/gamos/generator/addSingleParticleSource source gamma 0.2*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst  0. 0. 1.
+
+/gamos/userAction GmMovementEventAction
+/gamos/movement/moveFromFile movements.lis
+
+#/control/execute ../visVRML2FILE.in
+/control/execute ../visOGLIX.in
+
+/run/beamOn 10000
+

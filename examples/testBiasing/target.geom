@@ -1,0 +1,16 @@
+:ROTM RM0 0 0 0
+
+:MATE CU521ICRU 29 63.54 8.9333
+:MATE W521ICRU 74 183.85 19.3
+
+:VOLU expHall BOX 25*cm 25*cm 150*cm G4_AIR
+
+:VIS expHall OFF
+
+:P TARGET_THICK 2.5
+
+// Target 
+:VOLU target BOX 2*cm 2*cm $TARGET_THICK G4_Cu
+:COLOR target  1 0 0
+:PLACE target  1 expHall RM0 0.0 0.0 $TARGET_THICK
+

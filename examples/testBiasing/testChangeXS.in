@@ -1,0 +1,24 @@
+/tracking/verbose 1
+/gamos/setParam GmGeometryFromText:FileName target.geom
+/gamos/geometry GmGeometryFromText
+
+/gamos/physicsList GmEMPhysics
+
+/gamos/generator GmGenerator
+
+/gamos/setParam myOperator:XSFactor 10.
+/gamos/physics/biasing/createOperator myOperator ChangeCrossSection
+/gamos/physics/biasing/addParticles2Oper gamma myOperator
+
+/run/initialize
+
+/gamos/physics/biasing/associateOper2LogVol target myOperator
+
+/gamos/generator/addSingleParticleSource mySource gamma 6.*MeV
+/gamos/generator/positionDist mySource GmGenerDistPositionPoint 0. 0. -10.
+/gamos/generator/directionDist mySource GmGenerDistDirectionConst 0. 0. 1.
+
+/gamos/setParam GmCountProcessesUA:PrintProcList 1
+/gamos/userAction GmCountProcessesUA
+
+/run/beamOn 1000

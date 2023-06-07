@@ -1,0 +1,35 @@
+/control/verbose 1
+/run/verbose 1
+/tracking/verbose 1
+
+/gamos/setParam TrackCount:EachNEvent 100
+
+/gamos/setParam GmGeometryFromText:FileName test.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+/gamos/verbosity GmUAVerbosity 4
+
+/geometry/textInput/verbose 0
+
+/run/particle/setCut 1. mm
+
+/gamos/analysis/fileFormat root
+
+/run/initialize
+
+# 1 muC/cc in tumour
+/gamos/generator/addIsotopeSource source Na22 1.e3*becquerel
+
+/gamos/generator/listSources
+
+/gamos/userAction GmCountProcessesUA
+
+/gamos/userAction GmMovementEventAction
+/gamos/movement/moveEachNEvents rotate box 30.*deg 1. 0. 0. 5
+/gamos/movement/moveEachTime displace box 5.*mm 1. 0. 0. 0.02*s
+
+/control/execute ../visOGLIX.in
+
+/run/beamOn 100
+

@@ -1,0 +1,41 @@
+#################################################
+#G4 macro file to use with the code MagShield   #
+#author:	L. Desorgher (SpaceIT GmbH)     #
+#creation:	26-11-2008			#
+#################################################
+
+#Grid computation for the main Toroid of the Active system1
+##############################################
+
+#Construct one  coil
+####################
+
+/MagneticFieldModels/Coil/SetRout 0.250000 m
+/MagneticFieldModels/Coil/SetD1 0.110000 m
+/MagneticFieldModels/Coil/SetD2 0.110000 m
+/MagneticFieldModels/Coil/SetL1 5.000000 m
+/MagneticFieldModels/Coil/SetL2 2.000000 m
+/MagneticFieldModels/Coil/SetI  -1900000.000000 ampere
+/MagneticFieldModels/CreateAParametrizedField Coil Coil1
+
+#Construct the toroid
+####################
+
+/MagneticFieldModels/ReplicateField/SelectField Coil1
+/MagneticFieldModels/ReplicateField/SetR  2.750000 m
+/MagneticFieldModels/ReplicateField/SetPhi0 90.000000 degree
+/MagneticFieldModels/ReplicateField/SetdPhi 7.500000 degree
+/MagneticFieldModels/ReplicateField/SetNCopies  48
+/MagneticFieldModels/CreateAParametrizedField ReplicateField Toroid1
+
+#Construct the toroid
+####################
+
+/MagneticFieldModels/BiotSavartIntegrator/SetNphi 40
+/MagneticFieldModels/BiotSavartIntegrator/SetNy 10
+
+#Compute the field on different  grids
+####################
+
+/MagneticFieldModels/ComputeBfieldOnACylindricalGrid  Toroid1  90.000000 0.750000 11 degree 0.000000 0.050000 122 -4.100000 0.050000 165 m main_toroid_grid.txt 
+

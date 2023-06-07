@@ -1,0 +1,31 @@
+#################################################
+#G4 macro file to use with the code MagShield   #
+#author:	L. Desorgher (SpaceIT GmbH)     #
+#creation:	26-11-2008			#
+#################################################
+
+#Current test for the coils of the main toroid 
+##############################################
+
+#Construct one  coil
+####################
+
+/MagneticFieldModels/Coil/SetRout 0.250000 m
+/MagneticFieldModels/Coil/SetD1 0.110000 m
+/MagneticFieldModels/Coil/SetD2 0.110000 m
+/MagneticFieldModels/Coil/SetL1 5.000000 m
+/MagneticFieldModels/Coil/SetL2 2.000000 m
+/MagneticFieldModels/Coil/SetI  -1900000.000000 ampere
+/MagneticFieldModels/CreateAParametrizedField Coil Coil1
+
+#Construct the toroid
+####################
+
+/MagneticFieldModels/BiotSavartIntegrator/SetNphi 40
+/MagneticFieldModels/BiotSavartIntegrator/SetNy 10
+
+#Compute the field on different  grids
+####################
+
+/MagneticFieldModels/ComputeJCurrentOnACartesianGrid  Coil1   0.000000 0.100000 1  -1.875000 0.025000 151 -4.125000 0.025000 331 0.005000 m coil_jtest.txt 
+

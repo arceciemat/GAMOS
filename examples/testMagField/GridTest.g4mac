@@ -1,0 +1,38 @@
+#################################################
+#G4 macro file to use with the code MagShield   #
+#author:	L. Desorgher (SpaceIT GmbH)     #
+#creation:	26-11-2008			#
+#################################################
+
+#Main Toroid definition
+##############################################
+
+/MagneticFieldModels/InterpolatedField/SetGridFileName main_toroid_grid.txt
+/MagneticFieldModels/CreateAParametrizedField  InterpolatedField MainToroidGrid1
+
+#Upper Cap Toroid definition
+##############################################
+
+/MagneticFieldModels/InterpolatedField/SetGridFileName upper_toroid_grid.txt
+/MagneticFieldModels/CreateAParametrizedField  InterpolatedField UpperToroidGrid1
+
+#Upper field Translation
+##############################################
+
+/CoordinateTransformation/ResetToUnit
+/CoordinateTransformation/AddTranslation 0.000000 0.000000 1.750000 m
+/CoordinateTransformation/Register PositionToroid2
+
+#Total field 
+##############################################
+
+/MagneticFieldModels/CompoundField/Reset
+/MagneticFieldModels/CompoundField/AddField MainToroidGrid1 
+/MagneticFieldModels/CompoundField/AddField UpperToroidGrid1 PositionToroid2
+/MagneticFieldModels/CreateAParametrizedField CompoundField TotalField
+
+#Compute the field on different  grids
+####################
+
+/MagneticFieldModels/ComputeBfieldOnACylindricalGrid  TotalField  45.000000 0.750000 11 degree 0.000000 0.050000 122 -4.100000 0.050000 165 m total_grid.txt 
+
