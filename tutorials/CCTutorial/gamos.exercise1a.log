@@ -1,0 +1,995 @@
+/control/execute exercise1a.in
+/tracking/verbose 1
+/gamos/setParam GmGeometryFromText:FileName CCGeometryRingEx1.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+GmEMPhysics PhysicsList:DEFAULT = gamma-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
+GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
+/gamos/generator GmGenerator
+/run/initialize
+/gamos/generator/addSingleParticleSource source gamma 141*keV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 1. 0. 0.
+/control/execute ../../../examples/visVRML2FILE.in
+/vis/scene/create
+/vis/open VRML2FILE
+Issue /vis/viewer/refresh or flush to see effect.
+/vis/viewer/flush
+Your "world" has no vis attributes or is marked as visible.
+  For a better view of the contents, mark the world as invisible, e.g.,
+  myWorldLogicalVol -> SetVisAttributes (G4VisAttributes::GetInvisible());
+G4Scene::AddWorldIfEmpty: The scene was empty of run-duration models.
+  "world" has been added.
+/vis/viewer/set/viewpointThetaPhi 10 120 deg
+Issue /vis/viewer/refresh or flush to see effect.
+/vis/viewer/zoom 1
+Issue /vis/viewer/refresh or flush to see effect.
+/vis/scene/add/trajectories
+/tracking/storeTrajectory 1
+Attributes available for modeling and filtering with
+  "/vis/modeling/trajectories/create/drawByAttribute" and
+  "/vis/filtering/trajectories/create/attributeFilter" commands:
+G4TrajectoriesModel:
+  Event ID (EventID): G4int
+  Run ID (RunID): G4int
+G4Trajectory:
+  Charge (Ch): unit: e+ (G4double)
+  Track ID (ID): G4int
+  Initial kinetic energy (IKE): G4BestUnit (G4double)
+  Initial momentum magnitude (IMag): G4BestUnit (G4double)
+  Initial momentum (IMom): G4BestUnit (G4ThreeVector)
+  No. of points (NTP): G4int
+  PDG Encoding (PDG): G4int
+  Parent ID (PID): G4int
+  Particle Name (PN): G4String
+G4TrajectoryPoint:
+  Position (Pos): G4BestUnit (G4ThreeVector)
+WARNING: Trajectory storing has been requested.  This action may be
+  reversed with "/tracking/storeTrajectory 0".
+/vis/scene/notifyHandlers
+/vis/scene/endOfEventAction accumulate
+WARNING: The vis manager will keep up to 100 events.
+  This may use a lot of memory.
+  It may be changed with, e.g., "/vis/scene/endOfEventAction accumulate 10".
+/vis/viewer/update
+/vis/viewer/flush
+===========================================
+Output VRML 2.0 file: g4_00.wrl
+Maximum number of files in the destination directory: 100
+  (Customizable with the environment variable: G4VRMLFILE_MAX_FILE_NUM) 
+===========================================
+*** VRML 2.0 File  g4_00.wrl  is generated.
+MESSAGE from VRML2FILE driver:
+    Set an environmental variable  G4VRMLFILE_VIEWER
+    if you want to visualize the generated VRML file
+    automatically.  For example, 
+    setenv  G4VRMLFILE_VIEWER  vrwave 
+ALSO you may change the file header with G4VRMLFILE_HEADER
+    or the whole filename with G4VRMLFILE_FILE_NAME
+/run/beamOn 10
+=======================================================================
+======                 Electromagnetic Physics Parameters      ========
+=======================================================================
+LPM effect enabled                                 1
+Enable creation and use of sampling tables         0
+Apply cuts on all EM processes                     0
+Use general process                                0
+Enable linear polarisation for gamma               0
+Enable sampling of quantum entanglement            0
+X-section factor for integral approach             0.8
+Min kinetic energy for tables                      100 eV 
+Max kinetic energy for tables                      100 TeV
+Number of bins per decade of a table               7
+Verbose level                                      1
+Verbose level for worker thread                    0
+Bremsstrahlung energy threshold above which 
+  primary e+- is added to the list of secondary    100 TeV
+Bremsstrahlung energy threshold above which primary
+  muon/hadron is added to the list of secondary    100 TeV
+Lowest triplet kinetic energy                      1 MeV
+Enable sampling of gamma linear polarisation       0
+5D gamma conversion model type                     0
+5D gamma conversion model on isolated ion          0
+Livermore data directory                           livermore
+=======================================================================
+======                 Ionisation Parameters                   ========
+=======================================================================
+Step function for e+-                              (0.2, 1 mm)
+Step function for muons/hadrons                    (0.2, 0.1 mm)
+Step function for light ions                       (0.2, 0.1 mm)
+Step function for general ions                     (0.2, 0.1 mm)
+Lowest e+e- kinetic energy                         1 keV
+Lowest muon/hadron kinetic energy                  1 keV
+Fluctuations of dE/dx are enabled                  1
+Use ICRU90 data                                    0
+Use built-in Birks satuaration                     0
+Build CSDA range enabled                           0
+Use cut as a final range enabled                   0
+Enable angular generator interface                 0
+Max kinetic energy for CSDA tables                 1 GeV
+Max kinetic energy for NIEL computation            0 eV 
+Linear loss limit                                  0.01
+Read data from file for e+e- pair production by mu 0
+=======================================================================
+======                 Multiple Scattering Parameters          ========
+=======================================================================
+Type of msc step limit algorithm for e+-           1
+Type of msc step limit algorithm for muons/hadrons 0
+Msc lateral displacement for e+- enabled           1
+Msc lateral displacement for muons and hadrons     0
+Urban msc model lateral displacement alg96         1
+Range factor for msc step limit for e+-            0.04
+Range factor for msc step limit for muons/hadrons  0.2
+Geometry factor for msc step limitation of e+-     2.5
+Safety factor for msc step limit for e+-           0.6
+Skin parameter for msc step limitation of e+-      1
+Lambda limit for msc step limit for e+-            1 mm
+Use Mott correction for e- scattering              0
+Factor used for dynamic computation of angular 
+  limit between single and multiple scattering     1
+Fixed angular limit between single 
+  and multiple scattering                          3.1416 rad
+Upper energy limit for e+- multiple scattering     100 MeV
+Type of electron single scattering model           0
+Type of nuclear form-factor                        1
+Screening factor                                   1
+=======================================================================
+
+### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
+          DefaultRegionForTheWorld  1  1  0
+### ===  Auger flag: 1
+### ===  Ignore cuts flag:   0
+
+phot:  for gamma SubType=12 BuildTable=0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       PhotoElectric : Emin=    0 eV  Emax=  100 TeV  SauterGavrila Fluo
+
+compt:  for gamma SubType=13 BuildTable=1
+      Lambda table from 100 eV  to 1 MeV, 7 bins/decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       Klein-Nishina : Emin=    0 eV  Emax=  100 TeV
+
+conv:  for gamma SubType=14 BuildTable=1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins/decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+     BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
+
+Rayl:  for gamma SubType=11 BuildTable=1
+      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+   LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
+
+msc:  for e-  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+          StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
+
+eIoni:  for e-  XStype:1  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+eBrem:  for e-  XStype:4  SubType=3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
+            eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
+
+msc:  for e+  SubType= 10
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
+          StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
+
+eIoni:  for e+  XStype:1  SubType=2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+
+========= Table of registered couples ============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : CZT
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  9.76338 keV    e-  170.177 keV    e+  165.747 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 2     used in the geometry : Yes
+ Material : G4_Si
+ Range cuts        :  gamma  100 um     e-  100 um     e+  100 um  proton 100 um 
+ Energy thresholds :  gamma  2.3205 keV    e-  121.85 keV    e+  119.642 keV proton -1 MeV
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+==================================================================
+
+/vis/scene/notifyHandlers scene-0
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.141        0        0         0       world initStep
+    1       50        0        0     0.141        0       50        50 scatcrystal Transportation
+    2     52.2        0        0         0  0.00184     2.19      52.2 scatcrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     52.2        0        0     0.139        0        0         0 scatcrystal initStep
+    1     52.2  0.00573 0.000494     0.137  0.00217  0.00593   0.00593 scatcrystal msc
+    2     52.2  0.00814 1.71e-16     0.135  0.00238  0.00256   0.00849 scatcrystal Transportation
+    3     52.2   0.0122 -6.07e-05     0.132  0.00301   0.0046    0.0131 scatcrystal msc
+    4     52.2   0.0137 -8.87e-17     0.131 0.000884  0.00157    0.0147 scatcrystal Transportation
+    5     52.2   0.0183 0.000491     0.128  0.00316  0.00528    0.0199 scatcrystal msc
+    6     52.2   0.0224 1.56e-06     0.126  0.00141  0.00445    0.0244 scatcrystal msc
+    7     52.2   0.0224 -8.85e-17     0.126 6.56e-06 9.91e-06    0.0244 scatcrystal Transportation
+    8     52.2   0.0264 -0.000366     0.125  0.00109  0.00411    0.0285 scatcrystal msc
+    9     52.2   0.0306 -0.000192     0.124  0.00118  0.00448     0.033 scatcrystal msc
+   10     52.2    0.031 -4.8e-17     0.124 0.000196 0.000486    0.0335 scatcrystal Transportation
+   11     52.2   0.0349  0.00156     0.122   0.0021  0.00445    0.0379 scatcrystal msc
+   12     52.2   0.0385  0.00381     0.119   0.0021  0.00444    0.0424 scatcrystal msc
+   13     52.2   0.0413   0.0071     0.118  0.00167  0.00447    0.0468 scatcrystal msc
+   14     52.2    0.043   0.0113     0.114  0.00428  0.00467    0.0515 scatcrystal msc
+   15     52.2   0.0497   0.0149     0.109  0.00405  0.00786    0.0594 scatcrystal msc
+   16     52.2    0.055    0.019     0.105  0.00407  0.00726    0.0666 scatcrystal msc
+   17     52.2   0.0624   0.0212    0.0984    0.007   0.0112    0.0779 scatcrystal msc
+   18     52.2   0.0742   0.0182    0.0907  0.00772    0.014    0.0919 scatcrystal msc
+   19     52.2   0.0805   0.0124    0.0849  0.00578   0.0102     0.102 scatcrystal msc
+   20     52.2   0.0835  0.00804    0.0815  0.00336   0.0078      0.11 scatcrystal msc
+   21     52.2   0.0857  0.00556    0.0599   0.0216  0.00411     0.114 scatcrystal msc
+   22     52.2   0.0854  0.00198     0.054  0.00592  0.00407     0.118 scatcrystal msc
+   23     52.2   0.0833 0.000877    0.0506   0.0034  0.00467     0.123 scatcrystal msc
+   24     52.2   0.0816 9.14e-05    0.0473  0.00332  0.00401     0.127 scatcrystal msc
+   25     52.2   0.0817 1.03e-16    0.0469 0.000375 0.000115     0.127 scatcrystal Transportation
+   26     52.2   0.0823 -0.000627    0.0459  0.00102 0.000897     0.128 scatcrystal msc
+   27     52.2   0.0827 -0.00117    0.0454 0.000523 0.000721     0.128 scatcrystal msc
+   28     52.2   0.0829 -0.00209     0.044  0.00133 0.000975     0.129 scatcrystal msc
+   29     52.2   0.0831 -0.00308    0.0433 0.000741  0.00115     0.131 scatcrystal msc
+   30     52.2   0.0839 -0.00451    0.0418  0.00149  0.00173     0.132 scatcrystal msc
+   31     52.2   0.0846 -0.00748    0.0391  0.00271  0.00335     0.136 scatcrystal msc
+   32     52.2   0.0817 -0.00876    0.0312  0.00788  0.00484     0.141 scatcrystal msc
+   33     52.2   0.0788 -0.00755         0   0.0312   0.0106     0.151 scatcrystal eIoni
+===========================================
+Output VRML 2.0 file: g4_01.wrl
+Maximum number of files in the destination directory: 100
+  (Customizable with the environment variable: G4VRMLFILE_MAX_FILE_NUM) 
+===========================================
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.141        0        0         0       world initStep
+    1       50        0        0     0.141        0       50        50 scatcrystal Transportation
+    2       60        0        0     0.141        0       10        60       world Transportation
+    3       80        0        0     0.141        0       20        80  abscrystal Transportation
+    4     81.8        0        0         0  0.00463     1.81      81.8  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     81.8        0        0     0.109        0        0         0  abscrystal initStep
+    1     81.8        0        0     0.109        0        0         0  abscrystal Transportation
+    2     81.8        0        0     0.109        0        0         0  abscrystal Transportation
+    3     81.8        0        0     0.109        0        0         0  abscrystal Transportation
+    4     81.8 -1.69e-05 -0.00145     0.108  0.00152  0.00187   0.00187  abscrystal msc
+    5     81.8 1.85e-16 -0.00153     0.108        0   0.0001   0.00197  abscrystal Transportation
+    6     81.8 1.85e-16 -0.00153     0.108        0        0   0.00197  abscrystal Transportation
+    7     81.8 -0.000207 -0.00341     0.104  0.00354   0.0024   0.00437  abscrystal msc
+    8     81.8 -0.000908 -0.00517     0.104 0.000517  0.00222   0.00659  abscrystal msc
+    9     81.8 -0.00214 -0.00639     0.101  0.00242  0.00186   0.00845  abscrystal msc
+   10     81.8 -0.00246 -0.00826    0.0991  0.00211  0.00205    0.0105  abscrystal msc
+   11     81.8 -0.00257  -0.0102    0.0678   0.0313   0.0021    0.0126  abscrystal msc
+   12     81.8 -0.00407  -0.0109    0.0657  0.00207  0.00216    0.0148  abscrystal msc
+   13     81.8 -0.00523 -0.00908    0.0586   0.0071  0.00259    0.0173  abscrystal msc
+   14     81.8 -0.00377 -0.00742    0.0528   0.0058  0.00317    0.0205  abscrystal msc
+   15     81.8 -0.00282 -0.00667    0.0477  0.00509  0.00229    0.0228  abscrystal msc
+   16     81.8 -0.00101 -0.00677    0.0404  0.00729  0.00225     0.025  abscrystal msc
+   17     81.8 -0.000421 -0.00643    0.0334  0.00704  0.00203    0.0271  abscrystal msc
+   18     81.8 2.14e-16 -0.00644    0.0319  0.00142  0.00128    0.0284  abscrystal Transportation
+   19     81.8 9.96e-05 -0.00665    0.0301  0.00181 0.000287    0.0286  abscrystal msc
+   20     81.8 7.38e-05  -0.0069    0.0299 0.000193 0.000281    0.0289  abscrystal msc
+   21     81.8 2.99e-06 -0.00709    0.0299  9.1e-05 0.000255    0.0292  abscrystal msc
+   22     81.8 1.01e-16  -0.0071    0.0299        0 8.46e-06    0.0292  abscrystal Transportation
+   23     81.8 -8.26e-05  -0.0073    0.0298 6.05e-05 0.000241    0.0294  abscrystal msc
+   24     81.8 -5.04e-05 -0.00751    0.0293 0.000507 0.000241    0.0297  abscrystal msc
+   25     81.8 -6.28e-17 -0.00765    0.0292 0.000108 0.000161    0.0298  abscrystal Transportation
+   26     81.8 -6.28e-17 -0.00765    0.0292        0        0    0.0298  abscrystal Transportation
+   27     81.8 -1.26e-05 -0.00786    0.0287 0.000502 0.000251    0.0301  abscrystal msc
+   28     81.8 -9.69e-17 -0.00787    0.0287        0 1.92e-05    0.0301  abscrystal Transportation
+   29     81.8 8.29e-05 -0.00801    0.0285 0.000209 0.000222    0.0303  abscrystal msc
+   30     81.8 0.000124 -0.00815    0.0282  0.00029 0.000231    0.0306  abscrystal msc
+   31     81.8 9.99e-05 -0.00812    0.0281 0.000102 0.000221    0.0308  abscrystal msc
+   32     81.8 1.14e-06 -0.00819    0.0279 0.000211 0.000239     0.031  abscrystal msc
+   33     81.8 1.14e-16 -0.00819    0.0279 4.26e-06 1.38e-06     0.031  abscrystal Transportation
+   34     81.8 -0.000126 -0.00836    0.0278 7.82e-05 0.000227    0.0312  abscrystal msc
+   35     81.8 -0.000275 -0.00847    0.0278 1.96e-05 0.000222    0.0315  abscrystal msc
+   36     81.8 -0.000461 -0.00847    0.0274 0.000335 0.000217    0.0317  abscrystal msc
+   37     81.8 -0.000683 -0.00838    0.0249  0.00258 0.000269    0.0319  abscrystal msc
+   38     81.8 -0.000991 -0.00835    0.0225  0.00239 0.000393    0.0323  abscrystal msc
+   39     81.8 -0.000755 -0.00869    0.0186  0.00383 0.000615     0.033  abscrystal msc
+   40     81.8 -0.000516 -0.00879    0.0167  0.00193 0.000454    0.0334  abscrystal msc
+   41     81.8 -0.000486 -0.00859    0.0153  0.00145 0.000298    0.0337  abscrystal msc
+   42     81.8 -0.000715 -0.00859    0.0145 0.000754 0.000313     0.034  abscrystal msc
+   43     81.8 -0.000612 -0.00887    0.0131  0.00139 0.000435    0.0345  abscrystal msc
+   44     81.8 -0.000416 -0.00869    0.0121  0.00105 0.000379    0.0348  abscrystal msc
+   45     81.8 -0.000313 -0.00869    0.0115 0.000513 0.000234    0.0351  abscrystal msc
+   46     81.8 -0.000252 -0.00867    0.0107 0.000807 0.000207    0.0353  abscrystal msc
+   47     81.8 -0.000205  -0.0088    0.0097  0.00104 0.000211    0.0355  abscrystal msc
+   48     81.8 -0.000191 -0.00874   0.00857  0.00113 0.000216    0.0357  abscrystal msc
+   49     81.8 -0.000334 -0.00869   0.00727   0.0013 0.000206    0.0359  abscrystal msc
+   50     81.8 -0.000417 -0.00877   0.00682 0.000452 0.000212    0.0361  abscrystal msc
+   51     81.8 -0.00044 -0.00881         0  0.00682  0.00056    0.0367  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     81.8        0        0    0.0272        0        0         0  abscrystal initStep
+    1     81.8        0        0    0.0272        0        0         0  abscrystal Transportation
+    2     81.8  -0.0312   0.0971         0  0.00356    0.102     0.102  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     81.8  -0.0312   0.0971  0.000476        0        0         0  abscrystal initStep
+    1     81.8  -0.0312   0.0971         0 0.000476 1.71e-05  1.71e-05  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     81.8  -0.0312   0.0971    0.0232        0        0         0  abscrystal initStep
+    1     81.9 6.59e-17    0.113    0.0232        0   0.0866    0.0866  abscrystal Transportation
+    2       82   0.0311     0.13         0  0.00494   0.0864     0.173  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       82   0.0311     0.13    0.0182        0        0         0  abscrystal initStep
+    1       82   0.0311     0.13         0   0.0182  0.00267   0.00267  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.141        0        0         0       world initStep
+    1       50        0        0     0.141        0       50        50 scatcrystal Transportation
+    2     54.3        0        0     0.105        0     4.32      54.3 scatcrystal compt
+    3     54.3        0        0     0.105        0        0      54.3 scatcrystal Transportation
+    4     54.3        0        0     0.105        0        0      54.3 scatcrystal Transportation
+    5     54.3        0        0     0.105        0        0      54.3 scatcrystal Transportation
+    6     54.2    0.393   -0.241    0.0789        0    0.473      54.8 scatcrystal compt
+    7     54.2    0.336 1.67e-16    0.0789        0    0.253        55 scatcrystal Transportation
+    8     53.9 1.11e-16     1.41    0.0789        0     1.48      56.5 scatcrystal Transportation
+    9     53.6   -0.303     2.68         0  0.00184     1.34      57.9 scatcrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     53.6   -0.303     2.68    0.0771        0        0         0 scatcrystal initStep
+    1     53.6   -0.314     2.69         0   0.0771   0.0505    0.0505 scatcrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     54.2    0.393   -0.241    0.0264        0        0         0 scatcrystal initStep
+    1     54.2    0.395   -0.242         0   0.0264  0.00798   0.00798 scatcrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     54.3        0        0    0.0356        0        0         0 scatcrystal initStep
+    1     54.3 -0.000269 3.73e-05    0.0356 1.27e-05 0.000526  0.000526 scatcrystal msc
+    2     54.3 -0.000477 0.000202    0.0354 0.000226 0.000549   0.00108 scatcrystal msc
+    3     54.3 -0.00079 0.000185    0.0352 0.000215 0.000531   0.00161 scatcrystal msc
+    4     54.3 -0.00107 0.000153    0.0351 0.000104 0.000461   0.00207 scatcrystal msc
+    5     54.3 -0.00131 0.000167    0.0345 0.000578 0.000552   0.00262 scatcrystal msc
+    6     54.3 -0.00148 6.54e-05     0.034 0.000474 0.000493   0.00311 scatcrystal msc
+    7     54.3  -0.0016 1.85e-05    0.0339 0.000182 0.000567   0.00368 scatcrystal msc
+    8     54.3  -0.0016 -2.01e-16    0.0338 1.06e-05  0.00012    0.0038 scatcrystal Transportation
+    9     54.3  -0.0013 -6.63e-05    0.0337 0.000173 0.000481   0.00428 scatcrystal msc
+   10     54.3 -0.000944 -6.98e-05    0.0332 0.000425 0.000451   0.00473 scatcrystal msc
+   11     54.3 -0.000627 -0.000241    0.0326 0.000633 0.000463   0.00519 scatcrystal msc
+   12     54.3 -0.000189 -0.000386    0.0316  0.00102 0.000494   0.00569 scatcrystal msc
+   13     54.3 -1.81e-16 -0.000467    0.0312 0.000353 0.000218   0.00591 scatcrystal Transportation
+   14     54.3 0.000384 -0.000618    0.0309 0.000379 0.000422   0.00633 scatcrystal msc
+   15     54.3 0.000721 -0.000752    0.0302 0.000656 0.000418   0.00675 scatcrystal msc
+   16     54.3  0.00119 -0.000828    0.0296 0.000582 0.000509   0.00726 scatcrystal msc
+   17     54.3  0.00153 -0.000483    0.0292 0.000379 0.000515   0.00777 scatcrystal msc
+   18     54.3  0.00182 -0.000183    0.0284 0.000816 0.000425    0.0082 scatcrystal msc
+   19     54.3  0.00184 -1.71e-18    0.0283 9.92e-05 0.000189   0.00838 scatcrystal Transportation
+   20     54.3  0.00184 0.000414    0.0268  0.00152 0.000424   0.00881 scatcrystal msc
+   21     54.3  0.00176 0.000794    0.0264 0.000405 0.000402   0.00921 scatcrystal msc
+   22     54.3  0.00167  0.00119    0.0261 0.000263 0.000422   0.00963 scatcrystal msc
+   23     54.3  0.00162  0.00195    0.0254 0.000744  0.00082    0.0105 scatcrystal msc
+   24     54.3  0.00107  0.00264    0.0243  0.00108 0.000941    0.0114 scatcrystal msc
+   25     54.3 0.000893   0.0032    0.0235  0.00085 0.000641     0.012 scatcrystal msc
+   26     54.3 0.000859  0.00355    0.0229 0.000583 0.000568    0.0126 scatcrystal msc
+   27     54.3 0.000865  0.00403    0.0226 0.000274 0.000543    0.0131 scatcrystal msc
+   28     54.3  0.00118  0.00443    0.0214   0.0012  0.00053    0.0137 scatcrystal msc
+   29     54.3  0.00178  0.00476      0.02  0.00146 0.000741    0.0144 scatcrystal msc
+   30     54.3  0.00254  0.00528    0.0168  0.00319  0.00103    0.0154 scatcrystal msc
+   31     54.3  0.00376  0.00549    0.0136  0.00319  0.00147    0.0169 scatcrystal msc
+   32     54.3  0.00416  0.00501         0   0.0136  0.00252    0.0194 scatcrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.141        0        0         0       world initStep
+    1       50        0        0     0.141        0       50        50 scatcrystal Transportation
+    2       60        0        0     0.141        0       10        60       world Transportation
+    3       80        0        0     0.141        0       20        80  abscrystal Transportation
+    4     82.3        0        0         0  0.00463     2.28      82.3  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     82.3        0        0     0.109        0        0         0  abscrystal initStep
+    1     82.3 -0.00108   0.0015     0.108  0.00153  0.00198   0.00198  abscrystal msc
+    2     82.3 -0.00283   0.0023     0.105  0.00227  0.00212    0.0041  abscrystal msc
+    3     82.3  -0.0024  0.00356     0.103  0.00258  0.00198   0.00608  abscrystal msc
+    4     82.3 -0.000881  0.00397       0.1  0.00239  0.00229   0.00836  abscrystal msc
+    5     82.3 -6.2e-17   0.0045    0.0943  0.00613  0.00239    0.0108  abscrystal Transportation
+    6     82.3  0.00133  0.00504    0.0914  0.00287   0.0017    0.0125  abscrystal msc
+    7     82.3  0.00178  0.00528    0.0901  0.00131  0.00145    0.0139  abscrystal msc
+    8     82.3  0.00223  0.00629    0.0869  0.00318  0.00164    0.0155  abscrystal msc
+    9     82.3  0.00258  0.00664    0.0797  0.00725  0.00171    0.0173  abscrystal msc
+   10     82.3    0.002  0.00731    0.0772  0.00243  0.00174     0.019  abscrystal msc
+   11     82.3   0.0019  0.00714    0.0755  0.00174  0.00146    0.0205  abscrystal msc
+   12     82.3  0.00279  0.00763     0.074  0.00153  0.00147    0.0219  abscrystal msc
+   13     82.3  0.00339  0.00866    0.0728  0.00117  0.00167    0.0236  abscrystal msc
+   14     82.3  0.00299   0.0103    0.0714  0.00138  0.00212    0.0257  abscrystal msc
+   15     82.3  0.00253    0.012    0.0695  0.00187  0.00196    0.0277  abscrystal msc
+   16     82.3  0.00268   0.0126    0.0685  0.00102  0.00168    0.0294  abscrystal msc
+   17     82.3  0.00164   0.0131    0.0675  0.00106  0.00159    0.0309  abscrystal msc
+   18     82.3  0.00043   0.0131     0.067 0.000483  0.00147    0.0324  abscrystal msc
+   19     82.3 -6.45e-18   0.0129    0.0653  0.00172  0.00074    0.0332  abscrystal Transportation
+   20     82.3 -0.000774   0.0129    0.0641   0.0012  0.00103    0.0342  abscrystal msc
+   21     82.3 -0.00141   0.0131    0.0631 0.000978 0.000802     0.035  abscrystal msc
+   22     82.3 -0.00197   0.0135    0.0616  0.00145 0.000901    0.0359  abscrystal msc
+   23     82.3 -0.00256   0.0141    0.0555  0.00612  0.00126    0.0371  abscrystal msc
+   24     82.3 -0.00158    0.015    0.0529  0.00257  0.00158    0.0387  abscrystal msc
+   25     82.3 -0.000971   0.0152    0.0516  0.00138 0.000821    0.0395  abscrystal msc
+   26     82.3 -0.00034   0.0155    0.0508 0.000787 0.000797    0.0403  abscrystal msc
+   27     82.3 2.34e-17   0.0157    0.0483   0.0025 0.000612    0.0409  abscrystal Transportation
+   28     82.3 0.000227   0.0162    0.0469  0.00137 0.000559    0.0415  abscrystal msc
+   29     82.3 -8.31e-17   0.0162    0.0454  0.00147 0.000283    0.0418  abscrystal Transportation
+   30     82.3 -0.000296   0.0162    0.0453 0.000157 0.000511    0.0423  abscrystal msc
+   31     82.3 -0.000484   0.0159    0.0445  0.00077 0.000466    0.0428  abscrystal msc
+   32     82.3  -0.0005   0.0156    0.0424  0.00215  0.00048    0.0432  abscrystal msc
+   33     82.3 -0.000178   0.0153    0.0419 0.000479 0.000538    0.0438  abscrystal msc
+   34     82.3 -1.48e-16   0.0151    0.0416 0.000325 0.000331    0.0441  abscrystal Transportation
+   35     82.3 0.000139   0.0148    0.0406 0.000965 0.000421    0.0445  abscrystal msc
+   36     82.3 0.000461   0.0147    0.0384  0.00217 0.000403    0.0449  abscrystal msc
+   37     82.3 0.000638   0.0144    0.0378 0.000625 0.000411    0.0454  abscrystal msc
+   38     82.3 0.000763    0.014    0.0376 0.000183 0.000439    0.0458  abscrystal msc
+   39     82.3  0.00106   0.0138    0.0366 0.000967 0.000437    0.0462  abscrystal msc
+   40     82.3  0.00145    0.014    0.0349  0.00178 0.000692    0.0469  abscrystal msc
+   41     82.3  0.00169    0.014    0.0329  0.00196 0.000842    0.0478  abscrystal msc
+   42     82.3   0.0013   0.0139    0.0271  0.00576  0.00109    0.0489  abscrystal msc
+   43     82.3 0.000993   0.0134    0.0265 0.000596 0.000764    0.0496  abscrystal msc
+   44     82.3 0.000943   0.0129    0.0261 0.000483 0.000531    0.0501  abscrystal msc
+   45     82.3  0.00139   0.0129    0.0239  0.00215 0.000635    0.0508  abscrystal msc
+   46     82.3  0.00199   0.0131    0.0221  0.00179 0.000802    0.0516  abscrystal msc
+   47     82.3  0.00287    0.013    0.0162  0.00596  0.00134    0.0529  abscrystal msc
+   48     82.3  0.00298    0.013         0   0.0162   0.0022    0.0551  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     82.3        0        0    0.0272        0        0         0  abscrystal initStep
+    1     82.3   0.0615  0.00175         0  0.00356   0.0635    0.0635  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     82.3   0.0615  0.00175  0.000476        0        0         0  abscrystal initStep
+    1     82.3   0.0615  0.00175         0 0.000476 1.71e-05  1.71e-05  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     82.3   0.0615  0.00175    0.0232        0        0         0  abscrystal initStep
+    1     82.1    0.302   0.0917         0  0.00402     0.29      0.29  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     82.1    0.302   0.0917    0.0191        0        0         0  abscrystal initStep
+    1     82.1    0.302   0.0918         0   0.0191   0.0029    0.0029  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.141        0        0         0       world initStep
+    1       50        0        0     0.141        0       50        50 scatcrystal Transportation
+    2     52.2        0        0     0.106        0     2.18      52.2 scatcrystal compt
+    3     52.2        0        0     0.106        0        0      52.2 scatcrystal Transportation
+    4     52.2        0        0     0.106        0        0      52.2 scatcrystal Transportation
+    5     52.2        0        0     0.106        0        0      52.2 scatcrystal Transportation
+    6     51.5     2.68    -1.85    0.0841        0     3.33      55.5 scatcrystal compt
+    7       54        0     -4.7    0.0841        0     4.68      60.2 scatcrystal Transportation
+    8     54.3   -0.277       -5    0.0841        0    0.485      60.7 scatcrystal Transportation
+    9     58.8    -4.96      -10    0.0841        0     8.19      68.9 scatcrystal Transportation
+   10     58.8       -5      -10    0.0841        0   0.0621      68.9 scatcrystal Transportation
+   11     59.3    -5.49    -10.6    0.0841        0    0.858      69.8 scatcrystal Rayl
+   12       60     -6.4    -11.7    0.0841        0     1.62      71.4       world Transportation
+   13      199     -186     -240    0.0841        0      322       394  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     51.5     2.68    -1.85    0.0215        0        0         0 scatcrystal initStep
+    1     51.5     2.68    -1.85         0   0.0215  0.00558   0.00558 scatcrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     52.2        0        0    0.0354        0        0         0 scatcrystal initStep
+    1     52.2 -0.000291  0.00017     0.035 0.000342 0.000495  0.000495 scatcrystal msc
+    2     52.2 -0.000535  0.00035    0.0343 0.000718  0.00047  0.000965 scatcrystal msc
+    3     52.2 -0.000691 0.000612    0.0324  0.00187 0.000523   0.00149 scatcrystal msc
+    4     52.2 -0.000797 0.000752    0.0323 0.000154 0.000568   0.00206 scatcrystal msc
+    5     52.2 -0.000791  0.00085    0.0319  0.00036 0.000444    0.0025 scatcrystal msc
+    6     52.2 -0.00075 0.000867    0.0308  0.00112 0.000458   0.00296 scatcrystal msc
+    7     52.2 -0.000863 0.000868    0.0298 0.000979 0.000562   0.00352 scatcrystal msc
+    8     52.2 -0.00103  0.00081    0.0288 0.000978 0.000565   0.00408 scatcrystal msc
+    9     52.2 -0.00123 0.000587     0.028 0.000839 0.000485   0.00457 scatcrystal msc
+   10     52.2 -0.00161 0.000402    0.0275 0.000471 0.000476   0.00505 scatcrystal msc
+   11     52.2 -0.00167 3.74e-05     0.027 0.000486 0.000491   0.00554 scatcrystal msc
+   12     52.2 -0.00163 -1.31e-16    0.0268 0.000235 7.96e-05   0.00562 scatcrystal Transportation
+   13     52.2 -0.00145 -0.000215    0.0266 0.000168 0.000335   0.00595 scatcrystal msc
+   14     52.2  -0.0012 -0.000408    0.0264 0.000256  0.00032   0.00627 scatcrystal msc
+   15     52.2 -0.000969 -0.000627     0.026 0.000377 0.000339   0.00661 scatcrystal msc
+   16     52.2 -0.00066 -0.000816    0.0253 0.000693 0.000371   0.00698 scatcrystal msc
+   17     52.2 -0.000273 -0.000974    0.0231  0.00225 0.000436   0.00742 scatcrystal msc
+   18     52.2 -2.4e-05 -0.00116    0.0227 0.000412 0.000328   0.00775 scatcrystal msc
+   19     52.2 2.02e-16 -0.00118    0.0227        0 3.28e-05   0.00778 scatcrystal Transportation
+   20     52.2 0.000197  -0.0013    0.0216  0.00108 0.000273   0.00805 scatcrystal msc
+   21     52.2 0.000417  -0.0014    0.0212 0.000373 0.000263   0.00831 scatcrystal msc
+   22     52.2 0.000596 -0.00146     0.021 0.000161 0.000203   0.00852 scatcrystal msc
+   23     52.2 0.000938 -0.00147    0.0203  0.00077 0.000355   0.00887 scatcrystal msc
+   24     52.2  0.00148 -0.00135    0.0189  0.00135 0.000589   0.00946 scatcrystal msc
+   25     52.2  0.00193 -0.000797    0.0178  0.00115 0.000779    0.0102 scatcrystal msc
+   26     52.2  0.00182  -0.0011    0.0169 0.000881 0.000446    0.0107 scatcrystal msc
+   27     52.2  0.00222 -0.00149    0.0149  0.00201 0.000657    0.0113 scatcrystal msc
+   28     52.2  0.00279 -0.00139     0.012  0.00292 0.000816    0.0122 scatcrystal msc
+   29     52.2  0.00261 -0.000755   0.00981  0.00215 0.000935    0.0131 scatcrystal msc
+   30     52.2  0.00244 -0.000411   0.00777  0.00204 0.000471    0.0136 scatcrystal msc
+   31     52.2  0.00245 -0.000251   0.00711 0.000656 0.000249    0.0138 scatcrystal msc
+   32     52.2  0.00226  -0.0002   0.00595  0.00116 0.000236     0.014 scatcrystal msc
+   33     52.2  0.00223 -3.55e-05    0.0046  0.00134 0.000264    0.0143 scatcrystal msc
+   34     52.2  0.00229 1.29e-16   0.00376  0.00084 0.000105    0.0144 scatcrystal Transportation
+   35     52.2  0.00229 2.99e-06   0.00366 0.000106 1.76e-05    0.0144 scatcrystal msc
+   36     52.2  0.00229 1.29e-05   0.00349 0.000169 1.76e-05    0.0145 scatcrystal msc
+   37     52.2   0.0023 2.49e-05   0.00344 4.55e-05 1.76e-05    0.0145 scatcrystal msc
+   38     52.2  0.00231 3.53e-05   0.00324 0.000204 1.76e-05    0.0145 scatcrystal msc
+   39     52.2   0.0023 3.37e-05    0.0031 0.000137 2.11e-05    0.0145 scatcrystal msc
+   40     52.2  0.00229 2.39e-05   0.00307 2.61e-05 2.01e-05    0.0145 scatcrystal msc
+   41     52.2  0.00228  1.1e-05   0.00304 3.57e-05 1.76e-05    0.0145 scatcrystal msc
+   42     52.2  0.00228 7.16e-07   0.00304        0 1.76e-05    0.0146 scatcrystal msc
+   43     52.2  0.00228 1.16e-16   0.00303 9.41e-06 1.03e-06    0.0146 scatcrystal Transportation
+   44     52.2  0.00228 -1.14e-05   0.00277 0.000256 1.38e-05    0.0146 scatcrystal msc
+   45     52.2  0.00228 -2.21e-05   0.00277  5.1e-06 1.38e-05    0.0146 scatcrystal msc
+   46     52.2  0.00227 -3.05e-05   0.00269  8.1e-05 1.38e-05    0.0146 scatcrystal msc
+   47     52.2  0.00226 -2.77e-05    0.0022 0.000487 1.85e-05    0.0146 scatcrystal msc
+   48     52.2  0.00226 -1.71e-05   0.00218 2.13e-05 1.63e-05    0.0146 scatcrystal msc
+   49     52.2  0.00226 -6.49e-06   0.00216 1.75e-05 1.38e-05    0.0147 scatcrystal msc
+   50     52.2  0.00226 1.73e-16   0.00212 4.06e-05  7.7e-06    0.0147 scatcrystal Transportation
+   51     52.2  0.00225  6.3e-06   0.00193  0.00019 9.34e-06    0.0147 scatcrystal msc
+   52     52.2  0.00225 1.43e-05   0.00188 5.32e-05 9.34e-06    0.0147 scatcrystal msc
+   53     52.2  0.00225 2.28e-05   0.00185 3.02e-05 9.34e-06    0.0147 scatcrystal msc
+   54     52.2  0.00224 1.67e-05   0.00179 5.24e-05 1.33e-05    0.0147 scatcrystal msc
+   55     52.2  0.00224 9.76e-06   0.00164 0.000158 1.01e-05    0.0147 scatcrystal msc
+   56     52.2  0.00223 1.76e-06   0.00144 0.000194 9.34e-06    0.0147 scatcrystal msc
+   57     52.2  0.00223 -1.34e-16   0.00144        0 2.36e-06    0.0147 scatcrystal Transportation
+   58     52.2  0.00223 -3.25e-06   0.00135 9.75e-05 6.52e-06    0.0147 scatcrystal msc
+   59     52.2  0.00222 -2.59e-06   0.00107 0.000278 6.52e-06    0.0147 scatcrystal msc
+   60     52.2  0.00222 -6.02e-08         0  0.00107 6.52e-06    0.0147 scatcrystal msc
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.141        0        0         0       world initStep
+    1       50        0        0     0.141        0       50        50 scatcrystal Transportation
+    2     56.1        0        0     0.125        0     6.08      56.1 scatcrystal compt
+    3     56.1        0        0     0.125        0        0      56.1 scatcrystal Transportation
+    4     56.1        0        0     0.125        0        0      56.1 scatcrystal Transportation
+    5     57.4     -1.5    -1.34     0.091        0     2.38      58.5 scatcrystal compt
+    6     56.6       -2        0     0.091        0     1.62      60.1 scatcrystal Transportation
+    7     53.7    -3.85        5     0.091        0     6.08      66.2 scatcrystal Transportation
+    8     51.8       -5     8.12     0.091        0     3.79        70 scatcrystal Transportation
+    9     50.8     -5.7       10     0.091        0     2.29      72.2 scatcrystal Transportation
+   10       50    -6.17     11.3     0.091        0     1.56      73.8    scatring Transportation
+   11     49.6    -6.44       12     0.091        0    0.868      74.7       world Transportation
+   12    -83.3    -90.8      240     0.091        0      277       352  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     57.4     -1.5    -1.34     0.034        0        0         0 scatcrystal initStep
+    1     57.4     -1.5    -1.34         0    0.034   0.0123    0.0123 scatcrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     56.1        0        0     0.016        0        0         0 scatcrystal initStep
+    1     56.1 6.99e-05 6.06e-05     0.016 6.18e-05 0.000142  0.000142 scatcrystal msc
+    2     56.1 0.000132 0.000135    0.0158 0.000197 0.000128  0.000269 scatcrystal msc
+    3     56.1 0.000175 0.000216    0.0157 1.94e-05 0.000131    0.0004 scatcrystal msc
+    4     56.1 0.000244 0.000286    0.0157 3.95e-05 0.000138  0.000539 scatcrystal msc
+    5     56.1 0.000265 0.000371    0.0156 0.000126 0.000143  0.000682 scatcrystal msc
+    6     56.1 0.000282 0.000483    0.0154 0.000198 0.000155  0.000838 scatcrystal msc
+    7     56.1 0.000246  0.00063    0.0154        0 0.000157  0.000995 scatcrystal msc
+    8     56.1 0.000214 0.000774    0.0149 0.000526 0.000152   0.00115 scatcrystal msc
+    9     56.1 0.000213 0.000902    0.0147 0.000114 0.000132   0.00128 scatcrystal msc
+   10     56.1  0.00021  0.00102    0.0144  0.00032 0.000125    0.0014 scatcrystal msc
+   11     56.1 8.25e-05  0.00105    0.0141 0.000319 0.000135   0.00154 scatcrystal msc
+   12     56.1 -1.52e-16  0.00102    0.0137 0.000428 8.94e-05   0.00163 scatcrystal Transportation
+   13     56.1  -0.0001    0.001    0.0136 9.89e-05 0.000105   0.00173 scatcrystal msc
+   14     56.1 -0.000179 0.000984    0.0134 0.000173 0.000104   0.00184 scatcrystal msc
+   15     56.1 -0.000259 0.000989    0.0131 0.000262 0.000106   0.00194 scatcrystal msc
+   16     56.1 -0.00036    0.001     0.013 0.000185 0.000146   0.00209 scatcrystal msc
+   17     56.1 -0.000449 0.000979    0.0118  0.00114 0.000234   0.00232 scatcrystal msc
+   18     56.1 -0.000354 0.000761   0.00726  0.00455 0.000283   0.00261 scatcrystal msc
+   19     56.1 -0.000238 0.000616   0.00625  0.00101 0.000216   0.00282 scatcrystal msc
+   20     56.1 -0.000165 0.000558   0.00604 0.000206  0.00014   0.00296 scatcrystal msc
+   21     56.1 -0.00012 0.000493   0.00563 0.000418 0.000102   0.00306 scatcrystal msc
+   22     56.1 -4.43e-05 0.000438    0.0043  0.00133 0.000104   0.00317 scatcrystal msc
+   23     56.1 -1.97e-16 0.000406   0.00418 0.000116 7.01e-05   0.00324 scatcrystal Transportation
+   24     56.1 1.38e-05 0.000394   0.00412 6.09e-05 1.99e-05   0.00326 scatcrystal msc
+   25     56.1 2.59e-05 0.000384   0.00404 8.17e-05 1.99e-05   0.00328 scatcrystal msc
+   26     56.1 2.59e-05 0.000382     0.004 3.72e-05 1.99e-05    0.0033 scatcrystal msc
+   27     56.1 2.89e-05 0.000389    0.0039 0.000101 1.99e-05   0.00332 scatcrystal msc
+   28     56.1 3.31e-05 0.000397   0.00389 1.43e-05 1.99e-05   0.00334 scatcrystal msc
+   29     56.1 4.14e-05 0.000394   0.00384 4.42e-05 1.99e-05   0.00336 scatcrystal msc
+   30     56.1 5.39e-05 0.000402   0.00379 5.55e-05  2.5e-05   0.00338 scatcrystal msc
+   31     56.1 6.51e-05 0.000427   0.00363 0.000155 3.39e-05   0.00342 scatcrystal msc
+   32     56.1 8.79e-05 0.000454   0.00356 7.51e-05 4.08e-05   0.00346 scatcrystal msc
+   33     56.1 0.000106 0.000492   0.00325 0.000308 5.11e-05   0.00351 scatcrystal msc
+   34     56.1 9.88e-05 0.000551   0.00248 0.000763 6.92e-05   0.00358 scatcrystal msc
+   35     56.1 9.07e-05 0.000595   0.00232 0.000167 5.31e-05   0.00363 scatcrystal msc
+   36     56.1 9.75e-05  0.00063   0.00204 0.000276 5.54e-05   0.00369 scatcrystal msc
+   37     56.1 0.000109 0.000653         0  0.00204 0.000117    0.0038 scatcrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.141        0        0         0       world initStep
+    1       50        0        0     0.141        0       50        50 scatcrystal Transportation
+    2       60        0        0     0.141        0       10        60       world Transportation
+    3       80        0        0     0.141        0       20        80  abscrystal Transportation
+    4     80.2        0        0         0   0.0318    0.211      80.2  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     80.2        0        0     0.109        0        0         0  abscrystal initStep
+    1     80.2        0        0     0.109        0        0         0  abscrystal Transportation
+    2     80.2 -0.00114 0.000718     0.107  0.00217  0.00198   0.00198  abscrystal msc
+    3     80.2 -0.00286 0.000114     0.106  0.00111  0.00214   0.00412  abscrystal msc
+    4     80.2   -0.003 -1.48e-16     0.106 0.000196 0.000218   0.00434  abscrystal Transportation
+    5     80.2 -0.00411 -0.000197     0.102  0.00326  0.00174   0.00609  abscrystal msc
+    6     80.2 -0.00542 -0.000959     0.101  0.00108  0.00177   0.00786  abscrystal msc
+    7     80.2 -0.00592 -0.00269    0.0994  0.00195    0.002   0.00986  abscrystal msc
+    8     80.2  -0.0046 -0.00356    0.0989 0.000553  0.00171    0.0116  abscrystal msc
+    9     80.2 -0.00328 -0.00361    0.0973  0.00158  0.00199    0.0136  abscrystal msc
+   10     80.2 -0.00314 -0.00408    0.0854   0.0119  0.00154    0.0151  abscrystal msc
+   11     80.2 -0.00258 -0.00363    0.0835  0.00191  0.00198    0.0171  abscrystal msc
+   12     80.2 -0.00229 -0.00289    0.0811   0.0024  0.00227    0.0193  abscrystal msc
+   13     80.2   -0.001  -0.0016    0.0788   0.0023  0.00202    0.0214  abscrystal msc
+   14     80.2  -0.0011 -0.000105    0.0776   0.0012  0.00198    0.0233  abscrystal msc
+   15     80.2 -0.000901 2.16e-16    0.0774 0.000182 0.000318    0.0237  abscrystal Transportation
+   16     80.2 -4.12e-05 0.000256    0.0758  0.00153   0.0012    0.0249  abscrystal msc
+   17     80.2  9.3e-17 0.000256    0.0758 4.23e-05 4.27e-05    0.0249  abscrystal Transportation
+   18     80.2  0.00104 0.000467    0.0748 0.000978  0.00117    0.0261  abscrystal msc
+   19     80.2  0.00179  0.00122    0.0739 0.000959  0.00117    0.0272  abscrystal msc
+   20     80.2  0.00247  0.00204    0.0712  0.00262  0.00114    0.0284  abscrystal msc
+   21     80.2  0.00323  0.00252    0.0708 0.000446  0.00122    0.0296  abscrystal msc
+   22     80.2   0.0043   0.0027     0.069  0.00178  0.00135    0.0309  abscrystal msc
+   23     80.2  0.00557  0.00313    0.0676  0.00141  0.00153    0.0325  abscrystal msc
+   24     80.2  0.00707   0.0026    0.0623  0.00529  0.00186    0.0343  abscrystal msc
+   25     80.2  0.00769  0.00179    0.0584  0.00391  0.00177    0.0361  abscrystal msc
+   26     80.2  0.00758  0.00148    0.0571  0.00129  0.00107    0.0372  abscrystal msc
+   27     80.2   0.0075 0.000537    0.0566 0.000544  0.00121    0.0384  abscrystal msc
+   28     80.2  0.00758 1.39e-17    0.0514  0.00515 0.000708    0.0391  abscrystal Transportation
+   29     80.2  0.00718 -0.000296    0.0505 0.000919 0.000635    0.0397  abscrystal msc
+   30     80.2  0.00693 -0.000502    0.0493  0.00118   0.0006    0.0403  abscrystal msc
+   31     80.2  0.00681 -0.000697    0.0467  0.00262 0.000581    0.0409  abscrystal msc
+   32     80.2  0.00635 -0.000657    0.0458 0.000853 0.000569    0.0415  abscrystal msc
+   33     80.2  0.00592 -0.000599    0.0454 0.000415 0.000588    0.0421  abscrystal msc
+   34     80.2  0.00569 -0.00058    0.0446 0.000849 0.000538    0.0426  abscrystal msc
+   35     80.2  0.00592 -0.000412     0.044 0.000555 0.000553    0.0432  abscrystal msc
+   36     80.2  0.00611 -0.000198    0.0401  0.00394 0.000551    0.0437  abscrystal msc
+   37     80.2  0.00626 -1.68e-16    0.0392 0.000845 0.000396    0.0441  abscrystal Transportation
+   38     80.2  0.00626 -1.68e-16    0.0392        0        0    0.0441  abscrystal Transportation
+   39     80.2  0.00606 -8.66e-05    0.0387 0.000548 0.000396    0.0445  abscrystal msc
+   40     80.2  0.00599 -0.000378    0.0379 0.000773 0.000375    0.0449  abscrystal msc
+   41     80.2  0.00626 -0.000302    0.0363  0.00163 0.000342    0.0452  abscrystal msc
+   42     80.2  0.00637 -0.000196    0.0361 0.000151 0.000344    0.0456  abscrystal msc
+   43     80.2  0.00634 -2.26e-05    0.0361 7.78e-05 0.000362    0.0459  abscrystal msc
+   44     80.2  0.00635 1.45e-16     0.036 1.56e-05 3.04e-05    0.0459  abscrystal Transportation
+   45     80.2  0.00635 0.000313    0.0326  0.00343 0.000339    0.0463  abscrystal msc
+   46     80.2   0.0061 0.000428    0.0322 0.000459 0.000316    0.0466  abscrystal msc
+   47     80.2  0.00586  0.00052    0.0316 0.000507 0.000314    0.0469  abscrystal msc
+   48     80.2  0.00564 0.000453    0.0297  0.00195 0.000318    0.0472  abscrystal msc
+   49     80.2  0.00548 0.000304    0.0296 0.000104 0.000337    0.0476  abscrystal msc
+   50     80.2  0.00552 6.06e-05    0.0291 0.000446 0.000327    0.0479  abscrystal msc
+   51     80.2  0.00553 -1.5e-16     0.029 0.000117 7.95e-05     0.048  abscrystal Transportation
+   52     80.2  0.00559 -0.000194    0.0277  0.00131 0.000239    0.0482  abscrystal msc
+   53     80.2  0.00569 -0.000386    0.0275 0.000247 0.000254    0.0485  abscrystal msc
+   54     80.2  0.00577 -0.000547    0.0271  0.00042 0.000234    0.0487  abscrystal msc
+   55     80.2  0.00569 -0.000817    0.0263 0.000716 0.000344     0.049  abscrystal msc
+   56     80.2  0.00589 -0.00107     0.026 0.000309 0.000527    0.0496  abscrystal msc
+   57     80.2  0.00595 -0.00146    0.0242   0.0018 0.000628    0.0502  abscrystal msc
+   58     80.2  0.00657 -0.00135    0.0201  0.00413 0.000836     0.051  abscrystal msc
+   59     80.2  0.00652 -0.00119    0.0117  0.00843 0.000753    0.0518  abscrystal msc
+   60     80.2  0.00656 -0.00108         0   0.0117   0.0013    0.0531  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.141        0        0         0       world initStep
+    1       50        0        0     0.141        0       50        50 scatcrystal Transportation
+    2     51.1        0        0    0.0994        0     1.06      51.1 scatcrystal compt
+    3     51.1        0        0    0.0994        0        0      51.1 scatcrystal Transportation
+    4     51.1        0        0    0.0994        0        0      51.1 scatcrystal Transportation
+    5       50     -1.3    -1.18    0.0994        0     2.05      53.1    scatring Transportation
+    6       50    -1.32     -1.2    0.0994        0   0.0339      53.1       world Transportation
+    7     -146     -242     -220    0.0994        0      380       433  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     51.1        0        0    0.0416        0        0         0 scatcrystal initStep
+    1     51.1 0.000209  0.00039    0.0411 0.000522 0.000818  0.000818 scatcrystal msc
+    2     51.1 0.000387  0.00078    0.0401 0.000985 0.000732   0.00155 scatcrystal msc
+    3     51.1 0.000676  0.00114    0.0386   0.0015 0.000664   0.00221 scatcrystal msc
+    4     51.1 0.000842  0.00163    0.0382 0.000434 0.000735   0.00295 scatcrystal msc
+    5     51.1 0.000748  0.00207     0.037  0.00118 0.000676   0.00362 scatcrystal msc
+    6     51.1  0.00016  0.00221    0.0356   0.0014 0.000715   0.00434 scatcrystal msc
+    7     51.1 -7.69e-17  0.00225    0.0339  0.00165 0.000181   0.00452 scatcrystal Transportation
+    8     51.1 -0.000445  0.00219    0.0337 0.000271 0.000493   0.00501 scatcrystal msc
+    9     51.1 -0.000881  0.00223    0.0333  0.00039 0.000465   0.00548 scatcrystal msc
+   10     51.1 -0.00144  0.00219    0.0328 0.000456 0.000577   0.00606 scatcrystal msc
+   11     51.1  -0.0022  0.00191    0.0317   0.0011 0.000861   0.00692 scatcrystal msc
+   12     51.1 -0.00317  0.00173    0.0307    0.001  0.00104   0.00796 scatcrystal msc
+   13     51.1 -0.00288  0.00262    0.0287  0.00197 0.000995   0.00896 scatcrystal msc
+   14     51.1 -0.00324  0.00373    0.0281 0.000677   0.0013    0.0103 scatcrystal msc
+   15     51.1 -0.00328  0.00561    0.0246  0.00343   0.0021    0.0124 scatcrystal msc
+   16     51.1 -0.00408  0.00702    0.0214  0.00318  0.00243    0.0148 scatcrystal msc
+   17     51.1 -0.00531  0.00785         0   0.0214  0.00555    0.0203 scatcrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.141        0        0         0       world initStep
+    1       50        0        0     0.141        0       50        50 scatcrystal Transportation
+    2       60        0        0     0.141        0       10        60       world Transportation
+    3       80        0        0     0.141        0       20        80  abscrystal Transportation
+    4     83.4        0        0         0  0.00435      3.4      83.4  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     83.4        0        0     0.109        0        0         0  abscrystal initStep
+    1     83.4 4.87e-05 -0.00148     0.106  0.00336  0.00179   0.00179  abscrystal msc
+    2     83.4 -1.27e-16 -0.00212     0.105  0.00131  0.00107   0.00286  abscrystal Transportation
+    3     83.4 -1.14e-05 -0.00306     0.103   0.0011  0.00178   0.00464  abscrystal msc
+    4     83.4 1.43e-16  -0.0032     0.103        0 0.000153   0.00479  abscrystal Transportation
+    5     83.4 1.41e-05 -0.00464     0.101  0.00193  0.00187   0.00666  abscrystal msc
+    6     83.4 1.12e-17 -0.00474     0.101 0.000273  0.00011   0.00677  abscrystal Transportation
+    7     83.4 -7.2e-05 -0.00595     0.101 0.000496  0.00147   0.00824  abscrystal msc
+    8     83.4 -5.55e-17 -0.00653       0.1 0.000619 0.000669   0.00891  abscrystal Transportation
+    9     83.4 -5.55e-17 -0.00653       0.1        0        0   0.00891  abscrystal Transportation
+   10     83.4 -0.00131 -0.00714    0.0997 0.000415  0.00184    0.0108  abscrystal msc
+   11     83.4  -0.0018 -0.00636    0.0981  0.00154  0.00169    0.0124  abscrystal msc
+   12     83.4 -0.00278 -0.00522    0.0975 0.000664  0.00169    0.0141  abscrystal msc
+   13     83.4 -0.00417 -0.00476    0.0957  0.00179  0.00192     0.016  abscrystal msc
+   14     83.4 -0.00627  -0.0051    0.0469   0.0488   0.0026    0.0186  abscrystal msc
+   15     83.4 -0.00456 -0.00675    0.0433  0.00363  0.00302    0.0217  abscrystal msc
+   16     83.4 -0.00307 -0.00818    0.0378  0.00548  0.00263    0.0243  abscrystal msc
+   17     83.4 -0.00191 -0.00737    0.0309  0.00688  0.00187    0.0262  abscrystal msc
+   18     83.4 -0.00189 -0.00742    0.0254  0.00548   0.0019    0.0281  abscrystal msc
+   19     83.4 -0.00235 -0.00731    0.0198  0.00569  0.00186    0.0299  abscrystal msc
+   20     83.4 -0.00237 -0.00765         0   0.0198  0.00306     0.033  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     83.4        0        0    0.0275        0        0         0  abscrystal initStep
+    1     83.4    0.011  -0.0186         0  0.00356   0.0229    0.0229  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     83.4    0.011  -0.0186  0.000754        0        0         0  abscrystal initStep
+    1     83.4    0.011  -0.0186         0 0.000754 6.96e-06  6.96e-06  abscrystal msc
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     83.4    0.011  -0.0186    0.0232        0        0         0  abscrystal initStep
+    1     83.2   0.0114 -0.00209    0.0232        0    0.195     0.195  abscrystal Rayl
+    2     83.2   0.0118 1.84e-16    0.0232        0  0.00253     0.197  abscrystal Transportation
+    3     83.4   0.0657    0.326         0  0.00494    0.396     0.594  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     83.4   0.0657    0.326    0.0182        0        0         0  abscrystal initStep
+    1     83.4   0.0659    0.326         0   0.0182  0.00267   0.00267  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0        0        0        0     0.141        0        0         0       world initStep
+    1       50        0        0     0.141        0       50        50 scatcrystal Transportation
+    2       60        0        0     0.141        0       10        60       world Transportation
+    3       80        0        0     0.141        0       20        80  abscrystal Transportation
+    4     82.7        0        0         0  0.00463     2.72      82.7  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     82.7        0        0     0.109        0        0         0  abscrystal initStep
+    1     82.7 0.000436  0.00024     0.108 0.000723  0.00202   0.00202  abscrystal msc
+    2     82.7  0.00031 -1.99e-16     0.107  0.00131 0.000458   0.00248  abscrystal Transportation
+    3     82.7 4.99e-06  -0.0011     0.103  0.00446  0.00213   0.00461  abscrystal msc
+    4     82.7 -9.68e-17 -0.00111     0.103        0 1.29e-05   0.00462  abscrystal Transportation
+    5     82.7 -0.000784  -0.0024     0.101  0.00204  0.00199   0.00661  abscrystal msc
+    6     82.7 -0.00196 -0.00372    0.0996  0.00101  0.00205   0.00867  abscrystal msc
+    7     82.7  -0.0027 -0.00535    0.0969  0.00278  0.00204    0.0107  abscrystal msc
+    8     82.7 -0.00329 -0.00696    0.0966 0.000284    0.002    0.0127  abscrystal msc
+    9     82.7 -0.00404 -0.00832    0.0951  0.00145  0.00168    0.0144  abscrystal msc
+   10     82.7 -0.00474    -0.01    0.0926  0.00251  0.00218    0.0166  abscrystal msc
+   11     82.7 -0.00518  -0.0121    0.0899  0.00274  0.00265    0.0192  abscrystal msc
+   12     82.7 -0.00637  -0.0137     0.088  0.00192  0.00286    0.0221  abscrystal msc
+   13     82.7 -0.00838  -0.0123    0.0834  0.00451  0.00381    0.0259  abscrystal msc
+   14     82.7 -0.00883 -0.00803    0.0777  0.00577  0.00582    0.0317  abscrystal msc
+   15     82.7 -0.00791 -0.00603    0.0725  0.00519  0.00504    0.0368  abscrystal msc
+   16     82.7  -0.0109 -0.00639    0.0706  0.00189  0.00371    0.0405  abscrystal msc
+   17     82.7  -0.0134 -0.00851     0.067  0.00359  0.00438    0.0448  abscrystal msc
+   18     82.7   -0.018 -0.00835    0.0627  0.00433  0.00595    0.0508  abscrystal msc
+   19     82.7  -0.0175 -0.00541    0.0439   0.0188  0.00537    0.0562  abscrystal msc
+   20     82.7  -0.0192 -0.00373    0.0317   0.0122  0.00303    0.0592  abscrystal msc
+   21     82.7  -0.0198 -0.00332         0   0.0317  0.00671    0.0659  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     82.7        0        0    0.0272        0        0         0  abscrystal initStep
+    1     82.7        0        0    0.0272        0        0         0  abscrystal Transportation
+    2     82.7        0        0    0.0272        0        0         0  abscrystal Transportation
+    3     82.7        0        0    0.0272        0        0         0  abscrystal Transportation
+    4     82.7  -0.0234    -0.03         0 0.000671   0.0486    0.0486  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     82.7  -0.0234    -0.03  0.000476        0        0         0  abscrystal initStep
+    1     82.7  -0.0234    -0.03         0 0.000476 1.71e-05  1.71e-05  abscrystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     82.7  -0.0234    -0.03     0.026        0        0         0  abscrystal initStep
+    1     82.7   -0.151  -0.0525     0.026        0    0.139     0.139  abscrystal Rayl
+    2     82.7   -0.182  -0.0525         0  0.00402   0.0317     0.171  abscrystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     82.7   -0.182  -0.0525     0.022        0        0         0  abscrystal initStep
+    1     82.7   -0.183  -0.0522         0    0.022  0.00366   0.00366  abscrystal eIoni
+ Run terminated.
+Run Summary
+  Number of events processed : 10
+  User=0.030000s Real=0.044008s Sys=0.010000s
+10 events have been kept for refreshing and/or reviewing.
+  "/vis/reviewKeptEvents" to review them one by one.
+  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+*** VRML 2.0 File  g4_01.wrl  is generated.
+MESSAGE from VRML2FILE driver:
+    Set an environmental variable  G4VRMLFILE_VIEWER
+    if you want to visualize the generated VRML file
+    automatically.  For example, 
+    setenv  G4VRMLFILE_VIEWER  vrwave 
+ALSO you may change the file header with G4VRMLFILE_HEADER
+    or the whole filename with G4VRMLFILE_FILE_NAME

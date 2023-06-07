@@ -1,0 +1,1385 @@
+/control/execute exercise3e.in
+/tracking/verbose 0
+/gamos/setParam GmReadPhantomGeometry:FileName ./world.geom
+/gamos/setParam GmSimplePhantomGeometry:MaterialNames PMMA
+/gamos/setParam GmSimplePhantomGeometry:MaterialZVoxels 300
+/gamos/setParam GmSimplePhantomGeometry:MaterialDensities 1.19
+/gamos/setParam GmSimplePhantomGeometry:NVoxels 400 400 300
+/gamos/setParam GmSimplePhantomGeometry:PhantomDims -200 200 -200 200 -150 150
+/gamos/setParam GmReadPhantomGeometry:InitialDisplacement 0. 0. 0.
+/gamos/setParam GmReadPhantomGeometry:InitialRotAngles 0*deg 0. 0.
+/gamos/geometry GmSimplePhantomGeometry
+/gamos/physicsList G4QGSP_BIC_AllHP
+<<< Geant4 Physics List simulation engine: QGSP_BIC_AllHP
+
+/gamos/generator GmGenerator
+/run/initialize
+/home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6
+@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6/Inelastic
+@@@ G4ParticleHPInelasticData instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6/Inelastic/CrossSection/6_nat_Carbon
+@@@ G4ParticleHPInelasticData instantiated for particle proton data directory variable is G4PROTONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Proton
+/home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Proton
+@@@ G4ParticleHPInelastic instantiated for particle proton data directory variable is G4PROTONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Proton/Inelastic
+/home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Deuteron
+@@@ G4ParticleHPInelastic instantiated for particle deuteron data directory variable is G4DEUTERONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Deuteron/Inelastic
+@@@ G4ParticleHPInelasticData instantiated for particle deuteron data directory variable is G4DEUTERONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Deuteron
+/home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Triton
+@@@ G4ParticleHPInelastic instantiated for particle triton data directory variable is G4TRITONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Triton/Inelastic
+@@@ G4ParticleHPInelasticData instantiated for particle triton data directory variable is G4TRITONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Triton
+/home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/He3
+@@@ G4ParticleHPInelastic instantiated for particle He3 data directory variable is G4HE3HPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/He3/Inelastic
+@@@ G4ParticleHPInelasticData instantiated for particle He3 data directory variable is G4HE3HPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/He3
+/home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Alpha
+@@@ G4ParticleHPInelastic instantiated for particle alpha data directory variable is G4ALPHAHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Alpha/Inelastic
+@@@ G4ParticleHPInelasticData instantiated for particle alpha data directory variable is G4ALPHAHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Alpha
+/gamos/physics/addPhysics radioactiveDecay
+G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+It will not be added !!
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+/gamos/physics/removeProcessesByType Electromagnetic
+/control/execute ../exercise0/pbsSource.in
+/gamos/generator/addSingleParticleSource source proton 226.62*MeV
+/gamos/generator/energyDist source GmGenerDistEnergyConstant 226.62*MeV
+/gamos/generator/timeDist source GmGenerDistTimeConstantChange 32.*ps
+/gamos/generator/positionDist source GmGenerDistPositionDisc 1.5*mm 0. 0. -400.*mm
+/gamos/generator/directionDist source GmGenerDistDirectionCone 0. 0. 1. 3.6*mrad
+/gamos/userAction GmCountTracksUA
+/gamos/userAction GmCountProcessesUA
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+GmEnergySplitter::GmEnergySplitter
+ GmVPrimitiveScorer::SetParameters: no parameters 
+/gamos/setParam RTPSPDoseHistos:FileName doseHistos.e
+/gamos/setParam RTPSPDoseHistos:HistosFileName ./doseHistos.lis
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorer
+phantomContainer GmRegularParamUtils::GetPhantomMotherTranslation (0,0,0) global (0,0,0)
+phantomContainer GmRegularParamUtils::GetPhantomMotherRotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+ global 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+ RTPSPDoseHistos nvoxel 400 400 300
+ RTPSPDoseHistos half dim 0.5 0.5 0.5
+ RTPSPDoseHistos translation (0,0,0)
+ RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+/run/beamOn 10000
+G4RunManagerKernel -- G4ScoreSplittingProcess is appended to all particles.
+
+=======================================================
+======       ParticleHP Physics Parameters     ========
+=======================================================
+ UseOnlyPhotoEvaporation ? 0
+ SkipMissingIsotopes ?     0
+ NeglectDoppler ?          0
+ DoNotAdjustFinalState ?   0
+ ProduceFissionFragments ? 0
+ UseWendtFissionModel ?    0
+ UseNRESP71Model ?         0
+=======================================================
+
+@@@ G4ParticleHPInelastic instantiated for particle proton data directory variable is G4PROTONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Proton/Inelastic
+======================================================================
+======          Radioactive Decay Physics Parameters           =======
+======================================================================
+Max life time                                     1.4427e+06 ps
+Internal e- conversion flag                       1
+Stored internal conversion coefficients           1
+Enable correlated gamma emission                  0
+Max 2J for sampling of angular correlations       10
+Atomic de-excitation enabled                      1
+Auger electron emission enabled                   1
+Check EM cuts disabled for atomic de-excitation   1
+Use Bearden atomic level energies                 0
+Use ANSTO fluorescence model                      0
+Threshold for very long decay time at rest        1e+27  ns
+======================================================================
+
+=======================================================
+======       ParticleHP Physics Parameters     ========
+=======================================================
+ UseOnlyPhotoEvaporation ? 0
+ SkipMissingIsotopes ?     0
+ NeglectDoppler ?          0
+ DoNotAdjustFinalState ?   0
+ ProduceFissionFragments ? 0
+ UseWendtFissionModel ?    0
+ UseNRESP71Model ?         0
+=======================================================
+
+@@@ G4ParticleHPInelastic instantiated for particle He3 data directory variable is G4HE3HPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/He3/Inelastic
+
+=======================================================
+======       ParticleHP Physics Parameters     ========
+=======================================================
+ UseOnlyPhotoEvaporation ? 0
+ SkipMissingIsotopes ?     0
+ NeglectDoppler ?          0
+ DoNotAdjustFinalState ?   0
+ ProduceFissionFragments ? 0
+ UseWendtFissionModel ?    0
+ UseNRESP71Model ?         0
+=======================================================
+
+@@@ G4ParticleHPInelastic instantiated for particle alpha data directory variable is G4ALPHAHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Alpha/Inelastic
+
+=======================================================
+======       ParticleHP Physics Parameters     ========
+=======================================================
+ UseOnlyPhotoEvaporation ? 0
+ SkipMissingIsotopes ?     0
+ NeglectDoppler ?          0
+ DoNotAdjustFinalState ?   0
+ ProduceFissionFragments ? 0
+ UseWendtFissionModel ?    0
+ UseNRESP71Model ?         0
+=======================================================
+
+@@@ G4ParticleHPInelastic instantiated for particle deuteron data directory variable is G4DEUTERONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Deuteron/Inelastic
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6/Elastic/CrossSection/6_nat_Carbon
+
+=======================================================
+======       ParticleHP Physics Parameters     ========
+=======================================================
+ UseOnlyPhotoEvaporation ? 0
+ SkipMissingIsotopes ?     0
+ NeglectDoppler ?          0
+ DoNotAdjustFinalState ?   0
+ ProduceFissionFragments ? 0
+ UseWendtFissionModel ?    0
+ UseNRESP71Model ?         0
+=======================================================
+
+@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6/Inelastic
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4NDL4.6/Capture/CrossSection/6_nat_Carbon
+
+=======================================================
+======       ParticleHP Physics Parameters     ========
+=======================================================
+ UseOnlyPhotoEvaporation ? 0
+ SkipMissingIsotopes ?     0
+ NeglectDoppler ?          0
+ DoNotAdjustFinalState ?   0
+ ProduceFissionFragments ? 0
+ UseWendtFissionModel ?    0
+ UseNRESP71Model ?         0
+=======================================================
+
+@@@ G4ParticleHPInelastic instantiated for particle triton data directory variable is G4TRITONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.00.p03.gamos/../data/G4TENDL1.4/Triton/Inelastic
+
+====================================================================
+                  HADRONIC PROCESSES SUMMARY (verbose level 1)
+
+---------------------------------------------------
+                           Hadronic Processes for GenericIon
+
+  Process: ionElastic
+        Model:          NNDiffuseElastic: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
+  Process: ionInelastic
+        Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
+  Process: RadioactiveDecay
+
+---------------------------------------------------
+                           Hadronic Processes for He3
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
+  Process: He3Inelastic
+        Model:       ParticleHPInelastic: 0 eV /n ---> 200 MeV/n
+        Model:  Binary Light Ion Cascade: 190 MeV/n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:          He3HPInelasticXS: 0 eV  ---> 200 MeV
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
+---------------------------------------------------
+                           Hadronic Processes for alpha
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
+  Process: alphaInelastic
+        Model:       ParticleHPInelastic: 0 eV /n ---> 200 MeV/n
+        Model:  Binary Light Ion Cascade: 190 MeV/n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:        AlphaHPInelasticXS: 0 eV  ---> 200 MeV
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
+---------------------------------------------------
+                           Hadronic Processes for anti_He3
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: anti_He3Inelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_alpha
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: anti_alphaInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_deuteron
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: anti_deuteronInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_lambda
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: anti_lambdaInelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 0 eV  ---> 25 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_neutron
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100.1 MeV
+        Model:              AntiAElastic: 100 MeV ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: anti_neutronInelastic
+        Model:                      FTFP: 0 eV  ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_proton
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100.1 MeV
+        Model:              AntiAElastic: 100 MeV ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: anti_protonInelastic
+        Model:                      FTFP: 0 eV  ---> 100 TeV
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_triton
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
+        Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: anti_tritonInelastic
+        Model:                      FTFP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for deuteron
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
+  Process: dInelastic
+        Model:       ParticleHPInelastic: 0 eV /n ---> 200 MeV/n
+        Model:  Binary Light Ion Cascade: 190 MeV/n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:     DeuteronHPInelasticXS: 0 eV  ---> 200 MeV
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
+---------------------------------------------------
+                           Hadronic Processes for e+
+
+  Process: positronNuclear
+        Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for e-
+
+  Process: electronNuclear
+        Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for gamma
+
+  Process: photonNuclear
+        Model:               GammaNPreco: 0 eV  ---> 200 MeV
+        Model:            BertiniCascade: 199 MeV ---> 6 GeV
+        Model:           TheoFSGenerator: 3 GeV ---> 100 TeV
+     Cr_sctns:            GammaNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for kaon+
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: kaon+Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for kaon-
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: kaon-Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: hBertiniCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for lambda
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: lambdaInelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for mu+
+
+  Process: muonNuclear
+        Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for mu-
+
+  Process: muonNuclear
+        Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
+     Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
+
+  Process: muMinusCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for neutron
+
+  Process: hadElastic
+        Model:             hElasticCHIPS: 19.5 MeV ---> 100 TeV
+        Model:          NeutronHPElastic: 0 eV  ---> 20 MeV
+     Cr_sctns:        NeutronHPElasticXS: 0 eV  ---> 20 MeV
+     Cr_sctns:        G4NeutronElasticXS: 0 eV  ---> 100 TeV
+
+  Process: neutronInelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            Binary Cascade: 19.9 MeV ---> 6 GeV
+        Model:        NeutronHPInelastic: 0 eV  ---> 20 MeV
+     Cr_sctns:      NeutronHPInelasticXS: 0 eV  ---> 20 MeV
+     Cr_sctns:      G4NeutronInelasticXS: 0 eV  ---> 100 TeV
+
+  Process: nCapture
+        Model:          NeutronHPCapture: 0 eV  ---> 20 MeV
+        Model:               nRadCapture: 19.9 MeV ---> 100 TeV
+     Cr_sctns:        NeutronHPCaptureXS: 0 eV  ---> 20 MeV
+     Cr_sctns:        G4NeutronCaptureXS: 0 eV  ---> 100 TeV
+
+  Process: nFission
+        Model:          NeutronHPFission: 0 eV  ---> 20 MeV
+        Model:                G4LFission: 19.9 MeV ---> 100 TeV
+     Cr_sctns:        NeutronHPFissionXS: 0 eV  ---> 20 MeV
+     Cr_sctns:                    ZeroXS: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for pi+
+
+  Process: hadElastic
+        Model:           hElasticGlauber: 0 eV  ---> 100 TeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: pi+Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for pi-
+
+  Process: hadElastic
+        Model:           hElasticGlauber: 0 eV  ---> 100 TeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: pi-Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: hBertiniCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for proton
+
+  Process: hadElastic
+        Model:             hElasticCHIPS: 0 eV  ---> 100 TeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+  Process: protonInelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            Binary Cascade: 190 MeV ---> 6 GeV
+        Model:       ParticleHPInelastic: 0 eV  ---> 200 MeV
+     Cr_sctns:       ProtonHPInelasticXS: 0 eV  ---> 200 MeV
+     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
+---------------------------------------------------
+                           Hadronic Processes for sigma-
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV  ---> 100 TeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: sigma-Inelastic
+        Model:                      QGSP: 12 GeV ---> 100 TeV
+        Model:                      FTFP: 3 GeV ---> 25 GeV
+        Model:            BertiniCascade: 0 eV  ---> 6 GeV
+     Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
+  Process: hBertiniCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for triton
+
+  Process: hadElastic
+        Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
+  Process: tInelastic
+        Model:       ParticleHPInelastic: 0 eV /n ---> 200 MeV/n
+        Model:  Binary Light Ion Cascade: 190 MeV/n ---> 6 GeV/n
+        Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
+     Cr_sctns:       TritonHPInelasticXS: 0 eV  ---> 200 MeV
+     Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
+================================================================
+=======================================================================
+======       Pre-compound/De-excitation Physics Parameters     ========
+=======================================================================
+Type of pre-compound inverse x-section              3
+Pre-compound model active                           1
+Pre-compound excitation low energy (MeV)            0.1
+Pre-compound excitation high energy (MeV)           30
+Type of de-excitation inverse x-section             3
+Type of de-excitation factory                       Evaporation+GEM
+Number of de-excitation channels                    68
+Min excitation energy (keV)                         0.01
+Min energy per nucleon for multifragmentation (MeV) 2e+05
+Limit excitation energy for Fermi BreakUp (MeV)     20
+Level density (1/MeV)                               0.075
+Use simple level density model                      1
+Use discrete excitation energy of the residual      0
+Time limit for long lived isomeres (ns)             1442.7
+Isomer production flag                              1
+Internal e- conversion flag                         1
+Store e- internal conversion data                   1
+Correlated gamma emission flag                      0
+Max 2J for sampling of angular correlations         10
+=======================================================================
+
+========= Table of registered couples ============================
+
+Index : 0     used in the geometry : Yes
+ Material : G4_AIR
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  990 eV     e-  990 eV     e+  990 eV  proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+Index : 1     used in the geometry : Yes
+ Material : PMMA1.19
+ Range cuts        :  gamma  700 um     e-  700 um     e+  700 um  proton 0 fm 
+ Energy thresholds :  gamma  2.41092 keV    e-  306.404 keV    e+  298.561 keV proton 0 eV 
+ Region(s) which use this couple : 
+    DefaultRegionForTheWorld
+
+==================================================================
+
+G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
+See commands in /vis/modeling/trajectories/ for other options.
+### Run 0 starts.
+ %%% EVENT 0 NTRACKS 186 TOTAL NTRACKS 186
+ %%% EVENT 1000 NTRACKS 1 TOTAL NTRACKS 41494
+ %%% EVENT 2000 NTRACKS 21 TOTAL NTRACKS 79873
+ %%% EVENT 3000 NTRACKS 1 TOTAL NTRACKS 115933
+ %%% EVENT 4000 NTRACKS 1 TOTAL NTRACKS 156209
+ %%% EVENT 5000 NTRACKS 1 TOTAL NTRACKS 197936
+ %%% EVENT 6000 NTRACKS 9 TOTAL NTRACKS 235226
+ %%% EVENT 7000 NTRACKS 16 TOTAL NTRACKS 276942
+ %%% EVENT 8000 NTRACKS 1 TOTAL NTRACKS 315241
+ %%% EVENT 9000 NTRACKS 1 TOTAL NTRACKS 360614
+ Run terminated.
+Run Summary
+  Number of events processed : 10000
+  User=448.920000s Real=449.459057s Sys=0.110000s
+ GmVPSPrinter::SetUnit RTPSPDoseHistos 1e-12 New 1e-12 Ratio 1
+ CreateHisto1D RTPSPDoseHistos: Dose = 36201
+ CreateHisto1D RTPSPDoseHistos: Dose-volume = 36202
+ CreateHisto1D RTPSPDoseHistos: Dose Error REL = 36203
+ CreateHisto1D RTPSPDoseHistos: log10(Dose Error REL) = 36204
+ CreateHisto1D RTPSPDoseHistos: Dose Error = 36205
+ CreateHisto1D RTPSPDoseHistos: log10(Dose Error) = 36206
+ CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error) = 36207
+ CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error REL) = 36208
+RTPSPDoseHistos MINIMUM DOSE 1.79769e+308 Gy 
+RTPSPDoseHistos MAXIMUM DOSE -1.79769e+308 Gy 
+RTPSPDoseHistos AVERAGE ERROR 20% = 0
+RTPSPDoseHistos AVERAGE ERROR 50% = 0
+RTPSPDoseHistos AVERAGE ERROR 90% = 0
+RTPSPDoseHistos TOTAL DOSE = 0 +-(REL) 0
+ FillHisto1N_X X_Merged nXmin 0 nXmax 399 nYmin 0 nYmax 399 nZmin 0 nZmax 299
+ CreateHisto1D X_Merged = 66301
+ CreateHisto1D Y_Merged = 66302
+ CreateHisto1D Z_Merged = 66303
+ CreateHisto1D BraggPeak_1cm = 66304
+ CreateHisto1D BraggPeak_2cm = 66305
+ CreateHisto1D BraggPeak_out = 66306
+ CreateHisto1D BraggPeak_2mm = 66307
+@@@@ GmCountProcessesUA
+ PART_COUNT: Al22 = 6
+ PART_COUNT: Al23 = 6
+ PART_COUNT: Al24 = 2
+ PART_COUNT: Al24[425.800] = 7
+ PART_COUNT: Al25 = 10
+ PART_COUNT: Al25[1612.500] = 1
+ PART_COUNT: Al26 = 3
+ PART_COUNT: Al27 = 2
+ PART_COUNT: Ar32 = 1
+ PART_COUNT: B10 = 358
+ PART_COUNT: B11 = 391
+ PART_COUNT: B12 = 9
+ PART_COUNT: B13 = 2
+ PART_COUNT: B7 = 3
+ PART_COUNT: B8 = 90
+ PART_COUNT: B9 = 59
+ PART_COUNT: Be10 = 36
+ PART_COUNT: Be11 = 3
+ PART_COUNT: Be5 = 3
+ PART_COUNT: Be6 = 9
+ PART_COUNT: Be7 = 165
+ PART_COUNT: Be8 = 374
+ PART_COUNT: Be9 = 89
+ PART_COUNT: C10 = 43
+ PART_COUNT: C11 = 560
+ PART_COUNT: C12 = 29269
+ PART_COUNT: C13 = 547
+ PART_COUNT: C14 = 33
+ PART_COUNT: C15 = 1
+ PART_COUNT: C8 = 1
+ PART_COUNT: C9 = 44
+ PART_COUNT: Cl31 = 1
+ PART_COUNT: F15 = 2
+ PART_COUNT: F16 = 26
+ PART_COUNT: F17 = 7911
+ PART_COUNT: F18 = 66
+ PART_COUNT: F19 = 25
+ PART_COUNT: H4 = 14
+ PART_COUNT: H5 = 3
+ PART_COUNT: He3 = 430
+ PART_COUNT: He5 = 6
+ PART_COUNT: He6 = 10
+ PART_COUNT: He7 = 2
+ PART_COUNT: He8 = 1
+ PART_COUNT: Li10 = 1
+ PART_COUNT: Li4 = 31
+ PART_COUNT: Li5 = 26
+ PART_COUNT: Li6 = 371
+ PART_COUNT: Li7 = 125
+ PART_COUNT: Li8 = 8
+ PART_COUNT: Li9 = 6
+ PART_COUNT: Mg21 = 17
+ PART_COUNT: Mg22 = 10
+ PART_COUNT: Mg23 = 13
+ PART_COUNT: Mg24 = 13
+ PART_COUNT: Mg25 = 4
+ PART_COUNT: N10 = 2
+ PART_COUNT: N11 = 4
+ PART_COUNT: N12 = 371
+ PART_COUNT: N13 = 19970
+ PART_COUNT: N14 = 940
+ PART_COUNT: N15 = 267
+ PART_COUNT: N16 = 3
+ PART_COUNT: N17 = 1
+ PART_COUNT: Na20 = 29
+ PART_COUNT: Na21 = 18
+ PART_COUNT: Na22 = 16
+ PART_COUNT: Na23 = 7
+ PART_COUNT: Na24 = 1
+ PART_COUNT: Ne18 = 5382
+ PART_COUNT: Ne19 = 48
+ PART_COUNT: Ne20 = 27
+ PART_COUNT: Ne21 = 13
+ PART_COUNT: Ne22 = 2
+ PART_COUNT: O13 = 205
+ PART_COUNT: O14 = 12710
+ PART_COUNT: O15 = 769
+ PART_COUNT: O16 = 10864
+ PART_COUNT: O17 = 56
+ PART_COUNT: O18 = 22
+ PART_COUNT: O19 = 1
+ PART_COUNT: P26 = 2
+ PART_COUNT: P27 = 3
+ PART_COUNT: P29 = 1
+ PART_COUNT: P31 = 1
+ PART_COUNT: S27 = 2
+ PART_COUNT: S30 = 1
+ PART_COUNT: S32 = 1
+ PART_COUNT: Si23 = 3
+ PART_COUNT: Si24 = 4
+ PART_COUNT: Si25 = 4
+ PART_COUNT: Si25[0.008] = 1
+ PART_COUNT: Si25[0.037] = 1
+ PART_COUNT: Si26 = 4
+ PART_COUNT: Si27 = 1
+ PART_COUNT: Si28 = 1
+ PART_COUNT: alpha = 8021
+ PART_COUNT: deuteron = 2140
+ PART_COUNT: e+ = 3
+ PART_COUNT: gamma = 62177
+ PART_COUNT: neutron = 5393
+ PART_COUNT: nu_e = 3
+ PART_COUNT: proton = 223940
+ PART_COUNT: triton = 204
+ PROC_COUNT Al22 : Transportation = 633
+ PROC_COUNT Al22 : ionElastic = 2
+ PROC_COUNT Al22 : ionInelastic = 3
+ PROC_COUNT Al22 : ALL = 638
+ PROC_COUNT Al23 : Transportation = 942
+ PROC_COUNT Al23 : ionElastic = 2
+ PROC_COUNT Al23 : ionInelastic = 4
+ PROC_COUNT Al23 : ALL = 948
+ PROC_COUNT Al24 : Transportation = 310
+ PROC_COUNT Al24 : ionElastic = 2
+ PROC_COUNT Al24 : ionInelastic = 2
+ PROC_COUNT Al24 : ALL = 314
+ PROC_COUNT Al24[425.800] : Transportation = 710
+ PROC_COUNT Al24[425.800] : ionElastic = 3
+ PROC_COUNT Al24[425.800] : ionInelastic = 3
+ PROC_COUNT Al24[425.800] : ALL = 716
+ PROC_COUNT Al25 : Transportation = 1432
+ PROC_COUNT Al25 : ionElastic = 8
+ PROC_COUNT Al25 : ionInelastic = 4
+ PROC_COUNT Al25 : ALL = 1444
+ PROC_COUNT Al25[1612.500] : RadioactiveDecay = 1
+ PROC_COUNT Al25[1612.500] : ALL = 1
+ PROC_COUNT Al26 : Transportation = 1381
+ PROC_COUNT Al26 : ionElastic = 1
+ PROC_COUNT Al26 : ionInelastic = 1
+ PROC_COUNT Al26 : ALL = 1383
+ PROC_COUNT Al27 : Transportation = 114
+ PROC_COUNT Al27 : ionInelastic = 1
+ PROC_COUNT Al27 : ALL = 115
+ PROC_COUNT Ar32 : Transportation = 96
+ PROC_COUNT Ar32 : ionElastic = 1
+ PROC_COUNT Ar32 : ALL = 97
+ PROC_COUNT B10 : Transportation = 123816
+ PROC_COUNT B10 : ionElastic = 217
+ PROC_COUNT B10 : ionInelastic = 233
+ PROC_COUNT B10 : ALL = 124266
+ PROC_COUNT B11 : Transportation = 127480
+ PROC_COUNT B11 : ionElastic = 212
+ PROC_COUNT B11 : ionInelastic = 261
+ PROC_COUNT B11 : ALL = 127953
+ PROC_COUNT B12 : Transportation = 2522
+ PROC_COUNT B12 : ionElastic = 7
+ PROC_COUNT B12 : ionInelastic = 6
+ PROC_COUNT B12 : ALL = 2535
+ PROC_COUNT B13 : Transportation = 450
+ PROC_COUNT B13 : ionElastic = 2
+ PROC_COUNT B13 : ionInelastic = 2
+ PROC_COUNT B13 : ALL = 454
+ PROC_COUNT B7 : RadioactiveDecay = 3
+ PROC_COUNT B7 : ALL = 3
+ PROC_COUNT B8 : Transportation = 33158
+ PROC_COUNT B8 : ionElastic = 44
+ PROC_COUNT B8 : ionInelastic = 43
+ PROC_COUNT B8 : ALL = 33245
+ PROC_COUNT B9 : RadioactiveDecay = 59
+ PROC_COUNT B9 : ALL = 59
+ PROC_COUNT Be10 : Transportation = 10784
+ PROC_COUNT Be10 : ionElastic = 25
+ PROC_COUNT Be10 : ionInelastic = 24
+ PROC_COUNT Be10 : ALL = 10833
+ PROC_COUNT Be11 : Transportation = 1503
+ PROC_COUNT Be11 : ionElastic = 2
+ PROC_COUNT Be11 : ionInelastic = 1
+ PROC_COUNT Be11 : ALL = 1506
+ PROC_COUNT Be5 : RadioactiveDecay = 3
+ PROC_COUNT Be5 : ALL = 3
+ PROC_COUNT Be6 : RadioactiveDecay = 9
+ PROC_COUNT Be6 : ALL = 9
+ PROC_COUNT Be7 : Transportation = 57499
+ PROC_COUNT Be7 : ionElastic = 85
+ PROC_COUNT Be7 : ionInelastic = 100
+ PROC_COUNT Be7 : ALL = 57684
+ PROC_COUNT Be8 : RadioactiveDecay = 374
+ PROC_COUNT Be8 : ALL = 374
+ PROC_COUNT Be9 : Transportation = 33642
+ PROC_COUNT Be9 : ionElastic = 65
+ PROC_COUNT Be9 : ionInelastic = 54
+ PROC_COUNT Be9 : ALL = 33761
+ PROC_COUNT C10 : Transportation = 26809
+ PROC_COUNT C10 : ionElastic = 44
+ PROC_COUNT C10 : ionInelastic = 40
+ PROC_COUNT C10 : ALL = 26893
+ PROC_COUNT C11 : Transportation = 183867
+ PROC_COUNT C11 : ionElastic = 299
+ PROC_COUNT C11 : ionInelastic = 359
+ PROC_COUNT C11 : ALL = 184525
+ PROC_COUNT C12 : NoProcess = 5
+ PROC_COUNT C12 : Transportation = 9470128
+ PROC_COUNT C12 : ionElastic = 17920
+ PROC_COUNT C12 : ionInelastic = 19900
+ PROC_COUNT C12 : ALL = 9.50795e+06
+ PROC_COUNT C13 : NoProcess = 1
+ PROC_COUNT C13 : Transportation = 182091
+ PROC_COUNT C13 : ionElastic = 393
+ PROC_COUNT C13 : ionInelastic = 388
+ PROC_COUNT C13 : ALL = 182873
+ PROC_COUNT C14 : Transportation = 12013
+ PROC_COUNT C14 : ionElastic = 17
+ PROC_COUNT C14 : ionInelastic = 22
+ PROC_COUNT C14 : ALL = 12052
+ PROC_COUNT C15 : Transportation = 1
+ PROC_COUNT C15 : ALL = 1
+ PROC_COUNT C8 : RadioactiveDecay = 1
+ PROC_COUNT C8 : ALL = 1
+ PROC_COUNT C9 : Transportation = 20639
+ PROC_COUNT C9 : ionElastic = 19
+ PROC_COUNT C9 : ionInelastic = 27
+ PROC_COUNT C9 : ALL = 20685
+ PROC_COUNT Cl31 : Transportation = 40
+ PROC_COUNT Cl31 : ionInelastic = 1
+ PROC_COUNT Cl31 : ALL = 41
+ PROC_COUNT F15 : RadioactiveDecay = 2
+ PROC_COUNT F15 : ALL = 2
+ PROC_COUNT F16 : RadioactiveDecay = 26
+ PROC_COUNT F16 : ALL = 26
+ PROC_COUNT F17 : Transportation = 2102020
+ PROC_COUNT F17 : ionElastic = 5076
+ PROC_COUNT F17 : ionInelastic = 5378
+ PROC_COUNT F17 : ALL = 2.11247e+06
+ PROC_COUNT F18 : Transportation = 16845
+ PROC_COUNT F18 : ionElastic = 36
+ PROC_COUNT F18 : ionInelastic = 46
+ PROC_COUNT F18 : ALL = 16927
+ PROC_COUNT F19 : Transportation = 8724
+ PROC_COUNT F19 : ionElastic = 33
+ PROC_COUNT F19 : ionInelastic = 18
+ PROC_COUNT F19 : ALL = 8775
+ PROC_COUNT H4 : RadioactiveDecay = 14
+ PROC_COUNT H4 : ALL = 14
+ PROC_COUNT H5 : RadioactiveDecay = 3
+ PROC_COUNT H5 : ALL = 3
+ PROC_COUNT He3 : He3Inelastic = 134
+ PROC_COUNT He3 : Transportation = 226172
+ PROC_COUNT He3 : hadElastic = 297
+ PROC_COUNT He3 : ALL = 226603
+ PROC_COUNT He5 : RadioactiveDecay = 6
+ PROC_COUNT He5 : ALL = 6
+ PROC_COUNT He6 : Transportation = 3632
+ PROC_COUNT He6 : ionElastic = 8
+ PROC_COUNT He6 : ionInelastic = 4
+ PROC_COUNT He6 : ALL = 3644
+ PROC_COUNT He7 : RadioactiveDecay = 2
+ PROC_COUNT He7 : ALL = 2
+ PROC_COUNT He8 : Transportation = 471
+ PROC_COUNT He8 : ionElastic = 2
+ PROC_COUNT He8 : ionInelastic = 1
+ PROC_COUNT He8 : ALL = 474
+ PROC_COUNT Li10 : RadioactiveDecay = 1
+ PROC_COUNT Li10 : ALL = 1
+ PROC_COUNT Li4 : RadioactiveDecay = 31
+ PROC_COUNT Li4 : ALL = 31
+ PROC_COUNT Li5 : RadioactiveDecay = 26
+ PROC_COUNT Li5 : ALL = 26
+ PROC_COUNT Li6 : Transportation = 126419
+ PROC_COUNT Li6 : ionElastic = 227
+ PROC_COUNT Li6 : ionInelastic = 233
+ PROC_COUNT Li6 : ALL = 126879
+ PROC_COUNT Li7 : Transportation = 48321
+ PROC_COUNT Li7 : ionElastic = 84
+ PROC_COUNT Li7 : ionInelastic = 76
+ PROC_COUNT Li7 : ALL = 48481
+ PROC_COUNT Li8 : Transportation = 3543
+ PROC_COUNT Li8 : ionElastic = 8
+ PROC_COUNT Li8 : ionInelastic = 4
+ PROC_COUNT Li8 : ALL = 3555
+ PROC_COUNT Li9 : Transportation = 2211
+ PROC_COUNT Li9 : ionElastic = 7
+ PROC_COUNT Li9 : ionInelastic = 5
+ PROC_COUNT Li9 : ALL = 2223
+ PROC_COUNT Mg21 : Transportation = 4600
+ PROC_COUNT Mg21 : ionElastic = 11
+ PROC_COUNT Mg21 : ionInelastic = 6
+ PROC_COUNT Mg21 : ALL = 4617
+ PROC_COUNT Mg22 : Transportation = 2479
+ PROC_COUNT Mg22 : ionElastic = 8
+ PROC_COUNT Mg22 : ionInelastic = 6
+ PROC_COUNT Mg22 : ALL = 2493
+ PROC_COUNT Mg23 : Transportation = 2639
+ PROC_COUNT Mg23 : ionElastic = 9
+ PROC_COUNT Mg23 : ionInelastic = 9
+ PROC_COUNT Mg23 : ALL = 2657
+ PROC_COUNT Mg24 : Transportation = 2620
+ PROC_COUNT Mg24 : ionElastic = 10
+ PROC_COUNT Mg24 : ionInelastic = 10
+ PROC_COUNT Mg24 : ALL = 2640
+ PROC_COUNT Mg25 : Transportation = 364
+ PROC_COUNT Mg25 : ionInelastic = 2
+ PROC_COUNT Mg25 : ALL = 366
+ PROC_COUNT N10 : RadioactiveDecay = 2
+ PROC_COUNT N10 : ALL = 2
+ PROC_COUNT N11 : RadioactiveDecay = 4
+ PROC_COUNT N11 : ALL = 4
+ PROC_COUNT N12 : Transportation = 95435
+ PROC_COUNT N12 : ionElastic = 186
+ PROC_COUNT N12 : ionInelastic = 205
+ PROC_COUNT N12 : ALL = 95826
+ PROC_COUNT N13 : RadioactiveDecay = 2
+ PROC_COUNT N13 : Transportation = 5770179
+ PROC_COUNT N13 : ionElastic = 11596
+ PROC_COUNT N13 : ionInelastic = 12693
+ PROC_COUNT N13 : ALL = 5.79447e+06
+ PROC_COUNT N14 : Transportation = 222367
+ PROC_COUNT N14 : ionElastic = 481
+ PROC_COUNT N14 : ionInelastic = 502
+ PROC_COUNT N14 : ALL = 223350
+ PROC_COUNT N15 : Transportation = 79494
+ PROC_COUNT N15 : ionElastic = 181
+ PROC_COUNT N15 : ionInelastic = 190
+ PROC_COUNT N15 : ALL = 79865
+ PROC_COUNT N16 : Transportation = 834
+ PROC_COUNT N16 : ionInelastic = 2
+ PROC_COUNT N16 : ALL = 836
+ PROC_COUNT N17 : Transportation = 340
+ PROC_COUNT N17 : ionElastic = 1
+ PROC_COUNT N17 : ionInelastic = 1
+ PROC_COUNT N17 : ALL = 342
+ PROC_COUNT Na20 : Transportation = 5800
+ PROC_COUNT Na20 : ionElastic = 15
+ PROC_COUNT Na20 : ionInelastic = 17
+ PROC_COUNT Na20 : ALL = 5832
+ PROC_COUNT Na21 : Transportation = 4548
+ PROC_COUNT Na21 : ionElastic = 16
+ PROC_COUNT Na21 : ionInelastic = 10
+ PROC_COUNT Na21 : ALL = 4574
+ PROC_COUNT Na22 : Transportation = 2972
+ PROC_COUNT Na22 : ionElastic = 9
+ PROC_COUNT Na22 : ionInelastic = 11
+ PROC_COUNT Na22 : ALL = 2992
+ PROC_COUNT Na23 : Transportation = 1113
+ PROC_COUNT Na23 : ionInelastic = 4
+ PROC_COUNT Na23 : ALL = 1117
+ PROC_COUNT Na24 : Transportation = 10
+ PROC_COUNT Na24 : ionElastic = 1
+ PROC_COUNT Na24 : ionInelastic = 1
+ PROC_COUNT Na24 : ALL = 12
+ PROC_COUNT Ne18 : Transportation = 2761003
+ PROC_COUNT Ne18 : ionElastic = 6950
+ PROC_COUNT Ne18 : ionInelastic = 7153
+ PROC_COUNT Ne18 : ALL = 2.77511e+06
+ PROC_COUNT Ne19 : Transportation = 12122
+ PROC_COUNT Ne19 : ionElastic = 27
+ PROC_COUNT Ne19 : ionInelastic = 29
+ PROC_COUNT Ne19 : ALL = 12178
+ PROC_COUNT Ne20 : Transportation = 5123
+ PROC_COUNT Ne20 : ionElastic = 20
+ PROC_COUNT Ne20 : ionInelastic = 16
+ PROC_COUNT Ne20 : ALL = 5159
+ PROC_COUNT Ne21 : Transportation = 2829
+ PROC_COUNT Ne21 : ionElastic = 4
+ PROC_COUNT Ne21 : ionInelastic = 6
+ PROC_COUNT Ne21 : ALL = 2839
+ PROC_COUNT Ne22 : Transportation = 194
+ PROC_COUNT Ne22 : ionElastic = 3
+ PROC_COUNT Ne22 : ionInelastic = 2
+ PROC_COUNT Ne22 : ALL = 199
+ PROC_COUNT O13 : Transportation = 72858
+ PROC_COUNT O13 : ionElastic = 135
+ PROC_COUNT O13 : ionInelastic = 165
+ PROC_COUNT O13 : ALL = 73158
+ PROC_COUNT O14 : Transportation = 6746124
+ PROC_COUNT O14 : ionElastic = 14278
+ PROC_COUNT O14 : ionInelastic = 14852
+ PROC_COUNT O14 : ALL = 6.77525e+06
+ PROC_COUNT O15 : Transportation = 396470
+ PROC_COUNT O15 : ionElastic = 935
+ PROC_COUNT O15 : ionInelastic = 1029
+ PROC_COUNT O15 : ALL = 398434
+ PROC_COUNT O16 : NoProcess = 8
+ PROC_COUNT O16 : Transportation = 3161937
+ PROC_COUNT O16 : ionElastic = 7642
+ PROC_COUNT O16 : ionInelastic = 7893
+ PROC_COUNT O16 : ALL = 3.17748e+06
+ PROC_COUNT O17 : Transportation = 14888
+ PROC_COUNT O17 : ionElastic = 37
+ PROC_COUNT O17 : ionInelastic = 41
+ PROC_COUNT O17 : ALL = 14966
+ PROC_COUNT O18 : Transportation = 5235
+ PROC_COUNT O18 : ionElastic = 16
+ PROC_COUNT O18 : ionInelastic = 16
+ PROC_COUNT O18 : ALL = 5267
+ PROC_COUNT O19 : Transportation = 355
+ PROC_COUNT O19 : ionElastic = 1
+ PROC_COUNT O19 : ionInelastic = 1
+ PROC_COUNT O19 : ALL = 357
+ PROC_COUNT P26 : Transportation = 95
+ PROC_COUNT P26 : ionElastic = 1
+ PROC_COUNT P26 : ionInelastic = 2
+ PROC_COUNT P26 : ALL = 98
+ PROC_COUNT P27 : Transportation = 205
+ PROC_COUNT P27 : ionElastic = 1
+ PROC_COUNT P27 : ALL = 206
+ PROC_COUNT P29 : Transportation = 127
+ PROC_COUNT P29 : ionElastic = 1
+ PROC_COUNT P29 : ionInelastic = 1
+ PROC_COUNT P29 : ALL = 129
+ PROC_COUNT P31 : Transportation = 156
+ PROC_COUNT P31 : ionElastic = 2
+ PROC_COUNT P31 : ionInelastic = 1
+ PROC_COUNT P31 : ALL = 159
+ PROC_COUNT S27 : Transportation = 284
+ PROC_COUNT S27 : ionElastic = 1
+ PROC_COUNT S27 : ionInelastic = 2
+ PROC_COUNT S27 : ALL = 287
+ PROC_COUNT S30 : Transportation = 5
+ PROC_COUNT S30 : ionInelastic = 1
+ PROC_COUNT S30 : ALL = 6
+ PROC_COUNT S32 : Transportation = 291
+ PROC_COUNT S32 : ionElastic = 2
+ PROC_COUNT S32 : ALL = 293
+ PROC_COUNT Si23 : Transportation = 182
+ PROC_COUNT Si23 : ionElastic = 1
+ PROC_COUNT Si23 : ionInelastic = 1
+ PROC_COUNT Si23 : ALL = 184
+ PROC_COUNT Si24 : Transportation = 254
+ PROC_COUNT Si24 : ionElastic = 1
+ PROC_COUNT Si24 : ionInelastic = 1
+ PROC_COUNT Si24 : ALL = 256
+ PROC_COUNT Si25 : Transportation = 474
+ PROC_COUNT Si25 : ionInelastic = 2
+ PROC_COUNT Si25 : ALL = 476
+ PROC_COUNT Si25[0.008] : RadioactiveDecay = 1
+ PROC_COUNT Si25[0.008] : ALL = 1
+ PROC_COUNT Si25[0.037] : RadioactiveDecay = 1
+ PROC_COUNT Si25[0.037] : ALL = 1
+ PROC_COUNT Si26 : Transportation = 581
+ PROC_COUNT Si26 : ionInelastic = 3
+ PROC_COUNT Si26 : ALL = 584
+ PROC_COUNT Si27 : Transportation = 46
+ PROC_COUNT Si27 : ALL = 46
+ PROC_COUNT Si28 : Transportation = 5
+ PROC_COUNT Si28 : ionInelastic = 1
+ PROC_COUNT Si28 : ALL = 6
+ PROC_COUNT alpha : Transportation = 4657268
+ PROC_COUNT alpha : alphaInelastic = 494
+ PROC_COUNT alpha : hadElastic = 6336
+ PROC_COUNT alpha : ALL = 4.6641e+06
+ PROC_COUNT deuteron : Transportation = 1216497
+ PROC_COUNT deuteron : dInelastic = 526
+ PROC_COUNT deuteron : hadElastic = 960
+ PROC_COUNT deuteron : ALL = 1.21798e+06
+ PROC_COUNT e+ : Transportation = 1265
+ PROC_COUNT e+ : ALL = 1265
+ PROC_COUNT gamma : Transportation = 42330771
+ PROC_COUNT gamma : ALL = 4.23308e+07
+ PROC_COUNT neutron : Transportation = 5520355
+ PROC_COUNT neutron : hadElastic = 153829
+ PROC_COUNT neutron : nCapture = 1081
+ PROC_COUNT neutron : neutronInelastic = 917
+ PROC_COUNT neutron : ALL = 5.67618e+06
+ PROC_COUNT nu_e : Transportation = 1717
+ PROC_COUNT nu_e : ALL = 1717
+ PROC_COUNT proton : Transportation = 138216417
+ PROC_COUNT proton : hadElastic = 14569
+ PROC_COUNT proton : protonInelastic = 4927
+ PROC_COUNT proton : ALL = 1.38236e+08
+ PROC_COUNT triton : Transportation = 84517
+ PROC_COUNT triton : hadElastic = 126
+ PROC_COUNT triton : tInelastic = 105
+PROC_COUNT triton : ALL = 84748
+PROC_CREATOR_COUNT Al22 : ionInelastic = 6
+PROC_CREATOR_COUNT Al23 : ionInelastic = 6
+PROC_CREATOR_COUNT Al24 : ionInelastic = 2
+PROC_CREATOR_COUNT Al24[425.800] : ionInelastic = 7
+PROC_CREATOR_COUNT Al25 : RadioactiveDecay = 1
+PROC_CREATOR_COUNT Al25 : ionInelastic = 9
+PROC_CREATOR_COUNT Al25[1612.500] : RadioactiveDecay = 1
+PROC_CREATOR_COUNT Al26 : ionInelastic = 3
+PROC_CREATOR_COUNT Al27 : ionInelastic = 2
+PROC_CREATOR_COUNT Ar32 : ionInelastic = 1
+PROC_CREATOR_COUNT B10 : alphaInelastic = 2
+PROC_CREATOR_COUNT B10 : dInelastic = 65
+PROC_CREATOR_COUNT B10 : ionInelastic = 30
+PROC_CREATOR_COUNT B10 : neutronInelastic = 17
+PROC_CREATOR_COUNT B10 : protonInelastic = 241
+PROC_CREATOR_COUNT B10 : tInelastic = 3
+PROC_CREATOR_COUNT B11 : He3Inelastic = 1
+PROC_CREATOR_COUNT B11 : alphaInelastic = 13
+PROC_CREATOR_COUNT B11 : dInelastic = 9
+PROC_CREATOR_COUNT B11 : ionInelastic = 8
+PROC_CREATOR_COUNT B11 : neutronInelastic = 95
+PROC_CREATOR_COUNT B11 : protonInelastic = 238
+PROC_CREATOR_COUNT B11 : tInelastic = 27
+PROC_CREATOR_COUNT B12 : He3Inelastic = 2
+PROC_CREATOR_COUNT B12 : dInelastic = 2
+PROC_CREATOR_COUNT B12 : neutronInelastic = 3
+PROC_CREATOR_COUNT B12 : protonInelastic = 2
+PROC_CREATOR_COUNT B13 : protonInelastic = 2
+PROC_CREATOR_COUNT B7 : RadioactiveDecay = 1
+PROC_CREATOR_COUNT B7 : protonInelastic = 2
+PROC_CREATOR_COUNT B8 : ionInelastic = 78
+PROC_CREATOR_COUNT B8 : protonInelastic = 12
+PROC_CREATOR_COUNT B9 : He3Inelastic = 1
+PROC_CREATOR_COUNT B9 : alphaInelastic = 1
+PROC_CREATOR_COUNT B9 : dInelastic = 4
+PROC_CREATOR_COUNT B9 : neutronInelastic = 1
+PROC_CREATOR_COUNT B9 : protonInelastic = 52
+PROC_CREATOR_COUNT Be10 : alphaInelastic = 1
+PROC_CREATOR_COUNT Be10 : dInelastic = 1
+PROC_CREATOR_COUNT Be10 : neutronInelastic = 6
+PROC_CREATOR_COUNT Be10 : protonInelastic = 28
+PROC_CREATOR_COUNT Be11 : dInelastic = 3
+PROC_CREATOR_COUNT Be5 : protonInelastic = 3
+PROC_CREATOR_COUNT Be6 : protonInelastic = 9
+PROC_CREATOR_COUNT Be7 : alphaInelastic = 3
+PROC_CREATOR_COUNT Be7 : dInelastic = 1
+PROC_CREATOR_COUNT Be7 : ionInelastic = 3
+PROC_CREATOR_COUNT Be7 : neutronInelastic = 3
+PROC_CREATOR_COUNT Be7 : protonInelastic = 155
+PROC_CREATOR_COUNT Be8 : RadioactiveDecay = 59
+PROC_CREATOR_COUNT Be8 : alphaInelastic = 21
+PROC_CREATOR_COUNT Be8 : dInelastic = 9
+PROC_CREATOR_COUNT Be8 : ionInelastic = 54
+PROC_CREATOR_COUNT Be8 : neutronInelastic = 40
+PROC_CREATOR_COUNT Be8 : protonInelastic = 191
+PROC_CREATOR_COUNT Be9 : He3Inelastic = 1
+PROC_CREATOR_COUNT Be9 : alphaInelastic = 2
+PROC_CREATOR_COUNT Be9 : dInelastic = 12
+PROC_CREATOR_COUNT Be9 : ionInelastic = 2
+PROC_CREATOR_COUNT Be9 : neutronInelastic = 41
+PROC_CREATOR_COUNT Be9 : protonInelastic = 29
+PROC_CREATOR_COUNT Be9 : tInelastic = 2
+PROC_CREATOR_COUNT C10 : RadioactiveDecay = 4
+PROC_CREATOR_COUNT C10 : dInelastic = 1
+PROC_CREATOR_COUNT C10 : protonInelastic = 38
+PROC_CREATOR_COUNT C11 : He3Inelastic = 10
+PROC_CREATOR_COUNT C11 : alphaInelastic = 4
+PROC_CREATOR_COUNT C11 : dInelastic = 2
+PROC_CREATOR_COUNT C11 : ionInelastic = 193
+PROC_CREATOR_COUNT C11 : neutronInelastic = 15
+PROC_CREATOR_COUNT C11 : protonInelastic = 336
+PROC_CREATOR_COUNT C12 : He3Inelastic = 15
+PROC_CREATOR_COUNT C12 : alphaInelastic = 242
+PROC_CREATOR_COUNT C12 : dInelastic = 61
+PROC_CREATOR_COUNT C12 : hadElastic = 27876
+PROC_CREATOR_COUNT C12 : ionElastic = 140
+PROC_CREATOR_COUNT C12 : ionInelastic = 199
+PROC_CREATOR_COUNT C12 : neutronInelastic = 227
+PROC_CREATOR_COUNT C12 : protonInelastic = 504
+PROC_CREATOR_COUNT C12 : tInelastic = 5
+PROC_CREATOR_COUNT C13 : He3Inelastic = 47
+PROC_CREATOR_COUNT C13 : RadioactiveDecay = 2
+PROC_CREATOR_COUNT C13 : alphaInelastic = 4
+PROC_CREATOR_COUNT C13 : dInelastic = 69
+PROC_CREATOR_COUNT C13 : hadElastic = 280
+PROC_CREATOR_COUNT C13 : ionElastic = 1
+PROC_CREATOR_COUNT C13 : ionInelastic = 7
+PROC_CREATOR_COUNT C13 : nCapture = 16
+PROC_CREATOR_COUNT C13 : neutronInelastic = 49
+PROC_CREATOR_COUNT C13 : protonInelastic = 60
+PROC_CREATOR_COUNT C13 : tInelastic = 12
+PROC_CREATOR_COUNT C14 : alphaInelastic = 1
+PROC_CREATOR_COUNT C14 : dInelastic = 2
+PROC_CREATOR_COUNT C14 : ionInelastic = 1
+PROC_CREATOR_COUNT C14 : neutronInelastic = 6
+PROC_CREATOR_COUNT C14 : protonInelastic = 17
+PROC_CREATOR_COUNT C14 : tInelastic = 6
+PROC_CREATOR_COUNT C15 : alphaInelastic = 1
+PROC_CREATOR_COUNT C8 : protonInelastic = 1
+PROC_CREATOR_COUNT C9 : RadioactiveDecay = 2
+PROC_CREATOR_COUNT C9 : ionInelastic = 40
+PROC_CREATOR_COUNT C9 : protonInelastic = 2
+PROC_CREATOR_COUNT Cl31 : ionInelastic = 1
+PROC_CREATOR_COUNT F15 : protonInelastic = 2
+PROC_CREATOR_COUNT F16 : dInelastic = 1
+PROC_CREATOR_COUNT F16 : ionInelastic = 23
+PROC_CREATOR_COUNT F16 : protonInelastic = 2
+PROC_CREATOR_COUNT F17 : He3Inelastic = 1
+PROC_CREATOR_COUNT F17 : dInelastic = 12
+PROC_CREATOR_COUNT F17 : ionInelastic = 7897
+PROC_CREATOR_COUNT F17 : tInelastic = 1
+PROC_CREATOR_COUNT F18 : He3Inelastic = 9
+PROC_CREATOR_COUNT F18 : ionInelastic = 51
+PROC_CREATOR_COUNT F18 : tInelastic = 6
+PROC_CREATOR_COUNT F19 : alphaInelastic = 6
+PROC_CREATOR_COUNT F19 : ionInelastic = 19
+PROC_CREATOR_COUNT H4 : He3Inelastic = 1
+PROC_CREATOR_COUNT H4 : dInelastic = 1
+PROC_CREATOR_COUNT H4 : protonInelastic = 12
+PROC_CREATOR_COUNT H5 : protonInelastic = 3
+PROC_CREATOR_COUNT He3 : He3Inelastic = 5
+PROC_CREATOR_COUNT He3 : RadioactiveDecay = 31
+PROC_CREATOR_COUNT He3 : alphaInelastic = 2
+PROC_CREATOR_COUNT He3 : dInelastic = 1
+PROC_CREATOR_COUNT He3 : ionInelastic = 153
+PROC_CREATOR_COUNT He3 : neutronInelastic = 6
+PROC_CREATOR_COUNT He3 : protonInelastic = 205
+PROC_CREATOR_COUNT He3 : tInelastic = 27
+PROC_CREATOR_COUNT He5 : alphaInelastic = 1
+PROC_CREATOR_COUNT He5 : dInelastic = 1
+PROC_CREATOR_COUNT He5 : protonInelastic = 4
+PROC_CREATOR_COUNT He6 : neutronInelastic = 2
+PROC_CREATOR_COUNT He6 : protonInelastic = 7
+PROC_CREATOR_COUNT He6 : tInelastic = 1
+PROC_CREATOR_COUNT He7 : dInelastic = 1
+PROC_CREATOR_COUNT He7 : protonInelastic = 1
+PROC_CREATOR_COUNT He8 : protonInelastic = 1
+PROC_CREATOR_COUNT Li10 : He3Inelastic = 1
+PROC_CREATOR_COUNT Li4 : alphaInelastic = 1
+PROC_CREATOR_COUNT Li4 : dInelastic = 2
+PROC_CREATOR_COUNT Li4 : protonInelastic = 28
+PROC_CREATOR_COUNT Li5 : dInelastic = 4
+PROC_CREATOR_COUNT Li5 : protonInelastic = 22
+PROC_CREATOR_COUNT Li6 : He3Inelastic = 1
+PROC_CREATOR_COUNT Li6 : dInelastic = 7
+PROC_CREATOR_COUNT Li6 : ionInelastic = 71
+PROC_CREATOR_COUNT Li6 : neutronInelastic = 23
+PROC_CREATOR_COUNT Li6 : protonInelastic = 269
+PROC_CREATOR_COUNT Li7 : alphaInelastic = 2
+PROC_CREATOR_COUNT Li7 : ionInelastic = 6
+PROC_CREATOR_COUNT Li7 : neutronInelastic = 24
+PROC_CREATOR_COUNT Li7 : protonInelastic = 92
+PROC_CREATOR_COUNT Li7 : tInelastic = 1
+PROC_CREATOR_COUNT Li8 : dInelastic = 1
+PROC_CREATOR_COUNT Li8 : ionInelastic = 1
+PROC_CREATOR_COUNT Li8 : neutronInelastic = 2
+PROC_CREATOR_COUNT Li8 : protonInelastic = 4
+PROC_CREATOR_COUNT Li9 : RadioactiveDecay = 1
+PROC_CREATOR_COUNT Li9 : protonInelastic = 5
+PROC_CREATOR_COUNT Mg21 : ionInelastic = 17
+PROC_CREATOR_COUNT Mg22 : ionInelastic = 10
+PROC_CREATOR_COUNT Mg23 : ionInelastic = 13
+PROC_CREATOR_COUNT Mg24 : ionInelastic = 13
+PROC_CREATOR_COUNT Mg25 : ionInelastic = 4
+PROC_CREATOR_COUNT N10 : protonInelastic = 2
+PROC_CREATOR_COUNT N11 : ionInelastic = 2
+PROC_CREATOR_COUNT N11 : protonInelastic = 2
+PROC_CREATOR_COUNT N12 : dInelastic = 2
+PROC_CREATOR_COUNT N12 : ionInelastic = 353
+PROC_CREATOR_COUNT N12 : protonInelastic = 16
+PROC_CREATOR_COUNT N13 : He3Inelastic = 3
+PROC_CREATOR_COUNT N13 : dInelastic = 21
+PROC_CREATOR_COUNT N13 : ionInelastic = 19888
+PROC_CREATOR_COUNT N13 : neutronInelastic = 3
+PROC_CREATOR_COUNT N13 : protonInelastic = 54
+PROC_CREATOR_COUNT N13 : tInelastic = 1
+PROC_CREATOR_COUNT N14 : He3Inelastic = 31
+PROC_CREATOR_COUNT N14 : alphaInelastic = 4
+PROC_CREATOR_COUNT N14 : dInelastic = 34
+PROC_CREATOR_COUNT N14 : hadElastic = 169
+PROC_CREATOR_COUNT N14 : ionElastic = 2
+PROC_CREATOR_COUNT N14 : ionInelastic = 443
+PROC_CREATOR_COUNT N14 : neutronInelastic = 27
+PROC_CREATOR_COUNT N14 : protonInelastic = 213
+PROC_CREATOR_COUNT N14 : tInelastic = 17
+PROC_CREATOR_COUNT N15 : alphaInelastic = 30
+PROC_CREATOR_COUNT N15 : dInelastic = 1
+PROC_CREATOR_COUNT N15 : ionInelastic = 23
+PROC_CREATOR_COUNT N15 : neutronInelastic = 71
+PROC_CREATOR_COUNT N15 : protonInelastic = 137
+PROC_CREATOR_COUNT N15 : tInelastic = 5
+PROC_CREATOR_COUNT N16 : dInelastic = 1
+PROC_CREATOR_COUNT N16 : neutronInelastic = 2
+PROC_CREATOR_COUNT N17 : tInelastic = 1
+PROC_CREATOR_COUNT Na20 : ionInelastic = 29
+PROC_CREATOR_COUNT Na21 : ionInelastic = 18
+PROC_CREATOR_COUNT Na22 : ionInelastic = 16
+PROC_CREATOR_COUNT Na23 : ionInelastic = 7
+PROC_CREATOR_COUNT Na24 : ionInelastic = 1
+PROC_CREATOR_COUNT Ne18 : He3Inelastic = 1
+PROC_CREATOR_COUNT Ne18 : ionInelastic = 5381
+PROC_CREATOR_COUNT Ne19 : alphaInelastic = 2
+PROC_CREATOR_COUNT Ne19 : ionInelastic = 46
+PROC_CREATOR_COUNT Ne20 : ionInelastic = 27
+PROC_CREATOR_COUNT Ne21 : ionInelastic = 13
+PROC_CREATOR_COUNT Ne22 : ionInelastic = 2
+PROC_CREATOR_COUNT O13 : ionInelastic = 204
+PROC_CREATOR_COUNT O13 : protonInelastic = 1
+PROC_CREATOR_COUNT O14 : He3Inelastic = 4
+PROC_CREATOR_COUNT O14 : RadioactiveDecay = 2
+PROC_CREATOR_COUNT O14 : ionInelastic = 12687
+PROC_CREATOR_COUNT O14 : protonInelastic = 17
+PROC_CREATOR_COUNT O15 : He3Inelastic = 15
+PROC_CREATOR_COUNT O15 : RadioactiveDecay = 26
+PROC_CREATOR_COUNT O15 : alphaInelastic = 6
+PROC_CREATOR_COUNT O15 : ionInelastic = 501
+PROC_CREATOR_COUNT O15 : neutronInelastic = 6
+PROC_CREATOR_COUNT O15 : protonInelastic = 215
+PROC_CREATOR_COUNT O16 : He3Inelastic = 1
+PROC_CREATOR_COUNT O16 : alphaInelastic = 58
+PROC_CREATOR_COUNT O16 : dInelastic = 20
+PROC_CREATOR_COUNT O16 : hadElastic = 10469
+PROC_CREATOR_COUNT O16 : ionElastic = 49
+PROC_CREATOR_COUNT O16 : ionInelastic = 29
+PROC_CREATOR_COUNT O16 : neutronInelastic = 59
+PROC_CREATOR_COUNT O16 : protonInelastic = 178
+PROC_CREATOR_COUNT O16 : tInelastic = 1
+PROC_CREATOR_COUNT O17 : He3Inelastic = 5
+PROC_CREATOR_COUNT O17 : alphaInelastic = 5
+PROC_CREATOR_COUNT O17 : dInelastic = 24
+PROC_CREATOR_COUNT O17 : hadElastic = 6
+PROC_CREATOR_COUNT O17 : ionInelastic = 9
+PROC_CREATOR_COUNT O17 : protonInelastic = 2
+PROC_CREATOR_COUNT O17 : tInelastic = 5
+PROC_CREATOR_COUNT O18 : hadElastic = 19
+PROC_CREATOR_COUNT O18 : protonInelastic = 1
+PROC_CREATOR_COUNT O18 : tInelastic = 2
+PROC_CREATOR_COUNT O19 : ionInelastic = 1
+PROC_CREATOR_COUNT P26 : ionInelastic = 2
+PROC_CREATOR_COUNT P27 : ionInelastic = 3
+PROC_CREATOR_COUNT P29 : ionInelastic = 1
+PROC_CREATOR_COUNT P31 : ionInelastic = 1
+PROC_CREATOR_COUNT S27 : ionInelastic = 2
+PROC_CREATOR_COUNT S30 : ionInelastic = 1
+PROC_CREATOR_COUNT S32 : ionInelastic = 1
+PROC_CREATOR_COUNT Si23 : ionInelastic = 3
+PROC_CREATOR_COUNT Si24 : ionInelastic = 4
+PROC_CREATOR_COUNT Si25 : ionInelastic = 4
+PROC_CREATOR_COUNT Si25[0.008] : RadioactiveDecay = 1
+PROC_CREATOR_COUNT Si25[0.037] : ionInelastic = 1
+PROC_CREATOR_COUNT Si26 : ionInelastic = 4
+PROC_CREATOR_COUNT Si27 : ionInelastic = 1
+PROC_CREATOR_COUNT Si28 : ionInelastic = 1
+PROC_CREATOR_COUNT alpha : He3Inelastic = 47
+PROC_CREATOR_COUNT alpha : RadioactiveDecay = 780
+PROC_CREATOR_COUNT alpha : alphaInelastic = 443
+PROC_CREATOR_COUNT alpha : dInelastic = 184
+PROC_CREATOR_COUNT alpha : ionInelastic = 1307
+PROC_CREATOR_COUNT alpha : neutronInelastic = 725
+PROC_CREATOR_COUNT alpha : protonInelastic = 4502
+PROC_CREATOR_COUNT alpha : tInelastic = 33
+PROC_CREATOR_COUNT deuteron : He3Inelastic = 10
+PROC_CREATOR_COUNT deuteron : alphaInelastic = 14
+PROC_CREATOR_COUNT deuteron : dInelastic = 39
+PROC_CREATOR_COUNT deuteron : hadElastic = 5
+PROC_CREATOR_COUNT deuteron : ionElastic = 8
+PROC_CREATOR_COUNT deuteron : ionInelastic = 15
+PROC_CREATOR_COUNT deuteron : nCapture = 1065
+PROC_CREATOR_COUNT deuteron : neutronInelastic = 95
+PROC_CREATOR_COUNT deuteron : protonInelastic = 883
+PROC_CREATOR_COUNT deuteron : tInelastic = 6
+PROC_CREATOR_COUNT e+ : RadioactiveDecay = 3
+PROC_CREATOR_COUNT gamma : He3Inelastic = 4
+PROC_CREATOR_COUNT gamma : RadioactiveDecay = 2
+PROC_CREATOR_COUNT gamma : alphaInelastic = 1658
+PROC_CREATOR_COUNT gamma : dInelastic = 970
+PROC_CREATOR_COUNT gamma : ionInelastic = 54603
+PROC_CREATOR_COUNT gamma : nCapture = 1087
+PROC_CREATOR_COUNT gamma : neutronInelastic = 958
+PROC_CREATOR_COUNT gamma : protonInelastic = 2869
+PROC_CREATOR_COUNT gamma : tInelastic = 26
+PROC_CREATOR_COUNT neutron : He3Inelastic = 15
+PROC_CREATOR_COUNT neutron : RadioactiveDecay = 21
+PROC_CREATOR_COUNT neutron : alphaInelastic = 49
+PROC_CREATOR_COUNT neutron : dInelastic = 256
+PROC_CREATOR_COUNT neutron : ionInelastic = 91
+PROC_CREATOR_COUNT neutron : neutronInelastic = 931
+PROC_CREATOR_COUNT neutron : protonInelastic = 3956
+PROC_CREATOR_COUNT neutron : tInelastic = 74
+PROC_CREATOR_COUNT nu_e : RadioactiveDecay = 3
+PROC_CREATOR_COUNT proton : He3Inelastic = 130
+PROC_CREATOR_COUNT proton : Primary = 10000
+PROC_CREATOR_COUNT proton : RadioactiveDecay = 151
+PROC_CREATOR_COUNT proton : alphaInelastic = 82
+PROC_CREATOR_COUNT proton : dInelastic = 313
+PROC_CREATOR_COUNT proton : hadElastic = 137293
+PROC_CREATOR_COUNT proton : ionElastic = 67221
+PROC_CREATOR_COUNT proton : ionInelastic = 140
+PROC_CREATOR_COUNT proton : neutronInelastic = 315
+PROC_CREATOR_COUNT proton : protonInelastic = 8263
+PROC_CREATOR_COUNT proton : tInelastic = 32
+PROC_CREATOR_COUNT triton : RadioactiveDecay = 14
+PROC_CREATOR_COUNT triton : alphaInelastic = 4
+PROC_CREATOR_COUNT triton : dInelastic = 15
+PROC_CREATOR_COUNT triton : ionInelastic = 3
+PROC_CREATOR_COUNT triton : neutronInelastic = 19
+PROC_CREATOR_COUNT triton : protonInelastic = 147
+PROC_CREATOR_COUNT triton : tInelastic = 2
+0 events have been kept for refreshing and/or reviewing.
+  "/vis/reviewKeptEvents" to review them one by one.
+  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.

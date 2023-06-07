@@ -1,0 +1,27 @@
+import random
+import matplotlib, sys
+import matplotlib.pyplot as plt
+import csv
+
+import MyHistos
+class cvsHistoReader:
+    fHistos1D = []
+    """Docstring."""
+    def __init__(self, csvfile):
+
+        with open(sys.argv[1], 'r') as csvfile:
+            histoData = csv.reader(csvfile)
+            print(sys.argv[1]+" histoData ")
+            for row in histoData:
+                if row[0] == '1D' :
+                    print("1D HISTOGRAM",len(row))
+                    his1 = MyHistos.Histo1D(row)
+                    fHistos1D.append(his)
+#   for cell in row: 
+#      print("row=",row," cell=",cell)
+# print(histoData.head(0))
+# for row in histoData:
+#     print("row=",row)
+
+sys.exit()
+    

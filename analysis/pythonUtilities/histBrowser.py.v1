@@ -1,0 +1,377 @@
+import tkinter as tk
+from tkinter import ttk
+from csvHistoReader import *
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+# !!! FOR NEWER PYTHONS from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg,NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg,NavigationToolbar2TkAgg
+import numpy as np
+from PIL import Image as im
+                                            
+class UI(tk.Frame):
+    """Docstring."""
+    verbose = 1
+    onevar = 0
+    histList = None
+    fHistos1D = []
+    fHistos2D = []
+    fHistoFiles = []
+    fHisto2Histo1file = {}
+    fHisto2Histo2file = {}
+    fFileListLinePos = {}
+    bHistoShown = {}
+    resiz = 0
+    histShown = False
+    thePanedWindow = None
+    theFrameHL = None
+    theFrameHF = None
+    theHistoFigure = None
+    theCanvas = None
+    theSubPlotArea = None
+#-    theFigureAgg = None
+    theCanvasCwid = None
+    bPlotErrors = None
+    bPlotSame = None
+    bResizing = False
+    newWidth = 7.0
+    parentWidth = 1192
+    parentHeight = 821
+
+    #    photo = PhotoImage(file="cat.png")
+#    def __init__(self, parent=None, *args):
+    def __init__(self, parent, *args):
+        # Bind the function to configure the parent window
+        parent.bind("<Configure>", self.ResizeListBoxAndImage)
+
+        #---- Define frames and pannedWindow
+        tk.Frame.__init__(self, parent,bg='grey', width=437, height=798, borderwidth=10, relief='sunken')#, pady=3)
+        self.parent = parent #??
+        self.pack(fill="both",expand=True)
+        self.columnconfigure(0, weight = 1)
+        self.rowconfigure(0, weight = 1)        
+        
+        self.thePanedWindow = ttk.PanedWindow(self,orient="horizontal")
+        self.thePanedWindow.pack(fill="both",expand=True) # Window,height=798,width=437, background="red")
+        self.theFrameHL = tk.Frame(self.thePanedWindow,height=798,width=437)#, background="blue")
+        self.thePanedWindow.add(self.theFrameHL)
+        self.theFrameHL.columnconfigure(0, weight=1)
+        self.theFrameHL.rowconfigure(1, weight=1)
+
+        self.theFrameHF = tk.Frame(self.thePanedWindow,height=700,width=700) #, background="red")
+        self.thePanedWindow.add(self.theFrameHF)
+        self.theFrameHF.columnconfigure(0, weight=1)
+        self.theFrameHF.rowconfigure(1, weight=1)
+
+        self.ReadHistoFiles( args )
+
+        self.CreateWidgets()
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    def ReadHistoFiles( self, args ): 
+
+        if self.verbose >= 3 : print("N ARGS ",len(args),"  ",args)
+        iihf = 1
+        iih1 = 0
+        iih2 = 0
+        for hflist in args:
+            if self.verbose >= 3 : print("ARG= ",len(hflist),"  ",hflist)
+            for hfName in hflist:
+                if self.verbose >= 3 : print("hfName",hfName)
+                if hfName == sys.argv[0]: continue
+                if self.verbose >= 2 : print("READING HISTO FILE: ",hfName)
+                self.fHistoFiles.append(hfName)
+                self.bHistoShown[iihf] = True
+                histoFile = csvHistoReader(hfName)
+                #                self.fHistos1D.extend(histoFile.fHistos1D)
+                for his1 in histoFile.fHistos1D :
+                    self.fHistos1D.append(his1)
+                    self.fHisto2Histo1file[iih1] = iihf
+                    if self.verbose >= 2 : print(iih1," READ fHistos1D: ",his1.name," fHisto2Histo1file ",self.fHisto2Histo1file[iih1])
+                    iih1 += 1
+                for his2 in histoFile.fHistos2D :
+                    self.fHistos2D.append(his2)
+                    self.fHisto2Histo2file[iih2] = iihf
+                    if self.verbose >= 2 : print(iih2," READ fHistos2D: ",his2.name," fHisto2Histo2file ",self.fHisto2Histo2file[iih2])
+                    iih2 += 1
+                iihf += 1
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    def CreateWidgets(self):
+
+        ##### CHECK BUTTONS FOR HISTOGRAM OPTIONS
+        bPlotErrors = tk.BooleanVar(value=True)
+        self.CBError = tk.Checkbutton(self.theFrameHL, text="error",
+                                      variable=bPlotErrors,onvalue=True,offvalue=False)#,command=self.showCheckButtons)
+        self.CBError.grid(column=0, row=0, sticky=tk.W)
+        self.bPlotErrors = bPlotErrors
+        # self.CBError.invoke()
+        bPlotSame = tk.BooleanVar()
+        self.CBSame = tk.Checkbutton(self.theFrameHL, text="same",
+                                     variable=bPlotSame,state=tk.DISABLED) #,command=self.showCheckButtons)
+        self.CBSame.grid(column=1, row=0, sticky=tk.W)
+        self.bPlotSame = bPlotSame
+
+        ##### LIST OF HISTOGRAMS
+        ### HIST LIST SCROLLING BARS
+        #        tk.Label(self.theFrameHL, text='Find what:').grid(column=2, row=2, sticky=tk.W)
+        lbSBV = tk.Scrollbar(self.theFrameHL,orient=tk.VERTICAL)#,command = self.theFrameHL.histList.yview)
+        lbSBV.grid(column=1, row=1, sticky=tk.N+tk.S)
+        lbSBH = tk.Scrollbar(self.theFrameHL,orient=tk.HORIZONTAL)#,command = self.theFrameHL.histList.yview)
+        lbSBH.grid(column=0, row=2, sticky=tk.W+tk.E)
+
+        ### LIST OF HISTOGRAMS
+        hlWidthMax = 50
+        hlWidth = 0
+        for hisf in self.fHistoFiles :
+            hl1 = len(hisf)
+            hlWidth = max(hlWidth,hl1)
+            #            print("hlWidth ",hlWidth,"  ",hl1)
+            if hlWidth > hlWidthMax :
+                hlWidth = hlWidthMax
+                break
+        for his in self.fHistos1D :
+            hl1 = len(his.name)
+            hlWidth = max(hlWidth,hl1)
+            #            print("hlWidth ",hlWidth,"  ",hl1)
+            if hlWidth > hlWidthMax :
+                hlWidth = hlWidthMax
+                break    
+        for his in self.fHistos2D :
+            hl2 = len(his.name)
+            hlWidth = max(hlWidth,hl2)
+            #            print("hlWidth ",hlWidth,"  ",hl2)
+            if hlWidth > hlWidthMax :
+                hlWidth = hlWidthMax
+                break
+        hlHeightMax = 30
+        hlHeight = min(len(self.fHistos1D)+len(self.fHistos2D)+len(self.fHistoFiles),hlHeightMax)
+        hlHeight = 40
+        
+        self.histList = tk.Listbox(self.theFrameHL,height=hlHeight,width=hlWidth
+                                   ,yscrollcommand=lbSBV.set,xscrollcommand=lbSBH.set)# selectmode='extended'),)
+        ### INSERT HISTOGRAMS IN LIST
+        self.FillListBox()
+#        self.histList.config(yscrollcommand=lbSB)
+        lbSBV['command'] = self.histList.yview
+        lbSBH['command'] = self.histList.xview
+        
+        #### QUIT button
+        self.quitBut = tk.Button(self.theFrameHL, text="Quit", command=self.quit, font= ('Helvetica 14 bold italic'))
+        self.quitBut.grid(column=0, row=3)
+
+#        if self.verbose >= 3 : print("FRAME SIZE",self.parent.winfo_height(), self.parent.winfo_width())
+#        if self.verbose >= 3 : print("histList SIZE", self.histList.winfo_height(),  self.histList.winfo_width())
+#        self.parent.geometry('{}x{}'.format(y, x))
+        return
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    def FillListBox(self):
+        self.histList.delete(0,tk.END)
+        self.fFileListLinePos.clear()
+        iihf = 1 # index of file
+        iil = 0 # index of line in histList
+        for hisFile1 in self.fHistoFiles:
+            if self.verbose >= 2 : print(iil, " INSERT HISTO FILE: ",hisFile1)
+            self.fFileListLinePos[iil] = (0,iihf)
+#            print(iil,"F fFileListLinePos ",self.fFileListLinePos[iil]) # GDEB
+            self.histList.insert(iil,hisFile1) # +str(iihf))
+            iil += 1
+            iih = 0
+            for his1 in self.fHistos1D:
+                if self.bHistoShown.get(iihf) :     
+#                    print("HISTO1: ",his1)
+                    if self.fHisto2Histo1file.get(iih) == iihf:
+                        if self.verbose >= 2 : print(iil, " INSERT HISTO1D: ",his1.name," === ",self.fHisto2Histo1file.get(iih)," == ",iih)
+                        self.histList.insert(iil,"  "+his1.name) #+str(iih))
+                        self.fFileListLinePos[iil] = (1,iih)
+#                        print(iil,"1 fFileListLinePos ",self.fFileListLinePos[iil]) # GDEB
+                        if self.verbose >= 3 : print(" SET self.fFileListLinePos ",iih, " = ",self.fFileListLinePos[iil])
+                        iil+=1
+                iih = iih+1      # index of histogram in fHistos1D
+
+            iih = 0
+            for his2 in self.fHistos2D:
+                if self.bHistoShown.get(iihf) :     
+                #            print("HISTO2: ",his2)
+                    if self.fHisto2Histo2file.get(iih) == iihf:
+                        if self.verbose >= 2 : print(iil, " INSERT HISTO2D: ",his2.name," === ",self.fHisto2Histo2file.get(iih)," == ",iih)
+                        self.histList.insert(iil,"  "+his2.name) #+str(iih))
+                        self.fFileListLinePos[iil] = (2,iih)
+                        if self.verbose >= 3 : print(" SET self.fFileListLinePos ",iih, " = ",self.fFileListLinePos[iil])
+                        iil+=1
+                iih = iih+1      # index of histogram in fHistos1D
+            iihf += 1
+        self.histList.grid(column=0, row=1, sticky=tk.E+tk.W+tk.N+tk.S)#, sticky=tk.W)
+        self.histList.bind('<<ListboxSelect>>', self.SelectHist)
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    def SelectHist(self,event):
+        selected_index = int(event.widget.curselection()[0])
+        iil = self.fFileListLinePos.get(selected_index)
+        if self.verbose >= 3 : print("@@ selectHist ",selected_index," : ",iil)
+#        print(" READ self.fFileListLinePos ",selected_index, " = ",self.fFileListLinePos.get(selected_index)) # GDEB
+        if iil[0] == 0 : # show / unshow histograms in file
+            self.bHistoShown[abs(iil[1])] = not self.bHistoShown.get(abs(iil[1]))
+            self.FillListBox()
+                
+        else: # select histogram
+            #        selected_value = event.widget.get(selected_index)
+            if self.verbose >= 2 : print("@@@@ SELECTING ",self.fHistos1D[iil[1]].name)
+            self.showHist(iil[0],iil[1])
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    def showHist(self,it,ih):
+
+        if it == 1:
+            his1 = self.fHistos1D[ih]
+#            print("@@#@#@@ SHOWHIST ",ih,his1,self.histShown) # GDEB
+            self.histShown = True
+            self.CBSame.config(state=tk.NORMAL)
+            
+            figWidth = 7
+            figHeight = 7
+            if  self.theHistoFigure != None:
+                figWidth = self.theHistoFigure.get_figwidth()
+                figHeight = self.theHistoFigure.get_figheight()
+
+            self.theHistoFigure = plt.figure(figsize = (figWidth,figHeight), dpi = 100)
+            # adding the subplot
+            self.theSubPlotArea = self.theHistoFigure.add_subplot(111)
+            self.theSubPlotArea.set_xlabel(his1.name)
+            if self.verbose >= 3 : print(" PLOT HIS1 ",his1,":",his1.data,"+-",his1.dataErr," Xs=",hX)
+            xStep = his1.Xstep(his1)
+            #       plot1.xlim(float(his1.xmin),float(his1.xmax))
+            #       plot1.xlabel(his1.name)
+#            print("bPlotErrors ",self.bPlotErrors.get())# GDEB
+            if self.bPlotErrors.get() :
+                if self.bPlotSame.get() :
+#                    self.theSubPlotArea.bar(self.lastHisto1.Xbins(self.lastHisto1),self.lastHisto1.data, color='None', errcolor='blue', yerr=self.lastHisto1.dataErr, width=xStep,linewidth=0)
+                    self.theSubPlotArea.errorbar(self.lastHisto1.Xbins(self.lastHisto1),self.lastHisto1.data, color='black', yerr=self.lastHisto1.dataErr)
+                    self.theSubPlotArea.errorbar(his1.Xbins(his1),his1.data,yerr=his1.dataErr,color='red')
+                    for ii in range(self.lastHisto1.nbin):
+                        self.theSubPlotArea.scatter(self.lastHisto1.xmin+xStep*(ii+0.5)
+                                                    ,self.lastHisto1.data[ii],color='black',s=10)
+                    for ii in range(his1.nbin):
+                        self.theSubPlotArea.scatter(his1.xmin+xStep*(ii+0.5)
+                                                   ,his1.data[ii],color='red',s=10)
+                else :
+#                    self.theSubPlotArea.bar(his1.Xbins(his1),his1.data, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep,linewidth=0)
+                    self.theSubPlotArea.errorbar(his1.Xbins(his1),his1.data, color='black', yerr=his1.dataErr)
+                    for ii in range(his1.nbin):
+                        self.theSubPlotArea.scatter(his1.xmin+xStep*(ii+0.5)
+                                                ,his1.data[ii],color='black',s=10)
+                        #print(ii,"POINT ",his1.xmin+xStep*(ii+0.5),his1.data[ii])
+
+            else :
+                if self.bPlotSame.get() :
+                    self.theSubPlotArea.plot(self.lastHisto1.Xbins(self.lastHisto1),self.lastHisto1.data, color='black') #, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep) # !!! Does not resize well
+                    self.theSubPlotArea.plot(his1.Xbins(his1),his1.data, color='red') #, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep) # !!! Does not resize well
+                else:
+                    self.theSubPlotArea.plot(his1.Xbins(his1),his1.data, color='black') #, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep) # !!! Does not resize well
+
+            self.theCanvas = FigureCanvasTkAgg(self.theHistoFigure, master = self.theFrameHF)
+            self.theCanvas.draw()
+            self.theCanvasCwid = self.theCanvas.get_tk_widget()
+            self.theCanvasCwid.grid(column=0, row=0, sticky=tk.E+tk.W+tk.N+tk.S)
+            
+            toolbarFrame = tk.Frame(master=self.theFrameHF)
+            toolbarFrame.grid(column=0,row=2, sticky=tk.E+tk.W+tk.N+tk.S)
+            toolbar = NavigationToolbar2TkAgg(self.theCanvas, toolbarFrame)
+            #        if self.verbose >= 3 : print("theSubPlotArea SIZE", self.theSubPlotArea.winfo_height(),  self.theSubPlotArea.winfo_width())
+            #if self.verbose >= 3 : print("theCanvas SIZE", self.theCanvas.height(),  self.theCanvas.width())
+            #        ROOT.geometry("1137x798")
+            self.lastHisto1 = his1
+            
+        elif it == 2:
+            his2 = self.fHistos2D[ih]
+ #           print("@@#@#@@ SHOWHIST ",ih,his2) # GDEB
+            self.histShown = True
+            self.theHistoFigure = plt.figure(figsize = (his2.xnbin,his2.ynbin), dpi = 100)
+#t            self.theHistoFigure = plt.figure(figsize = (7, 7), dpi = 10)
+            # adding the subplot
+            self.theSubPlotArea = self.theHistoFigure.add_subplot(111)
+            self.theSubPlotArea.set_xlabel(his2.name)
+            hX = his2.Xbins(his2)
+            hY = his2.Xbins(his2)
+            #            hY = his2.Ybins(his2)
+            hZ = his2.data
+            #            if self.verbose >= 3 : print(" PLOT HIS2 ",his2,":",his2.data,"+-",his2.dataErr," Xs=",hX)
+            #            print(his2.name,"DATA ARRAY PLOTTED ",his2.dataArray)
+            self.theSubPlotArea.imshow(his2.dataArray,origin="lower",extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax)) #,norm=LogNorm(vin=0.001,vmax=1))
+            self.theCanvas = FigureCanvasTkAgg(self.theHistoFigure, master = self.theFrameHF)
+            self.theCanvas.draw()
+            self.theCanvasCwid = self.theCanvas.get_tk_widget()
+            self.theCanvasCwid.grid(column=0, row=0, sticky=tk.E+tk.W+tk.N+tk.S)
+            toolbarFrame = tk.Frame(master=self.theFrameHF)
+            toolbarFrame.grid(column=0,row=2, sticky=tk.E+tk.W+tk.N+tk.S)
+            toolbar = NavigationToolbar2TkAgg(self.theCanvas, toolbarFrame)
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    def ResizeListBoxAndImage(self,event):
+        if self.verbose >= 3 : print("#@#@#@### ENTER  ResizeListBoxAndImage ",self.bResizing)
+        if self.bResizing :
+            return
+        #        if self.theCanvas != None :             return
+#        self.grid_remove()
+#        self.grid(sticky=tk.N+tk.S+tk.W+tk.E) # histList SIZE 404 724    364  618 
+#        if self.verbose >= 3 : print("ResizeListBoxAndImage :FRAME SIZE",self.theFrameHF.winfo_width(), self.theFrameHF.winfo_height(), self.parent.winfo_width(),self.parent.winfo_height())
+        if self.verbose >= 3 : print("ResizeListBoxAndImage :FRAME SIZE",self.parentWidth,"?",self.parent.winfo_width(),self.parentHeight,"=?",self.parent.winfo_height())
+#        if self.parent.winfo_width() == 1192 :
+        if self.parent.winfo_width() == self.parentWidth :
+            return
+#        if self.parent.winfo_height() == 821 :
+        if self.parent.winfo_height() == self.parentHeight :
+            return
+#        if self.parent.winfo_height() != 821 :
+        if self.parent.winfo_height() != self.parentHeight :
+#        if self.theFrameHL.winfo_height() != 778 :
+            if self.verbose >= 3 : print("ResizeListBoxAndImage: CHANGE? histList ", self.histList,self.histShown)        
+            ### Change histList if no figure (else figure frame change changes histList frame)
+            if self.histList != None :
+                if self.histShown == False : 
+                    width = int((self.parent.winfo_width()-33)/8)
+                else : 
+                    width = int((self.parent.winfo_width()-733)/8)                
+                    self.histList.config(height = int((self.parent.winfo_height()-74)/18) )
+                #            self.histList.config(height = 30)
+                #            self.histList.grid_remove()
+                #            self.histList.grid(column=0, row=0, sticky=tk.E+tk.W+tk.N+tk.S)#, sticky=tk.W)
+                if self.verbose >= 3 : print("ResizeListBoxAndImage: NEW histList SIZE", self.histList.winfo_width(),self.histList.winfo_height(),self.theFrameHL.winfo_height())        
+
+        #----- Resize image
+        if self.histShown :
+        # if self.theHistoFigure :
+            self.bResizing = True
+            if self.verbose >= 3 : print("ResizeListBoxAndImage: FIGURE SIZE", self.theHistoFigure.get_size_inches()," in ",self.theFrameHF.winfo_width(),self.theFrameHF.winfo_height())
+            factor = self.theFrameHF.winfo_width()/100/self.newWidth
+            self.newWidth = self.theFrameHF.winfo_width()/100
+            newHeight = (self.theFrameHF.winfo_height()-34)/100
+            if self.verbose >= 3 : print("ResizeListBoxAndImage: NEW WIDTH HEIGHT",self.newWidth,newHeight," FACTOR= ",factor,self.theHistoFigure.get_figwidth(),self.theHistoFigure.get_figheight())
+            self.theHistoFigure.set_figwidth(self.newWidth)
+            self.theHistoFigure.set_figheight(newHeight)
+            if self.verbose >= 3 : print("ResizeListBoxAndImage: 1CHANGED FIGURE SIZE", self.theHistoFigure.get_size_inches())
+            if factor != 1.0 :
+                self.theSubPlotArea.xaxis.label.set_fontsize(self.theSubPlotArea.xaxis.label.get_fontsize()*factor)
+            
+#            self.frameHF.refresh()
+            self.theCanvasCwid.configure(width=self.newWidth, height=newHeight*100)
+            self.theCanvasCwid.update_idletasks()
+            if self.verbose >= 3 : print("ResizeListBoxAndImage: 2CHANGED FIGURE SIZE", self.theHistoFigure.get_size_inches())
+            
+            self.bResizing = False
+            self.parentWidth = self.parent.winfo_width()
+            self.parentHeight = self.theFrameHF.winfo_height()
+            return
+                
+            
+#....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+if __name__ == "__main__":
+    ROOT = tk.Tk()
+    ROOT.title("GAMOS Python Histogram Browser")
+    ROOT.geometry("")  #437 798")
+    ROOT.columnconfigure(0, weight=1)
+    ROOT.rowconfigure(0, weight=1)
+    APP = UI(ROOT,sys.argv)
+#    APP = UI(sys.argv[1])
+    APP.mainloop()
+    ROOT.destroy()
