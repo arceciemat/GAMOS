@@ -419,6 +419,7 @@ G4String GmGenUtils::FileInPath( G4String fileName )
 
   return GmGenUtils::FileInPath( path, fileName );
 }
+
 //-----------------------------------------------------------------------
 G4String GmGenUtils::FileInPath( G4String& filepath, const G4String fileName )
 {

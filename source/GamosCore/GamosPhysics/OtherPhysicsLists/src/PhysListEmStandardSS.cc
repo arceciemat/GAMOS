@@ -36,7 +36,7 @@
 #include "G4SystemOfUnits.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4LossTableManager.hh"
-#include "G4EmProcessOptions.hh"
+//#include "G4EmProcessOptions.hh"
 
 #include "G4ComptonScattering.hh"
 #include "G4GammaConversion.hh"
@@ -216,18 +216,18 @@ void PhysListEmStandardSS::ConstructProcess()
   // Main options and setting parameters are shown here.
   // Several of them have default values.
   //
-  G4EmProcessOptions emOptions;
+  /*   G4EmProcessOptions emOptions;
   
   //physics tables
   //
-  emOptions.SetMinEnergy(10*eV);        
+    emOptions.SetMinEnergy(10*eV);        
   emOptions.SetMaxEnergy(10*TeV);      
   emOptions.SetDEDXBinning(12*20);      
   emOptions.SetLambdaBinning(12*20); 
 
   // scattering
   emOptions.SetPolarAngleLimit(0.0);
-
+  */
   // Deexcitation
   G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
   G4LossTableManager::Instance()->SetAtomDeexcitation(de);
