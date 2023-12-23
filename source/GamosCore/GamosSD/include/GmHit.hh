@@ -31,8 +31,8 @@ public:
   void UpdateMe( G4Step* aStep, G4double enerResol );
 
   // Ahora un par de funciones virtuales
-  void Draw();
-  void Print(std::ostream& os = G4cout, G4bool bVerbose = TRUE);
+  virtual void Draw();
+  virtual void Print(std::ostream& os = G4cout, G4bool bVerbose = TRUE);
   void Print(FILE* fout, G4bool bVerbose );
   void Build(std::vector<G4String>& wl );
   void PrintBadHit(std::vector<G4String>& wl );

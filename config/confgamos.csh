@@ -2,7 +2,7 @@ setenv G4SYSTEM Linux-g++
 
 #--- GAMOS variables
 setenv GAMOSDIR /home/arce/gamos
-setenv GAMOS_VER GAMOS.6.3
+setenv GAMOS_VER GAMOS.6.3.1
 setenv GAMOSINSTALL $GAMOSDIR/$GAMOS_VER
 setenv GAMOS_BASE $GAMOSINSTALL
 setenv GAMOSEXTERNAL $GAMOSDIR/external

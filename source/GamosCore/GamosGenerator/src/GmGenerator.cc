@@ -38,6 +38,7 @@ GmGenerator::GmGenerator()
   GmMovementUtils::SetbUsingGmGenerator( true );
 
   bBiasDistributions = false;
+
 }
 
 //------------------------------------------------------------------------

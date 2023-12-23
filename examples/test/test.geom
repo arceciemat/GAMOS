@@ -5,4 +5,5 @@
 :VOLU "my tube" TUBS 0. 10. 20. 0. 360. G4_AIR
 :PLACE "my tube" 1 world RM0 0. 0. $POSZ
 :VOLU sphere ORB 5. G4_Pb
-:PLACE sphere 1 "my tube" RM0 0. 1. $POSZ
+:ROTM RM90X 90 0 0 
+:PLACE sphere 1 "my tube" RM90X 0. 1. $POSZ

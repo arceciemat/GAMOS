@@ -44,6 +44,9 @@ public:
   void SetOnlyDiff( G4bool od ) {
     bOnlyDiff = od;
   }
+  void SetGammaOverCut( G4double oc ) {
+    theGammaOverCut = oc;
+  }
   void SetNErrorSigmas( G4double nsig ) {
     theNErrorSigmas = nsig;
     if( nsig != 0. ) {
@@ -74,8 +77,10 @@ private:
   G4bool bErrors;// (INCLUDE ERROR IMAGE)
   G4double theNErrorSigmas;
   G4bool bHisto1D;
+  G4double theGammaOverCut;
+  G4bool bGammaOverCutDone;
 };
 
 #endif
   
-  
+

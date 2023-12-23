@@ -125,6 +125,12 @@ GmPDSInteractionAngleManager::GmPDSInteractionAngleManager( const G4String& file
 }
 
 //------------------------------------------------------------------
+GmPDSInteractionAngleManager::~GmPDSInteractionAngleManager()
+{
+  theEnergies.clear();
+  theHistoEntries.clear();
+}
+//------------------------------------------------------------------
 G4double GmPDSInteractionAngleManager::GetHistoValue(const G4String& procname, const G4String& matname, G4double ener, const G4double cosang)
 {
     msmds::const_iterator itepe = theEnergies.find(procname);

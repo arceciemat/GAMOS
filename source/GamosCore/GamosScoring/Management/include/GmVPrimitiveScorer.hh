@@ -20,6 +20,9 @@ class GmVDistribution;
 class GmConvergenceTester;
 class GmGeometryUtils;
 enum ScoreNEventsType { SNET_ByRun, SNET_ByEvent, SNET_ByNFilled };
+//## score spectrum
+typedef std::map<G4int,G4double> mid;
+typedef std::map<G4int, mid* > mimid;
 
 class GmVPrimitiveScorer : public G4VPrimitiveScorer
 {
@@ -74,16 +77,15 @@ public:
     if( theSumV2.find( index ) == theSumV2.end() ) return 0.;
     return theSumV2[index];
   }
-
   std::map<G4int,G4double>* GetSumV2() const {
-    return const_cast<std::map<G4int,G4double>* >( &theSumV2 ); 
+    return const_cast<std::map<G4int,G4double>* >( &theSumV2 );
   }
 
   void SetSumV2( std::map<G4int,G4double>& sumw2 ) {
     theSumV2 = sumw2; }
 
   void Normalize(G4THitsMap<G4double>* RunMap);
-  void CalculateErrors(G4THitsMap<G4double>* RunMap);
+  virtual void CalculateErrors(G4THitsMap<G4double>* RunMap);
   G4double GetError( G4int index );
   G4double GetErrorRelative( G4int index, G4double sumWX );
   
@@ -176,8 +178,75 @@ public:
     theMultiplyingDistribution = dist;
   }
 
+  //## score spectrum
+  G4bool IsSpectrum() const {
+    return bSpectrum;
+  }
+  void SetSpectrum( G4bool sp );
+  mimid GetSpectrumSumV( ) {
+    return theSpectrumSumV;
+  }
+  mid* GetSpectrumSumV( G4int index ) {
+    return theSpectrumSumV[index];
+  }
+  void SetSpectrumSumV( mimid& sumw ) {
+    theSpectrumSumV = sumw; }
+
+  mimid GetSpectrumSumV2( ) {
+    return theSpectrumSumV2;
+  }
+  mid* GetSpectrumSumV2( G4int index ) {
+    return theSpectrumSumV2[index];
+  }
+  void SetSpectrumSumV2( mimid& sumw2 ) {
+    theSpectrumSumV2 = sumw2; }
+
+//## score spectrum
+  G4int GetSpectrumNBins() const {
+    return theSpectrumNBins;
+  }
+  G4double GetSpectrumBinWidth() const {
+    return theSpectrumBinWidth;
+  }
+  G4double GetSpectrumMinimum() const {
+    return theSpectrumMinimum;
+  }
+  G4double GetSpectrumMaximum() const {
+    return theSpectrumMaximum;
+  } 
+  G4bool GetSpectrumBinLog10() const {
+    return bSpectrumBinLog10;
+  }
+  void SetSpectrumNBins( G4int nb ){
+    theSpectrumNBins = nb;
+  }
+  void SetSpectrumBinWidth( G4double bw ) {
+    theSpectrumBinWidth = bw;
+  }
+  void SetMinimum( G4double min ) {
+    theSpectrumMinimum = min;
+  }
+  void SetSpectrumMaximum( G4double max ) {
+    theSpectrumMaximum = max;
+  }
+  void SeSpectrumBinLog10( G4bool blog ) {
+    bSpectrumBinLog10 = blog;
+  }
+  void CheckSpectrumDims();
+  
 private:
   G4double GetError( G4int index, G4double sumWX, G4double nEvents );
+
+  //## score spectrum
+public:  
+  G4bool FillScorerSpectrum(G4Step* aStep, G4int index, G4double val, G4double wei);
+  void SumEndOfEventSpectrum();
+  void AddToScoresSpectrum();
+  void NormalizeSpectrum();
+  void CalculateErrorsSpectrum();
+  G4double GetErrorSpectrum( G4int index, G4double sumWX, G4double sumWX2, G4double nEvents );
+  G4double GetErrorRelativeSpectrum( G4int index, G4int ibin, G4double sumWX);
+  G4double GetErrorSpectrum( G4int index, G4int ibin );
 
 protected:
   GmVFilter* theFilter;
@@ -222,6 +291,19 @@ protected:
   G4bool bSubScorer;
 
   G4double theMinDensity;
+
+  //## score spectrum
+  G4bool bSpectrum;
+  G4bool bSpectrum1Interaction;
+  std::map<G4int, mid* > theSpectrumSumV_tmp;
+  std::map<G4int, mid* > theSpectrumSumV;
+  std::map<G4int, mid* > theSpectrumSumV2;
+  std::map<G4int, mid* > theSpectrumError;
+  G4int theSpectrumNBins;
+  G4double theSpectrumBinWidth;
+  G4double theSpectrumMinimum;
+  G4double theSpectrumMaximum;
+  G4bool bSpectrumBinLog10;
 
 };
 

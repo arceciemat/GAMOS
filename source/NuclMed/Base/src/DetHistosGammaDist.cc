@@ -43,9 +43,9 @@ DetHistosGammaDist::DetHistosGammaDist()
   hnam = hgnam + "Orig Pos R if Gamma reaches SD (mm)";
   theAnaMgr->CreateHisto1D(hnam,100,0,200.,104000+6);
 
-  //----- Get  "ring" volume radius
-  std::vector<G4LogicalVolume*> rings = GmGeometryUtils::GetInstance()->GetLogicalVolumes("ring",1);
-  /*  G4VSolid* ring = rings[0]->GetSolid();
+  //----- Get  "ring" volume radius  
+  /* std::vector<G4LogicalVolume*> rings = GmGeometryUtils::GetInstance()->GetLogicalVolumes("ring",1);
+    G4VSolid* ring = rings[0]->GetSolid();
   if( ring->GetEntityType() != "G4Tubs" ) {
     G4Exception("DetHistosGammaDist::DetHistosGammaDist: ring is not a Tubs, but a " + ring->GetEntityType() );
   }

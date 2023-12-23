@@ -25,7 +25,13 @@ public: // with description
 
   virtual void SetParameters( const std::vector<G4String>& );
 
-  void SetUnit(GmVPrimitiveScorer* theScorer );
+  void SetUnit(GmVPrimitiveScorer* scorer);
+
+  void CheckSpectrum(GmVPrimitiveScorer* scorer, G4bool bMustBeSpectrum = false );
+
+  virtual G4bool IsSpectrum() {
+    return false;
+  }
   
 protected:
 

@@ -47,7 +47,7 @@ G4String TextScorerData::GetIndexVal( G4String scoreName, G4bool bLogX )
     }
   }
   if( igf == std::string::npos ) { // NOT FOUND
-    return GmGenUtils::GetValue(scoreName);
+    return scoreName;
   }
 
   //  size_t igInterval = igf; // position of '-' defining an interva

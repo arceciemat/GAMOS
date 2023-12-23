@@ -27,6 +27,7 @@ GmGeometryFromText::GmGeometryFromText()
   gROOT->GetPluginManager()->AddHandler("G4VUserDetectorConstruction", "^geomtext:", "GmGeometryFromText",	
 			 "GamosCore_GamosGeometry", "GmGeometryFromText()");
 #endif
+  theClassName = "GmGeometryFromText";
 }
 
 
@@ -36,13 +37,13 @@ G4VPhysicalVolume* GmGeometryFromText::Construct()
   //------------------------------------------------ 
   // Get the file names 
   //------------------------------------------------ 
-  G4String filename = GmParameterMgr::GetInstance()->GetStringValue("GmGeometryFromText:FileName", "");
+  G4String filename = GmParameterMgr::GetInstance()->GetStringValue(theClassName+":FileName", "");
   
   if( filename == "" ) {
     G4Exception("GeometryFromText::Construct",
 		"Wrong argument",
 		FatalErrorInArgument,
-		"filename is not defined, please use '/gamos/setParam GmGeometryFromText:FileName MU_FILE_NAME'");
+		("filename is not defined, please use '/gamos/setParam "+theClassName+":FileName MU_FILE_NAME'").c_str());
   }
 
   filename = GmGenUtils::FileInPath( filename );
@@ -56,17 +57,21 @@ G4VPhysicalVolume* GmGeometryFromText::Construct()
   volmgr->AddTextFile(filename);
 
   std::vector<G4String> fnamepar;
-  fnamepar = GmParameterMgr::GetInstance()->GetVStringValue("GmGeometryFromText:FileNameParallel", fnamepar);
+  fnamepar = GmParameterMgr::GetInstance()->GetVStringValue(theClassName+":FileNameParallel", fnamepar);
   if( fnamepar.size() != 0 ){
-    if( fnamepar.size()%2 != 0 ){
-      G4Exception("GmGeometryFromText::Construct",
-		  "Error in number of arguments of parameter 'GmGeometryFromText:FileNameParallel'",
-		  FatalException,
-		  (G4String("There should be a multiple of two: FILE_NAME_1 PARALLEL_WORLD_NUMBER_1 FILE_NAME_2 PARALLEL_WORLD_NUMBER_2 ..., there are ")
-		   +GmGenUtils::itoa(fnamepar.size())).c_str());
-    }
-    for( unsigned int ii = 0; ii < fnamepar.size(); ii+=2 ) {
-      volmgr->AddTextFileParallel(fnamepar[ii],GmGenUtils::GetInteger(fnamepar[ii+1]));
+    if( fnamepar.size() == 1 ){
+      volmgr->AddTextFileParallel(fnamepar[0],1);
+    } else {
+      if( fnamepar.size()%2 != 0 ){
+	G4Exception("GmGeometryFromText::Construct",
+		    "Error in number of arguments of parameter 'GmGeometryFromText:FileNameParallel'",
+		    FatalException,
+		    (G4String("There should be a multiple of two: FILE_NAME_1 PARALLEL_WORLD_NUMBER_1 FILE_NAME_2 PARALLEL_WORLD_NUMBER_2 ..., there are ")
+		     +GmGenUtils::itoa(fnamepar.size())).c_str());
+      } 
+      for( unsigned int ii = 0; ii < fnamepar.size(); ii+=2 ) {
+	volmgr->AddTextFileParallel(fnamepar[ii],GmGenUtils::GetInteger(fnamepar[ii+1]));
+      }
     }
 
   }
@@ -89,9 +94,9 @@ G4VPhysicalVolume* GmGeometryFromText::Construct()
   // Build the Geant4 mass geometry
   //------------------------------------------------ 
 
-  G4VPhysicalVolume* physiWorld = gtb->ConstructDetectorGAMOS(tgrVoltop, -1, 1 );
+  thePhysiWorld = gtb->ConstructDetectorGAMOS(tgrVoltop, -1, 1 );
 
   //  G4VPhysicalVolume* physiWorld = volmgr->ReadAndConstructDetector();
 
-    return physiWorld;
+  return thePhysiWorld;
 }

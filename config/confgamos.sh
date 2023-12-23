@@ -3,7 +3,7 @@ export G4SYSTEM=Linux-g++
 
 #--- GAMOS variables
 export GAMOSDIR=/home/arce/gamos
-export GAMOS_VER=GAMOS.6.3
+export GAMOS_VER=GAMOS.6.3.1
 export GAMOSINSTALL=$GAMOSDIR/$GAMOS_VER
 export GAMOS_BASE=$GAMOSINSTALL
 export GAMOSEXTERNAL=$GAMOSDIR/external

@@ -76,58 +76,91 @@ G4bool GmTrackInfo::GetBoolValue( const G4String& key )
 }
 
 //--------------------------------------------------------------
-G4int GmTrackInfo::GetIntValue( const G4String& key )
+G4int GmTrackInfo::GetIntValue( const G4String& key, G4bool bMustExist )
 {
   //  G4cout << this << " GmTrackInfo::GetInterValue" << key << " " << theIntValues.size() << G4endl;
   std::map<G4String,G4int>::const_iterator ite = theIntValues.find( key );
   if( ite == theIntValues.end() ) {
-    return -INT_MAX;
-    /*G4Exception("GmTrackInfo::GetInterValue",
-		"String not found",
-		FatalErrorInArgument,
-		G4String("Looking for: " + key).c_str());*/
+    if( bMustExist ) {
+      G4Exception("GmTrackInfo::GetInterValue",
+		  "String not found",
+		  FatalErrorInArgument,
+		  G4String("Looking for: " + key).c_str());
+    } else {
+      G4Exception("GmTrackInfo::GetInterValue",
+		  "String not found",
+		  JustWarning,
+		  G4String("Looking for: " + key).c_str());
+      return -INT_MAX;
+    }
+
   }
   return (*ite).second;
   
 }
 
 //--------------------------------------------------------------
-G4double GmTrackInfo::GetDoubleValue( const G4String& key )
+G4double GmTrackInfo::GetDoubleValue( const G4String& key, G4bool bMustExist ) 
 {
   std::map<G4String,G4double>::const_iterator ite = theDoubleValues.find( key );
   if( ite == theDoubleValues.end() ) {
-    G4Exception("GmTrackInfo::GetDoubleValue",
+    if( bMustExist ) {
+      G4Exception("GmTrackInfo::GetDoubleValue",
 		"String not found",
 		FatalErrorInArgument,
 		G4String("Looking for: " + key).c_str());
+    } else {
+      G4Exception("GmTrackInfo::GetDoubleValue",
+		"String not found",
+		JustWarning,
+		G4String("Looking for: " + key).c_str());
+      return -DBL_MAX;
+    }
   }
   return (*ite).second;
-  
+
 }
 
 //--------------------------------------------------------------
-G4String GmTrackInfo::GetStringValue( const G4String& key )
+G4String GmTrackInfo::GetStringValue( const G4String& key, G4bool bMustExist )
 {
   std::map<G4String,G4String>::const_iterator ite = theStringValues.find( key );
   if( ite == theStringValues.end() ) {
-    G4Exception("GmTrackInfo::GetStringValue",
-		"String not found",
-		FatalErrorInArgument,
-		G4String("Looking for: " + key).c_str());
+    if( bMustExist ) {
+      G4Exception("GmTrackInfo::GetStringValue",
+		  "String not found",
+		  FatalErrorInArgument,
+		  G4String("Looking for: " + key).c_str());
+    } else {
+      G4Exception("GmTrackInfo::GetStringValue",
+		  "String not found",
+		  JustWarning,
+		  G4String("Looking for: " + key).c_str());
+      return "-ZZZZZ";
+    }
   }
   return (*ite).second;
   
 }
 
 //--------------------------------------------------------------
-G4ThreeVector GmTrackInfo::GetThreeVectorValue( const G4String& key )
+G4ThreeVector GmTrackInfo::GetThreeVectorValue( const G4String& key, G4bool bMustExist )
 {
   std::map<G4String,G4ThreeVector>::const_iterator ite = theThreeVectorValues.find( key );
   if( ite == theThreeVectorValues.end() ) {
-    G4Exception("GmTrackInfo::GetThreeVectorValue",
-		"ThreeVector not found",
-		FatalErrorInArgument,
-		G4String("Looking for: " + key).c_str());
+    if( bMustExist ) {
+      //-      G4cout << this << " NO 3V " << theThreeVectorValues.size() << G4endl; //GDEB
+      G4Exception("GmTrackInfo::GetThreeVectorValue",
+		  "ThreeVector not found",
+		  FatalErrorInArgument,
+		  G4String("Looking for: " + key).c_str());
+    } else {
+        G4Exception("GmTrackInfo::GetThreeVectorValue",
+		  "ThreeVector not found",
+		  JustWarning,
+		  G4String("Looking for: " + key).c_str());
+	return G4ThreeVector(-DBL_MAX,-DBL_MAX,-DBL_MAX);
+    }
   }
   return (*ite).second;
   

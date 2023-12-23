@@ -1,7 +1,7 @@
 #include "GmScoringUA.hh"
 #include "GmScoringRun.hh"
 #include "GmScoringMgr.hh"
-#include "GamosCore/GamosScoring/Management/include/GmVPrimitiveScorer.hh"
+#include "GmVPrimitiveScorer.hh"
 #include "G4Run.hh"
 
 //-----------------------------------------------------------------
@@ -61,10 +61,10 @@ void GmScoringUA::BeginOfEventAction( const G4Event* )
 //----------------------------------------------------------------------
 void GmScoringUA::EndOfEventAction( const G4Event* )
 { 
-  std::map<G4String,GmVPrimitiveScorer*>::const_iterator ite;
+  std::map<G4String,GmVPrimitiveScorer*>::const_iterator iteS;
   std::map<G4String,GmVPrimitiveScorer*> scorers = GmScoringMgr::GetInstance()->GetScorers();
-
-  for( ite = scorers.begin(); ite != scorers.end(); ite++ ){
-    (*ite).second->SumEndOfEvent();
+  for( iteS = scorers.begin(); iteS != scorers.end(); iteS++ ){
+    (*iteS).second->SumEndOfEvent();
   }
+
 }

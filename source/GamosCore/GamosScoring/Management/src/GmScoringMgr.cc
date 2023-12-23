@@ -3,6 +3,8 @@
 #include "GmCompoundScorer.hh"
 #include "GmScoringRun.hh"
 #include "GmScoringVerbosity.hh"
+#include "GmVPSPrinter.hh"
+#include "GmPSPrinterMgr.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
@@ -10,15 +12,14 @@
 #include "GamosCore/GamosBase/Base/include/GmFilterMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh"
 #include "GamosCore/GamosBase/Base/include/GmClassifierMgr.hh"
-#include "GamosCore/GamosScoring/Management/include/GmVPSPrinter.hh"
-#include "GamosCore/GamosScoring/Management/include/GmPSPrinterMgr.hh"
+
 #include "G4MultiFunctionalDetector.hh"
 #include "G4SDManager.hh"
 
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
 #else
-#include "GamosCore/GamosScoring/Management/include/GmPrimitiveScorerFactory.hh"
+#include "GmPrimitiveScorerFactory.hh"
 #endif
 
 GmScoringMgr* GmScoringMgr::theInstance = 0;
@@ -140,12 +141,12 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
     }
   }
   if( itesco != theScorers.end() ) {
-    if( wl.size() < 2 ) G4Exception("GmScoringMgr::SetNewVAlue",
+    if( wl.size() < 2 ) G4Exception("GmScoringMgr::AddScorerToMFD",
 				    "Wrong argument",
 				    FatalErrorInArgument,
 				    G4String("/gamos/scoring/addScorer2MFD  needs only 2 arguments: ScorerName MFDname").c_str()); 
     
-    if( wl.size() > 2 ) G4Exception("GmScoringMgr::SetNewVAlue",
+    if( wl.size() > 2 ) G4Exception("GmScoringMgr::AddScorerToMFD",
 				    "Wrong argument",
 				    FatalErrorInArgument,
 				    G4String("/gamos/scoring/addScorer2MFD  used for attaching to a MFD an existing scorer needs only 2 arguments: ScorerName MFDname \n . If you need to give parameters to the scorers, use the command  /gamos/scoring/createScorer" ).c_str()); 
@@ -155,11 +156,11 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
 
   //--- Create Scorer
   } else {
-    if( wl.size() < 3 ) G4Exception("GmScoringMgr::SetNewVAlue",
+    if( wl.size() < 3 ) G4Exception("GmScoringMgr::AddScorerToMFD",
 				    "Wrong argument",
 				    FatalErrorInArgument,
 				    G4String("/gamos/scoring/addScorer2MFD  needs only 3 arguments: ScorerName ScorerClass MFDname ").c_str()); 
-    if( wl.size() > 3 ) G4Exception("GmScoringMgr::SetNewVAlue",
+    if( wl.size() > 3 ) G4Exception("GmScoringMgr::AddScorerToMFD",
 				    "Wrong argument",
 				    FatalErrorInArgument,
 				    G4String("/gamos/scoring/addScorer2MFD  needs only 3 arguments: ScorerName ScorerClass MFDname \n . If you need to give parameters to the scorers, use the command  /gamos/scoring/createScorer" ).c_str()); 
@@ -177,12 +178,14 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
 #else
     scorer = GmPrimitiveScorerFactory::get()->create(scorerClass,scorerName);
 #endif
+    //    G4cout << " SCORER " << scorer << G4endl; //GDEB
     if( !scorer ) {
       G4Exception(" GmScoringMgr::AddScorer2MFD",
 		  "Wrong argument",
 		  FatalErrorInArgument,
 		  G4String("Scorer class not found " + scorerClass + " Please check documentation and your /gamos/scoring/addScorer2MFD commands").c_str());
     }
+
     MFDName = wl[2];
     std::vector<G4String> params;
     scorer->SetParameters( params ); // GmPSLETD builds the parameters itself
@@ -205,6 +208,7 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
   scorer->PropagateMFDToSubScorers(); 
 
   theScorers[scorerName] = scorer;
+  G4cout << " REGISTER SCORER " << scorerName << " " << scorer << G4endl; //GDEB
 
 }
 
@@ -235,7 +239,6 @@ void GmScoringMgr::AddFilter2Scorer( std::vector<G4String> params )
 
 }
 
-
 //----------------------------------------------------------------------
 void GmScoringMgr::AddPrinter2Scorer( std::vector<G4String> params )
 {
@@ -256,11 +259,13 @@ void GmScoringMgr::AddPrinter2Scorer( std::vector<G4String> params )
   (*ite) = params[0];
   
   GmVPSPrinter* printer = GmPSPrinterMgr::GetInstance()->FindOrBuildPSPrinter(params,1);
-  
-  ((*itesco).second)->AddPrinter(printer);
+
+  GmVPrimitiveScorer* scorer = ((*itesco).second);
+  scorer->AddPrinter(printer);
  
   thePrinters[params[0]] = printer;
 
+  printer->CheckSpectrum( scorer, printer->IsSpectrum() );
   //-  ((*itesco).second)->PropagatePrinterToSubScorers(printer); 
 
 }

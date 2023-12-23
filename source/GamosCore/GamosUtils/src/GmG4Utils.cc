@@ -716,3 +716,28 @@ G4DecayTable* GmG4Utils::FindOrBuildDecayTable( const G4ParticleDefinition* part
   return decayTable;
 }
 
+
+G4ParticleDefinition* GmG4Utils::GetG4Particle( const G4String particleName, G4bool bMustExist )
+{
+  G4ParticleDefinition* part = 0;
+  
+  G4ParticleTable* partTable = G4ParticleTable::GetParticleTable();
+  G4ParticleTable::G4PTblDicIterator* itepar = partTable->GetIterator();
+  itepar->reset();
+  while( (*itepar)() ){
+    G4ParticleDefinition* particle = itepar->value();
+    if( particle->GetParticleName() == particleName ) {
+      part = particle;
+      break;
+    }
+  }
+  
+  if( part == 0 && bMustExist ){
+    G4Exception("GmG4Utils::GetG4Particle",
+		"ERROR",
+		FatalErrorInArgument,
+		("particle name not found " + particleName ).c_str() );
+  }
+
+  return part;
+}

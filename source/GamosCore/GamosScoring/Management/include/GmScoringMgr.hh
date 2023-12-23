@@ -4,6 +4,7 @@
 #include "G4RunManager.hh"
 class G4MultiFunctionalDetector;
 class GmVPrimitiveScorer;
+class GmVPrimitiveScorerSpectrum;
 class GmVFilter;
 class GmVPSPrinter;
 class GmVClassifier;
@@ -25,6 +26,7 @@ public:
   void CreateMFD( const std::vector<G4String>& wl );
   void CreateScorer( const G4String& scorerName, const G4String& scorerClass, std::vector<G4String>& params );
   void AddScorer2MFD( std::vector<G4String>& wl );
+  GmVPrimitiveScorerSpectrum* AddScorerSpectrum2MFD( std::vector<G4String>& wl );
   void AddFilter2Scorer( std::vector<G4String> params ); 
   void AddPrinter2Scorer(std::vector<G4String> params ); 
   void AssignClassifier2Scorer( std::vector<G4String>& params ); 

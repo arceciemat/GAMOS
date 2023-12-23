@@ -11,6 +11,8 @@
 #include "GamosCore/GamosData/Distributions/include/GmVNumericDistribution.hh"
 #include "GamosCore/GamosBase/Base/include/GmDistributionMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
+#include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
+#include "GamosCore/GamosGeometry/include/GmTouchable.hh"
 
 #include "G4PrimaryVertex.hh"
 #include "G4ParticleDefinition.hh"
@@ -32,6 +34,30 @@ GmParticleSource::GmParticleSource( const G4String& name )
   bBiasDistributions = false;
 
   theMaxBiasIterations = GmParameterMgr::GetInstance()->GetNumericValue(theName+":MaxBiasIterations",10000);
+
+  G4String localVolume = GmParameterMgr::GetInstance()->GetStringValue("GmGenerator:LocalVolume","");
+  //  G4cout << " GET localVolume " << localVolume << G4endl; //GDEB
+  if( localVolume != "" ) {
+    bLocalVolume = true;
+    std::vector<GmTouchable*> touchables = GmGeometryUtils::GetInstance()->GetTouchables( localVolume );
+    if( touchables.size() == 0 ) {
+      G4Exception("GmGenerator::GmGenerator",
+		  "",
+		  FatalErrorInArgument,
+		  ("Local volume name not found: "+localVolume).c_str());
+    } else if( touchables.size() != 1 ) {
+      G4Exception("GmGenerator::GmGenerator",
+		  "",
+		  FatalErrorInArgument,
+		  ("Local volume can only have one placement, it has "+GmGenUtils::itoa(touchables.size())).c_str());
+    }
+    theLocalVolumePosition = touchables[0]->GetGlobalPosition();
+    theLocalVolumeRotation = touchables[0]->GetGlobalRotation();
+    //    G4cout << " FILL localVolume " << localVolume << " " <<  theLocalVolumePosition << " " << theLocalVolumeRotation << G4endl; //GDEB
+  } else {
+    bLocalVolume = false;
+  }
+
 }
 
 
@@ -45,6 +71,8 @@ void GmParticleSource::CheckDistributionsExist()
 		FatalErrorInArgument,
 		"");
   }
+
+
 }
 
 
@@ -454,4 +482,28 @@ std::vector<G4PrimaryVertex*> GmParticleSource::GenerateVertices( G4double time 
   vtxs.push_back(GenerateVertex( time ));
 
   return vtxs;
+}
+
+//-----------------------------------------------------------------------
+G4ThreeVector GmParticleSource::PositionInLocalVolume( G4ThreeVector position )
+{
+  //  G4ThreeVector pos1 = position; //GDEB
+  position = theLocalVolumeRotation*position;
+  //  G4cout << " LocalVolume pos ROT " << position << " from " << pos1 << G4endl; //GDEB
+  position += theLocalVolumePosition;
+  //  G4cout << " LocalVolume pos " << position << " from " << position-theLocalVolumePosition << "  " << theLocalVolumePosition << G4endl; //GDEB
+
+  return position;
+}
+
+
+//-----------------------------------------------------------------------
+G4ThreeVector GmParticleSource::DirectionInLocalVolume( G4ThreeVector direction )
+{
+  G4ThreeVector dir1 = direction; //GDEB
+  direction = theLocalVolumeRotation*direction;
+  //  G4cout << " LocalVolume dir " << direction << " from " << dir1 << G4endl; //GDEB
+
+  return direction;
+
 }

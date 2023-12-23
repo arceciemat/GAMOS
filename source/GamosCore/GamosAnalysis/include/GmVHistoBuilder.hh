@@ -16,7 +16,7 @@ public:
   void SetHistoNameAndNumber(const G4String& fname, std::vector<GmVFilter*>& filters, GmVClassifier* classifier );
   void BuildHistoName(const G4String& name, std::vector<GmVFilter*>& filters, GmVClassifier* classifier );
   void BuildHistoFileName(const G4String& name, std::vector<GmVFilter*>& filters, GmVClassifier* classifier );
-  void BuildHistoNumber();
+  static G4int BuildHistoNumber();
 
   void PrintHisto( G4int hn );
 

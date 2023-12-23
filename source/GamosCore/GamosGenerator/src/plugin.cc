@@ -10,6 +10,7 @@
 #include "GmGenerDistEnergyConstantIsotopeDecay.hh"
 #include "GmGenerDistEnergyRandomFlat.hh"
 #include "GmGenerDistEnergyGaussian.hh"
+#include "GmGenerDistEnergyLogGaussian.hh"
 #include "GmGenerDistEnergyFromFile.hh"
 #include "GmGenerDistEnergyFromMultiFileE.hh"
 #include "GmGenerDistTimeConstant.hh"
@@ -39,6 +40,7 @@
 #include "GmGenerDistDirectionCone2DGaussian.hh"
 #include "GmGenerDistDirectionConicalRing.hh"
 #include "GmGenerDistDirectionGaussian.hh"
+#include "GmGenerDistDirectionFan.hh"
 #include "GmGenerDistPositionDirectionTowardsBox.hh"
 #include "GmGenerDistDirectionThetaFromFile.hh"
 #include "GmGenerDistPositionDirectionInVolumeSurface.hh"
@@ -65,6 +67,7 @@ PLUGINSVC_FACTORY(GmGenerDistEnergyBetaDecay,GmVGenerDistEnergy*())
 PLUGINSVC_FACTORY(GmGenerDistEnergyConstantIsotopeDecay,GmVGenerDistEnergy*())
 PLUGINSVC_FACTORY(GmGenerDistEnergyRandomFlat,GmVGenerDistEnergy*())
 PLUGINSVC_FACTORY(GmGenerDistEnergyGaussian,GmVGenerDistEnergy*())
+PLUGINSVC_FACTORY(GmGenerDistEnergyLogGaussian,GmVGenerDistEnergy*())
 PLUGINSVC_FACTORY(GmGenerDistEnergyFromFile,GmVGenerDistEnergy*())
 PLUGINSVC_FACTORY(GmGenerDistEnergyFromMultiFileE,GmVGenerDistEnergy*())
 PLUGINSVC_FACTORY(GmGenerDistEnergyIsolethargical,GmVGenerDistEnergy*())
@@ -105,6 +108,7 @@ PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelGaussian,GmVGenerDistPosit
 PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelGaussian,GmVGenerDistDirection*())
 PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelDoubleGaussian,GmVGenerDistPosition*())
 PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelDoubleGaussian,GmVGenerDistDirection*())
+PLUGINSVC_FACTORY(GmGenerDistDirectionFan,GmVGenerDistDirection*())
 
 PLUGINSVC_FACTORY(GmGenerDistPositionDirectionInVolumeSurface,GmVGenerDistPosition*())
 PLUGINSVC_FACTORY(GmGenerDistPositionDirectionInVolumeSurface,GmVGenerDistDirection*())
@@ -137,6 +141,7 @@ DEFINE_GAMOS_GENER_DIST_ENERGY(GmGenerDistEnergyBetaDecay);
 DEFINE_GAMOS_GENER_DIST_ENERGY(GmGenerDistEnergyConstantIsotopeDecay);
 DEFINE_GAMOS_GENER_DIST_ENERGY(GmGenerDistEnergyRandomFlat);
 DEFINE_GAMOS_GENER_DIST_ENERGY(GmGenerDistEnergyGaussian);
+DEFINE_GAMOS_GENER_DIST_ENERGY(GmGenerDistEnergyLogGaussian);
 DEFINE_GAMOS_GENER_DIST_ENERGY(GmGenerDistEnergyFromFile);
 DEFINE_GAMOS_GENER_DIST_ENERGY(GmGenerDistEnergyFromMultiFileE);
 DEFINE_GAMOS_GENER_DIST_ENERGY(GmGenerDistEnergyIsolethargical);
@@ -173,6 +178,7 @@ DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionConeGaussian);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionCone2DGaussian);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionConicalRing);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionGaussian);
+DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistDirectionFan);
 DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDirection2DCorrelGaussian);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistPositionDirection2DCorrelGaussian);
 DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDirection2DCorrelDoubleGaussian);

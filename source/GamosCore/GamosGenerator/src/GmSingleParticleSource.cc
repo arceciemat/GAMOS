@@ -85,6 +85,9 @@ G4PrimaryVertex* GmSingleParticleSource::GenerateVertex( G4double time )
   if( bBiasDistributions ) {
     BiasPosition();
   }
+  if( bLocalVolume ) {
+    thePosition = PositionInLocalVolume(thePosition);
+  }
 
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << "GmSingleParticleSource::GenerateVertex pos " << thePosition << G4endl;
@@ -106,7 +109,10 @@ G4PrimaryVertex* GmSingleParticleSource::GenerateVertex( G4double time )
   if( bBiasDistributions ) {
     BiasDirection();
   }
-
+  if( bLocalVolume ) {
+    theDirection = DirectionInLocalVolume(theDirection);
+  }
+  
   G4ThreeVector mom = theDirection * std::sqrt(theEnergy*theEnergy + 2.*theParticleDef->GetPDGMass()*theEnergy);
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << " GmSingleParticleSource::GenerateVertex  mom " << mom << " theEnergy " << theEnergy << " " << theDirection<<"+"<<theEnergy*theEnergy  << "+"<<theParticleDef->GetPDGMass()<<"*"<<theEnergy <<G4endl;

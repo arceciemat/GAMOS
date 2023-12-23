@@ -113,12 +113,12 @@ void DCMResizeImage::ReadFilesAndGetImages()
 		} */
 
   imageReaders = theReaderMgr->GetImageReaders(DRM_RTDose,false);
-  /*  if( imageReaders.size() != 0 ) {
+  if( imageReaders.size() != 0 ) {
     G4Exception(theExeName, 
 		"",
 		FatalException,
 		"DICOM RTDose image not implemented yet. Please ask the GAMOS team");
-		} */
+		} 
 
   if( theReaderMgr->GetNofImageReaders(DRM_OTHER) == 0 ) {
     G4Exception(theExeName, 
@@ -197,12 +197,12 @@ void DCMResizeImage::ReadFilesAndGetImages()
   }
   
   imageReaders =  theReaderMgr->GetImageReaders(DRM_RTDose,false);
-  if( imageReaders.size() != 0 ) {
+  /*  if( imageReaders.size() != 0 ) {
     G4Exception(theExeName, 
 		"",
 		FatalException,
 		"DICOM RTDose image not implemented yet. Please ask the GAMOS team");
-  }
+		}*/
 
   imageReaders =  theReaderMgr->GetImageReaders(DRM_Sqdose,false);
   for( size_t ii = 0; ii < imageReaders.size(); ii++ ) {    

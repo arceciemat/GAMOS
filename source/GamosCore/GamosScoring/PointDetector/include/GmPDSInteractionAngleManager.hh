@@ -10,7 +10,7 @@ class GmPDSInteractionAngleManager
 {
   public:
   GmPDSInteractionAngleManager( const G4String& );
-  ~GmPDSInteractionAngleManager(){};
+  ~GmPDSInteractionAngleManager();
 
   G4double GetHistoValue(const G4String& procname, const G4String& matname, G4double ener, const G4double cosang );
 

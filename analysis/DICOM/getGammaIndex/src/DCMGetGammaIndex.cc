@@ -36,6 +36,7 @@ DCMGetGammaIndex::DCMGetGammaIndex()
   theReaderMgr->SetMergeRTReaders( false );
   theDicomMgr = DicomMgr::GetInstance();  Initialise();
   theStructImage = 0;
+  theGammaOverCut = 1.;
 }
 
 //------------------------------------------------------------------------
@@ -176,6 +177,9 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
 	  thePerCentType = GIPCT_AtPoint;
 	  thePointPerCent = G4ThreeVector(GmGenUtils::GetValue(argv[ii+2]),GmGenUtils::GetValue(argv[ii+3]),GmGenUtils::GetValue(argv[ii+4]));
 	  ii += 4;
+	} else if( G4String(argvstr1) == "gammaOverCut" ) {
+	  theGammaOverCut = GmGenUtils::GetValue( argvstr1 );
+	  ii++;
 	} else {
 	  G4Exception("getGammaIndex",
 		      "",
@@ -345,6 +349,8 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
   operGammaIndex->SetPointPerCent(thePointPerCent);
   operGammaIndex->SetOnlyDiff(theParamMgr->GetNumericValue("bOnlyDiff",0));
   operGammaIndex->SetNErrorSigmas(theParamMgr->GetNumericValue("nErrorSigmas",0));   
+  operGammaIndex->SetGammaOverCut(theGammaOverCut);
+
   if( theParamMgr->GetNumericValue("nErrorSigmas",0)!= 0 ) {
     bErrors = true;
   } else {
@@ -558,7 +564,7 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	//loop to voxels and make them 0 if not in structure
 	G4int nVox = image1Mod->GetNoVoxels();
 	//t check and correct if image1Mod and theStructIDImage are not the same
-	if( nVox != theStructIDImage->GetNoVoxels() ) {
+	if( nVox != G4int(theStructIDImage->GetNoVoxels()) ) {
 	  G4Exception(theExeName.c_str(),
 		      "",
 		      FatalErrorInArgument,

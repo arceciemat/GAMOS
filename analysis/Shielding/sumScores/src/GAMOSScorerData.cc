@@ -37,7 +37,7 @@ void GAMOSScorerData::Print( std::ofstream& fout )
 //----------------------------------------------------------------------
 G4String GAMOSScorerData::GetIndexVal( G4String scoreName, G4bool bLogX ) 
 {
-  G4String indexVal = 0.;
+  G4String indexVal = "";
   //--- Find separating '-'
   size_t igf = scoreName.find("-");
   size_t igInterval = std::string::npos; // position of '-' defining an interval

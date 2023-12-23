@@ -46,6 +46,7 @@ DCM2DOperGammaIndex::DCM2DOperGammaIndex( G4int , G4String )
 
   bErrors = false;
   theNErrorSigmas = 0.; 
+  bGammaOverCutDone = false;
 
 }
 
@@ -82,9 +83,9 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
 
   //  std::vector<G4double>* iDataOut = new std::vector<G4double>(nVoxXY1*nVoxZ1);
   //  G4cout << " START iDataOut " << iDataOut << G4endl; //GDEB
-  TH1F* histoGI;
+  TH1F* histoGI = 0;
   double theHGILim;
-  TCanvas* canvas;
+  TCanvas* canvas = 0;
   if( bHisto1D ) {
     //  TH2F* histoXSvsGI;
     theHGILim = std::min(100.,double(MAXDISTVOXEL));
@@ -172,7 +173,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
 
   //----- Histogram with all Z planes
   std::string limstrALL = "GammaIndex_XY_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_1D_ALL";
-  TH1F* histoGIALL;
+  TH1F* histoGIALL = 0;
   if( bHisto1D ) {
     histoGIALL = new TH1F((limstrALL).c_str(),(limstrALL).c_str(),std::max(100,int(theHGILim*10)),0.,theHGILim);
   }
@@ -197,6 +198,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
   }
     
   //----- Loop to each Z plane
+  G4int gammaOverN = 0;
   for( G4int nvz1 = 0; nvz1 < nVoxZ1; nvz1++ ){
     if( DicomVerb(infoVerb) ) G4cout << " Z PLANE " << nvz1 << G4endl; 
     G4double zMin = fMinZ1 + nvz1*fVoxDimZ1;
@@ -561,6 +563,9 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
 	}
       }
 
+      if( minGamma > theGammaOverCut ) {
+	gammaOverN ++;
+      }
       if( bHisto1D ) {
 	histoGI->Fill(minGamma);
 	histoGIALL->Fill(minGamma);
@@ -623,10 +628,10 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
     gStyle->SetOptStat(1111111);
     histoGIALL->SetMaximum(50000);
     histoGIALL->Draw("histo");
-    double xInit = 200*theMaxGammaValue/2.*canvas->GetWw()/500;
+    // double xInit = 200*theMaxGammaValue/2.*canvas->GetWw()/500;
       //      xInit = 290*canvas->GetWw()/500;    
-    double yInit= 25000.*canvas->GetWh()/500;
-    EColor color = kBlack;
+    // double yInit= 25000.*canvas->GetWh()/500;
+    //    EColor color = kBlack;
       //    pad1->cd(); 
     //    DrawWordInPave( histoGI, "G" + GmGenUtils::ftoa(perCentLim)+"/"+GmGenUtils::ftoa(minDistLim)+ ": " + GmGenUtils::ftoa(mean) + "+-" + GmGenUtils::ftoa(rms) + " P" + GmGenUtils::itoa(pval*100) + "= " + GmGenUtils::ftoa(int(gammaPVal*100)/100.), xInit, yInit, color, 0.02 );
     //    DrawWordInPave( histoGI, "HOLA AQUI ESTAaMOS", xInit, yInit, color, 0.02 );
@@ -637,6 +642,8 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
     canvas->Print(("his"+G4String(histoGIALL->GetName())+"logY.gif").c_str());
   }
 
+  if( bGammaOverCutDone ) G4cout << "@@@@ N Gamma over " << theGammaOverCut << " = " << gammaOverN << " out of " << nVoxZ1*nVoxXY1 << G4endl;
+  bGammaOverCutDone = true;
 }
 
 //------------------------------------------------------------------------
@@ -668,8 +675,8 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
   std::vector<G4double> iData1 = *(image1->GetData());
   std::vector<G4double>* iDataOut = imageOut->GetData();
 
-  TH1F* histoGI; 
   //  TH2F* histoXSvsGI;
+  TH1F* histoGI = 0;
   double theHGILim = std::min(100.,double(MAXDISTVOXEL));
   TCanvas* canvas = new TCanvas();
   //  std::map<G4double,TH2F*> theHistosXSvsGI;
@@ -765,6 +772,7 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
   }
 
   //----- Loop to each Y plane
+  G4int gammaOverN = 0;
   for( G4int nvy1 = 0; nvy1 < nVoxY1; nvy1++ ){
      if( DicomVerb(testVerb) ) G4cout << " Y PLANE " << nvy1 << G4endl; 
     G4double yMin = fMinY1 + nvy1*fVoxDimY1;
@@ -1103,6 +1111,9 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
 	}
       }
            
+      if( minGamma > theGammaOverCut ) {
+	gammaOverN ++;
+      }
       if( bHisto1D ) {
 	histoGI->Fill(minGamma);
       }
@@ -1278,6 +1289,9 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
     canvasSt->Print((gifstr+".gif").c_str());
   }
   */
+  if( bGammaOverCutDone ) G4cout << "@@@@ N Gamma over " << theGammaOverCut << " = " << gammaOverN << " out of " << nVoxZ1*nVoxXY1 << G4endl;
+  bGammaOverCutDone = true;
+
 }
 
 //------------------------------------------------------------------------
@@ -1309,7 +1323,7 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
   std::vector<G4double> iData1 = *(image1->GetData());
   std::vector<G4double>* iDataOut = imageOut->GetData();
 
-  TH1F* histoGI; 
+  TH1F* histoGI = 0; 
   //  TH2F* histoXSvsGI;
   double theHGILim = std::min(100.,double(MAXDISTVOXEL));
   TCanvas* canvas = new TCanvas();
@@ -1406,6 +1420,7 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
   }
       
   //----- Loop to each X plane
+  G4int gammaOverN = 0;
   for( G4int nvx1 = 0; nvx1 < nVoxX1; nvx1++ ){
     if( DicomVerb(infoVerb) ) G4cout << " X PLANE " << nvx1 << G4endl; 
     G4double xMin = fMinX1 + nvx1*fVoxDimX1;
@@ -1741,6 +1756,9 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
 	}
       }
            
+      if( minGamma > theGammaOverCut ) {
+	gammaOverN ++;
+      }
       if( bHisto1D ) {
 	histoGI->Fill(minGamma);
       }
@@ -1915,6 +1933,9 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
     canvasSt->Print((gifstr+".gif").c_str());
   }
   */
+  if( bGammaOverCutDone ) G4cout << "@@@@ N Gamma over " << theGammaOverCut << " = " << gammaOverN << " out of " << nVoxZ1*nVoxXY1 << G4endl;
+  bGammaOverCutDone = true;
+
 }
 
 G4double DCM2DOperGammaIndex::GetMinAtVoxel( G4double imageMin, G4double phantomMin, G4double voxelFVoxDim )

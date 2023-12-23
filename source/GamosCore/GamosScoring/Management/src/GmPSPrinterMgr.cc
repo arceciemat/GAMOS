@@ -9,6 +9,7 @@
 #include "Reflex/PluginService.h"
 #else
 #include "GmPSPrinterFactory.hh"
+#include "GmPSPrinterSpectrumFactory.hh"
 #endif
 
 GmPSPrinterMgr* GmPSPrinterMgr::theInstance = 0;
@@ -34,7 +35,7 @@ GmPSPrinterMgr::~GmPSPrinterMgr()
 }
 
 //----------------------------------------------------------------------
-GmVPSPrinter* GmPSPrinterMgr::CreatePSPrinter( std::vector<G4String> params, G4bool bExists )
+GmVPSPrinter* GmPSPrinterMgr::CreatePSPrinter( std::vector<G4String> params, G4bool )
 {
 #ifdef ROOT5
   GmVPSPrinter* PSPrinter = Reflex::PluginService::Create<GmVPSPrinter*>(params[1],params[0]);
@@ -42,20 +43,22 @@ GmVPSPrinter* GmPSPrinterMgr::CreatePSPrinter( std::vector<G4String> params, G4b
   GmVPSPrinter* PSPrinter = GmPSPrinterFactory::get()->create(params[1],params[0]);
 #endif
   
-  if( PSPrinter != 0 ) {
-    params.erase(params.begin()); 
-    params.erase(params.begin());  
-    
-    PSPrinter->SetParameters( params );
-    AddPSPrinter( PSPrinter );
-
-  } else if( bExists ) {
+  if( PSPrinter == 0 ) {
+    PSPrinter = GmPSPrinterSpectrumFactory::get()->create(params[1],params[0]);
+  }
+  if( PSPrinter == 0 ) {
     G4Exception(" GmPSPrinterMgr::CreatePSPrinter",
 		"Wrong argument",
 		FatalException,
 		G4String(" PSPrinter type not found " + params[1] + " .Please check documentation and your '/gamos/scoring/printer' commands").c_str());
   }
-
+  
+  params.erase(params.begin()); 
+  params.erase(params.begin());  
+  
+  PSPrinter->SetParameters( params );
+  AddPSPrinter( PSPrinter );
+  
   return PSPrinter;
 }
 

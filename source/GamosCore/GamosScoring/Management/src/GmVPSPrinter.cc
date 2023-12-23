@@ -35,13 +35,31 @@ void GmVPSPrinter::SetParameters( const std::vector<G4String>& params )
 }
 
 //-------------------------------------------------------------------
-void GmVPSPrinter::SetUnit(GmVPrimitiveScorer* theScorer )
+void GmVPSPrinter::CheckSpectrum(GmVPrimitiveScorer* scorer, G4bool bMustBeSpectrum )
 {
-  theUnit = theScorer->GetUnit();
+  G4bool bSpectrum = scorer->IsSpectrum();
+  if( bSpectrum != bMustBeSpectrum ) {
+    G4String msg = "";
+    if( bMustBeSpectrum ) {
+      msg = "You cannot assign a printer which is of type PrinterSpectrum to a scorer which is not of type ScorerSpectrum \n";
+    } else {
+      msg = "You cannot assign a printer which is not of type PrinterSpectrum to a scorer which is of type ScorerSpectrum \n";
+    }
+    G4Exception("GmVPSPrinter::DumpAll",
+		"",
+		FatalException,
+		(msg+ G4String("Trying to assign printer ")+GetName()+G4String(" to scorer ")+scorer->GetName()).c_str());
+  }
+}
+
+//-------------------------------------------------------------------
+void GmVPSPrinter::SetUnit(GmVPrimitiveScorer* scorer )
+{
+  theUnit = scorer->GetUnit();
   if( theNewUnit == -1 ) {
-    theNewUnit = theScorer->GetUnit();
-    theUnitName = theScorer->GetUnitName();
-    //    G4cout << "SetUnit " <<  theName << " " << theNewUnit << " Name " << theUnitName << G4endl; //GDEB
+    theNewUnit = scorer->GetUnit();
+    theUnitName = scorer->GetUnitName();
+    // G4cout << "SetUnit " <<  theName << " " << theNewUnit << " Name " << theUnitName << G4endl; //GDEB
   }
   theUnitRatio = theUnit/theNewUnit;
   theUnitRatio2 = theUnitRatio*theUnitRatio;

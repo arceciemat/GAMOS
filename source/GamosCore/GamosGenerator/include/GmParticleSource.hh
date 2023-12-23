@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include "G4ThreeVector.hh"
+#include "G4RotationMatrix.hh"
 class G4PrimaryVertex;
 class GmVGenerDist;
 class GmVGenerDistEnergy;
@@ -101,6 +102,8 @@ public:
 
 protected:
   void CheckDistributionsExist();
+  G4ThreeVector PositionInLocalVolume( G4ThreeVector position );
+  G4ThreeVector DirectionInLocalVolume( G4ThreeVector direction );
 
 protected:
   G4String theName;
@@ -125,5 +128,8 @@ protected:
   G4double theWeight;
   G4bool bBiasDistributions;
 
+  G4ThreeVector theLocalVolumePosition;
+  G4RotationMatrix theLocalVolumeRotation;
+  G4bool bLocalVolume;
 };
 #endif // GmParticleSource_H

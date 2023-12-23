@@ -33,7 +33,7 @@ void GmVHistoBuilder::SetHistoNameAndNumber( const G4String& fname, std::vector<
     //-    BuildHistoFileName( userHName, filters, classifier );
   }
 
-  BuildHistoNumber();
+  theHistoNumber = BuildHistoNumber();
   theAnaMgr = GmAnalysisMgr::GetInstance(theHistoFileName);
 
 #ifndef GAMOS_NO_VERBOSE
@@ -65,7 +65,7 @@ void GmVHistoBuilder::BuildHistoFileName(const G4String& name, std::vector<GmVFi
 }
 
 //----------------------------------------------------------------------------
-void GmVHistoBuilder::BuildHistoNumber()
+G4int GmVHistoBuilder::BuildHistoNumber()
 {
   G4int hn;
   do{
@@ -73,7 +73,7 @@ void GmVHistoBuilder::BuildHistoNumber()
   } while( theHistoNumbers.find(hn) != theHistoNumbers.end() );
   
   theHistoNumbers.insert(hn);
-  theHistoNumber = hn;
+  return hn;
 }
 
 //----------------------------------------------------------------------------

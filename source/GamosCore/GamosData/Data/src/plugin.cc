@@ -190,6 +190,7 @@
 #include "GmDataFinalSolid.hh"
 #include "GmDataInitialLogicalVolume.hh"
 #include "GmDataFinalLogicalVolume.hh"
+#include "GmDataVertexLogicalVolume.hh"
 #include "GmDataInitialPhysicalVolume.hh"
 #include "GmDataFinalPhysicalVolume.hh"
 #include "GmDataInitialTouchable.hh"
@@ -464,6 +465,7 @@ PLUGINSVC_FACTORY(GmDataInitialSolid,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalSolid,GmVData*())
 PLUGINSVC_FACTORY(GmDataInitialLogicalVolume,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalLogicalVolume,GmVData*())
+PLUGINSVC_FACTORY(GmDataVertexLogicalVolume,GmVData*())
 PLUGINSVC_FACTORY(GmDataInitialPhysicalVolume,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalPhysicalVolume,GmVData*())
 PLUGINSVC_FACTORY(GmDataInitialTouchable,GmVData*())
@@ -754,6 +756,7 @@ DEFINE_GAMOS_DATA(GmDataInitialSolid);
 DEFINE_GAMOS_DATA(GmDataFinalSolid);
 DEFINE_GAMOS_DATA(GmDataInitialLogicalVolume);
 DEFINE_GAMOS_DATA(GmDataFinalLogicalVolume);
+DEFINE_GAMOS_DATA(GmDataVertexLogicalVolume);
 DEFINE_GAMOS_DATA(GmDataInitialPhysicalVolume);
 DEFINE_GAMOS_DATA(GmDataFinalPhysicalVolume);
 DEFINE_GAMOS_DATA(GmDataInitialTouchable);

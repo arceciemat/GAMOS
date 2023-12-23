@@ -179,7 +179,6 @@ void GmVSD::CreateHit( G4Step* aStep, unsigned long long id )
   //  G4cout << " GmVSD::CreateHit aStep->GetTrack()->GetGlobalTime() " << aStep->GetTrack()->GetGlobalTime() << G4endl; //GDEB
   theCurrentHit = new GmHit( aStep, energy, id, type, theEventID );
 
-  
   CalculateAndSetPosition( theCurrentHit, aStep ); //it is the SD that knows how to calculate the hit position
   theHitsInEvent.push_back( theCurrentHit );
 

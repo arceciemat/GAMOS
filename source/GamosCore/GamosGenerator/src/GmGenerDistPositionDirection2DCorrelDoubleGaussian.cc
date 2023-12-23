@@ -30,10 +30,11 @@ GmGenerDistPositionDirection2DCorrelDoubleGaussian::GmGenerDistPositionDirection
   if( !GmGenerDistPositionDirection2DCorrelDoubleGaussian::bHistograms ) {
     bHistogramsHere = false;
   }
-  if( GmParameterMgr::GetInstance()->GetNumericValue("GmGenerDistPositionDirection2DCorrelDoubleGaussian:Histograms",1) == 0 ) {
+  if( GmParameterMgr::GetInstance()->GetNumericValue("GmGenerDistPositionDirection2DCorrelDoubleGaussian:Histos",0) == 0 ) {
     bHistogramsHere = false; //GDEB
     bHistograms = false; //GDEB
   }
+
   //  G4cout << this << " CREATE bHistogramsHere " << bHistogramsHere << " " << GmGenerDistPositionDirection2DCorrelDoubleGaussian::bHistograms << G4endl; //GDEB
 #endif
 

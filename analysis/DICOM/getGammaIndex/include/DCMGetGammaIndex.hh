@@ -78,6 +78,7 @@ protected:
   G4bool bUseStructID;
   G4bool bErrors;
   G4bool bOutputFile;
+  G4double theGammaOverCut;
 };
 
 #endif

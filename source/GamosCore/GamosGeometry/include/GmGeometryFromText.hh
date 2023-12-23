@@ -10,6 +10,10 @@ class GmGeometryFromText :public G4VUserDetectorConstruction{
   ~GmGeometryFromText(){};
 
   G4VPhysicalVolume* Construct();
+
+protected:  
+  G4String theClassName;
+  G4VPhysicalVolume* thePhysiWorld;
 };
 
 #endif

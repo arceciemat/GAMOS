@@ -9,6 +9,9 @@
 #include "GmPSPrinterHistos.hh"
 #include "GmPSPrinterCSVFile.hh"
 
+#include "GmPSPrinterCoutSpectrum.hh"
+#include "GmPSPrinterHistosSpectrum.hh"
+
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
 
@@ -39,5 +42,9 @@ DEFINE_GAMOS_SCORER_PRINTER(GmPSPrinterBinFile);
 DEFINE_GAMOS_SCORER_PRINTER(GmPSPrinterTextFile);
 DEFINE_GAMOS_SCORER_PRINTER(GmPSPrinterHistos);
 DEFINE_GAMOS_SCORER_PRINTER(GmPSPrinterCSVFile);
+
+#include "GamosCore/GamosScoring/Management/include/GmPSPrinterSpectrumFactory.hh"
+DEFINE_GAMOS_SCORER_SPECTRUM_PRINTER(GmPSPrinterCoutSpectrum);
+DEFINE_GAMOS_SCORER_SPECTRUM_PRINTER(GmPSPrinterHistosSpectrum);
 
 #endif

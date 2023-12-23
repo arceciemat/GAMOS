@@ -51,6 +51,7 @@ protected:
   G4double theLastEventTime;
 
   G4bool bBiasDistributions;
+
 };
 
 #endif

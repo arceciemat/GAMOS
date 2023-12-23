@@ -47,8 +47,9 @@ public:
   static G4bool CheckProcessExists( G4ProcessManager* pmanager, const G4String& procName, G4bool bWarning = false );
   static std::vector<G4Material*> GetG4MaterialList( const G4String& materialName, G4bool bMustExist );
   static G4String GetParticleShortName( G4String name );
-  static G4DecayTable* FindOrBuildDecayTable( const G4ParticleDefinition* part );
-
+  static G4DecayTable* FindOrBuildDecayTable( const G4ParticleDefinition* part );  
+  static G4ParticleDefinition* GetG4Particle( const G4String particleName, G4bool bMustExist = true ); 
+  
 private:
   static std::map<const G4ParticleDefinition*,G4DecayTable*> thePartDecayTable;
 };

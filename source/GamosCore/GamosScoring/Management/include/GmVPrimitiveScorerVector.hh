@@ -124,7 +124,6 @@ protected:
   G4double sumALL; 
 
   G4int theNIndices;
-
 };
 
 #endif

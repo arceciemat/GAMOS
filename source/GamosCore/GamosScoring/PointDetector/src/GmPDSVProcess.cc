@@ -483,7 +483,7 @@ void GmPDSVProcess::CreateGeantino( const G4Track& aTrack, const G4double primPr
   trkInfo->SetDoubleValue("ParentWeight", GetWeight(&aTrack,FALSE) );
   
   geantino->SetUserInformation( trkInfo );
-  
+   
 //  G4double dist = (point-trkpos).mag()/cm;
   SetWeight( geantino, wei * probEmiss / (2.*M_PI*sqr(dist) ) );
   //SetWeight( geantino, 1. / (2.*M_PI*pow( dist,2 ) ) );

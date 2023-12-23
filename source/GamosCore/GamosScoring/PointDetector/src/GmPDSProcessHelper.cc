@@ -96,6 +96,7 @@ GmPDSProcessHelper::GmPDSProcessHelper(PDS1aryType ptype )
 //------------------------------------------------------------------
 GmPDSProcessHelper::~GmPDSProcessHelper()
 {
+  theScores->clear();
 }
 
 //------------------------------------------------------------------

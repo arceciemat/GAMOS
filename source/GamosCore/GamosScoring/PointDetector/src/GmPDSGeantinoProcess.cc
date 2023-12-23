@@ -67,32 +67,35 @@ G4VParticleChange* GmPDSGeantinoProcess::PostStepDoIt( const G4Track& aTrack, co
   if( gmtrki->GetParticle() != theOriginalParticle ) return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
   
   if( aTrack.GetKineticEnergy() == 0. ) return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
-
+  
   ChangeGeantinoWeight(&aStep);
-
+  
   G4int DR = theCurrentHelper->DetectorReached( aStep );
   if( DR != -1 ) { 
     if( bUseOriginalParticleSplitting ) SplitOriginalParticle( aTrack, aStep, aParticleChange );
-   
+    
     G4double wei = GetWeight(&aTrack);
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(testVerb) ) G4cout << "GmPDSGeantinoProcess::PostStepDoIt weight " << wei << G4endl;
 #endif
     
     theCurrentHelper->FillScores(aTrack, 1, DR);
-
+    
     /*    G4Track* aTrackNC = const_cast<G4Track*>(aStep.GetTrack());
-    G4cout << " SetTrackStatus fStopAndKill " << G4endl;
-    //    const_cast<G4Track*>(&aTrack)->SetTrackStatus( fStopAndKill );
-    aTrackNC->SetTrackStatus( fStopAndKill );*/
+	  G4cout << " SetTrackStatus fStopAndKill " << G4endl;
+	  //    const_cast<G4Track*>(&aTrack)->SetTrackStatus( fStopAndKill );
+	  aTrackNC->SetTrackStatus( fStopAndKill );*/
     aParticleChange.ProposeEnergy(0.);
-
+    
     G4double dist =theCurrentHelper->GetDistanceToDetectorIncm( aTrack.GetVertexPosition(),DR );
     G4int nhALL = 0;
+    G4int classIdx = gmtrki->GetIntValue("ClassifierIndex", false);
     if( theCurrentHelper->bControlHistos ) {
-      nhALL = theCurrentHelper->theHistoNumber + 100000 * gmtrki->GetIntValue("ClassifierIndex") + 100 * DR;
-      theCurrentHelper->theAnaMgr->GetHisto1(nhALL+91)->Fill(dist*CLHEP::cm);
-      theCurrentHelper->theAnaMgr->GetHisto2(nhALL+92)->Fill(dist*CLHEP::cm,log10(wei));
+      if( classIdx != -INT_MAX ) {	
+	nhALL = theCurrentHelper->theHistoNumber + 100000 * gmtrki->GetIntValue("ClassifierIndex") + 100 * DR;
+	theCurrentHelper->theAnaMgr->GetHisto1(nhALL+91)->Fill(dist*CLHEP::cm);
+	theCurrentHelper->theAnaMgr->GetHisto2(nhALL+92)->Fill(dist*CLHEP::cm,log10(wei));
+      }
     }
     std::map<G4double,Flux2Dose>::iterator ite = theCurrentHelper->theFlux2Dose.upper_bound( aTrack.GetVertexKineticEnergy());
     if( ite == theCurrentHelper->theFlux2Dose.end() ) {
@@ -103,23 +106,25 @@ G4VParticleChange* GmPDSGeantinoProcess::PostStepDoIt( const G4Track& aTrack, co
 		  G4String("Energy="+GmGenUtils::ftoa(aTrack.GetVertexKineticEnergy()) + " bigger than biggest energy in Flux2Dose coefficients" + GmGenUtils::ftoa((*ite).first) ).c_str());
     }
     if( theCurrentHelper->bControlHistos ) {
-      theCurrentHelper->theAnaMgr->GetHisto2(nhALL+93)->Fill(dist*CLHEP::cm,log10(wei) * (*ite).second.Hstar);
+      if( classIdx != -INT_MAX ) {
+	theCurrentHelper->theAnaMgr->GetHisto2(nhALL+93)->Fill(dist*CLHEP::cm,log10(wei) * (*ite).second.Hstar);
+      }
     }
-
+      
   } else {
     if( bUseMinimumGeantinoWeight ) {
       //---- Play Russian Roulette if weight is small
-      G4double wei = GetWeight(&aTrack);
-      if( wei < theMinimumGeantinoWeight ) {
+      G4double wei2 = GetWeight(&aTrack);
+      if( wei2 < theMinimumGeantinoWeight ) {
 	if( CLHEP::RandFlat::shoot() < theInvMinimumGeantinoWeightRR ) {
 	  G4Track* aTrackNC = const_cast<G4Track*>(aStep.GetTrack());
-	  SetWeight( aTrackNC, wei / theInvMinimumGeantinoWeightRR );
+	  SetWeight( aTrackNC, wei2 / theInvMinimumGeantinoWeightRR );
 #ifndef GAMOS_NO_VERBOSE
-	  if( ScoringVerb(debugVerb) ) G4cout << "GmPDSGeantinoProcess::PostStepDoIt low weight " << wei << " weight increased by Russian Roulette to " << wei / theInvMinimumGeantinoWeightRR << G4endl;
+	  if( ScoringVerb(debugVerb) ) G4cout << "GmPDSGeantinoProcess::PostStepDoIt low weight " << wei2 << " weight increased by Russian Roulette to " << wei2 / theInvMinimumGeantinoWeightRR << G4endl;
 #endif
 	} else {
 #ifndef GAMOS_NO_VERBOSE
-	  if( ScoringVerb(debugVerb) ) G4cout << "GmPDSGeantinoProcess::PostStepDoIt low weight " << wei << " killed by Russian Roulette " << G4endl;
+	  if( ScoringVerb(debugVerb) ) G4cout << "GmPDSGeantinoProcess::PostStepDoIt low weight " << wei2 << " killed by Russian Roulette " << G4endl;
 #endif
 	  aParticleChange.ProposeEnergy(0.);
 	}
@@ -140,14 +145,14 @@ G4VParticleChange* GmPDSGeantinoProcess::PostStepDoIt( const G4Track& aTrack, co
   }
   
   return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
-}
+  }
 
 //------------------------------------------------------------------
 void GmPDSGeantinoProcess::SplitOriginalParticle( const G4Track& aTrack, const G4Step& aStep, G4ParticleChange& aParticleChange2 )
 {
   G4double logwei = log(GetWeight(&aTrack));
 #ifndef GAMOS_NO_VERBOSE
-  if( ScoringVerb(testVerb) ) G4cout << "GmPDSGeantinoProcess::SplitOriginalPartile logwei " << logwei << " minimum " << theMinimumWeightForSplitting << " maximum " << theMaximumWeightForSplitting << G4endl;
+  if( ScoringVerb(-testVerb) ) G4cout << "GmPDSGeantinoProcess::SplitOriginalPartile logwei " << logwei << " minimum " << theMinimumWeightForSplitting << " maximum " << theMaximumWeightForSplitting << G4endl;
 #endif
   if( logwei > theMinimumWeightForSplitting && logwei < theMaximumWeightForSplitting ) {
     G4VUserTrackInformation* trki = aTrack.GetUserInformation();
@@ -231,7 +236,10 @@ void GmPDSGeantinoProcess::ChangeGeantinoWeight(const G4Step* aStep)
   G4ThreeVector vtx = aTrack->GetVertexPosition();
   G4VUserTrackInformation* trki = aTrack->GetUserInformation();
   GmTrackInfo* gmtrki = dynamic_cast<GmTrackInfo*>( trki );
-  G4Point3D point = gmtrki->GetThreeVectorValue("Point"); // geantino has in TrackInformation the point it is aimed to
+  G4Point3D point = gmtrki->GetThreeVectorValue("Point",false); // geantino has in TrackInformation the point it is aimed to
+  if( point == G4Point3D(G4ThreeVector(-DBL_MAX,-DBL_MAX,-DBL_MAX) )) {
+    return;
+  }
   G4double dist = (point-vtx).mag()/CLHEP::cm;
   if( dist < theExclusionRadius/CLHEP::cm ){
     G4double eRcm = theExclusionRadius/CLHEP::cm;

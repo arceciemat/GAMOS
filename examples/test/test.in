@@ -3,6 +3,7 @@
 /gamos/setParam GmGeometryFromText:FileName test.geom
 /gamos/geometry GmGeometryFromText
 /gamos/physicsList GmEMPhysics
+
 /gamos/generator GmGenerator
 
 /run/initialize
@@ -11,10 +12,11 @@
 /gamos/generator/directionDist source GmGenerDistDirectionConst  0. 0. 1.
 /gamos/generator/positionDist source GmGenerDistPositionInG4Volumes sphere
 
+
 #/gamos/userAction GmCountProcessesUA
 
 /control/execute ../visVRML2FILE.in
 #/control/execute ../visOGLIX.in
 
-/run/beamOn 5
+/run/beamOn 100
 

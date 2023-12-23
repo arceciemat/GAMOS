@@ -202,36 +202,33 @@ G4THitsMap<G4double>* GmScoringRun::GetHitsMap(const G4String& fullName){
 void GmScoringRun::DumpAllScorers()
 {
   //  PrintAllScorers();
-
   std::map<G4String,GmVPrimitiveScorer*> scorers = theScoringMgr->GetScorers();
-
   if( scorers.size() == 0 ) return; // somebody has initialized a G4Run
-  
+
   // - Number of HitsMap in this RUN.
   G4int n = GetNumberOfHitsMap();
-  //  G4cout << " GmScoringRun::DumpAllScorer() " << n << " " << theRunMap.size() << G4endl;
+  G4cout << " GmScoringRun::DumpAllScorer() " << n << " " << theRunMap.size() << G4endl;
   // - GetHitsMap and dump values.
   for ( G4int i = 0; i < n ; i++ ){
     G4THitsMap<G4double>* RunMap = GetHitsMap(i);
     //    G4cout << " GmScoringRun::DumpAllScorer RunMap " << RunMap << G4endl;
-    if ( RunMap ) {
-      //      G4cout << " PrimitiveScorer RUN: SD = " 
-      //	     << RunMap->GetSDname() <<" SCORER = "<< RunMap->GetName() << G4endl;
-      scorers[RunMap->GetName()]->Normalize(RunMap);
-
-      scorers[RunMap->GetName()]->CalculateErrors(RunMap);
-
-      scorers[RunMap->GetName()]->DumpAll(RunMap);
-      /*      G4cout << " Number of entries " << RunMap->entries() << G4endl;
-      std::map<G4int,G4double*>::iterator itr = RunMap->GetMap()->begin();
-      for(; itr != RunMap->GetMap()->end(); itr++) {
-	G4cout << "  copy no.: " << itr->first
+    //      G4cout << " PrimitiveScorer RUN: SD = " 
+    //	     << RunMap->GetSDname() <<" SCORER = "<< RunMap->GetName() << G4endl;
+    GmVPrimitiveScorer* scorer = scorers[RunMap->GetName()];
+    scorer->Normalize(RunMap);
+    
+    scorer->CalculateErrors(RunMap);
+    
+    scorer->DumpAll(RunMap);
+    /*      G4cout << " Number of entries " << RunMap->entries() << G4endl;
+	    std::map<G4int,G4double*>::iterator itr = RunMap->GetMap()->begin();
+	    for(; itr != RunMap->GetMap()->end(); itr++) {
+	    G4cout << "  copy no.: " << itr->first
 	       << "  Run Value : " << *(itr->second) 
 	       << G4endl;
 	       } */
-    }
   }
-  
+
 }
 
 //----------------------------------------------------------------------

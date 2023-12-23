@@ -25,10 +25,10 @@ public:
   G4bool ThreeVectorValueExists( const G4String& key );
 
   G4bool GetBoolValue( const G4String& key );
-  G4int GetIntValue( const G4String& key );
-  G4double GetDoubleValue( const G4String& key );
-  G4String GetStringValue( const G4String& key );
-  G4ThreeVector GetThreeVectorValue( const G4String& key );
+  G4int GetIntValue( const G4String& key, G4bool bMustExist = true ); 
+  G4double GetDoubleValue( const G4String& key, G4bool bMustExist = true ); 
+  G4String GetStringValue( const G4String& key, G4bool bMustExist = true ); 
+  G4ThreeVector GetThreeVectorValue( const G4String& key, G4bool bMustExist = true ); 
 
   void SetBoolValue( const G4String& key, G4bool value, G4bool bCannotExist = false );
   void SetIntValue( const G4String& key, G4int value, G4bool bCannotExist = false );

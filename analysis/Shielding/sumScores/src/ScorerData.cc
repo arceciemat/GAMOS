@@ -30,7 +30,7 @@ void ScorerData::SetNEvents(G4double evts)
 //-----------------------------------------------------------------
 ScorerData ScorerData::operator+=( const ScorerData& sd2 )
 {
-  if( ScoreData::verbosity >= 1 ) G4cout << "  ScorerData::operator+=: ADDING SCORER " << sd2.GetName() << "  N= " << sd2.GetNScores() << "  TO  " << theName << "  N= " << theNScores << G4endl;
+  if( ScoreData::verbosity >= 2 ) G4cout << "  ScorerData::operator+=: ADDING SCORER " << sd2.GetName() << "  N= " << sd2.GetNScores() << "  TO  " << theName << "  N= " << theNScores << G4endl;
 
   G4double NEvents2 = sd2.GetNEvents();
   /*t  for( int ii = 0; ii < GetNScores()+1; ii++ ){
@@ -51,7 +51,7 @@ ScorerData ScorerData::operator+=( const ScorerData& sd2 )
   if( ScoreData::verbosity >= 2 ) G4cout << "@@@ CHECK IF NEW SCORER ADDS SOME NEW SCORE " << G4endl; 
   for( int ii2 = 0; ii2 < sd2.GetNScores()+1; ii2++ ){
     ScoreData* id2 = sd2.GetScoreData(ii2);
-    if( ScoreData::verbosity >= 0 && ii2%10000 == 0 ) G4cout << ii2 << " out of " <<  sd2.GetNScores() << "  ScorerData::operator+=: " << theName << " DATA " << id2->GetName() << G4endl;
+    if( ScoreData::verbosity >= 3 && ii2%10000 == 0 ) G4cout << ii2 << " out of " <<  sd2.GetNScores() << "  ScorerData::operator+=: " << theName << " DATA " << id2->GetName() << G4endl;
     bool bFound1 = false;
     ScoreData* id1 = 0;
     for( int ii1 = 0; ii1 < theNScores+1; ii1++ ){

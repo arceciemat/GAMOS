@@ -26,10 +26,15 @@ void GmPSPrinterCoutContIndex::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimiti
 {
   SetUnit(scorer);
   
-  //  G4cout <<" GmPSPrinterCoutContIndex::DumpAll() " << G4endl;
-  G4cout << G4endl << " MultiFunctionalDet: " << scorer->GetMultiFunctionalDetector()->GetName() << G4endl;
-  G4cout << " PrimitiveScorer: " << scorer->GetName() << G4endl;
-  G4cout << " Number of entries= " << RunMap->entries() << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+  if( ScoringVerb(infoVerb) ) {
+    //  G4cout <<" GmPSPrinterCoutContIndex::DumpAll() " << G4endl;
+    G4cout << G4endl << " MultiFunctionalDet: " << scorer->GetMultiFunctionalDetector()->GetName() << G4endl;
+    G4cout << " PrimitiveScorer: " << scorer->GetName() << G4endl;
+    G4cout << " Number of entries= " << RunMap->entries() << G4endl;
+  }
+#endif
+  
   G4double aveALL = 0.;
   G4double errorALL = 0.;
   std::map<G4int,G4double*>* scorerMap = RunMap->GetMap();
