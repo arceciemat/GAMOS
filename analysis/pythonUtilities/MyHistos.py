@@ -5,6 +5,8 @@ import sys
 from functools import reduce
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
+import matplotlib
+from scipy.interpolate import interp1d, griddata,bisplrep,interp2d
 
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
 def CleanName(name):
@@ -34,8 +36,8 @@ class Histo1D(MutableMapping):
     xmax = float(0)
     under = 0
     underErr = 0
-    data = []
-    dataErr = []
+    data = np.zeros([1])
+    dataErr = np.zeros([1])
     over = 0
     overErr = 0  
     nent = 0
@@ -50,14 +52,14 @@ class Histo1D(MutableMapping):
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def __init__(self, args=[]):
-        self.data = []
-        self.dataErr = []
         if len(args) == 0 :
             return
         #        print("MyHistos args",args," N=",len((args)))#GDEB
         self.type = args[0]
         self.name = CleanName(args[1])
         self.nbin = int(args[2])
+        self.data = np.zeros([self.nbin])
+        self.dataErr = np.zeros([self.nbin])
         if len(args) != 2*self.nbin+14 :
             print("!! ERROR: Histo1D ",self.name," should have nbin ",2*self.nbin+14," and it has ",len(args))
             sys.exit()
@@ -66,9 +68,8 @@ class Histo1D(MutableMapping):
         self.under = float(args[5])
         self.underErr = float(args[6])
         for id in range(0,self.nbin) : # LOOP TO DATA
-            self.data.append(float(args[7+2*id]))
-            self.dataErr.append(float(args[7+2*id+1]))
-            # print(self.nbin,"FILL ",id," ",float(args[7+2*id]),"+-",float(args[7+2*id+1])) #GDEB
+            self.data[id] = float(args[7+2*id])
+            self.dataErr[id] = float(args[7+2*id+1])
         self.over = float(args[2*self.nbin+7])
         self.overErr = float(args[2*self.nbin+8])
         self.nent = float(args[2*self.nbin+9])
@@ -81,8 +82,6 @@ class Histo1D(MutableMapping):
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def FillFromLine(self,line):
-        self.data = []
-        self.dataErr = []
         self.type = "1D"
         self.name = ""
         self.nbin = len(line)
@@ -92,10 +91,12 @@ class Histo1D(MutableMapping):
 #        print("STEP ",step,self.xmin,self.xmax) #GDEB
         self.under = 0.
         self.underErr = 0.
+        self.data = np.zeros([self.nbin])
+        self.dataErr = np.zeros([self.nbin])
         for id in range(0,self.nbin) : # LOOP TO DATA
-            self.data.append(line[id][1])
-            self.dataErr.append(line[id][2])
-        #            print(self.nbin,"FILL ",id," ",self.data)#GDEB
+            self.data[id] = line[id][1]
+            self.dataErr[id] = line[id][2]
+            # print(len(line),self.nbin,"FILL ",id," ",self.data)#GDEB
         self.over = 0. 
         self.overErr = 0.
         self.nent = self.nbin
@@ -104,7 +105,45 @@ class Histo1D(MutableMapping):
         self.RMS = 0.
         self.RMSErr = 0.
         
-        #        self.num_holes = kwargs.get('num_holes',random_holes())
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def FillFromArrays(self,data,dataErr,minX,maxX) :
+        self.nbin = len(data)
+        sumX = np.zeros(nX)
+        sumY = np.zeros(nY)
+        sumXerr2 = np.zeros(nX)
+        sumYerr2 = np.zeros(nY)
+        xbins = self.Xbins()
+        nent = 0
+        sumx = 0
+        sumx2 = 0
+        sumxerr = 0
+        sumxerr2 = 0
+        self.data = np.zeros([self.nbin])
+        self.dataErr = np.zeros([self.nbin])
+        for ix in range(self.nbin) :
+            val = data[ix]
+            err = dataErr[ix]
+            self.data[id] = val
+            self.dataErr[id] = err
+            sumx += val
+            sumx2 += val*val
+            sumxerr += err
+            sumxerr2 += err*err
+            self.nent += val
+
+        if sumx != 0 :
+            self.mean = sumx/self.nent
+            self.meanErr = np.sqrt(sumxerr2)/sumx
+            #    self.xRMS = np.sqrt(sumx2/sumX.sum()-sumx*sumx)
+        else :
+            print("!!! WARNING: empty histogram ",self.name," range_X ",ix,"  out of",range(nX))
+        self.RMS = 0.
+        self.RMSErr = 0.
+
+        self.xunder = 0.
+        self.xunderErr = 0.
+        self.over = 0.
+        self.overErr = 0.
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def copy(self, his1orig):
@@ -117,11 +156,6 @@ class Histo1D(MutableMapping):
         self.xmax = his1orig.xmax
         self.under = his1orig.under
         self.underErr = his1orig.underErr
-        self.data = []
-        self.dataErr = []
-        for id in range(0,self.nbin) : # LOOP TO DATA
-            self.data.append(his1orig.data[id])
-            self.dataErr.append(his1orig.dataErr[id])
         self.over = his1orig.over
         self.overErr = his1orig.overErr
         self.nent = his1orig.nent
@@ -141,22 +175,21 @@ class Histo1D(MutableMapping):
             factor = normValue/dataSum
         else :
             factor = 1.
-            #        print(self.name,"NORM ",len(self.data),self.nbin)
-        self.data = [nn*factor for nn in self.data]
-        self.dataErr = [nn*factor for nn in self.dataErr]
+        print(self.name,"NORM=",normValue,"factor=", factor,"dataSum=",dataSum)
+        self.data *= factor
+        self.dataErr *= factor
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     ### NORM TO VALUE AT A POINT
     def normToValue(self,normValue, normX):
-        xstep = self.Xstep(self)
+        xstep = self.Xstep()
         ix = int((normX - self.xmin)/xstep)
         dataIx = self.data[ix]
         if dataIx == 0. :
             return
-       # print("normToValue",normValue,normX," ix= ",ix," dataIx= ",dataIx)  # GDEB
-        for ix in range(self.nbin) :
-            self.data[ix] *= normValue/dataIx
-            self.dataErr[ix] *= normValue/dataIx
+        # print("normToValue",normValue,normX," ix= ",ix," dataIx= ",dataIx)  # GDEB
+        self.data *= normValue/dataIx
+        self.dataErr *= normValue/dataIx
         #t        numpy.prod(self.data)
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
@@ -196,7 +229,6 @@ class Histo1D(MutableMapping):
 #                +" "+str(self.dataErr)
                )
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    @staticmethod
     def Xstep(self):
         xStep = (float(self.xmax)-float(self.xmin))/int(self.nbin)
         return xStep
@@ -206,12 +238,16 @@ class Histo1D(MutableMapping):
         xStep = (float(self.xmax)-float(self.xmin))/int(self.nbin)
         for ii in range(0,int(self.nbin)):
             Xbins.append(float(self.xmin)+(0.5+ii)*xStep)
-            # print(ii,"XBINS",float(self.xmin)+(0.5+ii)*xStep,float(self.xmin),"+",(0.5+ii),"*",xStep)
+            #print(ii,"XBINS",float(self.xmin)+(0.5+ii)*xStep,float(self.xmin),"+",(0.5+ii),"*",xStep)
         return Xbins
     
    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GetBinCenter(self,ix):
-        return self.xmin + Xstep(self)*(ix+0.5)
+        return self.xmin + self.Xstep()*(ix+0.5)
+    
+   #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def GetBinCentre(self,ix):
+        return self.xmin + self.Xstep()*(ix+0.5)
     
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def CheckEqual(self,obj):
@@ -235,18 +271,16 @@ class Histo1D(MutableMapping):
             return self
 
         newData = sum2(self.under,self.underErr,obj.under,obj.underErr)
-        self.under = newData[0]
-        self.underErr = newData[1]
-        for ii in range(0,self.nbin) : # LOOP TO DATA
-            newData = sum2(self.data[ii],self.dataErr[ii],obj.data[ii],obj.dataErr[ii])
-            self.data[ii] = newData[0]
-            self.dataErr[ii] = newData[1]
-        newData = sum2(self.over,self.overErr,obj.over,obj.overErr)
-        self.over = newData[0]
-        self.overErr = newData[1]
+        self.under = self.under+obj.under
+        self.underErr = np.sqrt(pow(self.underErr,2)+pow(obj.underErr,2))
+        self.data += obj.data
+        self.dataErr = np.sqrt(np.power(self.dataErr,2)+np.power(obj.dataErr,2))
+        self.over = self.over+obj.over
+        self.overErr = np.sqrt(pow(self.overErr,2)+pow(obj.overErr,2))
         self.nent += obj.nent
 
         newData = sum2(self.mean,self.meanErr,obj.mean,obj.meanErr)
+  #        print("HISTO1 Add mean",newData[0],newData[1],"<-",self.mean,self.meanErr)
         self.mean = newData[0]
         self.meanErr = newData[1]
 
@@ -257,8 +291,47 @@ class Histo1D(MutableMapping):
         return self
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def Average(self,obj,bCheckEqual=True):
+
+        if bCheckEqual and not self.CheckEqual(obj) :
+            return self
+        
+        newData = sum2(self.under,self.underErr,obj.under,obj.underErr)
+        self.under = newData[0]
+        self.underErr = newData[1]
+        # !!! MASK != 0
+        weiself = np.zeros(self.nbin)
+        weiobj = np.zeros(self.nbin)
+        for ii in range(0,self.nbin) :
+            newData = sum2(self.data[ii],self.dataErr[ii],obj.data[ii],obj.dataErr[ii])
+            self.data[ii] = newData[0]
+            self.dataErr[ii] = newData[1]
+        # gives error if bin error is 0     weidat = 1. / np.power(self.dataErr,2) 
+        # gives error if bin error is 0     weiobj = 1. / np.power(obj.dataErr,2)
+         # gives error if bin error is 0    self.data = (self.data * weidat + obj.data * weiobj ) / (weidat+weiobj)
+        # gives error if bin error is 0     self.dataErr = np.sqrt(1. / (weidat+weiobj) )
+        newData = sum2(self.over,self.overErr,obj.over,obj.overErr)
+        self.over = newData[0]
+        self.overErr = newData[1]
+        self.nent += obj.nent
+
+        if not math.isnan(self.meanErr) and not math.isnan(obj.meanErr) :
+            newData = sum2(self.mean,self.meanErr,obj.mean,obj.meanErr)
+            #print("HISTO1 Average mean",newData[0],newData[1],"<-",self.mean,self.meanErr)
+            self.mean = newData[0]
+            self.meanErr = newData[1]
+        else :
+            self.mean = (self.mean+obj.mean)/2.
+            self.meanErr = 0.
+        newData = sum2(self.RMS,self.RMSErr,obj.RMS,obj.RMSErr)
+        self.RMS = newData[0]
+        self.RMSErr = newData[1]
+
+        return self
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def DisplaceX(self,disp,orderInterp = 1):
-        xstep = self.Xstep(self)
+        xstep = self.Xstep()
         dispInBin = disp%xstep
         ixLeft = int(disp/xstep)+int((np.sign(disp)-1)/2)
         ixRight = ixLeft+1
@@ -316,12 +389,12 @@ class Histo1D(MutableMapping):
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def Mult(self,factor):
 
-        for ii in range(0,self.nbin) : # LOOP TO DATA
-            self.data[ii] = self.data[ii]*factor
-            self.dataErr[ii] = self.dataErr[1]*factor
-
-#        self.RMS = newData[0]
- #       self.RMSErr = newData[1]
+        self.data *= factor
+        self.dataErr *= factor
+        self.mean *= factor
+        self.meanErr *= factor
+        self.RMS *= factor
+        self.RMSErr *= factor
 
         return self
 
@@ -356,32 +429,27 @@ class Histo1D(MutableMapping):
         fOut.write(","+str(self.RMSErr))
         fOut.write("\n")
 
-    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-    def SetMeanRMSFromData(self) :
-        nx = 0.
-        sumx = 0.
-        sumx2 = 0.
-        sumxerr2 = 0.
-        xbins = self.Xbins()
-        #        print("SetMeanRMSFromData nb",self.nbin) # GDEB
-        for ix in range(self.nbin) :
-            nx += self.data[ix]
-            sumx += self.data[ix]*xbins[ix]
-            sumx2 += self.data[ix]*self.data[ix]*xbins[ix]*xbins[ix]
-            sumxerr2 += self.dataErr[ix]*self.dataErr[ix]*xbins[ix]*xbins[ix]
-        if nx > 0 :
-            self.mean = sumx/nx
-            #t        self.meanErr = math.sqrt(sumxerr2)/float(nx)
-            #t       self.RMS = math.sqrt(sumx2/float(nx)-sumx*sumx)
-        else :
-            self.mean = 0.
-            self.meanErr = 0.
-            self.RMS = 0.
-        self.RMSErr = 0.
-
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def Print(self):
+        print('"'+self.type+'"')
+        print(',"'+self.name+'"')
+        print(","+str(self.nbin))
+        print(","+str(self.xmin))
+        print(","+str(self.xmax))
+        print(","+str(self.under))
+        print(","+str(self.underErr))
+        print(","+str(self.over))
+        print(","+str(self.overErr))
+        print(","+str(self.nent))
+        print(","+str(self.mean))
+        print(","+str(self.meanErr))
+        print(","+str(self.RMS))
+        print(","+str(self.RMSErr))
+        print("\n")
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GaussianFit(self, idHis, bFitPlot) :
+#        print("GaussianFit bFitPlot ",bFitPlot)
         hx = self.Xbins()
         hy = self.data
         hxysum = 0
@@ -391,9 +459,14 @@ class Histo1D(MutableMapping):
             hxysum += hx[ii]*hy[ii]
             hxsum += hx[ii]
             hysum += hy[ii]
-#            print("hxysum",hxysum,hx[ii],"*",hy[ii]) # GDEB
-        mean = hxysum/hysum
-#        mean = sum(hx * hy) / sum(hy)
+            #            print("hxysum",hxysum,hx[ii],"*",hy[ii]) # GDEB
+        if hysum != 0. :
+            mean = hxysum/hysum
+        else :
+            param = [0.,0.,0.]
+            covariance = [ [0.,0.,0.], [0.,0.,0.], [0.,0.,0.]]
+            return param,covariance
+        #        mean = sum(hx * hy) / sum(hy)
         hxysum = 0
         for ii in range(0,len(hy)):
             hxysum += hy[ii]*(hx[ii]-mean)**2
@@ -401,8 +474,15 @@ class Histo1D(MutableMapping):
         sigma = np.sqrt(hxysum / hysum)
         #         A, x0, sigma = self.gauss_fit(hx, hy)
         #        sigma = np.sqrt(sum(hy * (hx - mean) ** 2) / sum(hy))
-        print("CALL curve_fit gauss",hy)
-        param, covariance = curve_fit(self.gauss, hx, hy, p0=[max(hy), mean, sigma])
+        #        print("CALL curve_fit gauss",hy)
+        try:
+            param, covariance = curve_fit(self.gauss, hx, hy, p0=[max(hy), mean, sigma])
+        except RuntimeError:
+            print("Error - Gaussian fit cannot be done")
+            param = [0.,0.,0.]
+            covariance = [ [0.,0.,0.], [0.,0.,0.], [0.,0.,0.]]
+            return param,covariance
+
         # #        parameters, covariance = curve_fit(self.Gauss, hX, hY)
         hyFit = self.gauss(hx,param[0],param[1],param[2])
 #        print("GaussianFit par",param) #GDEB
@@ -415,33 +495,43 @@ class Histo1D(MutableMapping):
             lcolor = 'black'
         elif idHis == 1:
             lcolor = 'black'
-        bFitPlot = 1
-        if bFitPlot :
+        #        bFitPlot = 1
+        if bFitPlot%10 == 1 :
             hxt = []
             hyt = []
+            if idHis == 1:
+                lcolor = 'grey'
+            elif idHis == 0:
+                lcolor = 'red'
+            #t DO NOT PLOT FIT
+            plt.plot(hxt, hyt, label='fit', linestyle='dotted',color=lcolor) #(0, (1, 10)),color='black')  # https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
+            plt.plot(hx, hyFit, label='fit', linestyle='dotted',color=lcolor) #(0, (1, 10)),color='black')  # https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
+            plt.draw()
+            #            plt.legend()
+        #print("GaussianFit bFitPlot ",int(bFitPlot/10)) #GDEB
+        if int(bFitPlot/10) == 1 :
             if idHis == 0:
                 lcolor = 'blue'
+                stext="MC sigma="
             elif idHis == 1:
                 lcolor = 'orange'
-            #            print("PLOT ",bFitPlot)
-            #t DO NOT PLOT FIT
-            #t plt.plot(hxt, hyt, label='fit', linestyle='dotted',color=lcolor) #(0, (1, 10)),color='black')  # https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
-            #t    plt.plot(hx, hyFit, label='fit', linestyle='dotted',color=lcolor) #(0, (1, 10)),color='black')  # https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
-            plt.draw()
-            plt.legend()
-            xPos = self.xmax*0.5
+                stext="Exp. sigma="
+            xPos = self.xmax*0.2
             yPos = self.maximumY()*(0.7-idHis*0.1)
-            plt.text(xPos,yPos,"mean= "+"{:.4e}".format(param[1]), color=lcolor)
-            yPos = self.maximumY()*(0.65-idHis*0.1)
-            plt.text(xPos,yPos,"sigma= "+"{:.4e}".format(param[2]), color=lcolor)
-            print("GAUSS TEXT",xPos,yPos,"sigma= "+"{:.4e}".format(param[2]))
+            #            plt.text(xPos,yPos,"mean= "+"{:.4e}".format(param[1]), color=lcolor)
+            #            yPos = self.maximumY()*(0.65-idHis*0.1)
+            #print("SIGMA COLOR",lcolor,"xytext",xPos,yPos,) #GDEB
+            matplotlib.rcParams.update({'font.size': 15})
+            plt.text(xPos,yPos,stext+" "+"{:.4g}".format(param[2]), color=lcolor)
+            print("GAUSS TEXT",xPos,yPos,"sigma= "+"{:.4e}".format(param[2])) #GDEB
+            print("GAUSS RES",param[0],param[1],param[2]) #GDEB
             plt.draw()
 
         return param,covariance
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def gauss(self,x, A, x0, sigma):
-        print(self.name,x0, sigma,"gauss", A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2)))
+         #print(self.name,x0, sigma,"gauss", A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2))) # GDEB
         return A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2))
 #    def gauss_fit(self,x, y):
 #        xysum = 0
@@ -464,15 +554,16 @@ class Histo1D(MutableMapping):
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def maximumY(self) :
-        maxY = 0
-        for ii in range(1,self.nbin-1) : 
-            maxY = max(maxY,self.data[ii])
+        return np.max(self.data)
 
-        return maxY
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def minimumY(self) :
+        return np.min(self.data)
+
 
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def reduceLimits(self,minX,maxX,bNSteps=True) :
-        xstep = self.Xstep(self)
+        xstep = self.Xstep()
         idMinX = int((minX-self.xmin)/xstep) # bin corresponding to minX
         if bNSteps :
             #            print( "idMinX ", idMinX, (minX-self.xmin),xstep,minX,self.xmin) # GDEB
@@ -504,7 +595,7 @@ class Histo1D(MutableMapping):
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GetBin( self, xval, bIsOK ) :
-        ibin = (xval-self.xmin)/self.Xstep(self)
+        ibin = (xval-self.xmin)/self.Xstep()
         if bIsOK :
             if ibin < 0 or ibin >= self.nbin :
                 print("!! WARNING MyHistos::GetBin: value ",xval," is out of X axis =(",self.xmin,",",self.xmax)
@@ -518,7 +609,147 @@ class Histo1D(MutableMapping):
             return(self.data[ibin],self.dataErr[ibin])
         else :
             return(None,None)
-          
+#@@ START GetClosestX:  13038.780740348151 34.239999999999995
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def GetClosestX(self, yval, xval) :
+        # print("@@ START GetClosestX: ",yval,xval)
+        distY = sys.float_info.max
+        prevY = sys.float_info.max
+        xbins = self.Xbins()
+        xstep = self.Xstep()
+        Xclosest = xbins[0]
+        #print("@@ GetClosestX: =xbins[0] ",Xclosest) #GDEB
+        for ii in range(1,len(self.data)) :
+            #print("@@ GetClosestX: check ",self.data[ii-1],"&",self.data[ii],"X", xbins[ii-1],"&",xbins[ii]) #GDEB
+            if self.data[ii] == yval :
+                cX1 = xbins[ii]
+                if np.abs(cX1-xval) < np.abs(Xclosest-xval) :
+                    Xclosest = cX1
+                #print("@@ GetClosestX: =xbins[ii] ",Xclosest,np.abs(cX1-xval)) #GDEB
+            elif (self.data[ii-1] < yval and self.data[ii] > yval) or (self.data[ii-1] > yval and self.data[ii] < yval) :
+                cX1 = xbins[ii-1] + xstep*np.abs(yval-self.data[ii-1])/np.abs(self.data[ii]-self.data[ii-1])
+                #print("checkii",np.abs(cX1-xval),"<", Xclosest,cX1,xval)
+                if np.abs(cX1-xval) < np.abs(Xclosest-xval) :
+                    Xclosest = cX1
+                #print("@@ GetClosestX: between bins",Xclosest,np.abs(cX1-xval),self.data[ii-1],"&",self.data[ii],"X", xbins[ii-1],"&",xbins[ii],":",np.abs(yval-self.data[ii-1]),np.abs(self.data[ii]-self.data[ii-1])) #GDEB
+        return Xclosest
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+
+    def GetIdInterpolatedValue(self, xval) :
+        xBins = self.Xbins()
+        ibin = -1 
+        for ib1 in range(len(xBins)) :
+            if xBins[ib1] == xval :
+                ibin = ib1
+                break
+        if ibin != -1 :
+            return ibin
+        else :
+ #           idBigger = [ii for ii, value in enumerate(xBins) if value > xval]
+            idBigger = next(xx for xx, val in enumerate(xBins)
+                            if val > xval)
+            return idBigger
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def GetLinearInterpolatedValue(self, xval) :
+        xBins = self.Xbins()
+        if xval in xBins :
+            xid = xBins.index(xval)
+            print(xid,xval,"HHHPredictPDD:hyval", self.data[xid])
+
+#        print(xval,"GIV",self.name,self.xmin,"=",xBins[0],xBins[len(xBins)-1])
+        ibin = -1 
+        for ib1 in range(len(xBins)) :
+            if xBins[ib1] == xval :
+                ibin = ib1
+                break
+        if ibin != -1 :
+  #          print(ibin,"HHHPredictPDD:hyval",self.data[ibin],"FROM ",xval)
+            return(self.data[ibin],self.dataErr[ibin])
+        else :
+            ibin = next(xx for xx, val in enumerate(xBins) if val > xval)
+ #           print("idBigger",ibin,xval)
+            ibinPrev = ibin-1
+            xStep = self.Xstep()
+            hyval = self.data[ibinPrev]+(self.data[ibin]-self.data[ibinPrev])*(xval-xBins[ibinPrev])/xStep
+            hyvalErr = self.dataErr[ibinPrev]+(self.dataErr[ibin]-self.dataErr[ibinPrev])*(xval-xBins[ibinPrev])/xStep
+#            print(ibin,xval,"HHHPredictPDD:hyval",hyval,self.data[ibinPrev],"+(",self.data[ibin],"-",self.data[ibinPrev],")*(",xval,"-",xBins[ibinPrev],")/",xStep," x1=",xBins[ibin])
+            return hyval,hyvalErr
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def GetInterpolatedValue(self, xval) :
+        xBins = self.Xbins()
+        if xval in xBins :
+            xid = xBins.index(xval)
+            return self.data[xid],self.dataErr[xid]
+
+        xarr = np.array(xBins)
+        yarr = self.data
+        if xval < xarr[0] :
+#            print("GetInterpolatedValue: "+str(xval)+" is smaller than minimum"+str(xarr[0]))
+            raise ValueError("GetInterpolatedValue: "+str(xval)+" is smaller than minimum"+str(xarr[0]))
+        if xval > xarr[-1] :
+            raise ValueError("GetInterpolatedValue: "+str(xval)+" is bigger than maximum"+str(xarr[-1]))
+        # linear         yval = np.interp(xval,xarr,yarr)
+        
+        # Perform spline interpolation
+        spline_interpolation = interp1d(xarr, yarr, kind='cubic')  # 'cubic' for cubic spline
+        # Interpolate the value at xval
+        yval = spline_interpolation(xval)
+        yarrErr = self.dataErr
+        spline_interpolationErr = interp1d(xarr, yarrErr, kind='cubic')  # 'cubic' for cubic spline
+        yvalErr = spline_interpolationErr(xval)
+
+        print("GETIV",yval,yvalErr)
+        return yval,yvalErr
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def GetXDistSameY(self, yval, xval) :
+        print("START GetXDistSameY", yval, xval) #GDEB
+        xclosest = sys.float_info.max
+        xValue = None
+        Xbins1 = self.Xbins()
+        xstep = self.Xstep()
+        for ii in range(self.nbin) :
+            if self.data[ii] == yval :
+            #    print(ii,"GetXDistSameY y1 == y2",self.data[ii]) #GDEG
+                return Xbins1[ii]
+            # interpolate linearly y's of this bin and next bin
+            if ii != self.nbin-1 :
+                data1 = self.data[ii]
+                data2 = self.data[ii+1]
+                if max(data1,data2) < yval :
+                    #print(ii,"GetXDistSameY yval too high",data1,data2,"<",yval) #GDEB
+                    continue
+                if min(data1,data2) > yval :
+                    #print(ii,"GetXDistSameY yval too small",data1,data2,">",yval) #GDEB
+                    continue
+                xValue = Xbins1[ii] + xstep*(abs(yval-data1)/abs(data2-data1))
+                # print("GetXDistSameY interpol",xValue, Xbins1[ii],xstep,yval,data1,data2,xstep*(abs(yval-data1)/abs(data2-data1))) #GDEB
+                xclosest = min(abs(xValue-xval),xclosest)
+                # print("GetXDistSameY xclosest",xclosest) #GDEB
+
+        if xclosest == sys.float_info.max :
+            return None
+        else :
+            return xclosest
+   
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def CalculateMeanAndRMS(self) :
+        return #t
+        Xbins = self.Xbins()
+        self.mean = (sum(Xbins[ii] * self.data[ii] )/ sum(self.data[ii]) for ii in range(len(Xbins)))
+        #    average = numpy.average(values, weights=weights)
+        # Fast and numerically precise:
+#t        self.mean = np.average(Xbins, weights=self.data)
+  #t      self.RMS = np.sqrt(np.average((Xbins-self.mean)**2, weights=self.data))
+        #   self.RMS = DescrStatsW(Xbins, weights=self.data, ddof=1).std
+        #    print("MEAN",self.mean,"RMS",self.RMS,"=",self.RMS/DescrStatsW(Xbins, weights=self.data, ddof=1).std)
+        self.meanErr = 0.
+        self.RMSErr = 0.
+
+        
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 class Histo2D(MutableMapping):
     type = "2D"
@@ -531,7 +762,6 @@ class Histo2D(MutableMapping):
     ymax = float(0)
     xunderV = [] # left row
     xunderErrV = [] # left row
-    data = []
     yunderV = [] # down row
     yunderErrV = [] # down row
     xunder = 0
@@ -544,7 +774,6 @@ class Histo2D(MutableMapping):
     xunderyoverErr = 0 # left down bin
     xoverV = [] # right row
     yoverV = [] # up row
-    dataErr = []
     xoverErrV = [] # right row
     yoverErrV = [] # up row
     xover = 0
@@ -557,7 +786,6 @@ class Histo2D(MutableMapping):
     xoveryoverErr = 0 # right up bin
     dataNP = np.zeros([1, 1])
     dataErrNP = np.zeros([1, 1])
-    dataArray = [] 
     nent = 0
     xmean = 0
     xmeanErr = 0
@@ -574,9 +802,6 @@ class Histo2D(MutableMapping):
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def __init__(self, args):
 #        print("MyHistos args",args," N=",len((args)))
-        self.data = []
-        self.dataErr = []
-        self.dataArray = []
         self.xunderV = []
         self.yunderV = []
         self.xunderErrV = []
@@ -598,9 +823,9 @@ class Histo2D(MutableMapping):
         self.xunderyunder = float(args[8]) # XOVERYOVER
         self.xunderyunderErr = float(args[9])
         #        print("xunderyunder",self.xunderyunder,"+-",self.xunderyunderErr) 
-        self.dataNP = np.zeros([self.xnbin,self.ynbin])
-        self.dataErrNP = np.zeros([self.xnbin,self.ynbin])
-        id1 = 9 + 1 
+        self.dataNP = np.zeros([self.ynbin,self.xnbin])
+        self.dataErrNP = np.zeros([self.ynbin,self.xnbin])
+        id1 = 9 + 1
         for iiy in range(0,self.ynbin) : # LOOP TO OUNDER 
             val = float(args[id1+2*iiy])
             err = float(args[id1+2*iiy+1])
@@ -626,17 +851,18 @@ class Histo2D(MutableMapping):
             self.yunderErr += err*err
             # print(id,self.yunder,"+-",self.yunderErr," add yunderV ",val,"+-",err)
             id1 += 2
+#            for iiy in range(self.ynbin-1,-1,-1) : # LOOP TO BIN[X,Y] DATA
             for iiy in range(0,self.ynbin) : # LOOP TO BIN[X,Y] DATA
+                #print(iix,iiy,id1,id1+iiy*2,"fill 2D data2",len(args))
                 val = float(args[id1+iiy*2])
-                self.data.append(val)
-                self.dataErr.append(float(args[id1+iiy*2+1]))
-                self.dataArray.append(val)
-                #              print(self.name,iix,iiy,"dataArray APPEND",args[id1+iiy*2])
-                #            print(self.name," SIZE self.data",len(self.data),len(self.dataArray))
                 #                print("FILL DATA",jj,iix,iiy,val)#GDEB
-                self.dataNP[iix,iiy] = val
-                self.dataErrNP[iix,iiy] = val
+                #                iiyInv = self.ynbin-iiy-1 # y must be reversed
+                #                self.dataNP[iiyInv,iix] = val
+                #                self.dataErrNP[iiyInv,iix] = val
+                self.dataNP[iiy,iix] = val
+                self.dataErrNP[iiy,iix] = val
                 jj = jj+1
+#                if( val != 0 ) :  print(self.name,iix,iiy,iiyInv,self.dataNP[iiyInv,iix] ) # GDEB
                       
             id1 += 2*self.ynbin
             val = float(args[id1])  # APPEND XOVER
@@ -647,9 +873,7 @@ class Histo2D(MutableMapping):
             self.yoverErr += err*err
             # print(id,self.yover,"+-",self.yoverErr," add yoverV ",val,"+-",err)
             id1 += 2
-
-        self.dataArray = np.reshape(self.dataArray, (self.xnbin,self.ynbin),order='F')
-#        print(self.name," dataArray LENGTH ",len(self.dataArray)) # GDEB
+        #5 0 755
         
         self.yunderErr = math.sqrt(self.yunderErr)
         self.yoverErr = math.sqrt(self.yoverErr)
@@ -668,7 +892,6 @@ class Histo2D(MutableMapping):
         id1 += self.ynbin*2
         self.xoveryover = float(args[id1])  # XOVERYOVER
         self.xoveryoverErr = float(args[id1+1])
-        #            print(self.xnbin,"FILL ",id," ",self.data)
         id1 += 2
         self.nent = float(args[id1])
         self.xmean = float(args[id1+1])
@@ -680,25 +903,47 @@ class Histo2D(MutableMapping):
         self.yRMS = float(args[id1+7])
         self.yRMSErr = float(args[id1+8])
         #        self.num_holes = kwargs.get('num_holes',random_holes())
-        
+        #        print("HISTO2_INIT_FROM_LINE N",len(self.data),self.xmin,self.xmax)
+#        print(self.name,"DATANP",self.dataNP)
+
+
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def FillFromArrays(self,data,dataErr,nX,nY) :
+    def FillFromLists(self,name,minX,maxX,minY,maxY,nX,nY,data,dataErr) :
         #print("fillHisto2FromArray: ",self.name)
+        if len(self.dataNP) != 0 :
+            self.dataNP = np.zeros([nY,nX])
+            self.dataErrNP = np.zeros([nY,nX])
+            self.xunderV = []
+            self.xunderErrV = []
+            self.xoverV = []
+            self.xoverErrV = []
+            self.yunderV = []
+            self.yunderErrV = []
+            self.yoverV = []
+            self.yoverErrV = []
+        self.name = name
+        self.xnbin = nX
+        self.ynbin = nY
+        self.xmin = minX
+        self.xmax = maxX
+        self.ymin = minY
+        self.ymax = maxY
         sumX = np.zeros(nX)
         sumY = np.zeros(nY)
         sumXerr2 = np.zeros(nX)
         sumYerr2 = np.zeros(nY)
-        xbins = self.Xbins(self)
-        ybins = self.Ybins(self)
+        xbins = self.Xbins()
+        ybins = self.Ybins()
         nent = 0    
-        for iy in range(nY) :
-            for ix in range(nX) :
-                val = data[ix,iy]
-                err = dataErr[ix,iy]
+        for ix in range(nX) :
+            for iy in range(nY) :
+                val = data[ix+iy*nX]
+                err = dataErr[ix+iy*nX]
                 #print(len(self.data),"fillHisto2FromArray",ix+iy*nX,ix,iy,val)
-                self.data.append(val)
-                self.dataErr.append(err)
-                self.dataArray.append(val)
+                self.dataNP[iy,ix] = val
+                self.dataErrNP[iy,ix] = err
+                ix = int(ixy/nY)
+                iy = ixy%nY
                 sumX[ix] += val
                 sumY[iy] += val
                 sumXerr2[ix] += err*err
@@ -738,18 +983,40 @@ class Histo2D(MutableMapping):
         self.yRMS = 0.
         self.yRMSErr = 0.
 
-        self.dataArray = np.reshape(self.dataArray, (self.xnbin,self.ynbin),order='F')
+        for iiy in range(0,self.ynbin) : # LOOP TO OUNDER 
+            self.xunderV.append(0.)
+            self.xunderErrV.append(0.)
+            self.xoverV.append(0.)
+            self.xoverErrV.append(0.)
+        for iix in range(0,self.xnbin) : # LOOP TO BIN[X,Y] DATA
+            self.yunderV.append(0.)
+            self.yunderErrV.append(0.)
+            self.yoverV.append(0.)
+            self.yoverErrV.append(0.)
 
+        
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def FillFromNPMats(self,name,minX,maxX,minY,maxY,data,dataErr) :
-        #print("fillFromNPMats: ",name)
+    def FillFromNPArrays(self,name,minX,maxX,minY,maxY,dataNP,dataErrNP) : 
+       #print("fillFromNPMats: ",name)
         self.name = name
-        self.xnbin = data.shape[0]
+        self.xnbin = dataNP.shape[1]
         self.xmin = minX
         self.xmax = maxX
-        self.ynbin = data.shape[1]
+        self.ynbin = dataNP.shape[0]
         self.ymin = minY
         self.ymax = maxY
+        self.dataNP = dataNP
+        self.dataErr = dataErrNP
+        print("DATANPARRAY N",len(self.dataNP),self.xmin,self.xmax)
+        if len(self.dataNP) != 0 :
+            self.xunderV = []
+            self.xunderErrV = []
+            self.xoverV = []
+            self.xoverErrV = []
+            self.yunderV = []
+            self.yunderErrV = []
+            self.yoverV = []
+            self.yoverErrV = []
         for iiy in range(0,self.ynbin) : # LOOP TO OUNDER 
             self.xunderV.append(0.)
             self.xunderErrV.append(0.)
@@ -766,17 +1033,14 @@ class Histo2D(MutableMapping):
         sumY = np.zeros(self.ynbin)
         sumXerr2 = np.zeros(self.xnbin)
         sumYerr2 = np.zeros(self.ynbin)
-        xbins = self.Xbins(self)
-        ybins = self.Ybins(self)
-        nent = 0    
+        xbins = self.Xbins()
+        ybins = self.Ybins()
+        nent = 0
         for iy in range(self.ynbin) :
             for ix in range(self.xnbin) :
-                val = data[ix,iy]
-                err = dataErr[ix,iy]
-                #print(len(self.data),"FillFromNPMats",ix+iy*self.xnbin,ix,iy,val)
-                self.data.append(val)
-                self.dataErr.append(err)
-                self.dataArray.append(val)
+                val = dataNP[iy,ix]
+                err = dataErrNP[iy,ix]
+                #print(len(self.dataNP),"FillFromNPMats",ix+iy*self.xnbin,ix,iy,val)
                 sumX[ix] += val
                 sumY[iy] += val
                 sumXerr2[ix] += err*err
@@ -810,13 +1074,11 @@ class Histo2D(MutableMapping):
             sumyerr2 += sumYerr2[iy]*sumYerr2[iy]*ybins[iy]*ybins[iy]
         else :
             print("!!! WARNING: empty histogram ",self.name," range_Y ",iy,"  out of",range(self.ynbin))
-            self.ymean = sumy/sumY.sum()
+            self.ymean = 0. #sumy/sumY.sum()
             #        self.ymeanErr = np.sqrt(sumyerr2)/sumY.sum()
             #    self.yRMS = np.sqrt(sumy2/sumY.sum()-sumy*sumy)
         self.yRMS = 0.
         self.yRMSErr = 0.
-
-        self.dataArray = np.reshape(self.dataArray, (self.xnbin,self.ynbin),order='F')
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def __setitem__(self, k, v):
@@ -837,10 +1099,10 @@ class Histo2D(MutableMapping):
         yield self.xmin
         yield self.xmax
         yield self.under
-        yield self.data
+        yield self.dataNP
         yield self.over
         yield self.underErr
-        yield self.dataErr
+        yield self.dataErrNP
         yield self.overErr
         yield self.nent
         yield self.mean
@@ -868,12 +1130,9 @@ class Histo2D(MutableMapping):
                 +" xRMS="+str(self.xRMS)+"+-"+str(self.xRMSErr)
                 +" yMEAN="+str(self.ymean)+"+-"+str(self.ymeanErr)
                 +" yRMS="+str(self.yRMS)+"+-"+str(self.yRMSErr)
-#                +" "+str(self.data)
-#                +" "+str(self.dataErr)
                 )
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    @staticmethod
     def Xstep(obj):
         xStep = (float(obj.xmax)-float(obj.xmin))/int(obj.xnbin)
         return xStep
@@ -881,15 +1140,15 @@ class Histo2D(MutableMapping):
         yStep = (float(obj.ymax)-float(obj.ymin))/int(obj.ynbin)
         return yStep
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    @staticmethod
     def Xbins(self):
+        #print("XBINS_NAME",self.name,self.xnbin,self.xmin,self.xmax)
         Xbins = []
         xStep = (float(self.xmax)-float(self.xmin))/int(self.xnbin)
         for ii in range(0,int(self.xnbin)):
             Xbins.append(float(self.xmin)+(0.5+ii)*xStep)
+            #print(ii,"ADD Xbin",float(self.xmin)+(0.5+ii)*xStep,":",self.xmin,"+(0.5+",ii,")*",xStep)
         return Xbins
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    @staticmethod
     def Ybins(self):
         Ybins = []
         yStep = (float(self.ymax)-float(self.ymin))/int(self.ynbin)
@@ -920,7 +1179,6 @@ class Histo2D(MutableMapping):
         if bCheckEqual and not self.CheckEqual(obj) :
             return self
 
-#        print(self.name," ADDSIZE self.data",len(self.data),len(self.dataArray))
         newData = sum2(self.xunderyunder,self.xunderyunderErr,obj.xunderyunder,obj.xunderyunderErr)
         self.xunderyunder = newData[0]
         self.xunderyunderErr = newData[1]
@@ -933,25 +1191,21 @@ class Histo2D(MutableMapping):
         self.xunderyover = newData[0]
         self.xunderyoverErr = newData[1]
 
-        newDataArray = []
         for iix in range(0,self.xnbin) : # LOOP TO BIN[X,Y] DATA
             newData = sum2(self.yunderV[iix],self.yunderErrV[iix],obj.yunderV[iix],obj.yunderErrV[iix])
             self.yunderV[iix] = newData[0]
             self.yunderErrV[iix] = newData[1]
             for iiy in range(0,self.ynbin) : # LOOP TO BIN[X,Y] DATA
                 iixy = iix+iiy*self.xnbin
-                newData = sum2(self.data[iixy],self.dataErr[iixy],obj.data[iixy],obj.dataErr[iixy])
+                newData = sum2(self.dataNP[iiy,iix],self.dataErrNP[iiy,iix],obj.dataNP[iiy,iix],obj.dataErrNP[iiy,iix])
 #                print(iix,iiy,"NEWDATA ",newData[0],self.data[iixy],obj.data[iixy])
-                self.data[iixy] = newData[0]
-                self.dataErr[iixy] = newData[1]
-                newDataArray.append(self.data[iixy])
+                self.dataNP[iiy,iix] = newData[0]
+                self.dataErrNP[iiy,iix] = newData[1]
 
             newData = sum2(self.yoverV[iix],self.yoverErrV[iix],obj.yoverV[iix],obj.yoverErrV[iix])
             self.yoverV[iix] = newData[0]
             self.yoverErrV[iix] = newData[1]
 
-        newDataArray = np.reshape(newDataArray, (self.xnbin,self.ynbin)) # order'F' ??
-        self.dataArray = newDataArray
         newData = sum2(self.xoveryunder,self.xoveryunderErr,obj.xoveryunder,obj.xoveryunderErr)
         self.xoveryunder = newData[0]
         self.xoveryunderErr = newData[1]
@@ -967,6 +1221,7 @@ class Histo2D(MutableMapping):
         self.nent += obj.nent
 
         newData = sum2(self.xmean,self.xmeanErr,obj.xmean,obj.xmeanErr)
+        #        print("ADD MEAN ",self.xmean,self.xmeanErr,obj.xmean,obj.xmeanErr)
         self.xmean = newData[0]
         self.xmeanErr = newData[1]
         newData = sum2(self.xRMS,self.xRMSErr,obj.xRMS,obj.xRMSErr)
@@ -985,10 +1240,8 @@ class Histo2D(MutableMapping):
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def Mult(self,factor):
 
-        for ii in range(0,self.xnbin*self.ynbin) : # LOOP TO DATA
-            self.data[ii] = self.dataData[ii]*factor
-            self.dataErr[ii] = self.dataErr[1]*factor
-            self.dataArray[ii] = self.dataArray[1]*factor
+        self.dataNP = self.dataNP*factor
+        self.dataErrNP = self.dataErrNP*factor
 
 #        self.RMS = newData[0]
  #       self.RMSErr = newData[1]
@@ -1000,8 +1253,8 @@ class Histo2D(MutableMapping):
         centre = np.array([(self.xmin+self.xmax)/2.,(self.ymin+self.ymax)/2.])
         return centre
 
-        #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def CrossLine(self,angle,step,bCentred=True):
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def CrossLine(self,angle,step,bCentred=True,bInterpolate=True):
         centre = self.CentrePoint()+np.array([0.01,0.01])
         hwidthX = (self.xmax-self.xmin)/2.
         hwidthY = (self.ymax-self.ymin)/2.
@@ -1017,6 +1270,7 @@ class Histo2D(MutableMapping):
         else :
             cotanang = sys.float_info.max/10.
             #        print(np.rad2deg(angle),"@@@ CrossLine tan",tanang,cotanang) # GDEB
+        ### Get first and last points in one of the borders of the histogram
         angsign = np.sign(np.deg2rad(180.)-angle%np.rad2deg(360.))
         angleN = angle%np.deg2rad(180.)
         if angleN < np.deg2rad(45.) :
@@ -1044,22 +1298,60 @@ class Histo2D(MutableMapping):
         nPoints = int(np.sqrt((lend-lstart).dot(lend-lstart))/step)
         # print("nPOINTS ",nPoints,lend-lstart,(lend-lstart).dot(lend-lstart)) #GDEB
         line = [] 
-#        for ss in np.arange(0.,hwidthXY,step) :
-#            pos = self.GetVoxel(lstart+ldir*ss)
+        #     for ss in np.arange(0.,hwidthXY,step) :
+        #         pos = self.GetVoxel(lstart+ldir*ss)
         for ss in range(nPoints) :
             dist = step*(ss+0.5)
             voxID = self.GetVoxel(lstart+ldir*dist)
-            # print("voxID",voxID,lstart+ldir*dist,lstart,"+",ldir,"*",step,"*(",ss+0.5) # GDEB
-            if voxID != -1 :
-                posval = np.array([dist-(nPoints)/2.*step,self.data[voxID],self.dataErr[voxID]])
-                line.append(posval)
-                #print(voxID,ss,"LINE APPEND",posval,len(line),lstart+ldir*step*(ss+0.5)) # GDEB
-        #        print("CentrePoint LINE ",line) # GDEB
+            if voxID == (-1,-1) :
+                continue
+            linepos = dist-(nPoints)/2.*step
+            if not bInterpolate : 
+                # print("voxID",voxID,lstart+ldir*dist,lstart,"+",ldir,"*",step,"*(",ss+0.5) # GDEB
+                lineval = np.array([linepos,self.dataNP[voxID[1],voxID[0]],self.dataErrNP[voxID[1],voxID[0]]])
+                line.append(lineval)
+                # print(voxID,ss,"LINE APPEND",lineval,len(line),lstart+ldir*step*(ss+0.5)) # GDEB
+                #print("CentrePoint LINE ",line) # GDEB
+            else :
+                ### average of values of 9 ID
+                distSum = 0.
+                valAver = 0.
+                valErrAver = 0.
+                idX = voxID%self.xnbin
+                idY = int(voxID/self.xnbin)
+                xstep = self.Xstep()
+                ystep = self.Ystep()
+                linepos2D = lstart+ldir*dist
+                for ix in range(idX-1,idX+2) : 
+                    if ix < 0 or ix >= self.xnbin :
+                        continue
+                    for iy in range(idY-1,idY+2) :
+                        if iy < 0 or iy >= self.ynbin :
+                            continue
+                        xpos = self.xmin+xstep*(0.5+ix) # position of voxel center
+                        ypos = self.ymin+ystep*(0.5+iy)
+                        dist = math.sqrt(math.pow(xpos-linepos2D[0],2)+math.pow(ypos-linepos2D[1],2))
+                       #print("DIST",dist,xpos,"-",linepos2D[0],"+",ypos,"-",linepos2D[1]) #GDEB
+                        dist2 = math.pow(dist,2)
+                        voxID1 = ix+iy*self.xnbin
+                        val = self.data[voxID1[1],ID1[0]]
+                        err = self.dataErr[voxID1[1],ID1[0]]
+                        valAver += val/dist2
+                        valErrAver += pow(err/dist2,2)
+                        distSum += 1./dist2
+                        #print(ix,iy,"INTERPOLATE",val,dist2,valAver,valErrAver,distSum) #GDEB
+                valAver /= distSum
+                valErrAver = math.sqrt(valErrAver/pow(distSum,2))
+                #rint("INTERPOLATE FINAL",valAver,valErrAver) # GDEB
+                lineval = np.array([linepos,valAver,valErrAver])
+                #rint(voxID,ss,"LINE APPEND",lineval,len(line),lstart+ldir*step*(ss+0.5)) # GDEB
+                line.append(lineval)
+                        
         return line
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def DisplaceXY(self,dispX,dispY,orderInterp = 1):
-        xstep = self.Xstep(self)
+        xstep = self.Xstep()
         dispInBinX = dispX%xstep
         ixLeft = int(dispX/xstep)+int((np.sign(dispX)-1)/2)
         ixRight = ixLeft+1
@@ -1069,56 +1361,54 @@ class Histo2D(MutableMapping):
         iyLeft = int(dispY/ystep)+int((np.sign(dispY)-1)/2)
         iyRight = iyLeft+1
        # print("DisplaceY DispY",dispY," inbin",dispInBinY," iy",iyLeft,"<>",iyRight," ystep",ystep, "   ",dispY/ystep,int(dispY/ystep),int((np.sign(dispY)-1)/2)) #GDEB
-        nData = len(self.data)
-        dataNew = []
-        for ixy in range(0,nData) :
-            ix = ixy%self.xnbin
-            iy = int(ixy/self.xnbin)
-            ix1 = int(max(0,ix+ixLeft))
-            ix1 = int(min(self.xnbin-1,ix1))
-            ix2 = int(max(0,ix+ixRight))
-            ix2 = int(min(self.xnbin-1,ix2))
-            iy1 = int(max(0,iy+iyLeft))
-            iy1 = int(min(self.ynbin-1,iy1))
-            iy2 = int(max(0,iy+iyRight))
-            iy2 = int(min(self.ynbin-1,iy2))
-            # interpolate 4 bins
-            # print("ixy's",ix1,ix2,iy1,iy2) #GDEB
-            data00 = self.data[ix1+iy1*self.xnbin]
-            data01 = self.data[ix1+iy2*self.xnbin]
-            data10 = self.data[ix2+iy1*self.xnbin]
-            data11 = self.data[ix2+iy2*self.xnbin]
-            # distance to centre of bin
-            dist00 = (xstep-dispInBinX)*(ystep-dispInBinY)
-            dist01 = (xstep-dispInBinX)*(dispInBinY)
-            dist10 = (dispInBinX)*(ystep-dispInBinY)
-            dist11 = (dispInBinX)*(dispInBinY)
-            distTot = dist00+dist01+dist10+dist11
-            #print(" DisplaceXY dist ",dist00,dist01,dist10,dist11,distTot,"data",data00,data01,data10,data11) #GDEB
-            dataNew1 = (data00*dist00+data01*dist01+data10*dist10+data11*dist11)/distTot
-            dataNew.append(dataNew1)
-            #print(" DisplaceXY ",ix,ix1,ix2,iy,iy1,iy2,dataNew1) # GDEB
-
-        for ix in range(0,nData) :
-            self.data[ix] = dataNew[ix]
+        nData = np.shape(self.dataNP)
+        dataNew = np.zeros([self.ynbin,self.xnbin])
+        for ix in range(nData[1]) : #!?!?!
+            for iy in range(nData[0]) :
+                ix1 = int(max(0,ix+ixLeft))
+                ix1 = int(min(self.xnbin-1,ix1))
+                ix2 = int(max(0,ix+ixRight))
+                ix2 = int(min(self.xnbin-1,ix2))
+                iy1 = int(max(0,iy+iyLeft))
+                iy1 = int(min(self.ynbin-1,iy1))
+                iy2 = int(max(0,iy+iyRight))
+                iy2 = int(min(self.ynbin-1,iy2))
+                # interpolate 4 bins
+                # print("ixy's",ix1,ix2,iy1,iy2) #GDEB
+                data00 = self.dataNP[iy1*self.xnbin,ix1]
+                data01 = self.dataNP[iy2*self.xnbin,ix1]
+                data10 = self.dataNP[iy1*self.xnbin,ix2]
+                data11 = self.dataNP[iy2*self.xnbin,ix2]
+                # distance to centre of bin
+                dist00 = (xstep-dispInBinX)*(ystep-dispInBinY)
+                dist01 = (xstep-dispInBinX)*(dispInBinY)
+                dist10 = (dispInBinX)*(ystep-dispInBinY)
+                dist11 = (dispInBinX)*(dispInBinY)
+                distTot = dist00+dist01+dist10+dist11
+                #print(" DisplaceXY dist ",dist00,dist01,dist10,dist11,distTot,"data",data00,data01,data10,data11) #GDEB
+                dataNew1 = (data00*dist00+data01*dist01+data10*dist10+data11*dist11)/distTot
+                dataNew.append(dataNew1)
+                #print(" DisplaceXY ",ix,ix1,ix2,iy,iy1,iy2,dataNew1) # GDEB
+                            
+        self.data = dataNew
 
         return self
             
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def GetVoxel(self,pos):
-        #        print("GETVOXEL ",pos) #GDEB
-        xstep = self.Xstep(self)
-        idX = int((pos[0]-self.xmin)/xstep)
+    def GetVoxel(self,pos) :
+    #        print("GETVOXEL ",pos) #GDEB
+        xstep = self.Xstep()
         ystep = self.Ystep()
+        idX = int((pos[0]-self.xmin)/xstep)
         idY = int((pos[1]-self.ymin)/ystep)
         #print("GetVoxel x",pos,idX,"=int((",pos[0],"-",self.xmin,")/",xstep,(pos[0]-self.xmin)/xstep) # GDEB
         #print("GetVoxel y",pos,idY,"=int((",pos[0],"-",self.ymin,")/",ystep,(pos[0]-self.ymin)/ystep) #GDEB
         if idX >= 0 and idY >= 0 and idX < self.xnbin and idY < self.ynbin :
-            return int(idY*self.xnbin+idX)
+            return int(idX,idY)
         else :
-            return -1
-        
+            return (-1,-1)
+
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def Write(self,fOut):
         fOut.write('"'+self.type+'"')
@@ -1141,8 +1431,8 @@ class Histo2D(MutableMapping):
             fOut.write(","+str(self.yunderErrV[iix]))
             for iiy in range(0,self.ynbin) : # LOOP TO BIN[X,Y] DATA 
                 iixy = iiy+iix*self.ynbin
-                fOut.write(","+str(self.data[iixy]))
-                fOut.write(","+str(self.dataErr[iixy]))
+                fOut.write(","+str(self.dataNP[iiy,iix]))
+                fOut.write(","+str(self.dataErrNP[iiy,iix]))
                 #print(iixy,iix,iiy,"WRITE NEWDATA ",(self.data[iixy]))
                 # print(iix,iiy,"WRITE NEWDATA ",(self.dataErr[iix]))
 
@@ -1167,3 +1457,228 @@ class Histo2D(MutableMapping):
         fOut.write(","+str(self.yRMS))
         fOut.write(","+str(self.yRMSErr))
         fOut.write("\n")
+
+#    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+#    def SquareHisto(self) :
+#        xBins = self.Xbins()
+#        yBins = self.Ybins()
+#        if len(xBins) == len(yBins) :
+#            return
+#        
+#        xarr = np.array(xBins)
+#        yarr = np.array(yBins)        
+#        if len(yarr) < len(xarr) :
+#            ystep = self.Ystep(self)
+#            for ix in range(0,self.xnbin) : 
+#                for iy in range(0,self.xnbin) :
+#                    ixy = ix*self.ynbin + iy
+#                    if iy < self.ynbin :
+#                        val = self.dataNP[iy,ix]
+#                    else :
+#                        #print(ix,iy,"VALFILL",len(self.data), ix*self.ynbin +self.ynbin-1)
+#                        val = self.dataNP[iy-1,ix] # copy last row
+#                        
+#                    dataNPT.append(val)
+#                    self.dataNP[iy,ix] = val
+#                    self.dataErrNP[iy,ix] = self.dataErrNP[ iy*self.xnbin +self.xnbin-1])
+#            for ii in range(len(yarr),len(xarr)) :
+#                #            np.append(yarr,yarr[-1])
+#                yBins.append(yBins[-1]*1.00001)
+#            yarr = np.array(yBins)
+#            self.ymax += (len(yarr)-len(xarr))*ystep
+#            
+#        if len(xarr) < len(yarr) :
+#            xstep = self.Xstep()
+#            for ix in range(0,self.ynbin) : 
+#                for iy in range(0,self.ynbin) :
+#                    ixy = ix*self.ynbin + iy
+#                    if ix < self.xnbin :
+#                        val = self.data[ixy]
+#                    else :
+#                        #print(ix,iy,"VALFILL",len(self.data), ix*self.ynbin +self.ynbin-1)
+#                        val = self.data[ iy*self.xnbin +self.xnbin-1] # copy last row
+#                    dataNPT.append(val)
+#                    self.data.append(val)
+#                    self.dataErr.append(self.dataErr[ iy*self.xnbin +self.xnbin-1])
+#            for ii in range(len(xarr),len(yarr)) :
+#                #            np.append(yarr,yarr[-1])
+#                xBins.append(xBins[-1]*1.00001)
+#            xarr = np.array(xBins)
+#            self.xmax += (len(xarr)-len(yarr))*xstep
+#
+#        self.dataNP = dataNPT
+#        self.xnbin = len(xBins)
+#        self.ynbin = len(yBins)
+#        print("SquareHisto",self.dataNP.shape)
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def GetInterpolatedValue(self, xval,yval) :
+        xBins = self.Xbins()
+        yBins = self.Ybins()
+        #print("XBINS",xBins)
+        #print("YBINS",yBins)        
+        if xval in xBins and yval in yBins :
+            xid = xBins.index(xval)
+            yid = yBins.index(yval)
+            return self.dataNP[yid,xid]
+        #        else :
+        #            print("!!NOT BINS ",xval,yval)
+
+#        xid = next((ii for ii, value in enumerate(xBins) if value > xval), None)
+
+ #       xid = [ii for ii, value in enumerate(xBins) if value >= xval][0]
+  #      yid = [ii for ii, value in enumerate(yBins) if value >= yval][0]
+        #print(xid,yid,"GetInterpolatedValue DATA")
+
+        xarr = np.array(xBins)
+        yarr = np.array(yBins)        
+
+        if xval < xarr[0] :
+            print("XARR",xarr)
+            raise ValueError("GetInterpolatedValue x : "+str(xval)+" is smaller than minimum "+str(xarr[0]))
+        if xval > xarr[-1] :
+            raise ValueError("GetInterpolatedValue x : "+str(xval)+" is bigger than maximum "+str(xarr[-1]))
+        if yval < yarr[0] :
+            print("XARR",xarr)
+            print("YARR",yarr)
+            raise ValueError("GetInterpolatedValue y: "+str(yval)+" is smaller than minimum "+str(yarr[0]))
+        if yval > yarr[-1] :
+            raise ValueError("GetInterpolatedValue y:"+str(yval)+" is bigger than mayimum "+str(yarr[-1]))
+       
+ #       # Create a grid of (x, y) pairs where you want to interpolate z
+#        x_grid, y_grid = np.meshgrid(np.linspace(xarr.min(), xarr.max(), 100), np.linspace(yarr.min(), yarr.max(), 100))
+
+        # Perform the interpolation
+#        print("GETINTERP XARR",xarr)
+#        print("GETINTERP YARR",yarr)
+
+        interp = interp2d(xarr, yarr, self.dataNP, kind='cubic')
+ #       x_grid, y_grid = np.meshgrid(np.linspace(min(xBins), max(xBins), self.xnbin), np.linspace(min(yBins), max(yBins), self.ynbin))
+#        interpF = interp(np.array(x_grid)[0],np.array(y_grid)[:, 0]) 
+        # Interpolate the data on the new grid
+#        fig = plt.figure()
+#        ax = fig.add_subplot(111, projection='3d')
+#        # Plot the surface
+#        ax.plot_surface(x_grid, y_grid, interpF, cmap='viridis')
+#        plt.show()
+
+        zval = interp(xval,yval)
+
+#        # Perform 2D interpolation        
+#        # Interpolate z values for specific (x, y) pairs
+#        zval = griddata((xarr, yarr), zval, (xval, yval), method='cubic')     # Perform spline interpolation
+
+        return zval
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def GetLinearInterpolatedValue(self, xval,yval) :
+        xBins = self.Xbins()
+        yBins = self.Ybins()
+        print("START GetLinearInterpolatedValue", xval,yval,"min=",xBins[0],yBins[0])
+        if (xval - xBins[0]) < 0 :
+            xval = xBins[0]
+        if (xval - xBins[0]) < -2e-3 :
+            print("XBINS",xBins)
+            raise ValueError("GetInterpolatedValue x : "+str(xval)+" is smaller than minimum "+str(xBins[0])+" : "+str(xval - xBins[0]))
+        if xval > xBins[-1] :
+            raise ValueError("GetInterpolatedValue x : "+str(xval)+" is bigger than maximum "+str(xBins[-1]))
+        if (yval - yBins[0]) < 0 :
+            yval = yBins[0]
+        if (yval - yBins[0]) < -2e-3 :
+            print("YBINS",yBins)
+            raise ValueError("GetInterpolatedValue y: "+str(yval)+" is smaller than minimum "+str(yBins[0])+" : "+str(yval - yBins[0]))
+        if yval > yBins[-1] :
+            raise ValueError("GetInterpolatedValue y:"+str(yval)+" is bigger than mayimum "+str(yBins[-1]))
+       
+        xid = -1
+        yid = -1
+        if xval in xBins :
+            xid = xBins.index(xval) 
+        if yval in yBins :
+            yid = yBins.index(yval) 
+
+        if xid != -1 and yid != -1 :
+            print("DAT in bins",self.dataNP[yid,xid])
+            return self.data[yid,xid]
+        
+        ibinx = next(xx for xx, val in enumerate(xBins) if val > xval)
+        ibiny = next(yy for yy, val in enumerate(yBins) if val > yval)
+
+        dataSum = 0.
+        distSum = 0.
+        xstep = self.Xstep()
+        ystep = self.Ystep()
+        for ix in range(ibinx-1,ibinx+1) :
+            xb = self.xmin + xstep*(ix+0.5)
+            for iy in range(ibiny-1,ibiny+1) :
+                if iy < 0:
+                    continue
+                yb = self.ymin + ystep*(iy+0.5)
+                dist = np.sqrt(pow(xval-xb,2)+pow(yval-yb,2))
+                distSum += dist
+                dataSum += self.dataNP[iy,ix]*dist
+                print(ix,iy,iy*self.xnbin+ix,"LinearInterp",dist,distSum,"data",self.data[iy,ix],dataSum
+                      ,self.xmin+xstep*ix,self.ymin+ystep*iy)
+        dat = dataSum / distSum
+        print("DAT",dat,dataSum,distSum)
+
+        return dat
+    
+ 
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def GetInterpolationFunction(self) :
+        xBins = self.Xbins()
+        yBins = self.Ybins()
+
+        xarr = np.array(xBins)
+        yarr = np.array(yBins)        
+
+#        mask = self.dataNP != 0        
+        interp = interp2d(xarr, yarr, self.dataNP, kind='cubic')
+#        interp = interp2d(xarr[mask], yarr[mask], self.dataNP[mask], kind='cubic')
+
+        return interp
+    
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def GetIdInterpolatedValue(self, xval,yval) :
+        xBins = self.Xbins()
+        ibinx = -1 
+        for ib1 in range(len(xBins)) :
+            if xBins[ib1] == xval :
+                ibinx = ib1
+                break
+        if ibinx == -1 :
+ #           idBigger = [ii for ii, value in enumerate(xBins) if value > xval]
+            idBigger = next(xx for xx, val in enumerate(xBins)
+                            if val > xval)
+            ibinx = idBigger
+
+        yBins = self.Ybins()
+        ibiny = -1 
+        for ib1 in range(len(yBins)) :
+            if yBins[ib1] == yval :
+                ibiny = ib1
+                break
+        if ibiny == -1 :
+ #           idBigger = [ii for ii, value in enumerate(yBins) if value > yval]
+            idBigger = next(yy for yy, val in enumerate(yBins)
+                            if val > yval)
+            ibiny = idBigger
+
+        return ibinx,ibiny
+    
+    ### NORM TO INTEGRAL
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def norm(self,normValue):
+        dataSum = np.sum(self.dataNP)
+#        dataSum2 = sum(self.data)
+        print("DATASUM",dataSum)
+        if dataSum != 0 :
+            factor = normValue/dataSum
+        else :
+            factor = 1.
+            #        print(self.name,"NORM ",len(self.data),self.nbin)
+        self.dataNP = factor * self.dataNP
+        self.dataErrNP = factor * self.dataErrNP
+        

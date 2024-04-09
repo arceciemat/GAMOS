@@ -608,14 +608,14 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
       EColor color = kBlack;
       //    pad1->cd(); 
       DrawWordInPave( histoGI, "G" + GmGenUtils::ftoa(perCentLim)+"/"+GmGenUtils::ftoa(minDistLim)+ ": " + GmGenUtils::ftoa(mean) + "+-" + GmGenUtils::ftoa(rms) + " P" + GmGenUtils::itoa(pval*100) + "= " + GmGenUtils::ftoa(int(gammaPVal*100)/100.), xInit, yInit, color, 0.02 );
-      canvas->Print(("his"+G4String(histoGI->GetName())+".gif").c_str());
+      canvas->Print(("his"+G4String(histoGI->GetName())+".jpg").c_str());
     }
    //    pad1->cd(); 
     //    theHistosXSvsGI[zMin+fVoxDimZ1/2.] = histoXSvsGI;
     /*    if( !bMaxAtPoint && !bMaxGammaValue ) {
       gStyle->SetOptStat(0);
       //      histoXSvsGI->Draw("colz");
-      //     canvas->Print(("his"+G4String(histoXSvsGI->GetName())+".gif").c_str());
+      //     canvas->Print(("his"+G4String(histoXSvsGI->GetName())+".jpg").c_str());
       } */
   }
   if( bHisto1D ) {
@@ -636,10 +636,10 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
     //    DrawWordInPave( histoGI, "G" + GmGenUtils::ftoa(perCentLim)+"/"+GmGenUtils::ftoa(minDistLim)+ ": " + GmGenUtils::ftoa(mean) + "+-" + GmGenUtils::ftoa(rms) + " P" + GmGenUtils::itoa(pval*100) + "= " + GmGenUtils::ftoa(int(gammaPVal*100)/100.), xInit, yInit, color, 0.02 );
     //    DrawWordInPave( histoGI, "HOLA AQUI ESTAaMOS", xInit, yInit, color, 0.02 );
 
-    canvas->Print(("his"+G4String(histoGIALL->GetName())+".gif").c_str());
+    canvas->Print(("his"+G4String(histoGIALL->GetName())+".jpg").c_str());
     canvas->SetLogy(1);
     histoGIALL->Draw("histo");
-    canvas->Print(("his"+G4String(histoGIALL->GetName())+"logY.gif").c_str());
+    canvas->Print(("his"+G4String(histoGIALL->GetName())+"logY.jpg").c_str());
   }
 
   if( bGammaOverCutDone ) G4cout << "@@@@ N Gamma over " << theGammaOverCut << " = " << gammaOverN << " out of " << nVoxZ1*nVoxXY1 << G4endl;
@@ -1156,14 +1156,14 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
       EColor color = kBlack;
       //    pad1->cd(); 
       DrawWordInPave( histoGI, "G" + GmGenUtils::ftoa(perCentLim)+"/"+GmGenUtils::ftoa(minDistLim)+ ": " + GmGenUtils::ftoa(mean) + "+-" + GmGenUtils::ftoa(rms) + " P" + GmGenUtils::itoa(pval*100) + "= " + GmGenUtils::ftoa(int(gammaPVal*100)/100.), xInit, yInit, color, 0.02 );
-      canvas->Print(("his"+G4String(histoGI->GetName())+".gif").c_str());
+      canvas->Print(("his"+G4String(histoGI->GetName())+".jpg").c_str());
     }
    //    pad1->cd(); 
     /*    theHistosXSvsGI[yMin+fVoxDimY1/2.] = histoXSvsGI;
 	  if( !bMaxAtPoint && !bMaxGammaValue ) {
 	  gStyle->SetOptStat(0);
 	  histoXSvsGI->Draw("colz");
-	  canvas->Print(("his"+G4String(histoXSvsGI->GetName())+".gif").c_str());
+	  canvas->Print(("his"+G4String(histoXSvsGI->GetName())+".jpg").c_str());
 	  } */
   }
     
@@ -1177,7 +1177,7 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
       TH2F* histo = (*iteh).second; 
       gStyle->SetOptStat(0);
       histo->Draw("colz");
-      canvas->Print(("his"+G4String(histo->GetName())+".gif").c_str());
+      canvas->Print(("his"+G4String(histo->GetName())+".jpg").c_str());
     }
   }*/
 
@@ -1285,8 +1285,8 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
       if( DicomVerb(testVerb) ) G4cout << ii << " ist " << ist << " GISmallPerSt " << theStructs[ist] << " : " << GIBval << " = "<< (*iteb).second << " / " <<(*iten).second<< G4endl; 
       marker->Draw();
     }
-    std::string gifstr = "hisDCMGetGammaIndex_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_PerStructure";
-    canvasSt->Print((gifstr+".gif").c_str());
+    std::string jpgstr = "hisDCMGetGammaIndex_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_PerStructure";
+    canvasSt->Print((jpgstr+".jpg").c_str());
   }
   */
   if( bGammaOverCutDone ) G4cout << "@@@@ N Gamma over " << theGammaOverCut << " = " << gammaOverN << " out of " << nVoxZ1*nVoxXY1 << G4endl;
@@ -1800,14 +1800,14 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
       EColor color = kBlack;
     //    pad1->cd(); 
       DrawWordInPave( histoGI, "G" + GmGenUtils::ftoa(perCentLim)+"/"+GmGenUtils::ftoa(minDistLim)+ ": " + GmGenUtils::ftoa(mean) + "+-" + GmGenUtils::ftoa(rms) + " P" + GmGenUtils::itoa(pval*100) + "= " + GmGenUtils::ftoa(int(gammaPVal*100)/100.), xInit, yInit, color, 0.02 );
-      canvas->Print(("his"+G4String(histoGI->GetName())+".gif").c_str());
+      canvas->Print(("his"+G4String(histoGI->GetName())+".jpg").c_str());
     }
    //    pad1->cd(); 
     /*    theHistosXSvsGI[xMin+fVoxDimX1/2.] = histoXSvsGI;
     if( !bMaxAtPoint && !bMaxGammaValue ) {
       gStyle->SetOptStat(0);
       histoXSvsGI->Draw("colz");
-      canvas->Print(("his"+G4String(histoXSvsGI->GetName())+".gif").c_str());
+      canvas->Print(("his"+G4String(histoXSvsGI->GetName())+".jpg").c_str());
       } */
   }
     
@@ -1821,7 +1821,7 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
       TH2F* histo = (*iteh).second;
       gStyle->SetOptStat(0);
       histo->Draw("colz");
-      canvas->Print(("his"+G4String(histo->GetName())+".gif").c_str());
+      canvas->Print(("his"+G4String(histo->GetName())+".jpg").c_str());
     }
   }
   */
@@ -1929,8 +1929,8 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
       if( DicomVerb(testVerb) ) G4cout << ii << " ist " << ist << " GISmallPerSt " << theStructs[ist] << " : " << GIBval << " = "<< (*iteb).second << " / " <<(*iten).second<< G4endl; 
       marker->Draw();
     }
-    std::string gifstr = "hisDCMGetGammaIndex_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_PerStructure";
-    canvasSt->Print((gifstr+".gif").c_str());
+    std::string jpgstr = "hisDCMGetGammaIndex_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_PerStructure";
+    canvasSt->Print((jpgstr+".jpg").c_str());
   }
   */
   if( bGammaOverCutDone ) G4cout << "@@@@ N Gamma over " << theGammaOverCut << " = " << gammaOverN << " out of " << nVoxZ1*nVoxXY1 << G4endl;

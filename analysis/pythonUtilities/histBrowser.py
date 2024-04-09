@@ -11,6 +11,7 @@ from PIL import Image as im
 from tkinter import BooleanVar
 import tkinter.font as tkFont
 from math import *
+from functools import reduce
 
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
 class UI(tk.Frame):
@@ -128,7 +129,7 @@ class UI(tk.Frame):
         self.theFrameCheckBoxHL = tk.Frame(self.theFrameHL,height=100,width=437)#, background="blue")
         self.theFrameCheckBoxHL.grid(column=0, row=0, sticky=tk.W)
 
-        bPlotErrors = tk.BooleanVar(value=True)
+        bPlotErrors = tk.BooleanVar(value=False)
         self.CBError = tk.Checkbutton(self.theFrameCheckBoxHL, text="error",
                                       variable=bPlotErrors,onvalue=True,offvalue=False)#,command=self.showCheckButtons)
         self.CBError.grid(column=0, row=0, sticky=tk.W)
@@ -142,7 +143,7 @@ class UI(tk.Frame):
         self.bPlotSame = bPlotSame
 
         bPlotNorm = tk.BooleanVar()
-        self.CBNorm = tk.Checkbutton(self.theFrameCheckBoxHL, text="Norm",
+        self.CBNorm = tk.Checkbutton(self.theFrameCheckBoxHL, text="norm",
                                      variable=bPlotNorm,state=tk.DISABLED) #,command=self.showChecknButtons)
         self.CBNorm.grid(column=1, row=0, sticky=tk.W)
         self.bPlotNorm = bPlotNorm
@@ -290,7 +291,7 @@ class UI(tk.Frame):
                 figWidth = self.theHistoFigure.get_figwidth()
                 figHeight = self.theHistoFigure.get_figheight()
                 
-            self.theHistoFigure = plt.figure(figsize = (figWidth,figHeight), dpi = 100, )
+            self.theHistoFigure = plt.figure(figsize = (figWidth/10,figHeight/10) )
             #@#@ adding the subplot
             self.theSubPlotArea = self.theHistoFigure.add_subplot(111)
             self.theSubPlotArea.set_xlabel(his1.name)
@@ -327,13 +328,13 @@ class UI(tk.Frame):
                     #                    self.theSubPlotArea.bar(self.prevHisto1N.Xbins(),self.prevHisto1N.data, color='None', errcolor='blue', yerr=self.prevHisto1N.dataErr, width=xStep,linewidth=0)
                     hy = self.prevHisto1N.data
                     plt.xlim(self.prevHisto1N.xmin, self.prevHisto1N.xmax)
-                    self.theSubPlotArea.errorbar(self.prevHisto1N.Xbins(),hy, color='black', yerr=self.prevHisto1N.dataErr)
-                    self.theSubPlotArea.errorbar(hisCurrentN.Xbins(),hisCurrentN.data,yerr=hisCurrentN.dataErr,color='red')
-                    xStep = self.prevHisto1N.Xstep(self.prevHisto1N)
-                    for ii in range(self.prevHisto1N.nbin):
-                        self.theSubPlotArea.scatter(self.prevHisto1N.xmin+xStep*(ii+0.5)
-                                                    ,self.prevHisto1N.data[ii],color='black',s=10)
-                    xStep = his1.Xstep(his1)
+                    self.theSubPlotArea.errorbar(self.prevHisto1N.Xbins(),hy, color='black', yerr=self.prevHisto1N.dataErr,fmt='-o')
+                    self.theSubPlotArea.errorbar(hisCurrentN.Xbins(),hisCurrentN.data,yerr=hisCurrentN.dataErr,color='red',fmt='-o')
+                    xStep = self.prevHisto1N.Xstep()
+#                    for ii in range(self.prevHisto1N.nbin):
+#                        self.theSubPlotArea.scatter(self.prevHisto1N.xmin+xStep*(ii+0.5)
+#                                                    ,self.prevHisto1N.data[ii],color='black',s=10)
+                    xStep = his1.Xstep()
                     for ii in range(hisCurrentN.nbin):
                         self.theSubPlotArea.scatter(hisCurrentN.xmin+xStep*(ii+0.5)
                                                    ,hisCurrentN.data[ii],color='red',s=10)
@@ -346,12 +347,12 @@ class UI(tk.Frame):
                     hx = his1.Xbins()
                     hy = his1.data
                     plt.xlim(his1.xmin, his1.xmax)
-                    self.theSubPlotArea.errorbar(hx,hy, color='black', yerr=his1.dataErr)
-                    xStep = his1.Xstep(his1)
-                    for ii in range(his1.nbin):
-#                        self.theSubPlotArea.scatter(his1.xmin+xStep*(ii+0.5)
-                        self.theSubPlotArea.scatter(hx[ii]
-                                                ,hy[ii],color='black',s=10)
+                    self.theSubPlotArea.errorbar(hx,hy, color='black', yerr=his1.dataErr,fmt='-o')
+                    xStep = his1.Xstep()
+#                    for ii in range(his1.nbin):
+##                        self.theSubPlotArea.scatter(his1.xmin+xStep*(ii+0.5)
+#                        self.theSubPlotArea.scatter(hx[ii]
+#                                                ,hy[ii],color='black',s=10)
                         #print(ii,"POINT ",his1.xmin+xStep*(ii+0.5),his1.data[ii])
                     self.printStatistics(his1)
 
@@ -369,7 +370,6 @@ class UI(tk.Frame):
                  #   print("hisCurrentN ",hisCurrentN.nbin,hisCurrentN.xmin,hisCurrentN.xmax)
                  #   print("his1 ",his1.nbin,his1.xmin,his1.xmax)
                     plt.xlim(self.prevHisto1N.xmin, self.prevHisto1N.xmax)
-                                        
                     self.theSubPlotArea.plot(self.prevHisto1N.Xbins(),self.prevHisto1N.data,color='black') #, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep) # !!! Does not resize well
                     self.theSubPlotArea.plot(hisCurrentN.Xbins(),hisCurrentN.data,color='red') #, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep) # !!! Does not resize well
                     self.printStatistics(self.prevHisto1N)
@@ -378,8 +378,16 @@ class UI(tk.Frame):
                 else:
                 #@#@ PLOT WITH NO ERRORS AND NOT SAME
                     plt.xlim(his1.xmin, his1.xmax)
-                    self.theSubPlotArea.plot(his1.Xbins(),his1.data,color='black') #, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep) # !!! Does not resize well
+                    hisCurrentN = Histo1D()
+                    hisCurrentN.copy(his1)
+                    if self.bPlotNorm.get() :
+                        self.prevHisto1N.norm(1.)
+                        hisCurrentN.norm(1.)
+                    self.theSubPlotArea.plot(hisCurrentN.Xbins(),hisCurrentN.data,color='black') #, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep) # !!! Does not resize well
                     self.printStatistics(his1)
+#                    for ii in range(len(hisCurrentN.data)) :
+ #                       if( hisCurrentN.data[ii] != 0. ) :
+ #                           print(ii,"HIS",hisCurrentN.Xbins()[ii],hisCurrentN.data[ii])
                     
             self.theCanvas = FigureCanvasTkAgg(self.theHistoFigure, master = self.theFrameHF)
             self.theCanvas.draw()
@@ -408,20 +416,44 @@ class UI(tk.Frame):
 #>>> img.save('/tmp/image.bmp')
 
             self.histShown = True
-            self.theHistoFigure = plt.figure(figsize = (his2.xnbin,his2.ynbin), dpi = 100)
+            self.theHistoFigure = plt.figure(figsize = (his2.xnbin/10,his2.ynbin/10))
+#            self.theHistoFigure = plt.figure(figsize = (his2.xnbin,his2.ynbin), dpi = 100)
 #t            self.theHistoFigure = plt.figure(figsize = (7, 7), dpi = 10)
             # adding the subplot
             self.theSubPlotArea = self.theHistoFigure.add_subplot(111)
             self.theSubPlotArea.set_xlabel(his2.name)
-            hX = his2.Xbins(his2)
-            hY = his2.Ybins(his2)
+            hX = his2.Xbins()
+            hY = his2.Ybins()
             #            hY = his2.Ybins()
-            hZ = his2.data
+            # hZ = his2.dataNP 
             #            if self.verbose >= 3 : print(" PLOT HIS2 ",his2,":",his2.data,"+-",his2.dataErr," Xs=",hX)
-            #            print(his2.name,"DATA ARRAY PLOTTED ",his2.dataArray)
+            #            print(his2.name,"DATA ARRAY PLOTTED ",his2.dataNP)
             #https://www.freesion.com/article/7746457300/
             cmap = mpl.cm.get_cmap("Blues").copy()
-            self.theSubPlotArea.imshow(his2.dataArray,origin="lower",extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax),aspect='auto',interpolation='none', cmap=cmap) #,norm=LogNorm(vin=0.001,vmax=1))
+
+            bBackgroundWhite = False
+            if bBackgroundWhite :
+                image = np.ones((32,32, 3))  # White background
+                image[:, :, 2] = 0.6  #1.0: Set blue channel to 1 (full intensity), making the background blue
+                # Create a mask based on the blue channel
+                blue_threshold = 0.999  # Adjust this value based on the intensity of blue in your image
+                mask = image[:, :, 2] > blue_threshold
+                # Create a masked version of the colormap
+                masked_cmap = mpl.colors.ListedColormap(np.ma.masked_array(cmap(np.arange(cmap.N)), mask))
+                plt.imshow(his2.dataNP,extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax),cmap=masked_cmap,origin="lower")
+            plt.imshow(his2.dataNP,extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax),origin="lower")
+#            plt.imshow(his2.dataNP) #,extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax),origin="lower"))
+#            cax = self.theHistoFigure.add_axes([0.12, 0.1, 0.78, 0.8])
+#            cax.get_xaxis().set_visible(False)
+#            cax.get_yaxis().set_visible(False)
+#            cax.patch.set_alpha(0)
+#            cax.set_frame_on(False)
+            plt.colorbar(orientation='vertical')
+            plt.show()
+            
+            #his2.plot(his2.dataNP,his2
+             #         his2.show()
+#            self.theSubPlotArea.imshow(his2.dataNP,origin="lower",extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax),aspect='auto',interpolation='none', cmap=cmap) #,norm=LogNorm(vin=0.001,vmax=1),origin="lower"))
             self.theCanvas = FigureCanvasTkAgg(self.theHistoFigure, master = self.theFrameHF)
             self.theCanvas.draw()
             self.theCanvasCwid = self.theCanvas.get_tk_widget()
@@ -429,7 +461,7 @@ class UI(tk.Frame):
             toolbarFrame = tk.Frame(master=self.theFrameHF)
             toolbarFrame.grid(column=0,row=2, sticky=tk.E+tk.W+tk.N+tk.S)
             toolbar = NavigationToolbar2Tk(self.theCanvas, toolbarFrame)
-            
+            plt.clf()
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
     def ResizeListBoxAndImage(self,event):
@@ -499,9 +531,14 @@ class UI(tk.Frame):
         self.StatText = tk.Text(self.theFrameCheckBoxHF,height=1,width=10,font=fontList)
         self.StatText.insert('1.0',"0")
         #print("STAT TEXT ",StatText.get('1.0',tk.END))
-        self.StatText.grid(column=1, row=0, sticky=tk.W)
+        self.StatText.grid(column=1, row=0, sticky=tk.W)      
 
-        
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    def plotBestFormat(self,str,val) :
+        if (fabs(val) < 1000. and fabs(val) > 0.001) or val == 0. :
+            return str+"{:.3f}".format(val)  
+        else:
+            return str+"{:.3e}".format(val)  
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
     def printStatistics(self,histo) :
@@ -523,27 +560,38 @@ class UI(tk.Frame):
             t2show = ""
             if ii == 0 :
                 if ista >= 1 :
-                    t2show += "Entri= "+"{:.2e}".format(histo.nent)  
+                    t2show += "Entri= "+str(int(histo.nent))
             elif ii == 1 :
                 if ista >= 1 :
-                    t2show += "mean=  "+"{:.2e}".format(histo.mean)                    
+                    t2show += self.plotBestFormat("Mean=  ",histo.mean)
                 if ista >= 2 :
-                    t2show += "+-"+"{:.2e}".format(histo.meanErr)
+                    t2show += self.plotBestFormat("+-",histo.meanErr)
+
             elif ii == 2 :
                 if ista >= 1 :
-                    t2show += "RMS=   "+"{:.2e}".format(histo.RMS)
+                    t2show += self.plotBestFormat("RMS=   ",histo.RMS)
                 if ista >= 2 :
-                    t2show += "+-"+"{:.2e}".format(histo.RMSErr)
+                    t2show += self.plotBestFormat("+-",histo.RMSErr)
             elif ii == 3 :
                 if ista >= 1 :
-                    t2show += "Over=  "+"{:.2e}".format(histo.over)
+                    t2show += self.plotBestFormat("Over=  ",histo.over)
                 if ista >= 2 :
-                    t2show += "+-"+"{:.2e}".format(histo.overErr)
+                    t2show += self.plotBestFormat("+-",histo.overErr)
             elif ii == 4 :
                 if ista >= 1 :
-                    t2show += "Under= "+"{:.2e}".format(histo.under)
+                    t2show += self.plotBestFormat("Under= ",histo.under)
                 if ista >= 2 :
-                    t2show += "+-"+"{:.2e}".format(histo.underErr)
+                    t2show += self.plotBestFormat("+-",histo.underErr)
+            elif ii == 5 :
+                # dataSum = reduce(lambda nn,mm: nn+mm,histo.data)
+                dataSum = sum(histo.data)
+                dataSumErr = sum([xx**2 for xx in histo.data])
+                dataSumErr = sqrt(dataSumErr)
+#                print("INTEGRAM",dataSum,dataErrSum,sum(histo.dataErr*histo.dataErr))
+                if ista >= 1 :
+                    t2show += self.plotBestFormat("Integr= ",dataSum)
+                if ista >= 2 :
+                    t2show += self.plotBestFormat("+-",dataSumErr)
 
             self.theHistoFigure.text(0.72-bShowErr*0.11,self.textYpos,t2show)
             if ista > 0 :
@@ -555,9 +603,9 @@ class UI(tk.Frame):
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GaussianFit(self) :
         #        print("start Gaussian Fit")
-        param,cov = self.lastHisto1.GaussianFit(0, True)
+        param,cov = self.lastHisto1.GaussianFit(0, 11) # 10: print text but do not superimpose fit line
         if self.bPlotSame.get() :
-            param,cov = self.prevHisto1N.GaussianFit(1,True)
+            param,cov = self.prevHisto1N.GaussianFit(1, 11)
 
             
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

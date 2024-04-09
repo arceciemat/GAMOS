@@ -782,7 +782,7 @@ void DCMGetGammaIndex::PrintHelp()
 	<< " -nPixelsX VALUE   number of pixels used for each figure in the X axis. Default is 1000. " << G4endl
 	<< " -nPixelsY VALUE   number of pixels used for each figure in the Y axis. Default is 1000. " << G4endl
 	<< " -nPixelsZ VALUE   number of pixels used for each figure in the Z axis. Default is 1000. " << G4endl
-	<< " -imageFormat FORMAT   available format are gif (default), png, eps, ps, pdf, svg, xpm, jpg and tiff " << G4endl
+	<< " -imageFormat FORMAT   available format are jpg (default), png, eps, ps, pdf, svg, xpm and tiff " << G4endl
 	<< " -bOutputFile    write the 2D histograms in an output file getGammaIndex_PC_DIST_2D.root" << G4endl
 	<< " -verb          verbosity: sets the verbosity" << G4endl
 	<< " -help          prints the list of arguments " << G4endl;

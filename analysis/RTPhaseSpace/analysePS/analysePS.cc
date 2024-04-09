@@ -89,11 +89,10 @@ int main(int argc,char** argv)
   if( theFileName.length() > 11 ) {
     if( theFileName.substr(theFileName.length()-11,11) == ".IAEAheader" ) theFileName = theFileName.substr(0,theFileName.length()-11);
   }
-if( RTVerb(warningVerb) ) G4cout << " READING FILE " << theFileName << G4endl;
+  if( RTVerb(warningVerb) ) G4cout << " READING FILE " << theFileName << G4endl;
   //---- Open header file
   G4String headerName = theFileName + ".IAEAheader";
   p_iaea_header->fheader = fopen(headerName,"rb");
-
 
   if( !p_iaea_header->fheader ) {
     G4Exception("analysePS",
@@ -110,7 +109,7 @@ if( RTVerb(warningVerb) ) G4cout << " READING FILE " << theFileName << G4endl;
 
   //----- Open record file
   FILE* p_rfile;
-  iaea_record_type *p_iaea_read;
+  iaea_record_type *p_iaea_record;
   G4String recordName = theFileName + ".IAEAphsp";
   p_rfile =  fopen(recordName,"rb");
   if( !p_rfile ) {
@@ -120,18 +119,16 @@ if( RTVerb(warningVerb) ) G4cout << " READING FILE " << theFileName << G4endl;
 		G4String("Error file not found :  " + recordName).c_str());
   }
 
-
-
   G4int theNParticlesInFile = p_iaea_header->nParticles;
   if( nRead == -1 ) nRead = theNParticlesInFile;
   if ( RTVerb(warningVerb) ) G4cout << " NPARTICLES TO BE READ " << nRead << std::endl;
 
   // Creating IAEA record and allocating memory for it
-  p_iaea_read = (iaea_record_type *) calloc(1, sizeof(iaea_record_type));
-  p_iaea_read->p_file = p_rfile;
+  p_iaea_record = (iaea_record_type *) calloc(1, sizeof(iaea_record_type));
+  p_iaea_record->p_file = p_rfile;
 
   //set record data
-  p_iaea_header->get_record_contents(p_iaea_read);
+  p_iaea_header->get_record_contents(p_iaea_record);
 
   G4UImanager::GetUIpointer()->ApplyCommand(G4String("/gamos/analysis/histo1Max PhaseSpace*Energy* ")+hisEMax);
   G4UImanager::GetUIpointer()->ApplyCommand(G4String("/gamos/analysis/histo2MaxY PhaseSpace*Energy* ")+hisEMax);
@@ -153,14 +150,15 @@ if( RTVerb(warningVerb) ) G4cout << " READING FILE " << theFileName << G4endl;
   if( RTVerb(warningVerb) ) PrintStat( p_iaea_header );
   for( G4int ii = 0; ii < nRead; ii++ ){
     if( ii%1000000 == 0 ) G4cout << "Reading PHSP track " << ii << G4endl;
-    int fileEnd = p_iaea_read->read_particle();
-    if( RTVerb(debugVerb) ) DumpParticle( p_iaea_read );
+    int fileEnd = p_iaea_record->read_particle();
+    if( RTVerb(-debugVerb) ) DumpParticle( p_iaea_record );
     if( fileEnd == FAIL) {
       fclose(p_rfile);
       break;
     }
-    theHistos->FillHistos( p_iaea_read, p_iaea_read->z*cm, (G4Step*)0 );
-  }
+    theHistos->FillHistos( p_iaea_record, p_iaea_record->z*cm, (G4Step*)0 );
+    G4cout << ii << " READ RECORD " << p_iaea_record->energy << G4endl; //GDEB
+ } 
 
   GmAnalysisMgr::DeleteInstances();
 

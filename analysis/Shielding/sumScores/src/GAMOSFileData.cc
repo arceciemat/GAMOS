@@ -44,7 +44,7 @@ GAMOSFileData::GAMOSFileData(G4String fileName)
     
     if ( wl[0]=="MultiFunctionalDet:" )  {
       if( nevents == -1 ) {
-	G4Exception("CompareScores",
+	G4Exception("sumcores",
 		    "No number of events",
 		    FatalException,
 		    (G4String("File ") + fileName + " has no number of events. Rerun it with '/run/verbose 1' user command").c_str());
@@ -58,6 +58,12 @@ GAMOSFileData::GAMOSFileData(G4String fileName)
       AddScorerData( scorerData );
       
     } else if ( wl[0]=="PrimitiveScorer:" ) {
+      if( ! scorerData ) {
+	G4Exception("GAMOSFileData::GAMOSFileData",
+		    "",
+		    FatalException,
+		    "File does not contain 'MultiFunctionalDet:' ");
+      }
       scorerData->SetScorerName( ExtractName(wl) );
       scorerData->SetName( scorerData->GetName() );
       scorerData->SetNEvents( nevents ); // total sum is calculated for each type of scorer name
@@ -65,11 +71,23 @@ GAMOSFileData::GAMOSFileData(G4String fileName)
     } else if (wl.size() == 4 && 
 	       wl[0]=="Number" && 
 	       wl[2] == "entries=") {
+      if( ! scorerData ) {
+	G4Exception("GAMOSFileData::GAMOSFileData",
+		    "",
+		    FatalException,
+		    "File does not contain 'MultiFunctionalDet:' ");
+      }
       scorerData->SetNScores( GmGenUtils::GetValue(wl[3]) );
       if( ScoreData::verbosity >= 1 ) G4cout << "@@@ New ScorerData N ENTRIES " << wl[3] << G4endl; 
       
       //---- Read and save score
     }  else if (wl.size() >= 6 && wl[0]=="index:") {
+      if( ! scorerData ) {
+	G4Exception("GAMOSFileData::GAMOSFileData",
+		    "",
+		    FatalException,
+		    "File does not contain 'MultiFunctionalDet:' ");
+      }
       GAMOSScoreData* scoreData = new GAMOSScoreData(wl, false);
       if( scoreData->SelfCheck() ) {
 	scorerData->AddScoreData( scoreData);
@@ -78,6 +96,12 @@ GAMOSFileData::GAMOSFileData(G4String fileName)
       } 
 
     } else {
+      if( ! scorerData ) {
+	G4Exception("GAMOSFileData::GAMOSFileData",
+		    "",
+		    FatalException,
+		    "File does not contain 'MultiFunctionalDet:' ");
+      }
       for( unsigned int kk = 0; kk < wl.size()-1; kk++ ) {
 	//	if (wl[kk]=="SUM" && wl[kk+1] == "ALL:") {
 	if (wl[kk]=="SUM_ALL:") {
@@ -91,7 +115,7 @@ GAMOSFileData::GAMOSFileData(G4String fileName)
   
   Infile.Close();
   if( nevents == -1 && bScorerFound ) {
-    G4Exception("compareScores",
+    G4Exception("GAMOSFileData::GAMOSFileData",
 		"Wrong argument",
 		FatalErrorInArgument,
 		"File does not contain number of events processed, it cannot be used");

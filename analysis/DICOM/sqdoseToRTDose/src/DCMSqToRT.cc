@@ -34,6 +34,7 @@ void DCMSqToRT::ProcessArguments( int argc, char** argv )
   theExeName = "sqdoseToRTDose";
   theSqDoseFN = "";
   theRTDoseFN = "";
+  thePatientPosition = "HFS";
   
   //--------- PROCESS ARGUMENTS
   if( argc == 2 ) {
@@ -62,6 +63,7 @@ void DCMSqToRT::ProcessArguments( int argc, char** argv )
 		  FatalErrorInArgument,
 		  "TWO ARGUMENTS MUST BE SQDOSE_INPUT_FILE RTDOSE_OUTPUT_FILE");
     }
+    G4cout << " theSqDoseFN " << theSqDoseFN << " theRTDoseFN " << theRTDoseFN << " thePatientPosition " << thePatientPosition << G4endl;
     return;
   } else {
     if(argc%2 != 1) { 
@@ -97,9 +99,10 @@ void DCMSqToRT::ProcessArguments( int argc, char** argv )
       }
     }
   }
-  theSqDoseFN = theParamMgr->GetStringValue("fSqdoseIn","");
-  theRTDoseFN = theParamMgr->GetStringValue("fRTDoseOut","");
+  theSqDoseFN = theParamMgr->GetStringValue("fSqdoseIn",theSqDoseFN);
+  theRTDoseFN = theParamMgr->GetStringValue("fRTDoseOut",theRTDoseFN);
   thePatientPosition = theParamMgr->GetStringValue("patientPosition","HFS");
+  G4cout << " theSqDoseFN " << theSqDoseFN << " theRTDoseFN " << theRTDoseFN << " thePatientPosition " << thePatientPosition << G4endl;
 }
 
 //---------------------------------------------------------------------------

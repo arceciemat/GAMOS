@@ -279,6 +279,16 @@ void DCMDrawDICOM::DrawImages()
     RTFile = dynamic_cast<DicomReaderRTStruct*>(VRTFiles[0]);
     theStPolygonSet = RTFile->GetPolygonSet();
     theVLineSets.push_back(theStPolygonSet);
+    // GDEB
+    /*    G4cout << " DCMDrawDICOM::DrawImages ( GOT POLYGON SET " << theStPolygonSet->GetName() << " Nlists " <<  theStPolygonSet->GetLineLists().size() << G4endl;
+    for( size_t ii = 0; ii <  theStPolygonSet->GetLineLists().size(); ii++ ) {
+      DicomVLineList* lineList =  theStPolygonSet->GetLineLists()[ii];
+      G4cout << ii << " POLYGON LINELIST " << lineList->GetName() << " Nlines "<< lineList->GetLines().size() << G4endl; 
+      for( size_t jj = 0; jj < lineList->GetLines().size(); jj++ ) {
+	DicomVLine* line = lineList->GetLines()[jj];
+	G4cout << jj << " POLYGON LINE " << line->GetName() << " Nlines "<< line->GetPoints().size() << G4endl;
+      }
+      }*/
   }
 
   //?    std::vector<DicomVImage*> imagesSt = theReaderMgr->GetImages(DRM_RTStruct);
@@ -327,7 +337,7 @@ void DCMDrawDICOM::DrawImages()
 	  DicomVImageStr* imgStID = dynamic_cast<DicomVImageStr*>(img); 
 	  DicomVImage* imgStIDDraw = new DicomVImage(imgStID, imgStID->GetName(), imgStID->GetModality(), imgStID->GetOrientation() );
 	  size_t nData = imgStID->GetNoVoxels();
-	  std::vector<G4String>* dataStr = imgStID->GetDataStr();
+	  //	  std::vector<G4String>* dataStr = imgStID->GetDataStr();
 	  //	  G4cout << " NVOXELS " << nData << " " << imgStID->GetNoVoxelsX() << " " << imgStID->GetNoVoxelsY() << " " << imgStID->GetNoVoxelsZ() << " " << dataStr->size() << G4endl; //GDEB
 	  std::vector<G4double>* data = imgStIDDraw->GetData();
 	  for( size_t iid = 0; iid < nData; iid++ ) {
@@ -559,7 +569,27 @@ void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lin
   //  G4cout << " DrawImage DrawXY " << bDrawXY << G4endl; //GDEB
   for( size_t ils = 0; ils < lineSets.size(); ils++ ) { // only polygons from RTStruct are included 
     DicomVLineSet* lineSet = lineSets[ils];
+    // GDEB
+    /*    G4cout << " DCMDrawDICOM::DrawImage( BEFORE DRAW POLYGON SET " << lineSet->GetName() << " Nlists " <<  lineSet->GetLineLists().size() << G4endl;
+    for( size_t ii = 0; ii <  lineSet->GetLineLists().size(); ii++ ) {
+      DicomVLineList* lineList =  lineSet->GetLineLists()[ii];
+      G4cout << ii << " POLYGON LINELIST " << lineList->GetName() << " Nlines "<< lineList->GetLines().size() << G4endl; 
+      for( size_t jj = 0; jj < lineList->GetLines().size(); jj++ ) {
+	DicomVLine* line = lineList->GetLines()[jj];
+	G4cout << jj << " POLYGON LINE " << line->GetName() << " Nlines "<< line->GetPoints().size() << G4endl;
+      }
+      } */
     lineSets[ils] = new DicomPolygonSet(dynamic_cast<DicomPolygonSet*>(lineSets[ils]), image, lineSets[ils]->GetOrientation());
+    // GDEB
+    /*    G4cout << " DCMDrawDICOM::DrawImage( DRAW POLYGON SET " << lineSets[ils]->GetName() << " Nlists " <<  lineSets[ils]->GetLineLists().size() << G4endl;
+    for( size_t ii = 0; ii <  lineSets[ils]->GetLineLists().size(); ii++ ) {
+      DicomVLineList* lineList =  lineSets[ils]->GetLineLists()[ii];
+      G4cout << ii << " POLYGON LINELIST " << lineList->GetName() << " Nlines "<< lineList->GetLines().size() << G4endl; 
+      for( size_t jj = 0; jj < lineList->GetLines().size(); jj++ ) {
+	DicomVLine* line = lineList->GetLines()[jj];
+	G4cout << jj << " POLYGON LINE " << line->GetName() << " Nlines "<< line->GetPoints().size() << G4endl;
+      }
+      }*/
     delete lineSet;
   }
   

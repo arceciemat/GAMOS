@@ -42,7 +42,7 @@ for file in files:
         hX = his1.Xbins()
         his1.norm(1)
         hY = his1.data
-        xStep = his1.Xstep(his1)
+        xStep = his1.Xstep()
         oneDict.update({his1.name : [hX,hY]})
     listofDict.append(oneDict) 
               

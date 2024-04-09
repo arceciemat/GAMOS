@@ -194,7 +194,7 @@ void DCMPrintValueAlongLine::ReadFilesAndGetImages()
       DicomLine* line = new DicomLine(pos,dir,lineName,DPOrientNone);
       line->SetPos0( pos0 );
       lineList->AddLine(line);
-      //      G4cout << "2 BUILD DicomLine " << pos << " " << dir << " " << lineName << G4endl; //GDEB
+      G4cout << "2 BUILD DicomLine " << pos << " " << dir << " " << pos0 << " " << lineName << G4endl; //GDEB
     }
   }
 }
@@ -214,6 +214,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
       std::vector<DicomVLine*> lines = lineLists[ill]->GetLines();
       for( size_t il = 0; il < lines.size(); il++ ) {
 	DicomLine* line = static_cast<DicomLine*>(lines[il]);
+	G4cout << " DCMPrintValueAlongLine::GetInfoFromImages(lineStep " << theLineStep << G4endl; //GDEB
 	std::map<G4double,G4double> intersValues = line->FindValues(image, theLineStep); 
 	G4double distBefore0;
 	G4double distToOut = DBL_MAX;
@@ -278,7 +279,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	G4String valueAlongLineFN = lineName+".val";
 	std::ofstream fout(valueAlongLineFN.c_str());
 	if( DicomVerb(infoVerb) ) G4cout << " ALONG LINE CREATING FILE " << lineName+".val" << std::endl; 
-	fout << "DATA: " << lineName << G4endl;
+	fout << ":DATA " << lineName << G4endl;
 	if( DicomVerb(infoVerb) ) G4cout << "@@@@ DCMPrintValueAlongLine n intersections " << intersValues.size() << G4endl;
 	G4double xvalold, yvalold;
 	for( iteiv = intersValues.begin(); iteiv != intersValues.end(); iteiv++ ) {

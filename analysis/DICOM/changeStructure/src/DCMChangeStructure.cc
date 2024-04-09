@@ -592,7 +592,7 @@ void DCMChangeStructure::WriteNewImage()
 void DCMChangeStructure::PrintHelp()
 {
   G4cout << " -fDCMIn      G4 DICOM input file " << G4endl
-	 << " -st          DICOM structure name " << G4endl
+	 << " -struct          DICOM structure name " << G4endl
 	 << " -mate        new material name " << G4endl
 	 << " -density     new material density " << G4endl
 	 << " -stOnly      Only change voxels that belong exclusively to the structure or all (1/0). Default = 0" << G4endl

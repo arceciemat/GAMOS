@@ -13,6 +13,7 @@ class DicomReaderRTDose;
 class DicomReaderRTStruct;
 class DicomReaderRTPlan;
 class DicomReaderRTIonPlan;
+class DicomReaderInterfile;
 class DicomVReaderImage;
 class DicomReaderMgr;
 class DicomMgr;
@@ -36,6 +37,7 @@ public:
 
   void SetCompression( G4String fComp );
   void AddFile( G4String fComp );
+  void AddFileInterfile( G4String fComp );
 
   void ProcessFiles();
   void DumpToTextFile();
@@ -63,7 +65,8 @@ private:
   DicomReaderRTStruct* theRTStructReader = 0;
   DicomReaderRTPlan* theRTPlanReader = 0;
   DicomReaderRTIonPlan* theRTIonPlanReader = 0;
-
+  DicomReaderInterfile* theIFReaderAll = 0;
+  
   //  DicomVReaderImeDICOM* theCTFileAll;
   //  DicomVReaderImage* theNMFileAll;
   //  DicomVReaderImage* theRTDoseFileAll;
@@ -72,6 +75,7 @@ private:
   DicomMgr* theDicomMgr;
   DicomReaderMgr* theReaderMgr;
   G4int fCompression;
+  G4bool bIsInterfile = false; 
 };
 
 #endif
