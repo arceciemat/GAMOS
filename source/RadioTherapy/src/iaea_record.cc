@@ -264,3 +264,29 @@ short iaea_record_type::read_particle()
 
   return(reclength);
 }
+
+void iaea_record_type::copy(iaea_record_type *record2)
+{
+  particle = record2->particle; 
+  energy = record2->energy;  
+  IsNewHistory = record2->IsNewHistory;
+  x = record2->x;
+  ix = record2->ix;       
+  y = record2->y;
+  iy = record2->iy;
+  z = record2->z;
+  iz = record2->iz;
+  u = record2->u;
+  iu = record2->iu;
+  v = record2->v;
+  iv = record2->iv;
+  w = record2->w;
+  iw = record2->iw;    
+  weight = record2->weight;
+  iweight = record2->iweight;
+  iextrafloat = record2->iextrafloat; 
+  iextralong = record2->iextralong;  
+  memcpy(extrafloat,record2->extrafloat,NUM_EXTRA_FLOAT);  
+  memcpy(extralong,record2->extralong,NUM_EXTRA_LONG);  
+  sizeExtraLong = record2->sizeExtraLong;
+}

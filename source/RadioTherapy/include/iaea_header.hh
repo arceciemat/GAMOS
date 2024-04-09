@@ -142,7 +142,7 @@ public:
       int get_record_contents(iaea_record_type *p_iaea_record);
       void initialize_counters();
       void update_counters(iaea_record_type *p_iaea_record);
-
+  void copy(iaea_header_type *header2);
 private:
       int read_block(char *lineread,char *blockname);
       int get_block(char *lineread);

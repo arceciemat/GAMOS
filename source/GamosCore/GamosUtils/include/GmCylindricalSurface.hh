@@ -6,6 +6,8 @@
 #include "G4RotationMatrix.hh"
 #include "G4Transform3D.hh"
 #include "G4Plane3D.hh"
+#include "G4Normal3D.hh"
+#include "G4Point3D.hh"
 class GmLine;
 
 class GmCylindricalSurface 

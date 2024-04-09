@@ -35,7 +35,7 @@ std::map<G4double, G4String> DicomReaderCT::theMaterials;
 std::map<G4int, G4double> DicomReaderCT::theCT2Density;
 std::map<G4double, G4String> DicomReaderCT::theMaterialDensities;
 #endif
-
+ 
 #include "CLHEP/Random/RandFlat.h"
 
 //-----------------------------------------------------------------------------
@@ -91,7 +91,7 @@ void DicomReaderCT::DICOMCreateImages()
   if( bOnlyHU ) return;
   
   theMateIDImage = CreateImage("CT_MateID", DIM_G4dcmCT_MateID, false, false );
-  //  G4cout << this << " DicomReaderCT::DICOMCreateImages " << theMateIDImage << G4endl; 
+  G4cout << this << " DicomReaderCT::DICOMCreateImages " << theMateIDImage << G4endl; 
   
   std::vector<G4double>* imageMateIDData = theMateIDImage->GetData();
   std::vector<G4double>* imageHUData = theDicomImage->GetData();
@@ -107,7 +107,7 @@ void DicomReaderCT::DICOMCreateImages()
     for( size_t ir = 0; ir < theNoVoxelsY; ir += theCompression ) {
       for( size_t ic = 0; ic < theNoVoxelsX; ic += theCompression ) {
 	//	size_t copyNoC = ic+ir*theNoVoxelsXC+iz*theNoVoxelsXYC;
-	//	if( DicomVerb(testVerb) )  G4cout << "iz " << iz << " ir " << ir << " ic " << ic << G4endl; //GDEB
+	if( DicomVerb(testVerb) )  G4cout << "iz " << iz << " ir " << ir << " ic " << ic << G4endl; //GDEB
 	meanHU = 0.;
 	int isumrMax = min(ir+theCompression,theNoVoxelsY);
 	int isumcMax = min(ic+theCompression,theNoVoxelsX);
@@ -309,17 +309,17 @@ std::map<G4double, G4String> DicomReaderCT::GetMaterials()
 //-----------------------------------------------------------------------------
 G4bool DicomReaderCT::IsMaterialDensities()
 {
-	return bMaterialDensities;
+  return bMaterialDensities;
 }
 
 //-----------------------------------------------------------------------------
 std::map<G4double, G4String> DicomReaderCT::GetMaterialDensities()
 {
-	return theMaterialDensities;
+  return theMaterialDensities;
 }
 
 //-----------------------------------------------------------------------------
 std::map<G4int, G4double> DicomReaderCT::GetCT2Density()
 {
-	return theCT2Density;
+  return theCT2Density;
 }

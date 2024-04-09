@@ -63,8 +63,8 @@ PLUGINSVC_FACTORY(GmRunDataCoutUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmStackDataCoutUA,GmUserAction*())
 
 #ifndef GAMOS_NO_ROOT
-#include "GmDataTTreeUA.hh"
-PLUGINSVC_FACTORY(GmDataTTreeUA,GmUserAction*())
+//#include "GmDataTTreeUA.hh"
+//PLUGINSVC_FACTORY(GmDataTTreeUA,GmUserAction*())
 #endif
 
 PLUGINSVC_FACTORY(GmNumericDataFilter,GmVFilter*(G4String))
@@ -107,8 +107,8 @@ DEFINE_GAMOS_USER_ACTION(GmRunDataCoutUA);
 DEFINE_GAMOS_USER_ACTION(GmStackDataCoutUA);
 
 #ifndef GAMOS_NO_ROOT
-#include "GmDataTTreeUA.hh"
-DEFINE_GAMOS_USER_ACTION(GmDataTTreeUA);
+//#include "GmDataTTreeUA.hh"
+//DEFINE_GAMOS_USER_ACTION(GmDataTTreeUA);
 #endif
 
 #include "GamosCore/GamosBase/Base/include/GmFilterFactory.hh"

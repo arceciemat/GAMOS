@@ -29,6 +29,11 @@ RTPlanMessenger::RTPlanMessenger(RTVPlanSource* myua)
   AssociatePlanLDACmd->SetParameterName("SOURCE_NAME GEOMETRY_NAME",false);
   AssociatePlanLDACmd->AvailableForStates(G4State_Idle,G4State_PreInit);
 
+  G4cerr << " ASSOCIATE BEAMV " << G4endl; //GDEB
+  AssociateBeamVolumesCmd = new GmUIcmdWithAString("/gamos/generator/RTPlan/associateBeamVolumes",this);
+  AssociateBeamVolumesCmd->SetParameterName("SOURCE_NAME RTPlanControlPoint_NAME GEOMETRY_NAME",false);
+  AssociateBeamVolumesCmd->AvailableForStates(G4State_Idle,G4State_PreInit);
+
 }
 
 //------------------------------------------------------------------------
@@ -37,6 +42,7 @@ RTPlanMessenger::~RTPlanMessenger()
   if (AssociatePlanVolumesCmd) delete AssociatePlanVolumesCmd;
   if (DefineAcceleratorVolumeCmd) delete DefineAcceleratorVolumeCmd;
   if (AssociatePlanLDACmd) delete AssociatePlanLDACmd;
+  if (AssociateBeamVolumesCmd) delete AssociateBeamVolumesCmd;
 }
 
 
@@ -54,8 +60,10 @@ void RTPlanMessenger::SetNewValue(G4UIcommand * command,
   } else if (command == AssociatePlanLDACmd) {
     //    GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: name particle_name energy energy_unit"); 
     myAction->AssociatePlanLimitingDeviceAngle(wl);
+  } else if (command == AssociateBeamVolumesCmd) {
+    //    GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: name particle_name energy energy_unit"); 
+    myAction->AssociateBeamVolumes(wl);
   }
-
-  return;
+  
 }
 

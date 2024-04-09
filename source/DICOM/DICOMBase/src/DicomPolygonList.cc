@@ -41,7 +41,7 @@ DicomPolygonList::DicomPolygonList(DicomPolygonList* polyListOld, DicomVImage* i
   mmddp posOrderedLines = polyListOld->BuildPosOrderedLines();  
   pmmddpi polygonsInPlane;
   pmmddpi pitet;
-  //  G4cout << "DicomPolygonList bVoxelsInUseClosest " << bVoxelsInUseClosest << G4endl;
+  //  G4cout << " DicomPolygonList bVoxelsInUseClosest " << bVoxelsInUseClosest << " Old nLines " << polyListOld->GetLines().size() << " " << polyListOld->GetName() << G4endl; //GDEB
   if( DicomVerb(debugVerb) ) {
     G4cout << "DicomPolygonList bVoxelsInUseClosest N " << posOrderedLines.size() << G4endl;
   }
@@ -62,6 +62,7 @@ DicomPolygonList::DicomPolygonList(DicomPolygonList* polyListOld, DicomVImage* i
   // all polygons in one unique Z
   // lines are all below image: check if adding line_range is in
   if( iteUP->first < imMinZ ) {
+    //    G4cout << " iteUP->first < imMinZ " << iteUP->first << " " << imMinZ << G4endl; //GDEB
     if( bOnePolygonZ ) { // all polygons in one unique Z
       std::vector<DicomVLine*> lines = polyListOld->GetLines();
       for( size_t il = 0; il < lines.size(); il++ ) {
@@ -75,6 +76,7 @@ DicomPolygonList::DicomPolygonList(DicomPolygonList* polyListOld, DicomVImage* i
       mmddpi ite1 = pitet.first; ite1--;
       line_range = (ite1->first-pitet.first->first)/2.; // check adding 1/2 line separations
       if( iteUP->first+line_range < imMinZ ) {
+	//	G4cout << " All lines have Z below min " << imMinZ << G4endl; //GDEB 
 	return;
       } else {
 	polygonsInPlane = posOrderedLines.equal_range((*iteUP).first);
@@ -88,6 +90,7 @@ DicomPolygonList::DicomPolygonList(DicomPolygonList* polyListOld, DicomVImage* i
     }
     // lines are all above image: check if subtracting line_range is in
   } else if( iteDOWN->first > imMaxZ ) {
+    //    G4cout << " iteDOWN->first > imMaxZ " << iteDOWN->first << " " << imMaxZ << G4endl; //GDEB
     if( bOnePolygonZ ) { // all polygons in one unique Z
       std::vector<DicomVLine*> lines = polyListOld->GetLines();
       for( size_t il = 0; il < lines.size(); il++ ) {
@@ -112,8 +115,9 @@ DicomPolygonList::DicomPolygonList(DicomPolygonList* polyListOld, DicomVImage* i
 	//FindVoxelsInXY(image,polygonsInPlane, line_range);
 	// (*iteDOWN).second->FindVoxelsInXY(image,-line_range);
       }
-    }
+    } 
   } else {
+#    G4cout << " INSIDEDicomPolygonList bOnePolygonZ " << bOnePolygonZ << G4endl; //GDEB
     if( bOnePolygonZ ) { // all polygons in one unique Z
       std::vector<DicomVLine*> lines = polyListOld->GetLines();
       for( size_t il = 0; il < lines.size(); il++ ) {
@@ -124,59 +128,62 @@ DicomPolygonList::DicomPolygonList(DicomPolygonList* polyListOld, DicomVImage* i
       return;
       // (*iteUP).second->FindVoxelsInXY(image);
     } else {
-  std::map<G4int,DicomVLine*> iZPlanes;
-  // List Z planes that each line is in
-  std::vector<DicomVLine*> linesOld = polyListOld->GetLines();
-  //-  G4cout << theName << " linesOld " <<linesOld.size() << G4endl; //GDEB
-  for( size_t ii = 0; ii < linesOld.size(); ii++ ) {
-    DicomPolygon* line = dynamic_cast<DicomPolygon*>(linesOld[ii]);
-    G4double planeZ = line->GetPlanePosition();
-    G4int iPolygonZ = GetPolygonZIndex(image, planeZ);
-    iZPlanes[iPolygonZ] = line;
-    //    G4cout << GetName() << " DicomPolygonList::DicomPolygonList( interpolate add iZPlanes " << iPolygonZ << " " << planeZ << G4endl; //GDEB
-  }
-  if( iZPlanes.size() == 0 ) return;
-  // get smaller and bigger index of > plane
-  std::map<G4int,DicomVLine*>::iterator itezp = iZPlanes.begin();
-  G4int iSmallerZ = itezp->first;
-  if( iSmallerZ < 0 ) iSmallerZ = 0; // using only a fraction of the CT image
-  std::map<G4int,DicomVLine*>::reverse_iterator ritezp = iZPlanes.rbegin();
-  G4int iBiggerZ = ritezp->first;
-  if( iBiggerZ >= G4int(image->GetNoVoxelsZ()) ) iBiggerZ = image->GetNoVoxelsZ()-1; // using only a fraction of the CT image
-  //  G4cout << theName << " DicomPolygonList::DicomPolygonList( interpolate iSmallerZ " << iSmallerZ << " iBiggerZ " << iBiggerZ << G4endl; //GDEB
-  // loop to iz plane numbers and see if one is not in iZPlanes
-  G4double imVoxelDimZ = image->GetVoxelDimZ();
-  //  G4cout << " DicomPolygonList::DicomPolygonList( interpolate imMinZ " << imMinZ << " imVoxelDimZ " << imVoxelDimZ << G4endl; //GDEB
-  for( G4int iz = iSmallerZ; iz <= iBiggerZ; iz++ ) {
-    itezp = iZPlanes.find(iz);
-    //    G4cout << " DicomPolygonList::DicomPolygonList( interpolate find plane " << iz << G4endl; //GDEB
-    if( itezp != iZPlanes.end() ) {
-      DicomPolygon* line = dynamic_cast<DicomPolygon*>(itezp->second);
-      DicomVLine* lineNew = AddDisplacedLine( line, 0. );
-      linesUsed[lineNew] = true;
-      //      G4cout << theName << " DicomPolygonList::DicomPolygonList( interpolate FOUND plane " << iz << " " << line->GetPoints()[0].z() << " NLINE " << theLines.size() << G4endl; //GDEB
-    } else {
-      // get closer line
-      G4double planeZ = imMinZ+(iz+0.5)*imVoxelDimZ;
-      G4double minZdist = DBL_MAX;
-      G4int iMinZdist = -1;
-      for( std::map<G4int,DicomVLine*>::iterator itezp1 = iZPlanes.begin(); itezp1 != iZPlanes.end(); itezp1++ ) {
-	G4double lineZ = itezp1->second->GetPlanePosition();;
-	if( fabs(planeZ-lineZ) < minZdist ) {
-	  minZdist =  fabs(planeZ-lineZ);
-	  iMinZdist = itezp1->first;
+      std::multimap<G4int,DicomVLine*> iZPlanes;
+      // List Z planes that each line is in
+      std::vector<DicomVLine*> linesOld = polyListOld->GetLines();
+      //      G4cout << theName << " lineName " << polyListOld->GetName() << " linesOld " << linesOld.size() << G4endl; //GDEB
+      for( size_t ii = 0; ii < linesOld.size(); ii++ ) {
+	DicomPolygon* line = dynamic_cast<DicomPolygon*>(linesOld[ii]);
+	G4double planeZ = line->GetPlanePosition();
+	G4int iPolygonZ = GetPolygonZIndex(image, planeZ);
+	if (iPolygonZ < 0 || iPolygonZ >= G4int(image->GetNoVoxelsZ()) ) continue;
+	iZPlanes.insert(std::multimap<G4int,DicomVLine*>::value_type(iPolygonZ,line));
+	//	G4cout << GetName() << " DicomPolygonList::DicomPolygonList( interpolate add iZPlanes " << iPolygonZ << " " << planeZ << G4endl; //GDEB
+      }
+      if( iZPlanes.size() == 0 ) return;
+      // get smaller and bigger index of > plane
+      std::multimap<G4int,DicomVLine*>::iterator itezp = iZPlanes.begin();
+      G4int iSmallerZ = itezp->first;
+      if( iSmallerZ < 0 ) iSmallerZ = 0; // using only a fraction of the CT image
+      std::multimap<G4int,DicomVLine*>::reverse_iterator ritezp = iZPlanes.rbegin();
+      G4int iBiggerZ = ritezp->first;
+      G4double imVoxelDimZ = image->GetVoxelDimZ();
+      //      G4cout << " DicomPolygonList::DicomPolygonList( interpolate iSmallerZ " << iSmallerZ << " iBiggerZ " << iBiggerZ <<" imMinZ " << imMinZ << " imVoxelDimZ " << imVoxelDimZ << G4endl; //GDEB
+      for( G4int iz = iSmallerZ; iz <= iBiggerZ; iz++ ) {
+	auto itePair = iZPlanes.equal_range(iz);
+	if( itePair.first != iZPlanes.end() ) {
+	  for( std::multimap<G4int,DicomVLine*>::iterator itezp1 = itePair.first; itezp1 != itePair.second; itezp1++ ) {
+	    //    G4cout << " DicomPolygonList::DicomPolygonList( interpolate find plane " << iz << G4endl; //GDEB
+	    DicomPolygon* line = dynamic_cast<DicomPolygon*>(itezp1->second);
+	    DicomVLine* lineNew = AddDisplacedLine( line, 0. );
+	    linesUsed[lineNew] = true;
+	    //	    G4cout << theName << " " << iz << " DicomPolygonList::DicomPolygonList( interpolate FOUND plane " << iz << " " << line->GetPoints()[0].z() << " NLINE " << theLines.size() << G4endl; //GDEB
+	  }
+	} else {
+	  // get closer line
+	  G4double planeZ = imMinZ+(iz+0.5)*imVoxelDimZ;
+	  G4double minZdist = DBL_MAX;
+	  G4int iMinZdist = -1;
+	  for( std::multimap<G4int,DicomVLine*>::iterator itezp1 = iZPlanes.begin(); itezp1 != iZPlanes.end(); itezp1++ ) {
+	    G4double lineZ = itezp1->second->GetPlanePosition();;
+	    if( fabs(planeZ-lineZ) < minZdist ) {
+	      minZdist =  fabs(planeZ-lineZ);
+	      iMinZdist = itezp1->first;
+	    }
+	  }
+	  auto itezp2 =iZPlanes.equal_range(iMinZdist);
+	  for (auto ite = itezp2.first; ite != itezp2.second; ++ite) {
+	    DicomPolygon* line = dynamic_cast<DicomPolygon*>(ite->second);
+	    std::vector<G4ThreeVector> points = line->GetPoints();
+	    G4double plusZ = 0.;
+	    if( points.size() > 0 ) plusZ = planeZ-points[0].z();
+	    //      DicomVLine* lineNew =
+	    AddDisplacedLine( line, plusZ );
+	    //	    G4cout << theName << " DicomPolygonList::DicomPolygonList( interpolate NOT FOUND plane " << iz << " ptsZ " << points[0].z() << " planeZ " << planeZ << " minZdist " << minZdist << " iMinZdist " <<  iMinZdist << " NLINE " << theLines.size() << G4endl; //GDEB
+	  }
 	}
       }
-      DicomPolygon* line = dynamic_cast<DicomPolygon*>(iZPlanes[iMinZdist]);
-      std::vector<G4ThreeVector> points = line->GetPoints();
-      G4double plusZ = 0.;
-      if( points.size() > 0 ) plusZ = planeZ-points[0].z();
-      //      DicomVLine* lineNew =
-      AddDisplacedLine( line, plusZ );
-      //      G4cout << theName << " DicomPolygonList::DicomPolygonList( interpolate NOT FOUND plane " << iz << " ptsZ " << points[0].z() << " planeZ " << planeZ << " minZdist " << minZdist << " iMinZdist " <<  iMinZdist << " NLINE " << theLines.size() << G4endl; //GDEB
-    }
-  }
-
+      
       // If 2*line_range > voxelBinWidth: a voxel lower edge and upper edge will have the same lineList as upper
       // If 2*line_range < voxelBinWidth: two or more polygons are in the same voxel: take the one closest to the voxel center
       // loop to all voxels from the ones of the minimum polygon to the maximum one
@@ -272,7 +279,7 @@ DicomPolygonList::DicomPolygonList(DicomPolygonList* polyListOld, DicomVImage* i
 	    linesUsed[newPoly] = true;
 	  }	  
 	  //	  FindVoxelsInXY(image,polygonsInPlane, line_range);
-	}
+	  }
       }
     */
     }
@@ -570,7 +577,7 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr, pmmddpi polygon
 DicomPolygon* DicomPolygonList::AddDisplacedLine( DicomPolygon* line, G4double disp )
 {
   std::vector<G4ThreeVector> points = line->GetPoints();
-  //  G4cout << this << "  DicomPolygonList::AddDisplacedLine " << theName << " Z= " << points[0].z() << " -> " <<points[0].z()+disp << " N_LINES " << theLines.size() << G4endl; //GDEB
+  //  G4cout << this << "  DicomPolygonList::AddDisplacedLine " << theName << " Z= " << points[0].z() << " -> " <<points[0].z()+disp << " NPOINTS " << line->GetPoints().size() << " N_LINES " << theLines.size() << G4endl; //GDEB
   std::vector<G4ThreeVector> dirs = line->GetDirections();
   for( size_t ip = 0; ip < points.size(); ip++ ) {
     if( line->GetOrientation() == DPOrientXY ) {
@@ -597,21 +604,28 @@ G4int DicomPolygonList::GetPolygonZIndex( DicomVImage* image, G4double planeZ )
 
   G4double polyZ = planeZ;
   G4int iPolygonZ = ( polyZ - imMinZ ) / imVoxelDimZ;
-  if( iPolygonZ < 0 ) {
-    G4cerr << " iPolygonZ= " << iPolygonZ
-	   << " Polygon Z= " << planeZ << " Image min Z= " << imMinZ << " diff " << planeZ-imMinZ << G4endl;
+  //  G4cout << " DicomPolygonList::GetPolygonZIndex " <<iPolygonZ << " = ( " << polyZ << " - " << imMinZ << " ) / " <<imVoxelDimZ << G4endl;//GDEB
+  if( DicomVerb(debugVerb) ) {
+    if( iPolygonZ < 0 ) {
+      G4cerr << " iPolygonZ= " << iPolygonZ
+	     << " Polygon Z= " << planeZ << " Image min Z= " << imMinZ << " diff " << planeZ-imMinZ << G4endl;
+    }
     //-- check if it is a  precision problem
     if( polyZ - imMinZ  > -image->GetPrecision() ) {
       iPolygonZ = 0;
-      G4Exception(" DicomPolygon::GetPolygonZIndex",
-		  "",
-		  JustWarning,
-		  "Polygon Z is smaller than image minimum Z, probably due to precision. It will be set to image minimim Z");
+      if( DicomVerb(debugVerb) ) {
+	G4Exception(" DicomPolygon::GetPolygonZIndex",
+		    "",
+		    JustWarning,
+		    "Polygon Z is smaller than image minimum Z, probably due to precision. It will be set to image minimim Z");
+      }
     } else {
-      G4Exception(" DicomPolygon::GetPolygonZIndex",
-		  "",
-		  JustWarning,
-		  "Polygon Z is smaller than image minimum Z, it will not be used");
+      if( DicomVerb(debugVerb) ) {
+	G4Exception(" DicomPolygon::GetPolygonZIndex",
+		    "",
+		    JustWarning,
+		    "Polygon Z is smaller than image minimum Z, it will not be used");
+      }
     }
   }
 
@@ -621,16 +635,16 @@ G4int DicomPolygonList::GetPolygonZIndex( DicomVImage* image, G4double planeZ )
 	     << "Polygon Z= " << planeZ << " Image max Z= " << imMaxZ << " diff " << polyZ-imMaxZ << G4endl;
     if( polyZ - imMaxZ < image->GetPrecision() ) {
       iPolygonZ = imNoVoxelsZ-1;
-      G4Exception(" DicomPolygon::GetPolygonZIndex",
+      /*t      G4Exception(" DicomPolygon::GetPolygonZIndex",
 		"",
 		  JustWarning,
-		  "Polygon Z is bigger than image maximum Z, probably due to precision. It will be set to image maximim Z");
+		  "Polygon Z is bigger than image maximum Z, probably due to precision. It will be set to image maximim Z"); *///GDEB
     } else {
-      G4Exception(" DicomPolygon::GetPolygonZIndex",
+      /*   G4Exception(" DicomPolygon::GetPolygonZIndex",
 		  "",
 		  JustWarning,
-		  "Polygon Z is bigger than image maximum Z, it will not be used");
-    }
+		  "Polygon Z is bigger than image maximum Z, it will not be used");*///GDEB
+    } 
   }
 
   return iPolygonZ;

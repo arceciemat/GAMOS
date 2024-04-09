@@ -1,4 +1,5 @@
 #include "GmCountProcessesUA.hh"
+#include "GmUtilsUAVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
 #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh"
 
@@ -34,8 +35,8 @@ void GmCountProcessesUA::BeginOfRunAction(const G4Run* )
   for( ii= 0; ii < siz; ii++ ){
     G4ParticleDefinition* particle = partTable->GetParticle(ii);
     G4String particleName = particle->GetParticleName();
-#ifdef DEBUG
-    G4cout << ii << " PCA " << particleName<< " " << particle->GetPDGStable() << " " << particle->IsShortLived() << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+    if( UtilsUAVerb(debugVerb) ) G4cout << ii << " PCA " << particleName<< " " << particle->GetPDGStable() << " " << particle->IsShortLived() << G4endl;
 #endif
     //    theParticleCount[particleName] = 0;
 
@@ -46,8 +47,8 @@ void GmCountProcessesUA::BeginOfRunAction(const G4Run* )
       int jj, sizproc = pvect->size();
       for( jj = 0; jj < sizproc; jj++ ) {
 	G4String processName = (*pvect)[jj]->GetProcessName();
-#ifdef DEBUG
-	G4cout << jj << " Process Name " << processName<< G4endl;
+#ifndef GAMOS_NO_VERBOSE
+	if( UtilsUAVerb(debugVerb) ) G4cout << jj << " Process Name " << processName<< G4endl;
 #endif
 	theProcessList.insert( mss::value_type(particleName,processName) );
 	if( processName.find("Ioni") != std::string::npos ){
@@ -131,8 +132,8 @@ void GmCountProcessesUA::PreUserTrackingAction(const G4Track* aTrack)
     } else {
       (*ite).second = (*ite).second +1; 
     }
-#ifdef DEBUG
-    G4cout << " creator " << particleName << " " << processName << " " << creatorProcessCount->size() << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+    if( UtilsUAVerb(debugVerb) ) G4cout << " creator " << particleName << " " << processName << " " << creatorProcessCount->size() << G4endl;
 #endif
     
   }
@@ -173,8 +174,8 @@ void GmCountProcessesUA::UserSteppingAction(const G4Step* aStep )
     processCount = (*itecp).second;
   }
   (*processCount)[pss(particleName,processName)] = (*processCount)[pss(particleName,processName)] + 1;
-#ifdef DEBUG
-  G4cout << " process list " << particleName << " " << processName << " " << (*processCount)[pss(particleName,processName)] << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+  if( UtilsUAVerb(debugVerb) ) G4cout << " process list " << particleName << " " << processName << " " << (*processCount)[pss(particleName,processName)] << G4endl;
 #endif
 
 }

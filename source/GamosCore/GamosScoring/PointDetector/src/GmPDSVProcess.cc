@@ -481,7 +481,7 @@ void GmPDSVProcess::CreateGeantino( const G4Track& aTrack, const G4double primPr
   //--- Store classification index in track info
   trkInfo->SetIntValue("ClassifierIndex",classifierIndex );
   trkInfo->SetDoubleValue("ParentWeight", GetWeight(&aTrack,FALSE) );
-  
+
   geantino->SetUserInformation( trkInfo );
    
 //  G4double dist = (point-trkpos).mag()/cm;
@@ -491,7 +491,7 @@ void GmPDSVProcess::CreateGeantino( const G4Track& aTrack, const G4double primPr
   
 #ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
-  if( ScoringVerb(infoVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt  probEmiss = " << probEmiss << " dist (cm) " << dist << " weight old " << wei << " weight new " << wei * probEmiss / (2.*M_PI*sqr(dist) ) << G4endl;
+  if( ScoringVerb(infoVerb) ) G4cout << "GmPDSVProcess::PostStepDoIt  probEmiss = " << probEmiss << " mate=" << stepPoint2->GetMaterial()->GetName() << " ener=" << secoEner << " dist(cm)=" << dist << " weight_old=" << wei << " weight_new=" << wei * probEmiss / (2.*M_PI*sqr(dist) ) << G4endl;
 #endif
 #endif
   aParticleChange.AddSecondary(geantino); 

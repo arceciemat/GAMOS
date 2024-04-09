@@ -39,7 +39,8 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
   G4int iAddPar = 0;
 
   G4bool bResize = false;
-  
+  G4bool bRotateXY180 = false; 
+ 
   G4String argvstr = argv[iPar];
   G4String argvstr1 = argv[iPar+1];
   G4String argvName = argvstr.substr(1,999);
@@ -126,9 +127,8 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
     new DicomOperLogN(GmGenUtils::GetValue(argvstr1),1,"DicomOperLogN");
   } else if( argvstr == "-rotateXY" ) {
     AddParam( argvName+ " " + argvstr1, PTdouble );
-    new DicomOperRotateXY180(GmGenUtils::GetValue(argvstr1),1,"DicomOperRotateXY180");
-    DicomMgr::GetInstance()->SetRotateXY180(GmGenUtils::GetValue(argvstr1));
     //    G4cout << " SetRotateXY180 " << GmGenUtils::GetValue(argvstr1) << G4endl; //GDEB
+    bRotateXY180 = true;
   } else if( argvstr == "-printMax" ) {
     AddParam( argvName+ " " + argvstr1, PTdouble );
     if( argvstr1 == "1" ) {
@@ -167,7 +167,12 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
   if( bResize ) {
     if( DicomMgr::GetInstance()->FindOperator("DicomOperResize") == 0 ) new DicomOperResize(0,"DicomOperResize");
   }
- 
+
+  new DicomOperRotateXY180(180.,1,"DicomOperRotateXY180");
+  if( bRotateXY180 ) {
+    DicomMgr::GetInstance()->SetRotateXY180(GmGenUtils::GetValue(argvstr1));
+  }
+
   return iAddPar;
 }
 

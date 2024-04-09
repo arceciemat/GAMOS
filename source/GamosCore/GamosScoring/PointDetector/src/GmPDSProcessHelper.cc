@@ -787,9 +787,9 @@ G4double GmPDSProcessHelper::GetCrossSectionForGamma( const G4Step* aStep )
   //  std::vector<G4String>::const_iterator iteg;
   for( iteg = theGammaProcesses.begin(); iteg != theGammaProcesses.end(); iteg++ ){
     //    G4double XS = theEmCalculator->GetCrossSectionPerVolume(energy, G4Gamma::Gamma(), (*iteg).first, aMaterial, region ); // it returns 0. for phot
-    G4double XS = (*iteg).second->CrossSectionPerVolume( energy, cutsC );
+    G4double XS = (*iteg).second->GetCrossSection( energy, cutsC );
     XStot += XS;
-    //      G4cout << "GmPDSProcessHelper::GetCrossSectionForGamma  CrossSection EM = " << procEM->CrossSectionPerVolume( energy, lv->GetMaterialCutsCouple() ) 
+    //      G4cout << "GmPDSProcessHelper::GetCrossSectionForGamma  CrossSection EM = " << procEM->GetCrossSection( energy, lv->GetMaterialCutsCouple() ) 
     //    << " ener " << energy 
     //     << " mate " << lv->GetMaterial()->GetName() << " process " << (*iteg).first << G4endl;
 #ifndef WIN32
@@ -822,7 +822,7 @@ G4double GmPDSProcessHelper::GetCrossSectionForOpticalPhoton( const G4Step* aSte
     //    G4double XS = theEmCalculator->GetCrossSectionPerVolume(energy, G4OpticalPhoton::OpticalPhoton(), (*iteg).first, aMaterial, region ); // it returns 0. for phot
     G4double XS = 1./(*iteg).second->GetMeanFreePath( *aTrack, 0, dummyFC );
     XStot += XS;
-    //      G4cout << "GmPDSProcessHelper::GetCrossSectionForOpticalPhoton  CrossSection EM = " << procEM->CrossSectionPerVolume( energy, lv->GetMaterialCutsCouple() ) 
+    //      G4cout << "GmPDSProcessHelper::GetCrossSectionForOpticalPhoton  CrossSection EM = " << procEM->GetCrossSection( energy, lv->GetMaterialCutsCouple() ) 
     //    << " ener " << energy 
     //     << " mate " << lv->GetMaterial()->GetName() << " process " << (*iteg).first << G4endl;
 #ifndef WIN32

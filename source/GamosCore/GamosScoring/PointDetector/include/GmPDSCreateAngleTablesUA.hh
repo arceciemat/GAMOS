@@ -40,7 +40,7 @@ private:
   std::map<G4double,int> theEnergyIDs;
   std::map<G4Material*,int> theMaterialIDs;
 
-  const G4ProcessVector* theProclis;
+  std::vector<G4VProcess*> theProclis;
   G4bool bInitialised;
 
   std::set<G4String> theHistos;

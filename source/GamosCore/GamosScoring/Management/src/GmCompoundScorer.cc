@@ -44,7 +44,6 @@ G4bool GmCompoundScorer::ProcessHits(G4Step* ,G4TouchableHistory*)
       for( unsigned int ii = 0; ii < siz; ii++ ){
 	expression += theSubExpressions[ii];
       if( ii < sizScorers )  expression += GmGenUtils::ftoa( theSubScorers[ii]->GetUnit());
-      //      G4cout << ii << " EXPRESSION " << expression << G4endl;//GDEB
       }
       theUnitName = expression;
       theUnit = GmGenUtils::GetValue( expression );

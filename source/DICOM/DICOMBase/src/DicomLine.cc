@@ -23,6 +23,7 @@ DicomLine::DicomLine( G4String name, DPOrientation ori )
 DicomLine::DicomLine( G4ThreeVector point, G4ThreeVector dir, G4String name, DPOrientation ori )
   : DicomVLine(name,ori)
 {
+  G4cout << " DicomLine::DicomLine nPt " << thePoints.size() << " point " << point << G4endl; //GDEB
   thePoints.push_back(point);
   theDirections.push_back(dir);
 }
@@ -40,6 +41,8 @@ std::map<G4double,G4double> DicomLine::FindValues( DicomVImage* image, G4double 
 //-----------------------------------------------------------------------------
 std::map<G4double,G4double> DicomLine::FindValuesInVoxels( DicomVImage* image)
 {
+  G4cout << " DicomLine::FindValuesInVoxels nPt " << thePoints.size() << G4endl; //GDEB
+
   std::map<G4double,G4double> intersValues;
   
   if( DicomVerb(infoVerb) ) G4cout << theName << " DicomLine::FindValuesInVoxels in image " << image->GetName() << " " << DicomVImage::GetModalityStr(image->GetModality()) << G4endl;
@@ -502,4 +505,12 @@ std::map<G4double,G4double> DicomLine::FindValuesInSteps( DicomVImage* image, G4
 
   return intersValues;
 										  
+}
+
+//-----------------------------------------------------------------------------
+void DicomLine::SetPos0( G4ThreeVector lp0 )
+{
+  thePos0 = lp0;
+  thePoints[0] = thePos0;
+  G4cout << " DicomLine::SetPos0  CHANGED " << thePoints[0] << G4endl; //GDEB
 }

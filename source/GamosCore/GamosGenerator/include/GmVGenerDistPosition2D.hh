@@ -19,8 +19,11 @@ public:
     theCentre = centre;
   }
 
-  void SetRotation( G4RotationMatrix rot );
-  void SetRotation( G4ThreeVector dir );
+  virtual void SetRotation( G4RotationMatrix& rot );
+  virtual void SetRotation( G4ThreeVector dir );
+  G4RotationMatrix GetRotation() const {
+    return theRotation;
+  }
 
 protected:
   

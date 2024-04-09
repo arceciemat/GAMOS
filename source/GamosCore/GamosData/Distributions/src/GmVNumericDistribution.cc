@@ -106,6 +106,7 @@ void GmVNumericDistribution::ReadFile()
     ReadFileUnknown( fileName );
   }
   else {
+    G4cout << " IS NUMERIC UPPER " <<  dynamic_cast<GmNumericDistributionUpper*>(this)  << G4endl; //GDEB
     if( dynamic_cast<GmNumericDistributionLinLin*>(this) || dynamic_cast<GmNumericDistributionLinLog*>(this) || 
 	dynamic_cast<GmNumericDistributionLogLin*>(this) || dynamic_cast<GmNumericDistributionLogLog*>(this) || 
 	dynamic_cast<GmNumericDistributionLower*>(this) || dynamic_cast<GmNumericDistributionUpper*>(this) || 
@@ -376,9 +377,9 @@ G4double GmVNumericDistribution::GetNumericValueFromIndex(const G4double indexVa
 {
   if( indexVal < theMinimum ) {
     std::map<G4double,G4double>::const_iterator ite = theValues.begin();
-    for( ; ite != theValues.end(); ite++ ) {
-      G4cerr << " VALUE " << ite->first << " = " << ite->second << G4endl;
-    }
+    /*    for( ; ite != theValues.end(); ite++ ) {
+      G4cerr << " VALUE " << ite->first << " = " << ite->second << G4endl; //GDEB
+      } */
     if( theAllowOutOfLimits == 1 ) {
       G4Exception(G4String(theName+"::GetIndexFromValue").c_str(),
 		  "Value out of limits",

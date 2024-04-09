@@ -34,6 +34,7 @@ public:
   void ProcessData();
   void CreateReaders();
   void CreateImages();
+  void CreateImagesCT( DicomReaderCT* imgMergedReaderCT );
   
   //  std::vector<DicomVReader*> GetReaders(G4String name, G4bool bMustExist = true) const;
   //  std::vector<DicomVReaderImage*> GetImageReaders(G4String name, G4bool bMustExist = true) const;

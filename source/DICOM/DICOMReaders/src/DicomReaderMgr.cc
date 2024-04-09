@@ -188,10 +188,8 @@ void DicomReaderMgr::SetCTOnlyHU( G4bool bOnlyHU )
 
 //-----------------------------------------------------------------------------
 void DicomReaderMgr::CreateImages()
-{
+{ 
   //---- Create images for image DICOM readers (other readers have built the images in ReadHeaderAndPixels)
-  G4bool bVoxelsInUseClosest = DicomParameterMgr::GetInstance()->GetNumericValue("closestPolygon",1);
- 
   //  for( mmmdri::iterator ite = theImageReaders.begin(); ite != theImageReaders.end(); ite = theImageReaders.upper_bound(ite->first)) {
   mdri ZOrderedReadersCT;
   mdri ZOrderedReadersNM;
@@ -241,50 +239,22 @@ void DicomReaderMgr::CreateImages()
     } else {
       imgMergedReaderCT = (DicomReaderCT*)(itemv->second);
     }
-    if( imgMergedReaderCT ) imgMergedReaderCT->DICOMCreateImages();
-  
-    //----- Special case for DICOM CT and DICOM RTStruct (create structure image in g4dcm)
-    //--- First resize g4dcm density image and then redo g4dcm mate ID image
-    DicomVOperator* operResize = theDicomMgr->FindOperator("DicomOperResize");
-#ifndef GAMOS_NO_VERBOSE
-    if( DicomVerb(infoVerb) ) G4cout << " operResize " << operResize << std::endl; 
-#endif
-    DicomVImage* imageDens = imgMergedReaderCT->GetMateDensImage();
-    if( operResize ) {
-      if( imageDens != 0 ) {  // NOT IF drawDICOM -fCT
-	operResize->Operate(imageDens);
-	imgMergedReaderCT->RecalculateMateIDFromMateDens();
-      } else {
-	operResize->Operate(imgMergedReaderCT->GetImage());
-      }
-    }
-    //--- Calculate g4dcm structure image
-    std::vector<DicomVReader*> structReaders = GetReaders(DRM_RTStruct,false);
-    size_t nSt = structReaders.size();
-    if( nSt != 0 ) {
-      //--- Only one RTStruct is allowed to build g4dcm CT
-      if( nSt != 1 ) {
-	G4Exception("DicomReaderMgr::CreateImages",
-		    "",
-		    FatalException,
-		    "Only one RTStruct is allowed to build g4dcm CT");
-      }
-      DicomVImageStr* imageDicomStructures = new DicomVImageStr( imageDens, "RTStruct", DIM_RTStruct );
-      DicomReaderRTStruct* structRead = (DicomReaderRTStruct*)(structReaders[0]);
-      DicomPolygonSet* polygonSet = structRead->GetPolygonSet();
-      std::vector<DicomVLineList*> lineLists = polygonSet->GetLineLists();
-      /*      for( size_t ipl = 0; ipl < lineLists.size(); ipl++ ) {
-		G4cout << ipl << " Mgr: " << lineLists.size() << " DicomReaderMgr ineList" << lineLists[ipl]->GetName() << " N " << lineLists[ipl]->GetLines().size() << G4endl; //GDEB
-		}*/
+
+    if( imgMergedReaderCT ) CreateImagesCT( imgMergedReaderCT );
     
-      if( bVoxelsInUseClosest ) {
-	DicomPolygonSet* polygonSetNew = new DicomPolygonSet(polygonSet, imageDicomStructures, polygonSet->GetOrientation() );
-	structRead->FindVoxelsInXY( imageDicomStructures, polygonSetNew );
-	delete polygonSetNew;
-      } else {
-	structRead->FindVoxelsInXY( imageDicomStructures, polygonSet );
-      }	  
-    }
+  }
+
+    //----- Interfile
+  if( ZOrderedReadersCT.size() != 0 ) {
+    /*   copy dicomReaderInterfile to DicomReaderCT 
+    DicomReaderCT* imgMergedReaderCT = 0;
+    if( imgMergedReaderCT ) CreateImagesCT( imgMergedReaderCT );*/
+
+
+    
+
+    
+    
   }
   
   //----- NM
@@ -324,6 +294,57 @@ void DicomReaderMgr::CreateImages()
     }
   }
   
+}
+
+
+//-----------------------------------------------------------------------------
+void DicomReaderMgr::CreateImagesCT( DicomReaderCT* imgMergedReaderCT )
+{
+  imgMergedReaderCT->DICOMCreateImages();
+  
+  //----- Special case for DICOM CT and DICOM RTStruct (create structure image in g4dcm)
+  //--- First resize g4dcm density image and then redo g4dcm mate ID image
+  DicomVOperator* operResize = theDicomMgr->FindOperator("DicomOperResize");
+#ifndef GAMOS_NO_VERBOSE
+  if( DicomVerb(infoVerb) ) G4cout << " operResize " << operResize << std::endl; 
+#endif
+  DicomVImage* imageDens = imgMergedReaderCT->GetMateDensImage();
+  if( operResize ) {
+    if( imageDens != 0 ) {  // NOT IF drawDICOM -fCT
+      operResize->Operate(imageDens);
+      imgMergedReaderCT->RecalculateMateIDFromMateDens();
+    } else {
+      operResize->Operate(imgMergedReaderCT->GetImage());
+    }
+  }
+  //--- Calculate g4dcm structure image
+  std::vector<DicomVReader*> structReaders = GetReaders(DRM_RTStruct,false);
+  size_t nSt = structReaders.size();
+  if( nSt != 0 ) {
+    //--- Only one RTStruct is allowed to build g4dcm CT
+    if( nSt != 1 ) {
+      G4Exception("DicomReaderMgr::CreateImages",
+		  "",
+		  FatalException,
+		  "Only one RTStruct is allowed to build g4dcm CT");
+    }
+    DicomVImageStr* imageDicomStructures = new DicomVImageStr( imageDens, "RTStruct", DIM_RTStruct );
+    DicomReaderRTStruct* structRead = (DicomReaderRTStruct*)(structReaders[0]);
+    DicomPolygonSet* polygonSet = structRead->GetPolygonSet();
+    std::vector<DicomVLineList*> lineLists = polygonSet->GetLineLists();
+    /*      for( size_t ipl = 0; ipl < lineLists.size(); ipl++ ) {
+	    G4cout << ipl << " Mgr: " << lineLists.size() << " DicomReaderMgr ineList" << lineLists[ipl]->GetName() << " N " << lineLists[ipl]->GetLines().size() << G4endl; //GDEB
+	    }*/
+    
+    G4bool bVoxelsInUseClosest = DicomParameterMgr::GetInstance()->GetNumericValue("closestPolygon",1);
+     if( bVoxelsInUseClosest ) {
+      DicomPolygonSet* polygonSetNew = new DicomPolygonSet(polygonSet, imageDicomStructures, polygonSet->GetOrientation() );
+      structRead->FindVoxelsInXY( imageDicomStructures, polygonSetNew );
+      delete polygonSetNew;
+    } else {
+      structRead->FindVoxelsInXY( imageDicomStructures, polygonSet );
+    }	  
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -419,6 +440,7 @@ DicomReaderCT* DicomReaderMgr::MergeSlicesCT(mdri files)
   mdri::const_iterator ite2 = files.begin();
   countSliceThickness[ite2->second->GetMaxZ()-ite2->second->GetMinZ()] += 1;
   ite2++;
+  G4int nMergedSlices = 1;
   for ( mdri::const_iterator itePrev = files.begin(); ite2 != files.end(); itePrev++, ite2++ ) {
     G4double separ = fabs((itePrev->second->GetMinZ()+itePrev->second->GetMaxZ())/2.-(ite2->second->GetMinZ()+ite2->second->GetMaxZ())/2); // separation between the center of this slice and the previous one
     if( itePrev != files.begin() ) {
@@ -429,6 +451,7 @@ DicomReaderCT* DicomReaderMgr::MergeSlicesCT(mdri files)
     if( fabs(thick-countSliceThickness.begin()->first) < 1.e-6 ) thick = countSliceThickness.begin()->first;
     countSliceThickness[thick] += 1;
     //    G4cout << " SLICE_SEPARATION " << separ << " THICKNESS " << ite2->second->GetMaxZ()-ite2->second->GetMinZ() << "  NSEPAR=" << countSliceSeparation.size() << " NTHICK=" << countSliceThickness.size() << G4endl; //GDEB
+    nMergedSlices++;
   }
   if( countSliceSeparation.size() == 1 && countSliceThickness.size() == 1 ) {
     G4double separ = countSliceSeparation.begin()->first;
@@ -451,8 +474,10 @@ DicomReaderCT* DicomReaderMgr::MergeSlicesCT(mdri files)
     if( ite == files.begin() ) {
       DicomReaderCT* rct = dynamic_cast<DicomReaderCT*>(ite->second);
       fileAll->SetOnlyHU( rct->IsOnlyHU() );
-    }
+    } 
   }
+  fileAll->SetNoVoxelsZ(nMergedSlices); // use only number of slices read, not all in set
+  
   return fileAll;
 
 }

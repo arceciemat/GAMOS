@@ -19,6 +19,7 @@ DetCountScatteringUA::DetCountScatteringUA()
 //----------------------------------------------------------------
 void DetCountScatteringUA::BeginOfRunAction( const G4Run* )
 {
+  SetHistoNameAndNumber("DetCountScatteringUA",theFilters,theClassifier);
   std::vector<G4String> vs;
   theVolumes = GmParameterMgr::GetInstance()->GetVStringValue("DetCountScatteringUA:VolumeNames",vs);
   std::vector<G4String> procNamesV; 

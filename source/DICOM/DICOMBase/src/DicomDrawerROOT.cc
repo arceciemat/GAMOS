@@ -281,7 +281,7 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
   canvas->SetCanvasSize(theCanvasNPixelsX,theCanvasNPixelsY*(imMaxY-imMinY)/(imMaxX-imMinX));
 
   if( DicomVerb(debugVerb) ) {
-    std::cout << " DrawXY IMAGE NAME " << image->GetName() << " " << DicomVImage::GetModalityStr( image->GetModality() )<< std::endl; //GDEB
+    std::cout << " DrawXY IMAGE NAME " << image->GetName() << " " << DicomVImage::GetModalityStr( image->GetModality() )<< std::endl;
   }
   std::vector<G4double>* imgDatap = image->GetData();
   G4double* imgData = &(imgDatap->at(0));
@@ -419,7 +419,7 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
 	lineSet->RotateXY180( 180.*CLHEP::deg, imgCentre );
 	lineSet->SetHasBeenRotatedXY180( true );
       } 
-      //      G4cout << " DicomDrawerROOT::DrawXY DrawLinesXY " << imMinZ+iz*imWidthZ << G4endl; //GDEB
+      //      G4cout << " DicomDrawerROOT::DrawXY DrawLinesXY " << lineSet->GetName() << " " << imMinZ+iz*imWidthZ << G4endl; //GDEB      
       DrawLinesXY( lineSet, imMinZ+iz*imWidthZ, imMinZ+(iz+1)*imWidthZ);
     }
     
@@ -718,17 +718,16 @@ void DicomDrawerROOT::DrawLinesYZ( DicomVLineSet* lineSet, G4double minX, G4doub
 //-----------------------------------------------------------------------------
 void DicomDrawerROOT::DrawLines( DicomVLineSet* lineSet, G4double minPos, G4double maxPos, size_t ix, size_t iy, DPOrientation orient)
 {
-  //  G4cout << " DicomDrawerROOT::DrawLines lineSet " << lineSet << " " << DicomVLine::GetOrientationName(lineSet->GetOrientation()) << " =? " << DicomVLine::GetOrientationName(orient) << G4endl; //GDEB
+  G4cout << " DicomDrawerROOT::DrawLines lineSet " << lineSet->GetName() << " " << DicomVLine::GetOrientationName(lineSet->GetOrientation()) << " =? " << DicomVLine::GetOrientationName(orient) << G4endl; //GDEB
 
   if( lineSet->GetOrientation() != orient ) return;
   std::vector<DicomVLineList*> lineLists = lineSet->GetLineLists();
   for( size_t ill = 0; ill < lineLists.size(); ill++ ) {
-    if( DicomVerb(testVerb) ) G4cout << " DicomDrawerROOT::DrawLines " << lineLists[ill]->GetName() << G4endl;
     std::vector<DicomVLine*> lines = lineLists[ill]->GetLines();
-    //    G4cout << " N LINES " <<  lines.size()<< G4endl;  //GDEB
+    if( DicomVerb(testVerb) ) G4cout << " DicomDrawerROOT::DrawLines " << lineLists[ill]->GetName() << " N LINES " <<  lines.size()<< G4endl;  
     for( size_t il = 0; il < lines.size(); il++ ) {
       G4double planePos = lines[il]->GetPlanePosition();
-      if( DicomVerb(testVerb) ) G4cout << " DicomDrawerROOT::DrawLines ?? LINE " << lineLists[ill]->GetName() << " ZPOS " << minPos <<  " <? " << planePos << " <? " << maxPos << G4endl;
+      if( DicomVerb(testVerb) ) G4cout << il << " DicomDrawerROOT::DrawLines ?? LINE " << lineLists[ill]->GetName() << " ZPOS " << minPos <<  " <? " << planePos << " <? " << maxPos << G4endl;
       if( planePos >= minPos && planePos <= maxPos ) {
 	if( DicomVerb(testVerb) ) G4cout << " DicomDrawerROOT::DrawLines LINE OK " << lineLists[ill]->GetName() << " ZPOS " << planePos << G4endl; 
 	std::vector<G4ThreeVector> points = lines[il]->GetPoints();

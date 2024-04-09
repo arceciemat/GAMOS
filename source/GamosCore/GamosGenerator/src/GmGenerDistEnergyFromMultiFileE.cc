@@ -67,6 +67,7 @@ void GmGenerDistEnergyFromMultiFileE::SetParams( const std::vector<G4String>& pa
   G4double ener = GmGenUtils::GetValue(params[0]);
   std::map<G4double,GmGenerDistEnergyFromFile*>::iterator ite = theEnergyDists.find(ener);
   if( ite == theEnergyDists.end() ) {
+    G4cerr << " Available Energies: " << G4endl;
     for( ite = theEnergyDists.begin(); ite != theEnergyDists.end(); ite++ ) {
       G4cerr << " ENER " << ite->first << G4endl;
     }

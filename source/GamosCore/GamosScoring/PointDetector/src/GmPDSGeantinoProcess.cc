@@ -269,11 +269,12 @@ void GmPDSGeantinoProcess::ChangeGeantinoWeight(const G4Step* aStep)
     //  G4double nmfp = aStep->GetStepLength() / aTrack->GetMaterial()->GetNuclearInterLength();
     
 #ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb) ) G4cout << "  GmPDSGeantinoProcess::ChangeGeantinoWeight:  old weight " <<  GetWeight(aTracknc) << G4endl;
+    //    if( ScoringVerb(debugVerb) ) G4cout << "  GmPDSGeantinoProcess::ChangeGeantinoWeight:  old weight " <<  GetWeight(aTracknc) << G4endl;
+    G4double old_weight = GetWeight(aTracknc);
 #endif
     SetWeight( aTracknc, GetWeight(aTracknc) * exp(-nmfp) );
 #ifndef GAMOS_NO_VERBOSE
-    G4cout <<  ScoringVerb(debugVerb) <<"  GmPDSGeantinoProcess::ChangeGeantinoWeight : ener " << aTrack->GetKineticEnergy() << "  nmfp " << nmfp << " exp(-nmfp) " << exp(-nmfp) << " new weight " << GetWeight(aTracknc) << G4endl;
+    G4cout <<  ScoringVerb(debugVerb) <<"  GmPDSGeantinoProcess::ChangeGeantinoWeight : old_weight=" << old_weight << " new_weight= " << GetWeight(aTracknc) << " mate= " << aStep->GetTrack()->GetVolume()->GetLogicalVolume()->GetMaterial()->GetName() << " ener=" << aTrack->GetKineticEnergy()  << " XS= " << XS << " dist= " << dist << " nmfp=" << nmfp << " exp(-nmfp)= " << exp(-nmfp)  << G4endl;
 #endif
 
   }

@@ -62,7 +62,7 @@ G4ThreeVector GmRegularParamUtils::GetPhantomMotherTranslation( G4bool bMustExis
     delete *ite;
   }
 
-  G4cout << phantomVol->GetName() << " GmRegularParamUtils::GetPhantomMotherTranslation " << translation << " global " << touch->GetGlobalPosition() << G4endl;
+  //  G4cout << phantomVol->GetName() << " GmRegularParamUtils::GetPhantomMotherTranslation " << translation << " global " << touch->GetGlobalPosition() << G4endl; //GDEB
   return translation;
   
 }
@@ -78,7 +78,7 @@ G4RotationMatrix GmRegularParamUtils::GetPhantomMotherRotation( G4bool bMustExis
   GmTouchable* touch = touchs[0];
   rotation = touch->GetGlobalRotation();
   
-  G4cout << phantomVol->GetName() << " GmRegularParamUtils::GetPhantomMotherRotation " << rotation << " global " << touch->GetGlobalRotation() << G4endl;
+  //  G4cout << phantomVol->GetName() << " GmRegularParamUtils::GetPhantomMotherRotation " << rotation << " global " << touch->GetGlobalRotation() << G4endl; //GDEB
   for( std::vector<GmTouchable*>::const_iterator ite = touchs.begin(); ite != touchs.end(); ite++ ) {
     delete *ite;
   }

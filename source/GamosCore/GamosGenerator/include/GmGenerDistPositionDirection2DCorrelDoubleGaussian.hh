@@ -30,6 +30,11 @@ public:
   virtual void SetParamsEnergy( G4String energy );
 
   virtual void SetDirection( G4ThreeVector dir );
+  virtual void SetRotation( G4RotationMatrix& rotm );
+  virtual void SetRotation( G4ThreeVector dir ){
+    GmVGenerDistPosition2D::SetRotation(dir);
+  }
+ 
   virtual void SetCentre( G4ThreeVector pos );
 
 private:

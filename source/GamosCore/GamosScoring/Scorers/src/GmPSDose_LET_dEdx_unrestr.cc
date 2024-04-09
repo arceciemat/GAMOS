@@ -41,11 +41,15 @@ G4bool GmPSDose_LET_dEdx_unrestr::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   G4double weight = aStep->GetPreStepPoint()->GetWeight(); 
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) {
+    G4StepPoint* preStep = aStep->GetPreStepPoint();
     G4cout << "  GmPSDose_LET_dEdx_unrestr::ProcessHits doselet " << doselet
 	   << " let " << let
-	   << " doselet " << doselet
 	   << " eSeco " << eSeco
 	   << " eeLoss " << eeLoss
+	   << " Energy " << (aStep->GetPreStepPoint()->GetKineticEnergy()+aStep->GetPostStepPoint()->GetKineticEnergy())/2.
+	   << " Mate " << preStep->GetMaterial()->GetName()
+	   << " Dens " << preStep->GetMaterial()->GetDensity()/(CLHEP::g/CLHEP::cm3)
+	   << " Pos " << preStep->GetPosition().x() << " " << preStep->GetPosition().y() << " " << preStep->GetPosition().z() 
 	   << G4endl;
 }
 #endif

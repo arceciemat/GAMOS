@@ -2,6 +2,7 @@
 # define SEAL_BASE_SYSAPI_FILE_NAME_LOCK_H
 
 //<<<<<< INCLUDES                                                       >>>>>>
+#define HAVE_SYS_SYSCTL_H 0
 
 # include "SealBase/config.h"
 # include <cerrno>

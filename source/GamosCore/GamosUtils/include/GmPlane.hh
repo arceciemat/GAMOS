@@ -4,6 +4,8 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 #include "G4Plane3D.hh"
+#include "G4Normal3D.hh"
+#include "G4Point3D.hh"
 
 class GmPlane : G4Plane3D
 {

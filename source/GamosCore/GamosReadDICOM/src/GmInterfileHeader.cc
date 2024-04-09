@@ -10,7 +10,7 @@ GmInterfileHeader::GmInterfileHeader()
   theDataType = "test";
   theNoBytesPerPixel = 4;
   theNDimensions = 3;
-  theNumberFormat = "float";
+  theNumberFormat = "";
   theMatrixAxisLabels[1] = "x";
   theMatrixAxisLabels[2] = "y";
   theMatrixAxisLabels[3] = "z";
@@ -88,12 +88,15 @@ void GmInterfileHeader::Read( std::ifstream* fin )
     } else if( stemp.find("scaling factor (mm/pixel) [") != std::string::npos ) {
       idDVal = getIdDVal(stemp);
       if( idDVal.first == 1 ) {
-	theVoxelDimX = idDVal.second;
+	theVoxelDimX = idDVal.second; 
       } else if( idDVal.first == 2 ) {
 	theVoxelDimY = idDVal.second;
       } else if( idDVal.first == 3 ) {
 	theVoxelDimZ = idDVal.second;
-      }      
+      }
+      double aa = idDVal.second;
+      theVoxelDimX = aa;
+      G4cout << aa << " scaling " <<  idDVal.first << " " <<  idDVal.second << " XYZ "<< theVoxelDimX << " " << theVoxelDimY << " " << theVoxelDimZ << G4endl;//GDEB
     } else if( stemp.find("offset [") != std::string::npos ) {
       idDVal = getIdDVal(stemp);
       if( idDVal.first == 1 ) {
@@ -107,7 +110,8 @@ void GmInterfileHeader::Read( std::ifstream* fin )
       theNoBytesPerPixel = getDVal(stemp); // TO BE IMPLEMENTED
     } else if( stemp.find("name of data file") != std::string::npos ) {
       theDataFileName = getSVal(stemp);
-    } else if( stemp.find("!number format") != std::string::npos ) {
+    } else if( stemp.find("!number format") != std::string::npos || 
+	       stemp.find("number format") != std::string::npos ) {
       theNumberFormat = getSVal(stemp);
     }
   }

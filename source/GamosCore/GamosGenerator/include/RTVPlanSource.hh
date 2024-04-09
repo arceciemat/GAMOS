@@ -35,7 +35,8 @@ public:
   virtual void AssociatePlanVolumes( std::vector<G4String> wl );
   virtual void AssociatePlanLimitingDeviceAngle( std::vector<G4String> wl );
   virtual void DefineAcceleratorVolume( std::vector<G4String> wl );
-
+  void AssociateBeamVolumes( std::vector<G4String> wl );
+  
   size_t GetNoBeams() const {
     return theBeams.size();
   }
@@ -58,6 +59,7 @@ protected:
   void BuildRTPlan2G4Associations();
   void MoveAccelerator(const RTBeamStateData& spdata);
   void MovePhantom(const RTBeamStateData& spdata);
+  void BuildRTBeam2G4Associations();
 
   void PredictInitialDisplacement(const RTBeamStateData& spdata );
 
@@ -106,6 +108,7 @@ protected:
   std::map<G4String,GmVModule*> theRTPlanGmModuleAssoc; 
   std::map<G4String,G4String> theRTPlanVoluAssoc;
   std::map<G4String,std::vector<G4VPhysicalVolume*> > theRTPlanG4PVsAssoc;
+  std::vector<G4String> theRTBeamVoluAssoc;
   G4String theLDAVolu;
   G4VPhysicalVolume* theLDAG4PV;
   G4String theAcceleratorVolume;
@@ -113,7 +116,10 @@ protected:
   G4ThreeVector theAcceleratorInitialPos;
   G4ThreeVector theOrigPhantomTranslation;
   G4RotationMatrix theOrigPhantomRotMat;
-
+  std::vector<G4VPhysicalVolume*> theRTBeamG4PVs;
+  std::vector<G4ThreeVector> theRTBeamPosition;
+  std::vector<G4RotationMatrix> theRTBeamRotation;
+  
   G4bool bCoordSystemPatient;
   GmVGenerDistPosition2D* thePositionDistribution2D;
 
@@ -132,6 +138,7 @@ protected:
 
   G4bool bRTHistoControlPoint;
   G4double theLastLimitingDeviceAngle;
+  G4bool bPhantomMoved;
 };
 
 #endif // RTVPlanSource_H

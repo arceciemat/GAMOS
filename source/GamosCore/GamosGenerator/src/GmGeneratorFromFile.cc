@@ -23,7 +23,7 @@ void GmGeneratorFromFile::ReadIsotopeAtomicNumbers()
     if( !fin.GetWordsInLine( wl ) ) break;
     if( wl[0] == ":ISOT" ) {
       G4String::size_type ic1 = wl[1].find("_");
-      G4int icN;
+      G4int icN = 0;
       for( unsigned int ii = 0; ii < ic1; ii++ ) {
 	if( GmGenUtils::IsNumber( wl[1][ii] ) ) {
 	  icN = ii;

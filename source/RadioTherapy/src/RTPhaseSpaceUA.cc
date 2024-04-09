@@ -296,10 +296,11 @@ void RTPhaseSpaceUA::StoreTrackRecord( const G4Step* aStep, G4double zstop)
     KineticEnergyMeV=preE+(E-preE)*(zstop-preR.z())/(postR.z()-preR.z());
     break;
   default:
+    p_iaea_record->particle = 9; // other
     G4Exception("RTPhaseSpaceUA::StoreTrackRecord:",
-		" particle code not supported ",
+		" particle code not supported, particle not saved ",
 		JustWarning,
-		G4String("particle: "+GmGenUtils::itoa(pdgCode)).c_str() );
+		G4String("particle: "+GmGenUtils::itoa(pdgCode)+aTrack->GetParticleDefinition()->GetParticleName()).c_str() );
     return;
   }
 

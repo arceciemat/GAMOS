@@ -20,10 +20,7 @@ public:
   G4ThreeVector GetPos0() const {
     return thePos0;
   }
-  void SetPos0( G4ThreeVector lp0 ) {
-    thePos0 = lp0;
-    bUsePos0 = true;
-  }
+  void SetPos0( G4ThreeVector lp0 );
 
 private:
   G4ThreeVector thePos0; // position to mark 0 value in GetDistanceTo0()

@@ -83,6 +83,8 @@ G4double GmComputeDEDX::GetElectronicDEDX(G4Step* aStep, G4bool bRestricted)
   
   if( !bRestricted ) {
     let = emCalculator.ComputeElectronicDEDX( kinEAver, part, mate, DBL_MAX);
+    //-    let = emCalculator.ComputeElectronicDEDX( preStepPoint->GetKineticEnergy(), part, mate, DBL_MAX);
+    
     /* gives the same as restricted because the 3 models for protons are
     - G4BetheBlochModel::ComputeDEDXPerVolume  
      G4double tmax      = MaxSecondaryEnergy(p, kineticEnergy); =

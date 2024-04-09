@@ -61,9 +61,9 @@ public:
       short read_particle();
       short write_particle();
       short initialize();
-
-private:
-  int sizeExtraLong;
+      void copy(iaea_record_type *record2);
+      // private:
+      int sizeExtraLong;
 };
 
 #endif

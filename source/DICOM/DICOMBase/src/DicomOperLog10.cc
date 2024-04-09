@@ -10,17 +10,20 @@
 DicomOperLog10::DicomOperLog10( G4int iOrder, G4String name )
   : DicomVOperator( iOrder, name )    
 {
+  //  G4cout << "DicomOperLog10::DicomOperLog10  " << G4endl; //GDEB
+   
 }
 
 //-----------------------------------------------------------------------------
 void DicomOperLog10::Operate( DicomVImage* image )
 {
+  //   G4cout << " DicomOperLog10::Operate(  " << G4endl; //GDEB
   size_t nVox = image->GetNoVoxels();
   std::vector<G4double>* data = image->GetData();
   G4double* dataP = &(data->at(0));
   for( size_t ii = 0; ii < nVox; ii++, dataP++ ) {
     if( (*dataP) != 0 ) {
-      //      G4cout << " DicomOperLog10 " << (*dataP) << " -> " << log10(*dataP) << G4endl; //GDEB
+      //     G4cout << " DicomOperLog10 " << (*dataP) << " -> " << log10(*dataP) << G4endl; //GDEB
       (*dataP) = log10(*dataP);
     } else {
       (*dataP) = -99;

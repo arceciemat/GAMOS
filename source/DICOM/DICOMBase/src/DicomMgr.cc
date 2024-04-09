@@ -30,7 +30,7 @@ DicomMgr* DicomMgr::GetInstance()
 DicomMgr::DicomMgr()
 {
   theInPolygonNCheck = 4;
-  bRotateXY180 = false;
+  bRotateXY180 = true;
   bImagePositionPatientIsPosVoxelCentre = true;
   
 #ifndef ROOT5
@@ -84,7 +84,7 @@ void DicomMgr::OperateAll()
 #ifndef GAMOS_NO_VERBOSE
 	  if( DicomVerb(infoVerb) ) G4cout << "DicomMgr::OperateAll Operator " << oper->GetName() << " on image " << image->GetName() << G4endl;
 #endif
-	  oper->Operate( image );
+ 	  oper->Operate( image );
 	}
       }
     }

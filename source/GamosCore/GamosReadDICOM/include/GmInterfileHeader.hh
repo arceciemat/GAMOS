@@ -113,7 +113,7 @@ private:
   std::string getSVal(std::string stemp);
   
   size_t theNoVoxelsX,theNoVoxelsY,theNoVoxelsZ;
-  size_t theVoxelDimX,theVoxelDimY,theVoxelDimZ;
+  float theVoxelDimX,theVoxelDimY,theVoxelDimZ;
   float theMinX,theMinY,theMinZ;
   float theNoEvent;  // it can be fractional, as obtained with the fraction of events that reach the phase space
   std::string theDataFileName;

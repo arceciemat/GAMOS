@@ -54,6 +54,7 @@
 #include <cmath>
 #include "iaea_utilities.hh"
 #include "iaea_header.hh"
+#include <iostream>
 
 //#include <limits.h>
 
@@ -1038,4 +1039,69 @@ int iaea_header_type::print_header ()
       print_statistics();
 
     return(OK);  
+}
+
+void iaea_header_type::copy(iaea_header_type *header2)
+{
+  file_type = header2->file_type;
+  byte_order = header2->byte_order;
+  /*  for( int ii = 0; ii < 9; ii++ ) {
+    std::cout << " REDCONTBEFCOPIED " << record_contents[ii] << " = " << header2->record_contents[ii] << std::endl; //GDEB
+    }*/
+  for( int ii = 0; ii < 9; ii++ ) {
+    record_contents[ii] = header2->record_contents[ii];
+  }
+  //??  memcpy(record_contents,header2->record_contents,9) ;
+  /*  for( int ii = 0; ii < NUM_EXTRA_FLOAT; ii++ ) {
+    std::cout << " REDCONTCOPIED " << record_contents[ii] << " = " << header2->record_contents[ii] << std::endl; //GDEB
+    } */
+  //  memcpy(record_constant,header2->record_constant,7);
+  for( int ii = 0; ii < NUM_EXTRA_LONG; ii++ ) {
+    record_constant[ii] = header2->record_constant[ii];
+  }
+  memcpy(extrafloat_contents,header2->extrafloat_contents,NUM_EXTRA_FLOAT);
+  memcpy(extralong_contents,header2->extralong_contents,NUM_EXTRA_LONG);
+  record_length = header2->record_length;
+  checksum= header2->checksum  ;
+  memcpy(coordinate_system_description,header2->coordinate_system_description,MAX_STR_LEN*MAX_NUMB_LINES+1);
+  orig_histories = header2->orig_histories;
+  nParticles = header2->nParticles;
+  for( int ii = 0; ii < MAX_NUM_PARTICLES; ii++ ) {
+    particle_number[ii] = header2->particle_number[ii];
+  }
+  //  memcpy(particle_number,header2->particle_number,MAX_NUM_PARTICLES);
+  memcpy(input_file_for_event_generator,header2->input_file_for_event_generator,MAX_STR_LEN*MAX_NUMB_LINES+1);
+  iaea_index = header2->iaea_index;
+  memcpy(title,header2->title,MAX_STR_LEN*MAX_NUMB_LINES+1);
+  memcpy(machine_type,header2->machine_type,MAX_STR_LEN*MAX_NUMB_LINES+1);
+  memcpy(MC_code_and_version,header2->MC_code_and_version,MAX_STR_LEN*MAX_NUMB_LINES+1);
+  global_photon_energy_cutoff = header2->global_photon_energy_cutoff;
+  global_particle_energy_cutoff = header2->global_particle_energy_cutoff  ;
+  //  transport_parameters = header2->transport_parameters;
+  //  beam_name  = header2->beam_name   ;
+  // field_size = header2->field_size  ;
+  // nominal_SSD = header2->nominal_SSD ; 
+  // variance_reduction_techniques = header2->variance_reduction_techniques  ;
+  // initial_source_description = header2->initial_source_description;
+  //  MC_input_filename = header2->MC_input_filename  ;
+  // published_reference = header2->published_reference;
+  // authors = header2->authors  ;
+  // institution = header2->institution  ;
+  // link_validation = header2->link_validation;
+  // additional_notes = header2->additional_notes;
+  for( int ii = 0; ii < MAX_NUM_PARTICLES; ii++ ) {
+    averageKineticEnergy[ii] = header2->averageKineticEnergy[ii]*header2->sumParticleWeight[ii]; // it is printed after division
+    sumParticleWeight[ii] = header2->sumParticleWeight[ii];
+    maximumKineticEnergy[ii] = header2->maximumKineticEnergy[ii];
+    minimumKineticEnergy[ii] = header2->minimumKineticEnergy[ii];
+    minimumWeight[ii] = header2->minimumWeight[ii];
+    maximumWeight[ii] = header2->maximumWeight[ii];
+  }
+  minimumX = header2->minimumX;
+  maximumX = header2->maximumX;
+  minimumY = header2->minimumY;
+  maximumY = header2->maximumY;
+  minimumZ = header2->minimumZ;
+  maximumZ = header2->maximumZ;
+  read_indep_histories = header2->read_indep_histories;
 }

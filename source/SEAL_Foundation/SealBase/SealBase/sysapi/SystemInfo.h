@@ -2,6 +2,7 @@
 # define SEAL_BASE_SYSAPI_SYSTEM_INFO_H
 
 //<<<<<< INCLUDES                                                       >>>>>>
+#define HAVE_SYS_SYSCTL_H 0
 
 # include "SealBase/config.h"
 # ifdef _WIN32

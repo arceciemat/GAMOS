@@ -80,6 +80,7 @@ void RTPhaseSpaceHistos::DefineHistoLimits()
 //---------------------------------------------------------------------
 void RTPhaseSpaceHistos::BookHistos(G4String partName, G4int index)
 {
+  G4cout << " RTPhaseSpaceHistos::BookHistos " << partName << " " << index << G4endl; //GDEB
   G4int hid = theParticleHistoIDs.size();
   theParticleHistoIDs[partName] = hid;
 
@@ -164,7 +165,7 @@ void RTPhaseSpaceHistos::FillHistos( iaea_record_type *p_iaea_record, G4double z
     BookHistos("gamma",index);
     BookHistos("e-",index);
     BookHistos("e+",index);
-    bHadrons = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("RTPhaseSpaceHistos:Hadrons",0));
+    bHadrons = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("RTPhaseSpaceHistos:Hadrons",1));
     
     if( bHadrons ) {
       BookHistos("neutron",index);
@@ -239,7 +240,7 @@ void RTPhaseSpaceHistos::FillHistos( EGSPhspParticle *particle, G4double zstop )
 }
 
 //----------------------------------------------------- ----------------
-void RTPhaseSpaceHistos::FillHistos( EGSPhspParticle * particle, G4int hid,              G4int zstopID, G4int index )
+void RTPhaseSpaceHistos::FillHistos( EGSPhspParticle * particle, G4int hid,  G4int zstopID, G4int index )
 {
   G4double posX = particle->thePosX;
   G4double posY = particle->thePosY;
@@ -261,7 +262,7 @@ void RTPhaseSpaceHistos::FillHistos( EGSPhspParticle * particle, G4int hid,     
 void RTPhaseSpaceHistos::FillHistos( G4double posX, G4double posY, G4double posR, G4double theta, G4double phi, G4double energy, G4double dirU, G4double dirV,  G4double dirW, G4double weight, G4int histoNumber )
 {
   //  if( weight != 1. ) G4cout << " weight " << G4endl;
-//  G4cout << "  RTPhaseSpaceHistos::FillHistos " << posX << " " << posY << " " << posR << " " << theta << " " << phi << " " << energy << " WEI " << weight << G4endl; //GDEB
+  //  G4cout << "  RTPhaseSpaceHistos::FillHistos " << posX << " " << posY << " " << posR << " " << theta << " " << phi << " " << energy << " WEI " << weight << " histoNumber " << histoNumber << G4endl; //GDEB
 //  G4cout << "  RTPhaseSpaceHistos::FillHistos " << posX << " WEI " << weight << G4endl; //GDEB
   theAnaMgr->GetHisto1(histoNumber+1)->Fill( posX, weight );
   /*  theAnaMgr->GetHisto1(histoNumber+1)->FillError( posX, weight );

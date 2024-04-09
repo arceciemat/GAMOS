@@ -140,7 +140,7 @@ G4double GmPDSInteractionAngleManager::GetHistoValue(const G4String& procname, c
         if (ScoringVerb(infoVerb)) {
             G4cerr << " GmPDSInteractionAngleManager::GetHistoValue:  no histogram found with enough entries, RETURNING 0.5 " << procname << " " << theEnergies.size() << G4endl;
             for (itepe = theEnergies.begin(); itepe != theEnergies.end(); itepe++) {
-                G4cerr << " ENERGIES " << (*itepe).first << " = " << procname << G4endl;
+                G4cerr << " ENERGIES " << (*itepe).first << " =? " << procname << G4endl;
             }
         }
 #endif

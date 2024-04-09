@@ -396,6 +396,9 @@ void GmGeometryUtils::DumpLV(G4LogicalVolume* lv, unsigned int leafDepth, std::o
     out << G4endl;
   }
   if( dumpVerbose >= 3) {
+    out << "  MATERIAL_PROP: " << *(lv->GetMaterial()) << G4endl;
+  }
+  if( dumpVerbose >= 3) {
     //----- dump solid
     DumpSolid( lv->GetSolid(), leafDepth, out );
   }

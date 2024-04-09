@@ -28,7 +28,7 @@ G4ThreeVector GmVGenerDistPosition2D::RotateAndTranslate( G4ThreeVector& posini 
 }
 
 //---------------------------------------------------------------------
-void GmVGenerDistPosition2D::SetRotation( G4RotationMatrix rot )
+void GmVGenerDistPosition2D::SetRotation( G4RotationMatrix& rot )
 {
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << " GmVGenerDistPosition2D::SetRotation ROT " << rot << G4endl;

@@ -24,6 +24,8 @@
 #include "GmRandomKillByParticleUA.hh"
 #include "GmSaveHistosAtRTCPUA.hh"
 #include "GmVisModelUA.hh"
+#include "GmStepRandomWeightUA.hh"
+#include "GmTrackRandomWeightUA.hh"
 
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
@@ -54,6 +56,8 @@ PLUGINSVC_FACTORY(GmPrintEMParamsUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmRandomKillByParticleUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmSaveHistosAtRTCPUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmVisModelUA,GmUserAction*())
+PLUGINSVC_FACTORY(GmStepRandomWeightUA,GmUserAction*())
+PLUGINSVC_FACTORY(GmTrackRandomWeightUA,GmUserAction*())
 
 #include "GmUtilsUAVerbosity.hh"
 PLUGINSVC_FACTORY(GmUtilsUAVerbosity,GmVVerbosity*())
@@ -90,6 +94,8 @@ DEFINE_GAMOS_USER_ACTION(GmPrintEMParamsUA);
 DEFINE_GAMOS_USER_ACTION(GmRandomKillByParticleUA);
 DEFINE_GAMOS_USER_ACTION(GmSaveHistosAtRTCPUA);
 DEFINE_GAMOS_USER_ACTION(GmVisModelUA);
+DEFINE_GAMOS_USER_ACTION(GmStepRandomWeightUA);
+DEFINE_GAMOS_USER_ACTION(GmTrackRandomWeightUA);
 
 #include "GamosCore/GamosBase/Base/include/GmVerbosityFactory.hh"
 #include "GmUtilsUAVerbosity.hh"

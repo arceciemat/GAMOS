@@ -17,7 +17,7 @@
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #endif
-G4bool GmGenerDistPositionDirection2DCorrelGaussian::bHistograms = true;
+G4bool GmGenerDistPositionDirection2DCorrelGaussian::bHistograms = false;
 
 //---------------------------------------------------------------------
 GmGenerDistPositionDirection2DCorrelGaussian::GmGenerDistPositionDirection2DCorrelGaussian()
@@ -57,10 +57,11 @@ G4ThreeVector GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition( Gm
   G4double randYp = CLHEP::RandGauss::shoot(0.,1.);
   G4double posY = theTriangularMatrixY[0][0]*randY+theTriangularMatrixY[0][1]*randYp;
   G4double dirY = theTriangularMatrixY[1][0]*randY+theTriangularMatrixY[1][1]*randYp;
-  // G4cout << " POSITION " << thePosition << "  DIRECTION " << theDirection << G4endl;
+  dirY *= -1;
+  //  G4cout << this << " POSITION " << thePosition << "  DIRECTION " << theDirection << G4endl; //GDEB
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition pos=" << posX << " " << posY << "   " <<theXYPhase/CLHEP::deg  << " TM= " << theTriangularMatrixX[0][0] << G4endl;
-  if( GenerVerb(debugVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GenerateDirection dir=" << dirX << " " << dirY << " TM= " << theTriangularMatrixX[1][1] << G4endl;
+  if( GenerVerb(debugVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition dir=" << dirX << " " << dirY << " TM= " << theTriangularMatrixX[1][1] << G4endl;
 #endif
   if( theXYPhase != 0. ) {
     G4double posXR = posX*cos(theXYPhase)+posY*sin(theXYPhase);
@@ -75,7 +76,12 @@ G4ThreeVector GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition( Gm
     dirX = dirXR;
     dirY = dirYR;
   }
-  thePosition = G4ThreeVector(posX,posY,0.)+theCentre;
+  thePosition = G4ThreeVector(posX,posY,0.);
+  thePosition *= theRotation;
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition before centre pos=" << thePosition << G4endl;
+#endif
+  thePosition += theCentre;
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition final pos=" << thePosition << " -center " << thePosition-theCentre << G4endl;
 #endif
@@ -89,7 +95,8 @@ G4ThreeVector GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition( Gm
   partSource->SetDirection(newDir);
   //  G4cout << this << "DIR=" << dirX << " " << dirY << "theAxisDir="<< theAxisDir << " " << theta << "=" << newDir.theta() << " " << phi << "=" << newDir.phi() << " GmGenerDistPositionDirection2DCorrelGaussian partSource direction " << partSource->GetDirection() << G4endl; //GDEB
   theDirection = newDir;
-  
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition final dir=" << dirX << " " << dirY << " " << theDirection << G4endl;
+
 #ifdef HISTOGRAMS
   //  G4cout << this <<" " << bHistogramsHere <<" FILL GmGenerDistPositionDirection2DCorrelGaussian::bHistograms = " << GmGenerDistPositionDirection2DCorrelGaussian::bHistograms << G4endl; //GDEB
   if( bHistogramsHere ) {
@@ -343,7 +350,9 @@ void GmGenerDistPositionDirection2DCorrelGaussian::SetDirection( G4ThreeVector d
   }
   thePerpDir = theAxisDir.cross(dirPP);
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(infoVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::SetDirection theAxisDir " << theAxisDir << " thePerpDir " << thePerpDir << G4endl;
+  if( GenerVerb(debugVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::SetDirection theAxisDir " << theAxisDir << " thePerpDir " << thePerpDir << G4endl;
 #endif
+  
+  theDirection = dir;
 
 }

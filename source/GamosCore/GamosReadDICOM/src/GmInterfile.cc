@@ -130,7 +130,7 @@ void GmInterfile::Read( FILE* fin )
     fread(fData,1,nVoxels*sizeof(float), fin);
     for( size_t ii = 0; ii < nVoxels; ii ++ ) {
       theData.push_back(fData[ii]);
-      G4cout << "  GmInterfile::Read( " << ii << " : " << fData[ii] << G4endl; //GDEB
+      //      G4cout << "  GmInterfile::Read( " << ii << " : " << fData[ii] << G4endl; //GDEB
     }
   } else if( theHeader->GetNumberFormat() == "double" ) {
     double *fData;
@@ -148,11 +148,45 @@ void GmInterfile::Read( FILE* fin )
     for( size_t ii = 0; ii < nVoxels; ii ++ ) {
       theData.push_back((long double)fData[ii]);
     }
+  } else if( theHeader->GetNumberFormat() == "signed integer" ) {
+     if(nBytesPerPixel == 1) {
+      int8_t *fData;
+      //theData = calloc( nVoxels,sizeof(int8_t));
+      fData = (int8_t*) malloc(nVoxels*sizeof(int8_t));
+      fread(fData,1,nVoxels*nBytesPerPixel, fin);
+      for( size_t ii = 0; ii < nVoxels; ii ++ ) {      
+	theData.push_back((int8_t)fData[ii]);
+      }
+   } else if(nBytesPerPixel == 2) {
+      int16_t *fData;
+      //theData = calloc( nVoxels,sizeof(int16_t));
+      fData = (int16_t*) malloc(nVoxels*sizeof(int16_t));
+      fread(fData,1,nVoxels*nBytesPerPixel, fin);
+      for( size_t ii = 0; ii < nVoxels; ii ++ ) {      
+	theData.push_back((int16_t)fData[ii]);
+	/*	if( ii%100000 == 0 ) {
+ 	  G4cout << ii << " data= " << fData[ii] << G4endl; //GDEB
+	  for(int16_t bit = sizeof(fData[ii])*8 - 1; bit >= 0; --bit) {
+	    std::cout << ((fData[ii] >> bit) & 1);
+	  }
+	  std::cout << std::endl;
+	}
+	}*/
+      }
+     } else if(nBytesPerPixel == 4) {
+      int32_t *fData;
+      //theData = calloc( nVoxels,sizeof(int32_t));
+      fData = (int32_t*) malloc(nVoxels*sizeof(int32_t));
+      fread(fData,1,nVoxels*nBytesPerPixel, fin);
+      for( size_t ii = 0; ii < nVoxels; ii ++ ) {      
+	theData.push_back((int32_t)fData[ii]);
+      }
+    }
   } else {
     G4Exception("GmInterfile::Read",
 		  "",
 		  FatalException,
-		  ("number format must be float or double or 'long double', it is "+ theHeader->GetNumberFormat()).c_str());
+		  ("number format must be float or double or 'long double or singed integer', it is "+ theHeader->GetNumberFormat()).c_str());
   }
 
 }

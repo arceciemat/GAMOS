@@ -28,6 +28,7 @@ private:
   GmUIcmdWithAString* AssociatePlanVolumesCmd;
   GmUIcmdWithAString* DefineAcceleratorVolumeCmd;
   GmUIcmdWithAString* AssociatePlanLDACmd;
+  GmUIcmdWithAString* AssociateBeamVolumesCmd;
 };
 
 #endif

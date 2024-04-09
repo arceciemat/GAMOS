@@ -312,7 +312,7 @@ std::vector<G4String> GmGenUtils::GetWordsInString( const G4String& stemp)
   std::vector<G4String> wordlist;
 
   //---------- Read a line of file:
-  //@@@@--- Cannot be read with a istream_iterator, becasuse it uses G4cout, and then doesn't read '\n'
+  //@@@@--- Cannot be read with a istream_iterator, because it uses G4cout, and then doesn't read '\n'
   //----- Clear wordlist
   G4int ii;
   const char* cstr = stemp.c_str();

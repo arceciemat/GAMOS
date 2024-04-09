@@ -71,10 +71,9 @@
 #include "G4AntiProton.hh"
 #include "G4KaonPlus.hh"
 #include "G4KaonMinus.hh"
-#include <set>
-
 #include "G4UAtomicDeexcitation.hh"
 #include "G4LossTableManager.hh"
+#include <set>
 
 // ----------------------------------------------------------------------------
 GmExtraPhysicsMessenger::GmExtraPhysicsMessenger()
@@ -255,133 +254,41 @@ void GmExtraPhysicsMessenger::AddPhysics(G4String newValue)
 // ----------------------------------------------------------------------------
 void GmExtraPhysicsMessenger::RemoveProcessesByType(G4String newValue)
 {
-  std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValue );
-  std::set<G4ProcessType> theProcessTypes; 
-  for( unsigned int ii = 0; ii < wl.size(); ii++ ){
-    if( wl[ii] == "NotDefined" ) {
-      theProcessTypes.insert(fNotDefined);
-    } else if( wl[ii] == "Transportation" ) {
-      theProcessTypes.insert(fTransportation);
-    } else if( wl[ii] == "Electromagnetic" ) {
-      theProcessTypes.insert(fElectromagnetic);
-    } else if( wl[ii] == "Optical" ) {
-      theProcessTypes.insert(fOptical);
-    } else if( wl[ii] == "Hadronic" ) {
-      theProcessTypes.insert(fHadronic);
-    } else if( wl[ii] == "Photolepton_hadron" ) {
-      theProcessTypes.insert(fPhotolepton_hadron);
-    } else if( wl[ii] == "Decay" ) {
-      theProcessTypes.insert(fDecay);
-    } else if( wl[ii] == "General" ) {
-      theProcessTypes.insert(fGeneral);
-    } else if( wl[ii] == "Parameterisation" ) {
-      theProcessTypes.insert(fParameterisation);
-    } else if( wl[ii] == "UserDefined" ) {
-      theProcessTypes.insert(fUserDefined);
-    } else {
-      G4Exception("GmExtraPhysicsMessenger::RemoveProcessesByType",
-		  (G4String("Unavailable process type: ")+wl[ii]).c_str(),
-		  FatalErrorInArgument,
-		  "Available types are: NotDefined, Transportation, Electromagnetic, Optical, Hadronic, Photolepton_hadron, Decay, General, Parameterisation, UserDefined");
-    }
-  }
-
-  G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleTable::G4PTblDicIterator* theParticleIterator = theParticleTable->GetIterator();
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-    G4ProcessVector* procVector = pmanager->GetProcessList();
-    for( G4int ii = procVector->size()-1; ii >= 0; ii-- ) {
-      //      std::set<G4ProcessType>::iterator itep =  theProcessTypes.begin(); 
-      //      G4cout << ii << " check RemoveProcess " << particle->GetParticleName() << " " << (*procVector)[ii]->GetProcessName() << " " << (*procVector)[ii]->GetProcessType() << " =? " << (*itep) << G4endl;
-      if( theProcessTypes.find( (*procVector)[ii]->GetProcessType() ) != theProcessTypes.end() ) {
-	pmanager->RemoveProcess( pmanager->GetProcessIndex( (*procVector)[ii] ) );
-#ifndef GAMOS_NO_VERBOSE
-	if( PhysicsVerb(debugVerb) ) G4cout << " GmExtraPhysicsMessenger::RemoveProcessesByType  RemoveProcess " << particle->GetParticleName() << " " << (*procVector)[ii]->GetProcessName() << G4endl;
-#endif
-      }
-    }
-
-  }
-
+  std::ostringstream message;
+  message << "!!!ERROR:  /gamos/physics/removeProcessesByType is deprecated " << G4endl
+	  << "Use instead  /process/inactivate name (particle) " << G4endl
+	  << "  name:     process name or type name" << G4endl
+	  << "  particle: particle name (all: for all particles)" << G4endl;
+  G4Exception("GmExtraPhysicsMessenger::RemoveProcessesByType", "",
+	      FatalException, message);
+    
 }
 
 // ----------------------------------------------------------------------------
 void GmExtraPhysicsMessenger::RemoveProcessesByName(G4String newValue)
 {
-  std::set<G4String> theProcessNames; 
-  std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValue );
-  for( unsigned int ii = 0; ii < wl.size(); ii++ ){
-    theProcessNames.insert(wl[ii]);
-  }
+  std::ostringstream message;
+  message << "!!!ERROR:  /gamos/physics/removeProcessesByName is deprecated " << G4endl
+	  << "Use instead  /process/inactivate name (particle) " << G4endl
+	  << "  name:     process name or type name" << G4endl
+	  << "  particle: particle name (all: for all particles)" << G4endl;
+  G4Exception("GmExtraPhysicsMessenger::RemoveProcessesByType", "",
+	      FatalException, message);
 
-  G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleTable::G4PTblDicIterator* theParticleIterator = theParticleTable->GetIterator();
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-    G4ProcessVector* procVector = pmanager->GetProcessList();
-    for( G4int ii = procVector->size()-1; ii >= 0; ii-- ) {
-      if( theProcessNames.find( (*procVector)[ii]->GetProcessName() ) != theProcessNames.end() ) {
-	pmanager->RemoveProcess( pmanager->GetProcessIndex( (*procVector)[ii] ) );
-#ifndef GAMOS_NO_VERBOSE
-	if( PhysicsVerb(debugVerb) ) G4cout << " GmExtraPhysicsMessenger::RemoveProcessesByName  RemoveProcess " << particle->GetParticleName() << " " << (*procVector)[ii]->GetProcessName() << G4endl;
-#endif
-      }
-    }
-  }
 }
 
 
 // ----------------------------------------------------------------------------
 void GmExtraPhysicsMessenger::RemoveProcessesByParticleAndName(G4String newValue)
 {
-  mmss thePartprocNames; 
-  std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValue );
-  if( wl.size()%2 != 0 ) {
-    for( unsigned int ii = 0; ii < wl.size(); ii++ ){
-      G4cerr << "PARAM= " << wl[ii] << G4endl;
-    }
-    G4Exception("GmExtraPhysicsMessenger::RemoveProcessesByParticleAndName",
-		"Wrong argument",
-		FatalErrorInArgument,
-		"Number of arguments has to be even: pairs of PARTICLE_NAME PROCESS_NAME");
-  }
-  
-  for( unsigned int ii = 0; ii < wl.size(); ii+=2 ){
-    thePartprocNames.insert(mmss::value_type(wl[ii],wl[ii+1]));
-  }
+  std::ostringstream message;
+  message << "!!!ERROR:  /gamos/physics/removeProcessesByName is deprecated " << G4endl
+	  << "Use instead  /process/inactivate name (particle) " << G4endl
+	  << "  name:     process name or type name" << G4endl
+	  << "  particle: particle name (all: for all particles)" << G4endl;
+  G4Exception("GmExtraPhysicsMessenger::RemoveProcessesByType", "",
+	      FatalException, message);
 
-  G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleTable::G4PTblDicIterator* theParticleIterator = theParticleTable->GetIterator();
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-    G4ProcessVector* procVector = pmanager->GetProcessList();
-    std::pair< mmss::iterator, mmss::iterator > itemmp = thePartprocNames.equal_range(particle->GetParticleName());
-    if( itemmp.first == itemmp.second ) continue;
-    for( G4int ii = procVector->size()-1; ii >= 0; ii-- ) {
-      //      G4cout << ii << " check RemoveProcess " << particle->GetParticleName() << " " << (*procVector)[ii]->GetProcessName() << " " << (*procVector)[ii]->GetProcessType() << " =? " << (*itep) << G4endl;
-      //?      if( find ( itemmp.first, itemmp.second, (*procVector)[ii]->GetProcessName() ) != itemmp.second ) {
-      mmss::iterator itemm; 
-      G4bool bFound = false;
-      for( itemm = itemmp.first; itemm != itemmp.second; itemm++ ){
-	if( (*itemm).second == (*procVector)[ii]->GetProcessName() ) {
-	  bFound = true;
-	  break;
-	}
-      }
-      if( bFound ) {
-	pmanager->RemoveProcess( pmanager->GetProcessIndex( (*procVector)[ii] ) );
-	G4cout << " RemoveProcess " << particle->GetParticleName() << " " << (*procVector)[ii]->GetProcessName() << G4endl;
-      }
-    }
-
-  }
 }
 
 // ----------------------------------------------------------------------------

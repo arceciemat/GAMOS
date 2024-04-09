@@ -103,7 +103,7 @@ GmVPrimitiveScorer::GmVPrimitiveScorer(G4String name)
     theSpectrumMaximum = GmParameterMgr::GetInstance()->GetNumericValue(primitiveName+":SpectrumMaximum",1.);
   }
 
-  CheckSpectrumDims();
+  //t  CheckSpectrumDims();
 }
 
 //--------------------------------------------------------------------

@@ -127,7 +127,7 @@ void GmParticleSource::SetDistributionPosition( const G4String& distName, const 
     G4Exception("GmParticleSource::SetDistributionPosition","Fatal error in argument",FatalErrorInArgument,G4String(" Distribution does not exist, check documentation ").c_str());
   }
   thePositionDistribution->SetName(distName);
-  
+
   thePositionDistribution->SetParticleSource( this );
   thePositionDistribution->CopyParams( wl );
   thePositionDistribution->SetParams( wl );
@@ -428,7 +428,7 @@ void GmParticleSource::BiasDirection()
       G4double val = (*ite).second->GetNumericValueFromIndex( theDirection.phi() );
       G4double rnd = CLHEP::RandFlat::shoot();
 #ifndef GAMOS_NO_VERBOSE
-      if( GenerVerb(testVerb) ) G4cout << "GmParticleSource::BiasDirection DirPhi " << rnd << " < " << val << G4endl; //GDEB
+      if( GenerVerb(testVerb) ) G4cout << "GmParticleSource::BiasDirection DirPhi " << rnd << " < " << val << G4endl; 
 #endif
       if( rnd < val ) {
 	theWeight /= val;	
@@ -500,7 +500,7 @@ G4ThreeVector GmParticleSource::PositionInLocalVolume( G4ThreeVector position )
 //-----------------------------------------------------------------------
 G4ThreeVector GmParticleSource::DirectionInLocalVolume( G4ThreeVector direction )
 {
-  G4ThreeVector dir1 = direction; //GDEB
+  //  G4ThreeVector dir1 = direction; //GDEB
   direction = theLocalVolumeRotation*direction;
   //  G4cout << " LocalVolume dir " << direction << " from " << dir1 << G4endl; //GDEB
 

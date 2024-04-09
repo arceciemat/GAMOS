@@ -18,7 +18,7 @@
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #endif
-G4bool GmGenerDistPositionDirection2DCorrelDoubleGaussian::bHistograms = true;
+G4bool GmGenerDistPositionDirection2DCorrelDoubleGaussian::bHistograms = false;
 
 //---------------------------------------------------------------------
 GmGenerDistPositionDirection2DCorrelDoubleGaussian::GmGenerDistPositionDirection2DCorrelDoubleGaussian()
@@ -30,11 +30,10 @@ GmGenerDistPositionDirection2DCorrelDoubleGaussian::GmGenerDistPositionDirection
   if( !GmGenerDistPositionDirection2DCorrelDoubleGaussian::bHistograms ) {
     bHistogramsHere = false;
   }
-  if( GmParameterMgr::GetInstance()->GetNumericValue("GmGenerDistPositionDirection2DCorrelDoubleGaussian:Histos",0) == 0 ) {
+  if( GmParameterMgr::GetInstance()->GetNumericValue("GmGenerDistPositionDirection2DCorrelDoubleGaussian:Histograms",1) == 0 ) {
     bHistogramsHere = false; //GDEB
     bHistograms = false; //GDEB
   }
-
   //  G4cout << this << " CREATE bHistogramsHere " << bHistogramsHere << " " << GmGenerDistPositionDirection2DCorrelDoubleGaussian::bHistograms << G4endl; //GDEB
 #endif
 
@@ -63,7 +62,7 @@ G4ThreeVector GmGenerDistPositionDirection2DCorrelDoubleGaussian::GeneratePositi
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelDoubleGaussian::GeneratePosition POS= " << thePosition << " DIR= " << theDirection << " " << bX1 << " " << bY1 << G4endl;
 #endif
-  //  ???  thePosition = theRotation * thePosition;
+  thePosition = theRotation * thePosition;
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelDoubleGaussian::GeneratePosition POS_afterROT= " << thePosition << G4endl;
 #endif
@@ -263,18 +262,46 @@ void GmGenerDistPositionDirection2DCorrelDoubleGaussian::SetParams( const std::v
 //---------------------------------------------------------------------
 void GmGenerDistPositionDirection2DCorrelDoubleGaussian::SetParamsEnergy( G4String energy )
 {
-  if (FILE *file = fopen((theConfFileNamePrefix+energy).c_str(), "r")) {
+  // try all options confE90 confE090 confE90.0 confE090.0
+  G4bool bFileOK = true;
+  G4String energyFinal = energy;
+  if(FILE *file = fopen((theConfFileNamePrefix+energy).c_str(), "r")) {
     fclose(file);
+    bFileOK = true;
   } else {
-    energy = "0"+energy;
+    //    G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+energy << " trying with " << theConfFileNamePrefix+"0"+energy << G4endl; //GDEB
+    bFileOK = false;    
   }
-  GmFileIn fin = GmFileIn::GetInstance(theConfFileNamePrefix+energy,true);
+  if (!bFileOK ) {
+    if (FILE *file = fopen((theConfFileNamePrefix+"0"+energy).c_str(), "r")) {
+      fclose(file);
+      bFileOK = true;
+      energyFinal = "0"+energy;
+    } else {
+      //      G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+"0"+energy << " trying with " << theConfFileNamePrefix+energy+".0" << G4endl; //GDEB
+      bFileOK = false;
+    }
+  }
+  if (!bFileOK ) {
+    if (FILE *file = fopen((theConfFileNamePrefix+energy+".0").c_str(), "r")) {
+      fclose(file);
+      bFileOK = true;
+      energyFinal = energy+".0";
+    } else {
+      //      G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+"0"+energy << " trying with " << theConfFileNamePrefix+"0"+energy+".0" << G4endl; //GDEB
+      bFileOK = false;
+    }
+  }
+  if (!bFileOK ) {
+    energyFinal = "0"+energy+".0";
+  } 
+  GmFileIn fin = GmFileIn::GetInstance(theConfFileNamePrefix+energyFinal,true);
   //  G4cout << " GmGenerDistPositionDirection2DCorrelDoubleGaussian::SetParamsEnergy " << theConfFileNamePrefix+energy << G4endl; //GDEB
   
   std::vector<G4String> params;
   fin.GetWordsInLine(params);
   fin.Close();
-  // G4cout << " GmGenerDistPositionDirection2DCorrelDoubleGaussian::SetParamsEnergy NPARAM " << params.size() << G4endl; //GDEB
+  //  G4cout << " GmGenerDistPositionDirection2DCorrelDoubleGaussian::SetParamsEnergy NPARAM " << params.size() << G4endl; //GDEB
 
   SetParams(params);
 #ifndef GAMOS_NO_VERBOSE
@@ -299,6 +326,7 @@ void GmGenerDistPositionDirection2DCorrelDoubleGaussian::SetDirection( G4ThreeVe
   theCorrelGaussianX2Y1->SetDirection(dir);
   theCorrelGaussianX2Y2->SetDirection(dir);
 
+  //  G4cout << " theCorrelGaussianX1Y1->SetDirection(dir); " << theCorrelGaussianX1Y1 << " " << theCorrelGaussianX1Y1->GetDirection() << G4endl; //GDEB
   //--- SetDirection of Position Dist (the one that calculates direction)
   GmVGenerDistDirection* dirDist = dynamic_cast<GmVGenerDistDirection*>(this);
   if( dirDist && dirDist->GetParticleSource() ) {
@@ -308,6 +336,29 @@ void GmGenerDistPositionDirection2DCorrelDoubleGaussian::SetDirection( G4ThreeVe
   }
 
 }
+
+//---------------------------------------------------------------------
+void GmGenerDistPositionDirection2DCorrelDoubleGaussian::SetRotation( G4RotationMatrix& rotm )
+{
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelDoubleGaussian::SetRotation " << rotm << G4endl;
+#endif
+  theCorrelGaussianX1Y1->SetRotation(rotm);
+  theCorrelGaussianX1Y2->SetRotation(rotm);
+  theCorrelGaussianX2Y1->SetRotation(rotm);
+  theCorrelGaussianX2Y2->SetRotation(rotm);
+
+  //  G4cout << " theCorrelGaussianX1Y1->SetRotation(rotm); " << theCorrelGaussianX1Y1 << " " << theCorrelGaussianX1Y1->GetRotation() << G4endl; //GDEB
+  //--- SetDirection of Position Dist (the one that calculates direction)
+  GmVGenerDistDirection* dirDist = dynamic_cast<GmVGenerDistDirection*>(this);
+  if( dirDist && dirDist->GetParticleSource() ) {
+    GmVGenerDistPosition* posDist = dirDist->GetParticleSource()->GetPositionDistribution();
+    GmGenerDistPositionDirection2DCorrelDoubleGaussian* posDistDG = dynamic_cast<GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(posDist);
+    posDistDG->SetRotation(rotm);
+  }
+
+}
+
 
 
 //---------------------------------------------------------------------

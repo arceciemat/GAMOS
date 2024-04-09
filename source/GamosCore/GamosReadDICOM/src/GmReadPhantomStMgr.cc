@@ -30,7 +30,7 @@ void GmReadPhantomStMgr::ReadStructEGS( GmFileIn& fin, G4int nVoxelX, G4int nVox
 
   theStIDs = new G4String[nVoxelX*nVoxelY*nVoxelZ];
 #ifndef GAMOS_NO_VERBOSE
-  if( ReadDICOMVerb(debugVerb) ) {
+  if( ReadDICOMVerb(-debugVerb) ) {
     G4cout << " GmReadPhantomStMgr::ReadStructEGS created theStIDs of size " << nVoxelX*nVoxelY*nVoxelZ << G4endl;
   }
 #endif
@@ -139,10 +139,13 @@ G4String GmReadPhantomStMgr::GetStID( size_t voxelID )
 //---------------------------------------------------------------------------
 std::set<size_t> GmReadPhantomStMgr::GetStIDList( size_t voxelID )
 {
+  G4cout << voxelID << G4endl; //GDEB
   G4String stid1 = theStIDs[voxelID];
   std::vector<G4String> stidlistStr = GmGenUtils::StringSplit(stid1,":");
+  G4cout << voxelID << " stid1 " << stid1 << " " << stidlistStr.size() << G4endl; //GDEB
   std::set<size_t> stIDList;
   for( size_t ii = 0; ii < stidlistStr.size(); ii++ ) {
+    G4cout << voxelID << " " << ii << " stidlistStr " << stidlistStr[ii] << G4endl; //GDEB
     stIDList.insert( GmGenUtils::GetInt(stidlistStr[ii]) );
   }
   

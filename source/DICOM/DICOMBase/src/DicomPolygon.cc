@@ -407,15 +407,19 @@ G4int DicomPolygon::GetPolygonZIndex( DicomVImage* image, G4double extraZ )
 	     << "Polygon Z= " << thePoints[0].z() << "+" << extraZ << " Image max Z= " << imMaxZ << " diff " << polyZ-imMaxZ << G4endl;
     if( polyZ - imMaxZ < image->GetPrecision() ) {
       iPolygonZ = imNoVoxelsZ-1;
-      G4Exception(" DicomPolygon::GetPolygonZIndex",
-		"",
-		  JustWarning,
-		  "Polygon Z is bigger than image maximum Z, probably due to precision. It will be set to image maximim Z");
+      if( DicomVerb(infoVerb) ) {
+	G4Exception(" DicomPolygon::GetPolygonZIndex",
+		    "",
+		    JustWarning,
+		    "Polygon Z is bigger than image maximum Z, probably due to precision. It will be set to image maximim Z");
+      }
     } else {
-      G4Exception(" DicomPolygon::GetPolygonZIndex",
-		  "",
-		  JustWarning,
-		  "Polygon Z is bigger than image maximum Z, it will not be used");
+      if( DicomVerb(infoVerb) ) { 
+	G4Exception(" DicomPolygon::GetPolygonZIndex",
+		    "",
+		    JustWarning,
+		    "Polygon Z is bigger than image maximum Z, it will not be used");
+      }
     }
   }
 

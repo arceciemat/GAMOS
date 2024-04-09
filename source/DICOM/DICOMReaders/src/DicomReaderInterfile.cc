@@ -228,7 +228,7 @@ void DicomReaderInterfile::ReadPixelData()
   theVoxelData = new std::vector<G4double>;
   for( size_t ii = 0; ii < nVoxels; ii++ ) {
     theVoxelData->push_back(DataRead[ii]*theRescaleSlope + theRescaleIntercept);
-    G4cout << " DicomReaderInterfile DATA " << ii << " : " << DataRead[ii]*theRescaleSlope + theRescaleIntercept << " " << DataRead[ii]<<"*"<<theRescaleSlope<<"+"<<theRescaleIntercept << G4endl; //GDEB
+     //    G4cout << " DicomReaderInterfile DATA " << ii << " : " << DataRead[ii]*theRescaleSlope + theRescaleIntercept << " " << DataRead[ii]<<"*"<<theRescaleSlope<<"+"<<theRescaleIntercept << G4endl; //GDEB
   }
   theDicomImage = CreateImage("Interfile", DIM_Interfile, true, true );
   

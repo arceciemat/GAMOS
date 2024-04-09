@@ -192,7 +192,7 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
        G4Exception("DicomVReaderImage::ReadHeaderAndPixels",
 		   "",
 		   JustWarning, //FatalException,
-		   "Error reading slice number, and GridFrameOffsetVector has also no information. Forcing thickness to be 1.");
+		   "Error reading slice number, and GridFrameOffsetVector has also no information. Forcing thickness to be 1 (temporarily, as this info is not saved in testCT.g4dcm)");
        //       "Error reading slice number, and GridFrameOffsetVector has also no information, file cannot be treated");
     }
     if( numberOfFrames > 1 ) {
@@ -246,7 +246,10 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
     
     theMinY = dImagePositionPatient[1]-dPixelSpacing[1]*0.5;
     theMaxY = dImagePositionPatient[1]+(dRows[0]-0.5)*dPixelSpacing[1];
-    
+
+    if( dSliceThickness.size() == 0 ) {
+      dSliceThickness.push_back(1.);
+    }
     theMinZ = dImagePositionPatient[2]-dSliceThickness[0]*0.5;
     G4cout << " theMinZ= " << theMinZ << " " << dImagePositionPatient[2] << " - " <<dSliceThickness[0] << "*0.5" <<  G4endl; //GDEB
     theMaxZ = dImagePositionPatient[2]+dSliceThickness[0]*(numberOfFrames-0.5);
@@ -284,7 +287,7 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
   //  std::vector<double> d = Read1Data(theDataset, DCM_, 1);
   
   theBitAllocated = Read1Data(theDataset, DCM_BitsAllocated, 1)[0];
-  if( DicomVerb(testVerb) ) G4cout << " BIT ALLOCATED " << theBitAllocated << G4endl; 
+  if( DicomVerb(-infoVerb) ) G4cout << " BIT ALLOCATED " << theBitAllocated << G4endl; 
 
   std::vector<double> vDoseGridScaling = Read1Data(theDataset, DCM_DoseGridScaling, 1);
   if( vDoseGridScaling.size() == 1 ) {
@@ -319,7 +322,7 @@ void DicomVReaderImage::ReadPixelData()
 {
   G4bool bPixelRepresentationSigned = false;
   std::vector<double> pixelRep = Read1Data(theDataset, DCM_PixelRepresentation, 1);
-  //  G4cout << " pixelRep. " << pixelRep.size() << G4endl; //GDEB
+  // G4cout << " pixelRep. " << pixelRep.size() << G4endl; //GDEB
   if( pixelRep.size() == 1 ) bPixelRepresentationSigned = G4bool(pixelRep[0]);
   if( DicomVerb(debugVerb) ) G4cout << " pixelRep. " << pixelRep[0] << " = " << bPixelRepresentationSigned << G4endl; 
   
@@ -375,7 +378,7 @@ void DicomVReaderImage::ReadPixelData()
 	(*current)->pixSeq->p
     */
     
-    if( DicomVerb(debugVerb) ) G4cout << " DicomVReaderImage::ReadPixelData:  result == EC_Normal Reading compressed data " << std::endl;
+    if( DicomVerb(infoVerb) ) G4cout << " DicomVReaderImage::ReadPixelData:  result == EC_Normal Reading compressed data " << std::endl;
     DcmPixelItem* pixitem = NULL;
     // Access first frame (skipping offset table)
     for( int ii = 1; ii < 2; ii++ ) {
@@ -469,7 +472,7 @@ void DicomVReaderImage::ReadPixelData()
 	    }
 	    theVoxelData->at(newCopyNo) = val;
 	    if( DicomVerb(testVerb) ) {
-	      //	      if( val1U != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << " = " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << "="  << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; //GDEB           
+	      if( val1U != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << " = " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << "="  << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; //GDEB           
 	    }	  
           }
         }
@@ -512,9 +515,9 @@ void DicomVReaderImage::ReadPixelData()
 	    } else {
 	      val = val1U;
 	    }
-	    //G4cout << ic+ir*theNoVoxelsX+iz*theNoVoxelsXY << " pixdata " << iz<<":"<<ir<<":"<<ic << " = " << pixData[ic+ir*theNoVoxelsX] << " ==> " << val << G4endl; //GDEB
+	    // G4cout << ic+ir*theNoVoxelsX+iz*theNoVoxelsXY << " pixdata " << iz<<":"<<ir<<":"<<ic << " = " << pixData[ic+ir*theNoVoxelsX] << " ==> " << val << G4endl; //GDEB
 	    val = val*theRescaleSlope*theDoseGridScaling + theRescaleIntercept;
-	    //	    G4cout << " FINAL val " << val << " " << theRescaleSlope << "*" << theDoseGridScaling <<"+" << theRescaleIntercept << G4endl; //GDEB
+	    //G4cout << " FINAL val " << val << " " << theRescaleSlope << "*" << theDoseGridScaling <<"+" << theRescaleIntercept << G4endl; //GDEB
 	    size_t newCopyNo;
 	    if( thePatientPosition == "HFS" || thePatientPosition == "" ) {
 	      newCopyNo = ic+ir*theNoVoxelsX+iz*theNoVoxelsXY;
@@ -532,7 +535,7 @@ void DicomVReaderImage::ReadPixelData()
 	    }
 	    theVoxelData->at(newCopyNo) = val;
 	    if( DicomVerb(testVerb) ) {
-	      // if( val != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << "  " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; //GDEB
+	      if( val != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << "  " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; //GDEB
 	    }	  
           }
 	}
@@ -601,7 +604,7 @@ void DicomVReaderImage::ReadPixelData()
     }
   }
 
-  G4cout << GetName() << "  DicomVReaderImage::ReadPixel READ  " << theVoxelData->size() << G4endl;
+  G4cout << GetName() << "  DicomVReaderImage::ReadPixelData READ  " << theVoxelData->size() << G4endl;
 
 }
 

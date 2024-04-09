@@ -15,6 +15,9 @@
 #include "G4LogicalVolume.hh"
 #include "G4ParticleTable.hh"
 #include "G4TransportationManager.hh"
+#include "G4GammaGeneralProcess.hh"
+#include "G4GammaConversionToMuons.hh"
+
 #include <iomanip>
 
 //------------------------------------------------------------------
@@ -127,15 +130,44 @@ void GmPDSCreateAngleTablesUA::Initialise( const G4Event* evt )
     if( particle->GetParticleName() == thePrimaryParticleName ){
 #ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
-     if( ScoringVerb(debugVerb) ) G4cout << "GmPDSCreateAngleTablesUA:  PARTICLE is " << particle->GetParticleName() << G4endl;
+      if( ScoringVerb(-debugVerb) ) G4cout << "GmPDSCreateAngleTablesUA:  PARTICLE is " << particle->GetParticleName() << G4endl;
 #endif
 #endif
-     pmanager = particle->GetProcessManager();
+      pmanager = particle->GetProcessManager();
+      G4ProcessVector* procVector = pmanager->GetProcessList();
+      for( G4int ii = procVector->size()-1; ii >= 0; ii-- ) {
+	if( (*procVector)[ii]->GetProcessName() != "GammaGeneralProc" ) {
+	  theProclis.push_back((*procVector)[ii]);
+	} else {
+	  G4GammaGeneralProcess* ggproc = dynamic_cast<G4GammaGeneralProcess*>((*procVector)[ii]);
+	  if( ggproc->GetPhotoElectric() != 0 ) {
+	    theProclis.push_back( ggproc->GetPhotoElectric() );
+	  }
+	  if(ggproc->GetCompton() != 0 ) {
+	    theProclis.push_back( ggproc->GetCompton() );
+	  }
+	  if( ggproc->GetConversionEE() != 0 ) {
+	    theProclis.push_back( ggproc->GetConversionEE() );
+	  }
+	  if( ggproc->GetRayleigh() != 0 ) {
+	    theProclis.push_back( ggproc->GetRayleigh() );
+	  }
+	  if( ggproc->GetConversionMM() != 0 ) {
+	    theProclis.push_back( dynamic_cast<G4GammaConversionToMuons*>(ggproc->GetConversionMM()) );
+	  }
+	}
+      }
+
       break;
     }
+    
   }
 
-  theProclis = pmanager->GetProcessList();
+  /*  //GDEB
+  for( G4int ii = 0; ii < theProclis.size(); ii++ ) {
+    G4String procName = theProclis[ii]->GetProcessName();
+    G4cerr << " PROCESS DEFINED: " << procName << G4endl; //GDEB
+    }*/
 
   bInitialised = true;
 }
@@ -152,8 +184,8 @@ void GmPDSCreateAngleTablesUA::BookHistos(G4String energyName, G4String mateName
 #endif
   std::string hnam,hnam0,hnam1;
   std::string procName;
-  for( size_t nn = 0; nn < theProclis->entries(); nn++ ){
-    procName = (*theProclis)[nn]->GetProcessName();
+  for( size_t nn = 0; nn < theProclis.size(); nn++ ){
+    procName = theProclis[nn]->GetProcessName();
     theProcesses[procName] = nn;
     if( procName == "Transportation" || procName == "Decay" ) continue;    
 
@@ -247,10 +279,16 @@ void GmPDSCreateAngleTablesUA::UserSteppingAction(const G4Step* aStep)
 #endif
       std::map<G4String,int>::iterator itep = theProcesses.find( procName );
       if( itep == theProcesses.end() ){
+	G4cerr << " Process not found " << procName << G4endl; 
+	for( itep = theProcesses.begin(); itep != theProcesses.end(); itep++ ) {
+	  G4cerr << "PROCESS: " << itep->first << " : " << itep->second << G4endl; 
+	}
+	std::map<G4String,int>::iterator itep = theProcesses.find( procName );
 	G4Exception("GmPDSCreateAngleTablesUA::UserSteppingAction",
 		    "Process not defined: particle is not the same as the primary one!",
 		    JustWarning,
 		    "Use /gamos/userAction GmKillAtStackingActionUA GmSecondaryFilter");
+	abort();
 	return;
       }
       G4int nproc = (*itep).second;

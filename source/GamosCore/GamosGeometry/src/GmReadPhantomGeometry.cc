@@ -378,7 +378,7 @@ void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
 	theMateDensities[copyNo] = dens;
 
 #ifndef GAMOS_NO_VERBOSE
-	if( GeomVerb(infoVerb) ) {
+	if( GeomVerb(testVerb) ) {
 	  if( copyNo%1000000 == 1 ) G4cout << "ReadVoxelDensities mate IDs: " << copyNo << G4endl; //GDEB
 	}
 #endif
@@ -397,7 +397,11 @@ void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
   for( size_t ii = 0; ii < thePhantomMaterialsOriginal.size(); ii++ ){
     mpite = densiMinMax.find( ii );
     densitySteps[ii] = ((*mpite).second.second-(*mpite).second.first)/densityNSplit; //each materials a different density step
-    //    G4cout << ii << " densitSteps " << densitySteps[ii] << " min " << (*mpite).second.first << " max " << (*mpite).second.second << " densityNSplit " << densityNSplit << G4endl; //GDEB
+#ifndef GAMOS_NO_VERBOSE
+      if( GeomVerb(debugVerb) ) {
+	G4cout << ii << " " << thePhantomMaterialsOriginal[ii]->GetName() << " ReadVoxelDensities  densitySteps " << densitySteps[ii] << " min " << (*mpite).second.first << " max " << (*mpite).second.second << " densityNSplit " << densityNSplit << G4endl; 
+      }
+#endif
   }
 
   std::map< std::pair<G4Material*,G4int>, matInfo* > newMateDens;
@@ -407,7 +411,7 @@ void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
     G4int nVoxels = nVoxelX*nVoxelY*nVoxelZ;
     for( G4int copyNo = 0; copyNo < nVoxels; copyNo++ ) {
 #ifndef GAMOS_NO_VERBOSE
-      if( GeomVerb(infoVerb) ) {
+      if( GeomVerb(testVerb) ) {
 	if( copyNo%1000000 == 1 ) G4cout << "ReadVoxelDensities mate Densities: " << copyNo << G4endl; //GDEB
       }
 #endif
@@ -420,21 +424,23 @@ void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
       if( fabs(dens - (*imite).second->GetDensity()/CLHEP::g*CLHEP::cm3 ) < 1.e-9 ) continue;
       
       //--- Build material name with thePhantomMaterialsOriginal name + density
-      //	float densityBin = densitySteps[mateID] * (G4int(dens/densitySteps[mateID])+0.5);
+      // Get to which densityBin of the original material mateID it corresponds
       G4int densityBin = (G4int(dens/densitySteps[mateID]));
-      
       //      G4String mateName = (*imite).second->GetName()+GmGenUtils::ftoa(densityBin);
       //      G4cout << " densityBin " << densityBin << " " << dens << " " <<densitySteps[mateID] << " mateName= " << mateName << G4endl; 
       //--- Look if it is the first voxel with this material/densityBin
-      std::pair<G4Material*,G4int> matdens((*imite).second, densityBin );
-      
+      std::pair<G4Material*,G4int> matdens((*imite).second, densityBin );      
       std::map< std::pair<G4Material*,G4int>, matInfo* >::iterator mppite = newMateDens.find( matdens );
       if( mppite != newMateDens.end() ){
 	matInfo* mi = (*mppite).second;
 	mi->sumdens += dens;
 	mi->nvoxels++;
 	theMateIDs[copyNo] = thePhantomMaterialsOriginal.size() + mi->id;
-	//	  G4cout << copyNo << " mat new again " << thePhantomMaterialsOriginal.size()-1 + mi->id << " " << mi->id << " dens " << dens << G4endl; //GDEB
+#ifndef GAMOS_NO_VERBOSE
+	if( GeomVerb(testVerb) ) {
+	  G4cout << copyNo << "ReadVoxelDensities mat new repeated " << thePhantomMaterialsOriginal.size()-1 + mi->id << " " << mi->id << " dens " << dens << G4endl; 
+      	}
+#endif
       } else {
 	matInfo* mi = new matInfo;
 	mi->sumdens = dens;
@@ -442,10 +448,19 @@ void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
 	mi->id = newMateDens.size();
 	newMateDens[matdens] = mi;
 	theMateIDs[copyNo] = thePhantomMaterialsOriginal.size() + mi->id;
-	//	  G4cout << copyNo << " " << newMateDens.size() << " mat new first " << thePhantomMaterialsOriginal.size() + mi->id  << " dens " << dens << " miid " << mi->id << " mate " << (*imite).second->GetName() << " densityBin " << densityBin << G4endl; //GDEB
+#ifndef GAMOS_NO_VERBOSE
+	if( GeomVerb(debugVerb) ) {
+	  G4cout << copyNo << " " << newMateDens.size() << " mat new first " << thePhantomMaterialsOriginal.size() + mi->id  << " dens " << dens << " miid " << mi->id << " mate " << (*imite).second->GetName() << " densityBin " << densityBin << G4endl; //
+	}
+#endif
       }
       theMateDensities[copyNo] = dens;
-      //       	G4cout << ix << " " << iy << " " << iz << " " << copyNo << " filling mateIDs " << theMateIDs[copyNo] << " from " << mateID << " mateDens " << theMateDensities[copyNo] 	       << " POS= " << offsetX+dimX*2*(ix+0.5) << "," << offsetY+dimY*2*(iy+0.5) << "," << offsetZ+dimZ*2*(iz+0.5) << G4endl;  //GDEB
+#ifndef GAMOS_NO_VERBOSE
+      if( GeomVerb(testVerb) ) {
+	G4cout << "ReadVoxelDensities " << copyNo << " filling mateIDs " << theMateIDs[copyNo] << " from " << mateID << " mateDens " << theMateDensities[copyNo] << G4endl;
+	//	G4cout << ix << "ReadVoxelDensities " << iy << " " << iz << " " << copyNo << " filling mateIDs " << theMateIDs[copyNo] << " from " << mateID << " mateDens " << theMateDensities[copyNo] 	       << " POS= " << offsetX+dimX*2*(ix+0.5) << "," << offsetY+dimY*2*(iy+0.5) << "," << offsetZ+dimZ*2*(iz+0.5) << G4endl;
+      }
+#endif
       //	mateIDs[copyNo] = atoi(cid)-1;
     }
   }   
@@ -481,7 +496,14 @@ void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
     G4String mateName = ((*mppite).first).first->GetName() + "_" + GmGenUtils::ftoa(saverdens);
     //  thePhantomMaterials.push_back( BuildMaterialChangingDensity( (*mppite).first.first, averdens, mateName ) );
     thePhantomMaterials[(*mppite).second->id+iim] = BuildMaterialChangingDensity( (*mppite).first.first, averdens, mateName );
-    //    G4cout << "GmReadPhantomGeometry::ReadVoxelDensities ADD MATERIAL " << (*mppite).second->id+iim	   << " ID " << thePhantomMaterials[(*mppite).second->id+iim]->GetName()  	   << " from " << (*mppite).first.first->GetName() 	   << " dens " << thePhantomMaterials[(*mppite).second->id+iim]->GetDensity() << " averdens " << averdens << " saverdens " << saverdens << G4endl; //GDEB
+#ifndef GAMOS_NO_VERBOSE
+      if( GeomVerb(infoVerb) ) {
+        G4cout << "GmReadPhantomGeometry::ReadVoxelDensities ADD MATERIAL " << (*mppite).second->id+iim	   << " ID " << thePhantomMaterials[(*mppite).second->id+iim]->GetName()
+	       << " from " << (*mppite).first.first->GetName()
+	       << " dens " << thePhantomMaterials[(*mppite).second->id+iim]->GetDensity()/CLHEP::g*CLHEP::cm3
+	       << " averdens " << averdens << " saverdens " << saverdens << G4endl;
+      }
+#endif
   }
 
   // for( size_t ii = 0; ii < thePhantomMaterials.size(); ii++ ) {

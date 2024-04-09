@@ -6,8 +6,9 @@
 #include "GmDataDNAInitialVolumeType.hh"
 #include "GmEmDNAPhysics.hh"
 #include "GmDNAVerbosity.hh"
-#include "GmMicroyzG4UA.hh" 
+#include "GmMicroyzUA.hh" 
 #include "GmMicroyzVolUA.hh" 
+#include "GmCellyzUA.hh" 
 
 #include "GamosCore/GamosGenerator/include/GmGeneratorFactory.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryFactory.hh"
@@ -30,8 +31,9 @@ DEFINE_GAMOS_USER_ACTION(GmDNAStackingAction);
 DEFINE_GAMOS_USERTIMESTEP_ACTION(GmDNATimeStepAction);
 DEFINE_GAMOS_DATA(GmDataDNAInitialVolumeType);
 
-DEFINE_GAMOS_USER_ACTION(GmMicroyzG4UA);
+DEFINE_GAMOS_USER_ACTION(GmMicroyzUA);
 DEFINE_GAMOS_USER_ACTION(GmMicroyzVolUA);
+DEFINE_GAMOS_USER_ACTION(GmCellyzUA);
 
 DEFINE_SEAL_PLUGIN(GmVerbosityFactory, GmDNAVerbosity, "GmDNAVerbosity");
 

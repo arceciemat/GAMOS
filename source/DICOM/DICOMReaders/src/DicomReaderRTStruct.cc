@@ -306,8 +306,8 @@ void DicomReaderRTStruct::BuildPolygonSet()
     DicomROI* roi = (*iter).second;
     G4int roiID = roi->GetNumber(); 
     DicomPolygonList* polyList = new DicomPolygonList(roi->GetName().c_str(), roiID, DPOrientXY);
-    if( DicomVerb(debugVerb) ) G4cout << "DicomReaderRTStruct::BuildPolygonSet AddLineList " << roi->GetName() << " " << roiID << G4endl;
     thePolygonSet->AddLineList(static_cast<DicomVLineList*>(polyList));
+    if( DicomVerb(debugVerb) ) G4cout << thePolygonSet->GetName() << " DicomReaderRTStruct::BuildPolygonSet AddLineList " << roi->GetName() << " " << roiID << " NLists " << thePolygonSet->GetLineLists().size() << G4endl;
 
     //    roi->GetContours();
     //    std::cout << jj << " " << roi << " BuildStructureIDs checking ROI "<< roiID << " " << roi->GetName() << " CONT " << roi->GetContours().size() << G4endl; //GDEB
@@ -330,8 +330,8 @@ void DicomReaderRTStruct::BuildPolygonSet()
 	if( DicomVerb(debugVerb) ) G4cout << " " << kk << " NPOINTS " << points.size() << G4endl;
 	std::vector<G4ThreeVector> dirs = roic->GetDirections();
 	DicomPolygon* polyg = new DicomPolygon(points,dirs,roi->GetName().c_str(), DPOrientXY);
-	if( DicomVerb(debugVerb) ) G4cout << "DicomReaderRTStruct::BuildPolygonSet AddPolygon FROM " << roi->GetName() << " " << dirs[1] << " " << points[2] << " " << points[1] << G4endl;
 	polyList->AddLine(polyg);
+	if( DicomVerb(debugVerb) ) G4cout << "DicomReaderRTStruct::BuildPolygonSet AddPolygon FROM " << roi->GetName() << " " << dirs[1] << " " << points[2] << " " << points[1] << " Npoly " << polyList->GetLines().size() << G4endl;
       }
     }
   }

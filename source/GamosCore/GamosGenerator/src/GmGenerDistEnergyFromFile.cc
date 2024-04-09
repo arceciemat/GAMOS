@@ -291,7 +291,7 @@ void GmGenerDistEnergyFromFile::SetParams( const std::vector<G4String>& params )
   
   if( calcType == theCalculationTypeOld && theFileName == params[0] ){
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(warningVerb) ) G4cout << " GmGenerDistEnergyFromFile::SetParams: same parameters as last time, do not read file again " << G4endl;
+    if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistEnergyFromFile::SetParams: same parameters as last time, do not read file again " << G4endl;
 #endif
     return;
   }
