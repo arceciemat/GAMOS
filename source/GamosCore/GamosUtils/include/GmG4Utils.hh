@@ -16,7 +16,10 @@ class G4Material;
 class G4Ions;
 class G4Nucleus;
 class G4VTouchable;
+<<<<<<< HEAD
 class G4ProcessVector;
+=======
+>>>>>>> 889849c0 (GAMOS.7.0 v1)
 
 class GmG4Utils {
 public:
@@ -52,8 +55,12 @@ public:
   static G4DecayTable* FindOrBuildDecayTable( const G4ParticleDefinition* part );  
   static G4ParticleDefinition* GetG4Particle( const G4String particleName, G4bool bMustExist = true ); 
   static G4String GetNameNumberFromTouchable( const G4VTouchable* touch );
+<<<<<<< HEAD
   static G4ProcessVector* GetGammaProcessVector(G4ProcessVector* provVectorOrig );
 
+=======
+  
+>>>>>>> 889849c0 (GAMOS.7.0 v1)
 private:
   static std::map<const G4ParticleDefinition*,G4DecayTable*> thePartDecayTable;
 

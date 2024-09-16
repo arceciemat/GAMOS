@@ -19,12 +19,17 @@ public:
   std::map<G4double,G4String> FindValuesStr( DicomVImageStr* image, G4double step = -DBL_MAX);
   std::map<G4double,G4double> FindValuesInVoxels( DicomVImage* image);
   std::map<G4double,G4double> FindValuesInSteps( DicomVImage* image, G4double step);
+<<<<<<< HEAD
   std::map<G4double,G4String> FindValuesInVoxelsStr( DicomVImageStr* imageStr );
   std::map<G4double,G4String> FindValuesInStepsStr( DicomVImageStr* imageStr, G4double step);
 
 private:
   G4int CheckOutOfPhantom( G4ThreeVector pos, G4ThreeVector dir, std::vector<G4double> fMinV,  std::vector<G4double> fMaxV, std::vector<G4String> fAxisNameV );
 
+=======
+
+private:
+>>>>>>> 889849c0 (GAMOS.7.0 v1)
 };
 
 #endif

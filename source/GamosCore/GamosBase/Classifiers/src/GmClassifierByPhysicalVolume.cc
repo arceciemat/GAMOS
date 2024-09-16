@@ -33,7 +33,11 @@ int64_t GmClassifierByPhysicalVolume::GetIndexFromStep(const G4Step* aStep)
   G4String pvNameNum = GmG4Utils::GetNameNumberFromTouchable(aStep->GetPreStepPoint()->GetTouchable());
   
   int64_t index;
+<<<<<<< HEAD
   std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(pvNameNum);
+=======
+  std::map<G4String*,int64_t>::const_iterator ite = theIndexMap.find(pvNameNum);
+>>>>>>> 889849c0 (GAMOS.7.0 v1)
   if( ite == theIndexMap.end() ){
     index = theIndexMap.size()+1+theMaxIndex;
     theIndexMap[pvNameNum] = index;
@@ -53,7 +57,11 @@ int64_t GmClassifierByPhysicalVolume::GetIndexFromTrack(const G4Track* aTrack)
 {
   int64_t index;
   G4String pvNameNum = GmG4Utils::GetNameNumberFromTouchable(aTrack->GetTouchable());
+<<<<<<< HEAD
   std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(pvNameNum);
+=======
+  std::map<G4String*,int64_t>::const_iterator ite = theIndexMap.find(pvNameNum);
+>>>>>>> 889849c0 (GAMOS.7.0 v1)
   if( ite == theIndexMap.end() ){
     index = theIndexMap.size()+1+theMaxIndex;
     theIndexMap[pvNameNum] = index;

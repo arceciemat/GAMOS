@@ -306,8 +306,13 @@ void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double 
     /*t
 #ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(testVerb) ) {
+<<<<<<< HEAD
       if( ixn < 10 ) G4cout << ixn << "DicomOperResize::Operate X minXn " << imMinX+im1stVoxX*imVoxDimX << G4endl;
       if( ixn < 10000 ) G4cout << ixn << "/" << newNoVoxelsX << ": DicomOperResize::Operate X minXn " << minXn << " maxXn " << maxXn << " im1st " << im1stVoxX << " imVoxMinMax " << imVoxMinX << " " << imVoxMaxX << " imVoxDimX " << imVoxDimX << G4endl;
+=======
+      if( ixn < 10e9 ) G4cout << ixn << "DicomOperResize::Operate X leftwXn " << imMinX+im1stVoxX*imVoxDimX << G4endl;
+      if( ixn < 10000e9 ) G4cout << ixn << "/" << newNoVoxelsX << ": DicomOperResize::Operate X leftwXn " << leftwXn << " rightWXn " << rightWXn << " im1st " << im1stVoxX << " imVoxMinMax " << imVoxMinX << " " << imVoxMaxX << " imVoxDimX " << imVoxDimX << G4endl;
+>>>>>>> 889849c0 (GAMOS.7.0 v1)
     }
 #endif
     */
@@ -320,7 +325,11 @@ void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double 
       /*t
 #ifndef GAMOS_NO_VERBOSE
       if( DicomVerb(testVerb) ) {
+<<<<<<< HEAD
 	if( iyn < 10000 ) G4cout << iyn << "/" << newNoVoxelsY << ": DicomOperResize::Operate Y minYn " << minYn << " " << maxYn << " im1st " << im1stVoxY << " imVoxMinMax " << imVoxMinY << " " << imVoxMaxY << G4endl;
+=======
+	if( iyn < 10000e9 ) G4cout << iyn << "/" << newNoVoxelsY << ": DicomOperResize::Operate Y leftwYn " << leftwYn << " " << rightWYn << " im1st " << im1stVoxY << " imVoxMinMax " << imVoxMinY << " " << imVoxMaxY << G4endl;
+>>>>>>> 889849c0 (GAMOS.7.0 v1)
       }
 #endif
       */
@@ -335,7 +344,11 @@ void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double 
 	/*t 
 #ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(testVerb) ) {
+<<<<<<< HEAD
 	  if( izn < 10 ) G4cout << izn << "/" << newNoVoxelsZ << ": DicomOperResize::Operate Z minZn " << minZn << " " << maxZn << " im1st " << im1stVoxZ << " imVoxMinMax " << imVoxMinZ << " " << imVoxMaxZ << G4endl;
+=======
+	  if( izn < 10e9 ) G4cout << izn << "/" << newNoVoxelsZ << ": DicomOperResize::Operate Z leftwZn " << leftwZn << " " << rightWZn << " im1st " << im1stVoxZ << " imVoxMinMax " << imVoxMinZ << " " << imVoxMaxZ << G4endl;
+>>>>>>> 889849c0 (GAMOS.7.0 v1)
 	}
 #endif
 	*/
@@ -368,7 +381,7 @@ void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double 
 	      //	      G4cout << "@@ imCopyNo " << imCopyNo << " : " << ix << " " << iy << " " << iz  << " < " << image->GetNoVoxels() << G4endl; //GDEB
 	      newData->at(copyNo) += image->GetData(imCopyNo)*fracXYZ;
 	      fracTOT += fracXYZ;
-	      //	      G4cout << "@@ fracTOT " << fracTOT << " " << fracXYZ << " " << copyNo << ": " << newData->at(copyNo) << " " << imCopyNo << " : " << ix << " " << iy << " " << iz << " " << image->GetData(imCopyNo) << G4endl; //GDEB
+	      //	      G4cout << "@@ fracTOT " << fracTOT << " " << fracXYZ << " " << copyNo << ":new " << newData->at(copyNo) << "  " << imCopyNo << " : " << ix << " " << iy << " " << iz << " =" << image->GetData(imCopyNo) << G4endl; //GDEB
 #ifndef GAMOS_NO_VERBOSE
 	      if( DicomVerb(testVerb) ) {
 		if( ixn < 10 && iyn < 10 && izn < 10) G4cout << ix << " " << iy << " " << iz << "DicomOperResize::Operate fractions " << fracX << " " << fracXY/fracX << " " << fracXYZ/fracXY << G4endl;

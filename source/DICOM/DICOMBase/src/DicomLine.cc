@@ -482,6 +482,7 @@ std::map<G4double,G4double> DicomLine::FindValuesInSteps( DicomVImage* image, G4
 										  
 }
 
+<<<<<<< HEAD
   //-----------------------------------------------------------------------------
 std::map<G4double,G4String> DicomLine::FindValuesInVoxelsStr( DicomVImageStr* imageStr )
 {
@@ -876,3 +877,5 @@ G4int DicomLine::CheckOutOfPhantom( G4ThreeVector pos, G4ThreeVector dir, std::v
   return isOut;
 
 }
+=======
+>>>>>>> 889849c0 (GAMOS.7.0 v1)
