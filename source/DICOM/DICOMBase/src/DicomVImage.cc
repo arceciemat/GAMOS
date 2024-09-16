@@ -1610,3 +1610,4 @@ G4ThreeVector DicomVImage::GetPosition(int ix, int iy, int iz)
   return G4ThreeVector(posX,posY,posZ);
   
 }
+

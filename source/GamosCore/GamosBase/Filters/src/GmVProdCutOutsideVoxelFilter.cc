@@ -45,7 +45,7 @@ G4bool GmVProdCutOutsideVoxelFilter::AcceptTrack(const G4Track* aTrack)
   if( trkID != -1 ) {
     //    G4cout << " GmVProdCutOutsideVoxelFilter particle found , nvoxel " << aTrack->GetVolume()->GetCopyNo() << " creationVoxel " << theCreationVoxels[aTrack->GetTrackID()] << G4endl;
     theParticleIDs.insert(aTrack->GetTrackID()); // if parent is cut, this one is cut also
-    if( theCreationVoxels[trkID] != aTrack->GetVolume()->GetCopyNo() ) {
+    if( theCreationVoxels[trkID] != aTrack->GetTouchable()->GetReplicaNumber() ) {
       //      G4cout << " GmVProdCutOutsideVoxelFilter accepted nvoxel " << aTrack->GetVolume()->GetCopyNo() << " creationVoxel " << theCreationVoxels[trkID] << G4endl;
       bAcceptTrack = TRUE;
     }
@@ -78,7 +78,7 @@ G4bool GmVProdCutOutsideVoxelFilter::AcceptTrack(const G4Track* aTrack)
       if( ener != 0. && ener < cut && CheckProcess(aTrack->GetCreatorProcess()) ) {
 	//	G4cout << " GmVProdCutOutsideVoxelFilter new particle below cut " << aTrack->GetVertexKineticEnergy() << " < " << cut  << G4endl;
 	theParticleIDs.insert(aTrack->GetTrackID());
-	theCreationVoxels[aTrack->GetTrackID()] = aTrack->GetVolume()->GetCopyNo();
+	theCreationVoxels[aTrack->GetTrackID()] = aTrack->GetTouchable()->GetReplicaNumber();
       }
     }
   }

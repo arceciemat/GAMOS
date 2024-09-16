@@ -1,6 +1,7 @@
 #include "DicomParameterMgr.hh"
 #include "DicomMgr.hh"
 #include "DicomOperResize.hh"
+#include "DicomOperExtendAir.hh"
 #include "DicomOperMultByNumber.hh"
 #include "DicomOperLog.hh"
 #include "DicomOperLog10.hh"
@@ -39,6 +40,7 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
   G4int iAddPar = 0;
 
   G4bool bResize = false;
+  G4bool bExtendAir = false;
   G4bool bRotateXY180 = false; 
  
   G4String argvstr = argv[iPar];
@@ -111,6 +113,7 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
     //-    PrintParametersUsage(99);
   } else if( argvstr == "-fOut" ||
 	     argvstr == "-fRTStruct" ||
+	     argvstr == "-fVOIStruct" ||
 	     argvstr == "-fDrawLines" ) {    
     AddParam( argvName+ " " + argvstr1, PTstring );
   } else if( argvstr == "-multByNumber" ) {
@@ -159,6 +162,10 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
     AddParam( "nPixelsX " + argvstr1, PTdouble );
     AddParam( "nPixelsY " + argvstr1, PTdouble );
     AddParam( "nPixelsZ " + argvstr1, PTdouble ); 
+  } else if( argvstr == "-bExtendAir" ) {
+    if( argvstr1 == "1" ) {
+      new DicomOperExtendAir(0,"DicomOperExtendAir");
+    }
   } else {
     iAddPar = -1;
   }
@@ -166,6 +173,7 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
 
   if( bResize ) {
     if( DicomMgr::GetInstance()->FindOperator("DicomOperResize") == 0 ) new DicomOperResize(0,"DicomOperResize");
+    //-if( DicomMgr::GetInstance()->FindOperator("DicomOperExtendAir") == 0 ) new DicomOperExtendAir(0,"DicomOperExtendAir");
   }
 
   new DicomOperRotateXY180(180.,1,"DicomOperRotateXY180");
@@ -253,6 +261,7 @@ void DicomParameterMgr::PrintHelpInputFiles()
     << " -fRTDose FILE_NAME   dose image file in DICOM RTDOSE format" << G4endl
     << " -fInterfile FILE_NAME   image file in Interfile 3.3 format " << G4endl
     << " -fRTStruct FILE_NAME Structures image file in DICOM RTSTRUCT format" << G4endl
+    << " -fVOIStruct FILE_NAME Structures image file in VOI struct format" << G4endl
     << " -minY VAL     minimum image Y value" << G4endl
     << " -maxY VAL     maximum image Y value" << G4endl
     << " -nVoxY VAL    number of image voxels in Y" << G4endl

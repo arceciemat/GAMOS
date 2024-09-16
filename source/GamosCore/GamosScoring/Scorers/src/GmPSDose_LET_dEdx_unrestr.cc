@@ -36,17 +36,21 @@ G4bool GmPSDose_LET_dEdx_unrestr::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     // }
 
   G4double eSeco = GetSecondaryElectronEnergy(aStep); // secondary energy of electrons
-  G4double eeLoss = edep + eSeco;
+  // G4double eeLoss = edep + eSeco; 
+  G4double length = aStep->GetStepLength();
+  G4double eeLoss = let*length + eSeco;
+
   G4double doselet = eeLoss*let;
   G4double weight = aStep->GetPreStepPoint()->GetWeight(); 
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) {
     G4StepPoint* preStep = aStep->GetPreStepPoint();
     G4cout << "  GmPSDose_LET_dEdx_unrestr::ProcessHits doselet " << doselet
+	   << " POSZ " << preStep->GetPosition().z()
 	   << " let " << let
 	   << " eSeco " << eSeco
 	   << " eeLoss " << eeLoss
-	   << " Energy " << (aStep->GetPreStepPoint()->GetKineticEnergy()+aStep->GetPostStepPoint()->GetKineticEnergy())/2.
+	   << " Energy " << (preStep->GetKineticEnergy()+aStep->GetPostStepPoint()->GetKineticEnergy())/2.
 	   << " Mate " << preStep->GetMaterial()->GetName()
 	   << " Dens " << preStep->GetMaterial()->GetDensity()/(CLHEP::g/CLHEP::cm3)
 	   << " Pos " << preStep->GetPosition().x() << " " << preStep->GetPosition().y() << " " << preStep->GetPosition().z() 

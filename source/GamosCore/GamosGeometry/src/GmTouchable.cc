@@ -1,3 +1,4 @@
+
 #include "GmTouchable.hh"
 #include "GmGeomVerbosity.hh"
 
@@ -163,7 +164,7 @@ GmTouchable::GmTouchable( const G4VTouchable* g4touch )
   //----- long name: for efficiency reasons, build it when looping the PV's
 
   //----- copyNo
-  theCopyNo = pv->GetCopyNo();
+  theCopyNo = g4touch->GetReplicaNumber(); //-pv->GetCopyNo();
 
   // theVisCateg
   //----- materialName

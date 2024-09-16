@@ -31,7 +31,7 @@ G4bool GmInMassPhysicalVolumeReplicatedFilter::AcceptTrack(const G4Track* aTrack
 
   G4VPhysicalVolume* physvol = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndSetup( aTrack->GetPosition(), (G4ThreeVector*)0, false, false ); 
   if( physvol ) {
-    G4String pvName = physvol->GetName() + ":" + GmGenUtils::ftoa(physvol->GetCopyNo());
+    G4String pvName = physvol->GetName() + ":" + GmGenUtils::ftoa(aTrack->GetTouchable()->GetReplicaNumber());
     if( theVPhysicalVolumes.find(pvName) != theVPhysicalVolumes.end() ) {
 #ifndef GAMOS_NO_VERBOSE
     if( FilterVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeReplicatedFilter::AcceptTrack  return 1 " << physvol->GetName() << G4endl;
@@ -54,7 +54,7 @@ G4bool GmInMassPhysicalVolumeReplicatedFilter::AcceptTrack(const G4Track* aTrack
 G4bool GmInMassPhysicalVolumeReplicatedFilter::AcceptStep(const G4Step* aStep)
 {
   G4VPhysicalVolume* physvol = aStep->GetTrack()->GetVolume();
-  G4String pvName = physvol->GetName() + ":" + GmGenUtils::ftoa(physvol->GetCopyNo());
+  G4String pvName = physvol->GetName() + ":" + GmGenUtils::ftoa(aStep->GetPreStepPoint()->GetTouchable()->GetReplicaNumber());
   if( theVPhysicalVolumes.find(pvName) != theVPhysicalVolumes.end() ) {
 #ifndef GAMOS_NO_VERBOSE
     if( FilterVerb(debugVerb) ) G4cout << " GmInMassPhysicalVolumeReplicatedFilter::AcceptStep  return 1 " << physvol->GetName() << G4endl;

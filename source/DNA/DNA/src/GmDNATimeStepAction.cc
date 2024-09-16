@@ -57,7 +57,7 @@ GmDNATimeStepAction::GmDNATimeStepAction()
   : G4UserTimeStepAction()
 {
   GmParameterMgr* parmgr = GmParameterMgr::GetInstance();
-  G4double endTime = parmgr->GetNumericValue("GmDNATimeStepAction:EndTime",2.5*nanosecond);
+  G4double endTime = parmgr->GetNumericValue("GmDNATimeStepAction:EndTime",1.*microsecond);
   G4int schedulerVerbose = G4int(parmgr->GetNumericValue("GmDNATimeStepAction:G4SchedulerVerbose",1));
 
   if(G4DNAChemistryManager::IsActivated())

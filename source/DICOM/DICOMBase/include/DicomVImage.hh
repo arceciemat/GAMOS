@@ -44,6 +44,9 @@ public:
   G4double GetVoxelDimY() const { return (theMaxY-theMinY)/theNoVoxelsY; };
   G4double GetVoxelDimZ() const { return (theMaxZ-theMinZ)/theNoVoxelsZ; };
   std::vector<G4double> GetVoxelDimV();
+  G4double GetWidthX() const { return (theMaxX-theMinX)/theNoVoxelsX; };
+  G4double GetWidthY() const { return (theMaxY-theMinY)/theNoVoxelsY; };
+  G4double GetWidthZ() const { return (theMaxZ-theMinZ)/theNoVoxelsZ; };
 
   G4double GetMinX() const { return theMinX; };
   G4double GetMinY() const { return theMinY; };
@@ -178,8 +181,33 @@ public:
   G4ThreeVector GetPosition(int ii);
   G4ThreeVector GetPosition(int ix, int iy, int iz);
   
+  //  static size_t theStructureIdxShift;
+  G4double GetPrecision() const {
+    return thePrecision;
+  }
+  
+  void SetPrecision(G4double prec) {
+    thePrecision = prec;
+  }
+
+  virtual void BuildIsodLinesXY(std::vector<G4double> isodPerCents);
+  virtual void BuildIsodLinesXZ(std::vector<G4double> isodPerCents);
+  virtual void BuildIsodLinesYZ(std::vector<G4double> isodPerCents);
+  virtual DicomVLineSet* GetIsodosesXY () const {
+    return theIsodosesXY;
+  }
+  virtual DicomVLineSet* GetIsodosesXZ () const {
+    return theIsodosesXZ;
+  }
+  virtual DicomVLineSet* GetIsodosesYZ () const {
+    return theIsodosesYZ;
+  }
+
+  virtual G4bool IsDose() const;
+  
 protected:
   virtual void DrawIsodPoints( std::vector<ppidv> pointPairsIsod, DicomVLineList* polyList, G4double isodoseValue, DPOrientation ori );
+  //  static double DP_PRECISION;
 
 protected:
   G4String theName;
@@ -209,32 +237,6 @@ public:
   std::vector<G4double>* theData;
   G4RotationMatrix* theRotation;
   G4bool bAutomaticOperate; // if not automatic, Operations have to be invoked explicitly, not by DicomMgr::OperateAll
-
-  //  static size_t theStructureIdxShift;
-  G4double GetPrecision() const {
-    return thePrecision;
-  }
-  
-  void SetPrecision(G4double prec) {
-    thePrecision = prec;
-  }
-  
-  //  static double DP_PRECISION;
-
-  virtual void BuildIsodLinesXY(std::vector<G4double> isodPerCents);
-  virtual void BuildIsodLinesXZ(std::vector<G4double> isodPerCents);
-  virtual void BuildIsodLinesYZ(std::vector<G4double> isodPerCents);
-  virtual DicomVLineSet* GetIsodosesXY () const {
-    return theIsodosesXY;
-  }
-  virtual DicomVLineSet* GetIsodosesXZ () const {
-    return theIsodosesXZ;
-  }
-  virtual DicomVLineSet* GetIsodosesYZ () const {
-    return theIsodosesYZ;
-  }
-  
-  virtual G4bool IsDose() const;
 
 private:
   G4bool bIsodosesNormalized;

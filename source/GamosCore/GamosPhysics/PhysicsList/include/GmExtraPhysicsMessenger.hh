@@ -12,7 +12,10 @@ class G4UIcmdWithoutParameter;
 class GmUIcmdWithAString;
 class G4LivermorePhotoElectricModel;
 class G4LivermoreIonisationModel;
+class G4VProcess;
 class G4VEmProcess;
+class G4VEmModel;
+class G4EmModelManager;
 class G4VEnergyLossProcess;
 
 typedef std::multimap<G4String,G4String> mmss;
@@ -37,12 +40,19 @@ private:
   void AddDeexcitation();
   void Replace1Model(G4String newParticleName, G4String newProcessName, G4String newModelName);
 
+  std::pair<G4VEmModel*,G4VEmModel*> ChangeMsc(G4String newParticleName, G4String newProcessName, G4String newModelName);
+  std::pair<G4VEmModel*,G4VEmModel*> ChangeIoni(G4String newParticleName, G4String newProcessName, G4String newModelName);
+  std::pair<G4VEmModel*,G4VEmModel*> ChangeBrem(G4VEnergyLossProcess* process, G4String newParticleName, G4String newProcessName, G4String newModelName);
+  void ReplaceG4Model(G4VProcess* process, G4VEmModel* newModel, G4VEmModel* newModel2 );
+    
 private:
   G4UIcmdWithABool* theApplyCutsCmd;
   G4UIcmdWithoutParameter* theParallelPhysCmd;
   GmUIcmdWithAString* theAddPhysicsCmd;
-  GmUIcmdWithAString* theRemoveProcessesByTypeCmd;
+  GmUIcmdWithAString* theRemoveProcessesCmd;
   GmUIcmdWithAString* theRemoveProcessesByNameCmd;
+  GmUIcmdWithAString* theRemoveProcessesByTypeCmd;
+  GmUIcmdWithAString* theRemoveProcessesByParticleCmd;
   GmUIcmdWithAString* theRemoveProcessesByParticleAndNameCmd;
   GmUIcmdWithAString* theReplaceModelSetCmd;
   GmUIcmdWithAString* theReplaceModelCmd;

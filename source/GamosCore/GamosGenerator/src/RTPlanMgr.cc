@@ -224,7 +224,7 @@ void RTPlanMgr::CalculateMetersetEvts()
     G4Exception("RTPlanMgr::AccumulateMetersets",
 		"",
 		FatalException,
-		("MSUnitsToRun+MSUnitsToSkip="+GmGenUtils::ftoa(theMSUnitsToRun+theMSUnitsToSkip)+ " > TotalBeamMS="+GmGenUtils::ftoa(beamAccumMS)).c_str());
+		("MSUnitsToRun+MSUnitsToSkip="+GmGenUtils::ftoa(theMSUnitsToRun+theMSUnitsToSkip)+ " > TotalBeamMS="+GmGenUtils::ftoa(beamAccumMS)+" DIFF="+GmGenUtils::ftoa(MSUnitsTOTAL-beamAccumMS)).c_str());
   }
   
   //----- Calculate event corresponding to each subCPs, accumulating meterset
@@ -482,6 +482,7 @@ RTBeamStateData RTPlanMgr::GetNextBeamStateData(G4int ie)
   //t  G4cout << " RTPlanMgr::GetNextBeamStateData " << ie << " " << theSubCPEvt[ie] << G4endl << theSubCPEvt[ie]->GetControlPoint() << G4endl << theSubCPEvt[ie]->GetControlPoint()->GetBeam() << G4endl << theSubCPEvt[ie]->GetControlPoint()->GetBeam()->GetIndex() << G4endl; //GDEB
   if( theCurrentBeam == theSubCPEvt[ie]->GetControlPoint()->GetBeam()->GetIndex() ) {
     bChangedBeam = true;
+    theRTSource->SetMovePhantom(true);
     if( bDumpAtBeam ) {
       DumpHistosAndScorersBeam(); 
     }

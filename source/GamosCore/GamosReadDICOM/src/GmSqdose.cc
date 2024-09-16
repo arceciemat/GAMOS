@@ -4,6 +4,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include <limits>
+G4bool GmSqdose::bNo0Dose = false;
 
 //-----------------------------------------------------------------------
 GmSqdose::GmSqdose()
@@ -29,6 +30,7 @@ GmSqdose::GmSqdose()
 
   bBelowFloatPrecisionSetTo0 = GmParameterMgr::GetInstance()->GetNumericValue("GmSqdose:BelowFloatPrecisionSetTo0",1);
   //   G4cout << this << " bBelowFloatPrecisionSetTo0 " << bBelowFloatPrecisionSetTo0 << G4endl;  //GDEB
+
 }
 
 //-----------------------------------------------------------------------
@@ -206,7 +208,7 @@ void GmSqdose::Read( FILE* fin )
 		    G4String("Reading voxel number "+GmGenUtils::itoa(iv)).c_str());
       }
       theDoses.push_back( ftmp );
-      // G4cout << iv << " 1SQDOSE " << ftmp << G4endl; //GDEB
+      // G4cout << this << "  " << iv << " 1SQDOSE " << ftmp << " N " << theDoses.size() << G4endl; //GDEB 
       //      G4cout << " 1SQDOSE " << ftmp << " " << iv << G4endl; //GDEB
     }
       
@@ -275,9 +277,10 @@ GmSqdose GmSqdose::operator+=( const GmSqdose& gmdose )
   G4float nevTSq = nevT*nevT;
   theHeader->SetNumberOfEvents(nevT);
   std::vector<float> doses = gmdose.GetDoses();
-  std::vector<float> doses2 = gmdose.GetDoseSqs();
+  std::vector<float> doseSqs = gmdose.GetDoseSqs();
 
   size_t siz = theDoses.size();
+  //  G4cout << this << " GmSqdose+= " << siz << " " << doses.size() << G4endl; //GDEB
   if( doses.size() > siz ) {
     for( size_t ii = siz; ii < doses.size(); ii++ ) {
       theDoses[ii] = 0.;
@@ -291,16 +294,26 @@ GmSqdose GmSqdose::operator+=( const GmSqdose& gmdose )
   for( size_t ii = 0; ii < siz; ii++ ) {
     //    if( ii == 0 ) G4cout << this << " dose1 " << theDoses[ii] << " " << &gmdose << " dose2 " << dose2[ii] << G4endl;
     //    theDoses[ii] = (theDoses[ii]*nevA + doses[ii]*nevB) / nevSUM;
-    //   theDoseSqs[ii] = (theDoseSqs[ii]*nevA*nevA + doses2[ii]*nevB*nevB)/(nevSUM*nevSUM);
+    //   theDoseSqs[ii] = (theDoseSqs[ii]*nevA*nevA + doseSqs[ii]*nevB*nevB)/(nevSUM*nevSUM);
     if( ii < doses.size() ) {
-      G4bool bError0 = 0; // if both errors are 0, set DosesSq so that new error is 0
+      if( GmSqdose::bNo0Dose ) {
+	if( theDoses[ii] == 0. ) {
+	  theDoses[ii] = doses[ii];
+	  theDoseSqs[ii] = doseSqs[ii];
+	  continue;
+	}
+	if( doses[ii] == 0. ) {
+	  continue;
+	}
+      }
+      G4bool bError0 = 0; // if both errors are 0, set DoseSqs so that new error is 0
       G4double errd1 = theDoses[ii]==0 ? 0 : theDoseSqs[ii]*nev1 - theDoses[ii]*theDoses[ii];
       //      G4cout << ii << " errd1 " << errd1 << " = " << theDoseSqs[ii] << " * " << nev1<< "  - " <<theDoses[ii]*theDoses[ii] <<  " : " << theDoses[ii]  << " :: " <<  sqrt(fabs(errd1))/theDoses[ii] << G4endl; //GDEB
       
       if( theDoses[ii] == 0 || fabs(errd1)/theDoses[ii]/theDoses[ii] < 5.e-07 ) {
-	//	G4double errd2 = doses[ii]==0 ? 0 : doses2[ii]*nev2 - doses[ii]*doses[ii];      
-	G4double errd2 = doses2[ii]*nev2 - doses[ii]*doses[ii];      
-	//	G4cout << ii << " errd2 " << errd2 << " = " << doses2[ii] << " * " << nev2<< "  - " <<doses[ii]*doses[ii] << " : " << doses[ii] << " :: " << sqrt(fabs(errd2))/doses[ii] << " ::: " << fabs(errd2)/doses[ii]/doses[ii] << G4endl; //GDEB
+	//	G4double errd2 = doses[ii]==0 ? 0 : doseSqs[ii]*nev2 - doses[ii]*doses[ii];      
+	G4double errd2 = doseSqs[ii]*nev2 - doses[ii]*doses[ii];      
+	//	G4cout << ii << " errd2 " << errd2 << " = " << doseSqs[ii] << " * " << nev2<< "  - " <<doses[ii]*doses[ii] << " : " << doses[ii] << " :: " << sqrt(fabs(errd2))/doses[ii] << " ::: " << fabs(errd2)/doses[ii]/doses[ii] << G4endl; //GDEB
 	if( doses[ii] == 0 || fabs(errd2)/doses[ii]/doses[ii] < 5.e-07 ) {
 	  bError0 = 1;
 	}
@@ -310,13 +323,13 @@ GmSqdose GmSqdose::operator+=( const GmSqdose& gmdose )
 	theDoseSqs[ii] = theDoses[ii]*theDoses[ii]/nevT;
 	//	G4cout << ii << " NEW ERROR " << theDoseSqs[ii] << " " << nevT << " " << theDoseSqs[ii]*theHeader->GetNumberOfEvents()- theDoses[ii]*theDoses[ii] << " : " << theDoses[ii] << G4endl; //GDEB
       } else {
-	theDoseSqs[ii] = (theDoseSqs[ii]*nev1Sq + doses2[ii]*nev2Sq)/nevTSq;
+	theDoseSqs[ii] = (theDoseSqs[ii]*nev1Sq + doseSqs[ii]*nev2Sq)/nevTSq;
       }
       // if error=0, make error of sum = 0
 
     }
     //    if( theDoses[ii] != 0 )  G4cout << ii << "summed dose1 " << theDoses[ii] << " dose2 " << doses[ii] << G4endl;
-    // if( ii == 0)  G4cout << "summed doseSq1 " << theDoseSqs[ii] << " dose2 " << doses2[ii] << G4endl;
+    // if( ii == 0)  G4cout << "summed doseSq1 " << theDoseSqs[ii] << " dose2 " << doseSqs[ii] << G4endl;
   }
 
   //  G4cout << "dose value sum " << theDoses[0] << G4endl;
@@ -334,11 +347,11 @@ GmSqdose GmSqdose::operator*=( G4double factor )
   for( size_t ii = 0; ii < siz; ii++ ) {
     //    if( ii == 0 ) G4cout << this << " dose1 " << theDoses[ii] << " " << &gmdose << " dose2 " << dose2[ii] << G4endl;
     //    theDoses[ii] = (theDoses[ii]*nevA + doses[ii]*nevB) / nevSUM;
-    //   theDoseSqs[ii] = (theDoseSqs[ii]*nevA*nevA + doses2[ii]*nevB*nevB)/(nevSUM*nevSUM);
+    //   theDoseSqs[ii] = (theDoseSqs[ii]*nevA*nevA + doseSqs[ii]*nevB*nevB)/(nevSUM*nevSUM);
     theDoses[ii] *= factor;
     theDoseSqs[ii] *= factor2;
     // if( ii == 0 )  G4cout << "summed dose1 " << theDoses[ii] << " dose2 " << doses[ii] << G4endl;
-    // if( ii == 0)  G4cout << "summed doseSq1 " << theDoseSqs[ii] << " dose2 " << doses2[ii] << G4endl;
+    // if( ii == 0)  G4cout << "summed doseSq1 " << theDoseSqs[ii] << " dose2 " << doseSqs[ii] << G4endl;
   }
 
   //  G4cout << "dose value sum " << theDoses[0] << G4endl;
@@ -346,8 +359,71 @@ GmSqdose GmSqdose::operator*=( G4double factor )
   return *this;
 }
 
+//-----------------------------------------------------------------------
+GmSqdose GmSqdose::operator*=( const GmSqdose& gmdose )
+{
+  G4float nev1 = theHeader->GetNumberOfEvents();
+  G4float nev2 = gmdose.GetHeader()->GetNumberOfEvents();
+  G4float nev1Sq = nev1*nev1;
+  G4float nev2Sq = nev2*nev2;
+  G4float nevT = nev1*nev2;
+  G4float nevTSq = nevT*nevT;
+  theHeader->SetNumberOfEvents(nevT);
+  std::vector<float> doses = gmdose.GetDoses();
+  std::vector<float> doseSqs = gmdose.GetDoseSqs();
 
-//--------------------------------------------------------------------
+  size_t siz = theDoses.size();
+  if( doses.size() > siz ) {
+    for( size_t ii = siz; ii < doses.size(); ii++ ) {
+      theDoses[ii] = 0.;
+    }
+  }
+  
+  for( size_t ii = 0; ii < siz; ii++ ) {
+    if( GmSqdose::bNo0Dose ) {
+      if( theDoses[ii] == 0. ) {
+	theDoses[ii] = doses[ii];
+	theDoseSqs[ii] = doseSqs[ii];
+	continue;
+      }
+      if( doses[ii] == 0. ) {
+	continue;
+      }
+    }
+    if( ii < doses.size() ) {
+      G4bool bError0 = 0; // if both errors are 0, set DoseSqs so that new error is 0
+      G4double errd1 = theDoses[ii]==0 ? 0 : theDoseSqs[ii]*nev1 - theDoses[ii]*theDoses[ii];
+      //      G4cout << ii << " errd1 " << errd1 << " = " << theDoseSqs[ii] << " * " << nev1<< "  - " <<theDoses[ii]*theDoses[ii] <<  " : " << theDoses[ii]  << " :: " <<  sqrt(fabs(errd1))/theDoses[ii] << G4endl; //GDEB
+      
+      if( theDoses[ii] == 0 || fabs(errd1)/theDoses[ii]/theDoses[ii] < 5.e-07 ) {
+	//	G4double errd2 = doses[ii]==0 ? 0 : doseSqs[ii]*nev2 - doses[ii]*doses[ii];      
+	G4double errd2 = doseSqs[ii]*nev2 - doses[ii]*doses[ii];      
+	//	G4cout << ii << " errd2 " << errd2 << " = " << doseSqs[ii] << " * " << nev2<< "  - " <<doses[ii]*doses[ii] << " : " << doses[ii] << " :: " << sqrt(fabs(errd2))/doses[ii] << " ::: " << fabs(errd2)/doses[ii]/doses[ii] << G4endl; //GDEB
+	if( doses[ii] == 0 || fabs(errd2)/doses[ii]/doses[ii] < 5.e-07 ) {
+	  bError0 = 1;
+	}
+      }
+      theDoses[ii] = (theDoses[ii]*nev1 * doses[ii]*nev2)/nevT;
+      
+      if( bError0 ) {
+	theDoseSqs[ii] = theDoses[ii]*theDoses[ii]/nevT;
+	//	G4cout << ii << " NEW ERROR " << theDoseSqs[ii] << " " << nevT << " " << theDoseSqs[ii]*theHeader->GetNumberOfEvents()- theDoses[ii]*theDoses[ii] << " : " << theDoses[ii] << G4endl; //GDEB
+      } else {
+	theDoseSqs[ii] = (theDoseSqs[ii]*nev1Sq * doseSqs[ii]*nev2Sq)/nevTSq;
+      }
+      // if error=0, make error of sum = 0
+
+    }
+    //    if( theDoses[ii] != 0 )  G4cout << ii << "summed dose1 " << theDoses[ii] << " dose2 " << doses[ii] << G4endl;
+    // if( ii == 0)  G4cout << "summed doseSq1 " << theDoseSqs[ii] << " dose2 " << doseSqs[ii] << G4endl;
+  }
+
+  //  G4cout << "dose value sum " << theDoses[0] << G4endl;
+
+  return *this;
+}
+
+//-----------------------------------------------------------------------
 void GmSqdose::CalculateErrors()
 {
   size_t nvox = theDoses.size();
@@ -488,7 +564,7 @@ void GmSqdose::SumDisplaced( GmSqdose* doseNew )
 #endif
   
   std::vector<float> dosesNew = doseNew->GetDoses();
-  std::vector<float> dosesSqNew = doseNew->GetDoseSqs();
+  std::vector<float> doseSqsNew = doseNew->GetDoseSqs();
   G4int nVoxelsX1 = head1->GetNoVoxelsX();
   G4int nVoxelsX2 = head2->GetNoVoxelsX();
   G4int nVoxelsY1 = head1->GetNoVoxelsY();
@@ -524,7 +600,7 @@ void GmSqdose::SumDisplaced( GmSqdose* doseNew )
       for( G4int ix = ixmin; ix < ixmax; ix++, copyNo++ ) {
 	G4int copyNo1 = ix + iy*nVoxelsY1 + iz*nVoxelsXY1;
 	G4int copyNo2 = ix-idxMin + (iy-idyMin)*nVoxelsY2 + (iz-idyMin)*nVoxelsXY2;
-	G4bool bError0 = 0; // if both errors are 0, set DosesSq so that new error is 0
+	G4bool bError0 = 0; // if both errors are 0, set DoseSqs so that new error is 0
 	G4double errd1 = theDoses[copyNo1]==0 ? 0 : theDoseSqs[copyNo1]*nev1 - theDoses[copyNo1]*theDoses[copyNo1];
 	//G4cout << copyNo1 << " errd1 " << errd1 << " = " << theDoseSqs[copyNo1] << " * " << nev1<< "  - " <<theDoses[copyNo1]*theDoses[copyNo1] <<  " : " << theDoses[copyNo1]  << " :: " <<  sqrt(fabs(errd1))/theDoses[copyNo1] << G4endl; //GDEB
 	if( theDoses[copyNo1] == 0 || fabs(errd1)/theDoses[copyNo1]/theDoses[copyNo1] < 5.e-07 ) {
@@ -542,8 +618,8 @@ void GmSqdose::SumDisplaced( GmSqdose* doseNew )
 	  sumDoseSqs[copyNo] = theDoses[copyNo1]*theDoses[copyNo1]/nevT;
 	  //	  G4cout << copyNo1 << " NEW ERROR " << theDoseSqs[copyNo1] << " " << nevT << " " << theDoseSqs[copyNo1]*theHeader->GetNumberOfEvents()- theDoses[copyNo1]*theDoses[copyNo1] << " : " << theDoses[copyNo1] << G4endl; //GDEB
 	} else {
-	  sumDoseSqs[copyNo] = (theDoseSqs[copyNo1]*nev1Sq + dosesSqNew[copyNo2]*nev2Sq)/nevTSq;
-	  //	  G4cout <<ix<<":"<<iy<<":"<<iz<< " " << copyNo << " FINAL ERROR " << sumDoseSqs[copyNo] << " " << theDoseSqs[copyNo1] << "*" << nev1Sq << " +doseSq2 " << dosesSqNew[copyNo2] << "*" << nev2Sq << "/" << nevTSq << G4endl; //GDEB
+	  sumDoseSqs[copyNo] = (theDoseSqs[copyNo1]*nev1Sq + doseSqsNew[copyNo2]*nev2Sq)/nevTSq;
+	  //	  G4cout <<ix<<":"<<iy<<":"<<iz<< " " << copyNo << " FINAL ERROR " << sumDoseSqs[copyNo] << " " << theDoseSqs[copyNo1] << "*" << nev1Sq << " +doseSq2 " << doseSqsNew[copyNo2] << "*" << nev2Sq << "/" << nevTSq << G4endl; //GDEB
 	}
 	// if error=0, make error of sum = 0
 	

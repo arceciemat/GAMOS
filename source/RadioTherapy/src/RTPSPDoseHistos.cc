@@ -366,7 +366,7 @@ void RTPSPDoseHistos::FillHisto1N_Y( const G4String& hisName, G4double nXmin, G4
 void RTPSPDoseHistos::FillHisto1N_Z( const G4String& hisName, G4double nXmin, G4double nXmax, G4double nYmin, G4double nYmax, G4double nZmin, G4double nZmax, G4double )
 { 
 #ifndef GAMOS_NO_VERBOSE
-  if( RTVerb(debugVerb) ) G4cout << " FillHisto1N_Z " << hisName 
+  if( RTVerb(-debugVerb) ) G4cout << " FillHisto1N_Z " << hisName 
 	 << " nXmin " << nXmin << " nXmax " << nXmax 
 	 << " nYmin " << nYmin << " nYmax " << nYmax 
 	 << " nZmin " << nZmin << " nZmax " << nZmax 
@@ -789,7 +789,7 @@ void RTPSPDoseHistos::FillHistosFromFile( G4String fileName )
       //      G4cout << "CALLING 1N_Y " << wl[1]<< " " <<hminX<< " " <<hmaxX<< " " <<hminY<< " " <<hmaxY<< " " <<hminZ<< " " <<hmaxZ << G4endl;
       FillHisto1N_Y(wl[1],hminX,hmaxX,hminY,hmaxY,hminZ,hmaxZ,ZSlope);
     } else if( wl[0] == "1Z" ) {
-      //      G4cout << "CALLING 1N_Z " << wl[1]<< " " <<hminX<< " " <<hmaxX<< " " <<hminY<< " " <<hmaxY<< " " <<hminZ<< " " <<hmaxZ << G4end l;
+      G4cout << "CALLING 1N_Z " << wl[1]<< " " <<hminX<< " " <<hmaxX<< " " <<hminY<< " " <<hmaxY<< " " <<hminZ<< " " <<hmaxZ << G4endl; //GDEB
       FillHisto1N_Z(wl[1],hminX,hmaxX,hminY,hmaxY,hminZ,hmaxZ,ZSlope);
     } else if( wl[0] == "2XY" ) {
       FillHisto2N_XY(wl[1],hminX,hmaxX,hminY,hmaxY,hminZ,hmaxZ,ZSlope);

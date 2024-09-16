@@ -58,7 +58,7 @@ G4bool GmMinRangeCutOutsideVoxelFilter::AcceptTrack(const G4Track* aTrack)
   if( trkID != -1 ) {
     //    G4cout << " GmMinRangeCutOutsideVoxelFilter particle found , nvoxel " << aTrack->GetVolume()->GetCopyNo() << " creationVoxel " << theCreationVoxel << G4endl;
     theParticleIDs.insert(aTrack->GetTrackID()); // if it is cut or if parent is cut ( as then this one is also cut)
-    if( theCreationVoxel != aTrack->GetVolume()->GetCopyNo() ) {
+    if( theCreationVoxel != aTrack->GetTouchable()->GetReplicaNumber() ) {
       //      G4cout << " GmMinRangeCutOutsideVoxelFilter accepted nvoxel " << aTrack->GetVolume()->GetCopyNo() << " creationVoxel " << theCreationVoxel << G4endl;
       bAcceptTrack = TRUE;
     }
@@ -93,7 +93,7 @@ G4bool GmMinRangeCutOutsideVoxelFilter::AcceptTrack(const G4Track* aTrack)
       if( ener!= 0. && ener < cut && CheckProcess(aTrack->GetCreatorProcess()) ) {
 	//	  G4cout << " GmMinRangeCutOutsideVoxelFilter new particle below cut " << ener << " < " << cut  << G4endl;
 	  theParticleIDs.insert(aTrack->GetTrackID());
-	theCreationVoxel = aTrack->GetVolume()->GetCopyNo(); // this is the voxel where all the energy would be counted as deposited if the track is cut
+	theCreationVoxel = aTrack->GetTouchable()->GetReplicaNumber(); // this is the voxel where all the energy would be counted as deposited if the track is cut
 	//----- Store the secondary tracks that are created in previous steps (those are not cut)
 
 	//	G4TrackVector* trackSeco = aTrack->GetSecondary();

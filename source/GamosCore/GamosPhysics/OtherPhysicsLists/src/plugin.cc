@@ -1,4 +1,5 @@
 #include "GmDummyPhysics.hh"
+#include "GmG4HadronicPhysicsLists.hh"
 #include "GmG4PhysicsLists.hh"
 #include "GmQGSP_BIC_HP_EMopt3.hh"
 
@@ -35,6 +36,8 @@ PLUGINSVC_FACTORY(G4QGSP_BIC_AllHP,G4VUserPhysicsList*())
 
 PLUGINSVC_FACTORY(GmQGSP_BIC_HP_EMopt3,G4VUserPhysicsList*())
 
+PLUGINSVC_FACTORY(GmG4HadronicPhysicsLists,G4VUserPhysicsList*())
+
 #else
 
 #include "SEAL_Foundation/PluginManager/PluginManager/ModuleDef.h"
@@ -69,4 +72,7 @@ DEFINE_GAMOS_PHYSICS(GmQGSP_BIC_HP_EMopt3);
 DEFINE_GAMOS_PHYSICS(G4FTFP_BERT_ATL);
 DEFINE_GAMOS_PHYSICS(G4FTFQGSP_BERT);
 DEFINE_GAMOS_PHYSICS(NuBeam);
+
+DEFINE_GAMOS_PHYSICS(GmG4HadronicPhysicsLists);
+
 #endif

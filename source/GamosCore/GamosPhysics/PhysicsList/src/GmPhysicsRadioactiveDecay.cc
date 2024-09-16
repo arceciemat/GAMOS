@@ -14,7 +14,7 @@
 
 //----------------------------------------------------------------------
 GmPhysicsRadioactiveDecay::GmPhysicsRadioactiveDecay()
-: theRadioactiveDecay(0)
+// : theRadioactiveDecay(0)
 {
   G4DeexPrecoParameters* deex = G4NuclearLevelData::GetInstance()->GetParameters();
   deex->SetStoreICLevelData(true);
@@ -27,7 +27,7 @@ GmPhysicsRadioactiveDecay::GmPhysicsRadioactiveDecay()
 //----------------------------------------------------------------------
 GmPhysicsRadioactiveDecay::~GmPhysicsRadioactiveDecay()
 {
-  delete theRadioactiveDecay;
+  //  delete theRadioactiveDecay;
 }
  
 //----------------------------------------------------------------------

@@ -55,6 +55,7 @@ void DicomPolygon::SetPoints( std::vector<G4ThreeVector> points )
   std::vector<G4ThreeVector>::iterator ite = points.begin();
   std::vector<G4ThreeVector>::reverse_iterator rite = points.rbegin();
   if( *ite != *rite) {
+#ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(infoVerb) ) {
       G4Exception("DicomPolygon::SetPoints",
 		  "",
@@ -64,6 +65,7 @@ void DicomPolygon::SetPoints( std::vector<G4ThreeVector> points )
 	    G4cerr << ii << " POINT " << points[ii] << G4endl; //GDEB
 	    } */
     }
+#endif
     thePoints.push_back(*ite);
     //    theDirections.push_back(G4ThreeVector());
   }
@@ -96,9 +98,12 @@ void DicomPolygon::BuildDirections()
 //-----------------------------------------------------------------------------
 void DicomPolygon::FindVoxelsInXY( DicomVImageStr* imageStr, G4double extraZ )
 {
+#ifndef GAMOS_NO_VERBOSE
   if( DicomVerb(infoVerb) ) G4cout << theName << " DicomPolygon::FindVoxelsInXY in image " << imageStr->GetName() << " " << DicomVImage::GetModalityStr(imageStr->GetModality()) << " polygon_name " << theName <<  " from " << theLineList->GetName()  << " NPoints " << thePoints.size() << " Z= " << thePoints[0] << " - " << extraZ << G4endl;
+#endif
+  
   double PRECISION = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
-
+  
   if( theOrientation != DPOrientXY ) {
     G4Exception("DicomPolygon::FindVoxelsInXY",
 		"",
@@ -106,7 +111,7 @@ void DicomPolygon::FindVoxelsInXY( DicomVImageStr* imageStr, G4double extraZ )
 		("Only XY polygon orientations are supported, this is orientation " + DicomVLine::GetOrientationName(theOrientation) + " Please contact GAMOS authors").c_str());
   }
   std::set<double> distInters;
-
+  
   //----- Extract the old image data
   size_t imNoVoxelsX = imageStr->GetNoVoxelsX();
   size_t imNoVoxelsY = imageStr->GetNoVoxelsY();
@@ -120,15 +125,19 @@ void DicomPolygon::FindVoxelsInXY( DicomVImageStr* imageStr, G4double extraZ )
   G4double imVoxelDimX = imageStr->GetVoxelDimX();
   G4double imVoxelDimY = imageStr->GetVoxelDimY();
   G4double imVoxelDimZ = imageStr->GetVoxelDimZ();
-
+  
   //--- Get contour Zplane ID and check it is in limits
   G4int iPolygonZ = GetPolygonZIndex(imageStr, extraZ);
   if( iPolygonZ < 0 || iPolygonZ >= G4int(imNoVoxelsZ) ) {
     return;
   }
-
-  if( DicomVerb(debugVerb) ) G4cout << " INTERS CONTOUR WITH Z SLICE " << thePoints[0].z() << " zMin " << imMinZ << " zMax " << imMinZ+imVoxelDimZ*imageStr->GetNoVoxelsZ() << G4endl;
-  if( DicomVerb(debugVerb) ) G4cout << " NPOINTS " << thePoints.size() << G4endl;
+  
+#ifndef GAMOS_NO_VERBOSE
+  if( DicomVerb(debugVerb) ) {
+    G4cout << " INTERS CONTOUR WITH Z SLICE " << thePoints[0].z() << " zMin " << imMinZ << " zMax " << imMinZ+imVoxelDimZ*imageStr->GetNoVoxelsZ() << G4endl;
+    G4cout << " NPOINTS " << thePoints.size() << G4endl;
+  }
+#endif
 
   //--- Set min/max extensions
   double minXc = DBL_MAX;
@@ -156,17 +165,19 @@ void DicomPolygon::FindVoxelsInXY( DicomVImageStr* imageStr, G4double extraZ )
   int idMaxX = std::min(int(imNoVoxelsX-1),int((maxXc-imMinX)/imVoxelDimX+1));
   int idMinY = std::max(0,int((minYc-imMinY)/imVoxelDimY));
   int idMaxY = std::min(int(imNoVoxelsY-1),int((maxYc-imMinY)/imVoxelDimY+1));
-  if( DicomVerb(debugVerb) )
+#ifndef GAMOS_NO_VERBOSE
+  if( DicomVerb(debugVerb) ) {
     G4cout << " OK CONTOUR INSIDE X/Y OF Z SLICE "
 	   << " minXc " << minXc << " < " << imMinX
 	   << " maxXc " << maxXc << " > " << imMaxX
 	   << " minYc " << minYc << " < " << imMinY
 	   << " maxYc " << maxYc << " > " << imMaxY << G4endl;
-  if( DicomVerb(debugVerb) )
     G4cout << " VOXEL ID LIMITS OF CONTOUR : idMinX " << idMinX 
 	   << " idMaxX " << idMaxX 
 	   << " idMinY " << idMinY 
 	   << " idMaxY " << idMaxY << G4endl;
+  }
+#endif
   //for each voxel: build 4 lines from the corner towards the center and check how many contour segments it crosses, and the minimum distance to a segment
 
   //  if( DicomVerb(debugVerb) ) G4cout << " LOOPING POLYGON " << theName << " from " << theLineList->GetName() << G4endl; 
@@ -185,10 +196,14 @@ void DicomPolygon::FindVoxelsInXY( DicomVImageStr* imageStr, G4double extraZ )
       G4double stepAngle = 153*CLHEP::deg;
       for( int iloop = 1; ; iloop++ ) {
 	distInters.clear();
+#ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(debugVerb) ) G4cout << " START LOOP " << iloop << G4endl;
+#endif
 	double v0x = cos(iniAngle+iloop*stepAngle);
 	double v0y = sin(iniAngle+iloop*stepAngle);
+#ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(debugVerb) ) G4cout << ix << " " << iy << "@@@@@ CHECKING VOXEL AT (" << c0x << "," << c0y << ")" << " DIR= (" << v0x << "," << v0y << ") " << G4endl;
+#endif
 	for( size_t ll = 0; ll < thePoints.size()-1; ll++ ){ // NO last point, as it is the same as first point => direction=0
 	  double pc0x = thePoints[ll].x() - c0x;
 	  double pc0y = thePoints[ll].y() - c0y;
@@ -210,38 +225,60 @@ void DicomPolygon::FindVoxelsInXY( DicomVImageStr* imageStr, G4double extraZ )
 	  if( fabs(fac1) > PRECISION ) { // if not parallel lines
 	    lambdaq = -fac2/fac1;
 	  } else {
+#ifndef GAMOS_NO_VERBOSE
 	    if( DicomVerb(testVerb) ) G4cout << " PARALLEL LINES  LAMBDAP " << lambdap << " LAMBDAQ " << lambdaq << " facs " << fac1 << " " << fac2 << " " << fac3 << " d0 " << d0x << " " << d0y << " v0 " << v0x << " " << v0y << " pc0 " << pc0x << " " << pc0y << G4endl; 
+#endif
 	  }
+#ifndef GAMOS_NO_VERBOSE
 	  if( DicomVerb(testVerb) ) G4cout << ll << " " << thePoints[ll] << " " << theDirections[ll] << " INTERS LAMBDAQ " << lambdaq << " facs " << fac1 << " " << fac2 << " " << fac3 << G4endl; 
+#endif
 	  //--- Intersection is = c0+lambdap*v0 and = thePoints[ll]+lambdaq*theDirections[ll]
 	  if( lambdaq < PRECISION || lambdaq-1. >= PRECISION ) continue; // BAD: intersection further than segment length
 	  if( lambdap > PRECISION ) { 
 	    distInters.insert(lambdap);
+#ifndef GAMOS_NO_VERBOSE
 	    if( DicomVerb(testVerb) ) G4cout << " !! GOOD INTERS " << lambdaq << "  (" << thePoints[ll].x()+lambdaq*d0x << "," << thePoints[ll].y()+lambdaq*d0y << ")  =  (" << c0x+lambdap*v0x << "," << c0y+lambdap*v0y << ") " << " N " << distInters.size() << G4endl;		      
+#endif
 	  } else {
+#ifndef GAMOS_NO_VERBOSE
 	    if( DicomVerb(testVerb) ) G4cout << " !! BAD INTERS: OPPOSITE DIRECTION " << lambdap << G4endl;		      
+#endif
 	  }
+#ifndef GAMOS_NO_VERBOSE
 	    if( DicomVerb(testVerb) ) G4cout << " INTERS LAMBDAQ " << lambdaq << " P " << lambdap << G4endl;
-	  if( DicomVerb(testVerb) ) G4cout << " INTERS POINT FROM CENTRE= " << ll << "  (" << thePoints[ll].x()+lambdaq*d0x-c0x << "," << thePoints[ll].y()+lambdaq*d0y-c0y << ")  =  (" << c0x+lambdap*v0x-(thePoints[ll].x()+lambdaq*d0x) << "," << c0y+lambdap*v0y-(thePoints[ll].y()+lambdaq*d0y) << ") " << G4endl; 
-	  if( DicomVerb(debugVerb) ) G4cout << " INTERS POINT FROM CENTRE= " << ll << " (" << thePoints[ll].x()+lambdaq*d0x << "," <<  thePoints[ll].y()+lambdaq*d0y << ")  =  (" << c0x+lambdap*v0x << "," << c0y+lambdap*v0y << ") " << G4endl;
+#endif
+#ifndef GAMOS_NO_VERBOSE
+	    if( DicomVerb(testVerb) ) {
+	      G4cout << " INTERS POINT FROM CENTRE= " << ll << "  (" << thePoints[ll].x()+lambdaq*d0x-c0x << "," << thePoints[ll].y()+lambdaq*d0y-c0y << ")  =  (" << c0x+lambdap*v0x-(thePoints[ll].x()+lambdaq*d0x) << "," << c0y+lambdap*v0y-(thePoints[ll].y()+lambdaq*d0y) << ") " << G4endl; 
+	      G4cout << " INTERS POINT FROM CENTRE= " << ll << " (" << thePoints[ll].x()+lambdaq*d0x << "," <<  thePoints[ll].y()+lambdaq*d0y << ")  =  (" << c0x+lambdap*v0x << "," << c0y+lambdap*v0y << ") " << G4endl;
+	    }
+#endif
 	} // end thePoints loop
 	if( distInters.size() % 2 == 1 ) { // search for odd number of segment intersections
 	  loopResult++;
 	} else {
 	  loopResult--;
 	}
+#ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(debugVerb) ) G4cout << iloop << " LOOP RESULT " << (distInters.size() % 2) << " -> " << loopResult << G4endl; 
+#endif
 	if( iloop == NLoopInitial
 	    || (iloop>NLoopInitial &&(iloop-NLoopInitial)%NLoopPlus == 0)
 	    || iloop == NLoopMax
 	    || iloop == NLoopMax + 1 ) {
+#ifndef GAMOS_NO_VERBOSE
 	  if( DicomVerb(debugVerb) ) G4cout << " CHECK LOOP RESULT " << loopResult << " || " << iloop << " == " << NLoopMax+1 << G4endl; 
+#endif
 	  if( loopResult != 0 || iloop == NLoopMax + 1 ) break;
+#ifndef GAMOS_NO_VERBOSE
 	  if( DicomVerb(debugVerb) ) G4cout << "!! CONTRADICTORY RESULT AFTER LOOP " << " (" << imMinX + imVoxelDimX*(ix+0.5) << "," << imMinY + imVoxelDimY*(iy+0.5) << "," << thePoints[0].z() << ")" << loopResult << " || " << iloop << " == " << NLoopMax+1 << G4endl; 
+#endif
 	}
       } //ENDED the NLOOPS 
       if( loopResult > 0 )  {
+#ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(debugVerb) ) G4cout << "@@@@@ CENTRE OK  for Polygon " << GetName() << " " << ix << " " << iy << " (" << imMinX + imVoxelDimX*(ix+0.5) << "," << imMinY + imVoxelDimY*(iy+0.5) << "," << thePoints[0].z() << ")" << G4endl;
+#endif
 	// extract previous ID value
 	G4String roiStr = imageStr->GetDataStr(ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY);
 	//		roival = 2 + NMAXID*3 + NMAXID*NMAXID*15;
@@ -251,8 +288,10 @@ void DicomPolygon::FindVoxelsInXY( DicomVImageStr* imageStr, G4double extraZ )
 	  if( roiStr.find(theIDStr) != std::string::npos ) {
 	    roiStr += ":"+theIDStr;
 	  }
+#ifndef GAMOS_NO_VERBOSE
 	  if( DicomVerb(debugVerb) ){
 	    G4cout << ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY << " FINAL Struct ID WITH PREVIOUS ID's IN VOXEL " << ix << " " << iy << " : " << roiStr << G4endl;
+#endif
 	  }
 	}
 	imageStr->SetDataStr(ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY, theIDStr);
@@ -269,13 +308,15 @@ void DicomPolygon::FindVoxelsInXY( DicomVImageStr* imageStr, G4double extraZ )
       
     }
   }
-}
+  }
 
 
 //-----------------------------------------------------------------------------
 G4bool DicomPolygon::PointIsInXY( G4ThreeVector point )
 {
+#ifndef GAMOS_NO_VERBOSE
   if( DicomVerb(infoVerb) ) G4cout << theName << " DicomPolygon::FindVoxelsInXY in point " << point << " polygon_name " << theName << " NPoints " << thePoints.size() << G4endl;
+#endif
   double PRECISION = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
 
   if( theOrientation != DPOrientXY ) {
@@ -314,10 +355,14 @@ G4bool DicomPolygon::PointIsInXY( G4ThreeVector point )
   G4double stepAngle = 153*CLHEP::deg;
   for( int iloop = 1; ; iloop++ ) {
     distInters.clear();
+#ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(debugVerb) ) G4cout << " START LOOP " << iloop << G4endl;
+#endif
     double v0x = cos(iniAngle+iloop*stepAngle);
     double v0y = sin(iniAngle+iloop*stepAngle);
+#ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(debugVerb) ) G4cout << " @@@@@ CHECKING POINT AT (" << c0x << "," << c0y << ")" << " DIR= (" << v0x << "," << v0y << ") " << G4endl;
+#endif
     for( size_t ll = 0; ll < thePoints.size()-1; ll++ ){ // NO last point, as it is the same as first point => direction=0
       double pc0x = thePoints[ll].x() - c0x;
       double pc0y = thePoints[ll].y() - c0y;
@@ -333,41 +378,61 @@ G4bool DicomPolygon::PointIsInXY( G4ThreeVector point )
       if( fabs(fac1) > PRECISION ) { // if not parallel lines
 	lambdaq = -fac2/fac1;
       } else {
+#ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(testVerb) ) G4cout << " PARALLEL LINES  LAMBDAP " << lambdap << " LAMBDAQ " << lambdaq << " facs " << fac1 << " " << fac2 << " " << fac3 << " d0 " << d0x << " " << d0y << " v0 " << v0x << " " << v0y << " pc0 " << pc0x << " " << pc0y << G4endl; 
+#endif
       }
+#ifndef GAMOS_NO_VERBOSE
       if( DicomVerb(testVerb) ) G4cout << ll << " " << thePoints[ll] << " " << theDirections[ll] << " INTERS LAMBDAQ " << lambdaq << " facs " << fac1 << " " << fac2 << " " << fac3 << G4endl; 
+#endif
       //--- Intersection is = c0+lambdap*v0 and = thePoints[ll]+lambdaq*theDirections[ll]
       if( lambdaq < PRECISION || lambdaq-1. >= PRECISION ) continue; // BAD: intersection further than segment length
       if( lambdap > PRECISION ) { 
 	distInters.insert(lambdap);
-	if( DicomVerb(testVerb) ) G4cout << " !! GOOD INTERS " << lambdaq << "  (" << thePoints[ll].x()+lambdaq*d0x << "," << thePoints[ll].y()+lambdaq*d0y << ")  =  (" << c0x+lambdap*v0x << "," << c0y+lambdap*v0y << ") " << " N " << distInters.size() << G4endl;		      
+#ifndef GAMOS_NO_VERBOSE
+	if( DicomVerb(testVerb) ) G4cout << " !! GOOD INTERS " << lambdaq << "  (" << thePoints[ll].x()+lambdaq*d0x << "," << thePoints[ll].y()+lambdaq*d0y << ")  =  (" << c0x+lambdap*v0x << "," << c0y+lambdap*v0y << ") " << " N " << distInters.size() << G4endl;	
+#endif
       } else {
+#ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(testVerb) ) G4cout << " !! BAD INTERS: OPPOSITE DIRECTION " << lambdap << G4endl;	 
+#endif
       }
-      if( DicomVerb(testVerb) ) G4cout << " INTERS LAMBDAQ " << lambdaq << " P " << lambdap << G4endl;
-      if( DicomVerb(testVerb) ) G4cout << " INTERS POINT FROM CENTRE= " << ll << "  (" << thePoints[ll].x()+lambdaq*d0x-c0x << "," << thePoints[ll].y()+lambdaq*d0y-c0y << ")  =  (" << c0x+lambdap*v0x-(thePoints[ll].x()+lambdaq*d0x) << "," << c0y+lambdap*v0y-(thePoints[ll].y()+lambdaq*d0y) << ") " << G4endl; 
-      if( DicomVerb(debugVerb) ) G4cout << " INTERS POINT FROM CENTRE= " << ll << " (" << thePoints[ll].x()+lambdaq*d0x << "," <<  thePoints[ll].y()+lambdaq*d0y << ")  =  (" << c0x+lambdap*v0x << "," << c0y+lambdap*v0y << ") " << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+      if( DicomVerb(testVerb) ) {
+	G4cout << " INTERS LAMBDAQ " << lambdaq << " P " << lambdap << G4endl;
+	G4cout << " INTERS POINT FROM CENTRE= " << ll << "  (" << thePoints[ll].x()+lambdaq*d0x-c0x << "," << thePoints[ll].y()+lambdaq*d0y-c0y << ")  =  (" << c0x+lambdap*v0x-(thePoints[ll].x()+lambdaq*d0x) << "," << c0y+lambdap*v0y-(thePoints[ll].y()+lambdaq*d0y) << ") " << G4endl; 
+	G4cout << " INTERS POINT FROM CENTRE= " << ll << " (" << thePoints[ll].x()+lambdaq*d0x << "," <<  thePoints[ll].y()+lambdaq*d0y << ")  =  (" << c0x+lambdap*v0x << "," << c0y+lambdap*v0y << ") " << G4endl;
+      }
+#endif
     } // end thePoints loop
     if( distInters.size() % 2 == 1 ) { // search for odd number of segment intersections
       loopResult++;
     } else {
       loopResult--;
     }
+#ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(debugVerb) ) G4cout << iloop << " LOOP RESULT " << (distInters.size() % 2) << " -> " << loopResult << G4endl; 
+#endif
     if( iloop == NLoopInitial
 	|| (iloop>NLoopInitial &&(iloop-NLoopInitial)%NLoopPlus == 0)
 	|| iloop == NLoopMax
 	|| iloop == NLoopMax + 1 ) {
+#ifndef GAMOS_NO_VERBOSE
       if( DicomVerb(debugVerb) ) G4cout << " CHECK LOOP RESULT " << loopResult << " || " << iloop << " == " << NLoopMax+1 << G4endl; 
+#endif
       if( loopResult != 0 || iloop == NLoopMax + 1 ) break;
       //      if( DicomVerb(debugVerb) ) G4cout << "!! CONTRADICTORY RESULT AFTER LOOP " << " (" << imMinX + imVoxelDimX*(ix+0.5) << "," << imMinY + imVoxelDimY*(iy+0.5) << "," << thePoints[0].z() << ")" << loopResult << " || " << iloop << " == " << NLoopMax+1 << G4endl; 
     }
   } //ENDED the NLOOPS 
   if( loopResult > 0 )  {
+#ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(debugVerb) ) G4cout << "@@@@@ CENTRE INSIDE Polygon " << GetName() << " " << point << G4endl;
+#endif
     return true;
   } else {
+#ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(debugVerb) ) G4cout << "@@@@@ CENTRE OUTSIDE Polygon " << GetName() << " " << point << G4endl;
+#endif
     return false;
   }
 }
@@ -403,23 +468,31 @@ G4int DicomPolygon::GetPolygonZIndex( DicomVImage* image, G4double extraZ )
 
   if( iPolygonZ >= G4int(imNoVoxelsZ) ) {
     G4double imMaxZ = imMinZ+imVoxelDimZ*image->GetNoVoxelsZ();
-    G4cerr << "DicomPolygon has Z bigger than image "
-	     << "Polygon Z= " << thePoints[0].z() << "+" << extraZ << " Image max Z= " << imMaxZ << " diff " << polyZ-imMaxZ << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+      if( DicomVerb(infoVerb) ) {
+	G4cerr << "DicomPolygon has Z bigger than image "
+	       << "Polygon Z= " << thePoints[0].z() << "+" << extraZ << " Image max Z= " << imMaxZ << " diff " << polyZ-imMaxZ << G4endl;
+      }
+#endif
     if( polyZ - imMaxZ < image->GetPrecision() ) {
       iPolygonZ = imNoVoxelsZ-1;
+#ifndef GAMOS_NO_VERBOSE
       if( DicomVerb(infoVerb) ) {
 	G4Exception(" DicomPolygon::GetPolygonZIndex",
 		    "",
 		    JustWarning,
 		    "Polygon Z is bigger than image maximum Z, probably due to precision. It will be set to image maximim Z");
       }
+#endif
     } else {
+#ifndef GAMOS_NO_VERBOSE
       if( DicomVerb(infoVerb) ) { 
 	G4Exception(" DicomPolygon::GetPolygonZIndex",
 		    "",
 		    JustWarning,
 		    "Polygon Z is bigger than image maximum Z, it will not be used");
       }
+#endif
     }
   }
 

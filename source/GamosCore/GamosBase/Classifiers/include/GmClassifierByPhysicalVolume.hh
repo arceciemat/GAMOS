@@ -4,7 +4,6 @@
 #include <vector>
 #include <map>
 #include "globals.hh"
-class G4VPhysicalVolume;
 #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh"
 
 class GmClassifierByPhysicalVolume  : public GmVClassifier
@@ -23,7 +22,7 @@ public: // with description
   virtual void SetIndices( std::vector<G4String> wl );
 
 private:
-  std::map<G4VPhysicalVolume*,int64_t> theIndexMap;
+  std::map<G4String,int64_t> theIndexMap;
 };
 
 #endif

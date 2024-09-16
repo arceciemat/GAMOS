@@ -39,6 +39,7 @@ class DicomReaderRTStruct : public DicomVReader
 public:
   DicomReaderRTStruct(DcmDataset* dset);
   DicomReaderRTStruct(G4String fileName );
+  DicomReaderRTStruct();
   ~DicomReaderRTStruct(){};
 
 public:
@@ -56,7 +57,7 @@ public:
     return theStructImage;
   }    
   
-private:
+protected:
   void BuildPolygonSet();
   std::map<G4int,DicomROI*> theROIs;
 

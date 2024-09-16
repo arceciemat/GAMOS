@@ -15,7 +15,6 @@ geant4_add_module(GamosCore_GamosBase_Classifiers
     GmClassifierBySecondariesListExclude.hh
     GmCompoundClassifier.hh
     GmClassifierByLogicalVolume.hh
-    GmClassifierByPhysicalVolumeReplicated.hh
     GmClassifierByHadronicReaction.hh
     GmClassifierByKineticEnergy.hh
     GmClassifierByMaterial.hh
@@ -30,7 +29,6 @@ geant4_add_module(GamosCore_GamosBase_Classifiers
     GmClassifierBySecondariesListExclude.cc
     GmClassifierBy1Ancestor.cc
     GmClassifierByParticleProcess.cc
-    GmClassifierByPhysicalVolumeReplicated.cc
     GmClassifierByParallelLogicalVolume.cc
     plugin.cc
     GmClassifierByLogicalVolume.cc

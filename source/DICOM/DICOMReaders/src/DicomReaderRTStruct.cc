@@ -24,6 +24,11 @@
 #include "dcmtk/config/osconfig.h"   // make sure OS specific configuration is included 
 
 //-----------------------------------------------------------------------------
+DicomReaderRTStruct::DicomReaderRTStruct() : DicomVReader(DRM_RTStruct)
+{
+}
+
+//-----------------------------------------------------------------------------
 DicomReaderRTStruct::DicomReaderRTStruct(DcmDataset* dset) : DicomVReader(dset, DRM_RTStruct)
 {
   ReadData();
@@ -151,7 +156,7 @@ void DicomReaderRTStruct::ReadData()
       G4int refROINumber = GmGenUtils::GetInt(refROINumberStr.c_str());
       std::map<G4int,DicomROI*>::const_iterator iter = theROIs.find(refROINumber); 
       if( iter == theROIs.end() ) {
-	G4Exception("DicomReaderRTStruct::DicomReaderRTStruct",
+	G4Exception("DicomReaderRTStruct::ReadData",
 		    "",
 		    JustWarning,
 		    ("Contour sequence has a ReferencedROINumber tag that does not correspond to any ROI in DRTStructureSetROISequence, a new ROI will be created with name Struct"+refROINumberStr).c_str());
@@ -163,7 +168,7 @@ void DicomReaderRTStruct::ReadData()
       }
 
     } else {
-      G4Exception("DicomReaderRTStruct::DicomReaderRTStruct",
+      G4Exception("DicomReaderRTStruct::ReadData",
 		  "",
 		  JustWarning,
 		  "Contour sequence does not have any ReferencedROINumber tag, it will be assigned to the last ROI");
@@ -325,13 +330,19 @@ void DicomReaderRTStruct::BuildPolygonSet()
 		      "",
 		      JustWarning,
 		      ("Number of points less than 3 for contour " + roi->GetName() + " : "+GmGenUtils::itoa(kk)+" No  polygon will be built").c_str());
-	  continue;
+	  continue; 
 	}
 	if( DicomVerb(debugVerb) ) G4cout << " " << kk << " NPOINTS " << points.size() << G4endl;
 	std::vector<G4ThreeVector> dirs = roic->GetDirections();
 	DicomPolygon* polyg = new DicomPolygon(points,dirs,roi->GetName().c_str(), DPOrientXY);
 	polyList->AddLine(polyg);
-	if( DicomVerb(debugVerb) ) G4cout << "DicomReaderRTStruct::BuildPolygonSet AddPolygon FROM " << roi->GetName() << " " << dirs[1] << " " << points[2] << " " << points[1] << " Npoly " << polyList->GetLines().size() << G4endl;
+	if( DicomVerb(debugVerb) ) G4cout << "DicomReaderRTStruct::BuildPolygonSet AddPolygon FROM " << roi->GetName() << " ID " << roiID << " contour " << kk << " " << dirs[1] << " " << points[2] << " " << points[1] << " Npoly " << polyList->GetLines().size() << G4endl;
+	if( DicomVerb(testVerb) ) {
+	  for( size_t ii = 0; ii < points.size(); ii++ ) {
+	    G4cout << "DicomReaderRTStruct::BuildPolygonSet AddPolygon FROM " << roi->GetName() << " ID " << roiID << " contour " << kk << " pt " << ii << " " << points[ii] << G4endl;
+	  }
+	}
+	
       }
     }
   }

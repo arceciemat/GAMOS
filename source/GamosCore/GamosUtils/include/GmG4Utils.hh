@@ -15,6 +15,8 @@ class G4SteppingManager;
 class G4Material;
 class G4Ions;
 class G4Nucleus;
+class G4VTouchable;
+class G4ProcessVector;
 
 class GmG4Utils {
 public:
@@ -49,9 +51,12 @@ public:
   static G4String GetParticleShortName( G4String name );
   static G4DecayTable* FindOrBuildDecayTable( const G4ParticleDefinition* part );  
   static G4ParticleDefinition* GetG4Particle( const G4String particleName, G4bool bMustExist = true ); 
-  
+  static G4String GetNameNumberFromTouchable( const G4VTouchable* touch );
+  static G4ProcessVector* GetGammaProcessVector(G4ProcessVector* provVectorOrig );
+
 private:
   static std::map<const G4ParticleDefinition*,G4DecayTable*> thePartDecayTable;
+
 };
 
 #endif

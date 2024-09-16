@@ -10,11 +10,11 @@
 #include "G4LogicalVolume.hh"
 #include "G4MoleculeGun.hh"
 #include "G4tgbVolumeMgr.hh"
-#include "G4tgbParallelGeomMgr.hh"
+//#include "G4tgbParallelGeomMgr.hh"
 #include "GamosCore/GamosGeometry/include/GmGeomTextDetectorBuilder.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include "GamosCore/GamosGeometry/include/GmParallelWorldCreator.hh"
+//#include "GamosCore/GamosGeometry/include/GmParallelWorldCreator.hh"
 #include "G4tgrMessenger.hh"
  
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

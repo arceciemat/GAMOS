@@ -2,6 +2,7 @@
 #define GmDataInitialPhysicalVolume_hh
 
 #include "GamosCore/GamosData/Management/include/GmVDataString.hh"
+class G4VTouchable;
 
 class GmDataInitialPhysicalVolume : public GmVDataString
 {

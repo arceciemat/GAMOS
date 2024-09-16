@@ -3,7 +3,6 @@
 #include "GmClassifierByLogicalVolume.hh"
 #include "GmClassifierByKineticEnergy.hh"
 #include "GmClassifierByPhysicalVolume.hh"
-#include "GmClassifierByPhysicalVolumeReplicated.hh"
 #include "GmClassifierByRegion.hh"
 #include "GmClassifierByParticle.hh"
 #include "GmClassifierByPrimaryParticle.hh"
@@ -25,7 +24,6 @@ PLUGINSVC_FACTORY(GmClassifierBy1Ancestor,GmVClassifier*(G4String))
 PLUGINSVC_FACTORY(GmClassifierByLogicalVolume,GmVClassifier*(G4String))
 PLUGINSVC_FACTORY(GmClassifierByKineticEnergy,GmVClassifier*(G4String))
 PLUGINSVC_FACTORY(GmClassifierByPhysicalVolume,GmVClassifier*(G4String))
-PLUGINSVC_FACTORY(GmClassifierByPhysicalVolumeReplicated,GmVClassifier*(G4String))
 PLUGINSVC_FACTORY(GmClassifierByRegion,GmVClassifier*(G4String))
 PLUGINSVC_FACTORY(GmClassifierByParticle,GmVClassifier*(G4String))
 PLUGINSVC_FACTORY(GmClassifierByPrimaryParticle,GmVClassifier*(G4String))
@@ -52,7 +50,6 @@ DEFINE_GAMOS_CLASSIFIER(GmClassifierBy1Ancestor);
 DEFINE_GAMOS_CLASSIFIER(GmClassifierByLogicalVolume);
 DEFINE_GAMOS_CLASSIFIER(GmClassifierByKineticEnergy);
 DEFINE_GAMOS_CLASSIFIER(GmClassifierByPhysicalVolume);
-DEFINE_GAMOS_CLASSIFIER(GmClassifierByPhysicalVolumeReplicated);
 DEFINE_GAMOS_CLASSIFIER(GmClassifierByRegion);
 DEFINE_GAMOS_CLASSIFIER(GmClassifierByParticle);
 DEFINE_GAMOS_CLASSIFIER(GmClassifierByPrimaryParticle);

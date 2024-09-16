@@ -1,6 +1,7 @@
 #include "GmClassifierByPhysicalVolume.hh"
 #include "GamosCore/GamosBase/Classifiers/include/GmClassifierVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 
 #include "G4Step.hh"
@@ -29,19 +30,21 @@ void GmClassifierByPhysicalVolume::SetParameters( std::vector<G4String>& params 
 //----------------------------------------------------------------
 int64_t GmClassifierByPhysicalVolume::GetIndexFromStep(const G4Step* aStep)
 {
+  G4String pvNameNum = GmG4Utils::GetNameNumberFromTouchable(aStep->GetPreStepPoint()->GetTouchable());
+  
   int64_t index;
-  G4VPhysicalVolume* pv = aStep->GetPreStepPoint()->GetPhysicalVolume();
-  std::map<G4VPhysicalVolume*,int64_t>::const_iterator ite = theIndexMap.find(pv);
+  std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(pvNameNum);
   if( ite == theIndexMap.end() ){
     index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[pv] = index;
+    theIndexMap[pvNameNum] = index;
   } else {
     index = (*ite).second;
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierByPhysicalVolume::GetIndexFromStep " << index << " pv " << pv->GetName() << " : " << pv->GetCopyNo() << G4endl;
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierByPhysicalVolume::GetIndexFromStep " << index << " pvNameNum " << pvNameNum << G4endl;
 #endif
+  
   return index;
 }
 
@@ -49,19 +52,17 @@ int64_t GmClassifierByPhysicalVolume::GetIndexFromStep(const G4Step* aStep)
 int64_t GmClassifierByPhysicalVolume::GetIndexFromTrack(const G4Track* aTrack)
 {
   int64_t index;
-  G4VPhysicalVolume* pv = aTrack->GetVolume();
-  if( !pv ) return 0;
-
-  std::map<G4VPhysicalVolume*,int64_t>::const_iterator ite = theIndexMap.find(pv);
+  G4String pvNameNum = GmG4Utils::GetNameNumberFromTouchable(aTrack->GetTouchable());
+  std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(pvNameNum);
   if( ite == theIndexMap.end() ){
     index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[pv] = index;
+    theIndexMap[pvNameNum] = index;
   } else {
     index = (*ite).second;
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierByPhysicalVolume::GetIndex " << index << " pv " << pv->GetName() << " : " << pv->GetCopyNo() << G4endl;
+  if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierByPhysicalVolume::GetIndexFromTrack " << index << " pvNameNum " << pvNameNum << G4endl;
 #endif
   return index;
 }
@@ -70,10 +71,10 @@ int64_t GmClassifierByPhysicalVolume::GetIndexFromTrack(const G4Track* aTrack)
 G4String GmClassifierByPhysicalVolume::GetIndexName(int64_t index)
 {
   G4String name = "NOT_FOUND";
-  std::map<G4VPhysicalVolume*,int64_t>::const_iterator ite;
+  std::map<G4String,int64_t>::const_iterator ite;
   for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
     if((*ite).second == index ){
-      name= (*ite).first->GetName()+":"+GmGenUtils::itoa((*ite).first->GetCopyNo());
+      name= (*ite).first;
       break;
     }
   }
@@ -87,9 +88,9 @@ GmClassifierByPhysicalVolume::~GmClassifierByPhysicalVolume()
 #ifndef GAMOS_NO_VERBOSE
   if( ClassifierVerb(debugVerb) ) {
     G4cout << "%%%%% Table of indices for GmClassifierByPhysicalVolume " << theName << G4endl;
-    std::map<G4VPhysicalVolume*,int64_t>::const_iterator ite;
+    std::map<G4String,int64_t>::const_iterator ite;
     for( ite = theIndexMap.begin(); ite != theIndexMap.end(); ite++ ){
-      G4cout << theName << ": " << (*ite).first->GetName() << ":" << (*ite).first->GetCopyNo() << " = " << (*ite).second << G4endl;
+      G4cout << theName << ": " << (*ite).first << ":" << (*ite).second << G4endl;
     }
   }
 #endif

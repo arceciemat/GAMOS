@@ -7,9 +7,20 @@
 
 std::vector<GmFileIn*> GmFileIn::theInstances;
 
+//-----------------------------------------------------------------------
 GmFileIn::GmFileIn()
 {
   theSeparator = ' ';
+  bUseCommentDoubleSlash = true;
+  bUseCommentHashtag = true;
+}
+
+//-----------------------------------------------------------------------
+GmFileIn::GmFileIn( const G4String& name ): theName(name)
+{
+  theSeparator = ' ';
+  bUseCommentDoubleSlash = true;
+  bUseCommentHashtag = true;
 }
 
 //-----------------------------------------------------------------------
@@ -184,10 +195,14 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
       }
       if ( theSeparator == ' ' && theStrTemp.length() == 0 ) break;
       size_t comment = theStrTemp.find(G4String("//") );
-      if( comment == G4String::npos ) {
-	comment = theStrTemp.find(G4String("#"));
-      } else {
-	comment = std::min(comment,theStrTemp.find(G4String("#")));
+
+      if( !bUseCommentDoubleSlash ) comment = G4String::npos;
+      if( bUseCommentHashtag ) {
+	if( comment == G4String::npos ) {
+	  comment = theStrTemp.find(G4String("#"));
+	} else {
+	  comment = std::min(comment,theStrTemp.find(G4String("#")));
+	}
       }
       
 #ifdef DEBUG_FILEIN

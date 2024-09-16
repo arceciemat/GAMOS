@@ -43,7 +43,7 @@ GEANT4_DEFINE_MODULE(NAME DICOMBase
 		DicomOperMirrorY.hh
 		DicomOperCompressXY.hh
 		DicomLineList.hh
-		DicomOperResize.hh
+		DicomOperExtendAir.hh
 	 SOURCES
 		DicomLineList.cc
 		DicomNDOperArithm.cc
@@ -57,7 +57,7 @@ GEANT4_DEFINE_MODULE(NAME DICOMBase
 		DicomVImage.cc
 		DicomLineDrawingOptions.cc
 		DicomOperLog.cc
-		DicomOperResize.cc
+		DicomOperExtendAir.cc
 		DicomVLineList.cc
 		DicomVObjectWithParams.cc
 		DicomVLineSet.cc

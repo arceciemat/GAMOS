@@ -14,7 +14,7 @@ DicomVReader::DicomVReader(DRModality mod)
 {
   theReaderMgr = DicomReaderMgr::GetInstance();
   theReaderMgr->AddReader( this, mod );
-  if( DicomVerb(infoVerb) ) {
+  if( DicomVerb(-infoVerb) ) {
     G4cout << " DicomVReader AddReader " << this->GetName() << " " << DicomVReader::GetModalityStr(mod) << G4endl;
   }
   theModality = mod;

@@ -62,7 +62,8 @@ RTVPlanSource::RTVPlanSource( const G4String& name): GmParticleSource( name )
   theTimeDistribution = 0;
   theAcceleratorVolume = "";  
   theAcceleratorPV = 0;
-  bPhantomMoved = false;
+  theLateralSpreadingDevice = "";  
+  //  bPhantomMoved = false;
 
 }
 
@@ -179,9 +180,9 @@ void RTVPlanSource::InitializeGeometry()
     //      G4cout << "1RTPlanMgr::MovePhantom theOrigPhantomRotMat " << theOrigPhantomRotMat  << G4endl;   //GDEB
     theOrigPhantomRotMat = *(pv->GetRotation());
     //   G4cout << "2RTPlanMgr::MovePhantom theOrigPhantomRotMat " << theOrigPhantomRotMat  << G4endl;   //GDEB
-    bPhantom = true;
+    bMovePhantom = true;
   } else {
-    bPhantom = false;
+    bMovePhantom = false;
   }
 }   
 
@@ -227,7 +228,7 @@ G4PrimaryVertex* RTVPlanSource::GenerateVertex( G4double time )
     SetSpotSize( thePositionDistribution2D, bsdata );
     
     MoveAccelerator(bsdata);
-    if( bPhantom ) MovePhantom( bsdata ); // it is not necessary to move it each CP, because it only uses the IsocentrePos
+    if( bMovePhantom ) MovePhantom( bsdata ); // it is not necessary to move it each CP, because it only uses the IsocentrePos
 
     //change the time interval according to protons per MU for new energy
     if( bInitProtonsPerMU ) {
@@ -857,10 +858,23 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
 //------------------------------------------------------------------------
 void RTVPlanSource::MovePhantom(const RTBeamStateData& bsdata )
 {
+  std::vector<G4VPhysicalVolume*> PVs = theGeomUtils->GetPhysicalVolumes("phantomContainer",0); // you may use RTPlan with other geometry not phantoms, and then "phantom" cannot be moved
+  if( PVs.size() == 0 ) {
+#ifndef GAMOS_NO_VERBOSE
+    if( GenerVerb(warningVerb) ) {
+        G4Exception("RTVPlanSource::MovePhantom",
+		    "",
+		    JustWarning,
+		    "No physical volume found with name  phantomContainer, phantom will not be moved");
+    }
+#endif
+    return;
+  }
+  
   G4GeometryManager* geomMgr = G4GeometryManager::GetInstance();
   geomMgr->OpenGeometry();
 
-  if( bIsocenterAtZero && bPhantomMoved ) return;
+  //  if( bIsocenterAtZero && bPhantomMoved ) return;
   PredictInitialDisplacement( bsdata );
 
   //-- Get center of phantomContainer
@@ -879,7 +893,6 @@ void RTVPlanSource::MovePhantom(const RTBeamStateData& bsdata )
 #endif
 
   //--- TRANSLATE AND ROTATE AS GIVEN BY PARAMETERS IN .in FILE (Initial)
-  std::vector<G4VPhysicalVolume*> PVs = theGeomUtils->GetPhysicalVolumes("phantomContainer",1);
   G4VPhysicalVolume* pv = PVs[0];
   //  G4RotationMatrix* phantomRotMat = new G4RotationMatrix(CLHEP::inverseOf(theOrigPhantomRotMat));
 
@@ -965,7 +978,7 @@ void RTVPlanSource::MovePhantom(const RTBeamStateData& bsdata )
 
   geomMgr->CloseGeometry();
     
-  bPhantomMoved = true;
+  // bPhantomMoved = true;
 }
 
 //-----------------------------------------------------------------------

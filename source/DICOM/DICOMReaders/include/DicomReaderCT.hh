@@ -36,7 +36,7 @@ public:
     bOnlyHU = bohu;
   }
   
-#ifdef WIN32  //WINDEB          
+#ifdef WIN32  //WINDEB       
 	#if defined DICOMReaders_ALLOC_EXPORT
 		G4DLLEXPORT G4bool IsMaterialDensities();
 		G4DLLEXPORT std::map<G4double, G4String> GetMaterials();

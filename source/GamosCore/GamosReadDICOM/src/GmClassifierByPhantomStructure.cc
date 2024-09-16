@@ -40,7 +40,7 @@ void GmClassifierByPhantomStructure::SetParameters( std::vector<G4String>& param
 //---------------------------------------------------------------
 int64_t GmClassifierByPhantomStructure::GetIndexFromStep(const G4Step* aStep)
 {
-  int64_t copyNo = aStep->GetTrack()->GetVolume()->GetCopyNo();
+  int64_t copyNo = aStep->GetPreStepPoint()->GetTouchable()->GetCopyNumber();
 
   G4String stid1 = theReadPhantomStMgr->GetStID( copyNo );
   std::vector<G4String> stidlistStr = GmGenUtils::StringSplit(stid1,":");
@@ -56,7 +56,7 @@ int64_t GmClassifierByPhantomStructure::GetIndexFromStep(const G4Step* aStep)
 //---------------------------------------------------------------
 int64_t GmClassifierByPhantomStructure::GetIndexFromTrack(const G4Track* aTrack)
 {
-  int64_t copyNo = aTrack->GetVolume()->GetCopyNo();
+  int64_t copyNo = aTrack->GetTouchable()->GetCopyNumber();
 
   G4String stid1 = theReadPhantomStMgr->GetStID( copyNo );
   std::vector<G4String> stidlistStr = GmGenUtils::StringSplit(stid1,":");

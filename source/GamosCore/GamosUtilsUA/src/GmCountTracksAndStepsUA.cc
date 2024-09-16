@@ -28,6 +28,7 @@ void GmCountTracksAndStepsUA::BeginOfRunAction(const G4Run* )
 //-----------------------------------------------------------------
 void GmCountTracksAndStepsUA::UserSteppingAction(const G4Step* aStep )
 {
+  G4cout << " IS FIRST " << aStep->IsFirstStepInVolume() << " " << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName()<< ":" << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo() << " STAT " << aStep->GetPreStepPoint()->GetStepStatus() << " " << aStep->GetPostStepPoint()->GetStepStatus() << G4endl; //GDEB
   G4int index;
   if (theClassifier ) {
     index = theClassifier->GetIndexFromStep(aStep);

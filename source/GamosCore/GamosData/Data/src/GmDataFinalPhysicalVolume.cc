@@ -1,9 +1,12 @@
 #include "GmDataFinalPhysicalVolume.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosUtils/include/GmG4Utils.hh"
+
+#include "GamosCore/GamosData/Management/include/GmDataVerbosity.hh"
 
 #include "G4Step.hh"
 #include "G4Track.hh"
-#include "G4LogicalVolume.hh"
+#include "G4VTouchable.hh"
 
 //----------------------------------------------------------------
 GmDataFinalPhysicalVolume::GmDataFinalPhysicalVolume()
@@ -24,21 +27,12 @@ GmDataFinalPhysicalVolume::~GmDataFinalPhysicalVolume()
 //----------------------------------------------------------------
 G4String GmDataFinalPhysicalVolume::GetStringValueFromStep( const G4Step* aStep )
 { 
-  G4VPhysicalVolume* PV = aStep->GetPostStepPoint()->GetPhysicalVolume();
-  if( PV ) { 
-    return PV->GetName()+":"+GmGenUtils::ftoa(PV->GetCopyNo());
-  } else {
-    return G4String("OutOfWorld");
-  }
+  return  GmG4Utils::GetNameNumberFromTouchable(aStep->GetPostStepPoint()->GetTouchable());
+
 }
 
 //----------------------------------------------------------------
 G4String GmDataFinalPhysicalVolume::GetStringValueFromTrack( const G4Track* aTrack )
 { 
-  G4VPhysicalVolume* PV = aTrack->GetNextVolume();
-  if( PV ) { 
-    return PV->GetName()+":"+GmGenUtils::ftoa(PV->GetCopyNo());
-  } else {
-    return G4String("OutOfWorld");
-  }
+  return  GmG4Utils::GetNameNumberFromTouchable(aTrack->GetNextTouchable());
 }

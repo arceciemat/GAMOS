@@ -34,6 +34,8 @@
 #include "G4DNAChemistryManager.hh"
 #include "G4Scheduler.hh"
 #include "G4UserTimeStepAction.hh"
+#include "G4ParticleHPManager.hh"
+
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
 #else
@@ -101,7 +103,9 @@ GmRunManager::GmRunManager()
 
   bRestoreSeedsUsed = false;
 
-	G4EmParameters::Instance();
+  G4EmParameters::Instance();
+
+  G4ParticleHPManager::GetInstance()->SetDoNotAdjustFinalState(false);
 }
 
 //----------------------------------------------------------------------

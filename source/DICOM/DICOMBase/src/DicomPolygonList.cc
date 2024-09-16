@@ -117,7 +117,7 @@ DicomPolygonList::DicomPolygonList(DicomPolygonList* polyListOld, DicomVImage* i
       }
     } 
   } else {
-#    G4cout << " INSIDEDicomPolygonList bOnePolygonZ " << bOnePolygonZ << G4endl; //GDEB
+    //    G4cout << " INSIDEDicomPolygonList bOnePolygonZ " << bOnePolygonZ << G4endl; //GDEB
     if( bOnePolygonZ ) { // all polygons in one unique Z
       std::vector<DicomVLine*> lines = polyListOld->GetLines();
       for( size_t il = 0; il < lines.size(); il++ ) {
@@ -343,7 +343,7 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr )
     
   BuildPosOrderedLines();
   if( DicomVerb(debugVerb) ) {
-    G4cout << " DicomPolygonList::FindVoxelsInXY  thePosOrderedLines N " << thePosOrderedLines.size() << G4endl;
+    G4cout << GetName() << " DicomPolygonList::FindVoxelsInXY  thePosOrderedLines N " << thePosOrderedLines.size() << G4endl;
   }
 
   for( mmddpi ite = thePosOrderedLines.begin(); ite != thePosOrderedLines.end(); ite++ ) {
@@ -363,6 +363,7 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr, pmmddpi polygon
   if( DicomVerb(infoVerb) ) {
     G4cout << theName << " : " << theNumber << " CALLED FindVoxelsInXY  N LINES= " << std::distance(polygonsInPlane.first,polygonsInPlane.second) << " Z= " << polygonsInPlane.first->second->GetPoints()[0].z() << G4endl;
   }
+  // DicomVerb.SetFilterLevel( testVerb ); //GDEB
   G4double planeZ = polygonsInPlane.first->second->GetPoints()[0].z();
   if( DicomVerb(infoVerb) ) G4cout << theName << " DicomPolygonList::FindVoxelsInXY in image " << imageStr->GetName() << " " << DicomVImage::GetModalityStr(imageStr->GetModality()) << " polygon_name " << theName <<  " from " << GetName() << G4endl;
   double PRECISION = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
@@ -538,7 +539,7 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr, pmmddpi polygon
 	}
       } //ENDED the NLOOPS 
       if( loopResult > 0 )  {
-	if( DicomVerb(debugVerb) ) G4cout << "@@@@@ CENTRE OK  for Polygon " << GetName() << " " << ix << " " << iy << " (" << imMinX + imVoxelDimX*(ix+0.5) << "," << imMinY + imVoxelDimY*(iy+0.5) << "," << planeZ << ")" << G4endl;
+ 	if( DicomVerb(debugVerb) ) G4cout << "@@@@@ CENTRE OK  for Polygon " << GetName() << " " << ix << " " << iy << " (" << imMinX + imVoxelDimX*(ix+0.5) << "," << imMinY + imVoxelDimY*(iy+0.5) << "," << planeZ << ")" << G4endl;
 	// extract previous ID value
 	G4String roiStr = imageStr->GetDataStr(ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY);
 	//	G4cout << " fStructure " << ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY << " roiStrOLD : " << roiStr << G4endl; //GDEB
@@ -631,8 +632,10 @@ G4int DicomPolygonList::GetPolygonZIndex( DicomVImage* image, G4double planeZ )
 
   if( iPolygonZ >= G4int(imNoVoxelsZ) ) {
     G4double imMaxZ = imMinZ+imVoxelDimZ*image->GetNoVoxelsZ();
+    if( DicomVerb(infoVerb) ) {
       G4cerr << " iPolygonZ= " << iPolygonZ 
 	     << "Polygon Z= " << planeZ << " Image max Z= " << imMaxZ << " diff " << polyZ-imMaxZ << G4endl;
+    }
     if( polyZ - imMaxZ < image->GetPrecision() ) {
       iPolygonZ = imNoVoxelsZ-1;
       /*t      G4Exception(" DicomPolygon::GetPolygonZIndex",

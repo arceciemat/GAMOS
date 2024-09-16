@@ -237,6 +237,9 @@
 #include "GmDataFinalElectronDensity.hh"
 #include "GmDataFinalRadLength.hh"
 #include "GmDataFinalNuclearInterLength.hh"
+#include "GmDataInitialStoppingPower.hh"
+#include "GmDataInitialElectronicStoppingPower.hh"
+#include "GmDataInitialNuclearStoppingPower.hh"
 
 //--- OTHERS
 #include "GmDataTrackLength.hh"
@@ -515,6 +518,9 @@ PLUGINSVC_FACTORY(GmDataFinalDensity,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalElectronDensity,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalRadLength,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalNuclearInterLength,GmVData*())
+PLUGINSVC_FACTORY(GmDataInitialStoppingPower,GmVData*())
+PLUGINSVC_FACTORY(GmDataInitialElectronicStoppingPower,GmVData*())
+PLUGINSVC_FACTORY(GmDataInitialNuclearStoppingPower,GmVData*())
 
 //--- OTHERS
 PLUGINSVC_FACTORY(GmDataTrackLength,GmVData*())
@@ -805,6 +811,9 @@ DEFINE_GAMOS_DATA(GmDataFinalDensity);
 DEFINE_GAMOS_DATA(GmDataFinalElectronDensity);
 DEFINE_GAMOS_DATA(GmDataFinalRadLength);
 DEFINE_GAMOS_DATA(GmDataFinalNuclearInterLength);
+DEFINE_GAMOS_DATA(GmDataInitialStoppingPower);
+DEFINE_GAMOS_DATA(GmDataInitialElectronicStoppingPower);
+DEFINE_GAMOS_DATA(GmDataInitialNuclearStoppingPower);
 
 //--- OTHERS
 DEFINE_GAMOS_DATA(GmDataTrackLength);

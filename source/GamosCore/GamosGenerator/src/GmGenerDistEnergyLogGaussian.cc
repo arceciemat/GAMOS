@@ -19,6 +19,7 @@ G4double GmGenerDistEnergyLogGaussian::GenerateEnergy( const GmParticleSource* )
     // Generar muestras de la distribución log-normal
     ener = lognormal_dist(generator);
     
+    // G4cout << " LOGG " << ener << " " << theInverse << " " << theInverse - ener << G4endl; //GDEB
     if( theInverse != 0. ) {
       ener = theInverse - ener;
     }

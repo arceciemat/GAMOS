@@ -818,11 +818,19 @@ std::vector<G4VPhysicalVolume*> GmGeometryUtils::GetPhysicalVolumes( const G4Str
     if(exists) {
       DumpG4PVLVTree(G4cout, 1); 
       G4Exception(" GmGeometryUtils::GetPhysicalVolumes",
-      "Wrong argument",
-      FatalErrorInArgument,
+		  "Wrong argument",
+		  FatalErrorInArgument,
 		  G4String("No physical volume found with name " + name).c_str());
     } else {
-      G4cerr << "!!WARNING: GmGeometryUtils::GetPhysicalVolumes: no physical volume found with name " << name << G4endl;
+#ifndef GAMOS_NO_VERBOSE
+      if( GeomVerb(warningVerb) ) {
+	G4Exception(" GmGeometryUtils::GetPhysicalVolumes",
+		    "Wrong argument",
+		    JustWarning,
+		    G4String("No physical volume found with name " + name).c_str());
+	//      G4cerr << "!!WARNING: GmGeometryUtils::GetPhysicalVolumes: no physical volume found with name " << name << G4endl;
+      }
+#endif
     }
   }
 

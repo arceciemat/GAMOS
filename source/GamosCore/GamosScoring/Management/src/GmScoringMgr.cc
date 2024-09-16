@@ -208,7 +208,7 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
   scorer->PropagateMFDToSubScorers(); 
 
   theScorers[scorerName] = scorer;
-  G4cout << " REGISTER SCORER " << scorerName << " " << scorer << G4endl; //GDEB
+  //  G4cout << " REGISTER SCORER " << scorerName << " " << scorer << G4endl; //GDEB
 
 }
 

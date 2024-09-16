@@ -81,8 +81,25 @@ G4double GmComputeDEDX::GetElectronicDEDX(G4Step* aStep, G4bool bRestricted)
   std::vector<double> dd;  sqrt(dd[33]);
   */
   
+  G4int theNEbins = 100;
   if( !bRestricted ) {
-    let = emCalculator.ComputeElectronicDEDX( kinEAver, part, mate, DBL_MAX);
+    if ( 0 ) {
+      G4double ener = aStep->GetPreStepPoint()->GetKineticEnergy();
+      G4double enerChangeBin = (ener - aStep->GetPostStepPoint()->GetKineticEnergy()) / theNEbins;
+      //      G4cout << " GmComputeDEDX enerChangeBin " << enerChangeBin << " ener:" <<ener <<"-"<<  aStep->GetPostStepPoint()->GetKineticEnergy() << G4endl; //GDEB
+
+      ener -= enerChangeBin*0.5; // use energy at bin center
+      G4double letSum = 0.;
+      for( G4int ii = 0; ii < theNEbins; ii++ ) {
+	G4double let1 = emCalculator.ComputeElectronicDEDX( ener, part, mate, DBL_MAX);
+	ener -= enerChangeBin;
+	letSum += let1;
+	//	G4cout << ii << " GmComputeDEDX let1 " << let1 << " ener=" << ener << " letSum=" << letSum << G4endl; //GDEB
+      }
+      let = letSum / theNEbins;
+    } else {
+      let = emCalculator.ComputeElectronicDEDX( kinEAver, part, mate, DBL_MAX);
+    }
     //-    let = emCalculator.ComputeElectronicDEDX( preStepPoint->GetKineticEnergy(), part, mate, DBL_MAX);
     
     /* gives the same as restricted because the 3 models for protons are

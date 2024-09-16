@@ -30,7 +30,7 @@ GmCompoundScorer::GmCompoundScorer(G4String name)
 
 
 //--------------------------------------------------------------------
-G4bool GmCompoundScorer::ProcessHits(G4Step* ,G4TouchableHistory*)
+G4bool GmCompoundScorer::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 {
   if( !bInitialized ) {
     //--- set unit
@@ -43,7 +43,7 @@ G4bool GmCompoundScorer::ProcessHits(G4Step* ,G4TouchableHistory*)
       unsigned int sizScorers = theSubScorers.size();
       for( unsigned int ii = 0; ii < siz; ii++ ){
 	expression += theSubExpressions[ii];
-      if( ii < sizScorers )  expression += GmGenUtils::ftoa( theSubScorers[ii]->GetUnit());
+	if( ii < sizScorers )  expression += GmGenUtils::ftoa( theSubScorers[ii]->GetUnit());
       }
       theUnitName = expression;
       theUnit = GmGenUtils::GetValue( expression );

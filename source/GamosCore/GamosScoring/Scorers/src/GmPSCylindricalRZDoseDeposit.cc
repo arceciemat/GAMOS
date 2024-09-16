@@ -91,7 +91,7 @@ void GmPSCylindricalRZDoseDeposit::SetParameters( const std::vector<G4String>& p
     for( unsigned int ii = 0; ii < params.size(); ii++ ){
       parastr += params[ii] + " ";
     }
-    G4Exception("GmG4PSData::SetParameters",
+    G4Exception("GmPSCylindricalRZDoseDeposit::SetParameters",
 		"There should be six, nine or twelve parameters: NSLICES_R MIN_R MAX_R NSLICES_Z MIN_Z MAX_Z CENTRE_X CENTRE_Y CENTRE_Z ZAXIS_X ZAXIS_Y ZAXIS_Z",
 		FatalErrorInArgument,
 		G4String("They are: "+parastr).c_str());
@@ -129,9 +129,15 @@ void GmPSCylindricalRZDoseDeposit::SetParameters( const std::vector<G4String>& p
 	index = theNBinsR*iZ+iR;
 	theVolumes[index] = M_PI*(pow(theMinR+(iR+1)*theStepR,2)-pow(theMinR+iR*theStepR,2))*theStepZ;
 #ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb) ) 
-      G4cout << "  GmPSCylindricalRZDoseDeposit::SetParameters : " << index << " iR= " << iR << " iZ=" << iZ << " VOLUME=" << theVolumes[index] << " theStepR= " <<  theStepR << " theStepZ=" << theStepZ << G4endl;
+	if( ScoringVerb(debugVerb) ) 
+	  G4cout << "  GmPSCylindricalRZDoseDeposit::SetParameters : " << index << " iR= " << iR << " iZ=" << iZ << " VOLUME=" << theVolumes[index] << " theStepR= " << theStepR << " theStepZ=" << theStepZ << G4endl;
 #endif
+	if( theVolumes[index] <= 0. ) {
+	  G4Exception("GmPSCylindricalRZDoseDeposit::SetParameters",
+		      "",
+		      FatalErrorInArgument,
+		      ("The volume is negative, please check your volume parameters. volume="+GmGenUtils::ftoa(theVolumes[index])).c_str());   
+	}
       }
     } 
   } else {

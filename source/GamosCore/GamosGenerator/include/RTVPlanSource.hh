@@ -48,6 +48,9 @@ public:
   std::map<G4String,std::vector<G4VPhysicalVolume*> > GetRTPlanG4PVsAssoc() const {
     return theRTPlanG4PVsAssoc;
   }
+  void SetMovePhantom( G4bool bmp ) {
+    bMovePhantom = bmp;
+  }
 
 protected:
   //  virtual G4double GetSpotSize( RTBeamStateData spData ) = 0;
@@ -67,10 +70,12 @@ protected:
 
   void MoveBeam(const RTBeamStateData& spdata);
 
+ 
 private:
   void InitializeDistributions();
   void InitializeGeom();
-  
+  void DefineLateralSpreadingDevice( std::vector<G4String> wl );
+ 
 protected:
   G4String thePlanFileName;
   G4String theBeamFileName;
@@ -124,7 +129,7 @@ protected:
   GmVGenerDistPosition2D* thePositionDistribution2D;
 
   G4bool bInitializedGeom;
-  G4bool bPhantom; 
+  G4bool bMovePhantom; 
   //  G4bool bBeamOriginAtZero;
   G4bool bIsocenterAtZero;  
   //  G4bool bIsocentreAtZero;
@@ -138,7 +143,8 @@ protected:
 
   G4bool bRTHistoControlPoint;
   G4double theLastLimitingDeviceAngle;
-  G4bool bPhantomMoved;
+  G4String theLateralSpreadingDevice;
+  //  G4bool bPhantomMoved;
 };
 
 #endif // RTVPlanSource_H

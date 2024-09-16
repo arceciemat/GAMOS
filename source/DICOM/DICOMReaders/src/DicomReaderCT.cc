@@ -91,7 +91,7 @@ void DicomReaderCT::DICOMCreateImages()
   if( bOnlyHU ) return;
   
   theMateIDImage = CreateImage("CT_MateID", DIM_G4dcmCT_MateID, false, false );
-  G4cout << this << " DicomReaderCT::DICOMCreateImages " << theMateIDImage << G4endl; 
+  //  G4cout << this << " DicomReaderCT::DICOMCreateImages " << theMateIDImage << G4endl;  //GDEB
   
   std::vector<G4double>* imageMateIDData = theMateIDImage->GetData();
   std::vector<G4double>* imageHUData = theDicomImage->GetData();
@@ -122,8 +122,8 @@ void DicomReaderCT::DICOMCreateImages()
 	meanHU /= (isumrMax-ir)*(isumcMax-ic);
 	G4double meanDens = Hounsfield2density(std::round(meanHU));
 	imageMateDensData->at(copyNoC) = meanDens;	
-	if( DicomVerb(testVerb) ) G4cout << copyNo << " " << iz << ":" << ir << ":" << ic << " FINAL meanHU " << meanHU << " " << meanDens << G4endl; 
 	size_t mateID = GetMaterialIndex(meanDens);
+	if( DicomVerb(testVerb) ) G4cout << copyNo << " " << iz << ":" << ir << ":" << ic << " FINAL meanHU " << meanHU << " " << meanDens << " mateID " << mateID << G4endl; 
 	imageMateIDData->at(copyNoC++) = mateID;	
       }	
     }
@@ -154,7 +154,6 @@ void DicomReaderCT::AddMaterial( std::vector<G4String> wl )
   }
   bMaterialDensities = false;
   theMaterials[G4UIcommand::ConvertToDouble(wl[2])] = wl[1];
-  
 }
 
 //-----------------------------------------------------------------------------

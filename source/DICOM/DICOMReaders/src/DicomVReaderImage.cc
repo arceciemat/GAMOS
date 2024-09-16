@@ -1,4 +1,3 @@
-
 #include "DicomVReaderImage.hh"
 #include "DicomReaderMgr.hh"
 #include "DicomUIDInfo.hh"
@@ -87,7 +86,6 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
 
   std::vector<double> dImagePositionPatient = Read1Data(theDataset, DCM_ImagePositionPatient,3); // center of first voxel read
   std::vector<double> dImageOrientationPatient = Read1Data(theDataset, DCM_ImageOrientationPatient,6);
-
   Float64 data;
   if( dImagePositionPatient.size() == 0 ) { 
     DcmStack resultStack;
@@ -125,10 +123,12 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
       }
     }
   }
+
   if( dImagePositionPatient.size() == 0 ) {
     dImagePositionPatient = Read1Data(theDataset, DCM_RTImagePosition,2); // center of first voxel read
     theLocation = 0.;
   }
+
   if( dImagePositionPatient.size() == 2 ) { //RTImage
     theOrientationRows = G4ThreeVector(1,0,0);
     theOrientationColumns = G4ThreeVector(0,1,0);
@@ -143,6 +143,55 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
     } else {
       theOrientationRows = G4ThreeVector(dImageOrientationPatient[0],dImageOrientationPatient[1],dImageOrientationPatient[2]);
       theOrientationColumns = G4ThreeVector(dImageOrientationPatient[3],dImageOrientationPatient[4],dImageOrientationPatient[5]);
+    }    
+  }
+
+  std::vector< std::vector<G4double> > dImagePositionPatientMulti;
+  if( dImagePositionPatient.size() == 0 ) {
+    // Check if it has many slices (UID_EnhancedCTImageStorage)
+    // Find PerFrameFunctionalGroupsSequence
+    DcmSequenceOfItems *perFrameSeq = NULL;
+    OFCondition status = theDataset->findAndGetSequence(DCM_PerFrameFunctionalGroupsSequence, perFrameSeq);
+    if (status.good() && perFrameSeq) {
+      // Loop through PerFrameFunctionalGroupsSequence items
+      unsigned long numPerFrameItems = perFrameSeq->card();
+      //      G4cout << " PERFRAME numPerFrameItems " <<numPerFrameItems << G4endl; //GDEB
+      for (unsigned long ii1 = 0; ii1 < numPerFrameItems; ++ii1) {
+        DcmItem *perFrameItem = perFrameSeq->getItem(ii1);
+	//G4cout << ii1 << "  perFrameItem " << perFrameItem << G4endl; //GDEB
+        if (perFrameItem) {
+          // Find PlanePositionSequence within the PerFrame item
+          DcmSequenceOfItems *planePositionSeq = NULL;
+          status = perFrameItem->findAndGetSequence(DCM_PlanePositionSequence, planePositionSeq);
+	  //G4cout << perFrameItem << " POSITI " << status.good() << " " << planePositionSeq << G4endl; //GDE
+	  if (status.good() && planePositionSeq) {
+	    // Loop through items in the sequence
+	    unsigned long numItems = planePositionSeq->card();
+  	    for (unsigned long ii2 = 0; ii2 < numItems; ii2++) {
+	      DcmItem* item = planePositionSeq->getItem(ii2);
+	      if (item != NULL) {
+		unsigned long pos;
+		dImagePositionPatient.clear();
+		for( pos = 0; pos < 3; pos++ ) {
+		  if( item->findAndGetFloat64(DCM_ImagePositionPatient,data,pos).good() ) {
+		    dImagePositionPatient.push_back(data);
+		  }
+		}
+		dImagePositionPatientMulti.push_back( dImagePositionPatient );
+		//G4cout << dImagePositionPatientMulti.size() << " ADDING dImagePositionPatient to MULTI " << dImagePositionPatient[0]<<","<<dImagePositionPatient[1]<<"," <<dImagePositionPatient[2]<< G4endl; //GDEB
+		
+	      }
+	    }
+	    if( dImagePositionPatientMulti.size() == 0 ) {
+	      G4Exception("DicomVImageReader::ReadData",
+			  "",
+			  FatalException,
+			  "No ImagePositionPatient");
+	    }
+	  }
+	  //	  G4cout << " NOT ADDING " << theDataset->findAndGetSequence(DCM_PlanePositionSequence, planePositionSequence).good() << " " << planePositionSequence << G4endl; //GDEB
+	}
+      }
     }
   }
   
@@ -163,19 +212,35 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
 		  "DFCT0002",
 		  JustWarning,
 		  "OrientationRows must be (-1,0,0) and OrientationColumns (0,-1,0), please contact GAMOS authors");
+      theOrientationRows = G4ThreeVector(-1,0,0);
+      theOrientationColumns = G4ThreeVector(0,-1,0);
     }
   }
 
-  G4int numberOfFrames = 1;
   OFString dModality = Read1DataStr(theDataset, DCM_Modality);
+
   std::vector<double> gridFrameOffsets;
+  Uint16 numberOfFrames = 1;
+  // OFCondition status = theDataset->findAndGetUint16(DCM_NumberOfFrames, numberOfFrames);
   std::vector<double> numberOfFramesV = Read1Data(theDataset, DCM_NumberOfFrames,1);
-  //  G4cout << " DCM_NUMBEROFFRAMES " << numberOfFrames << " " << numberOfFramesV.size() << G4endl; //GDEB
+  //G4cout << " DCM_NUMBEROFFRAMES " << numberOfFrames << " " << numberOfFramesV.size() << G4endl; //GDEB
   if( numberOfFramesV.size() == 0 ) {
     numberOfFramesV = Read1Data(theDataset, DCM_NumberOfSlices,1);
     //    G4cout << " DCM_NUMBEROFSLICES NV " << numberOfFramesV.size() << G4endl; //GDEB
   }
   if( numberOfFramesV.size() != 0 ) numberOfFrames = numberOfFramesV[0];
+
+  if( dImagePositionPatientMulti.size() != 0 && numberOfFrames == 1 )  {
+    DcmSequenceOfItems *perFrameSeq = NULL;
+    OFCondition status = theDataset->findAndGetSequence(DCM_PerFrameFunctionalGroupsSequence, perFrameSeq);
+    unsigned long numPerFrameItems = perFrameSeq->card();
+    numberOfFrames = numPerFrameItems;
+    G4Exception("DicomVImageReader::ReadData",
+		"",
+		JustWarning,
+		"No DCM_NumberOfFrames tag found, setting it to number of PerFrameFunctionalGroupsSequence");
+  }
+	
   //  G4cout << " NUMBEROFFRAMES " << numberOfFrames << " " << numberOfFramesV.size() << G4endl; //GDEB
   /*
   Sint16 datai;
@@ -186,6 +251,9 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
   */
 
   std::vector<double> dSliceThickness = Read1Data(theDataset, DCM_SliceThickness, 1);
+  std::vector<double> dPixelSpacing = Read1Data(theDataset, DCM_PixelSpacing, 2);
+  if( DicomVerb(debugVerb) ) G4cout << " dPixelSpacing " << dPixelSpacing[0] << " " << dPixelSpacing[1] << G4endl;
+  
   if( dSliceThickness.size() == 0 ) {    
     // set dSliceThickness from GridFrameOffsetVector (for RTDose)
     if( gridFrameOffsets.size() < 2 ) {
@@ -196,20 +264,89 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
        //       "Error reading slice number, and GridFrameOffsetVector has also no information, file cannot be treated");
     }
     if( numberOfFrames > 1 ) {
-      dSliceThickness.push_back(gridFrameOffsets[1]- gridFrameOffsets[0]);
-      for( size_t ii = 2; ii < gridFrameOffsets.size(); ii++ ){
-	if( dSliceThickness[0] != gridFrameOffsets[ii]- gridFrameOffsets[ii-1] ) {
-	  G4Exception("DicomVReaderImage::ReadHeaderAndPixels",
+      if( dImagePositionPatientMulti.size() == 0 ) {
+	dSliceThickness.push_back(gridFrameOffsets[1] - gridFrameOffsets[0]);
+	for( size_t ii = 2; ii < gridFrameOffsets.size(); ii++ ){
+	  if( dSliceThickness[0] != gridFrameOffsets[ii]- gridFrameOffsets[ii-1] ) {
+	    G4Exception("DicomVReaderImage::ReadHeaderAndPixels",
+			"",
+			FatalException,
+			("Error reading slice number " + GmGenUtils::itoa(ii)
+			 + " Files with different slice thickness cannot be used in the same job : "
+			 + GmGenUtils::ftoa( dSliceThickness[0] ) + " != "
+			 + GmGenUtils::ftoa( gridFrameOffsets[ii]- gridFrameOffsets[ii-1])).c_str());
+	  }
+	}
+      } else {
+	// Navigate to SharedFunctionalGroupsSequence
+	DcmStack resultStack;
+	if (theDataset->search(DCM_SharedFunctionalGroupsSequence, resultStack, ESM_fromHere, true) != EC_Normal || resultStack.empty())  {
+	  G4Exception("ReadPixelData",
+		    "",
+		      FatalException,
+		      "Error finding SharedFunctionalGroupsSequence" );
+	}
+	DcmSequenceOfItems* sharedFGSequenceItem = dynamic_cast<DcmSequenceOfItems*>(resultStack.top());
+	//G4cout << sharedFGSequenceItem << " STACK TOP " << resultStack.top() << G4endl; //GDEB
+	if (!sharedFGSequenceItem) {
+	  G4Exception("ReadPixelData",
+		    "",
+		      FatalException,
+		      "Error accessing SharedFunctionalGroupsSequence item");
+	}
+	// Navigate to PixelMeasuresSequence within SharedFunctionalGroupsSequence
+	if (sharedFGSequenceItem->search(DCM_PixelMeasuresSequence, resultStack, ESM_fromHere, true) != EC_Normal || resultStack.empty()) {
+	  G4Exception("ReadPixelData",
+		    "",
+		      FatalException,
+		      "Error finding PixelMeasuresSequence within SharedFunctionalGroupsSequence");
+	}
+	//	G4cout << " PMI stack " << resultStack.top() << G4endl; //GDEB
+	DcmSequenceOfItems* seqpixelMeasuresItem = dynamic_cast<DcmSequenceOfItems*>(resultStack.top());
+	G4cout << "seqpixelMeasuresItem " << seqpixelMeasuresItem << G4endl; //
+	if (!seqpixelMeasuresItem) {
+	  G4Exception("ReadPixelData",
 		      "",
 		      FatalException,
-		      ("Error reading slice number " + GmGenUtils::itoa(ii)
-		       + " Files with different slice thickness cannot be used in the same job : "
-		       + GmGenUtils::ftoa( dSliceThickness[0] ) + " != "
-		       + GmGenUtils::ftoa( gridFrameOffsets[ii]- gridFrameOffsets[ii-1])).c_str());
+		      "Error accessing PixelMeasuresSequence item");
 	}
+        DcmItem *pixelMeasuresItem = seqpixelMeasuresItem->getItem(0); // it should only have one
+	G4cout << "pixelMeasuresItem " << pixelMeasuresItem << G4endl; //
+	// Access SliceThickness within PixelMeasuresSequence
+	Float64 sliceT = 0.0;
+	if( pixelMeasuresItem->findAndGetFloat64(DCM_SliceThickness, sliceT, 0).good() )  {
+	  dSliceThickness.push_back(sliceT);
+	  G4cout << " dSliceThickness from PixelMeasuresSequence " << dSliceThickness[0] << G4endl; 
+	} else  {	
+	  G4Exception("ReadPixelData",
+		    "",
+		      FatalException,
+		      "Error retrieving Pixel Spacing");
+	}
+	if( dPixelSpacing.size() == 0 ) {
+	  // Access PixelSpacing within PixelMeasuresSequence
+	  Float64 pixelSpacingRow = 0.0;
+	  Float64 pixelSpacingCol = 0.0;
+	  if (pixelMeasuresItem->findAndGetFloat64(DCM_PixelSpacing, pixelSpacingRow, 0).good() &&
+	      pixelMeasuresItem->findAndGetFloat64(DCM_PixelSpacing, pixelSpacingCol, 1).good()) {
+	    std::cout << "Pixel Spacing (Row): " << pixelSpacingRow << std::endl;
+	    std::cout << "Pixel Spacing (Column): " << pixelSpacingCol << std::endl;
+	    dPixelSpacing.push_back(pixelSpacingRow);
+	    dPixelSpacing.push_back(pixelSpacingCol);
+	  } else  {
+	    G4Exception("ReadPixelData",
+			"",
+			JustWarning,
+			"Error retrieving Pixel Spacing");
+	  }
+	}
+	
       }
-    }
-  } 
+    
+    } 
+
+  }
+  
   bZDirectionInvert = false;
   if( theModality == DRM_NM ) {
     if( theDataset->findAndGetFloat64(DCM_SpacingBetweenSlices,data,0).good() ) {
@@ -228,9 +365,6 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
     }
   }
   
-  std::vector<double> dPixelSpacing = Read1Data(theDataset, DCM_PixelSpacing, 2);
-  if( DicomVerb(debugVerb) ) G4cout << " dPixelSpacing " << dPixelSpacing[0] << " " << dPixelSpacing[1] << G4endl;
-  
   std::vector<double> dRows = Read1Data(theDataset, DCM_Rows, 1);
   std::vector<double> dColumns = Read1Data(theDataset, DCM_Columns, 1);
   theNoVoxelsY = dRows[0];
@@ -240,6 +374,7 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
   // Image Position (0020,0032) specifies the x, y, and z coordinates of the upper left hand corner of the image; it is the center of the first voxel transmitted
   // it is the center of the first voxel transmitted.
   G4bool bPosVoxelCentre = theDicomMgr->GetImagePositionPatientIsPosVoxelCentre();
+
   if( bPosVoxelCentre ) {
     theMinX = dImagePositionPatient[0]-dPixelSpacing[0]*0.5; // center of pixel
     theMaxX = dImagePositionPatient[0]+(dColumns[0]-0.5)*dPixelSpacing[0];
@@ -250,10 +385,24 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
     if( dSliceThickness.size() == 0 ) {
       dSliceThickness.push_back(1.);
     }
-    theMinZ = dImagePositionPatient[2]-dSliceThickness[0]*0.5;
-    G4cout << " theMinZ= " << theMinZ << " " << dImagePositionPatient[2] << " - " <<dSliceThickness[0] << "*0.5" <<  G4endl; //GDEB
-    theMaxZ = dImagePositionPatient[2]+dSliceThickness[0]*(numberOfFrames-0.5);
-    G4cout << " theMaxZ= " << theMaxZ << " " << dImagePositionPatient[2] << " + " <<dSliceThickness[0] << "*" << numberOfFrames << "-0.5" <<  G4endl; //GDEB
+    if( dImagePositionPatientMulti.size() == 0 ) {
+      theMinZ = dImagePositionPatient[2]-dSliceThickness[0]*0.5;
+      //G4cout << " theMinZ= " << theMinZ << " " << dImagePositionPatient[2] << " - " <<dSliceThickness[0] << "*0.5" <<  G4endl; //GDEB
+      theMaxZ = dImagePositionPatient[2]+dSliceThickness[0]*(numberOfFrames-0.5);
+      //G4cout << " theMaxZ= " << theMaxZ << " " << dImagePositionPatient[2] << " + " <<dSliceThickness[0] << "*" << numberOfFrames << "-0.5" <<  G4endl; //GDEB
+    } else {
+      // get minimum and maximum Z 
+      theMinZ = DBL_MAX;
+      theMaxZ = -DBL_MAX;
+      //G4cout << " theMinZ " << theMinZ << " " << dImagePositionPatientMulti.size() << G4endl; //GDEB
+      for( size_t ii = 0; ii < dImagePositionPatientMulti.size(); ii++ ) {
+	theMinZ = std::min(theMinZ,dImagePositionPatientMulti[ii][2]);
+	theMaxZ = std::max(theMaxZ,dImagePositionPatientMulti[ii][2]);
+	// 	G4cout << ii << " theMinZ " << theMinZ << " " << dImagePositionPatientMulti[ii][0] << " " << dImagePositionPatientMulti[ii][1] << " " << dImagePositionPatientMulti[ii][2] << G4endl; //GDEB
+      }
+      theMinZ -= dSliceThickness[0]*0.5;
+      theMaxZ -= dSliceThickness[0]*0.5;
+    }
   } else {
   // image position are coordinates of the upper left hand corner of the image;
   // it is the corner of the first voxel transmitted. !!!
@@ -263,9 +412,19 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
     theMinY = dImagePositionPatient[1]-dPixelSpacing[1]*0.;
     theMaxY = dImagePositionPatient[1]+(dRows[0]-0.)*dPixelSpacing[1];
 
-    theMinZ = dImagePositionPatient[2]-dSliceThickness[0]*0.;
-    //    G4cout << " theMinZ= " << theMinZ << " " << dImagePositionPatient[2] << G4endl; //GDEB
-    theMaxZ = dImagePositionPatient[2]+dSliceThickness[0]*(numberOfFrames);
+    if( dImagePositionPatientMulti.size() == 0 ) {
+      theMinZ = dImagePositionPatient[2]-dSliceThickness[0]*0.;
+      //    G4cout << " theMinZ= " << theMinZ << " " << dImagePositionPatient[2] << G4endl; //GDEB
+      theMaxZ = dImagePositionPatient[2]+dSliceThickness[0]*(numberOfFrames);
+    } else {
+      // get minimum and maximum Z 
+      theMinZ = DBL_MAX;
+      theMaxZ = -DBL_MAX;
+      for( size_t ii = 0; ii << dImagePositionPatientMulti.size(); ii++ ) {
+	theMinZ = std::min(theMinZ,dImagePositionPatientMulti[ii][2]);
+	theMaxZ = std::max(theMaxZ,dImagePositionPatientMulti[ii][2]);
+      }
+    }
   }
     
   //G4cout << bPosVoxelCentre << " MINX " << theMinX << " " << theMaxX << G4endl; //GDEB
@@ -472,7 +631,7 @@ void DicomVReaderImage::ReadPixelData()
 	    }
 	    theVoxelData->at(newCopyNo) = val;
 	    if( DicomVerb(testVerb) ) {
-	      if( val1U != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << " = " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << "="  << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; //GDEB           
+	      if( val1U != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << " = " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << "="  << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl;           
 	    }	  
           }
         }
@@ -535,7 +694,7 @@ void DicomVReaderImage::ReadPixelData()
 	    }
 	    theVoxelData->at(newCopyNo) = val;
 	    if( DicomVerb(testVerb) ) {
-	      if( val != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << "  " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; //GDEB
+	      if( val != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << "  " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; 
 	    }	  
           }
 	}
@@ -875,7 +1034,7 @@ void DicomVReaderImage::ResizeImage() // for DicomReaderNM, DicomReaderRTDose
     theDicomImage->SetNoVoxelsY(theDicomImage->GetNoVoxelsY()*theCompression);
     paramMgr->AddParam("nVoxX "+GmGenUtils::itoa(theDicomImage->GetNoVoxelsX()/theCompression),PTdouble); 
     paramMgr->AddParam("nVoxY "+GmGenUtils::itoa(theDicomImage->GetNoVoxelsY()/theCompression),PTdouble);
-    G4cout << " nVoxX " << GmGenUtils::itoa(theDicomImage->GetNoVoxelsX()/theCompression) << " " << theDicomImage->GetNoVoxelsX() << " / " << theCompression << "   === " << paramMgr->GetNumericValue("nVoxX",-99) << G4endl; //GDEB
+    //    G4cout << " nVoxX " << GmGenUtils::itoa(theDicomImage->GetNoVoxelsX()/theCompression) << " " << theDicomImage->GetNoVoxelsX() << " / " << theCompression << "   === " << paramMgr->GetNumericValue("nVoxX",-99) << G4endl; //GDEB
   }
   
 #ifndef GAMOS_NO_VERBOSE

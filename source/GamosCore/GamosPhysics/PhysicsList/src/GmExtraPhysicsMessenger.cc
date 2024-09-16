@@ -18,6 +18,7 @@
 #include "GamosCore/GamosBase/Base/include/GmUIcmdWithAString.hh"
 
 #include "G4VEmProcess.hh"
+#include "G4VEmModel.hh"
 #include "G4VEnergyLossProcess.hh"
 #include "G4EmModelManager.hh"
 #include "G4EmParameters.hh"
@@ -34,10 +35,12 @@
 #include "G4KleinNishinaCompton.hh"
 #include "G4LivermoreComptonModel.hh"
 #include "G4PenelopeComptonModel.hh"
+#include "G4LowEPComptonModel.hh"
 
 #include "G4BetheHeitlerModel.hh"
 #include "G4LivermoreGammaConversionModel.hh"
 #include "G4PenelopeGammaConversionModel.hh"
+#include "G4BetheHeitler5DModel.hh"
 
 #include "GmLivermoreRayleighModel_XSChangeNEW.hh"
 #include "G4PenelopeRayleighModel.hh"
@@ -45,10 +48,8 @@
 #include "G4MollerBhabhaModel.hh"
 #include "G4LivermoreIonisationModel.hh"
 #include "G4PenelopeIonisationModel.hh"
-
-#include "G4MollerBhabhaModel.hh"
-#include "G4LivermoreIonisationModel.hh"
-#include "G4PenelopeIonisationModel.hh"
+#include "G4eIonisation.hh"
+#include "G4EmStandUtil.hh"
 
 #include "G4SeltzerBergerModel.hh"
 #include "G4eBremsstrahlungRelModel.hh"
@@ -73,6 +74,11 @@
 #include "G4KaonMinus.hh"
 #include "G4UAtomicDeexcitation.hh"
 #include "G4LossTableManager.hh"
+#include "G4VMultipleScattering.hh"
+
+#include "G4CoulombScattering.hh"
+#include "G4eCoulombScatteringModel.hh"
+
 #include <set>
 
 // ----------------------------------------------------------------------------
@@ -90,7 +96,7 @@ GmExtraPhysicsMessenger::GmExtraPhysicsMessenger()
   
   // add new physics
   theAddPhysicsCmd = new GmUIcmdWithAString("/gamos/physics/addPhysics",this);  
-  theAddPhysicsCmd->SetGuidance("Add new physics: decay, radioactiveDecay, opticalphoton, cerenkov, gamma-nuclear, electron-nuclear, positron-nuclear, xray-refraction, coulombScattering");
+  theAddPhysicsCmd->SetGuidance("Add new physics: decay, radioactiveDecay, opticalphoton, cerenkov, gamma-nuclear, electron-nuclear, positron-nuclear, xray-refraction, CoulombScattering");
   theAddPhysicsCmd->AvailableForStates(G4State_Idle);
 
   // remove processes by type
@@ -99,11 +105,17 @@ GmExtraPhysicsMessenger::GmExtraPhysicsMessenger()
   theRemoveProcessesByTypeCmd->AvailableForStates(G4State_Idle);
   
   // delete processes by name
+  theRemoveProcessesCmd = new GmUIcmdWithAString("/gamos/physics/removeProcesses",this);  
+  theRemoveProcessesCmd->SetGuidance("Remove processes of given name");
+  theRemoveProcessesCmd->AvailableForStates(G4State_Idle);
   theRemoveProcessesByNameCmd = new GmUIcmdWithAString("/gamos/physics/removeProcessesByName",this);  
   theRemoveProcessesByNameCmd->SetGuidance("Remove processes of given name");
   theRemoveProcessesByNameCmd->AvailableForStates(G4State_Idle);
   
   // delete processes by particle and name
+  theRemoveProcessesByParticleCmd = new GmUIcmdWithAString("/gamos/physics/removeProcessesByParticle",this);  
+  theRemoveProcessesByParticleCmd->SetGuidance("Remove processes of given name for given particles: PARTICLE_1 PROCESS_1 PARTICLE_2 PROCESS_2 ...");
+  theRemoveProcessesByParticleCmd->AvailableForStates(G4State_Idle);
   theRemoveProcessesByParticleAndNameCmd = new GmUIcmdWithAString("/gamos/physics/removeProcessesByParticleAndName",this);  
   theRemoveProcessesByParticleAndNameCmd->SetGuidance("Remove processes of given name for given particles: PARTICLE_1 PROCESS_1 PARTICLE_2 PROCESS_2 ...");
   theRemoveProcessesByParticleAndNameCmd->AvailableForStates(G4State_Idle);
@@ -127,8 +139,10 @@ GmExtraPhysicsMessenger::~GmExtraPhysicsMessenger()
   delete theApplyCutsCmd;
   delete theParallelPhysCmd;
   delete theAddPhysicsCmd;
-  delete theRemoveProcessesByTypeCmd;
+  delete theRemoveProcessesCmd;
   delete theRemoveProcessesByNameCmd;
+  delete theRemoveProcessesByTypeCmd;
+  delete theRemoveProcessesByParticleCmd;
   delete theRemoveProcessesByParticleAndNameCmd;
   delete theReplaceModelSetCmd;
   delete theReplaceModelCmd;
@@ -148,11 +162,17 @@ void GmExtraPhysicsMessenger::SetNewValue(G4UIcommand* command,G4String newValue
   } else if (command == theAddPhysicsCmd){
     AddPhysics( newValue );
 
-  } else if (command == theRemoveProcessesByTypeCmd){
-    RemoveProcessesByType(newValue);
+  } else if (command == theRemoveProcessesCmd){
+    RemoveProcessesByName(newValue);
 
   } else if (command == theRemoveProcessesByNameCmd){
     RemoveProcessesByName(newValue);
+
+  } else if (command == theRemoveProcessesByTypeCmd){
+    RemoveProcessesByType(newValue);
+
+  } else if (command == theRemoveProcessesByParticleCmd){
+    RemoveProcessesByParticleAndName(newValue);
 
   } else if (command == theRemoveProcessesByParticleAndNameCmd){
     RemoveProcessesByParticleAndName(newValue);
@@ -238,21 +258,29 @@ void GmExtraPhysicsMessenger::AddPhysics(G4String newValue)
   } else if( newValue == "de-excitation" ) {
     AddDeexcitation();
 
-  } else if( newValue == "coulombScattering" ) {
-    GmPhysicsCoulombScattering* coulScat = new GmPhysicsCoulombScattering();
+  } else if( newValue.find("coulombScattering") != std::string::npos 
+	     || newValue.find("CoulombScattering") != std::string::npos ) {
+    GmPhysicsCoulombScattering* coulScat = 0;
+    if( newValue.find("_") == std::string::npos ) {
+      coulScat = new GmPhysicsCoulombScattering();
+    } else {
+      size_t is = newValue.find("_");
+      G4double lowEnergyLimit = GmGenUtils::GetValue(newValue.substr(is+1,9999));
+      coulScat = new GmPhysicsCoulombScattering(lowEnergyLimit);
+    }
     coulScat->ConstructProcess();
 
   } else {
     G4Exception("GmExtraPhysicsMessenger::AddPhysics",
 		"Wrong argument",
 		FatalErrorInArgument,
-		G4String("ARGUMENT is = " + newValue + " .It may be: decay, radioactiveDecay, opticalphoton, cerenkov, gamma-nuclear, electron-nuclear, positron-nuclear, xray-refraction").c_str());
+		G4String("ARGUMENT is = " + newValue + " .It may be: decay, radioactiveDecay, opticalphoton, cerenkov, gamma-nuclear, electron-nuclear, positron-nuclear, xray-refraction, de-excitation, CoulombScattering").c_str());
   }
   
 }
 
 // ----------------------------------------------------------------------------
-void GmExtraPhysicsMessenger::RemoveProcessesByType(G4String newValue)
+void GmExtraPhysicsMessenger::RemoveProcessesByType(G4String )
 {
   std::ostringstream message;
   message << "!!!ERROR:  /gamos/physics/removeProcessesByType is deprecated " << G4endl
@@ -265,7 +293,7 @@ void GmExtraPhysicsMessenger::RemoveProcessesByType(G4String newValue)
 }
 
 // ----------------------------------------------------------------------------
-void GmExtraPhysicsMessenger::RemoveProcessesByName(G4String newValue)
+void GmExtraPhysicsMessenger::RemoveProcessesByName(G4String )
 {
   std::ostringstream message;
   message << "!!!ERROR:  /gamos/physics/removeProcessesByName is deprecated " << G4endl
@@ -279,7 +307,7 @@ void GmExtraPhysicsMessenger::RemoveProcessesByName(G4String newValue)
 
 
 // ----------------------------------------------------------------------------
-void GmExtraPhysicsMessenger::RemoveProcessesByParticleAndName(G4String newValue)
+void GmExtraPhysicsMessenger::RemoveProcessesByParticleAndName(G4String )
 {
   std::ostringstream message;
   message << "!!!ERROR:  /gamos/physics/removeProcessesByName is deprecated " << G4endl
@@ -353,23 +381,43 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
   G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
   G4ParticleTable::G4PTblDicIterator* theParticleIterator = theParticleTable->GetIterator();
   theParticleIterator->reset();
+  G4bool bParticleFound = false;
+  G4bool bProcessFound = false;
+
+  G4double CSlowEnergyLimit = 0.;  
+  if( newModelName.find("CoulombScattering") != std::string::npos ) { // CoulombScat_100 sets low energy to 100, like in std_option4
+    if( newModelName.find("_") != std::string::npos ) {
+      size_t is = newModelName.find("_");
+      CSlowEnergyLimit = GmGenUtils::GetValue(newModelName.substr(is+1,9999));
+      newModelName = newModelName.substr(0,is);	      
+    }	    
+  }
+  
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator -> value();
     G4String particleName = particle -> GetParticleName();
     //      G4cout << " particleName " << particleName << G4endl;
     if (particleName == newParticleName ) {
+      bParticleFound = true;
+      bProcessFound = false;
       if( newParticleName == "gamma" ) {	  
+	//G4VEmModel* newModel2 = 0;
 	G4ProcessManager* pmanager = particle->GetProcessManager();
-	G4ProcessVector* procVector = pmanager->GetProcessList();
+	G4ProcessVector* procVector = GmG4Utils::GetGammaProcessVector(pmanager->GetProcessList());
+
 	for( size_t ii = 0; ii < procVector->size(); ii++ ) {
-	  G4VEmProcess* process = (G4VEmProcess*)((*procVector)[ii]);
+	  G4VEmProcess* process = dynamic_cast<G4VEmProcess*>((*procVector)[ii]);
+	  if( ! process ) { // Transportation
+	    continue;
+	  }
 	  G4String processName = process->GetProcessName();
 	  G4VEmModel* newModel = 0;
 	  if( processName == newProcessName ) {
 	    if( processName == "phot" ) {
+	      bProcessFound = true;
 	      if( newModelName == "standard" ) {
 		newModel = new G4PEEffectFluoModel;
-	      } else if( newModelName == "low-energy" ) {
+	      } else if( newModelName == "lowener" ) {
 		newModel = new G4LivermorePhotoElectricModel();
 		newModel->SetHighEnergyLimit(1.*CLHEP::GeV);
 	      } else if( newModelName == "penelope" ) {
@@ -377,45 +425,53 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
 		newModel->SetHighEnergyLimit(1.*CLHEP::GeV);
 	      } else {
 		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
+			    "Wrong model given",
 			    FatalException,
 			    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
 	      }
 	      
 	    } else if( processName == "compt" ) {
+	      bProcessFound = true;
 	      if( newModelName == "standard" ) {
 		newModel = new G4KleinNishinaCompton;
-	      } else if( newModelName == "low-energy" ) {
+	      } else if( newModelName == "lowener" ) {
 		newModel = new G4LivermoreComptonModel();
 		newModel->SetHighEnergyLimit(1.*CLHEP::GeV);
 	      } else if( newModelName == "penelope" ) {
 		newModel = new G4PenelopeComptonModel();
 		newModel->SetHighEnergyLimit(1.*CLHEP::GeV);
+	      } else if( newModelName == "lowEP" ) {
+		newModel = new G4LowEPComptonModel();
+		newModel->SetHighEnergyLimit(20*CLHEP::MeV);
 	      } else {
 		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
+			    "Wrong model given",
 			    FatalException,
 			    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
 	      }
 	      
 	    } else if( processName == "conv" ) { 
+	      bProcessFound = true;
 	      if( newModelName == "standard" ) {
 		newModel = new G4BetheHeitlerModel;
-	      } else if( newModelName == "low-energy" ) {
+	      } else if( newModelName == "lowener" ) {
 		newModel = new G4LivermoreGammaConversionModel();
 		newModel->SetHighEnergyLimit(1.*CLHEP::GeV);
 	      } else if( newModelName == "penelope" ) {
 		newModel = new G4PenelopeGammaConversionModel();
 		newModel->SetHighEnergyLimit(1.*CLHEP::GeV);
+	      } else if( newModelName == "BetheHeitler5D" ) {
+		newModel = new G4BetheHeitler5DModel();
 	      } else {
 		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
+			    "Wrong model given",
 			    FatalException,
-			    G4String("PARTICLE" + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+			    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
 	      }
 	    } else if( processName == "Rayl" ) { 
+	      bProcessFound = true;
 	      if( newModelName == "standard" ) {	   
-	      } else if( newModelName == "low-energy" ) {
+	      } else if( newModelName == "lowener" ) {
 		newModel = new GmLivermoreRayleighModel_XSChangeNEW();
 		newModel->SetHighEnergyLimit(1.*CLHEP::GeV);
 	      } else if( newModelName == "penelope" ) {
@@ -423,9 +479,9 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
 		newModel->SetHighEnergyLimit(1.*CLHEP::GeV);
 	      } else {
 		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
+			    "Wrong model given",
 			    FatalException,
-			    G4String("PARTICLE" + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+			    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
 	      }
 	    } else {
 	      continue;
@@ -434,6 +490,13 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
 	    if( newModel == 0 ) continue; // rayleigh for standard models
 	    // Delete old model and add new
 	    std::vector<G4VEmModel*> models = process->modelManager->models;
+#ifndef GAMOS_NO_VERBOSE
+	    if( PhysicsVerb(debugVerb) ) {
+	      for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+		G4cout << ii2 << "OLD GAMMA MODELS " << models[ii2]->GetName() << G4endl; 
+	      }
+	    }
+#endif
 	    for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
 	      delete models[ii2];
 	    }
@@ -444,182 +507,184 @@ void GmExtraPhysicsMessenger::Replace1Model(G4String newParticleName, G4String n
 	    process->modelManager->isUsed.clear();
 	    process->modelManager->nEmModels = 0;
 	    process->AddEmModel(0,newModel);
-	    
+
+#ifndef GAMOS_NO_VERBOSE
+	    if( PhysicsVerb(debugVerb) ) {
+	      for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+		G4cout << ii2 << "NEW GAMMA MODELS " << models[ii2]->GetName() << G4endl; 
+	      }
+	    }
+#endif
 	  }
 	}
       } else if( newParticleName == "e-" ) {
+	G4VEmModel* newModel2 = 0;
 	G4ProcessManager* pmanager = particle->GetProcessManager();
 	G4ProcessVector* procVector = pmanager->GetProcessList();
 	for( size_t ii = 0; ii < procVector->size(); ii++ ) {
-	  G4VEnergyLossProcess* process = (G4VEnergyLossProcess*)((*procVector)[ii]);
-	  G4String processName = process->GetProcessName();
+	  G4String processName = (*procVector)[ii]->GetProcessName();
 	  if( processName == newProcessName ) {
 	    G4VEmModel* newModel = 0;
-	    G4VEmModel* newModel2 = 0;
 	    
 	    if( processName == "eIoni" ) {
-	      if( newModelName == "standard" ) {
-		newModel = new G4MollerBhabhaModel;
-	      } else if( newModelName == "low-energy" ) {
-		newModel = new G4LivermoreIonisationModel();
-	      } else if( newModelName == "penelope" ) {
-		newModel = new G4PenelopeIonisationModel();
-	      } else {
-		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
-			    FatalException,
-			    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+	      bProcessFound = true;
+	      if( newModelName == "pen_std" ) {	
+		G4eIonisation* eIoni = dynamic_cast<G4eIonisation*>((*procVector)[ii]);
+		eIoni->SetFluctModel(G4EmStandUtil::ModelOfFluctuations());
 	      }
-	      
+	      std::pair<G4VEmModel*,G4VEmModel*> newModels = ChangeIoni( newParticleName, newProcessName, newModelName );
+	      newModel = newModels.first;
+	      newModel2 = newModels.second;
 	    } else if( processName == "eBrem" ) {
-	      if( newModelName == "standard" ) {
-		newModel = new G4SeltzerBergerModel();
-		newModel2 = new G4eBremsstrahlungRelModel();
-		newModel->SetLowEnergyLimit(process->MinKinEnergy());
-		newModel->SetHighEnergyLimit(newModel2->LowEnergyLimit());
-		newModel2->SetHighEnergyLimit(process->MaxKinEnergy());                
-	      } else if( newModelName == "low-energy" ) {
-		newModel = new G4LivermoreBremsstrahlungModel();
-	      } else if( newModelName == "penelope" ) {
-		newModel = new G4PenelopeBremsstrahlungModel();
-	      } else {
-		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
-			    FatalException,
-			    G4String("PARTICLE" + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
-	      }
-	      
+	      bProcessFound = true;
+	      std::pair<G4VEmModel*,G4VEmModel*> newModels = ChangeBrem( dynamic_cast<G4VEnergyLossProcess*>((*procVector)[ii]), newParticleName, newProcessName, newModelName );
+	      newModel = newModels.first;
+	      newModel2 = newModels.second;
 	    } else if( processName == "msc" ) {
-	      if( newModelName == "Urban" ) {
-		newModel = new G4UrbanMscModel();
-	      }else if( newModelName == "WentzelVI" ) {
-		newModel = new G4WentzelVIModel();
-	      }else if( newModelName == "GoudsmitSaunderson" ) {
-		newModel = new G4GoudsmitSaundersonMscModel();
-	      } else {
-		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
-			    FatalException,
-			    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+	      bProcessFound = true;
+	      std::pair<G4VEmModel*,G4VEmModel*> newModels = ChangeMsc( newParticleName, newProcessName, newModelName );
+	      newModel = newModels.first;
+	      newModel2 = newModels.second;
+	    } else if( processName == "CoulombScat" ) { // only change low energy limit
+	      bProcessFound = true;
+	      if ( CSlowEnergyLimit != 0. ) {
+		G4CoulombScattering* procCS = dynamic_cast<G4CoulombScattering*>((*procVector)[ii]);
+		procCS->SetMinKinEnergy(CSlowEnergyLimit);
+		if( procCS->NumberOfModels() != 1 ) {
+		}
+		G4eCoulombScatteringModel* modelCS = dynamic_cast<G4eCoulombScatteringModel*>(procCS->EmModel(0));
+		modelCS->SetLowEnergyLimit(CSlowEnergyLimit);
+		modelCS->SetActivationLowEnergyLimit(CSlowEnergyLimit);
 	      }
-	    } else {
-	      continue;
 	    }
 	    
-	    if( newModel == 0 ) continue; // rayleigh for standard models
+	    if( newModel == 0 ) continue; // Rayleigh for standard models
 	    
-	    // Delete old modle and add new
-	    std::vector<G4VEmModel*> models = process->modelManager->models;
-	    for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
-	      delete models[ii2];
-	    }
-	    process->modelManager->models.clear();
-	    process->modelManager->flucModels.clear();
-	    process->modelManager->regions.clear();
-	    process->modelManager->orderOfModels.clear();
-	    process->modelManager->isUsed.clear();
-	    process->modelManager->nEmModels = 0;
-	    process->AddEmModel(0,newModel);
-	    if( newModel2 ) process->AddEmModel(0,newModel2);
+	    // Delete old model and add new
+	    ReplaceG4Model((*procVector)[ii],newModel,newModel2);
 	  }
 	}
       } else if( newParticleName == "e+" ) {
+	G4VEmModel* newModel2 = 0;
 	G4ProcessManager* pmanager = particle->GetProcessManager();
 	G4ProcessVector* procVector = pmanager->GetProcessList();
 	for( size_t ii = 0; ii < procVector->size(); ii++ ) {
-	  G4VEnergyLossProcess* process = (G4VEnergyLossProcess*)((*procVector)[ii]);
-	  G4String processName = process->GetProcessName();
+	  G4String processName = (*procVector)[ii]->GetProcessName();
 	  if( processName == newProcessName ) {
 	    G4VEmModel* newModel = 0;
-	    G4VEmModel* newModel2 = 0;
 	    
 	    if( processName == "eIoni" ) {
-	      if( newModelName == "standard" ) {
-		newModel = new G4MollerBhabhaModel;
-	      } else if( newModelName == "low-energy" ) {
-		newModel = new G4LivermoreIonisationModel();
-	      } else if( newModelName == "penelope" ) {
-		newModel = new G4PenelopeIonisationModel();
-	      } else {
-		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
-			    FatalException,
-			    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+	      bProcessFound = true;
+	      if( newModelName == "pen_std" ) {
+		G4eIonisation* eIoni = dynamic_cast<G4eIonisation*>((*procVector)[ii]);
+		eIoni->SetFluctModel(G4EmStandUtil::ModelOfFluctuations());
 	      }
-	      
+	      std::pair<G4VEmModel*,G4VEmModel*> newModels = ChangeIoni( newParticleName, newProcessName, newModelName );
+	      newModel = newModels.first;
+	      newModel2 = newModels.second;
 	    } else if( processName == "eBrem" ) {
-	      if( newModelName == "standard" ) {
-		newModel = new G4SeltzerBergerModel();
-		newModel2 = new G4eBremsstrahlungRelModel();
-		newModel->SetLowEnergyLimit(process->MinKinEnergy());
-		newModel->SetHighEnergyLimit(newModel2->LowEnergyLimit());
-		newModel2->SetHighEnergyLimit(process->MaxKinEnergy());                
-	      } else if( newModelName == "low-energy" ) {
-		newModel = new G4LivermoreBremsstrahlungModel();
-	      } else if( newModelName == "penelope" ) {
-		newModel = new G4PenelopeBremsstrahlungModel();
-	      } else {
-		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
-			    FatalException,
-			    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
-	      }
-	      
+	      bProcessFound = true;
+	      std::pair<G4VEmModel*,G4VEmModel*> newModels = ChangeBrem( dynamic_cast<G4VEnergyLossProcess*>((*procVector)[ii]), newParticleName, newProcessName, newModelName );
+	      newModel = newModels.first;
+	      newModel2 = newModels.second;
 	    } else if( processName == "annihil" ) {
+	      bProcessFound = true;
 	      if( newModelName == "standard" ) {
 		newModel = new G4eeToTwoGammaModel();
-	      } else if( newModelName == "low-energy" ) {
 	      } else if( newModelName == "penelope" ) {
 		newModel = new G4PenelopeAnnihilationModel();
 	      } else {
 		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
-			    FatalException,
-			    G4String("PARTICLE" + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
-	      }
-	      
-	    } else if( processName == "msc" ) {
-	      if( newModelName == "Urban" ) {
-		newModel = new G4UrbanMscModel();
-	      }else if( newModelName == "WentzelVI" ) {
-		newModel = new G4WentzelVIModel();
-	      }else if( newModelName == "GoudsmitSaunderson" ) {
-		newModel = new G4GoudsmitSaundersonMscModel();
-	      } else {
-		G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-			    "Wrong argument given",
+			    "Wrong model given",
 			    FatalException,
 			    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+	      }
+	    } else if( processName == "msc" ) {
+	      bProcessFound = true;
+	      std::pair<G4VEmModel*,G4VEmModel*> newModels = ChangeMsc( newParticleName, newProcessName, newModelName );
+	      newModel = newModels.first;
+	      newModel2 = newModels.second;
+	    } else if( processName == "CoulombScat" ) { // only change low energy limit
+	      bProcessFound = true;
+	      if ( CSlowEnergyLimit != 0. ) {
+		G4CoulombScattering* procCS = dynamic_cast<G4CoulombScattering*>((*procVector)[ii]);
+		procCS->SetMinKinEnergy(CSlowEnergyLimit);
+		if( procCS->NumberOfModels() != 1 ) {
+		}
+		G4eCoulombScatteringModel* modelCS = dynamic_cast<G4eCoulombScatteringModel*>(procCS->EmModel(0));
+		modelCS->SetLowEnergyLimit(CSlowEnergyLimit);
+		modelCS->SetActivationLowEnergyLimit(CSlowEnergyLimit);
 	      }
 	    }
 	    
 	    if( newModel == 0 ) continue; // rayleigh for standard models
 	    
-	    // Delete old model and add new
-	    std::vector<G4VEmModel*> models = process->modelManager->models;
-	    for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
-	      delete models[ii2];
+	    ReplaceG4Model((*procVector)[ii],newModel,newModel2);
+	  }
+	}
+      } else if( newParticleName == "proton" 
+		 || newParticleName == "mu-"
+		 || newParticleName == "mu+"
+		 || newParticleName == "kaon+"
+		 || newParticleName == "kaon-" 
+		 || newParticleName == "pi+"
+		 || newParticleName == "pi-"
+		 ) {
+	G4VEmModel* newModel2 = 0;
+	G4ProcessManager* pmanager = particle->GetProcessManager();
+	G4ProcessVector* procVector = pmanager->GetProcessList();
+	for( size_t ii = 0; ii < procVector->size(); ii++ ) {
+	  //	  G4cout << ii << " " << particleName << " PROCESS LOOP " << (*procVector)[ii]->GetProcessName() << G4endl; //GDEB
+	  G4String processName = (*procVector)[ii]->GetProcessName();
+	  if( processName == newProcessName ) {
+	    G4VEmModel* newModel = 0;
+	    
+	    if( processName == "hIoni" ) {
+	      bProcessFound = true;
+	      std::pair<G4VEmModel*,G4VEmModel*> newModels = ChangeIoni( newParticleName, newProcessName, newModelName );
+	      newModel = newModels.first;
+	      newModel2 = newModels.second;
+	    } else if( processName == "hBrem" ) {
+	      bProcessFound = true;
+	      std::pair<G4VEmModel*,G4VEmModel*> newModels = ChangeBrem( dynamic_cast<G4VEnergyLossProcess*>((*procVector)[ii]), newParticleName, newProcessName, newModelName );
+	      newModel = newModels.first;
+	      newModel2 = newModels.second;
+	    } else if( processName == "msc" ) {
+	      bProcessFound = true;
+	      std::pair<G4VEmModel*,G4VEmModel*> newModels = ChangeMsc( newParticleName, newProcessName, newModelName );
+	      newModel = newModels.first;
+	      newModel2 = newModels.second;
 	    }
-	    process->modelManager->models.clear();
-	    process->modelManager->flucModels.clear();
-	    process->modelManager->regions.clear();
-	    process->modelManager->orderOfModels.clear();
-	    process->modelManager->isUsed.clear();
-	    process->modelManager->nEmModels = 0;
-	    process->AddEmModel(0,newModel);
-	    if( newModel2 ) process->AddEmModel(0,newModel2);
+	    
+	    if( newModel == 0 ) continue; // rayleigh for standard models
+	    
+	    ReplaceG4Model((*procVector)[ii],newModel,newModel2);
 	  }
 	}
       } else {
 	G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
-		    "Wrong argument given",
+		    "Wrong particle given",
 		    FatalException,
-		    G4String("PARTICLE" + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
-      }
+		    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+	
+      }  
       
-    }  
+      if( ! bProcessFound ) {
+	G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
+		    "Wrong process given",
+		    FatalException,
+		    G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+      }
+    }
   }
-  
+
+  if( ! bParticleFound ) {
+    G4Exception("void GmExtraPhysicsMessenger::ReplaceModel",
+		"Wrong particle given",
+		FatalException,
+		G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+  }
+
 }
 
 // ----------------------------------------------------------------------------
@@ -645,3 +710,183 @@ void GmExtraPhysicsMessenger::AddDeexcitation()
 
 }
     
+// ----------------------------------------------------------------------------
+std::pair<G4VEmModel*,G4VEmModel*> GmExtraPhysicsMessenger::ChangeMsc(G4String newParticleName, G4String newProcessName, G4String newModelName)
+{
+  G4VEmModel* newModel = 0;
+  G4VEmModel* newModel2 = 0;
+
+  if( newModelName == "Urban" ) {
+    newModel = new G4UrbanMscModel();
+  } else if( newModelName == "WentzelVI" ) {
+    newModel = new G4WentzelVIModel();
+  } else if( newModelName == "GoudsmitSaunderson" ) {
+    newModel = new G4GoudsmitSaundersonMscModel();
+  } else if( newModelName == "GS_WVI" ) {
+    newModel = new G4GoudsmitSaundersonMscModel();
+    //    G4GoudsmitSaundersonMscModel* newModel = new G4GoudsmitSaundersonMscModel();
+    // G4WentzelVIModel* newModel2 = new G4WentzelVIModel();
+    newModel = new G4GoudsmitSaundersonMscModel();
+    newModel2 = new G4WentzelVIModel();
+    G4double highEnergyLimit = G4EmParameters::Instance()->MscEnergyLimit();
+    newModel->SetHighEnergyLimit(highEnergyLimit);
+    newModel2->SetLowEnergyLimit(highEnergyLimit);
+  } else {
+    G4Exception("void GmExtraPhysicsMessenger::ChangeMsc",
+		"Wrong model given",
+		FatalException,
+		G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+  }
+
+  return std::pair<G4VEmModel*,G4VEmModel*> (newModel,newModel2);
+}
+
+// ----------------------------------------------------------------------------
+std::pair<G4VEmModel*,G4VEmModel*> GmExtraPhysicsMessenger::ChangeIoni(G4String newParticleName, G4String newProcessName, G4String newModelName)
+{
+  G4VEmModel* newModel = 0;
+  G4VEmModel* newModel2 = 0;
+
+  if( newModelName == "standard" ) {
+    newModel = new G4MollerBhabhaModel;
+  } else if( newModelName == "lowener" ) {
+    newModel = new G4LivermoreIonisationModel();
+  } else if( newModelName == "penelope" ) {
+    newModel = new G4PenelopeIonisationModel();
+  } else if( newModelName == "pen_std" ) {
+    G4eIonisation* eioni = new G4eIonisation();
+    eioni->SetFluctModel(G4EmStandUtil::ModelOfFluctuations());
+    newModel = new G4PenelopeIonisationModel();
+    newModel->SetHighEnergyLimit(0.1*CLHEP::MeV); 
+    eioni->AddEmModel(0, newModel);
+  } else {
+    G4Exception("void GmExtraPhysicsMessenger::ChangeIoni",
+		"Wrong model given",
+		FatalException,
+		G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+  }
+  
+  return std::pair<G4VEmModel*,G4VEmModel*> (newModel,newModel2);
+
+}
+
+// ----------------------------------------------------------------------------
+std::pair<G4VEmModel*,G4VEmModel*> GmExtraPhysicsMessenger::ChangeBrem(G4VEnergyLossProcess* process, G4String newParticleName, G4String newProcessName, G4String newModelName)
+{
+  G4VEmModel* newModel = 0;
+  G4VEmModel* newModel2 = 0;
+  if( newModelName == "standard" ) {
+    newModel = new G4SeltzerBergerModel();
+    newModel2 = new G4eBremsstrahlungRelModel();
+    newModel->SetLowEnergyLimit(process->MinKinEnergy());
+    newModel->SetHighEnergyLimit(newModel2->LowEnergyLimit());
+    newModel2->SetHighEnergyLimit(process->MaxKinEnergy());                
+  } else if( newModelName == "lowener" ) {
+    newModel = new G4LivermoreBremsstrahlungModel();
+  } else if( newModelName == "penelope" ) {
+    newModel = new G4PenelopeBremsstrahlungModel();
+  } else {
+    G4Exception("void GmExtraPhysicsMessenger::ChangeBrem",
+		"Wrong model given",
+		FatalException,
+		G4String("PARTICLE " + newParticleName + " PROCESS " + newProcessName + " MODEL " + newModelName).c_str());
+  }
+  
+  return std::pair<G4VEmModel*,G4VEmModel*> (newModel,newModel2);
+}
+
+// ----------------------------------------------------------------------------
+void GmExtraPhysicsMessenger::ReplaceG4Model(G4VProcess* process, G4VEmModel* newModel, G4VEmModel* newModel2 )
+{
+
+  G4VEnergyLossProcess* processEL = dynamic_cast<G4VEnergyLossProcess*>(process);
+  
+  if ( processEL ) {
+    // Delete old model and add new
+    //t    std::vector<G4VEmModel*> models = processEL->GetModelManager()->GetModels();
+    std::vector<G4VEmModel*> models = processEL->GetEmModels();
+#ifndef GAMOS_NO_VERBOSE
+	    if( PhysicsVerb(debugVerb) ) {
+	      for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+		G4cout << ii2 << "OLD GAMMA MODELS " << models[ii2]->GetName() << G4endl; 
+	      }
+	    }
+#endif
+    for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+      delete models[ii2];
+    }
+    processEL->modelManager->models.clear();
+    processEL->modelManager->flucModels.clear();
+    processEL->modelManager->regions.clear();
+    processEL->modelManager->orderOfModels.clear();
+    processEL->modelManager->isUsed.clear();
+    processEL->modelManager->nEmModels = 0;
+    processEL->AddEmModel(0,newModel);
+    if( newModel2 ) processEL->AddEmModel(0,newModel2);
+#ifndef GAMOS_NO_VERBOSE
+    if( PhysicsVerb(debugVerb) ) {
+      for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+	G4cout << ii2 << "NEW GAMMA MODELS " << models[ii2]->GetName() << G4endl; 
+      }
+    }
+#endif
+
+  } else {
+    G4VMultipleScattering* processMS = dynamic_cast<G4VMultipleScattering*>(process);
+    if ( processMS ) {
+      // Delete old model and add new
+      std::vector<G4VMscModel*> models = processMS->GetMscModels(); 
+      for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+	delete models[ii2];
+      }
+      processMS->modelManager->models.clear();
+      processMS->modelManager->flucModels.clear();
+      processMS->modelManager->regions.clear();
+      processMS->modelManager->orderOfModels.clear();
+      processMS->modelManager->isUsed.clear();
+      processMS->modelManager->nEmModels = 0;
+      G4VMscModel* newModelMS = dynamic_cast<G4VMscModel*>(newModel);
+      G4VMscModel* newModel2MS = dynamic_cast<G4VMscModel*>(newModel2);
+      processMS->AddEmModel(0,newModelMS);
+      if( newModel2 ) processMS->AddEmModel(0,newModel2MS);
+    } else {
+      G4VEmProcess* processEM = dynamic_cast<G4VEmProcess*>(process); // G4CoulombScattering
+      if ( ! processEM ) {
+	G4Exception("void GmExtraPhysicsMessenger::ReplaceG4Model",
+		    "Wrong model given",
+		    FatalException,
+		    G4String("PROCESSEM " + process->GetProcessName() + " it is not G4VEnergyLossProcess nor G4VMultipleScattering, please contact GAMOS authors").c_str());
+      }
+      // Delete old model and add new
+      std::vector<G4VEmModel*> models = processEM->GetEmModels();
+#ifndef GAMOS_NO_VERBOSE
+      if( PhysicsVerb(debugVerb) ) {
+	for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+	  G4cout << ii2 << "OLD CS MODELS " << models[ii2]->GetName() << G4endl; 
+	}
+      }
+#endif
+      for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+	delete models[ii2];
+      }
+      processEM->modelManager->models.clear();
+      processEM->modelManager->flucModels.clear();
+      processEM->modelManager->regions.clear();
+      processEM->modelManager->orderOfModels.clear();
+      processEM->modelManager->isUsed.clear();
+      processEM->modelManager->nEmModels = 0;
+      processEM->AddEmModel(0,newModel);
+      if( newModel2 ) processEM->AddEmModel(0,newModel2);
+
+#ifndef GAMOS_NO_VERBOSE
+      if( PhysicsVerb(debugVerb) ) {
+	for( size_t ii2 = 0; ii2 < models.size(); ii2++) {
+	  G4cout << ii2 << "NEW CS MODELS " << models[ii2]->GetName() << G4endl;
+	}
+      }
+#endif
+
+    }
+  }
+  
+}

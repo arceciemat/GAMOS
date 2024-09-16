@@ -324,6 +324,8 @@ G4Material* GmReadPhantomGeometry::BuildMaterialChangingDensity( G4Material* ori
       mate->AddElement( elem, frac );
     }
     //    G4cout << " IONISATION POTENTIAL " << mate->GetName() << " = " << mate->GetIonisation()->GetMeanExcitationEnergy() << G4endl; //GDEB
+    mate->GetIonisation()->SetMeanExcitationEnergy(origMate->GetIonisation()->GetMeanExcitationEnergy());
+    
     G4double ioniPot = GmParameterMgr::GetInstance()->GetNumericValue("GmReadPhantomGeometry:IonisationPotential",-1);
     if( ioniPot != -1 ) mate->GetIonisation()->SetMeanExcitationEnergy(ioniPot);
 

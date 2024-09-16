@@ -66,7 +66,13 @@ G4Point3D GmPDSDetector::GetRandomPoint() const
     name = theName.substr( isl+1, theName.length() );
   } else {
     name = theName;
-  } 
+  }
+  if pv->IsReplicated() {
+      G4Exception("GmPDSDetector::GetRandomPoint",
+		  "",
+		  FatalException,
+		  ("Cannot use a replicated/parameterised volume as detector: "+pv->GetName()).c_str());
+    }
   if( pv->GetName()+":"+GmGenUtils::itoa(pv->GetCopyNo()) != name ) {
     G4cerr << " GmPDSDetector::GetRandomPoint " << pv->GetName()+":"+GmGenUtils::itoa(pv->GetCopyNo()) << " is not inside detector " << name << G4endl;
   }

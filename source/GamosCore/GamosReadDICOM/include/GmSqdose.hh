@@ -16,6 +16,7 @@ public:
 
   GmSqdose operator+=( const GmSqdose& dose );
   GmSqdose operator*=( double factor );
+  GmSqdose operator*=( const GmSqdose& dose );
 
   void Read( G4String fileName );
   void Read( FILE* fin);
@@ -56,6 +57,15 @@ public:
 
   G4String GetTypeStr() const;
 
+  static G4bool bNo0Dose; 
+  static G4bool GetNo0Dose() {
+    return bNo0Dose;
+  }
+  static void SetNo0Dose( G4bool bno0 ) {
+    bNo0Dose = bno0;
+  }
+  
+  
 private:
   GmSqdoseHeader* theHeader;
   std::vector<float> theDoses;

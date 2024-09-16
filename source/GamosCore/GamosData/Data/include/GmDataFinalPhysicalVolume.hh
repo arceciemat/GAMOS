@@ -2,11 +2,12 @@
 #define GmDataFinalPhysicalVolume_hh
 
 #include "GamosCore/GamosData/Management/include/GmVDataString.hh"
+class G4VTouchable;
 
 class GmDataFinalPhysicalVolume : public GmVDataString
 {
 public:
-  GmDataFinalPhysicalVolume();
+  GmDataFinalPhysicalVolume(); 
   ~GmDataFinalPhysicalVolume();
 
   virtual G4String GetStringValueFromStep( const G4Step* aStep );

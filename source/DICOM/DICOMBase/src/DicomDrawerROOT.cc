@@ -405,6 +405,7 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
     G4bool bVoxelsInUseClosest = DicomParameterMgr::GetInstance()->GetNumericValue("closestPolygon",1);
     //--- Draw lines
     for( size_t ils = 0; ils < lineSets.size(); ils++ ) {
+
       DicomVLineSet* lineSet = lineSets[ils];
       if( dynamic_cast<DicomPolygonSet*>(lineSet) != 0 ) {
 	if( bVoxelsInUseClosest ) {
@@ -419,7 +420,25 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
 	lineSet->RotateXY180( 180.*CLHEP::deg, imgCentre );
 	lineSet->SetHasBeenRotatedXY180( true );
       } 
-      //      G4cout << " DicomDrawerROOT::DrawXY DrawLinesXY " << lineSet->GetName() << " " << imMinZ+iz*imWidthZ << G4endl; //GDEB      
+    /* GDEB 
+      G4cout << " DCMDrawDICOM::DrawImage( DRAW DrawPOLYGON SET " << lineSets[ils]->GetName() << " Nlists " <<  lineSets[ils]->GetLineLists().size() << G4endl; //GDEB
+      for( size_t ii = 0; ii <  lineSet->GetLineLists().size(); ii++ ) {
+	DicomVLineList* lineList =  lineSet->GetLineLists()[ii];
+	G4cout << ii << " DrawPOLYGON LINELIST " << lineList->GetName() << " Nlines "<< lineList->GetLines().size() << G4endl; 
+
+	for( size_t jj = 0; jj < lineList->GetLines().size(); jj++ ) {
+	  DicomVLine* line = lineList->GetLines()[jj];
+	  G4cout << jj << " DrawPOLYGON LINE " << line->GetName() << " Nlines "<< line->GetPoints().size() << G4endl;
+	  for( size_t ipt = 0; ipt < line->GetPoints().size(); ipt++ ) {
+	    G4cout << line << " " << ipt << " DrawPOLYGON POINT " << line->GetPoints()[ipt] << G4endl;
+	    }
+	}
+	}*/
+
+      
+      if( DicomVerb(debugVerb) ) {
+	G4cout << " DicomDrawerROOT::DrawXY DrawLinesXY " << lineSet->GetName() << " " << imMinZ+iz*imWidthZ << G4endl;
+      }
       DrawLinesXY( lineSet, imMinZ+iz*imWidthZ, imMinZ+(iz+1)*imWidthZ);
     }
     
@@ -718,7 +737,9 @@ void DicomDrawerROOT::DrawLinesYZ( DicomVLineSet* lineSet, G4double minX, G4doub
 //-----------------------------------------------------------------------------
 void DicomDrawerROOT::DrawLines( DicomVLineSet* lineSet, G4double minPos, G4double maxPos, size_t ix, size_t iy, DPOrientation orient)
 {
-  G4cout << " DicomDrawerROOT::DrawLines lineSet " << lineSet->GetName() << " " << DicomVLine::GetOrientationName(lineSet->GetOrientation()) << " =? " << DicomVLine::GetOrientationName(orient) << G4endl; //GDEB
+  if( DicomVerb(debugVerb) ) {
+    G4cout << " DicomDrawerROOT::DrawLines lineSet " << lineSet->GetName() << " " << DicomVLine::GetOrientationName(lineSet->GetOrientation()) << " =? " << DicomVLine::GetOrientationName(orient) << G4endl; 
+  }  
 
   if( lineSet->GetOrientation() != orient ) return;
   std::vector<DicomVLineList*> lineLists = lineSet->GetLineLists();

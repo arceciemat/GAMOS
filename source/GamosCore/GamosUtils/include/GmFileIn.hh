@@ -11,7 +11,7 @@ class GmFileIn
   GmFileIn();
   ~GmFileIn(){}
  private:
-   GmFileIn( const G4String& name ): theName(name){}
+  GmFileIn( const G4String& name );
 
  public:
   // Get the only instance opening the file
@@ -66,6 +66,13 @@ class GmFileIn
   G4String GetCurrentLine() const {
     return theStrTemp;
   }
+  void SetUseCommentDoubleSlash( G4bool buse ) {
+    G4cout << " SetUseCommentDoubleSlash " << buse << G4endl; //GDEB
+    bUseCommentDoubleSlash = buse;
+  }
+  void SetUseCommentHashtag( G4bool buse ) {
+    bUseCommentHashtag = buse;
+  }
 
  private:
   void OpenNewFile( const char* filename, G4bool bMustExist = false ); 
@@ -89,6 +96,8 @@ class GmFileIn
   G4bool bSuppressQuotes;
   G4bool bCheckQuotes;
   G4String theStrTemp;
+  G4bool bUseCommentDoubleSlash;
+  G4bool bUseCommentHashtag;
 };
 
 #endif 

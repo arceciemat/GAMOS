@@ -180,7 +180,7 @@ void RTPhaseSpaceUA::UserSteppingAction(const G4Step* aStep)
   for( unsigned int ii = 0; ii < theZStops.size(); ii++ ){
     double zstop = theZStops[ii];
 #ifndef GAMOS_NO_VERBOSE
-    if( RTVerb(testVerb) )  G4cout << " zstop " << zstop << " "  << postR.z() << " " << preR.z()-zstop << " * " << postR.z()-zstop << " " <<  (preR.z()-zstop) * (postR.z()-zstop) << " <? 0 " << G4endl;
+    if( RTVerb(testVerb) )  G4cout << " zstop " << zstop << " "  << preR.z() << ":" << postR.z() << " " << preR.z()-zstop << " * " << postR.z()-zstop << " " <<  (preR.z()-zstop) * (postR.z()-zstop) << " <? 0 " << G4endl;
 #endif
 #ifndef BEAMZPOS
     if ( postR.z() > zstop && bNotStoreBackwards ) {

@@ -29,7 +29,6 @@ RTPlanMessenger::RTPlanMessenger(RTVPlanSource* myua)
   AssociatePlanLDACmd->SetParameterName("SOURCE_NAME GEOMETRY_NAME",false);
   AssociatePlanLDACmd->AvailableForStates(G4State_Idle,G4State_PreInit);
 
-  G4cerr << " ASSOCIATE BEAMV " << G4endl; //GDEB
   AssociateBeamVolumesCmd = new GmUIcmdWithAString("/gamos/generator/RTPlan/associateBeamVolumes",this);
   AssociateBeamVolumesCmd->SetParameterName("SOURCE_NAME RTPlanControlPoint_NAME GEOMETRY_NAME",false);
   AssociateBeamVolumesCmd->AvailableForStates(G4State_Idle,G4State_PreInit);

@@ -21,7 +21,7 @@ public:
 
   G4String GetStID( size_t id );
   std::set<size_t> GetStIDList( size_t id ); // decompose id in Structure ID's 
-  G4String* GetStIDs() const {
+  std::vector<G4String> GetStIDs() const {
    return theStIDs;
   }
   std::map<G4int,G4String> GetStructs() const {
@@ -35,7 +35,7 @@ public:
 private:
   static GmReadPhantomStMgr* theInstance;
 
-  G4String* theStIDs;
+  std::vector<G4String> theStIDs;
   std::map<G4int,G4String> theStructs; // the structure names
 };
 

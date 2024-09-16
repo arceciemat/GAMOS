@@ -28,9 +28,9 @@ void GmReadPhantomStMgr::ReadStructEGS( GmFileIn& fin, G4int nVoxelX, G4int nVox
 {
   G4int theStNOD = GmParameterMgr::GetInstance()->GetNumericValue("GmReadPhantomEGSwithStGeometry:StNumberOfDigits",2);
 
-  theStIDs = new G4String[nVoxelX*nVoxelY*nVoxelZ];
+  theStIDs.resize(nVoxelX*nVoxelY*nVoxelZ);
 #ifndef GAMOS_NO_VERBOSE
-  if( ReadDICOMVerb(-debugVerb) ) {
+  if( ReadDICOMVerb(debugVerb) ) {
     G4cout << " GmReadPhantomStMgr::ReadStructEGS created theStIDs of size " << nVoxelX*nVoxelY*nVoxelZ << G4endl;
   }
 #endif
@@ -73,7 +73,7 @@ void GmReadPhantomStMgr::ReadStructEGS( GmFileIn& fin, G4int nVoxelX, G4int nVox
 void GmReadPhantomStMgr::ReadStructG4( GmFileIn& fin, G4int nVoxelX, G4int nVoxelY, G4int nVoxelZ )
 {
   size_t nVoxels = nVoxelX*nVoxelY*nVoxelZ;
-  theStIDs = new G4String[nVoxels];
+  theStIDs.resize(nVoxels);
 #ifndef GAMOS_NO_VERBOSE
  if( ReadDICOMVerb(debugVerb) ) {
    G4cout << " GmReadPhantomStMgr::ReadStructG4 created theStIDs of size " << nVoxels << G4endl;
@@ -139,13 +139,19 @@ G4String GmReadPhantomStMgr::GetStID( size_t voxelID )
 //---------------------------------------------------------------------------
 std::set<size_t> GmReadPhantomStMgr::GetStIDList( size_t voxelID )
 {
-  G4cout << voxelID << G4endl; //GDEB
+  if( theStIDs.size() == 0 ) {
+    G4Exception("GmReadPhantomStMgr::GetStIDList",
+		"",
+		FatalException,
+		"No Struct read, did you use GmReadPhantomG4withStGeometry?");
+  }
+  //G4cout << voxelID << " < " << theStIDs.size() << G4endl; //GDEB
   G4String stid1 = theStIDs[voxelID];
   std::vector<G4String> stidlistStr = GmGenUtils::StringSplit(stid1,":");
-  G4cout << voxelID << " stid1 " << stid1 << " " << stidlistStr.size() << G4endl; //GDEB
+  //  G4cout << voxelID << " stid1 " << stid1 << " " << stidlistStr.size() << G4endl; //GDEB
   std::set<size_t> stIDList;
   for( size_t ii = 0; ii < stidlistStr.size(); ii++ ) {
-    G4cout << voxelID << " " << ii << " stidlistStr " << stidlistStr[ii] << G4endl; //GDEB
+    //    G4cout << voxelID << " " << ii << " stidlistStr " << stidlistStr[ii] << G4endl; //GDEB
     stIDList.insert( GmGenUtils::GetInt(stidlistStr[ii]) );
   }
   

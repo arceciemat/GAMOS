@@ -23,6 +23,9 @@
 #include "G4Nucleus.hh"
 #include "G4HadronicProcess.hh"
 #include "G4DecayTable.hh"
+#include "G4VTouchable.hh"
+#include "G4GammaGeneralProcess.hh"
+#include "G4GammaConversionToMuons.hh"
 
 std::map<const G4ParticleDefinition*,G4DecayTable*> GmG4Utils::thePartDecayTable;
 
@@ -357,9 +360,10 @@ G4ThreeVector GmG4Utils::GetLocalFromGlobalPos( const G4ThreeVector globalPos, c
 //----------------------------------------------------------------
 G4ThreeVector GmG4Utils::GetLocalNFromGlobalPos( const G4ThreeVector globalPos, const G4NavigationHistory* navHis, G4int ancestorLevel )
 {
-  const G4AffineTransform transform = navHis->GetTransform(ancestorLevel);
+  G4int navLevel = navHis->GetDepth()-ancestorLevel;
+  if( navLevel < 0 ) navLevel = 0;
+  const G4AffineTransform transform = navHis->GetTransform(navLevel);
   G4ThreeVector localPos = transform.TransformPoint(globalPos);
-
   //  G4cout << " GmG4Utils::GetLocalFromGlobalPos " << localPos << " FROM " << globalPos << G4endl; //GDEB
   // G4cout << " GmG4Utils::GetLocalFromGlobalPos  transform " << transform << G4endl; //GDEB
   return localPos;
@@ -740,4 +744,49 @@ G4ParticleDefinition* GmG4Utils::GetG4Particle( const G4String particleName, G4b
   }
 
   return part;
+}
+
+//----------------------------------------------------------------
+G4String GmG4Utils::GetNameNumberFromTouchable( const G4VTouchable* touch )
+{
+  if( !touch ) return "OutOfWorld";
+  if( !touch->GetVolume() ) return "OutOfWorld";
+  
+  G4String name = touch->GetVolume()->GetName();
+  G4String number = GmGenUtils::itoa(touch->GetReplicaNumber());
+
+  G4String nameNum = name+":"+number;
+
+  return nameNum;
+}
+
+//----------------------------------------------------------------
+G4ProcessVector* GmG4Utils::GetGammaProcessVector(G4ProcessVector* procVectorOrig )
+{
+  G4ProcessVector* procVectorNew = new G4ProcessVector();
+  for( size_t ii = 0; ii < procVectorOrig->size(); ii++ ) {
+    G4VEmProcess* process = (G4VEmProcess*)((*procVectorOrig)[ii]);
+    G4GammaGeneralProcess* ggproc = dynamic_cast<G4GammaGeneralProcess*>((*procVectorOrig)[ii]);
+    if( ! ggproc ) {
+      procVectorNew->insert(process);
+    } else {
+      if( ggproc->GetPhotoElectric() != 0 ) {
+	procVectorNew->insert( ggproc->GetPhotoElectric() );
+      }
+      if(ggproc->GetCompton() != 0 ) {
+	procVectorNew->insert( ggproc->GetCompton() );
+      }
+      if( ggproc->GetConversionEE() != 0 ) {
+	procVectorNew->insert( ggproc->GetConversionEE() );
+      }
+      if( ggproc->GetRayleigh() != 0 ) {
+	procVectorNew->insert( ggproc->GetRayleigh() );
+      }
+      if( ggproc->GetConversionMM() != 0 ) {
+	procVectorNew->insert( ggproc->GetConversionMM() );
+      }
+    }
+  }
+
+  return procVectorNew;
 }

@@ -8,6 +8,7 @@
 #include "DicomReaderNM.hh"
 #include "DicomReaderRTDose.hh"
 #include "DicomReaderRTStruct.hh"
+#include "DicomReaderVOIStruct.hh"
 #include "DicomReaderTextLines.hh"
 #include "DicomReaderInterfile.hh"
 
@@ -154,6 +155,12 @@ void DicomReaderMgr::CreateReaders()
     new DicomReaderRTStruct(files[ii]);
   }
   files.clear();
+  files = theParamMgr->GetVStringValue("fVOIStruct",files);
+  for( size_t ii = 0; ii < files.size(); ii++ ) {
+    //    G4cout << " DICOMREADERMGR  new DicomReaderVOIStruct " << ii << " : " << files[ii] << G4endl; //GDEB
+    new DicomReaderVOIStruct(files[ii]);
+  }
+  files.clear();
   files = theParamMgr->GetVStringValue("fTextLines",files);
   for( size_t ii = 0; ii < files.size(); ii++ ) {
     new DicomReaderTextLines(files[ii]);
@@ -252,8 +259,7 @@ void DicomReaderMgr::CreateImages()
 
 
     
-
-    
+      
     
   }
   

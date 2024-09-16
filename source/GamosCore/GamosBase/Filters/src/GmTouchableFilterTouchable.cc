@@ -39,7 +39,7 @@ G4bool GmTouchableFilterTouchable::AcceptTouchable(const G4VTouchable* touch)
       G4bool cn = !geomUtils->CheckPVCopyNo( pv, ancestors[jj].second ) ;
 #ifndef GAMOS_NO_VERBOSE
       if( FilterVerb(debugVerb) ) G4cout << " GmTouchableFilterTouchable::AcceptTouchable check " <<  pv->GetName() << " != " << ancestors[jj].first << " " 
-	     << pv->GetCopyNo() << "- " << ancestors[jj].second 
+	     << touch->GetCopyNumber() << "- " << ancestors[jj].second 
 	     << "?" << (pv->GetName() != ancestors[jj].first)
 	     << "?" << G4int(cn)
 	     <<G4endl;

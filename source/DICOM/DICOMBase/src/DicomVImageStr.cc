@@ -134,7 +134,7 @@ G4bool DicomVImageStr::ReadDataFromTextFile( std::ifstream& fin, G4bool bReadHea
 //-----------------------------------------------------------------------------
 void DicomVImageStr::DumpDataToTextFile(std::ostream& fout, G4bool )
 {  
-  if( DicomVerb(warningVerb) ) G4cout << GetName() << " DumpDataToTextFile " << G4endl;
+  if( DicomVerb(warningVerb) ) G4cout << GetName() << " DicomVImageStr::DumpDataToTextFile N " <<theDataStr->size() <<  G4endl;
   size_t copyNo = 0;
   for( size_t iz = 0; iz < theNoVoxelsZ; iz++ ) {
     for( size_t iy = 0; iy < theNoVoxelsY; iy++ ) {
@@ -144,6 +144,7 @@ void DicomVImageStr::DumpDataToTextFile(std::ostream& fout, G4bool )
 	//	G4cout << ix+iy*theNoVoxelsX+iz*theNoVoxelsX*theNoVoxelsY << " : " << ix << " " << iy << " " << iz << " " << theMinX+GetVoxelDimX()*(ix+0.5) << " " << theMinY+GetVoxelDimY()*(iy+0.5) << " " << theMinZ+GetVoxelDimZ()*(iz+0.5) << " DATA_TO_TEXT " << theData->at(copyNo) << G4endl; //GDEB
 	G4String data = theDataStr->at(copyNo);
 	if( data == "" ) data = "0";
+	//	G4cout << ix+iy*theNoVoxelsX+iz*theNoVoxelsX*theNoVoxelsY << " : " << ix << " " << iy << " " << iz << " DATA_TO_TEXT " << data << G4endl; //theDataStr->at(copyNo) << G4endl; //GDEB
 	fout << data << " ";
 	/*	  G4ThreeVector pos = GetPosition(ix,iy,iz);
     G4double posZ = pos.z(); //GDEB
@@ -168,8 +169,10 @@ std::set<G4int> DicomVImageStr::GetIDList( G4int id )
   G4String voxelDataStr = theDataStr->at(id);
   std::set<G4int> idList;
 
-  std::vector<G4String> idListV = GmGenUtils::StringSplit( voxelDataStr, ":" );
+  std::vector<G4String> idListV = GmGenUtils::StringSplit( voxelDataStr, ":" );  
   for( size_t ii = 0; ii < idListV.size(); ii++ ) {
+    //    G4cout << id << " " << ii << " GetIDListN " << idListV.size() << G4endl; //GDEB
+    //    G4cout << ii << " GetIDList " << idListV[ii] << " FROM " << voxelDataStr << G4endl; //GDEB
     idList.insert(GmGenUtils::GetInt(idListV[ii]));
   }
 
@@ -186,3 +189,15 @@ void DicomVImageStr::ClearData()
 }
 
 
+//----------------------------------------------------------------------
+std::ostream& operator<<(std::ostream& os, const DicomVImageStr& img)
+{
+  os << " IMAGE: " << img.GetName()
+     << " NVoxels: " << img.GetNoVoxelsX() << " " << img.GetNoVoxelsY() << " " << img.GetNoVoxelsZ()
+     << " XDIM: " << img.GetMinX() << " " << img.GetMaxX()
+     << " YDIM: " << img.GetMinY() << " " << img.GetMaxY()
+     << " ZDIM: " << img.GetMinZ() << " " << img.GetMaxZ()
+     << G4endl;
+
+  return os;
+}
