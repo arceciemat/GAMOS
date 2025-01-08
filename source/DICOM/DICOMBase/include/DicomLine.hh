@@ -5,7 +5,6 @@
 #include "G4ThreeVector.hh"
 #include <map>
 class DicomVImage;
-class DicomVImageStr;
 
 class DicomLine : public DicomVLine
 { 
@@ -16,20 +15,19 @@ public:
   ~DicomLine(){};
 
   std::map<G4double,G4double> FindValues( DicomVImage* image, G4double step = -DBL_MAX);
-  std::map<G4double,G4String> FindValuesStr( DicomVImageStr* image, G4double step = -DBL_MAX);
   std::map<G4double,G4double> FindValuesInVoxels( DicomVImage* image);
   std::map<G4double,G4double> FindValuesInSteps( DicomVImage* image, G4double step);
-<<<<<<< HEAD
-  std::map<G4double,G4String> FindValuesInVoxelsStr( DicomVImageStr* imageStr );
-  std::map<G4double,G4String> FindValuesInStepsStr( DicomVImageStr* imageStr, G4double step);
+  G4ThreeVector GetPos0() const {
+    return thePos0;
+  }
+  void SetPos0( G4ThreeVector lp0 ) {
+    thePos0 = lp0;
+    bUsePos0 = true;
+  }
 
 private:
-  G4int CheckOutOfPhantom( G4ThreeVector pos, G4ThreeVector dir, std::vector<G4double> fMinV,  std::vector<G4double> fMaxV, std::vector<G4String> fAxisNameV );
-
-=======
-
-private:
->>>>>>> 889849c0 (GAMOS.7.0 v1)
+  G4ThreeVector thePos0; // position to mark 0 value in GetDistanceTo0()
+  G4bool bUsePos0;
 };
 
 #endif

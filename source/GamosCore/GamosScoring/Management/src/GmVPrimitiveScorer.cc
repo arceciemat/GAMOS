@@ -335,10 +335,10 @@ G4double GmVPrimitiveScorer::GetNEvents( G4int index ){
 }
 
 //--------------------------------------------------------------------
-void GmVPrimitiveScorer::Normalize(G4THitsMap<G4double>* RunMap)
+void GmVPrimitiveScorer::Normalize(G4THitsMap<G4double>* RunMap, G4bool bInverse )
 {
   if( bSpectrum ) {
-    return NormalizeSpectrum();
+    return NormalizeSpectrum(bInverse);
   }
   
   std::map<G4int,G4double*>::iterator ite;
@@ -346,6 +346,9 @@ void GmVPrimitiveScorer::Normalize(G4THitsMap<G4double>* RunMap)
     G4int index = ite->first;
     G4double nev = GetNEvents(index);
     G4double normFactor = nev*theUnit;
+    if ( bInverse ) {
+      normFactor = 1./normFactor;
+    }
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(debugVerb) ) G4cout << GetName() << " " << index << " Normalize SUMV_bef " << (*(ite->second)) << " v2 " << theSumV2[index] << G4endl;
 #endif
@@ -676,7 +679,7 @@ void GmVPrimitiveScorer::AddToScoresSpectrum()
 
 
 //--------------------------------------------------------------------
-void GmVPrimitiveScorer::NormalizeSpectrum( )
+void GmVPrimitiveScorer::NormalizeSpectrum( G4bool bInverse )
 {
   for( mimid::iterator itemm = theSpectrumSumV.begin(); itemm != theSpectrumSumV.end(); itemm++ ) {
     G4int index = itemm->first;
@@ -688,7 +691,10 @@ void GmVPrimitiveScorer::NormalizeSpectrum( )
     for( mid::iterator item = sumVIdx->begin(); item != sumVIdx->end(); item++ ) {
       G4int ibin = item->first;
       if( ScoringVerb(debugVerb) ) G4cout << GetName() << " " << index << " " << ibin << " NormalizeSpectrum SUM_bef " <<  sumVIdx->at(ibin) << " V2 " << sumV2Idx->at(ibin) << G4endl;
-      G4double sumX = (item->second)/normFactor;
+      if ( bInverse ) {
+	normFactor = 1./normFactor;
+      }
+      G4double sumX = (item->second) / normFactor;
       (*sumVIdx)[ibin] = sumX;
       (*sumV2Idx)[ibin] = sumV2Idx->at(ibin) / (normFactor*normFactor);
       if( ScoringVerb(debugVerb) ) G4cout << GetName() << " " << index << " " << ibin << " NormalizeSpectrum SUMV_aft " << sumVIdx->at(ibin) << " V2 " << sumV2Idx->at(ibin) << " " << normFactor << G4endl;

@@ -500,7 +500,7 @@ int RTPhaseSpaceUA::CloseIAEAHeaderFiles(G4int nevents)
     strcpy(L_fname,fname.c_str());
 
     p_iaea_header->fheader = open_file(L_fname,(char *)(".IAEAheader"),(char *)("wb"));
-    
+
     /* Write an IAEA header */
     if( p_iaea_header->write_header() != OK)
       { printf("\n ERROR: writing IAEA header"); return(FALSE); }  

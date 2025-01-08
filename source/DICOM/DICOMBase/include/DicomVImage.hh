@@ -13,8 +13,8 @@ class DicomVLineList;
 typedef std::pair<size_t,G4ThreeVector> pidv; // id is voxel x/y id + 0=line above, 1=line right, 2=line down, 3=line left, 4=diagonal
 typedef std::pair<pidv,pidv> ppidv;
 
-enum DIModality{ DIM_CT, DIM_NM, DIM_RTStruct, DIM_RTDose, DIM_G4dcmCT_MateID, DIM_G4dcmCT_MateDens, DIM_G4dcmCT_StructID, DIM_G4dcmNM, DIM_G4dcmDose, DIM_Sqdose, DIM_Sqdose_sq, DIM_Sqdose_err, DIM_Sqdose_errRel, DIM_GammaIndex, DIM_Interfile, DIM_OTHER };
-enum DIModalityShort{ DIMS_CT, DIMS_NM, DIMS_Struct, DIMS_Dose, DIMS_CT_MateID, DIMS_CT_MateDens, DIMS_Dose_sq, DIMS_Dose_err, DIMS_Dose_errRel, DIMS_GammaIndex, DIMS_Interfile, DIMS_OTHER };
+enum DIModality{ DIM_CT, DIM_NM, DIM_RTStruct, DIM_RTDose, DIM_G4dcmCT_MateID, DIM_G4dcmCT_MateDens, DIM_G4dcmCT_StructID, DIM_G4dcmNM, DIM_G4dcmDose, DIM_Sqdose, DIM_Sqdose_sq, DIM_Sqdose_err, DIM_Sqdose_errRel, DIM_GammaIndex, DIM_Interfile, DIM_InterfileCT, DIM_OTHER };
+enum DIModalityShort{ DIMS_CT, DIMS_NM, DIMS_Struct, DIMS_Dose, DIMS_CT_MateID, DIMS_CT_MateDens, DIMS_Dose_sq, DIMS_Dose_err, DIMS_Dose_errRel, DIMS_GammaIndex, DIMS_Interfile, DIMS_InterfileCT, DIMS_OTHER };
 
 enum DIOrientation{ DIO_XY, DIO_XZ, DIO_YZ };
 

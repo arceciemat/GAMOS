@@ -198,8 +198,20 @@ void GmSqdose::Read( FILE* fin )
   }
   //  G4cout << " READ nv " << nv << G4endl; //GDEB  
 
+  G4int nVoxX =  theHeader->GetNoVoxelsX();
+  G4int nVoxY =  theHeader->GetNoVoxelsY();
+  G4int nVoxZ =  theHeader->GetNoVoxelsZ();
+  G4int nVoxXY = nVoxX * nVoxY;
+  G4double minX =  theHeader->GetMinX();
+  G4double minY =  theHeader->GetMinY();
+  G4double minZ =  theHeader->GetMinZ();
+  G4double voxX = theHeader->GetVoxelHalfX()*2;
+  G4double voxY = theHeader->GetVoxelHalfY()*2;
+  G4double voxZ = theHeader->GetVoxelHalfZ()*2;
+  //  G4cout << " VOXXYZ " << voxX << " " <<voxY << " " << voxZ << G4endl; //GDEB
   if( theType == SqTALL || theType == SqTCROSS_PHANTOM  ) {
     for( size_t iv = 0; iv < nv; iv++ ){
+      //      G4cout << " READ iv " << iv << G4endl; //GDEB
       float ftmp;
       if( GmGenUtils::freadLittleEndian4(&ftmp, sizeof(float), 1, fin) != 1) {
 	G4Exception("GmSqdose::Read()",
@@ -208,6 +220,11 @@ void GmSqdose::Read( FILE* fin )
 		    G4String("Reading voxel number "+GmGenUtils::itoa(iv)).c_str());
       }
       theDoses.push_back( ftmp );
+      G4int iz = G4int(iv/nVoxXY);
+      G4int ix = G4int(iv%nVoxX);
+      G4int iy = G4int(iv/nVoxX%nVoxY);
+      //      if( iy == nVoxY-1 && ftmp != 0 )  G4cout << " GmSqdose " << ix << ":" << iy << ":" << iz << " copyNo " << iv << " XYZ  " << minX+voxX*(ix+0.5) << " " <<minY+voxY*(iy+0.5) << " " <<minZ+voxZ*(iz+0.5) <<  " = " << ftmp << G4endl; //GDEB RATON.Water
+
       // G4cout << this << "  " << iv << " 1SQDOSE " << ftmp << " N " << theDoses.size() << G4endl; //GDEB 
       //      G4cout << " 1SQDOSE " << ftmp << " " << iv << G4endl; //GDEB
     }

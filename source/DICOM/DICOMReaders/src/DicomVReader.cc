@@ -15,7 +15,7 @@ DicomVReader::DicomVReader(DRModality mod)
   theReaderMgr = DicomReaderMgr::GetInstance();
   theReaderMgr->AddReader( this, mod );
   if( DicomVerb(-infoVerb) ) {
-    G4cout << " DicomVReader AddReader " << this->GetName() << " " << DicomVReader::GetModalityStr(mod) << G4endl;
+    G4cout << " DicomVReader AddReader mod " << this->GetName() << " " << DicomVReader::GetModalityStr(mod) << G4endl;
   }
   theModality = mod;
 }
@@ -26,8 +26,8 @@ DicomVReader::DicomVReader(DcmDataset* dset, DRModality mod)
   
   theReaderMgr = DicomReaderMgr::GetInstance();
   theReaderMgr->AddReader( this, mod );
-  if( DicomVerb(debugVerb) ) {
-    G4cout << "a DicomVReader AddReader " << this->GetName() << " " << DicomVReader::GetModalityStr(mod) << G4endl;
+  if( DicomVerb(-infoVerb) ) {
+    G4cout << "DicomVReader AddReader dset mod " << this->GetName() << " " << DicomVReader::GetModalityStr(mod) << G4endl;
   }
   theDataset = dset;
   theModality = mod;
@@ -148,6 +148,8 @@ G4String DicomVReader::GetModalityStr(DRModality mod)
     return "DRM_RTImage";
   case DRM_Interfile:
     return "DRM_Interfile";
+  case DRM_InterfileCT:
+    return "DRM_InterfileCT";
   case DRM_OTHER:
     return "DRM_OTHER";
   }

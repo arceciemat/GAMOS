@@ -40,8 +40,8 @@ void DicomVLineList::AddLine( DicomVLine* line )
       if( line->GetOrientation() != DPOrientNone && theOrientation != line->GetOrientation() ) {
 	G4Exception(" DicomVLineList::AddLine",
 		  "",
-		    FatalException,
-		    ("Adding a line with Orientation="+DicomVLine::GetOrientationName(line->GetOrientation())+" while previous lines have Orientation="+DicomVLine::GetOrientationName(theOrientation)).c_str());
+		    JustWarning,
+		    ("Adding a line with Orientation="+DicomVLine::GetOrientationName(line->GetOrientation())+" while previous lines have Orientation="+DicomVLine::GetOrientationName(theOrientation)+"  SETTING IT TO DPOrientXY").c_str());
       }
     }
   } else {
@@ -71,8 +71,9 @@ void DicomVLineList::SetOrientation( DPOrientation ori, G4bool bChildren )
       if( theLineSet->GetOrientation() != ori ) {
 	G4Exception("DicomVLineList::SetOrientation",
 		    "",
-		    FatalException,
-		    ("Setting LineList orientation "+DicomVLine::GetOrientationName(ori)+" different than its LineSet orientation "+ DicomVLine::GetOrientationName(theLineSet->GetOrientation())).c_str());
+		    JustWarning,
+		    ("Setting LineList orientation "+DicomVLine::GetOrientationName(ori)+" different than its LineSet orientation "+ DicomVLine::GetOrientationName(theLineSet->GetOrientation())+"  SETTING IT TO DPOrientXY").c_str());
+	     theLineSet->SetOrientation(DPOrientXY,false); // this will set of line's belonging to it
       }
     }
   }

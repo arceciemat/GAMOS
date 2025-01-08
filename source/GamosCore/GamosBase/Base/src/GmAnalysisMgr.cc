@@ -591,7 +591,7 @@ bool GmAnalysisMgr::CreateHistoProfile1D(const G4String & pathAndTitle, int nBin
     if( GmGenUtils::AreWordsEquivalent( (*ite).first, pathAndTitle ) ) {
       lowerEdge = (*ite).second;
     }
-  }
+  }  
   for( ite = theHisto1Max.begin(); ite != theHisto1Max.end(); ite++ ){
     if( GmGenUtils::AreWordsEquivalent( (*ite).first, pathAndTitle ) ) {
       upperEdge = (*ite).second;

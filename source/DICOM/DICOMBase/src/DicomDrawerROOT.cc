@@ -18,6 +18,7 @@
 #include "CLHEP/Random/RandFlat.h"
 
 #include "TCanvas.h"
+#include "TH1F.h"
 #include "TH2F.h"
 #include "TGaxis.h"
 #include "TLine.h"
@@ -571,7 +572,7 @@ void DicomDrawerROOT::DrawXZ( DicomVImage* image, std::vector<DicomVLineSet*> li
     }
     
     std::string jpgName = "his"+hisName+"."+theImageFormat;
-    canvas->Print(jpgName.c_str());
+    canvas->Print(jpgName.c_str()); 
     if( theOutputFile ) {
       theOutputFile->cd();
       his->Write();
@@ -876,5 +877,14 @@ void DicomDrawerROOT::DrawWithLinesXZ( DicomVImage*, DicomVLine* ){}
 
 //-----------------------------------------------------------------------------
 void DicomDrawerROOT::DrawWithLinesYZ( DicomVImage*, DicomVLine* ){}
+
+//-----------------------------------------------------------------------------
+void DicomDrawerROOT::WriteHisto1D( const TH1F* histo )
+{
+  if( theOutputFile ) {
+    theOutputFile->cd();
+    histo->Write();
+  }
+}
 
 #endif

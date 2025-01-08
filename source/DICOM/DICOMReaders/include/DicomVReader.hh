@@ -8,7 +8,7 @@
 class DcmDataset;
 class DicomReaderMgr;
 
-enum DRModality{ DRM_CT, DRM_NM, DRM_RTStruct, DRM_RTDose, DRM_RTPlan, DRM_RTIonPlan, DRM_G4dcmCT, DRM_G4dcmNM, DRM_G4dcmDose, DRM_Sqdose, DRM_TextLines, DRM_RTImage, DRM_Interfile, DRM_OTHER };
+enum DRModality{ DRM_CT, DRM_NM, DRM_RTStruct, DRM_RTDose, DRM_RTPlan, DRM_RTIonPlan, DRM_G4dcmCT, DRM_G4dcmNM, DRM_G4dcmDose, DRM_Sqdose, DRM_TextLines, DRM_RTImage, DRM_Interfile, DRM_InterfileCT, DRM_OTHER };
 
 class DicomVReader 
 {

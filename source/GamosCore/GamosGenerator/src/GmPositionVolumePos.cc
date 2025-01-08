@@ -267,7 +267,8 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
     y = -ylength+2*ylength*CLHEP::RandFlat::shoot();
     z = -zlength+2*zlength*CLHEP::RandFlat::shoot();
     
-  } else if(solid->GetEntityType() == "G4Polycone" ){
+  } else if(solid->GetEntityType() == "G4Polycone" 
+	    || solid->GetEntityType() == "G4GenericPolycone" ){
     
 	const G4Polycone* polycone = static_cast<const G4Polycone*>(solid);
 

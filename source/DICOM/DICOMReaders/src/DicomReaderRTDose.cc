@@ -86,7 +86,7 @@ void DicomReaderRTDose::ReadHeaderAndPixels(G4bool bReadPixelData)
   std::vector<double> dSliceThickness = Read1Data(theDataset, DCM_SliceThickness, 1);
   //  theMinZ = dImagePositionPatient[2]+gridFrameOffsets[0]; //?
   theMaxZ = theMinZ +gridFrameOffsets[gridFrameOffsets.size()-1]+dSliceThickness[0];
-  G4cout << " RTDOSE MinZ " << theMinZ << " " << theMaxZ << G4endl; //GDEB
+  //  G4cout << " RTDOSE MinZ " << theMinZ << " " << theMaxZ << G4endl; //GDEB
   
   if(bReadPixelData) ReadPixelData();
 

@@ -205,6 +205,7 @@ void DicomReaderMgr::CreateImages()
     //----- Find list of readers of each modality
     DRModality mod = ite->first;
     DicomVReaderImage* dri = ite->second;
+    // G4cout << " DicomReaderMgr::CreateImages( " << mod << G4endl; //GDEB
     if( mod == DRM_CT ) {
       //----- Check and merge DICOM image readers
       //--- Order readers by Z
@@ -251,16 +252,11 @@ void DicomReaderMgr::CreateImages()
     
   }
 
-    //----- Interfile
+  //----- Interfile
   if( ZOrderedReadersCT.size() != 0 ) {
     /*   copy dicomReaderInterfile to DicomReaderCT 
     DicomReaderCT* imgMergedReaderCT = 0;
     if( imgMergedReaderCT ) CreateImagesCT( imgMergedReaderCT );*/
-
-
-    
-      
-    
   }
   
   //----- NM
@@ -303,7 +299,7 @@ void DicomReaderMgr::CreateImages()
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------  ----------------------------------------------------------
 void DicomReaderMgr::CreateImagesCT( DicomReaderCT* imgMergedReaderCT )
 {
   imgMergedReaderCT->DICOMCreateImages();

@@ -227,6 +227,8 @@ void GmScoringRun::DumpAllScorers()
 	       << "  Run Value : " << *(itr->second) 
 	       << G4endl;
 	       } */
+    scorer->Normalize(RunMap, true);
+   
   }
 
 }

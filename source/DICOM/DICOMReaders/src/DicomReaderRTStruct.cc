@@ -353,7 +353,7 @@ void DicomReaderRTStruct::BuildPolygonSet()
 //-----------------------------------------------------------------------------
 void DicomReaderRTStruct::FindVoxelsInXY( DicomVImageStr* imageStruct, DicomPolygonSet* polygonSet )
 {
-  //  G4cout << " DicomReaderRTStruct::FindVoxelsInXY( " << G4endl; //GDEB
+  //  G4cout << imageStruct << " DicomReaderRTStruct::FindVoxelsInXY( " << G4endl; //GDEB
   theStructImage = imageStruct;
   polygonSet->FindVoxelsInXY( imageStruct );
 }

@@ -15,11 +15,13 @@
 #include "G4RunManager.hh"
 #include "G4Run.hh"
 
+//-----------------------------------------------------------------------
 GmPSPrinterSqdose::GmPSPrinterSqdose(G4String name) : GmVPSPrinter( name )
 {
   theOutputType = "sqdose";
 }
 
+//-----------------------------------------------------------------------
 void GmPSPrinterSqdose::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* scorer )
 {
   SetUnit(scorer);

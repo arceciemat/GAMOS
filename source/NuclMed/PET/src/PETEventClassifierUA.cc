@@ -263,6 +263,10 @@ int64_t PETEventClassifierUA::ClassifyPET( gamosRecHitList& rhitList, const G4Ev
 	  //     << " VTX Y " << G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0)->GetPosition().y() << G4endl;
   }
 
+  G4cout << " bDumpLM "  << bDumpLM <<" theEventClass "<< theEventClass  << G4endl; //GDEB
+  G4cout << " PETIOMgr::GetInstance()->WriteEvent( " << G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0)->GetPosition()
+	 << " POS1 " <<  the511RecHits[0].GetPosition()
+	 << " POS2 " << the511RecHits[1].GetPosition()  << G4endl; //GDEB
   if( bDumpLM && theEventClass != 0 ) {
     PETIOMgr::GetInstance()->WriteEvent( G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0)->GetPosition(), 
 					      the511RecHits[0].GetPosition(), 

@@ -263,6 +263,8 @@ int64_t PETEventClassifierCrystalIDUA::ClassifyPET( gamosRecHitList& rhitList, c
 	  //     << " VTX Y " << G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0)->GetPosition().y() << G4endl;
   }
 
+    G4cout << " bDumpLM "  << bDumpLM <<" theEventClass "<< theEventClass  << G4endl; //GDEB
+  
   if( bDumpLM && theEventClass != 0 ) {
     G4PrimaryVertex* pvtx = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0);
     G4double Evtx = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0)->GetPrimary(0)->GetKineticEnergy();
@@ -271,6 +273,9 @@ int64_t PETEventClassifierCrystalIDUA::ClassifyPET( gamosRecHitList& rhitList, c
 					    pvtx->GetT0(),
 					    the511RecHits[0],
 					    the511RecHits[1]);
+  G4cout << " PETIOMgr::GetInstance()->WriteEvent( " << G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0)->GetPosition()
+	 << " E " << Evtx << " POS1 " <<  the511RecHits[0].GetPosition()
+	 << " POS2 " << the511RecHits[1].GetPosition()  << G4endl; //GDEB
   }
   
 

@@ -56,8 +56,7 @@ public:
 #endif
 
 private:
-
-	static G4bool bMaterialDensities;
+  static G4bool bMaterialDensities;
   static std::map<G4double,G4String> theMaterials;
   static std::map<G4double,G4String> theMaterialDensities;
   static std::map<G4int,G4double> theCT2Density;

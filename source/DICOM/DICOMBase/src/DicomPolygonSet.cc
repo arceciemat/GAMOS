@@ -1,3 +1,4 @@
+
 #include "DicomPolygonSet.hh"
 #include "DicomPolygonList.hh"
 #include "DicomVImage.hh"
@@ -31,7 +32,7 @@ DicomPolygonSet::DicomPolygonSet(DicomPolygonSet* polySet, DicomVImage* image, D
 //-----------------------------------------------------------------------------
 void DicomPolygonSet::FindVoxelsInXY( DicomVImageStr* imageStr )
 {
-  if( DicomVerb(infoVerb) ) G4cout << theName << " DicomPolygonSet::FindVoxelsInXY in image " << imageStr->GetName() << " " << DicomVImage::GetModalityStr(imageStr->GetModality()) << G4endl;
+  if( DicomVerb(infoVerb) ) G4cout << imageStr << " " << theName << " DicomPolygonSet::FindVoxelsInXY in image " << imageStr->GetName() << " " << DicomVImage::GetModalityStr(imageStr->GetModality()) << G4endl; 
   for( size_t ii = 0; ii < theLineLists.size(); ii++ ) {
     if( DicomVerb(debugVerb) ) G4cout << GetName() << "@@ DicomPolygonSet::FindVoxelsInXY " << theLineLists[ii]->GetName() << G4endl; 
     (static_cast<DicomPolygonList*>(theLineLists[ii]))->FindVoxelsInXY(imageStr);

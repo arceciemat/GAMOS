@@ -551,11 +551,11 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr, pmmddpi polygon
 	    roiStr += ":"+theIDStr;
 	  }
 	  //	  G4cout << " fStructure " << ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY << " roiStrNEW : " << roiStr << " <- " << theIDStr << " " << theID << G4endl; //GDEB
-	  if( DicomVerb(debugVerb) ){
-	    G4cout << ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY << " FINAL Struct ID WITH PREVIOUS ID's IN VOXEL " << ix << " " << iy << " : " << roiStr << G4endl;
-	  }
 	} else {
 	  roiStr = theIDStr;
+	}
+	if( DicomVerb(debugVerb) ){
+	  G4cout << imageStr << " : " <<ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY << " FINAL Struct ID WITH PREVIOUS ID's IN VOXEL " << ix << " " << iy << " " << iPolygonZ << " : " << roiStr << " Z=" << planeZ << G4endl;
 	}
 	imageStr->SetDataStr(ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY, roiStr);
 
@@ -605,14 +605,16 @@ G4int DicomPolygonList::GetPolygonZIndex( DicomVImage* image, G4double planeZ )
 
   G4double polyZ = planeZ;
   G4int iPolygonZ = ( polyZ - imMinZ ) / imVoxelDimZ;
-  //  G4cout << " DicomPolygonList::GetPolygonZIndex " <<iPolygonZ << " = ( " << polyZ << " - " << imMinZ << " ) / " <<imVoxelDimZ << G4endl;//GDEB
+  G4cout << " DicomPolygonList::GetPolygonZIndex " <<iPolygonZ << " = ( " << polyZ << " - " << imMinZ << " ) / " <<imVoxelDimZ << G4endl;//GDEB
   if( DicomVerb(debugVerb) ) {
     if( iPolygonZ < 0 ) {
       G4cerr << " iPolygonZ= " << iPolygonZ
 	     << " Polygon Z= " << planeZ << " Image min Z= " << imMinZ << " diff " << planeZ-imMinZ << G4endl;
     }
-    //-- check if it is a  precision problem
-    if( polyZ - imMinZ  > -image->GetPrecision() ) {
+  }
+  //-- check if it is a  precision problem
+  if( iPolygonZ < 0 ) {
+    if( polyZ - imMinZ  < -image->GetPrecision() ) {
       iPolygonZ = 0;
       if( DicomVerb(debugVerb) ) {
 	G4Exception(" DicomPolygon::GetPolygonZIndex",

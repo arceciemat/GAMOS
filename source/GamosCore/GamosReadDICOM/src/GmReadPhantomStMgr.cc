@@ -120,8 +120,8 @@ void GmReadPhantomStMgr::ReadStructG4( GmFileIn& fin, G4int nVoxelX, G4int nVoxe
     tvname = wl[1];;
     if( fin.eof() ) break;
 #ifndef GAMOS_NO_VERBOSE
-    if( ReadDICOMVerb(debugVerb) ) {
-      G4cout << "GmReadPhantomStMgr::ReadStructG4:  Reading tvnumber " << tvnumber << " tvname " << tvname << G4endl;
+    if( ReadDICOMVerb(-debugVerb) ) {
+      G4cout <<this << "GmReadPhantomStMgr::ReadStructG4:  Reading tvnumber " << tvnumber << " tvname " << tvname << G4endl;
     }
 #endif
     theStructs[tvnumber] = tvname;
@@ -140,6 +140,7 @@ G4String GmReadPhantomStMgr::GetStID( size_t voxelID )
 std::set<size_t> GmReadPhantomStMgr::GetStIDList( size_t voxelID )
 {
   if( theStIDs.size() == 0 ) {
+    G4cout << " GmReadPhantomStMgr::GetStIDList " << this << G4endl; //GDEB
     G4Exception("GmReadPhantomStMgr::GetStIDList",
 		"",
 		FatalException,

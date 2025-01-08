@@ -97,6 +97,9 @@ public:
   G4double GetVoxelData(G4int ii) const {
     return theVoxelData->at(ii);
   }
+  void SetVoxelData( std::vector<G4double>* vd ) {
+    theVoxelData = vd;
+  }
 
   virtual void ReadPixelData();
   

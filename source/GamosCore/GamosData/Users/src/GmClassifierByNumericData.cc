@@ -97,18 +97,26 @@ int64_t GmClassifierByNumericData::GetIndexFromValue(const G4double val )
 {
   if( (val - theMin) < -1.E-5 || (val - theMax) > 1.E-5 ) {
     if( theAllowOutOfLimits == 1 ) {
-      G4Exception(G4String(theName+"::GetIndexFromValue").c_str(),
-		  "Value out of limits",
-		  JustWarning,
-		  G4String(GmGenUtils::ftoa(theMin)+ " <=? " + GmGenUtils::ftoa(val)+" <=? "+GmGenUtils::ftoa(theMax)).c_str());
+#ifndef GAMOS_NO_VERBOSE
+      if( DataVerb(infoVerb) ) {
+	G4Exception(G4String(theName+"::GetIndexFromValue").c_str(),
+		    "Value out of limits",
+		    JustWarning,
+		    G4String(GmGenUtils::ftoa(theMin)+ " <=? " + GmGenUtils::ftoa(val)+" <=? "+GmGenUtils::ftoa(theMax)).c_str());
+      }
+#endif
       if( val < theMin ) return 0;
       if( val > theMax ) return INT_MAX;
     } else if( theAllowOutOfLimits == 0 ) {
-      G4Exception(G4String(theName+"::GetIndexFromValue").c_str(),
-		  "Value out of limits",
-		  FatalErrorInArgument,
-		  G4String(GmGenUtils::ftoa(theMin)+ " <=? " + GmGenUtils::ftoa(val)+" <=? "+GmGenUtils::ftoa(theMax)).c_str());
-    } else {
+#ifndef GAMOS_NO_VERBOSE
+      if( DataVerb(infoVerb) ) {
+	G4Exception(G4String(theName+"::GetIndexFromValue").c_str(),
+		    "Value out of limits",
+		    FatalErrorInArgument,
+		    G4String(GmGenUtils::ftoa(theMin)+ " <=? " + GmGenUtils::ftoa(val)+" <=? "+GmGenUtils::ftoa(theMax)).c_str());
+      }
+#endif
+      } else {
       if( val < theMin ) return 0;
       if( val > theMax ) return INT_MAX;
     }

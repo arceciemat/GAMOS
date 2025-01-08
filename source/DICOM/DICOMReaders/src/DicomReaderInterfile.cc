@@ -27,6 +27,11 @@ DicomReaderInterfile::DicomReaderInterfile(G4String fName, G4String name ) : Dic
 }
 
 //-----------------------------------------------------------------------------
+DicomReaderInterfile::DicomReaderInterfile( DRModality mod ) : DicomVReaderImage(mod)
+{
+}
+
+//-----------------------------------------------------------------------------
 void DicomReaderInterfile::ReadHeaderAndPixels(G4bool bReadPixelData)
 {
 #ifndef GAMOS_NO_VERBOSE
@@ -63,8 +68,8 @@ void DicomReaderInterfile::ReadHeader()
   std::string theByteOrder;
   theRescaleSlope = 1.;
   theRescaleIntercept = 0;
-  const G4int NMAXLIN = 10000;
-  char ltemp[NMAXLIN]; //there won't be lines longer than NMAXLIN characters
+  // const G4int NMAXLIN = 10000;
+  //  char ltemp[NMAXLIN]; //there won't be lines longer than NMAXLIN characters
   theInterfileHeader = new GmInterfileHeader();
   theInterfileHeader->Read(theHeaderFileName);
   //  G4double theOffsetX = 0, theOffsetY = 0., theOffsetZ = 0.;

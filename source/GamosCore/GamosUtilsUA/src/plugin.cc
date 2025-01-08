@@ -101,4 +101,7 @@ DEFINE_GAMOS_USER_ACTION(GmTrackRandomWeightUA);
 #include "GmUtilsUAVerbosity.hh"
 DEFINE_GAMOS_VERBOSITY(GmUtilsUAVerbosity);
 
+#include "KillNegativeLengthUA.hh"
+DEFINE_GAMOS_USER_ACTION(KillNegativeLengthUA);
+
 #endif

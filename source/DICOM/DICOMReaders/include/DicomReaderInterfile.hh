@@ -11,6 +11,7 @@ class DicomReaderInterfile : public DicomVReaderImage
 { 
 public:
   DicomReaderInterfile(G4String fName, G4String name = "");
+  DicomReaderInterfile( DRModality mod );
   ~DicomReaderInterfile(){};
   
   virtual void ReadHeaderAndPixels( G4bool bReadPixelData = true );

@@ -7,6 +7,7 @@
 #include "DicomVLine.hh"
 class TLine;
 class TFile;
+class TH1F;
 //class DicomOperLog;
 class DicomParameterMgr;
 #include <set>
@@ -59,6 +60,7 @@ public:
   void  SetPaletteMax( G4double pmax ) {
     thePaletteMax = pmax;
   }
+  void WriteHisto1D( const TH1F* histo );
 
 private:
   DicomPolygonSet* VoxelsInUseClosest( DicomPolygonSet* polySet, DicomVImage* image );

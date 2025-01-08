@@ -41,8 +41,8 @@ class RTPlanMgr
   void FillRTHistoControlPoint( G4int hNum, const RTBeamStateData& spdata );
   void FillRTIonHistoControlPoint( G4int hNum, const RTBeamStateData& spdata );
 
-  void DumpHistosAndScorers(); 
-  void DumpHistosAndScorersBeam();
+  void DumpHistosAndScorers( G4bool bIsBeam );
+  //-  void DumpHistosAndScorersBeam();
   void DumpHistosAndScorersControlPoint();
   void DumpHistosAndScorersSubControlPoint();
   
@@ -106,8 +106,12 @@ private:
   G4int theHCurrentNumber;
 
   G4bool bDumpAtBeam;
+  G4bool bDumpAtCP;
   G4bool bDumpAtControlPoint;
   G4bool bDumpAtSubControlPoint;
+  G4double theLastBeamCHANGEDSubCPEvt;
+  G4double theLastControlPointCHANGEDSubCPEvt; 
+
 
 };
 

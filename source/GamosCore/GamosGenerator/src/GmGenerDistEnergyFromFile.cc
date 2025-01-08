@@ -61,14 +61,16 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
   //----- Sanity checks
   std::map<G4double,G4double>::iterator ite, ite2;
   //--- For all: Check that energies are positive
-  for(ite = theEnerProb.begin(); ite != theEnerProb.end(); ite++){
-    if( (*ite).first < 0 ) {
+  if( theCalculationType != EFFCT_InterpolateLog ){
+    for(ite = theEnerProb.begin(); ite != theEnerProb.end(); ite++){
+      if( (*ite).first < 0 ) {
 	G4Exception("GmGenerDistEnergyFromFile::ReadEnergyDist",
 		    "Energies should be positive",
 		    FatalErrorInArgument,
 		    G4String("Energy = " + GmGenUtils::ftoa((*ite).first)).c_str());
+      }
     }
-  }      
+  }
   //--- For all: Check that energy increases
   //  G4cout << " ENERPROB " << theEnerProb.size() << G4endl;
   ite2 = theEnerProb.begin(); ite2++;
@@ -237,12 +239,15 @@ G4double GmGenerDistEnergyFromFile::GenerateEnergy( const GmParticleSource* )
     G4double diffP = (*iteU).second-(*iteD).second;
     G4double diffE = log((*iteU).first)-log((*iteD).first);
     G4double slope = diffP/diffE;
+    //    G4cout << " SLOPE " << slope << "=" << diffP<<"/"<<diffE << "DIFFP="  << (*iteU).second<<"-"<<(*iteD).second  << "DIFFE=" << log((*iteU).first)<<"-"<<log((*iteD).first); //GDEB
+
     G4double normCDF = slope*sqr(diffE)/2. + (*iteD).second*diffE ; // normalize Cumulative Distribution Function
     G4double randomProb = CLHEP::RandFlat::shoot();
     if(slope == 0) {
       energy = exp( log((*iteD).first) + randomProb* (log((*iteU).first)-log((*iteD).first)) );
     } else {
-     energy = exp( (( -(*iteD).second + sqrt( sqr((*iteD).second) + 2*slope*randomProb*normCDF) ) / slope ) + log((*iteD).first) );
+      energy = exp( (( -(*iteD).second + sqrt( sqr((*iteD).second) + 2*slope*randomProb*normCDF) ) / slope ) + log((*iteD).first) );
+      //      G4cout << " LATELOG " << energy << "= exp( (("    <<-(*iteD).second <<"+sqrt("<< sqr((*iteD).second)<<" + 2*"<<slope<<"*"     <<randomProb<<"*"<<normCDF<<") ) / "<<slope <<") + log("<<(*iteD).first<< G4endl; //GDEB
     }
      //    energy = exp( ((*iteU).second-(*iteD).second) * CLHEP::RandFlat::shoot() / slope + log((*iteD).first) );
 #ifndef GAMOS_NO_VERBOSE

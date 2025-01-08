@@ -24,11 +24,8 @@
 #include "G4HadronicProcess.hh"
 #include "G4DecayTable.hh"
 #include "G4VTouchable.hh"
-<<<<<<< HEAD
 #include "G4GammaGeneralProcess.hh"
 #include "G4GammaConversionToMuons.hh"
-=======
->>>>>>> 889849c0 (GAMOS.7.0 v1)
 
 std::map<const G4ParticleDefinition*,G4DecayTable*> GmG4Utils::thePartDecayTable;
 
@@ -763,7 +760,6 @@ G4String GmG4Utils::GetNameNumberFromTouchable( const G4VTouchable* touch )
   return nameNum;
 }
 
-<<<<<<< HEAD
 //----------------------------------------------------------------
 G4ProcessVector* GmG4Utils::GetGammaProcessVector(G4ProcessVector* procVectorOrig )
 {
@@ -794,5 +790,3 @@ G4ProcessVector* GmG4Utils::GetGammaProcessVector(G4ProcessVector* procVectorOri
 
   return procVectorNew;
 }
-=======
->>>>>>> 889849c0 (GAMOS.7.0 v1)

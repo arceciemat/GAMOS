@@ -41,6 +41,10 @@ RTPlanMgr* RTPlanMgr::GetInstance()
 //-------------------------------------------------------------
 RTPlanMgr::RTPlanMgr()
 {
+  // to check if beam and control point changed since last event where CHANGED TO NEXT SCAN SPOT
+  theLastBeamCHANGEDSubCPEvt = -1;
+  theLastControlPointCHANGEDSubCPEvt = -1; 
+  
 }
 
 //-------------------------------------------------------------
@@ -78,6 +82,7 @@ void RTPlanMgr::Initialize()
   }
   
   bDumpAtBeam = theParamMgr->GetNumericValue(name+":DumpAtBeam",0);
+  bDumpAtCP = theParamMgr->GetNumericValue(name+":DumpAtControlPoint",0);
   
   /*  if( GmParameterMgr::GetInstance()->GetNumericValue(name+":PlotBeamStates",0)) {
     theRTSource->PlotBeamStates();
@@ -148,11 +153,11 @@ void RTPlanMgr::CalculateMetersetEvts()
 	std::vector<RTVPlanSubControlPoint*> subCPs = CPs[iicp]->GetSubCPs();      
 	G4double numberOfPaintings = CPs[iicp]->GetNumberOfPaintings();
 #ifndef GAMOS_NO_VERBOSE
-	if( GenerVerb(debugVerb) ) G4cout << "LOOP beam: "<< iib << " CP: " << iicp << " nPaintings " << numberOfPaintings << G4endl; //GDEB	
+	if( GenerVerb(debugVerb) ) G4cout << "LOOP beam: "<< iib << " CP: " << iicp << " nPaintings " << numberOfPaintings << G4endl;
 #endif
 	for( size_t iiscp = 0; iiscp < subCPs.size(); iiscp++ ) {
 #ifndef GAMOS_NO_VERBOSE
-	  if( GenerVerb(debugVerb) ) G4cout << "LOOP beam: "<< iib << " CP: " << iicp << " subCP(ScanSpot): " << iiscp << " nPaintings " << numberOfPaintings << G4endl; //GDEB	
+	  if( GenerVerb(debugVerb) ) G4cout << "LOOP beam: "<< iib << " CP: " << iicp << " subCP(ScanSpot): " << iiscp << " nPaintings " << numberOfPaintings << G4endl; 
 #endif
 	  G4double meterSet = subCPs[iiscp]->GetMeterset();
 	  CPAccumMS += meterSet;
@@ -366,7 +371,26 @@ RTBeamStateData RTPlanMgr::GetRTBeamStateData( G4double& time, G4Event* evt, G4b
       bChangedBeamState = true;
 #ifndef GAMOS_NO_VERBOSE
       if( GenerVerb(testVerb) ) G4cout << "@@!!  RTPlanMgr::GenerateVertex CHANGED TO NEXT SCAN SPOT in event " << theEventID << " CurrentMetersetEvtID " << ie << G4endl; 
-      //t      if( GenerVerb(testVerb) ) G4cout << "@@!!  RTPlanMgr::GenerateVertex NextBeam " << iNextBeam << " !=?Current " << iCurrentBeam << G4endl; 
+      //t      if( GenerVerb(testVerb) ) G4cout << "@@!!  RTPlanMgr::GenerateVertex NextBeam " << iNextBeam << " !=?Current " << iCurrentBeam << G4endl;
+
+      if( ie != 0 ) {	
+	if( bDumpAtBeam ) {
+	  if( theLastBeamCHANGEDSubCPEvt != -1 &&  
+	      theSubCPEvt[ie]->GetControlPoint()->GetBeam()->GetIndex() != theSubCPEvt[theLastBeamCHANGEDSubCPEvt]->GetControlPoint()->GetBeam()->GetIndex() ) {
+	    DumpHistosAndScorers(true); 
+	  }
+	}
+	theLastBeamCHANGEDSubCPEvt = ie;
+	if( bDumpAtCP ) {
+	  //	  if( theLastControlPointCHANGEDSubCPEvt != -1 ) G4cout << ie << "IDCP " << theSubCPEvt[ie]->GetControlPoint()->GetIndex() << " !=? " << theLastControlPointCHANGEDSubCPEvt << " IDCPlast " << theSubCPEvt[theLastControlPointCHANGEDSubCPEvt]->GetControlPoint()->GetIndex() << G4endl; //GDEB
+	  if( theLastControlPointCHANGEDSubCPEvt != -1 &&
+	      theSubCPEvt[ie]->GetControlPoint()->GetIndex() != theSubCPEvt[theLastControlPointCHANGEDSubCPEvt]->GetControlPoint()->GetIndex() )  {
+	    DumpHistosAndScorers(false);	      
+	  }
+	}
+	theLastControlPointCHANGEDSubCPEvt = ie;
+      }
+      
 #endif
     }
     if( ie == ieMax ) {
@@ -483,9 +507,6 @@ RTBeamStateData RTPlanMgr::GetNextBeamStateData(G4int ie)
   if( theCurrentBeam == theSubCPEvt[ie]->GetControlPoint()->GetBeam()->GetIndex() ) {
     bChangedBeam = true;
     theRTSource->SetMovePhantom(true);
-    if( bDumpAtBeam ) {
-      DumpHistosAndScorersBeam(); 
-    }
   } else {
     bChangedBeam = false;
   }
@@ -493,6 +514,7 @@ RTBeamStateData RTPlanMgr::GetNextBeamStateData(G4int ie)
   RTBeamStateData bsData = theSubCPEvt[ie]->GetBeamStateData();
     
   theCurrentControlPoint = theSubCPEvt[ie]->GetControlPoint()->GetIndex();
+  //  G4cout << " RTPlanMgr theCurrentControlPoint0 " << theCurrentControlPoint << G4endl; //GDEB
   theCurrentBeam = theSubCPEvt[ie]->GetControlPoint()->GetBeam()->GetIndex();
 
   return bsData;
@@ -656,33 +678,54 @@ void RTPlanMgr::FillRTHistoControlPoint( G4int hNum, const RTBeamStateData& bsda
 }
 
 //------------------------------------------------------------------------
-void RTPlanMgr::FillRTIonHistoControlPoint( G4int hNum, const RTBeamStateData& bsData )
+void RTPlanMgr::FillRTIonHistoControlPoint( G4int , const RTBeamStateData&  )
 {
 
 }
 
-
+/*
 //------------------------------------------------------------------------
-void RTPlanMgr::DumpHistosAndScorersBeam( ) 
+void RTPlanMgr::DumpHistosAndScorersBeam( G4bool bIsBeam ) 
 {
   G4String suffix = theParamMgr->GetStringValue("GmAnalysisMgr:FileNameSuffix","");
-  G4String suffixNew = suffix + "_b"+GmGenUtils::itoa(theCurrentBeam);
+  G4String suffixNew;
+  if( bIsBeam ) {
+    suffixNew = suffix + ".b"+GmGenUtils::itoa(theCurrentBeam);
+  } else {
+    suffixNew = suffix + ".b"+GmGenUtils::itoa(theCurrentBeam)+ ".cp"+GmGenUtils::itoa(theCurrentControlPoint);
+  }
+
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(testVerb) ) G4cout << "@@@@  RTPlanMgr::DumpHistosAndScorersBeam IsChangeBeam(or CP) " << bIsBeam << " suffixNew " << suffixNew << G4endl;
+#endif
 
   DumpHistosAndScorers();
 
   theParamMgr->AddParam("GmAnalysisMgr:FileNameSuffix "+suffix,PTstring);
   
 }
-
+*/
 
 //------------------------------------------------------------------------
-void RTPlanMgr::DumpHistosAndScorers()
+void RTPlanMgr::DumpHistosAndScorers( G4bool bIsBeam )
 {
   G4String suffix = theParamMgr->GetStringValue("GmAnalysisMgr:FileNameSuffix","");
-  G4String suffixNew = suffix + "_b"+GmGenUtils::itoa(theCurrentBeam);
+  G4String suffixNew;
+  G4int idBeam = theSubCPEvt[theLastBeamCHANGEDSubCPEvt]->GetControlPoint()->GetBeam()->GetIndex();
+  G4int idCP = theSubCPEvt[theLastControlPointCHANGEDSubCPEvt]->GetControlPoint()->GetIndex(); 
+  //  G4cout << "DumpHistosAndScorers IDCP " << idCP << " =: " << theLastControlPointCHANGEDSubCPEvt << " IDCPlast " << theSubCPEvt[theLastControlPointCHANGEDSubCPEvt]->GetControlPoint()->GetIndex() << G4endl; //GDEB
+  if( bIsBeam ) {    
+    suffixNew = suffix + ".b"+GmGenUtils::itoa(idBeam);
+  } else {
+    suffixNew = suffix + ".b"+GmGenUtils::itoa(idBeam)+ ".cp"+GmGenUtils::itoa(idCP);
+}
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(warningVerb) ) G4cout << "@@@@  RTPlanMgr::DumpHistosAndScorersBeam IsChangeBeam(or CP) " << bIsBeam << " suffixNew " << suffixNew << G4endl;
+#endif
+  theParamMgr->AddParam("GmAnalysisMgr:FileNameSuffix "+suffixNew,PTstring);
 
   const G4Run* aRun = G4RunManager::GetRunManager()->GetCurrentRun();
-  std::cout << " RTPlanMgr::DumpHistosAndScorers " << GmNumberOfEvent::GetNumberOfEvent() << std::endl;//GDEB
+  //  std::cout << " RTPlanMgr::DumpHistosAndScorers " << GmNumberOfEvent::GetNumberOfEvent() << std::endl;//GDEB
   GmScoringRun* scrun = (GmScoringRun*)aRun;
   scrun->DumpAllScorers();
   
@@ -696,5 +739,7 @@ void RTPlanMgr::DumpHistosAndScorers()
       analMgr->Save( analMgr->GetFileName(), *itef ); 
     }
   }
-    
+
+  theParamMgr->AddParam("GmAnalysisMgr:FileNameSuffix "+suffix,PTstring);
+
 }

@@ -21,6 +21,7 @@ GmPhysicsRadioactiveDecay::GmPhysicsRadioactiveDecay()
   deex->SetMaxLifeTime(G4NuclideTable::GetInstance()->GetThresholdOfHalfLife()
                        /std::log(2.));
   deex->SetIsomerProduction(true);
+  deex->SetCorrelatedGamma(true);
 
 }
 

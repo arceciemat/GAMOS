@@ -8,6 +8,7 @@
 #include "GmNumericDistributionUpper.hh"
 #include "GmVNumericNDimDistribution.hh"
 #include "GamosCore/GamosData/Distributions/include/GmDistributionVerbosity.hh"
+#include "GamosCore/GamosData/Management/include/GmDataVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmHistoReaderCSV.hh"
 
@@ -376,15 +377,19 @@ G4double GmVNumericDistribution::GetValueFromTrack(const G4Track* aTrack)
 G4double GmVNumericDistribution::GetNumericValueFromIndex(const G4double indexVal)
 {
   if( indexVal < theMinimum ) {
-    std::map<G4double,G4double>::const_iterator ite = theValues.begin();
-    /*    for( ; ite != theValues.end(); ite++ ) {
+    /*    std::map<G4double,G4double>::const_iterator ite = theValues.begin();
+       for( ; ite != theValues.end(); ite++ ) {
       G4cerr << " VALUE " << ite->first << " = " << ite->second << G4endl; //GDEB
       } */
     if( theAllowOutOfLimits == 1 ) {
-      G4Exception(G4String(theName+"::GetIndexFromValue").c_str(),
-		  "Value out of limits",
-		  JustWarning,
-		  G4String(GmGenUtils::ftoa(theMinimum)+ " <=? " + GmGenUtils::ftoa(indexVal)+" <=? "+GmGenUtils::ftoa(theMaximum)).c_str());
+#ifndef GAMOS_NO_VERBOSE
+      if( DataVerb(infoVerb) ) {
+	G4Exception(G4String(theName+"::GetIndexFromValue").c_str(),
+		    "Value out of limits",
+		    JustWarning,
+		    G4String(GmGenUtils::ftoa(theMinimum)+ " <=? " + GmGenUtils::ftoa(indexVal)+" <=? "+GmGenUtils::ftoa(theMaximum)).c_str());
+      }
+#endif
       return 0;
     } else if( theAllowOutOfLimits == 0 ) {
       G4Exception("GmVNumericDistribution::GmGenUtils::GetValue",
@@ -397,10 +402,14 @@ G4double GmVNumericDistribution::GetNumericValueFromIndex(const G4double indexVa
   }
   if( indexVal > theMaximum*1.000001 ) { // precision problems
     if( theAllowOutOfLimits == 1 ) {
-      G4Exception(G4String(theName+"::GetIndexFromValue").c_str(),
-		  "Value out of limits",
-		  JustWarning,
-		  G4String(GmGenUtils::ftoa(theMinimum)+ " <=? " + GmGenUtils::ftoa(indexVal)+" <=? "+GmGenUtils::ftoa(theMaximum)).c_str());
+#ifndef GAMOS_NO_VERBOSE
+      if( DataVerb(infoVerb) ) {
+	G4Exception(G4String(theName+"::GetIndexFromValue").c_str(),
+		    "Value out of limits",
+		    JustWarning,
+		    G4String(GmGenUtils::ftoa(theMinimum)+ " <=? " + GmGenUtils::ftoa(indexVal)+" <=? "+GmGenUtils::ftoa(theMaximum)).c_str());
+      }
+#endif
       return INT_MAX;
     } else if( theAllowOutOfLimits == 0 ) {
       G4Exception("GmVNumericDistribution::GmGenUtils::GetValue",

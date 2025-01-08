@@ -1,3 +1,4 @@
+// Serves to handle ScanSpot in RTIonPlanControlPoint. Only 1 subCP in RTPlanControlPoint
 #ifndef RTVPlanSubControlPoint_H
 #define RTVPlanSubControlPoint_H
 #include "G4ThreeVector.hh"

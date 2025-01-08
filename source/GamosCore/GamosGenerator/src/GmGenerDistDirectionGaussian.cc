@@ -17,6 +17,8 @@ G4ThreeVector GmGenerDistDirectionGaussian::GenerateDirection( GmParticleSource*
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistDirectionGaussian::Generate  dir "  << dir << G4endl;
 #endif
+  dir /= dir.mag();
+  
   return dir;
 
 }

@@ -390,7 +390,7 @@ void GmScoringMgr::AddPrintNEventsType2Scorer( const G4String& scorerName, G4Str
 		G4String(" Trying to set track weight to a non-existing scorer named: " + scorerName).c_str() );
   }
 
-  ScoreNEventsType net;
+  ScoreNEventsType net = SNET_ByRun;
   if( val == "ByRun" ) {
     net = SNET_ByRun;
   } else if( val == "ByEvent" ) {

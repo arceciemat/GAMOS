@@ -273,7 +273,7 @@ G4bool DicomVImage::ReadDataFromTextFile( std::ifstream& fin, G4bool bReadHeader
     double posY = theMinY+(iy+0.5)*voxelDimY;
     double posZ = theMinZ+(iz+0.5)*voxelDimZ;
     G4ThreeVector pos(posX,posY,posZ);
-    if( DicomVerb(debugVerb) ) G4cout << GetName() << " " << ii << " " << iz << " " << ix << " " << iy << " : " << pos << " DATA= " <<data << G4endl;  //GDEB
+    if( DicomVerb(debugVerb) ) G4cout << GetName() << " " << ii << " " << iz << " " << ix << " " << iy << " : " << pos << " DATA= " <<data << G4endl; 
     //    G4ThreeVector posPrint(-50.,-192.242,-880.);
     //    G4ThreeVector posPrint(-50.1255,-192.242,-879.8);
     //    if( (pos-posPrint).mag() < 0.5 ) G4cout << " PRINT VOXEL " << GetName() << " " << (pos-posPrint).mag() << " " << pos << " : " << data << G4endl;  //GDEB
@@ -543,6 +543,8 @@ G4String DicomVImage::GetModalityStr(DIModality mod)
     return "DIM_GammaIndex";
   case DIM_Interfile:
     return "DIM_Interfile";
+  case DIM_InterfileCT:
+    return "DIM_InterfileCT";
   case DIM_OTHER:
     return "DIM_OTHER";
   }
@@ -589,7 +591,9 @@ DIModalityShort DicomVImage::GetModalityShort(DIModality mod)
   case DIM_GammaIndex:
     return DIMS_GammaIndex;
   case DIM_Interfile:
-    return DIMS_Interfile;
+    return DIMS_NM;
+  case DIM_InterfileCT:
+    return DIMS_InterfileCT;
   case DIM_OTHER:
     return DIMS_OTHER;
   }
@@ -637,7 +641,9 @@ G4String DicomVImage::GetModalityShortStr(DIModality mod)
   case DIM_GammaIndex:
     return "DIMS_GammaIndex";
   case DIM_Interfile:
-    return "DIMS_Intefile";
+    return "DIMS_NM";
+  case DIM_InterfileCT:
+    return "DIMS_IntefileCT";
   case DIM_OTHER:
     return "DIMS_OTHER";
   }
@@ -1568,6 +1574,7 @@ G4bool DicomVImage::IsDose() const
   case DIM_G4dcmNM:
   case DIM_GammaIndex:
   case DIM_Interfile:
+  case DIM_InterfileCT:
   case DIM_OTHER:
       return FALSE;
   }

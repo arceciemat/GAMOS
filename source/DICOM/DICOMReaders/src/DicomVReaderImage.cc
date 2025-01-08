@@ -446,7 +446,7 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
   //  std::vector<double> d = Read1Data(theDataset, DCM_, 1);
   
   theBitAllocated = Read1Data(theDataset, DCM_BitsAllocated, 1)[0];
-  if( DicomVerb(-infoVerb) ) G4cout << " BIT ALLOCATED " << theBitAllocated << G4endl; 
+  if( DicomVerb(infoVerb) ) G4cout << " BIT ALLOCATED " << theBitAllocated << G4endl; 
 
   std::vector<double> vDoseGridScaling = Read1Data(theDataset, DCM_DoseGridScaling, 1);
   if( vDoseGridScaling.size() == 1 ) {
@@ -695,7 +695,9 @@ void DicomVReaderImage::ReadPixelData()
 	    theVoxelData->at(newCopyNo) = val;
 	    if( DicomVerb(testVerb) ) {
 	      if( val != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << "  " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; 
-	    }	  
+	    }
+	    if( iz == theNoVoxelsZ-1 && val != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << "  " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; 
+
           }
 	}
       }

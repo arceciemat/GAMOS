@@ -107,7 +107,7 @@ G4bool DicomVImageStr::ReadDataFromTextFile( std::ifstream& fin, G4bool bReadHea
     fin >> dataStr;
     if( ii == 0 && dataStr == "") return 1; // no data
     // look for old way to define structures
-    if( GmGenUtils::IsInteger(dataStr) && GmGenUtils::GetInteger(dataStr) > 1000 ) G4cout <<theName << " OLD WAY TO DEFINE STRUCTURES in .g4dcm: NOW THEY MUST BE SEPARATED BY '\"' " << dataStr << G4endl; //GDEB
+    //    if( GmGenUtils::IsInteger(dataStr) && GmGenUtils::GetInteger(dataStr) > 1000 ) G4cout <<theName << " OLD WAY TO DEFINE STRUCTURES in .g4dcm: NOW THEY MUST BE SEPARATED BY '\"' " << dataStr << G4endl; //GDEB
     theDataStr->at(ii) = dataStr;
     //    std::set<G4int> dataID = GetIDList(dataStr);
     //    theDataIDs->at(ii) = dataID;
@@ -144,7 +144,7 @@ void DicomVImageStr::DumpDataToTextFile(std::ostream& fout, G4bool )
 	//	G4cout << ix+iy*theNoVoxelsX+iz*theNoVoxelsX*theNoVoxelsY << " : " << ix << " " << iy << " " << iz << " " << theMinX+GetVoxelDimX()*(ix+0.5) << " " << theMinY+GetVoxelDimY()*(iy+0.5) << " " << theMinZ+GetVoxelDimZ()*(iz+0.5) << " DATA_TO_TEXT " << theData->at(copyNo) << G4endl; //GDEB
 	G4String data = theDataStr->at(copyNo);
 	if( data == "" ) data = "0";
-	//	G4cout << ix+iy*theNoVoxelsX+iz*theNoVoxelsX*theNoVoxelsY << " : " << ix << " " << iy << " " << iz << " DATA_TO_TEXT " << data << G4endl; //theDataStr->at(copyNo) << G4endl; //GDEB
+	//	G4cout << this << " " <<ix+iy*theNoVoxelsX+iz*theNoVoxelsX*theNoVoxelsY << " : " << ix << " " << iy << " " << iz << " DicomVImageStr::DumpDataToTextFile " << data << G4endl; //theDataStr->at(copyNo) << G4endl; //GDEB
 	fout << data << " ";
 	/*	  G4ThreeVector pos = GetPosition(ix,iy,iz);
     G4double posZ = pos.z(); //GDEB
@@ -172,7 +172,7 @@ std::set<G4int> DicomVImageStr::GetIDList( G4int id )
   std::vector<G4String> idListV = GmGenUtils::StringSplit( voxelDataStr, ":" );  
   for( size_t ii = 0; ii < idListV.size(); ii++ ) {
     //    G4cout << id << " " << ii << " GetIDListN " << idListV.size() << G4endl; //GDEB
-    //    G4cout << ii << " GetIDList " << idListV[ii] << " FROM " << voxelDataStr << G4endl; //GDEB
+    //    G4cout << id << " " << ii << " GetIDList " << idListV[ii] << " FROM " << voxelDataStr << G4endl; //GDEB
     idList.insert(GmGenUtils::GetInt(idListV[ii]));
   }
 

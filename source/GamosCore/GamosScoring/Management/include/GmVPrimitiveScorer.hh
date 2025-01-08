@@ -84,7 +84,7 @@ public:
   void SetSumV2( std::map<G4int,G4double>& sumw2 ) {
     theSumV2 = sumw2; }
 
-  void Normalize(G4THitsMap<G4double>* RunMap);
+  void Normalize(G4THitsMap<G4double>* RunMap, G4bool bInverse = false );
   virtual void CalculateErrors(G4THitsMap<G4double>* RunMap);
   G4double GetError( G4int index );
   G4double GetErrorRelative( G4int index, G4double sumWX );
@@ -242,7 +242,7 @@ public:
   G4bool FillScorerSpectrum(G4Step* aStep, G4int index, G4double val, G4double wei);
   void SumEndOfEventSpectrum();
   void AddToScoresSpectrum();
-  void NormalizeSpectrum();
+  void NormalizeSpectrum( G4bool bInverse = false );
   void CalculateErrorsSpectrum();
   G4double GetErrorSpectrum( G4int index, G4double sumWX, G4double sumWX2, G4double nEvents );
   G4double GetErrorRelativeSpectrum( G4int index, G4int ibin, G4double sumWX);
