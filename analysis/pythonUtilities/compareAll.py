@@ -11,7 +11,7 @@ from checkPythonVersion import *
 from MyHistos import Histo1D
 from csvHistoReader import csvHistoReader
 
-verbose = 1
+verbose = 3
 ###### -------------- main ----------- ######
 #histoData = pd.read_csv(sys.argv[1])
 checkPythonVersion()
@@ -103,7 +103,7 @@ if __name__ == "__main__":
             ++iarg 
             ii = ii+1
         elif sys.argv[ii] == "-log" :
-            bLog = bool(sys.argv[ii+1])
+            bLog = bool(int(sys.argv[ii+1]))
         elif sys.argv[ii] == "-fit" :
             theFitType =  sys.argv[ii+1]
         elif sys.argv[ii] == "-bFitPlot" :
@@ -187,7 +187,7 @@ if __name__ == "__main__":
         ax1 = plt.subplot2grid((4,1),(0,0),rowspan=3)
         for hfile in theHisFiles :
             lcolor = GetColor(iih)
-            print(iih,"GETCOLOR",lcolor) #GDEB
+            print(iih,hfile.fileName,"GETCOLOR",lcolor) #GDEB
             if(verbose >= 3) : print("loop N histo in file",len(hfile.fHistos1D))
             for his1 in hfile.fHistos1D :
                 if(verbose >= 4) : print("CHECK name ",hisn,"=?=",his1.name)

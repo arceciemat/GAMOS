@@ -72,7 +72,7 @@ int main(int argc,char** argv)
 
   if( argc == 2 ) {
     if( G4String(argv[1]) == "-help" ) {
-      G4cout << "  -f    phase space file name (in this case do not use the file name alone as first argument as before)" << G4endl
+      G4cout << "  -f    sqdose file name " << G4endl
 	     << "  -NRead   number of particles to be read from the phase space file" << G4endl
 	     << "  -fOut    output file name " << G4endl
 	     << "  -fHistos    name of file with list of histograms " << G4endl
@@ -81,7 +81,7 @@ int main(int argc,char** argv)
 	     << "  -cont    type of the STL container that will be used to store the doses and dose errors. It can be MAP or map, that uses a std::map; it is the default one, the one used by the Geant4 scorers. "
 	     << " It can also be VECTOR or vector, that uses a std::vector; it occupies about ten times less than the std::map. The std::map container occupies a big amount of space, about 500 Mb for 10 million voxels, so we recommend you that you use std::vector if your phantom is big" << G4endl
 	     << "  -NVoxels   total number of voxels in phantom (argument needed if sqdose file is of type FILLED" << G4endl
-	     << "  -verb    verbosity: it sets the RTVerbosity. Default is warning, that will print the above lines; debug, that will print each particle read form the phase space file" << G4endl
+	     << "  -verb    verbosity: it sets the ReadDICOMVerbosity. Default is warning, that will print the above lines; debug, that will print each particle read form the phase space file" << G4endl
 	     << "  -help    prints the set of arguments" << G4endl;
       return 0;
     } else {

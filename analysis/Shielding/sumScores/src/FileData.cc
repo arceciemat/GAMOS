@@ -67,7 +67,7 @@ void FileData::Add( const FileData* fd2 )
   
   /*std::vector<ScorerData*>::iterator ite1, ite2;
     for( ite1 = theScorerData.begin(), ite2.GetScorerData().begin(); ite1 != theScorerData.end(); ite++ ){
-    ScorerData* sd = *ite;
+    ScorerData* srd = *ite;
     
     }*/
   if( ScoreData::verbosity >= 2 ) 
@@ -79,26 +79,26 @@ void FileData::Add( const FileData* fd2 )
   unsigned int siz1 = GetNumberOfScorers();
   unsigned int siz2 = fd2->GetNumberOfScorers();
   for( unsigned int ii = 0; ii < siz1; ii++ ){
-    ScorerData* sd1 = theScorerData[ii];
+    ScorerData* srd1 = theScorerData[ii];
     for( unsigned int jj = 0; jj < siz2; jj++ ){
-      ScorerData* sd2 = fd2->GetScorerData(jj);
+      ScorerData* srd2 = fd2->GetScorerData(jj);
       //--- sum scorers in two files if they are == (same name)
-      if( ! (*sd1 != *sd2) ) {
-	*sd1 += *sd2;
-	scorerData2Used.insert(sd2);
+      if( ! (*srd1 != *srd2) ) {
+	*srd1 += *srd2;
+	scorerData2Used.insert(srd2);
       }    
     }
   }    
 
   for( unsigned int ii = 0; ii < siz2; ii++ ){
-    ScorerData* sd1 = fd2->GetScorerData(ii);
-    if( scorerData2Used.find(sd1) != scorerData2Used.end() ) continue;
+    ScorerData* srd1 = fd2->GetScorerData(ii);
+    if( scorerData2Used.find(srd1) != scorerData2Used.end() ) continue;
     
     for( unsigned int jj = 0; jj < siz1; jj++ ){
-      ScorerData* sd2 = theScorerData[jj];
+      ScorerData* srd2 = theScorerData[jj];
       //--- sum scorers in two files if they are == (same name)
-      if( ! (*sd1 != *sd2) ) {
-	*sd1 += *sd2;
+      if( ! (*srd1 != *srd2) ) {
+	*srd1 += *srd2;
       }    
     }
   }    
@@ -106,9 +106,9 @@ void FileData::Add( const FileData* fd2 )
 }
 
 //-----------------------------------------------------------------------------
-void FileData::AddScorerData(ScorerData* sd)
+void FileData::AddScorerData(ScorerData* srd)
 {
-  theScorerData.push_back(sd);
+  theScorerData.push_back(srd);
   if( ScoreData::verbosity >= 1 ) G4cout << "@@@  FileData::AddScorerData  N= " << theScorerData.size() << G4endl; 
 
 }

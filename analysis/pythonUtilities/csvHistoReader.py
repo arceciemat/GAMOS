@@ -34,10 +34,12 @@ class csvHistoReader:
              
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def GetHisto1(self, hisName ) :
+    def GetHisto1(self, hisName, bExists = True ) :
         for his in self.fHistos1D :
             if his.name == hisName :
                 return his
+        if bExists :
+            print("!!! FATAL_ERROR at GetHisto1 HISTO DOES NOT EXIST:",hisName)
         return None
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.

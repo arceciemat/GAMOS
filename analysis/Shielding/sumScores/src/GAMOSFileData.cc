@@ -41,7 +41,8 @@ GAMOSFileData::GAMOSFileData(G4String fileName)
       FileData::theNEventsSum += nevents;
       if( ScoreData::verbosity >= 1 ) G4cout << " NEvents " << nevents << G4endl; 
     }
-    
+
+    //    G4cout << " READ Wl0 " << wl[0] << G4endl; //GDEB
     if ( wl[0]=="MultiFunctionalDet:" )  {
       if( nevents == -1 ) {
 	G4Exception("sumcores",
@@ -62,7 +63,7 @@ GAMOSFileData::GAMOSFileData(G4String fileName)
 	G4Exception("GAMOSFileData::GAMOSFileData",
 		    "",
 		    FatalException,
-		    "File does not contain 'MultiFunctionalDet:' ");
+		    "Reading 'PrimitiveScorer:'. File does not contain 'MultiFunctionalDet:' ");
       }
       scorerData->SetScorerName( ExtractName(wl) );
       scorerData->SetName( scorerData->GetName() );
@@ -75,7 +76,7 @@ GAMOSFileData::GAMOSFileData(G4String fileName)
 	G4Exception("GAMOSFileData::GAMOSFileData",
 		    "",
 		    FatalException,
-		    "File does not contain 'MultiFunctionalDet:' ");
+		    "Reading 'Number of entries'. File does not contain 'MultiFunctionalDet:' ");
       }
       scorerData->SetNScores( GmGenUtils::GetValue(wl[3]) );
       if( ScoreData::verbosity >= 1 ) G4cout << "@@@ New ScorerData N ENTRIES " << wl[3] << G4endl; 
@@ -86,7 +87,7 @@ GAMOSFileData::GAMOSFileData(G4String fileName)
 	G4Exception("GAMOSFileData::GAMOSFileData",
 		    "",
 		    FatalException,
-		    "File does not contain 'MultiFunctionalDet:' ");
+		    "Reading 'index:' File does not contain 'MultiFunctionalDet:' ");
       }
       GAMOSScoreData* scoreData = new GAMOSScoreData(wl, false);
       if( scoreData->SelfCheck() ) {
@@ -96,12 +97,6 @@ GAMOSFileData::GAMOSFileData(G4String fileName)
       } 
 
     } else {
-      if( ! scorerData ) {
-	G4Exception("GAMOSFileData::GAMOSFileData",
-		    "",
-		    FatalException,
-		    "File does not contain 'MultiFunctionalDet:' ");
-      }
       for( unsigned int kk = 0; kk < wl.size()-1; kk++ ) {
 	//	if (wl[kk]=="SUM" && wl[kk+1] == "ALL:") {
 	if (wl[kk]=="SUM_ALL:") {

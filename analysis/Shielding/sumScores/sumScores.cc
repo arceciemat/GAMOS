@@ -120,6 +120,8 @@ int main(int argc,char** argv)
 	}
       } else if( argvstr == "-bHistos" ) {
 	bHistosData = G4bool(GmGenUtils::GetValue(argv[ii+1]));
+      } else if( argvstr == "-bPlot" ) {
+	bHistosData = G4bool(GmGenUtils::GetValue(argv[ii+1]));
       } else {
 	PrintHelp();
 	G4Exception("sumScores",

@@ -121,6 +121,10 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
 	}
 	ii+=1+nIPC;
 
+      } else if( argvstr == "-bFigureTitle" ) {
+	theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
+	ii++;
+
       } else {
 	G4int iAddPar = theParamMgr->ReadParameter( argv, ii );
 	if( iAddPar == -1 ) {
@@ -225,6 +229,12 @@ void DCMDrawDICOM::CheckArguments()
   if( theParamMgr->GetNofImageFiles("fRTStruct") > 1 ) {
     DicomException("THERE MUST BE ONLY ONE IMAGE FILE OF TYPE RTSTRUCT");
   }
+  if( theParamMgr->GetNofImageFiles("fVOIStruct") > 1 ) {
+    DicomException("THERE MUST BE ONLY ONE IMAGE FILE OF TYPE VOISTRUCT");
+  }
+  if( theParamMgr->GetNofImageFiles("fRTStruct") + theParamMgr->GetNofImageFiles("fVOIStruct") > 1 ) {
+    DicomException("THERE MUST BE ONLY ONE IMAGE FILE OF TYPE RTSTRUCT OR VOISTRUCT");
+  }
   if( theParamMgr->GetNofImageFiles("fInterfile") > 1 ) {
     DicomException("THERE MUST BE ONLY ONE IMAGE FILE OF TYPE Sqdose");
   }
@@ -237,7 +247,7 @@ void DCMDrawDICOM::CheckArguments()
     }
   }
 	 
-  if(bDrawStruct1Fig && theParamMgr->GetNofImageFiles("fRTStruct") != 1 ) {
+  if(bDrawStruct1Fig && (theParamMgr->GetNofImageFiles("fRTStruct") + theParamMgr->GetNofImageFiles("fVOIStruct") != 1) ) {
     DicomException("TO DRAW STRUCTURES IN ONE FIGURE THERE MUST BE ONE IMAGE FILE OF TYPE RTSTRUCT");
   }
 
@@ -568,7 +578,7 @@ void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lin
 {
   //  G4cout << " DrawImage DrawXY " << bDrawXY << G4endl; //GDEB
   for( size_t ils = 0; ils < lineSets.size(); ils++ ) { // only polygons from RTStruct are included 
-    DicomVLineSet* lineSet = lineSets[ils];
+    //    DicomVLineSet* lineSet = lineSets[ils];
     // GDEB
     /*    G4cout << " DCMDrawDICOM::DrawImage( BEFORE DRAW POLYGON SET " << lineSet->GetName() << " Nlists " <<  lineSet->GetLineLists().size() << G4endl;
     for( size_t ii = 0; ii <  lineSet->GetLineLists().size(); ii++ ) {
@@ -580,17 +590,21 @@ void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lin
       }
       } */
     lineSets[ils] = new DicomPolygonSet(dynamic_cast<DicomPolygonSet*>(lineSets[ils]), image, lineSets[ils]->GetOrientation());
-    // GDEB
-    /*    G4cout << " DCMDrawDICOM::DrawImage( DRAW POLYGON SET " << lineSets[ils]->GetName() << " Nlists " <<  lineSets[ils]->GetLineLists().size() << G4endl;
-    for( size_t ii = 0; ii <  lineSets[ils]->GetLineLists().size(); ii++ ) {
-      DicomVLineList* lineList =  lineSets[ils]->GetLineLists()[ii];
-      G4cout << ii << " POLYGON LINELIST " << lineList->GetName() << " Nlines "<< lineList->GetLines().size() << G4endl; 
-      for( size_t jj = 0; jj < lineList->GetLines().size(); jj++ ) {
-	DicomVLine* line = lineList->GetLines()[jj];
-	G4cout << jj << " POLYGON LINE " << line->GetName() << " Nlines "<< line->GetPoints().size() << G4endl;
+    if( DicomVerb(debugVerb) ) {
+      G4cout << " DCMDrawDICOM::DrawImage( DRAW POLYGON SET " << lineSets[ils]->GetName() << " Nlists " <<  lineSets[ils]->GetLineLists().size() << G4endl;
+      for( size_t ii = 0; ii <  lineSets[ils]->GetLineLists().size(); ii++ ) {
+	DicomVLineList* lineList =  lineSets[ils]->GetLineLists()[ii];
+	G4cout << ii << " POLYGON LINELIST " << lineList->GetName() << " Nlines "<< lineList->GetLines().size() << G4endl; 
+	for( size_t jj = 0; jj < lineList->GetLines().size(); jj++ ) {
+	  DicomVLine* line = lineList->GetLines()[jj];
+	  G4cout << jj << " POLYGON LINE " << line->GetName() << " Nlines "<< line->GetPoints().size() << G4endl;
+	  for( size_t ipt = 0; ipt < line->GetPoints().size(); ipt++ ) {
+	    G4cout << line << " " << ipt << " POLYGON POINT " << line->GetPoints()[ipt] << G4endl;
+	  }
+	}
       }
-      }*/
-    delete lineSet;
+    }
+    //    delete lineSet;
   }
   
   std::vector<DicomVReader*> VRTFiles = theReaderMgr->GetReaders(DRM_TextLines, false);
@@ -667,6 +681,7 @@ void DCMDrawDICOM::PrintHelp()
 	 << " -bDrawIsodLines 1/0   draw isodose lines or not (default)" << G4endl  
 	 << " -isodPerCents N_VALUES %VALUE_1 %VALUE_2 ...    Define the isodose percentages (w.r.t. to maximum value in image). Default is 90 50 10" << G4endl
 	 << " -isodPerCentsAbs N_VALUES %VALUE_1 %VALUE_2 ...    Define the isodose percentages (in absolute values). Default is 90 50 10" << G4endl
-	 << " -overSurrounding FACTOR   limit voxel values to FACTOR*average values of surrounding voxels" << G4endl;
+	 << " -overSurrounding FACTOR   limit voxel values to FACTOR*average values of surrounding voxels" << G4endl
+	 << " -bFigureTitle 0/1 (1)   print the figure title in figure files " << G4endl; 
 }
   

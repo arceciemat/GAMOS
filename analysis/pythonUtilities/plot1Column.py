@@ -59,12 +59,18 @@ checkPythonVersion()
 verbose = 0
 
 ### Manage arguments 
+fileName=""
+icolumn = 0
 if len(sys.argv) == 2 :
     fileName = sys.argv[1]
 else :
     for ii in range(1,len(sys.argv)) :
         if sys.argv[ii] == "-f" :
             fileName = sys.argv[ii+1]
+            bParamTypeFound = True
+            ii = ii+1
+        elif sys.argv[ii] == "-col" :
+            icolumn = int(sys.argv[ii+1])
             bParamTypeFound = True
             ii = ii+1
 
@@ -92,8 +98,9 @@ for il in range(line1st,nData):
     words = lines[il].rstrip().split()
     if len(words) == 0 : continue
     if il%10000 == 0:
-        print("Reading line",il)
-    val = float(words[0])
+        print(il,icolumn,"Reading line",words)
+    print(il,icolumn,"Reading line",words[icolumn],words)        
+    val = float(words[icolumn])
     XPos.append(val)
     XPosNP = np.append(XPosNP,val)
     mean += val
@@ -126,7 +133,7 @@ print("NPmean",XPosNP.mean(),"+-",np.std(XPosNP)/nData,"rmsP=",np.sqrt(np.mean(X
 
 plt.xlabel(XAxisName)
 plt.draw()
-#print(bin_edges,"XLIM",xmin,xmax,xdiff,ymax)
+print(bin_edges,"XLIM",xmin,xmax,xdiff,ymax)
 #print("N",len(bin_edges),nData)
 t2show = "N=  "+str(nData)
 plt.text(xmax-0.25*xdiff,ymax*0.98,t2show)

@@ -123,12 +123,12 @@ void plotOrganInfo(std::string fileListName, bool bog=1, bool bpe=0)
   TH1F* histo = 0;
   //--- Loop to organ ID's 
   for( int ibin = 0; ibin <= nofData; ibin++ ) {
-    int iGifFile = ibin/nMaxDataPH;
+    int iJpgFile = ibin/nMaxDataPH;
     int ibinInFile = ibin%nMaxDataPH; 
     if( ibin%nMaxDataPH == 0 ) {
       //-- create histograms
       //      for( int ii = 0; ii < nofData/nMaxDataPH; ii++ ) {
-      int nbins = std::min(nMaxDataPH,nofData+1-iGifFile*nMaxDataPH);
+      int nbins = std::min(nMaxDataPH,nofData+1-iJpgFile*nMaxDataPH);
       histo = new TH1F("","",nbins+1,-0.5,nbins+0.5);
       if( verbose >= 3 ) std::cout << " NEW HISTO " << nbins << std::endl; //GDEB
       histo->SetMaximum( valMax );
@@ -183,13 +183,13 @@ void plotOrganInfo(std::string fileListName, bool bog=1, bool bpe=0)
       }
     }
     if( ibin%nMaxDataPH == nMaxDataPH-1 || ibin == nofData ) {
-      std::string fgifName;
+      std::string fjpgName;
       if( bPlotErrors ) {
-	fgifName = std::string("hisOrganDoseErrors_"+itoa(iGifFile)+".gif");
+	fjpgName = std::string("hisOrganDoseErrors_"+itoa(iJpgFile)+".jpg");
       } else {
-	fgifName = std::string("hisOrganDoses_"+itoa(iGifFile)+".gif");
+	fjpgName = std::string("hisOrganDoses_"+itoa(iJpgFile)+".jpg");
       }
-      canvas->Print(fgifName.c_str());
+      canvas->Print(fjpgName.c_str());
     }
   }
 }

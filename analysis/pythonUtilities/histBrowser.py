@@ -204,9 +204,13 @@ class UI(tk.Frame):
         self.showStat()
 
         #### FIT button
-        self.fitBut = tk.Button(self.theFrameHL, text="Gaussian Fit", command=self.GaussianFit, font= ('Helvetica 14 bold italic'), state=tk.DISABLED) 
+        self.fitBut = tk.Button(self.theFrameHL, text="Gaussian Fit", command=self.GaussianFit, font= ('Helvetica 14 bold italic')) #, state=tk.DISABLED) 
         self.fitBut.grid(column=1, row=3)
-      
+
+        #### FIT button
+        self.fitBut = tk.Button(self.theFrameHL, text="2Gaussian Fit", command=self.DoubleGaussianCenters0Fit, font= ('Helvetica 14 bold italic'), state=tk.DISABLED) 
+        self.fitBut.grid(column=2, row=3)
+
         #### QUIT button
         self.quitBut = tk.Button(self.theFrameHL, text="Quit", command=self.quit, font= ('Helvetica 14 bold italic'))
         self.quitBut.grid(column=0, row=3)
@@ -321,15 +325,15 @@ class UI(tk.Frame):
 #                    print("hisCurrentN ",hisCurrentN.nbin,hisCurrentN.xmin,hisCurrentN.xmax)
 #                    print("his1 ",his1.nbin,his1.xmin,his1.xmax)
                     if self.bPlotNorm.get() :
-                        self.prevHisto1N.norm(1.)
-                        hisCurrentN.norm(1.)
+                        self.prevHisto1N.normToMax(1.)
+                        hisCurrentN.normToMax(1.)
                     #                   print("N hisCurrentN ",hisCurrentN.nbin,hisCurrentN.xmin,hisCurrentN.xmax,hisCurrentN.Xbins())
                     #                  print("N his1 ",his1.nbin,his1.xmin,his1.xmax,his1.Xbins())
                     #                    self.theSubPlotArea.bar(self.prevHisto1N.Xbins(),self.prevHisto1N.data, color='None', errcolor='blue', yerr=self.prevHisto1N.dataErr, width=xStep,linewidth=0)
                     hy = self.prevHisto1N.data
                     plt.xlim(self.prevHisto1N.xmin, self.prevHisto1N.xmax)
-                    self.theSubPlotArea.errorbar(self.prevHisto1N.Xbins(),hy, color='black', yerr=self.prevHisto1N.dataErr,fmt='-o')
-                    self.theSubPlotArea.errorbar(hisCurrentN.Xbins(),hisCurrentN.data,yerr=hisCurrentN.dataErr,color='red',fmt='-o')
+                    self.theSubPlotArea.errorbar(self.prevHisto1N.Xbins(),hy, color='black', yerr=self.prevHisto1N.dataErr,fmt='-o',markersize=3)
+                    self.theSubPlotArea.errorbar(hisCurrentN.Xbins(),hisCurrentN.data,yerr=hisCurrentN.dataErr,color='red',fmt='-o',markersize=3)
                     xStep = self.prevHisto1N.Xstep()
 #                    for ii in range(self.prevHisto1N.nbin):
 #                        self.theSubPlotArea.scatter(self.prevHisto1N.xmin+xStep*(ii+0.5)
@@ -347,7 +351,7 @@ class UI(tk.Frame):
                     hx = his1.Xbins()
                     hy = his1.data
                     plt.xlim(his1.xmin, his1.xmax)
-                    self.theSubPlotArea.errorbar(hx,hy, color='black', yerr=his1.dataErr,fmt='-o')
+                    self.theSubPlotArea.errorbar(hx,hy, color='black', yerr=his1.dataErr,fmt='-o',markersize=3)
                     xStep = his1.Xstep()
 #                    for ii in range(his1.nbin):
 ##                        self.theSubPlotArea.scatter(his1.xmin+xStep*(ii+0.5)
@@ -429,19 +433,17 @@ class UI(tk.Frame):
             #            if self.verbose >= 3 : print(" PLOT HIS2 ",his2,":",his2.data,"+-",his2.dataErr," Xs=",hX)
             #            print(his2.name,"DATA ARRAY PLOTTED ",his2.dataNP)
             #https://www.freesion.com/article/7746457300/
-            cmap = mpl.cm.get_cmap("Blues").copy()
-
-            bBackgroundWhite = False
+            mycmap = mpl.colormaps["rainbow"]
+            bBackgroundWhite = True
             if bBackgroundWhite :
-                image = np.ones((32,32, 3))  # White background
-                image[:, :, 2] = 0.6  #1.0: Set blue channel to 1 (full intensity), making the background blue
-                # Create a mask based on the blue channel
-                blue_threshold = 0.999  # Adjust this value based on the intensity of blue in your image
-                mask = image[:, :, 2] > blue_threshold
-                # Create a masked version of the colormap
-                masked_cmap = mpl.colors.ListedColormap(np.ma.masked_array(cmap(np.arange(cmap.N)), mask))
-                plt.imshow(his2.dataNP,extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax),cmap=masked_cmap,origin="lower")
-            plt.imshow(his2.dataNP,extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax),origin="lower")
+                 mask = his2.dataNP == 0  # Create a mask for zero elements
+                 data_masked = his2.dataNP.copy()  # Create a copy of data for modification
+                 data_masked[mask] = 'nan'
+                 mycmap.set_bad("white")
+                 # mycmap.set_under("white") # doesn't work
+                 plt.imshow(data_masked,extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax),cmap=mycmap,origin="lower")
+            else :
+                plt.imshow(his2.dataNP,extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax),origin="lower",cmap=mycmap)
 #            plt.imshow(his2.dataNP) #,extent=(his2.xmin,his2.xmax,his2.ymin,his2.ymax),origin="lower"))
 #            cax = self.theHistoFigure.add_axes([0.12, 0.1, 0.78, 0.8])
 #            cax.get_xaxis().set_visible(False)
@@ -599,13 +601,19 @@ class UI(tk.Frame):
 
             if iimax == 0: return # do not loop 0 twice when range(0,0)
 
-        
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GaussianFit(self) :
         #        print("start Gaussian Fit")
         param,cov = self.lastHisto1.GaussianFit(0, 11) # 10: print text but do not superimpose fit line
         if self.bPlotSame.get() :
             param,cov = self.prevHisto1N.GaussianFit(1, 11)
+        
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def DoubleGaussianCenters0Fit(self) :
+        #        print("start Gaussian Fit")
+        param,cov = self.lastHisto1.DoubleGaussianCenters0Fit(0, 11) # 10: print text but do not superimpose fit line
+        if self.bPlotSame.get() :
+            param,cov = self.prevHisto1N.DoubleGaussianCenters0Fit(1, 11)
 
             
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

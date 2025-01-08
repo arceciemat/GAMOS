@@ -20,6 +20,6 @@ void testPalette( )
   //  f1->SetContour(nb);
   
   f1->Draw("surf1z");
-  c->Print("testPalette.gif");
+  c->Print("testPalette.jpg");
 
 }

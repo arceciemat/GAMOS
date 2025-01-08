@@ -8,6 +8,9 @@ import re
 
 from checkPythonVersion import *
 from MyHistos import Histo1D
+from GetColor import *
+
+verbose = 1
 
 ###################################
 def line_fit(X, Y):
@@ -42,10 +45,11 @@ def split_line_with_quotes(line):
 ###### -------------- main ----------- ######
 #histoData = pd.read_csv(sys.argv[1])
 checkPythonVersion()
-verbose = 1
 bFit = False
 bSort = True
 bError = False
+bHLine = True
+fileName = ""
 
 ### Manage arguments 
 if len(sys.argv) == 2 :
@@ -57,27 +61,33 @@ else :
             bParamTypeFound = True
             ii = ii+1
         elif sys.argv[ii] == "-bFit" :
-            bFit = bool(sys.argv[ii+1])
+            bFit = bool(int(sys.argv[ii+1]))
             ii = ii+1
         elif sys.argv[ii] == "-bSort" :
-            bSort = bool(sys.argv[ii+1])
+            bSort = bool(int(sys.argv[ii+1]))
             ii = ii+1
-        elif sys.argv[ii] == "-bErr" :
-            bError = bool(sys.argv[ii+1])
+        elif sys.argv[ii] == "-bErr" or sys.argv[ii] == "err" :
+            bError = bool(int(sys.argv[ii+1]))
             ii = ii+1
-
+        elif sys.argv[ii] == "-bHLine" :
+            bHLine  = bool(int(sys.argv[ii+1]))
+            print("CHANGE bHLine",bHLine,ii,sys.argv[ii+1])
+            ii = ii+1
 ### Read file
 file = open(fileName)
 
 bData = 0
 lines = file.readlines()
+if print(len(lines)) == 0 :
+    print("!!! ERROR FILE IS EMPTY",fileName)
+    sys.exit()
+    
 if lines[0][0:5] == ":DATA" :
     bData = 1
     words = split_line_with_quotes(lines[0])
-    nColumns = len(words)-1
+    nColumns = len(words)-2
     if bError :
         nColumns = int(nColumns/2)
-    print("NCOLUMNS",nColumns,"WORDS ",words) #GDEB
     if len(words) < 3:
         if verbose >= 0 : print("!!! ERROR: first line must contain at least three words: ':DATA' <X_axis> <Y_axis_1> (... <Y_axis_N>, it is",lines[0])
         sys.exit()
@@ -85,8 +95,9 @@ if lines[0][0:5] == ":DATA" :
     YAxisNames = []
     for ii in range (2,len(words)):
         YAxisNames.append(words[ii])
+    print("NCOLUMNS",nColumns,"xAxis ",XAxisName,"yAxis ",YAxisNames)  #GDEB
 else :
-    if verbose >= 1 : print("!!! WARNING: first word of file ",sys.argv[1]," should be ':DATA'; first line is",lines[0])
+    if verbose >= 1 : print("!!! WARNING: first word of file ",fileName," should be ':DATA'; first line is",lines[0])
     #    sys.exit()
     words = lines[1].rstrip().split()
     nColumns = len(words)-1
@@ -159,22 +170,19 @@ for il in range(nColumns) :
 yMin = max(yMinl)
 yMax = max(yMaxl)
 
+plt.grid()
 for il in range(nColumns) :
-    if il == 0 :
-        lcolor = 'black'
-    elif il == 1 :
-        lcolor = 'red'
-    elif il == 2 :
-        lcolor = 'blue'
-    elif il == 3 :
-        lcolor = 'green'
-    else :
-        lcolor = 'black'
+    if verbose >= 2 : print("MAKE PLOT il=",il,YAxisNames[il])
+    lcolor = GetColor(il)
+    if bHLine :
+        hLS='dashed'
+    else : 
+        hLS='None'
     if bError == False :
-        plt.plot(XPos,YPos[il], color=lcolor)
-    else :
-        plt.errorbar(XPos,YPos[il], color=lcolor, yerr=YPosErr[il],fmt="-o")
-#    print(il,"PLT.PLOT",XPos,YPos[il])#GDEB
+        plt.plot(XPos,YPos[il], color=lcolor,marker="o",markersize=4.,linestyle=hLS)
+#        print(il,"PLT.PLOT",XPos,YPos[il])#GDEB
+    else :        
+        plt.errorbar(XPos,YPos[il], color=lcolor, yerr=YPosErr[il],fmt='o',markersize=2.,linestyle=hLS,elinewidth=1)
 #    plt.legend()
     xtPos = min(XPos)+(max(XPos)-min(XPos))*0.9
     if verbose >= 3 : print("MAXY ",max(YPos[il]),"*",(0.7-il*0.1)) 
@@ -182,14 +190,14 @@ for il in range(nColumns) :
     ytPos = yMin+(yMax-yMin)*(0.3-(il*0.1))
     if verbose >= 3 : print(il,"TEXT POS",xtPos,ytPos,yMax)
     if verbose >= 3 : print(il,"PLOT",XPos,YPos[il])
-    if verbose >= 3 : print("YAXIS",il,len(YAxisNames))
+    #    if verbose >= 3 : print("YAXIS",il,len(YAxisNames))
     if len(YPos) != 1 :
         plt.text(xtPos,ytPos,YAxisNames[il], color=lcolor)
     else :
         ytPos = yMin+(yMax-yMin)*(0.3-(il*0.1))
         plt.ylabel(YAxisNames[il], color=lcolor,rotation=90)
 
-    plt.draw()
+    #   plt.draw()
     ### Fit to a line
     if bFit == True :
         const,slope = line_fit(XPos, YPos[il])
@@ -205,8 +213,9 @@ for il in range(nColumns) :
         if verbose >= 3 : print(YAxisNames[il],'SLOPE fit: {:.2f}e-3'.format(slope*1000.))
         plt.text(xtPos,ytPos,'s={:.2f}e-3'.format(slope*1000.))
         
-plt.savefig("histNColumn.jpg")
+plt.savefig("plotNColumn.jpg")
 
+fhis = open("plotNColumn.csv",'w')
 for il in range(nColumns) :
     his = Histo1D
     his.name = YAxisNames[il]
@@ -214,10 +223,12 @@ for il in range(nColumns) :
     his.nbin = len(XPos)
     his.xmin = min(XPos)-step/2.
     his.xmax = max(XPos)+step/2.
-    his.data = YPos[0]
-    his.dataErr = [0] * his.nbin
+    his.data = YPos[il]
+    if len(YPosErr[il]) != 0 :
+        his.dataErr = YPosErr[il] 
+    else :
+        his.dataErr = [0] * his.nbin
 
-    if verbose >= 3 : print(min(XPos), his.xmin ,step,max(XPos)-min(XPos),"DATA",his.data)
+    if verbose >= 3 : print(min(XPos),"HISmin/max", his.xmin ,step,max(XPos)-min(XPos)) #,"DATA",his.data)
     if verbose >= 3 : print(max(XPos),"ERR",his.dataErr)
-    fhis = open("plotNColumn.csv",'w')
     his.Write(his,fhis)

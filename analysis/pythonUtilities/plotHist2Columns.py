@@ -81,7 +81,7 @@ for iarg in range(1,2):
                 hYerr.append(float(words[2]))
             else :
                 hYerr.append(0.)
-    #print("hx= ",hX," hy=",hY)
+#    print("hx= ",hX," hy=",hY)
     #    xStep = his1.Xstep()
     #    plt.xlim(float(his1.xmin),float(his1.xmax))
     #    plt.xlabel(his1.name)

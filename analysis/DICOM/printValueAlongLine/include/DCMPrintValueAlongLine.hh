@@ -48,7 +48,7 @@ private:
 
   G4ThreeVector theLinePos;
   G4ThreeVector theLineDir;
-  G4ThreeVector theLinePos0;
+  G4ThreeVector thePos0;
   DicomLineSet* theLineSet;
   /*  DIModality theAnalyseModality;  // Modality of image to be analysed
 
@@ -65,6 +65,7 @@ private:
   G4String theLineListFN;
   G4int theAlongLineInput;
   G4double theLineStep;
+  G4bool bStructID;
 };
 
 #endif

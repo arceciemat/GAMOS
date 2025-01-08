@@ -31,30 +31,65 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosReadDICOM/include/GmSqdose.hh"
+#include "GamosCore/GamosRunManager/include/GmRunManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 int main(int argc,char** argv) 
 {
+  G4String fListName;
+  G4String fNameOut;
+  
+  if( argc == 2 ) {
+    if( G4String(argv[1]) == "-help" ) {
+      G4cout << "  -fl     file with list of sqdose file names " << G4endl
+	     << "  -fOut    output file name " << G4endl
+	     << "  -bNo0Dose 0/1   if 1, when a file has 0 dose it will be skipped (1: value will be the average of this 0 and the previous value" << G4endl
+	     << "  -verb    verbosity: it sets the ReadDICOMVerbosityVerbosity. Default is warning" << G4endl
+	     << "  -help    prints the set of arguments" << G4endl;
+      return 0;
+    }
 
-  if(argc != 3 && argc != 4 ) { 
+  } else if( argc == 3 ) {
+    fListName = argv[1];
+    fNameOut = argv[2];
+  } else {
+    if(argc%2 != 1) { 
     G4Exception("sumSqdose",
-		"wrong argument",
+		"Wrong argument",
 		FatalErrorInArgument,
-		"YOU MUST SUPPLY TWO OR THREE ARGUMENTS: FILE_WITH_LIST_OF_SQDDOSE_FILES FILE_OUTPUT FILE_OUTPUT_TYPE");
+		"WRONG NUMBER OF ARGUMENTS: THEY MUST BE -XX1 VAL_XX1 -XX2 VAL_XX2 ... ");
+    }
+    for( G4int ii = 1; ii < argc; ii+=2 ){
+      G4String argvstr = argv[ii];
+      if( argvstr == "-fl" ) {
+	fListName = argv[ii+1];
+      } else if( argvstr == "-fOut" ) {
+	fNameOut = argv[ii+1];
+      } else if( argvstr == "-bNo0Dose" ) {
+	GmSqdose::SetNo0Dose( G4bool(argv[ii+1]) );
+      } else if( argvstr == "-verb" ) {
+	G4String verbstr = "ReadDICOMVerbosity " + G4String(argv[ii+1]);
+	GmRunManager* runManager = GmRunManager::GetRunManager();
+	runManager->SelectVerbosity(verbstr);
+
+      } else {
+	G4Exception("sumSqdose",
+		    "Wrong argument",
+		    FatalErrorInArgument,
+		    G4String("Argument can be -f -hf -t, it is"+argvstr).c_str());
+      }
+    }
   }
 
-  G4String fileListName = argv[1];
-
-  G4String fNameOut = argv[2];
   FILE* fout  = fopen(fNameOut,"wb");
 
   std::vector<G4String> wl;
-  GmFileIn finlis = GmFileIn::GetInstance(fileListName,1);
+  GmFileIn finlis = GmFileIn::GetInstance(fListName,1);
   G4double nevents = 0.;
 
-  GmSqdose* dose;
-  GmSqdose* dose2;
+  GmSqdose* dose = 0;
+  GmSqdose* dose2 = 0;
   G4int ii;
   for( ii = 0;; ii++){
     if( ! finlis.GetWordsInLine(wl) ) break;      

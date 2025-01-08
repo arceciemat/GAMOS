@@ -13,7 +13,9 @@
 #include "DICOM/DICOMReaders/include/DicomReaderNM.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderRTDose.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderRTStruct.hh"
+#include "DICOM/DICOMReaders/include/DicomReaderVOIStruct.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderInterfile.hh"
+#include "DICOM/DICOMReaders/include/DicomReaderInterfileCT.hh"
 
 #include "DICOM/DICOM2G4/include/DicomReaderRTPlan.hh"
 #include "DICOM/DICOM2G4/include/DicomReaderRTIonPlan.hh"
@@ -66,11 +68,22 @@ void Dicom2G4FileMgr::Convert( G4String fileName )
       CheckNColumns(wl,2);
       if( DicomVerb(warningVerb) ) G4cout << "@@@@@@@ Reading FILE: " << wl[1]  << G4endl;
       AddFile(wl[1]);
-    } else if( wl[0] == ":FILE_IF" ) {
+    } else if( wl[0] == ":FILE_IF" || 
+	       wl[0] == ":FILE_INTERFILE" ) {
       CheckNColumns(wl,2);
       if( DicomVerb(warningVerb) ) G4cout << "@@@@@@@ Reading FILE: " << wl[1]  << G4endl;
       bIsInterfile = true;
       AddFileInterfile(wl[1]);
+    } else if( wl[0] == ":FILE_IF_CT" || 
+	       wl[0] == ":FILE_INTERFILE_CT" ) {
+      CheckNColumns(wl,2);
+      if( DicomVerb(warningVerb) ) G4cout << "@@@@@@@ Reading FILE: " << wl[1]  << G4endl;
+      //      bIsInterfile = true;
+      AddFileInterfileCT(wl[1]);
+    } else if( wl[0] == ":FILE_VOI" ) {
+      CheckNColumns(wl,2);
+      if( DicomVerb(warningVerb) ) G4cout << "@@@@@@@ Reading FILE: " << wl[1]  << G4endl;
+      AddFileVOIStruct(wl[1]);
     } else if( wl[0] == ":FILE_OUT" ) {
       CheckNColumns(wl,2);
       theFileOutName = wl[1];
@@ -126,11 +139,12 @@ void Dicom2G4FileMgr::AddFile( G4String fileName )
 {
   DcmFileFormat dfile;
   if( ! (dfile.loadFile(fileName.c_str())).good() ) {
-    G4Exception("DicomHandler::ReadFile",
+    G4Exception("Dicom2G4FileMgr::ReadFile",
 		"",
 		FatalErrorInArgument,
 		("Error reading file " + fileName).c_str());
   }
+
   DcmDataset* dset = dfile.getDataset();
   //  G4cout << " Dicom2G4FileMgr dset " << dset << " " << fileName << G4endl; //GDEB
   OFString dModality;
@@ -141,7 +155,7 @@ void Dicom2G4FileMgr::AddFile( G4String fileName )
 		FatalException,
 		" Have not read Modality");
   }
-
+  
   OFString sopClassUID;
   if( !dset->findAndGetOFString(DCM_SOPClassUID,sopClassUID).good() ) {
     G4Exception("Dicom2G4FileMgr::ReadData ",
@@ -150,13 +164,16 @@ void Dicom2G4FileMgr::AddFile( G4String fileName )
 		" Have not read SOPClassUID");
   }
   
+  G4cout << " sopClassUID " << sopClassUID <<" =? " << UID_CTImageStorage << " =? " << UID_EnhancedCTImageStorage  <<" =? " << UID_RTImageStorage << G4endl; //GDEB
+  G4cout << " dModality " << dModality << G4endl; //GDEB
   if( sopClassUID == UID_CTImageStorage 
+      || sopClassUID == UID_EnhancedCTImageStorage 
     || sopClassUID == UID_RTImageStorage ) {   
     //  if( dModality == "CT" ) {
     DicomReaderCT* df = new DicomReaderCT(dset);
     if( fCompression != 1 ) df->SetCompression( fCompression );
     //G4cout << " CT IMAGE " << df->GetImage() << " nZ " << df->GetImage()->GetNoVoxelsZ() << G4endl;//GDEB
-    G4cout << " CT IMAGE " << df->GetImage() << G4endl;
+    //    G4cout << " CT IMAGE " << df->GetImage() << G4endl;
     
   } else if( sopClassUID == UID_NuclearMedicineImageStorage
 	     || sopClassUID == UID_PositronEmissionTomographyImageStorage 
@@ -198,6 +215,21 @@ void Dicom2G4FileMgr::AddFileInterfile( G4String fileName )
 }
 
 //-----------------------------------------------------------------------------
+void Dicom2G4FileMgr::AddFileInterfileCT( G4String fileName )
+{
+  DicomReaderInterfileCT* df = new DicomReaderInterfileCT(fileName);
+  if( fCompression != 1 ) df->SetCompression( fCompression );
+
+}
+
+//-----------------------------------------------------------------------------
+void Dicom2G4FileMgr::AddFileVOIStruct( G4String fileName )
+{
+  new DicomReaderVOIStruct(fileName);
+
+}
+
+//-----------------------------------------------------------------------------
 void Dicom2G4FileMgr::ProcessFiles()
 {
   theReaderMgr = DicomReaderMgr::GetInstance();
@@ -212,7 +244,7 @@ void Dicom2G4FileMgr::ProcessFiles()
   
   std::vector<DicomVReaderImage*> CTReaders = theReaderMgr->GetImageReaders(DRM_CT, false);
   theCTReaderAll = 0;
-  //  G4cout << " GDEB Dicom2G4FileMgr::ProcessFiles " << CTReaders.size() << G4endl; //GDEB
+  //  G4cout << " GDEB Dicom2G4FileMgr::ProcessFiles " << CTReaders.size() << G4endl; // GDEB
   if( CTReaders.size() != 0 ) theCTReaderAll = (DicomReaderCT*)CTReaders[0];
 
   //  G4cout << "GDEB Dicom2G4FileMgr::ProcessFiles  " << CTReaders[0] << " " << theCTReaderAll << G4endl;  //GDEB
@@ -234,6 +266,7 @@ void Dicom2G4FileMgr::ProcessFiles()
 		FatalException,
 		"more then one RTStruct file");
   }
+  //  G4cout << " RTStructReaders.size() " <<  RTStructReaders.size() << " " << theRTStructReader << G4endl; //GDEB
 
   std::vector<DicomVReader*> RTPlanReaders = theReaderMgr->GetReaders(DRM_RTPlan,false);
   theRTPlanReader = 0;
@@ -253,10 +286,22 @@ void Dicom2G4FileMgr::ProcessFiles()
 		    FatalException,
 		    "There cannot be a CT file and a Interfile file");
       }
-      
       theIFReaderAll = (DicomReaderInterfile*)IFReaders[0];
   }
-  
+
+  std::vector<DicomVReaderImage*> IFCTReaders = theReaderMgr->GetImageReaders(DRM_InterfileCT, false);
+  theIFCTReaderAll = 0;
+  //  G4cout << " GDEB Dicom2G4FileMgr::ProcessFiles " << CTReaders.size() << G4endl; //GDEB
+  if( IFCTReaders.size() != 0 ) {
+    if( theCTReaderAll == 0 ){
+	G4Exception("Dicom2G4FileMgr::ProcessFiles",
+		    "",
+		    FatalException,
+		    "There must be a CT file created by the InterfileCT file");
+      }
+      theIFCTReaderAll = (DicomReaderInterfileCT*)IFCTReaders[0];
+  }
+
   DicomMgr::GetInstance()->OperateAll();
 
   DumpToTextFile();
@@ -361,6 +406,19 @@ void Dicom2G4FileMgr::DumpToTextFile()
   }
 
   if( theIFReaderAll != 0 ) {
+    if( !bFileOutByUser ) theFileOutName = "testNM.g4dcm";
+    if( DicomVerb(warningVerb) ) G4cout << " Dicom2G4FileMgr::Dumping Interfile NM To Text File " << theFileOutName << G4endl;
+    std::ofstream fout(theFileOutName);
+    
+    DicomVImage* imageDicomNM = theIFReaderAll->GetImage();
+    //    G4cout << "GDEB Dicom2G4FileMgr::DumpToTextFile  " << theCTReaderAll << " : " << imageDicomMateID << G4endl;  //GDEB
+    imageDicomNM->DumpHeaderToTextFile( fout );
+    imageDicomNM->DumpDataToTextFile( fout );
+    
+    fout.close();
+  }
+
+  if( theIFCTReaderAll != 0 ) {
     if( !bFileOutByUser ) theFileOutName = "testCT.g4dcm";
     if( DicomVerb(warningVerb) ) G4cout << " Dicom2G4FileMgr::Dumping CT To Text File " << theFileOutName << G4endl;
     std::ofstream fout(theFileOutName);

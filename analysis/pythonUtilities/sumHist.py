@@ -112,7 +112,7 @@ for ii in range(1,len(sys.argv)) :
                 theHisFileWeights.append(1.)
         ii = ii+1
     elif sys.argv[ii] == "-bAdd" :
-        bAdd = bool(sys.argv[ii+1])
+        bAdd = bool(int(sys.argv[ii+1]))
         ii = ii+1
 
 if not bParamTypeFound and len(sys.argv) == 3:

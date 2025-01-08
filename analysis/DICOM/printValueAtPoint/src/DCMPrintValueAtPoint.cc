@@ -101,8 +101,12 @@ void DCMPrintValueAtPoint::CheckArguments()
 //---------------------------------------------------------------------------
 void DCMPrintValueAtPoint::ReadFilesAndGetImages()
 {
-  //--- READ AND BUILD IMAGES
-  theReaderMgr->ProcessData();
+  //--- READ AND BUILD IMAGES 
+  theReaderMgr->CreateReaders();
+  theReaderMgr->SetCTOnlyHU(true);
+  theReaderMgr->CreateImages();
+  theDicomMgr->OperateAll();
+  //-  theReaderMgr->ProcessData();
  
 }
  
@@ -147,7 +151,15 @@ void DCMPrintValueAtPoint::PrintInfoFromImage()
     theExtension += G4ThreeVector(fWidthX*theExtensionN,fWidthY*theExtensionN,fWidthZ*theExtensionN);
     if( thePoint.x()-theExtension.x() < fMinX || thePoint.y()-theExtension.y() < fMinY || thePoint.z()-theExtension.z() < fMinZ ||
 	thePoint.x()+theExtension.x() > fMaxX || thePoint.y()+theExtension.y() > fMaxY || thePoint.z()+theExtension.z() > fMaxZ ) {
-      DicomException("Point out of image limits");
+      G4cerr << " POINT " << thePoint << G4endl
+	     << " EXTENSION " << theExtension << G4endl
+	     << " Xmin: " << thePoint.x()-theExtension.x() << " <? "<< fMinX
+	     << " Xmax: " << thePoint.x()+theExtension.x() << " >? "<< fMaxX
+	     << " Ymin: " << thePoint.y()-theExtension.y() << " <? "<< fMinY
+	     << " Ymax: " << thePoint.y()+theExtension.y() << " >? "<< fMaxY
+	     << " Zmin: " << thePoint.z()-theExtension.z() << " <? "<< fMinZ
+	     << " Zmax: " << thePoint.z()+theExtension.z() << " >? "<< fMaxZ << G4endl;
+      DicomException("Point+extension out of image limits");
     }
     G4int nCVoxXMin = int((thePoint.x()-theExtension.x()-fMinX)/fWidthX);
 #ifndef GAMOS_NO_VERBOSE

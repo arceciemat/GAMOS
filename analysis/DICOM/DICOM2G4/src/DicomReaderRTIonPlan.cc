@@ -24,6 +24,9 @@
 #include "dcmtk/dcmrt/seq/drtcos.h" // for CompensatorSequence
 #include "dcmtk/dcmrt/seq/drtbl2.h" // for BlockSequence
 #include "dcmtk/dcmrt/seq/drtws.h"     // for WedgeSequence
+#include "dcmtk/dcmrt/seq/drtrshs.h"
+#include "dcmtk/dcmrt/seq/drtrlsds.h"
+#include "dcmtk/dcmrt/seq/drtrms.h"
 
 //-----------------------------------------------------------------------------
 DicomReaderRTIonPlan::DicomReaderRTIonPlan(DcmDataset* dset) : DicomVReader(dset, DRM_RTIonPlan)
@@ -320,46 +323,94 @@ void DicomReaderRTIonPlan::ReadData()
       db->SetParamStr("AccessoryCode",fstr);
       if( DicomVerb(debugVerb) ) G4cout << "  " << i2 << " Snout AccessoryCode " << fstr << G4endl;
       } */
- 
+    
     if( beamItem.getNumberOfRangeShifters(fint) == EC_Normal ) {
       db->SetParam("NumberOfRangeShifters",fint);
-      if( DicomVerb(debugVerb) ) G4cout << " " << i1 << " NumberOfIonRangeRangeShifters " << fint << G4endl;
+      if( DicomVerb(debugVerb) ) G4cout << " " << i1 << " NumberOfIonRangeShifters " << fint << G4endl;
     }
-    /*t
-    DRTRangeShifterSequence beamRangeSeq = beamItem.getRangeShifterSequence();
-    beamRangeSeq.gotoFirstItem();
-    for( size_t i2 = 0; i2 < beamRangeSeq.getNumberOfItems(); i2++ ) {
-        DRTBeamRangeSequence::Item beamRangeItem = beamRangeSeq.getCurrentItem();
-      DicomBeam* dbbeamRange = new DicomBeamBlock( beamRangeItem );
-      db->AddBeamRangeSequenc( dbbeamRange );
-      } */
-
+    if(fint > 1 ) {
+      G4Exception("DicomReaderRTIonPlan::ReadData",
+		  "",
+		  FatalException,
+		  ("NumberOfRangeShifters cannot be > 1. Please contact GAMOS authors"+GmGenUtils::itoa(fint)).c_str());
+    }    
+    // Retrieve Range Shifter ID 
+    // Access the Range Shifter Sequence
+    DRTRangeShifterSequence &rangeShifterSeq = beamItem.getRangeShifterSequence();
+    // Get the number of items in the Range Shifter Sequence
+    const unsigned long numItemsrhs = rangeShifterSeq.getNumberOfItems();
+    if(int(numItemsrhs) != fint ) {
+      G4Exception("DicomReaderRTIonPlan::ReadData",
+		  "",
+		  FatalException,
+		  ("beamItem.getNumberOfRangeShifters() != rangeShifterSeq.getNumberOfItems(). Please contact GAMOS authors"+GmGenUtils::itoa(fint)+" , "+GmGenUtils::itoa(numItemsrhs)).c_str());
+    }
+    DRTRangeShifterSequence::Item itemrsh = rangeShifterSeq.getItem(0);
+    OFString rangeShifterID;
+    OFCondition status = itemrsh.getRangeShifterID(rangeShifterID);
+    if( status.good() ) {
+      G4cout << "Range Shifter ID: " << rangeShifterID << G4endl;
+      db->SetParam("RangeShifterID",GmGenUtils::GetInt(rangeShifterID.c_str()));
+    } else {
+      G4cerr << "Error: Range Shifter ID not found in DICOM file." << G4endl;
+    }
+    
+    //--- LateralSpreadingDevices
     if( beamItem.getNumberOfLateralSpreadingDevices(fint) == EC_Normal ) {
       db->SetParam("NumberOfLateralSpreadingDevices",fint);
-      if( DicomVerb(debugVerb) ) G4cout << " " << i1 << " NumberOfLateralSpreadingDevices " << fint << G4endl;
     }
-    /*t
     DRTLateralSpreadingDeviceSequence beamLSD = beamItem.getLateralSpreadingDeviceSequence();
-    beamLSD.gotoFirstItem();
-     for( size_t i2 = 0; i2 < beamLSD.getNumberOfItems(); i2++ ) {
-      DRTLateralSpreadingDeviceSequence::Item bcompItem = beamLSD.getCurrentItem();
-      DicomBeamLateralSpreadingDevice* dbcomp = new DicomBeamLateralSpreadingDevice( bcompItem );
-      db->AddLateralSpreadingDevice( dbcomp );
-      beamLSD.gotoNextItem();
-      } */
+    const unsigned long numItemslsd = beamLSD.getNumberOfItems();
+    if(int(numItemslsd) != fint ) {
+      G4Exception("DicomReaderRTIonPlan::ReadData",
+		  "",
+		  FatalException,
+		  ("beamItem.getNumberOfLateralSpreadingDevices() != beamLSD.getNumberOfItems(). Please contact GAMOS authors"+GmGenUtils::itoa(fint)+" , "+GmGenUtils::itoa(numItemslsd)).c_str());
+    }
+    //    for( size_t i2 = 0; i2 < beamLSD.getNumberOfItems(); i2++ ) {
+    DRTLateralSpreadingDeviceSequence::Item itemlsd = beamLSD.getItem(0);
+    OFString LatSpreDevType;
+    status = itemlsd.getLateralSpreadingDeviceType(LatSpreDevType);
+    if( status.good() ) {
+      G4cout << "LateralSpreadingDeviceType: " << LatSpreDevType << G4endl;
+      db->SetParamStr("LateralSpreadingDeviceType",LatSpreDevType);
+    } else {
+      G4cerr << "Error: LateralSpreadingDeviceType not found in DICOM file." << G4endl;
+    } 
 
+    //--- Range modulator 
     if( beamItem.getNumberOfRangeModulators(fint) == EC_Normal ) {
       db->SetParam("NumberOfRangeModulators",fint);
       if( DicomVerb(debugVerb) ) G4cout << " " << i1 << " NumberOfRangeModulators " << fint << G4endl;
     }
-    /*t  DRTRangeModulatorSequence beamRangeMod = beamItem.getRangeModulatorSequence();
-    beamRangeMod.gotoFirstItem();
-      for( size_t i2 = 0; i2 < beamRangeMod.getNumberOfItems(); i2++ ) {
-      DRTRangeModulatorSequence::Item bcompItem = beamRangeMod.getCurrentItem();
-      DicomBeamRangeModulator* dbcomp = new DicomBeamRangeModulator( bcompItem );
-      db->AddRangeModulator( dbcomp );
-      beamRangeMod.gotoNextItem();
-      } */
+    if(fint > 1 ) {
+      G4Exception("DicomReaderRTIonPlan::ReadData",
+		  "",
+		  FatalException,
+		  ("NumberOfRangeModulators cannot be > 1. Please contact GAMOS authors"+GmGenUtils::itoa(fint)).c_str());
+    }
+	
+    DRTRangeModulatorSequence beamRangeModSeq = beamItem.getRangeModulatorSequence();
+    // Get the number of items in the Range Shifter Sequence
+    const unsigned long numItemrm = beamRangeModSeq.getNumberOfItems();
+    if(int(numItemrm) != fint ) {
+      G4Exception("DicomReaderRTIonPlan::ReadData",
+		  "",
+		  FatalException,
+		  ("beamItem.getNumberOfRangeModulators() != beamRangeModSeq.getNumberOfItems(). Please contact GAMOS authors"+GmGenUtils::itoa(fint)+" , "+GmGenUtils::itoa(numItemrm)).c_str());
+    }
+    DRTRangeModulatorSequence::Item itemrm = beamRangeModSeq.getItem(0);
+    OFString RangModType;
+    status = itemrm.getRangeModulatorType(RangModType);
+    if( status.good() ) {
+      G4cout << "RangeModulatorType: " << RangModType << G4endl;
+      db->SetParamStr("RangeModulatorType",RangModType);
+    } else {
+      G4cerr << "Error: RangeModulatorType not found in DICOM file." << G4endl;
+    } 
+    //    DicomBeamRangeModulator* dbcomp = new DicomBeamRangeModulator( bcompItem );
+    //      db->AddRangeModulator( dbcomp );
+    //      beamRangeMod.gotoNextItem();
 
     
     if( beamItem.getDeviceSerialNumber(fstr) == EC_Normal ) {

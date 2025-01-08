@@ -20,6 +20,7 @@ typedef std::map<size_t,TProfile*> mhp;
 typedef std::pair<mhp,mhp> pmhpmhp;
 typedef std::multimap<G4double,G4double> mmdd;
 class GmReadPhantomStMgr;
+#include "G4StatAnalysis.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 class DCMGetOrganInfo
@@ -53,7 +54,7 @@ private:
   void WriteHistosToFile( pmhmh hpair, TFile* histosFile );
   void WriteHistosToFile( pmhpmhp hpair, TFile* histosFile );
   void DicomException(G4String msg, G4ExceptionSeverity sever = FatalException);
-  DicomVImage* FillImageDoseInSt( std::map<size_t, long double> theDosesPerSt );
+  DicomVImage* FillImageDoseInSt( std::map<size_t, G4StatAnalysis> theDosesPerSt );
   DicomVImage* BuildAnalyseErrorImage( DicomVImage* image, G4double relErr );
   
   DicomVImage* theAnalyseImage = 0; //FILE THAT CONTAINS THE GEOMETRY: CT/NM/DOSE
@@ -113,7 +114,7 @@ private:
   G4double theHistosLogN;
   G4bool bHistosLogN;
   std::vector<G4String> theExcludeStNames;
-  std::map<size_t, long double> theDosesPerSt;
+  std::map<size_t, G4StatAnalysis> theDosesPerSt;
   std::map<size_t, long double> theDoseErrorsPerSt;
   G4double theErrorImageRelErr;
   G4double theNErrorSigmas;

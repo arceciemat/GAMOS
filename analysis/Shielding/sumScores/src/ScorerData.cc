@@ -28,51 +28,51 @@ void ScorerData::SetNEvents(G4double evts)
 }
 
 //-----------------------------------------------------------------
-ScorerData ScorerData::operator+=( const ScorerData& sd2 )
+ScorerData ScorerData::operator+=( const ScorerData& srd2 )
 {
-  if( ScoreData::verbosity >= 2 ) G4cout << "  ScorerData::operator+=: ADDING SCORER " << sd2.GetName() << "  N= " << sd2.GetNScores() << "  TO  " << theName << "  N= " << theNScores << G4endl;
+  if( ScoreData::verbosity >= 2 ) G4cout << "  ScorerData::operator+=: ADDING SCORER " << srd2.GetName() << "  N= " << srd2.GetNScores() << "  TO  " << theName << "  N= " << theNScores << G4endl;
 
-  G4double NEvents2 = sd2.GetNEvents();
+  G4double NEvents2 = srd2.GetNEvents();
   /*t  for( int ii = 0; ii < GetNScores()+1; ii++ ){
-    ScoreData* id = GetScoreData(ii);
-    (*id) *= theNEvents;
+    ScoreData* sd = GetScoreData(ii);
+    (*sd) *= theNEvents;
     } */
 
   // loop to score data of 2 and check if same score data is found in 1: if yes, add data, if not create new data
-  /* if( sd2.GetNScores() == 0 ) {
+  /* if( srd2.GetNScores() == 0 ) {
     G4Exception("ScorerData::operator+=",
 		"",
 		JustWarning,
-		G4String("Adding empty scorer " + sd2.GetName()).c_str());
+		G4String("Adding empty scorer " + srd2.GetName()).c_str());
     return *this;
     }*/
 
-  //  G4cout << sd2.GetName() << " N SCORES " <<  sd2.GetNScores() << G4endl; //GDEB
+  //  G4cout << srd2.GetName() << " N SCORES " <<  srd2.GetNScores() << G4endl; //GDEB
   if( ScoreData::verbosity >= 2 ) G4cout << "@@@ CHECK IF NEW SCORER ADDS SOME NEW SCORE " << G4endl; 
-  for( int ii2 = 0; ii2 < sd2.GetNScores()+1; ii2++ ){
-    ScoreData* id2 = sd2.GetScoreData(ii2);
-    if( ScoreData::verbosity >= 3 && ii2%10000 == 0 ) G4cout << ii2 << " out of " <<  sd2.GetNScores() << "  ScorerData::operator+=: " << theName << " DATA " << id2->GetName() << G4endl;
+  for( int ii2 = 0; ii2 < srd2.GetNScores()+1; ii2++ ){
+    ScoreData* sd2 = srd2.GetScoreData(ii2);
+    if( ScoreData::verbosity >= 3 && ii2%10000 == 0 ) G4cout << ii2 << " out of " <<  srd2.GetNScores() << "  ScorerData::operator+=: " << theName << " DATA " << sd2->GetName() << G4endl;
     bool bFound1 = false;
-    ScoreData* id1 = 0;
-    for( int ii1 = 0; ii1 < theNScores+1; ii1++ ){
+    ScoreData* sd1 = 0;
+    for( size_t ii1 = 0; ii1 < theNScores+1; ii1++ ){
       if( ii1 >= theScoreData.size() ) break;
-      id1 = theScoreData[ii1];
-      if( *id1 == *id2 ) {
+      sd1 = theScoreData[ii1];
+      if( *sd1 == *sd2 ) {
 	bFound1 = true;
 	break;
       }
     }
 
-    //-    G4cout << ii2 << " CHECK DATA 2 " << id2->GetName() << " " << id2->GetScore() << " bFound1 " << bFound1 << G4endl; //GDEB
+    //-    G4cout << ii2 << " CHECK DATA 2 " << sd2->GetName() << " " << sd2->GetScore() << " bFound1 " << bFound1 << G4endl; //GDEB
 
     if( bFound1 ) {
-      *id1 += *id2;
-      if( ScoreData::verbosity >= 2 ) G4cout << "  ScorerData::operator+=: " << theName << " ADDED DATA " << id2->GetName() << " to " << id1->GetName() << G4endl;
+      *sd1 += *sd2;
+      if( ScoreData::verbosity >= 2 ) G4cout << "  ScorerData::operator+=: " << theName << " ADDED DATA " << sd2->GetName() << " to " << sd1->GetName() << G4endl;
     } else {
-      AddScoreData( id2 );
-      //-      (*id2) *= NEvents2;
+      AddScoreData( sd2 );
+      //-      (*sd2) *= NEvents2;
       theNScores += 1;
-      if( ScoreData::verbosity >= 2 ) G4cout << "  ScorerData::operator+=: " << theName << " CREATED NEW DATA " << id2->GetName() << G4endl; 
+      if( ScoreData::verbosity >= 2 ) G4cout << "  ScorerData::operator+=: " << theName << " CREATED NEW DATA " << sd2->GetName() << G4endl; 
     }
 
   }
@@ -80,9 +80,9 @@ ScorerData ScorerData::operator+=( const ScorerData& sd2 )
   theNumberOfFiles++;
 
   /*t  for( int ii = 0; ii < GetNScores()+1; ii++ ){
-    ScoreData* id = GetScoreData(ii);
-    (*id) *= 1./(theNEvents+NEvents2);
-    if( ScoreData::verbosity >= 2 ) G4cout << "  ScorerData::operator+=: " << theName << " SCALE TO PER EVENT " << id->GetName() << " = " << id->GetScore() << G4endl; 
+    ScoreData* sd = GetScoreData(ii);
+    (*sd) *= 1./(theNEvents+NEvents2);
+    if( ScoreData::verbosity >= 2 ) G4cout << "  ScorerData::operator+=: " << theName << " SCALE TO PER EVENT " << sd->GetName() << " = " << sd->GetScore() << G4endl; 
     } */
 
   theNEvents += NEvents2;
@@ -92,10 +92,10 @@ ScorerData ScorerData::operator+=( const ScorerData& sd2 )
 }
 
 //-----------------------------------------------------------------
-bool ScorerData::operator!=( const ScorerData& sd2 )
+bool ScorerData::operator!=( const ScorerData& srd2 )
 {
 
-  if (GetName() != sd2.GetName() ) {
+  if (GetName() != srd2.GetName() ) {
     return true;
   }
 

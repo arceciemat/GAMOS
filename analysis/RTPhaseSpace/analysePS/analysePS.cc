@@ -134,7 +134,7 @@ int main(int argc,char** argv)
   G4UImanager::GetUIpointer()->ApplyCommand(G4String("/gamos/analysis/histo2MaxY PhaseSpace*Energy* ")+hisEMax);
   G4UImanager::GetUIpointer()->ApplyCommand(G4String("/gamos/analysis/histo1Max PhaseSpace*X*at* ")+hisRMax);
   G4UImanager::GetUIpointer()->ApplyCommand(G4String("/gamos/analysis/histo1Max PhaseSpace*Y*at* ")+hisRMax);
-  G4UImanager::GetUIpointer()->ApplyCommand(G4String("/gamos/analysis/histo1Max PhaseSpace*Z*at* ")+hisRMax);
+  G4UImanager::GetUIpointer()->ApplyCommand(G4String("/gamos/analysis/histo1Max PhaseSpace*R*at* ")+hisRMax);
   G4UImanager::GetUIpointer()->ApplyCommand(G4String("/gamos/analysis/histo2MaxX PhaseSpace*XY*at* ")+hisRMax);
   G4UImanager::GetUIpointer()->ApplyCommand(G4String("/gamos/analysis/histo2MaxY PhaseSpace*XY*at* ")+hisRMax);
   G4UImanager::GetUIpointer()->ApplyCommand(G4String("/gamos/analysis/histo2MaxX PhaseSpace*R*vs* ")+hisRMax);
@@ -151,13 +151,12 @@ int main(int argc,char** argv)
   for( G4int ii = 0; ii < nRead; ii++ ){
     if( ii%1000000 == 0 ) G4cout << "Reading PHSP track " << ii << G4endl;
     int fileEnd = p_iaea_record->read_particle();
-    if( RTVerb(-debugVerb) ) DumpParticle( p_iaea_record );
+    if( RTVerb(debugVerb) ) DumpParticle( p_iaea_record );
     if( fileEnd == FAIL) {
       fclose(p_rfile);
       break;
     }
     theHistos->FillHistos( p_iaea_record, p_iaea_record->z*cm, (G4Step*)0 );
-    G4cout << ii << " READ RECORD " << p_iaea_record->energy << G4endl; //GDEB
  } 
 
   GmAnalysisMgr::DeleteInstances();

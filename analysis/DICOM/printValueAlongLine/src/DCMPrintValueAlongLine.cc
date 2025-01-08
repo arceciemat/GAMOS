@@ -29,7 +29,8 @@ DCMPrintValueAlongLine::DCMPrintValueAlongLine()
   theParamMgr = (DicomParameterMgr*)(DicomParameterMgr::GetInstance());
   theReaderMgr = DicomReaderMgr::GetInstance();
   theDMgr = DicomMgr::GetInstance();
- 
+  thePos0 = G4ThreeVector(DBL_MAX,DBL_MAX,DBL_MAX);
+  bStructID = false;
 }
 
 //---------------------------------------------------------------------------
@@ -88,7 +89,7 @@ void DCMPrintValueAlongLine::ProcessArguments(int argc,char** argv)
 		      FatalErrorInArgument,
 		      ("WRONG NUMBER OF ARGUMENTS, THERE MUST BE AT LEAST 3 AFTER -zeroOfAlongLine, while there are "+GmGenUtils::itoa(argc-ii-1)).c_str());
 	}
-	theLinePos0 = G4ThreeVector(GmGenUtils::GetValue(argv[ii+1]),GmGenUtils::GetValue(argv[ii+2]),GmGenUtils::GetValue(argv[ii+3]));
+	thePos0 = G4ThreeVector(GmGenUtils::GetValue(argv[ii+1]),GmGenUtils::GetValue(argv[ii+2]),GmGenUtils::GetValue(argv[ii+3]));
 	ii += 3;
         
       } else if( argvstr == "-bHistos" ) {
@@ -99,6 +100,9 @@ void DCMPrintValueAlongLine::ProcessArguments(int argc,char** argv)
 	theAlongLineInput = 2;
 	ii++;
       } else if( argvstr == "-lineStep" ) {
+	theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
+	ii++;
+      } else if( argvstr == "-bStructID" ) {
 	theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
 	ii++;
       } else {
@@ -118,6 +122,7 @@ void DCMPrintValueAlongLine::ProcessArguments(int argc,char** argv)
   bHistos = G4bool(theParamMgr->GetNumericValue("bHistos",0));
   theLineListFN = theParamMgr->GetStringValue("fLineList","");
   theLineStep = theParamMgr->GetNumericValue("lineStep",-DBL_MAX);
+  bStructID = theParamMgr->GetNumericValue("bStructID",0);
 }
 
 //---------------------------------------------------------------------------
@@ -142,7 +147,7 @@ void DCMPrintValueAlongLine::ReadFilesAndGetImages()
   //--- READ AND BUILD IMAGES
   theReaderMgr->ProcessData();
 
-  theImages = theReaderMgr->GetImages();
+  theImages = theReaderMgr->GetImages(1); // 1: get MateID, StructID
 
   theLineSet = new DicomLineSet("DCMPrintValueAlongLine",DPOrientNone);
   if( theAlongLineInput == 1 ) {
@@ -150,7 +155,6 @@ void DCMPrintValueAlongLine::ReadFilesAndGetImages()
     theLineSet->AddLineList(lineList1);
     DicomLine* line1 = new DicomLine(theLinePos,theLineDir,"valueInLine",DPOrientNone);
     //    G4cout << "1 BUILD DicomLine " << theLinePos << " " << theLineDir << " valueInLine " << G4endl; //GDEB
-    line1->SetPos0( theLinePos0 );
     lineList1->AddLine(line1);
   }
   
@@ -179,22 +183,20 @@ void DCMPrintValueAlongLine::ReadFilesAndGetImages()
       }
       G4ThreeVector pos( GmGenUtils::GetValue(wl[1]), GmGenUtils::GetValue(wl[2]), GmGenUtils::GetValue(wl[3]));
       G4ThreeVector dir( GmGenUtils::GetValue(wl[4]), GmGenUtils::GetValue(wl[5]), GmGenUtils::GetValue(wl[6]));
-      G4ThreeVector pos0 = pos;
       G4String lineName = "";
       if( wl.size() == 8 ) {
 	lineName = wl[7];
       }
       if( lineName == "" ) lineName = "valueInLine";
       if( wl.size() >= 10) {
-	pos0 = G4ThreeVector( GmGenUtils::GetValue(wl[7]), GmGenUtils::GetValue(wl[8]), GmGenUtils::GetValue(wl[9]));
+	thePos0 = G4ThreeVector( GmGenUtils::GetValue(wl[7]), GmGenUtils::GetValue(wl[8]), GmGenUtils::GetValue(wl[9]));
       }
       if( wl.size() == 11 ) {
 	lineName = wl[10];
       }
       DicomLine* line = new DicomLine(pos,dir,lineName,DPOrientNone);
-      line->SetPos0( pos0 );
       lineList->AddLine(line);
-      G4cout << "2 BUILD DicomLine " << pos << " " << dir << " " << pos0 << " " << lineName << G4endl; //GDEB
+      G4cout << "2 BUILD DicomLine " << pos << " " << dir << " " << thePos0 << " " << lineName << G4endl; //GDEB
     }
   }
 }
@@ -204,6 +206,11 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 {
   for( size_t iimg = 0; iimg < theImages.size(); iimg++ ) {
     DicomVImage* image = theImages[iimg];
+    if ( bStructID ) {
+      if ( image->GetModality() == DIM_G4dcmCT_MateID || image->GetModality() == DIM_G4dcmCT_MateDens ) {
+	continue; // only  DIM_G4dcmCT_StructID of testCT.g4dcm
+      }
+    }    
     G4String imageName = image->GetName();
     if( theImages.size() != 1 ) imageName += GmGenUtils::itoa(iimg); // figures of the same modality have the same name
     if( theImages.size() == 0 ) {
@@ -215,15 +222,40 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
       for( size_t il = 0; il < lines.size(); il++ ) {
 	DicomLine* line = static_cast<DicomLine*>(lines[il]);
 	G4cout << " DCMPrintValueAlongLine::GetInfoFromImages(lineStep " << theLineStep << G4endl; //GDEB
-	std::map<G4double,G4double> intersValues = line->FindValues(image, theLineStep); 
+	std::map<G4double,G4double> intersValues = line->FindValues(image, theLineStep);
+	if( thePos0 != G4ThreeVector(DBL_MAX,DBL_MAX,DBL_MAX) ){
+	  G4ThreeVector linePoint0 = line->GetPoint(0);
+	  G4ThreeVector lineDir = line->GetDirection(0);
+	  G4double distTo0 = linePoint0*lineDir;
+	  //	  auto insertWithOffset = [&intersValues, distTo0](double value) {
+	  //intersValues.insert(std::make_pair(value + distTo0, /* value based on the logic you need */));
+	  //  };
+	  //	  for( 	std::map<G4double,G4double>::const_iterator iteiv = intersValues.begin(); iteiv != intersValues.end(); iteiv++ ) {
+	  //G4cout << "INTERS0 " << iteiv->first << " " <<iteiv->second << G4endl;//GDEB
+	  //}
+	  std::map<double, double> shiftedIntersValues;
+	  for( 	std::map<G4double,G4double>::const_iterator iteiv = intersValues.begin(); iteiv != intersValues.end(); iteiv++ ) {
+	    // Add 5 to the key and insert the updated key-value pair into the new map
+	    shiftedIntersValues[iteiv->first + distTo0] = iteiv->second;
+	  }
+	  intersValues = shiftedIntersValues;
+
+	  //	  for( 	std::map<G4double,G4double>::const_iterator iteiv = intersValues.begin(); iteiv != intersValues.end(); iteiv++ ) {
+	  //	  G4cout << "INTERS2 " << iteiv->first << " " <<iteiv->second << G4endl; //GDEB
+	  //	  }
+	  //	  std::transform(insertValues.begin(), insertValues.end(), std::inserter(insertValues, insertValues.begin()),
+	  //     [](const std::pair<double, double>& elem) { return std::make_pair(elem.first + distTo0, elem.second); });
+
+  //	  for( std::map<G4double,G4double>::iterator iteiv = intersValues.begin(); iteiv != intersValues.end(); iteiv++ ) {    
+  //	    iteiv->first += distTo0;
+  //	  }
+	}
 	G4double distBefore0;
 	G4double distToOut = DBL_MAX;
 	
 	//----- Histogram name: build chaining dir and pos coordinates
 	G4ThreeVector dir = line->GetDirection(0);
 	G4ThreeVector pos = line->GetPoint(0);
-	G4ThreeVector pos0 = line->GetPos0();
-	
 	G4String lineName = imageName;
 	lineName += "_valueAL_";
 	lineName += line->GetName();
@@ -243,7 +275,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	  G4double xMin = DBL_MAX;
 	  G4double xMax = -DBL_MAX;
 	  G4double yMax = -DBL_MAX;
-	  for( iteiv = intersValues.begin(); iteiv != intersValues.end(); iteiv++ ) {
+	  for( iteiv = intersValues.begin(); iteiv != intersValues.end(); iteiv++ ) {	    
 	    G4double distHis =(*iteiv).first;
 	    G4double value =(*iteiv).second;
 	    xMin = min(xMin,distHis);
@@ -265,8 +297,8 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	    }
 	    distToOut = min(dist,distToOut);
 	  }
-	  distBefore0 = (pos+dir*distToOut-pos0).mag();
-	  if( DicomVerb(infoVerb) ) G4cout << "@@@@ DCMPrintValueAlongLine HISTO " << distBefore0 << " == " << pos << " + " << dir << " * " << distToOut << " - " << pos0 << " " << (pos+dir*distToOut-pos0) << distBefore0+distToOut << G4endl;
+	  distBefore0 = (pos+dir*distToOut-thePos0).mag();
+	  if( DicomVerb(-infoVerb) ) G4cout << "@@@@ DCMPrintValueAlongLine HISTO " << distBefore0 << " == " << pos << " + " << dir << " * " << distToOut << " - " << thePos0 << " " << (pos+dir*distToOut-thePos0) << distBefore0+distToOut << G4endl;
 	  	  if( DicomVerb(infoVerb) ) G4cout << "@@@@ DCMPrintValueAlongLine HISTO " << distBefore0-distToOut << " TO " << distBefore0 << G4endl;
 	  histo = new TH1F(lineName.c_str(), lineName.c_str(), 10000, distBefore0-distToOut,distBefore0);
 	  canvas = new TCanvas;
@@ -278,6 +310,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	//----- Write to file intersections-values
 	G4String valueAlongLineFN = lineName+".val";
 	std::ofstream fout(valueAlongLineFN.c_str());
+	G4cout << image->GetName() << " " << image->GetModalityStr() << " ALONG LINE CREATING FILE " << lineName+".val" << std::endl;  //GDEB
 	if( DicomVerb(infoVerb) ) G4cout << " ALONG LINE CREATING FILE " << lineName+".val" << std::endl; 
 	fout << ":DATA " << lineName << G4endl;
 	if( DicomVerb(infoVerb) ) G4cout << "@@@@ DCMPrintValueAlongLine n intersections " << intersValues.size() << G4endl;

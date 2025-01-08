@@ -1,6 +1,7 @@
 #include "DCMResizeImage.hh"
 
 #include "DICOM/DICOMBase/include/DicomVImage.hh"
+#include "DICOM/DICOMBase/include/DicomVImageStr.hh"
 #include "DICOM/DICOMBase/include/DicomMgr.hh"
 #include "DICOM/DICOMBase/include/DicomParameterMgr.hh"
 #include "DICOM/DICOMBase/include/DicomVerbosity.hh"
@@ -118,14 +119,14 @@ void DCMResizeImage::ReadFilesAndGetImages()
 		"",
 		FatalException,
 		"DICOM RTDose image not implemented yet. Please ask the GAMOS team");
-		} 
+  } 
 
-  if( theReaderMgr->GetNofImageReaders(DRM_OTHER) == 0 ) {
+  /*  if( theReaderMgr->GetNofImageReaders(DRM_OTHER) == 0 ) {
     G4Exception(theExeName, 
 		"",
 		FatalException,
 		"No image file selected");
-  }
+		}*/
 
   G4String fileName = theParamMgr->GetStringValue("fOut","");
   if( fileName != "" && theReaderMgr->GetNofImageReaders(DRM_OTHER) != 1 ) {
@@ -157,16 +158,18 @@ void DCMResizeImage::ReadFilesAndGetImages()
 		  JustWarning,
 		  "No interpolation can be done for G4dcmCT images");
     }
-    theParamMgr->AddParam("bInterpolate 0");
+    //t    theParamMgr->AddParam("bInterpolate 0");
     operResize->Operate(image);
     image->DumpHeaderToTextFile(fout);
     image->DumpDataToTextFile(fout);
     image = readerCT->GetMateDensImage();
     operResize->Operate(image);
     image->DumpDataToTextFile(fout,true);
-    image = readerCT->GetStructIDImage();
-    operResize->Operate(image);
-    if( image ) image->DumpDataToTextFile(fout);
+    DicomVImageStr* imageStr = readerCT->GetStructIDImage();
+    //    G4cout << " TO RESIZE imageStr " << imageStr << G4endl; //GDEB
+    operResize->OperateStr(imageStr);
+    //    G4cout << " RESIZED imageStr " << imageStr << G4endl; //GDEB
+    if( imageStr ) imageStr->DumpDataToTextFile(fout);
     std::map<G4int,G4String> structNames = readerCT->GetStructNames();
     for( std::map<G4int,G4String>::const_iterator itest = structNames.begin(); itest != structNames.end(); itest++ ) {
       fout << itest->first << " \"" << itest->second << "\""<< G4endl;
