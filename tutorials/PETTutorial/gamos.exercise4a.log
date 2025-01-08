@@ -35,8 +35,10 @@ GmPhysicsGammaLowEner::ConstructProcess
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -52,7 +54,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -62,8 +64,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -122,8 +125,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -132,10 +135,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=DistanceToBoundary Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
        LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
         MollerBhabha : Emin=    1 GeV Emax=  100 TeV
@@ -153,10 +156,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=DistanceToBoundary Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -244,38 +247,36 @@ See commands in /vis/modeling/trajectories/ for other options.
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=2.690000s Real=2.694607s Sys=0.010000s
+  User=1.600000s Real=1.604455s Sys=0.010000s
 @@@@ GmCountProcessesUA
  PART_COUNT: e+ = 10000
- PART_COUNT: e- = 80828
- PART_COUNT: gamma = 28525
+ PART_COUNT: e- = 81167
+ PART_COUNT: gamma = 28451
  PROC_COUNT e+ : Transportation = 23
  PROC_COUNT e+ : annihil = 10000
- PROC_COUNT e+ : eBrem = 128
- PROC_COUNT e+ : eIoni = 459
- PROC_COUNT e+ : eIoni_NoSeco = 10125
- PROC_COUNT e+ : msc = 486
- PROC_COUNT e+ : ALL = 21221
- PROC_COUNT e- : Transportation = 265
- PROC_COUNT e- : eBrem = 793
- PROC_COUNT e- : eBrem_NoSeco = 54
- PROC_COUNT e- : eIoni = 1399
- PROC_COUNT e- : eIoni_NoSeco = 82408
- PROC_COUNT e- : msc = 5246
- PROC_COUNT e- : ALL = 90165
- PROC_COUNT gamma : Rayl = 3413
- PROC_COUNT gamma : Transportation = 69728
- PROC_COUNT gamma : compt = 59180
- PROC_COUNT gamma : phot = 19790
-PROC_COUNT gamma : ALL = 152111
+ PROC_COUNT e+ : eBrem = 125
+ PROC_COUNT e+ : eBrem_NoSeco = 2
+ PROC_COUNT e+ : eIoni = 558
+ PROC_COUNT e+ : eIoni_NoSeco = 10181
+ PROC_COUNT e+ : msc = 422
+ PROC_COUNT e+ : ALL = 21311
+ PROC_COUNT e- : Transportation = 275
+ PROC_COUNT e- : eBrem = 840
+ PROC_COUNT e- : eBrem_NoSeco = 58
+ PROC_COUNT e- : eIoni = 1376
+ PROC_COUNT e- : eIoni_NoSeco = 82844
+ PROC_COUNT e- : msc = 4994
+ PROC_COUNT e- : ALL = 90387
+ PROC_COUNT gamma : Rayl = 3522
+ PROC_COUNT gamma : Transportation = 69347
+ PROC_COUNT gamma : compt = 59553
+ PROC_COUNT gamma : phot = 19678
+PROC_COUNT gamma : ALL = 152100
 PROC_CREATOR_COUNT e+ : Primary = 10000
-PROC_CREATOR_COUNT e- : compt = 59180
-PROC_CREATOR_COUNT e- : eIoni = 1858
-PROC_CREATOR_COUNT e- : phot = 19790
+PROC_CREATOR_COUNT e- : compt = 59554
+PROC_CREATOR_COUNT e- : eIoni = 1934
+PROC_CREATOR_COUNT e- : phot = 19679
 PROC_CREATOR_COUNT gamma : annihil = 20000
-PROC_CREATOR_COUNT gamma : compt = 71
-PROC_CREATOR_COUNT gamma : eBrem = 921
-PROC_CREATOR_COUNT gamma : phot = 7533
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+PROC_CREATOR_COUNT gamma : compt = 73
+PROC_CREATOR_COUNT gamma : eBrem = 965
+PROC_CREATOR_COUNT gamma : phot = 7413

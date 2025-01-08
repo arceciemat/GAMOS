@@ -31,8 +31,10 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -48,7 +50,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -58,8 +60,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -115,8 +118,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -125,10 +128,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -145,10 +148,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -4696,16 +4699,16 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
     4     22.8     10.9    -8.94     0.596   0.0393   0.0764     0.392   container msc
     5     22.8       11    -8.97     0.513   0.0828     0.06     0.452   container msc
     6     22.8       11    -8.98     0.498   0.0148   0.0292     0.481       world Transportation
-    7     4.02     26.2    -8.47     0.492  0.00398     24.2      24.7       world eIoni
-    8    -18.1       50    -4.86     0.488  0.00438       33      57.7  OutOfWorld Transportation
+    7     5.49       25    -8.57     0.492  0.00376     22.3      22.8       world eIoni
+    8    -17.8       50    -4.95     0.487  0.00489     34.7      57.5  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     4.02     26.2    -8.47   0.00186        0        0         0       world initStep
-    1     3.99     26.1    -8.52         0  0.00186    0.144     0.144       world eIoni
+    0     5.49       25    -8.57   0.00186        0        0         0       world initStep
+    1     5.46       25    -8.62         0  0.00186    0.144     0.144       world eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
@@ -5125,206 +5128,182 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
     0    -22.6    -11.9   -0.239      0.11        0        0         0       world initStep
-    1      -50     8.17    -8.76    0.0967   0.0132     40.4      40.4  OutOfWorld Transportation
+    1    -48.7     3.32    -6.41    0.0931   0.0113     34.6      34.6       world eIoni
+    2      -50     3.72    -6.15     0.093 0.000183     1.41        36  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -48.7     3.32    -6.41   0.00548        0        0         0       world initStep
+    1    -48.8     3.28    -6.78         0  0.00548    0.902     0.902       world eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.672   -0.527    -2.37         1        0        0         0      source initStep
-    1    0.403   -0.459     -2.5         1        0     1.08      1.08       world Transportation
-    2       11    0.212    -3.76         1        0     10.7      11.8   container Transportation
-    3       12    0.276    -3.88         1        0     1.01      12.8    detector Transportation
-    4     31.9     1.54    -6.24         1        0     20.1      32.8   container Transportation
-    5       33     1.61    -6.38         1        0     1.13        34       world Transportation
-    6       50     2.68     -8.4         1        0     17.2      51.1  OutOfWorld Transportation
+    0    0.342     -0.7     1.76         1        0        0         0      source initStep
+    1    0.476    -0.72      2.5         1        0    0.754     0.754       world Transportation
+    2     9.07    -2.01       50         1        0     48.3        49  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.318    0.127     2.28         1        0        0         0      source initStep
-    1   -0.551    0.834     2.08         1        0    0.771     0.771       world Transportation
-    2    -16.8       50    -11.8         1        0     53.6      54.4  OutOfWorld Transportation
+    0     0.29    0.733     1.51         1        0        0         0      source initStep
+    1    0.821   -0.156      2.5         1        0     1.43      1.43       world Transportation
+    2     26.3    -42.9       50         1        0     68.8      70.3  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.103   -0.849    -1.86         1        0        0         0      source initStep
-    1    0.739   0.0283    -1.47     0.943        0     1.15      1.15      source compt
-    2    0.956    0.292    -1.43     0.943        0    0.344       1.5       world Transportation
-    3     41.9       50     5.45     0.943        0     64.8      66.3  OutOfWorld Transportation
+    0    0.428    0.336   -0.136         1        0        0         0      source initStep
+    1    -0.35   0.0796     -2.5         1        0      2.5       2.5       world Transportation
+    2      -16    -5.07      -50         1        0     50.3      52.8  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0   -0.331   -0.877      1.2         1        0        0         0      source initStep
+    1   -0.561   -0.828     1.16         1        0    0.241     0.241       world Transportation
+    2      -50     9.72    -8.71         1        0     51.5      51.7  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    0.322   -0.789    -2.11         1        0        0         0      source initStep
+    1    0.762    0.449     -2.5         1        0     1.37      1.37       world Transportation
+    2     18.4       50    -18.1         1        0     54.8      56.2  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    0.897    -0.22     1.35         1        0        0         0      source initStep
+    1   -0.998   0.0653     2.43         1        0      2.2       2.2       world Transportation
+    2      -50     7.45     30.5         1        0     56.9      59.2  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0  -0.0819    0.387     -1.2         1        0        0         0      source initStep
+    1    0.649    0.761    -1.95         1        0     1.11      1.11       world Transportation
+    2     47.7     24.8      -50         1        0     71.5      72.6  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    0.818  -0.0495     0.68         1        0        0         0      source initStep
+    1    0.994    0.111    0.755         1        0     0.25      0.25       world Transportation
+    2       11     9.26        5         1        0     14.2      14.5   container Transportation
+    3     12.9       11      5.8         1        0     2.71      17.2       world Transportation
+    4       50     44.9     21.5         1        0     52.7      69.8  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0  -0.0939   -0.275     1.12         1        0        0         0      source initStep
+    1    0.901   -0.433     2.11         1        0     1.41      1.41       world Transportation
+    2     49.3    -8.14       50         1        0     68.5      69.9  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0  -0.0571    0.148    0.736         1        0        0         0      source initStep
+    1   -0.993   -0.122   -0.277         1        0     1.41      1.41       world Transportation
+    2    -46.9    -13.3      -50         1        0     68.9      70.3  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0   -0.497    0.427     2.09         1        0        0         0      source initStep
+    1   -0.758    0.365      2.5         1        0    0.492     0.492       world Transportation
+    2    -30.8     -6.8       50         1        0     56.6      57.1  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    0.914    -0.22    -1.39         1        0        0         0      source initStep
+    1    0.981   -0.192    -1.39         1        0   0.0735    0.0735       world Transportation
+    2       11     3.89    -2.48         1        0     10.9      10.9   container Transportation
+    3       12     4.31    -2.59     0.417        0     1.12      12.1   container compt
+    4     11.8       11   -0.317     0.417        0     7.07      19.1       world Transportation
+    5     10.1       50     12.9     0.417        0     41.2      60.4  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.739   0.0283    -1.47    0.0573        0        0         0      source initStep
-    1    0.734   0.0326    -1.44         0   0.0573   0.0552    0.0552      source eIoni
+    0       12     4.31    -2.59     0.583        0        0         0   container initStep
+    1     12.4      4.3    -2.68         0    0.583     1.05      1.05   container eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     0.69    0.671     1.47         1        0        0         0      source initStep
-    1    0.727    0.686     1.43         1        0   0.0566    0.0566       world Transportation
-    2       11     4.93    -9.63         1        0     15.7      15.7   container Transportation
-    3     12.3     5.46      -11         1        0     1.95      17.7       world Transportation
-    4     48.5     20.4      -50         1        0     55.3        73  OutOfWorld Transportation
+    0   -0.193   -0.455    0.503         1        0        0         0      source initStep
+    1    0.235   -0.972    0.193         1        0    0.739     0.739       world Transportation
+    2     40.8      -50    -29.2         1        0     70.1      70.8  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.945    0.101   -0.976         1        0        0         0      source initStep
-    1   -0.989    0.149    -1.03         1        0   0.0823    0.0823       world Transportation
-    2    -43.6     46.5      -50         1        0     79.8      79.8  OutOfWorld Transportation
+    0   -0.119    0.237   0.0825         1        0        0         0      source initStep
+    1    0.173    0.985   0.0478         1        0    0.804     0.804       world Transportation
+    2     19.3       50    -2.22         1        0     52.7      53.5  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.192  -0.0669    0.775         1        0        0         0      source initStep
-    1   -0.217   -0.976      1.6         1        0     1.23      1.23       world Transportation
-    2    -1.59      -50     46.2         1        0     66.3      67.5  OutOfWorld Transportation
+    0   -0.673    -0.21    -2.08         1        0        0         0      source initStep
+    1   -0.993   -0.117     -1.9         1        0    0.379     0.379       world Transportation
+    2      -50     14.1     25.7         1        0       58      58.4  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.284   -0.609     0.58         1        0        0         0      source initStep
-    1       -1 -0.00472    -1.15         1        0     1.97      1.97       world Transportation
-    2    -21.2       17      -50         1        0     55.5      57.5  OutOfWorld Transportation
+    0   -0.904  -0.0654     2.32         1        0        0         0      source initStep
+    1   -0.996  -0.0866     2.41         1        0    0.132     0.132       world Transportation
+    2    -48.8      -11       50         1        0     68.4      68.5  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.493  -0.0476   -0.862         1        0        0         0      source initStep
-    1   -0.577   -0.816    -1.99         1        0     1.74      1.74       world Transportation
-    2    -46.1    -33.5      -50         1        0     73.8      75.5  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.108   -0.165    -1.01         1        0        0         0      source initStep
-    1    0.794   -0.608   -0.927         1        0    0.821     0.821       world Transportation
-    2       11    -7.19    0.363         1        0     12.2        13   container Transportation
-    3     16.9      -11     1.11         1        0     7.07      20.1       world Transportation
-    4       50    -32.3     5.29         1        0     39.6      59.7  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.367    0.876   -0.235         1        0        0         0      source initStep
-    1   -0.632   -0.775   -0.712         1        0     1.74      1.74       world Transportation
-    2    -8.56      -50      -15         1        0     51.9      53.6  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.214   -0.372    -2.46         1        0        0         0      source initStep
-    1   -0.255   -0.364     -2.5         1        0   0.0553    0.0553       world Transportation
-    2      -50     8.65    -46.6         1        0     67.1      67.1  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.138  -0.0525    -1.24         1        0        0         0      source initStep
-    1     0.88   -0.476   -0.839         1        0    0.945     0.945       world Transportation
-    2       11    -6.25     4.67         1        0     12.9      13.8   container Transportation
-    3     19.3      -11      9.2         1        0     10.6      24.4       world Transportation
-    4       50    -28.5     25.9         1        0       39      63.5  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.216   -0.602     2.28         1        0        0         0      source initStep
-    1    0.474    0.881     1.95         1        0     1.54      1.54       world Transportation
-    2     9.02       50    -9.28         1        0     51.1      52.6  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.633    0.603    0.199         1        0        0         0      source initStep
-    1    0.683     0.73    0.212         1        0    0.137     0.137       world Transportation
-    2     20.2       50     5.41         1        0     53.2      53.4  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.302    0.223    -1.55         1        0        0         0      source initStep
-    1    0.385    0.923    -1.02         1        0     1.12      1.12       world Transportation
-    2     48.6       50     36.2         1        0     78.2      79.3  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.201   -0.419      1.8         1        0        0         0      source initStep
-    1   0.0177       -1     1.18         1        0    0.868     0.868       world Transportation
-    2    -15.2    -49.1      -50         1        0     71.9      72.7  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.033  -0.0431    -1.55         1        0        0         0      source initStep
-    1   -0.126   -0.992     2.22         1        0     3.89      3.89       world Transportation
-    2    -2.14      -13       50         1        0     49.3      53.2  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.832    0.475   -0.225         1        0        0         0      source initStep
-    1   -0.999   0.0383    0.176         1        0    0.617     0.617       world Transportation
-    2    -20.2      -50     46.1         1        0     70.6      71.2  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   0.0716    0.824     1.11         1        0        0         0      source initStep
-    1  -0.0103        1        1         1        0    0.221     0.221       world Transportation
-    2    -22.8       50    -28.8         1        0     61.8        62  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.626    0.444     -1.7         1        0        0         0      source initStep
-    1   0.0387    0.999    -2.32         1        0     1.06      1.06       world Transportation
-    2       50     42.7    -48.6         1        0     79.8      80.9  OutOfWorld Transportation
+    0    0.796    0.124   -0.125         1        0        0         0      source initStep
+    1    0.914    0.405   -0.212         1        0    0.317     0.317       world Transportation
+    2     21.7       50    -15.5         1        0     55.9      56.2  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
@@ -7077,251 +7056,314 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
     4    -0.96    0.125   -0.706     0.257   0.0112   0.0386     0.144      source msc
     5   -0.981    0.115   -0.733     0.247  0.00957   0.0361      0.18      source msc
     6   -0.994    0.107   -0.749      0.24  0.00733   0.0226     0.203       world Transportation
-    7    -11.3    -5.51    -21.1     0.231  0.00519     23.7      23.9       world eIoni
-    8    -14.6    -9.52    -31.6     0.226  0.00348     11.8      35.7       world eIoni
-    9    -21.2    -21.4      -50      0.22  0.00552     23.4      59.1  OutOfWorld Transportation
+    7    -10.2    -4.72    -18.7     0.232  0.00446     20.9      21.1       world eIoni
+    8    -13.3    -8.15    -27.9     0.227  0.00323     10.3      31.5       world eIoni
+    9    -19.8      -19    -49.1     0.221   0.0058     25.2      56.7       world eIoni
+   10      -20    -19.5      -50     0.221 7.84e-05     1.05      57.7  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -14.6    -9.52    -31.6   0.00241        0        0         0       world initStep
-    1    -14.5    -9.46    -31.6         0  0.00241    0.218     0.218       world eIoni
+    0    -13.3    -8.15    -27.9   0.00241        0        0         0       world initStep
+    1    -13.2    -8.09    -27.9         0  0.00241    0.218     0.218       world eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -11.3    -5.51    -21.1   0.00335        0        0         0       world initStep
-    1    -11.4    -5.43    -21.1         0  0.00335    0.381     0.381       world eIoni
+    0    -10.2    -4.72    -18.7   0.00335        0        0         0       world initStep
+    1    -10.4    -4.65    -18.7         0  0.00335    0.381     0.381       world eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.735   -0.418     1.86         1        0        0         0      source initStep
-    1   -0.833   -0.554     1.81         1        0    0.174     0.174       world Transportation
-    2    -36.4      -50    -15.9         1        0     63.4      63.6  OutOfWorld Transportation
+    0   -0.409    0.689     1.39         1        0        0         0      source initStep
+    1   -0.453    0.892     1.33         1        0    0.214     0.214       world Transportation
+    2      -11       50    -11.8         1        0     51.9      52.1  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.227   -0.409     1.72         1        0        0         0      source initStep
-    1   -0.945    0.326     2.41         1        0     1.24      1.24       world Transportation
-    2    -49.5       50     48.7         1        0     83.5      84.7  OutOfWorld Transportation
+    0    0.917     0.19    -1.72         1        0        0         0      source initStep
+    1    0.985    0.173    -1.71         1        0     0.07      0.07       world Transportation
+    2       11    -2.27   -0.978         1        0     10.3      10.4   container Transportation
+    3     12.3     -2.6   -0.879         1        0     1.39      11.8    detector Transportation
+    4     29.4    -6.75    0.371         1        0     17.6      29.4   container Transportation
+    5       33    -7.63    0.636         1        0     3.74      33.1       world Transportation
+    6       50    -11.8     1.88         1        0     17.5      50.6  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.644    0.688     2.02         1        0        0         0      source initStep
-    1     0.69    0.724     2.07         1        0   0.0749    0.0749       world Transportation
-    2     47.3     36.7       50         1        0     75.9        76  OutOfWorld Transportation
+    0   -0.699    -0.54   -0.187         1        0        0         0      source initStep
+    1    0.999  -0.0459     2.39         1        0     3.13      3.13       world Transportation
+    2     32.3     9.08       50         1        0     57.7      60.8  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -0.54  -0.0747     2.06         1        0        0         0      source initStep
-    1    0.261    0.965   -0.816         1        0     3.16      3.16       world Transportation
-    2       14     18.7      -50         1        0     54.1      57.2  OutOfWorld Transportation
+    0   0.0614     0.67     1.95         1        0        0         0      source initStep
+    1    -0.52   -0.854    0.575         1        0     2.13      2.13       world Transportation
+    2    -19.2      -50    -43.6         1        0     68.7      70.8  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.643    0.384    0.314         1        0        0         0      source initStep
-    1   -0.653    0.758    0.272         1        0    0.376     0.376       world Transportation
-    2    -1.91       50    -5.38         1        0     49.6        50  OutOfWorld Transportation
+    0    0.236    0.655     2.41         1        0        0         0      source initStep
+    1   -0.217    0.976    -2.22         1        0     4.66      4.66       world Transportation
+    2     -4.9     4.29      -50         1        0     48.1      52.8  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.777    0.233     1.87         1        0        0         0      source initStep
-    1   0.0856   -0.996   -0.376         1        0     2.65      2.65       world Transportation
-    2    -15.2    -28.2      -50         1        0     58.6      61.3  OutOfWorld Transportation
+    0    0.337   -0.323    -1.56         1        0        0         0      source initStep
+    1    0.224   -0.974    -1.22         1        0    0.741     0.741       world Transportation
+    2    -8.25      -50     24.1         1        0     55.8      56.5  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.236   -0.477    0.146         1        0        0         0      source initStep
-    1      0.2     0.98   -0.752         1        0     1.71      1.71       world Transportation
-    2    -1.03       50      -31         1        0     57.6      59.3  OutOfWorld Transportation
+    0   -0.492   -0.628    -1.36         1        0        0         0      source initStep
+    1   -0.528   -0.849    -1.15         1        0    0.305     0.305       world Transportation
+    2    -8.62      -50       45         1        0     67.9      68.2  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.187    0.913     1.09         1        0        0         0      source initStep
-    1    0.295    0.956     1.03         1        0    0.129     0.129       world Transportation
-    2       11      5.2    -4.67         1        0     12.8        13   container Transportation
-    3     14.1     6.43    -6.32     0.431        0     3.73      16.7   container compt
-    4     15.9       11    -3.61     0.431        0     5.61      22.3       world Transportation
-    5     31.5       50     19.5     0.431        0     47.9      70.2  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     14.1     6.43    -6.32     0.569        0        0         0   container initStep
-    1     14.2     6.46    -6.38     0.527   0.0419    0.118     0.118   container msc
-    2     14.2     6.53    -6.34       0.5   0.0269   0.0812       0.2   container msc
-    3     14.2     6.61    -6.29     0.359    0.141    0.102     0.302   container msc
-    4     14.2      6.7    -6.19     0.298    0.061    0.155     0.457   container msc
-    5     14.2     6.64    -6.06         0    0.298      0.4     0.857   container eIoni
+    0    -0.88   -0.344     2.19         1        0        0         0      source initStep
+    1   -0.693   -0.194      2.5         1        0    0.388     0.388       world Transportation
+    2     28.4     23.1       50         1        0     60.4      60.7  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.516   0.0213   -0.242         1        0        0         0      source initStep
-    1    0.387    0.922    -1.58         1        0     1.62      1.62       world Transportation
-    2    -4.28     33.5      -50         1        0     58.6      60.2  OutOfWorld Transportation
+    0  0.00618   -0.235    -1.21         1        0        0         0      source initStep
+    1  -0.0953   -0.995    -1.38         1        0    0.786     0.786       world Transportation
+    2    -6.64      -50    -12.4         1        0     50.7      51.4  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.472   -0.212   -0.602         1        0        0         0      source initStep
-    1  -0.0269    0.244     -2.5         1        0        2         2       world Transportation
-    2     11.1     11.7      -50         1        0     50.1      52.1  OutOfWorld Transportation
+    0   -0.414   -0.631    -1.41         1        0        0         0      source initStep
+    1   -0.993   -0.116    -1.13         1        0    0.825     0.825       world Transportation
+    2      -50     43.4     22.6         1        0     69.7      70.5  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.268   -0.936     1.89         1        0        0         0      source initStep
-    1    -0.38   -0.925    -1.88         1        0     3.77      3.77       world Transportation
-    2    -1.81    -0.79      -50         1        0     48.1      51.9  OutOfWorld Transportation
+    0    0.418    0.778    0.359         1        0        0         0      source initStep
+    1   -0.391     0.92    -0.76         1        0     1.39      1.39       world Transportation
+    2      -36     7.18      -50         1        0     61.1      62.5  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   0.0557    -0.77     1.32         1        0        0         0      source initStep
-    1    -0.68   -0.733     1.33         1        0    0.737     0.737       world Transportation
-    2      -50     1.76     2.07         1        0     49.4      50.1  OutOfWorld Transportation
+    0    0.235   -0.854     -1.1         1        0        0         0      source initStep
+    1   -0.327   -0.945   -0.204         1        0     1.06      1.06       world Transportation
+    2    -31.9    -6.03       50         1        0     59.5      60.6  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.447   -0.617     1.89         1        0        0         0      source initStep
-    1    0.297   -0.565      2.5         1        0    0.961     0.961       world Transportation
-    2       50     2.92     43.1         1        0     64.2      65.2  OutOfWorld Transportation
+    0   -0.223    0.679    -0.64         1        0        0         0      source initStep
+    1     0.37    0.929  -0.0871         1        0    0.848     0.848       world Transportation
+    2       11      5.4     9.82         1        0     15.2      16.1   container Transportation
+    3     12.3     5.93       11         1        0      1.8      17.9       world Transportation
+    4       50     21.8     46.2         1        0       54      71.8  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.376   -0.922     1.26         1        0        0         0      source initStep
-    1    0.517   -0.856     1.31         1        0    0.164     0.164       world Transportation
-    2       11     4.03     5.14         1        0     12.2      12.3   container Transportation
-    3     13.4     5.16     6.02         1        0     2.83      15.2    detector Transportation
-    4     23.6     9.88     9.72         1        0     11.8      26.9   container Transportation
-    5       26       11     10.6         1        0      2.8      29.7       world Transportation
-    6       50     22.2     19.4         1        0     27.9      57.7  OutOfWorld Transportation
+    0   -0.659   -0.221   -0.195         1        0        0         0      source initStep
+    1    -0.99   -0.139    0.118         1        0    0.464     0.464       world Transportation
+    2      -50     12.1     46.4         1        0     68.5        69  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   0.0203   -0.122    0.399         1        0        0         0      source initStep
-    1   -0.807    -0.59     1.52         1        0     1.47      1.47       world Transportation
-    2    -36.6    -20.9       50         1        0     63.6      65.1  OutOfWorld Transportation
+    0   -0.612    0.539   -0.438         1        0        0         0      source initStep
+    1    0.332   -0.943   -0.661         1        0     1.77      1.77       world Transportation
+    2     31.6      -50    -8.04         1        0     58.6      60.4  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.234    0.735     1.54         1        0        0         0      source initStep
-    1   -0.299    0.473      2.5         1        0    0.993     0.993       world Transportation
-    2    -3.55    -12.6       50         1        0     49.4      50.4  OutOfWorld Transportation
+    0   -0.466   -0.351   -0.436         1        0        0         0      source initStep
+    1   -0.849    0.528     2.49         1        0     3.08      3.08       world Transportation
+    2    -7.07     14.8       50         1        0       50      53.1  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.382   -0.838     1.34         1        0        0         0      source initStep
-    1   -0.501    0.866     2.08         1        0     1.86      1.86       world Transportation
-    2    -3.92       50     23.6         1        0     53.8      55.6  OutOfWorld Transportation
+    0    0.505   -0.698   -0.297         1        0        0         0      source initStep
+    1    0.148    0.989    0.218         1        0      1.8       1.8       world Transportation
+    2    -10.2       50     15.2         1        0     52.3      54.1  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.957   0.0864     1.67         1        0        0         0      source initStep
-    1        1   0.0139     1.77         1        0    0.134     0.134       world Transportation
-    2     20.5    -33.3       50         1        0     61.8      61.9  OutOfWorld Transportation
+    0  -0.0967   -0.827    -1.14         1        0        0         0      source initStep
+    1    0.413   -0.911    -1.84         1        0    0.874     0.874       world Transportation
+    2     35.3    -6.63      -50         1        0     59.7      60.6  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   0.0439    0.863    0.451         1        0        0         0      source initStep
-    1   -0.502    0.865   -0.152         1        0    0.813     0.813       world Transportation
-    2    -45.6     1.02      -50         1        0     67.2      68.1  OutOfWorld Transportation
+    0   -0.241   -0.948    -1.87         1        0        0         0      source initStep
+    1   -0.248   -0.969    -1.84         1        0   0.0341    0.0341       world Transportation
+    2    -15.1      -42       50         1        0     67.8      67.8  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   0.0324    0.161    -2.36         1        0        0         0      source initStep
-    1    0.135   0.0709     -2.5         1        0    0.195     0.195       world Transportation
-    2     34.7    -30.3      -50         1        0     66.1      66.3  OutOfWorld Transportation
+    0    -0.03   -0.387    -1.84         1        0        0         0      source initStep
+    1    0.282   -0.959    -1.45         1        0     0.76      0.76       world Transportation
+    2       27      -50       32         1        0     65.1      65.8  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.372    0.906    -1.91         1        0        0         0      source initStep
-    1    0.031    0.847     -2.5         1        0    0.686     0.686       world Transportation
-    2    -27.3    -3.83      -50         1        0       55      55.7  OutOfWorld Transportation
+    0  -0.0161    0.262    -1.33         1        0        0         0      source initStep
+    1    -0.97    0.244    -1.66         1        0     1.01      1.01       world Transportation
+    2      -50   -0.677    -18.5         1        0     51.9      52.9  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   0.0387   -0.283    0.823         1        0        0         0      source initStep
-    1    0.441   0.0499      2.5         1        0     1.76      1.76       world Transportation
-    2     11.8     9.47       50         1        0     49.8      51.5  OutOfWorld Transportation
+    0   -0.641    0.116     1.91         1        0        0         0      source initStep
+    1    0.843    0.538    0.677         1        0     1.98      1.98       world Transportation
+    2       11     3.42    -7.78         1        0     13.5      15.5   container Transportation
+    3     12.8     3.94    -9.29         1        0     2.41      17.9    detector Transportation
+    4     13.7     4.18      -10         1        0     1.14      19.1   container Transportation
+    5     14.9     4.52      -11         1        0      1.6      20.7       world Transportation
+    6       50     14.5    -40.3         1        0     46.8      67.5  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.676    0.371    -1.41         1        0        0         0      source initStep
-    1   -0.971    0.241    -1.28         1        0    0.346     0.346       world Transportation
-    2      -50    -21.4     19.8         1        0     57.6      57.9  OutOfWorld Transportation
+    0    0.282   0.0203   -0.305         1        0        0         0      source initStep
+    1    0.858   -0.513   -0.178         1        0    0.795     0.795       world Transportation
+    2       11     -9.9     2.06         1        0       14      14.8   container Transportation
+    3     12.2      -11     2.32         1        0     1.64      16.4       world Transportation
+    4       50      -46     10.6         1        0     52.2      68.6  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    0.147   -0.234     1.84         1        0        0         0      source initStep
+    1    0.944   -0.329     2.47         1        0     1.02      1.02       world Transportation
+    2       11    -1.53     10.4         1        0     12.9      13.9   container Transportation
+    3     11.7    -1.62       11         1        0    0.923      14.8       world Transportation
+    4       50     -6.2     41.3         1        0       49      63.9  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0   -0.241   -0.382     -2.1         1        0        0         0      source initStep
+    1   -0.412   -0.911    -1.74         1        0    0.658     0.658       world Transportation
+    2    -16.2      -50     30.8         1        0       61      61.7  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0   0.0864    0.666     1.95         1        0        0         0      source initStep
+    1   -0.102    0.995     2.29         1        0    0.509     0.509       world Transportation
+    2    -26.5       47       50         1        0     71.3      71.8  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    0.863     0.18    -1.85         1        0        0         0      source initStep
+    1    0.265   -0.964    -1.85         1        0     1.29      1.29       world Transportation
+    2    -25.3      -50    -1.91         1        0     55.3      56.6  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    0.161   -0.944     -1.8         1        0        0         0      source initStep
+    1    0.157   -0.988    -1.74         1        0   0.0688    0.0688       world Transportation
+    2    -3.32    -43.6       50         1        0     67.1      67.2  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0   -0.863   0.0539     -1.8         1        0        0         0      source initStep
+    1    0.827   -0.563    -2.12         1        0     1.83      1.83       world Transportation
+    2       11    -4.28    -3.99         1        0       11      12.8   container Transportation
+    3     13.4    -5.16    -4.44         1        0     2.63      15.4    detector Transportation
+    4     25.2    -9.47    -6.61         1        0     12.7      28.2   container Transportation
+    5     29.4      -11    -7.39         1        0     4.54      32.7       world Transportation
+    6       50    -18.5    -11.2         1        0     22.2      54.9  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0   -0.129    0.802     -1.7         1        0        0         0      source initStep
+    1 -0.00638        1    -1.79         1        0    0.248     0.248       world Transportation
+    2     30.3       50      -23         1        0     61.4      61.6  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
@@ -9031,164 +9073,121 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
     1     17.1       11      1.8     0.686   0.0264   0.0806    0.0806   container msc
     2     17.1       11     1.82      0.67   0.0162   0.0547     0.135   container msc
     3     17.1       11     1.82     0.669 0.000821   0.0018     0.137       world Transportation
-    4       50     45.5     13.3     0.665  0.00453     49.5      49.6  OutOfWorld Transportation
+    4     49.1     44.5     13.8     0.651  0.00442     48.2      48.4       world eIoni
+    5       50     45.7     14.3     0.651 0.000389     1.56      49.9  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     49.1     44.5     13.8    0.0135        0        0         0       world initStep
+    1     49.6     44.3     13.8    0.0116  0.00185    0.514     0.514       world msc
+    2     49.8     44.3     13.8    0.0112 0.000393    0.294     0.808       world msc
+    3       50     44.2     13.9    0.0109  0.00032    0.164     0.971  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.274    0.511    -2.15         1        0        0         0      source initStep
-    1    0.378    0.208     -2.5         1        0    0.477     0.477       world Transportation
-    2     14.3    -40.5      -50         1        0     64.1      64.6  OutOfWorld Transportation
+    0   -0.246   -0.165     2.22         1        0        0         0      source initStep
+    1   -0.474   -0.256      2.5         1        0    0.374     0.374       world Transportation
+    2    -39.2    -15.7       50         1        0     63.2      63.6  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.201     0.52    -1.21         1        0        0         0      source initStep
-    1     0.65     0.76    -1.08         1        0    0.526     0.526       world Transportation
-    2       11     6.29     1.97         1        0     12.1      12.6   container Transportation
-    3     13.9     7.84     2.83     0.357        0     3.41      16.1   container compt
-    4     13.1       11     1.02     0.357        0     3.73      19.8       world Transportation
-    5     3.03       50    -21.2     0.357        0       46      65.8  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     13.9     7.84     2.83     0.643        0        0         0   container initStep
-    1     14.3     7.91     3.01         0    0.643     1.18      1.18   container eIoni
+    0   0.0364   -0.762     1.07         1        0        0         0      source initStep
+    1    -0.15    0.989    -1.04         1        0     2.75      2.75       world Transportation
+    2    -4.46     41.6      -50         1        0     63.7      66.5  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0 -0.00572    0.349     0.74         1        0        0         0      source initStep
-    1   -0.742    -0.67    0.389         1        0     1.31      1.31       world Transportation
-    2    -36.4      -50    -16.6         1        0     63.2      64.5  OutOfWorld Transportation
+    0   -0.666   -0.252     1.82         1        0        0         0      source initStep
+    1    0.624   -0.356      2.5         1        0     1.46      1.46       world Transportation
+    2       11    -1.19     7.97         1        0     11.8      13.2   container Transportation
+    3     12.1    -1.28     8.54         1        0     1.23      14.4    detector Transportation
+    4     14.9     -1.5       10         1        0     3.15      17.6   container Transportation
+    5     16.8    -1.65       11         1        0     2.15      19.7       world Transportation
+    6       50    -4.33     28.5         1        0     37.7      57.4  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.186   -0.916   -0.559         1        0        0         0      source initStep
-    1   -0.233   -0.972   -0.589         1        0   0.0797    0.0797       world Transportation
-    2    -41.6      -50    -27.1         1        0     69.4      69.5  OutOfWorld Transportation
+    0     0.68   -0.615   -0.427         1        0        0         0      source initStep
+    1    0.703   -0.711   -0.535         1        0    0.146     0.146       world Transportation
+    2     11.2    -44.8      -50         1        0     67.1      67.2  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.549   -0.235    -2.17         1        0        0         0      source initStep
-    1   -0.156    0.988    -1.25         1        0     1.58      1.58       world Transportation
-    2     15.6       50     35.6         1        0     63.3      64.9  OutOfWorld Transportation
+    0   -0.808   -0.139    0.672         1        0        0         0      source initStep
+    1    -0.99   -0.143    0.839         1        0    0.247     0.247       world Transportation
+    2      -50     -1.3     45.9         1        0     66.6      66.9  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.121    0.454    0.976         1        0        0         0      source initStep
-    1    0.987   -0.158    0.598         1        0     1.13      1.13       world Transportation
-    2       11    -7.23    -3.78         1        0       13      14.1   container Transportation
-    3     16.3      -11     -6.1         1        0     6.93      21.1       world Transportation
-    4       50    -34.8    -20.8         1        0     43.8      64.8  OutOfWorld Transportation
+    0   0.0386   -0.441    0.932         1        0        0         0      source initStep
+    1   -0.756   -0.655    0.213         1        0     1.09      1.09       world Transportation
+    2      -50    -13.9    -44.4         1        0     67.7      68.8  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     0.43   -0.768    -1.17         1        0        0         0      source initStep
-    1   -0.936   -0.351   -0.569         1        0     1.55      1.55       world Transportation
-    2      -50     14.6     20.9         1        0     55.6      57.2  OutOfWorld Transportation
+    0   -0.796    0.343     2.42         1        0        0         0      source initStep
+    1   -0.916    0.401     2.41         1        0    0.134     0.134       world Transportation
+    2      -50     24.5    -1.12         1        0     54.8      54.9  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.728    0.465     2.44         1        0        0         0      source initStep
-    1    0.637    0.667      2.5         1        0    0.231     0.231       world Transportation
-    2    -21.6       50     18.1         1        0     56.3      56.5  OutOfWorld Transportation
+    0   -0.349    0.531    -1.38         1        0        0         0      source initStep
+    1   -0.316   -0.949    0.506         1        0      2.4       2.4       world Transportation
+    2    0.551    -39.8       50         1        0     62.9      65.3  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.171   -0.738     1.44         1        0        0         0      source initStep
-    1    0.997   0.0828    -2.03         1        0     3.75      3.75       world Transportation
-    2     17.1     11.4      -50         1        0     51.9      55.6  OutOfWorld Transportation
+    0   -0.646   -0.689     2.42         1        0        0         0      source initStep
+    1   -0.727   -0.687     2.38         1        0   0.0902    0.0902       world Transportation
+    2      -50    0.768    -22.6         1        0     55.2      55.3  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.269    0.677   0.0188         1        0        0         0      source initStep
-    1   -0.622    0.783    -1.46         1        0     1.73      1.73       world Transportation
-    2    -29.9     4.29      -50         1        0     56.8      58.5  OutOfWorld Transportation
+    0    0.662    0.367     2.09         1        0        0         0      source initStep
+    1    0.149    0.989     1.88         1        0    0.834     0.834       world Transportation
+    2    -40.3       50    -15.2         1        0     65.8      66.6  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.373   -0.658    0.209         1        0        0         0      source initStep
-    1    0.211   -0.978     0.15         1        0    0.363     0.363       world Transportation
-    2    -24.6      -50    -8.88         1        0     55.7      56.1  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.966  -0.0644   -0.363         1        0        0         0      source initStep
-    1        1  -0.0145   -0.378         1        0    0.062     0.062       world Transportation
-    2     34.8       50    -15.5         1        0     62.2      62.3  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.551    0.786     1.27         1        0        0         0      source initStep
-    1    0.551   -0.835   -0.389         1        0     2.57      2.57       world Transportation
-    2     33.6    -49.4      -50         1        0     76.9      79.4  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0  -0.0094    0.348     2.05         1        0        0         0      source initStep
-    1   0.0519    -0.69      2.5         1        0     1.13      1.13       world Transportation
-    2     2.97      -50     24.1         1        0     53.9        55  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.837    -0.26   -0.701         1        0        0         0      source initStep
-    1   -0.232   -0.973    0.225         1        0     1.58      1.58       world Transportation
-    2      -50    -34.2     43.3         1        0     73.7      75.3  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.147    0.585     1.09         1        0        0         0      source initStep
-    1   -0.593    0.805     1.31         1        0    0.803     0.803       world Transportation
-    2      -50     15.5     16.1         1        0     53.6      54.4  OutOfWorld Transportation
+    0   0.0668    0.162    0.368         1        0        0         0      source initStep
+    1   -0.173   -0.985     1.21         1        0     1.44      1.44       world Transportation
+    2    -10.4      -50     37.3         1        0     61.7      63.2  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
@@ -10023,16 +10022,16 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
     0    0.285    0.937    -1.93     0.757        0        0         0      source initStep
     1    0.286    0.958    -1.85     0.749  0.00816   0.0849    0.0849       world Transportation
-    2    -3.05     13.4     36.6      0.74  0.00738     40.6      40.7       world eIoni
-    3    -6.15     19.1       50     0.738  0.00147       15      55.7  OutOfWorld Transportation
+    2    -2.79     12.7     34.5      0.74  0.00709     38.4      38.5       world eIoni
+    3    -6.24     19.3       50     0.738  0.00186     17.2      55.7  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -3.05     13.4     36.6   0.00146        0        0         0       world initStep
-    1    -3.06     13.4     36.6         0  0.00146   0.0995    0.0995       world eIoni
+    0    -2.79     12.7     34.5   0.00146        0        0         0       world initStep
+    1    -2.79     12.8     34.5         0  0.00146   0.0995    0.0995       world eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
@@ -10294,10 +10293,18 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
     0   -0.876    0.073     1.62         1        0        0         0      source initStep
     1    0.791   -0.612     -1.7         1        0     3.78      3.78       world Transportation
     2       25    -10.6      -50         1        0     54.9      58.7  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    0.677    -0.17    -1.42         1        0        0         0      source initStep
+    1    0.911   -0.413     -1.2         1        0    0.406     0.406       world Transportation
+    2       11    -10.9     8.58         1        0     17.6        18   container Transportation
+    3     11.1      -11     8.64         1        0   0.0995      18.1       world Transportation
+    4     48.4      -50     44.9         1        0       65      83.1  OutOfWorld Transportation
  Run terminated.
 Run Summary
   Number of events processed : 1000
-  User=0.060000s Real=0.107444s Sys=0.040000s
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+  User=0.020000s Real=0.080661s Sys=0.030000s

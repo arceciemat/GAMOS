@@ -3,7 +3,7 @@ Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
 Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
 
 **************************************************************
- Geant4 version Name: geant4-11-00-patch-03    (16-September-2022)
+ Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -24,6 +24,8 @@ Registered graphics systems are:
   RayTracer (RayTracer)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
   OpenGLStoredX (OGLSX, OGL, OGLS)
 
@@ -257,8 +259,10 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -274,7 +278,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -284,8 +288,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -341,8 +346,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -351,10 +356,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -371,10 +376,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -482,60 +487,60 @@ See commands in /vis/modeling/trajectories/ for other options.
  CreateHisto1D RecHits: SD Scatterer: N sim hits = 202206
  CreateHisto1D RecHits: SD Scatterer: Time span (ns) = 202207
  CreateHisto1D RecHits: SD Scatterer: Distance between hits (mm) = 202208
- CreateHisto1D DetCountScatteringUA: E lost in interaction = 1936269428
+ CreateHisto1D DetCountScatteringUA: E lost in interaction = 112000001
  Run terminated.
 Run Summary
   Number of events processed : 100000
-  User=11.090000s Real=11.148031s Sys=0.000000s
+  User=1.030000s Real=1.026173s Sys=0.000000s
 @@@@ GmCountProcessesUA
- PART_COUNT: e- = 35373
- PART_COUNT: gamma = 103659
- PROC_COUNT e- : Transportation = 116
- PROC_COUNT e- : eBrem = 75
- PROC_COUNT e- : eBrem_NoSeco = 9
- PROC_COUNT e- : eIoni = 661
- PROC_COUNT e- : eIoni_NoSeco = 36688
- PROC_COUNT e- : msc = 1442
- PROC_COUNT e- : ALL = 38991
- PROC_COUNT gamma : Rayl = 1149
- PROC_COUNT gamma : Transportation = 388876
- PROC_COUNT gamma : compt = 27696
- PROC_COUNT gamma : phot = 7113
-PROC_COUNT gamma : ALL = 424834
-PROC_CREATOR_COUNT e- : compt = 27599
-PROC_CREATOR_COUNT e- : eIoni = 661
-PROC_CREATOR_COUNT e- : phot = 7113
+ PART_COUNT: e- = 35392
+ PART_COUNT: gamma = 103631
+ PROC_COUNT e- : Transportation = 113
+ PROC_COUNT e- : eBrem = 78
+ PROC_COUNT e- : eBrem_NoSeco = 10
+ PROC_COUNT e- : eIoni = 720
+ PROC_COUNT e- : eIoni_NoSeco = 36675
+ PROC_COUNT e- : msc = 1349
+ PROC_COUNT e- : ALL = 38945
+ PROC_COUNT gamma : Rayl = 1204
+ PROC_COUNT gamma : Transportation = 389058
+ PROC_COUNT gamma : compt = 27722
+ PROC_COUNT gamma : phot = 7047
+PROC_COUNT gamma : ALL = 425031
+PROC_CREATOR_COUNT e- : compt = 27625
+PROC_CREATOR_COUNT e- : eIoni = 720
+PROC_CREATOR_COUNT e- : phot = 7047
 PROC_CREATOR_COUNT gamma : Primary = 100000
-PROC_CREATOR_COUNT gamma : eBrem = 75
-PROC_CREATOR_COUNT gamma : phot = 3584
+PROC_CREATOR_COUNT gamma : eBrem = 78
+PROC_CREATOR_COUNT gamma : phot = 3553
 
  $$$$$$$$$$ Classification of Gamma Interactions in SD $$$$$$$$ 
  $$GSD: n Events      : 100000
- $$GSD: n gamma in SD : 8467 : 4.2335 % 
- $$GSD:  n PE         : 3272 : 38.6441 % 
- $$GSD:    PE 0 COMP    : 2313 : 70.6907 % 
- $$GSD:    PE 1 COMP    : 730 : 22.3105 % 
- $$GSD:    PE 2 COMP    : 158 : 4.82885 % 
- $$GSD:    PE >2 COMP   : 53 : 1.6198 % 
- $$GSD: No PE 0 COMP    : 3626 : 69.7979 % 
- $$GSD: No PE 1 COMP    : 1187 : 22.8489 % 
- $$GSD: No PE 2 COMP    : 308 : 5.92878 % 
- $$GSD: No PE >2 COMP   : 74 : 1.42445 % 
- $$GSD:  n COMP       : 2510 : 29.6445 % 
- $$GSD:    1 COMP       : 1917 : 76.3745 % 
- $$GSD:    2 COMP       : 466 : 18.5657 % 
- $$GSD:    >2 COMP      : 127 : 5.05976 % 
- $$GSD: nCOMP/gamma     : 0.387741
- $$GSD: n RAYL        : 426 : 5.0313 % 
+ $$GSD: n gamma in SD : 8459 : 4.2295 % 
+ $$GSD:  n PE         : 3236 : 38.2551 % 
+ $$GSD:    PE 0 COMP    : 2282 : 70.5192 % 
+ $$GSD:    PE 1 COMP    : 721 : 22.2806 % 
+ $$GSD:    PE 2 COMP    : 155 : 4.78986 % 
+ $$GSD:    PE >2 COMP   : 54 : 1.66873 % 
+ $$GSD: No PE 0 COMP    : 3639 : 69.6726 % 
+ $$GSD: No PE 1 COMP    : 1203 : 23.0327 % 
+ $$GSD: No PE 2 COMP    : 306 : 5.8587 % 
+ $$GSD: No PE >2 COMP   : 75 : 1.43596 % 
+ $$GSD:  n COMP       : 2514 : 29.7198 % 
+ $$GSD:    1 COMP       : 1924 : 76.5314 % 
+ $$GSD:    2 COMP       : 461 : 18.3373 % 
+ $$GSD:    >2 COMP      : 129 : 5.13126 % 
+ $$GSD: nCOMP/gamma     : 0.388462
+ $$GSD: n RAYL        : 448 : 5.29613 % 
  $$GSD: n CONV        : 0 : 0 % 
- $$GSD:  0 Gamma in event : 91533 : 91.533 % 
- $$GSD:  1 Gamma in event : 8467 : 8.467 % 
+ $$GSD:  0 Gamma in event : 91541 : 91.541 % 
+ $$GSD:  1 Gamma in event : 8459 : 8.459 % 
  $$GSD:  2 Gamma in event : 0 : 0 % 
  ---------------------------------------------------------
  
  --------------- True Compton imaging events -------------
-$$CC  ALL GOOD                           :  4835   4.835 % 
-(   0) $$CC Not coincident events        :  4835  4.835 % 
+$$CC  ALL GOOD                           :  4813   4.813 % 
+(   0) $$CC Not coincident events        :  4813  4.813 % 
 (   1) $$CC Coincident events            :  0   0 % 
 (   2) $$CC Fully absorbed coinc. event  :  0   0 % 
 (   3) $$CC Single Single events         :  0   0 % 
@@ -564,11 +569,9 @@ $$CC  ALL COINC. AND SCATTERED           :  0   0 %
 (1102) $$CC Fully absorbed coinc. event  :  0   0 % 
 (1103) $$CC Single Single events         :  0   0 % 
 (1110) $$CC More than 2 rec. hits found  :  0  0 % 
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
 Graphics systems deleted.
 Visualization Manager deleting...
+ GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 DetCountScatteringUA.exercise3b3:NormalizeToNEvents
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 compcam.exercise3b3:NormalizeToNEvents
 === saving histograms in file === compcam.exercise3b3.csv
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 gammaSD.exercise3b3:NormalizeToNEvents

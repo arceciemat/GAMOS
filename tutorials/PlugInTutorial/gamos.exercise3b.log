@@ -24,8 +24,10 @@
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
-Use general process                                0
+Use combined TransportationWithMsc                 Disabled
+Use general process                                1
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -41,7 +43,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -51,8 +53,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Urban
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -103,8 +106,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -115,10 +118,10 @@ msc:  for e-  SubType= 10
         WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=42 100 MeV - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -143,10 +146,10 @@ msc:  for e+  SubType= 10
         WentzelVIUni : Emin=  100 MeV Emax=  100 TeV Nbins=42 100 MeV - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -173,23 +176,23 @@ msc:  for proton  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for proton  XStype:1  SubType=2
+hIoni:  for proton  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=    2 MeV
           BetheBloch : Emin=    2 MeV Emax=  100 TeV
 
 hBrems:  for proton  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -205,10 +208,10 @@ msc:  for GenericIon  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-ionIoni:  for GenericIon  XStype:1  SubType=2
+ionIoni:  for GenericIon  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.02
       Stopping Power data for 17 ion/material pairs
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             BraggIon : Emin=    0 eV  Emax=    2 MeV
@@ -219,10 +222,10 @@ msc:  for alpha  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-ionIoni:  for alpha  XStype:1  SubType=2
+ionIoni:  for alpha  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.02
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             BraggIon : Emin=    0 eV  Emax=7.9452 MeV
           BetheBloch : Emin=7.9452 MeV Emax=  100 TeV
@@ -232,23 +235,23 @@ msc:  for anti_proton  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for anti_proton  XStype:1  SubType=2
+hIoni:  for anti_proton  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=    2 MeV
           BetheBloch : Emin=    2 MeV Emax=  100 TeV
 
 hBrems:  for anti_proton  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for anti_proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -264,23 +267,23 @@ msc:  for kaon+  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for kaon+  XStype:1  SubType=2
+hIoni:  for kaon+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=1.05231 MeV
           BetheBloch : Emin=1.05231 MeV Emax=  100 TeV
 
 hBrems:  for kaon+  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for kaon+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -296,23 +299,23 @@ msc:  for kaon-  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for kaon-  XStype:1  SubType=2
+hIoni:  for kaon-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV
           BetheBloch : Emin=1.05231 MeV Emax=  100 TeV
 
 hBrems:  for kaon-  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for kaon-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -328,25 +331,24 @@ msc:  for mu+  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-muIoni:  for mu+  XStype:1  SubType=2
+muIoni:  for mu+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=  200 keV
-          BetheBloch : Emin=  200 keV Emax=    1 GeV
-        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+        MuBetheBloch : Emin=  200 keV Emax=  100 TeV
 
 muBrems:  for mu+  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
               MuBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 muPairProd:  for mu+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
-      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -361,25 +363,24 @@ msc:  for mu-  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-muIoni:  for mu-  XStype:1  SubType=2
+muIoni:  for mu-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=  200 keV
-          BetheBloch : Emin=  200 keV Emax=    1 GeV
-        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+        MuBetheBloch : Emin=  200 keV Emax=  100 TeV
 
 muBrems:  for mu-  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
               MuBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 muPairProd:  for mu-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
-      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -394,23 +395,23 @@ msc:  for pi+  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for pi+  XStype:1  SubType=2
+hIoni:  for pi+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=297.505 keV
           BetheBloch : Emin=297.505 keV Emax=  100 TeV
 
 hBrems:  for pi+  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for pi+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -426,23 +427,23 @@ msc:  for pi-  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for pi-  XStype:1  SubType=2
+hIoni:  for pi-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=297.505 keV
           BetheBloch : Emin=297.505 keV Emax=  100 TeV
 
 hBrems:  for pi-  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for pi-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -463,15 +464,18 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:             hElasticCHIPS: 0 eV  ---> 100 TeV
      Cr_sctns:        G4NeutronElasticXS: 0 eV  ---> 100 TeV
 
+
   Process: neutronInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:      G4NeutronInelasticXS: 0 eV  ---> 100 TeV
 
+
   Process: nCapture
         Model:               nRadCapture: 0 eV  ---> 100 TeV
      Cr_sctns:        G4NeutronCaptureXS: 0 eV  ---> 100 TeV
+
 
   Process: nKiller
 
@@ -482,10 +486,12 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
 
+
   Process: B-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 0 eV  ---> 25 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
 
 ---------------------------------------------------
                            Hadronic Processes for D-
@@ -494,10 +500,12 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
 
+
   Process: D-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 0 eV  ---> 25 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
 
 ---------------------------------------------------
                            Hadronic Processes for GenericIon
@@ -507,6 +515,7 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
 
+
 ---------------------------------------------------
                            Hadronic Processes for He3
 
@@ -514,10 +523,12 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
 
+
   Process: He3Inelastic
         Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
 
 ---------------------------------------------------
                            Hadronic Processes for alpha
@@ -526,10 +537,12 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
 
+
   Process: alphaInelastic
         Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
 
 ---------------------------------------------------
                            Hadronic Processes for anti_He3
@@ -539,9 +552,11 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
 
+
   Process: anti_He3Inelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
 
   Process: hFritiofCaptureAtRest
 
@@ -553,9 +568,11 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
 
+
   Process: anti_alphaInelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
 
   Process: hFritiofCaptureAtRest
 
@@ -567,9 +584,16 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
 
+
   Process: anti_deuteronInelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
+
+  Process: hFritiofCaptureAtRest
+
+---------------------------------------------------
+                           Hadronic Processes for anti_hypertriton
 
   Process: hFritiofCaptureAtRest
 
@@ -580,10 +604,12 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
 
+
   Process: anti_lambdaInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 0 eV  ---> 25 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
 
   Process: hFritiofCaptureAtRest
 
@@ -595,9 +621,11 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              AntiAElastic: 100 MeV ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
 
+
   Process: anti_neutronInelastic
         Model:                      FTFP: 0 eV  ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
 
   Process: hFritiofCaptureAtRest
 
@@ -609,9 +637,11 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              AntiAElastic: 100 MeV ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
 
+
   Process: anti_protonInelastic
         Model:                      FTFP: 0 eV  ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
 
   Process: hFritiofCaptureAtRest
 
@@ -623,9 +653,11 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
 
+
   Process: anti_tritonInelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
+
 
   Process: hFritiofCaptureAtRest
 
@@ -636,10 +668,12 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
 
+
   Process: dInelastic
         Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
 
 ---------------------------------------------------
                            Hadronic Processes for e+
@@ -648,12 +682,14 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
 
+
 ---------------------------------------------------
                            Hadronic Processes for e-
 
   Process: electronNuclear
         Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
+
 
 ---------------------------------------------------
                            Hadronic Processes for gamma
@@ -664,6 +700,7 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:           TheoFSGenerator: 3 GeV ---> 100 TeV
      Cr_sctns:            GammaNuclearXS: 0 eV  ---> 100 TeV
 
+
 ---------------------------------------------------
                            Hadronic Processes for kaon+
 
@@ -671,11 +708,13 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
 
+
   Process: kaon+Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
 
 ---------------------------------------------------
                            Hadronic Processes for kaon-
@@ -684,11 +723,13 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
 
+
   Process: kaon-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
 
   Process: hBertiniCaptureAtRest
 
@@ -699,11 +740,13 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
 
+
   Process: lambdaInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
 
 ---------------------------------------------------
                            Hadronic Processes for mu+
@@ -712,12 +755,14 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
 
+
 ---------------------------------------------------
                            Hadronic Processes for mu-
 
   Process: muonNuclear
         Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
+
 
   Process: muMinusCaptureAtRest
 
@@ -728,11 +773,13 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:           hElasticGlauber: 0 eV  ---> 100 TeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
 
+
   Process: pi+Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
 
 ---------------------------------------------------
                            Hadronic Processes for pi-
@@ -741,11 +788,13 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:           hElasticGlauber: 0 eV  ---> 100 TeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
 
+
   Process: pi-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
 
   Process: hBertiniCaptureAtRest
 
@@ -756,11 +805,13 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:             hElasticCHIPS: 0 eV  ---> 100 TeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
 
+
   Process: protonInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
+
 
 ---------------------------------------------------
                            Hadronic Processes for sigma-
@@ -769,11 +820,13 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
 
+
   Process: sigma-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
+
 
   Process: hBertiniCaptureAtRest
 
@@ -784,10 +837,12 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
 
+
   Process: tInelastic
         Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
+
 
 ================================================================
 =======================================================================
@@ -795,18 +850,18 @@ CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
 =======================================================================
 Type of pre-compound inverse x-section              3
 Pre-compound model active                           1
-Pre-compound excitation low energy (MeV)            0.1
-Pre-compound excitation high energy (MeV)           30
+Pre-compound excitation low energy                  100 keV
+Pre-compound excitation high energy                 30 MeV
 Type of de-excitation inverse x-section             3
 Type of de-excitation factory                       Evaporation+GEM
 Number of de-excitation channels                    68
-Min excitation energy (keV)                         0.01
-Min energy per nucleon for multifragmentation (MeV) 2e+05
-Limit excitation energy for Fermi BreakUp (MeV)     20
+Min excitation energy                               10 eV 
+Min energy per nucleon for multifragmentation       200 GeV
+Limit excitation energy for Fermi BreakUp           20 MeV
 Level density (1/MeV)                               0.075
 Use simple level density model                      1
-Use discrete excitation energy of the residual      0
-Time limit for long lived isomeres (ns)             1
+Use discrete excitation energy of the residual      1
+Time limit for long lived isomeres                  1 ns 
 Isomer production flag                              1
 Internal e- conversion flag                         1
 Store e- internal conversion data                   0
@@ -891,437 +946,1108 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       -0    -1.08     9.94        10        0        0         0       world initStep
-    1       25    -1.08     9.94        10        0       25        25     Crystal Transportation
-    2     69.5    -1.08     9.94         0        0     44.5      69.5     Crystal neutronInelastic
+    0       -0    0.882     9.96        10        0        0         0       world initStep
+    1       25    0.882     9.96        10        0       25        25     Crystal Transportation
+    2     35.5    0.882     9.96         0        0     10.5      35.5     Crystal neutronInelastic
 
 *********************************************************************************************************
-* G4Track Information:   Particle = Lu174,   Track ID = 5,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     69.5    -1.08     9.94     0.126        0        0         0     Crystal initStep
-    1     69.5    -1.08     9.94         0    0.126 0.000134  0.000134     Crystal ionIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 1
+* G4Track Information:   Particle = Si28,   Track ID = 6,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     69.5    -1.08     9.94     0.156        0        0         0     Crystal initStep
-    1     68.8    -1.75     9.52         0  0.00924     1.08      1.08     Crystal phot
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 4
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     68.8    -1.75     9.52     0.147        0        0         0     Crystal initStep
-    1     68.8    -1.75     9.52         0    0.147   0.0635    0.0635     Crystal eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = neutron,   Track ID = 3,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     69.5    -1.08     9.94     0.182        0        0         0     Crystal initStep
-    1     69.5    -1.04       10     0.182        0   0.0987    0.0987     Crystal Transportation
-    2       68        0     11.3     0.182        0     2.18      2.28     Crystal Transportation
-    3     66.5     1.13     12.7     0.144        0     2.38      4.66     Crystal hadElastic
-    4     67.7        0     12.6     0.144        0     1.64       6.3     Crystal Transportation
-    5       75    -7.03       12     0.144        0     10.2      16.5       world Transportation
-    6    1e+03     -894    -67.8     0.144        0 1.28e+03   1.3e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = O16,   Track ID = 7,   Parent ID = 3
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     66.5     1.13     12.7    0.0375        0        0         0     Crystal initStep
-    1     66.5     1.13     12.7         0   0.0375 0.000126  0.000126     Crystal ionIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = neutron,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     69.5    -1.08     9.94      1.85        0        0         0     Crystal initStep
-    1     51.2      -10     4.74      1.85        0     21.1      21.1     Crystal Transportation
-    2     34.4    -18.1 -1.05e-05      1.85        0     19.2      40.3     Crystal Transportation
-    3     30.6      -20    -1.09      1.85        0      4.4      44.7       world Transportation
-    4   -1e+03     -521     -293      1.85        0 1.18e+03  1.23e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       -0     9.98    0.696        10        0        0         0       world initStep
-    1       25     9.98    0.696        10        0       25        25     Crystal Transportation
-    2       33     9.98    0.696      8.43        0     8.04        33     Crystal hadElastic
-    3     32.5     8.58    0.956      8.37        0     1.51      34.5     Crystal hadElastic
-    4     31.8     8.08 -1.23e-05      8.37        0     1.33      35.9     Crystal Transportation
-    5       25     3.67    -8.41      8.37        0     11.6      47.5       world Transportation
-    6     -771     -516   -1e+03      8.37        0 1.37e+03  1.42e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = Lu175,   Track ID = 3,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.5     8.58    0.956    0.0561        0        0         0     Crystal initStep
-    1     32.5     8.58    0.956         0   0.0561 8.96e-05  8.96e-05     Crystal ionIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = O16,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       33     9.98    0.696      1.57        0        0         0     Crystal initStep
-    1       33     9.98    0.696         0     1.57 0.000726  0.000726     Crystal ionIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       -0     4.66     8.85        10        0        0         0       world initStep
-    1       25     4.66     8.85        10        0       25        25     Crystal Transportation
-    2       75     4.66     8.85        10        0       50        75       world Transportation
-    3      300     4.66     8.85        10        0      225       300     Tracker Transportation
-    4      700     4.66     8.85        10        0      400       700       world Transportation
-    5    1e+03     4.66     8.85        10        0      300     1e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       -0    0.424     9.99        10        0        0         0       world initStep
-    1       25    0.424     9.99        10        0       25        25     Crystal Transportation
-    2     32.6    0.424     9.99         0        0     7.56      32.6     Crystal neutronInelastic
-
-*********************************************************************************************************
-* G4Track Information:   Particle = O16,   Track ID = 6,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.6    0.424     9.99     0.154        0        0         0     Crystal initStep
-    1     32.6    0.424     9.99         0    0.154 0.000273  0.000273     Crystal ionIoni
+    0     35.5    0.882     9.96      0.27        0        0         0     Crystal initStep
+    1     35.5    0.882     9.96         0     0.27 0.000287  0.000287     Crystal ionIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 5,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.6    0.424     9.99     0.587        0        0         0     Crystal initStep
-    1     32.6    0.441       10     0.587        0   0.0312    0.0312     Crystal Transportation
-    2     43.3     8.22       14     0.465        0     13.9      13.9     Crystal compt
-    3     57.2     6.85       20     0.465        0     15.2      29.1       world Transportation
-    4    1e+03    -86.3      429     0.465        0 1.03e+03  1.06e+03  OutOfWorld Transportation
+    0     35.5    0.882     9.96     0.442        0        0         0     Crystal initStep
+    1     35.5    0.883       10     0.442        0    0.059     0.059     Crystal Transportation
+    2     32.6    0.951     12.5     0.162        0     3.81      3.87     Crystal compt
+    3     33.1    0.998     12.1         0   0.0025    0.631       4.5     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     33.1    0.998     12.1      0.16        0        0         0     Crystal initStep
+    1     33.1    0.991     12.1         0     0.16   0.0723    0.0723     Crystal eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 5
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     43.3     8.22       14     0.122        0        0         0     Crystal initStep
-    1     43.3     8.23       14         0    0.122   0.0468    0.0468     Crystal eIoni
+    0     32.6    0.951     12.5      0.28        0        0         0     Crystal initStep
+    1     32.6    0.951     12.5     0.155    0.103   0.0947    0.0947     Crystal eBrem
+    2     32.6    0.948     12.5         0    0.155    0.069     0.164     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 9,   Parent ID = 7
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     32.6    0.951     12.5    0.0214        0        0         0     Crystal initStep
+    1     32.6    0.944     12.5         0  0.00925  0.00782   0.00782     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 9
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     32.6    0.944     12.5    0.0121        0        0         0     Crystal initStep
+    1     32.6    0.944     12.5         0   0.0121    0.001     0.001     Crystal eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.6    0.424     9.99     0.865        0        0         0     Crystal initStep
-    1     40.2      3.1     3.12     0.469        0     10.6      10.6     Crystal compt
-    2     43.6     2.26     3.81     0.426        0     3.59      14.2     Crystal compt
-    3     46.8     1.81     2.94         0   0.0634     3.29      17.5     Crystal phot
+    0     35.5    0.882     9.96      1.04        0        0         0     Crystal initStep
+    1     33.3     6.44 -1.13e-05      1.04        0     11.6      11.6     Crystal Transportation
+    2     31.9     9.73    -5.89     0.733        0     6.87      18.5     Crystal compt
+    3     29.7     9.27      -10     0.733        0     4.72      23.2     Crystal Transportation
+    4       25     8.32    -18.4     0.733        0     9.66      32.9       world Transportation
+    5     -519     -102   -1e+03     0.733        0 1.13e+03  1.16e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 4
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     46.8     1.81     2.94     0.362        0        0         0     Crystal initStep
-    1     46.8     1.81     2.93         0    0.362    0.251     0.251     Crystal eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 4
+* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 4
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     43.6     2.26     3.81    0.0433        0        0         0     Crystal initStep
-    1     43.6     2.26     3.82         0   0.0433  0.00835   0.00835     Crystal eIoni
+    0     31.9     9.73    -5.89     0.311        0        0         0     Crystal initStep
+    1     31.9     9.75     -5.9     0.153   0.0938   0.0922    0.0922     Crystal eBrem
+    2       32     9.74    -5.89         0    0.153   0.0677      0.16     Crystal eIoni
 
 *********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 4
+* G4Track Information:   Particle = gamma,   Track ID = 12,   Parent ID = 11
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     40.2      3.1     3.12     0.396        0        0         0     Crystal initStep
-    1     40.2     3.11     3.09         0    0.396    0.284     0.284     Crystal eIoni
+    0     31.9     9.75     -5.9    0.0639        0        0         0     Crystal initStep
+    1       32      9.7    -5.86         0   0.0633    0.116     0.116     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 13,   Parent ID = 12
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       32      9.7    -5.86  0.000555        0        0         0     Crystal initStep
+    1       32      9.7    -5.86         0 0.000555 1.34e-05  1.34e-05     Crystal eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = neutron,   Track ID = 3,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.6    0.424     9.99      2.78        0        0         0     Crystal initStep
-    1     54.4     2.49     9.19      2.78        0       22        22     Crystal hadElastic
-    2     62.7       10     8.36      2.78        0     11.2      33.2     Crystal Transportation
-    3     73.8       20     7.25      2.78        0       15      48.2       world Transportation
-    4    1e+03      855    -85.3      2.78        0 1.25e+03   1.3e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = Lu175,   Track ID = 11,   Parent ID = 3
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     54.4     2.49     9.19   0.00635        0        0         0     Crystal initStep
-    1     54.4     2.49     9.19         0  0.00635 3.01e-05  3.01e-05     Crystal ionIoni
+    0     35.5    0.882     9.96      3.67        0        0         0     Crystal initStep
+    1     40.7       10      9.9      3.67        0     10.5      10.5     Crystal Transportation
+    2     46.3       20     9.83      3.67        0     11.5        22       world Transportation
+    3       52       30     9.76      3.67        0     11.5      33.5     Crystal Transportation
+    4     57.7       40     9.69      3.67        0     11.5        45     Crystal Transportation
+    5     63.3       50     9.62      3.67        0     11.5      56.4     Crystal Transportation
+    6       69       60     9.55      3.67        0     11.5      67.9     Crystal Transportation
+    7     74.7       70     9.48      3.67        0     11.5      79.4       world Transportation
+    8      601    1e+03     2.96      3.67        0 1.07e+03  1.15e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 2,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.6    0.424     9.99      5.53        0        0         0     Crystal initStep
-    1     32.6    0.421       10      5.53        0   0.0115    0.0115     Crystal Transportation
-    2     31.6 1.67e-16     11.3      5.53        0     1.68      1.69     Crystal Transportation
-    3     25.1     -2.8       20      5.53        0     11.2      12.9       world Transportation
-    4     -702     -319    1e+03      5.53        0 1.26e+03  1.27e+03  OutOfWorld Transportation
+    0     35.5    0.882     9.96      4.51        0        0         0     Crystal initStep
+    1     38.4 -3.33e-16     6.74      4.51        0     4.42      4.42     Crystal Transportation
+    2     44.5    -1.85 -3.72e-06      4.51        0     9.25      13.7     Crystal Transportation
+    3       47    -2.61     -2.8      1.29        0     3.84      17.5     Crystal compt
+    4     49.8      -10    -7.16      1.29        0     9.02      26.5     Crystal Transportation
+    5     51.6    -14.8      -10      1.29        0     5.89      32.4     Crystal Transportation
+    6     52.2    -16.5      -11     0.239        0     2.01      34.4     Crystal compt
+    7     50.4    -15.6    -10.4         0   0.0633     2.12      36.5     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 16,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     50.4    -15.6    -10.4     0.176        0        0         0     Crystal initStep
+    1     50.4    -15.6    -10.4         0    0.176   0.0839    0.0839     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 15,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     52.2    -16.5      -11      1.06        0        0         0     Crystal initStep
+    1     52.3    -16.6      -11     0.478    0.555    0.416     0.416     Crystal eBrem
+    2     52.3    -16.6      -11         0    0.478     0.37     0.785     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 17,   Parent ID = 15
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     52.3    -16.6      -11    0.0224        0        0         0     Crystal initStep
+    1     52.3    -16.6      -11         0  0.00925  0.00549   0.00549     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 18,   Parent ID = 17
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     52.3    -16.6      -11    0.0131        0        0         0     Crystal initStep
+    1     52.3    -16.6      -11         0   0.0131  0.00114   0.00114     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 14,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       47    -2.61     -2.8      3.22        0        0         0     Crystal initStep
+    1     47.4    -2.59    -3.24      2.11    0.988     1.45      1.45     Crystal eBrem
+    2     47.7    -2.52    -3.39     0.854     1.26     1.73      3.19     Crystal eIoni
+    3     47.8    -2.47     -3.4         0    0.854      0.8      3.99     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 19,   Parent ID = 14
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     47.4    -2.59    -3.24     0.115        0        0         0     Crystal initStep
+    1     47.6    -2.54    -3.31         0   0.0633    0.182     0.182     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 20,   Parent ID = 19
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     47.6    -2.54    -3.31    0.0514        0        0         0     Crystal initStep
+    1     47.6    -2.54    -3.31         0   0.0514   0.0112    0.0112     Crystal eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       -0    -9.47     3.22        10        0        0         0       world initStep
-    1       25    -9.47     3.22        10        0       25        25     Crystal Transportation
-    2       75    -9.47     3.22        10        0       50        75       world Transportation
-    3      300    -9.47     3.22        10        0      225       300     Tracker Transportation
-    4      700    -9.47     3.22        10        0      400       700       world Transportation
-    5    1e+03    -9.47     3.22        10        0      300     1e+03  OutOfWorld Transportation
+    0       -0     0.93     9.96        10        0        0         0       world initStep
+    1       25     0.93     9.96        10        0       25        25     Crystal Transportation
+    2     60.9     0.93     9.96         0        0     35.9      60.9     Crystal neutronInelastic
 
 *********************************************************************************************************
-* G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
+* G4Track Information:   Particle = Lu175,   Track ID = 8,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       -0     9.85     1.74        10        0        0         0       world initStep
-    1       25     9.85     1.74        10        0       25        25     Crystal Transportation
-    2     47.8     9.85     1.74         0        0     22.8      47.8     Crystal neutronInelastic
+    0     60.9     0.93     9.96     0.109        0        0         0     Crystal initStep
+    1     60.9     0.93     9.96         0    0.109 0.000125  0.000125     Crystal ionIoni
 
 *********************************************************************************************************
-* G4Track Information:   Particle = Lu174,   Track ID = 6,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     47.8     9.85     1.74    0.0219        0        0         0     Crystal initStep
-    1     47.8     9.85     1.74         0   0.0219 5.57e-05  5.57e-05     Crystal ionIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = neutron,   Track ID = 5,   Parent ID = 1
+* G4Track Information:   Particle = gamma,   Track ID = 7,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     47.8     9.85     1.74    0.0935        0        0         0     Crystal initStep
-    1     47.8       10     1.78    0.0935        0    0.157     0.157     Crystal Transportation
-    2     47.8       20     4.32    0.0935        0     10.3      10.5       world Transportation
-    3     47.8       30     6.87    0.0935        0     10.3      20.8     Crystal Transportation
-    4     47.8       40     9.41    0.0935        0     10.3      31.1     Crystal Transportation
-    5     47.8     42.3       10    0.0935        0     2.38      33.5     Crystal Transportation
-    6     47.8       50       12    0.0935        0     7.94      41.4     Crystal Transportation
-    7     47.8       60     14.5    0.0935        0     10.3      51.8     Crystal Transportation
-    8     47.8       70     17.1    0.0935        0     10.3      62.1       world Transportation
-    9     46.6    1e+03      254    0.0935        0      960  1.02e+03  OutOfWorld Transportation
+    0     60.9     0.93     9.96     0.406        0        0         0     Crystal initStep
+    1     60.9    0.896       10     0.406        0   0.0552    0.0552     Crystal Transportation
+    2     60.9 -1.11e-16     11.1     0.406        0     1.45       1.5     Crystal Transportation
+    3     60.8    -2.56     14.4     0.333        0     4.13      5.64     Crystal compt
+    4     61.8    -3.63     15.1     0.333        0     1.65      7.29     Crystal Rayl
+    5     68.1      -10     19.4     0.333        0     9.93      17.2     Crystal Transportation
+    6     68.9    -10.8       20     0.333        0     1.27      18.5       world Transportation
+    7    1e+03     -961      670     0.333        0 1.48e+03   1.5e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 7
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     60.8    -2.56     14.4    0.0731        0        0         0     Crystal initStep
+    1     60.8    -2.56     14.4         0   0.0731   0.0201    0.0201     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 6,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     60.9     0.93     9.96      1.54        0        0         0     Crystal initStep
+    1     60.8    0.931       10      1.54        0   0.0801    0.0801     Crystal Transportation
+    2     45.3      1.2       20      1.54        0     18.5      18.6       world Transportation
+    3   -1e+03     19.4      693      1.54        0 1.24e+03  1.26e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 5,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     60.9     0.93     9.96      1.56        0        0         0     Crystal initStep
+    1       75     3.03     7.75      1.56        0     14.4      14.4       world Transportation
+    2      300     36.6    -27.5      1.56        0      230       245     Tracker Transportation
+    3      700     96.2    -90.1      1.56        0      409       654       world Transportation
+    4    1e+03      141     -137      1.56        0      307       961  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     47.8     9.85     1.74     0.101        0        0         0     Crystal initStep
-    1     47.9       10     1.86     0.101        0    0.203     0.203     Crystal Transportation
-    2     47.9       10     1.89         0   0.0108   0.0421     0.245     Crystal phot
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 4
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     47.9       10     1.89    0.0906        0        0         0     Crystal initStep
-    1     47.9       10     1.89         0   0.0906   0.0287    0.0287     Crystal eIoni
+    0     60.9     0.93     9.96      1.65        0        0         0     Crystal initStep
+    1     60.5        0     8.38      1.65        0     1.87      1.87     Crystal Transportation
+    2     58.6    -4.94 5.81e-06      1.65        0     9.91      11.8     Crystal Transportation
+    3     56.7      -10    -8.58      1.65        0     10.1      21.9     Crystal Transportation
+    4     56.4    -10.8      -10      1.65        0     1.68      23.6     Crystal Transportation
+    5     54.1    -16.7      -20      1.65        0     11.8      35.4       world Transportation
+    6     -168     -595   -1e+03      1.65        0 1.16e+03  1.19e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 3,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     47.8     9.85     1.74     0.321        0        0         0     Crystal initStep
-    1     47.8     9.83     1.72         0   0.0634   0.0244    0.0244     Crystal phot
+    0     60.9     0.93     9.96      2.04        0        0         0     Crystal initStep
+    1     55.3     4.41     7.96     0.317        0     6.89      6.89     Crystal compt
+    2     54.1    0.294       10     0.317        0     4.74      11.6     Crystal Transportation
+    3       54        0     10.1     0.317        0    0.339        12     Crystal Transportation
+    4     53.3    -2.47     11.4         0   0.0109     2.84      14.8     Crystal phot
 
 *********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 3
+* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 3
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     47.8     9.83     1.72     0.258        0        0         0     Crystal initStep
-    1     47.8     9.82     1.71         0    0.258    0.152     0.152     Crystal eIoni
+    0     53.3    -2.47     11.4     0.306        0        0         0     Crystal initStep
+    1     53.3    -2.49     11.4         0    0.306    0.196     0.196     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 3
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     55.3     4.41     7.96      1.72        0        0         0     Crystal initStep
+    1     55.1     4.56     7.87     0.917    0.785    0.898     0.898     Crystal eBrem
+    2     55.1     4.49     7.88     0.642    0.275    0.117      1.01     Crystal eBrem
+    3     55.1     4.53     7.92         0    0.642    0.552      1.57     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 12,   Parent ID = 10
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     55.1     4.56     7.87    0.0192        0        0         0     Crystal initStep
+    1     55.1     4.52     7.87         0 0.000514   0.0389    0.0389     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 13,   Parent ID = 12
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     55.1     4.52     7.87    0.0187        0        0         0     Crystal initStep
+    1     55.1     4.52     7.87         0   0.0187  0.00205   0.00205     Crystal eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = neutron,   Track ID = 2,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     47.8     9.85     1.74      1.76        0        0         0     Crystal initStep
-    1     50.5       10     1.02      1.76        0     2.75      2.75     Crystal Transportation
-    2     54.2     10.2 2.84e-06      1.76        0     3.89      6.64     Crystal Transportation
-    3     68.8       11    -3.95      1.48        0     15.1      21.7     Crystal hadElastic
-    4     68.3       10    -4.07      1.48        0     1.14      22.9     Crystal Transportation
-    5     64.3        0     -5.2      1.48        0     10.8      33.7     Crystal Transportation
-    6     60.3      -10    -6.33      1.48        0     10.8      44.5     Crystal Transportation
-    7     59.9      -11    -6.45      1.43        0     1.13      45.6     Crystal hadElastic
-    8     63.8      -20    -7.65      1.43        0     9.83      55.5       world Transportation
-    9     68.1      -30       -9      1.43        0       11      66.5     Crystal Transportation
-   10     71.3    -37.5      -10      1.43        0     8.18      74.6     Crystal Transportation
-   11     72.4      -40    -10.3      1.43        0     2.79      77.4     Crystal Transportation
-   12     74.7    -45.3    -11.1         0        0     5.78      83.2     Crystal neutronInelastic
+    0     60.9     0.93     9.96      2.69        0        0         0     Crystal initStep
+    1     60.8     0.87       10      2.69        0   0.0902    0.0902     Crystal Transportation
+    2     60.1        0     10.6      2.69        0     1.31       1.4     Crystal Transportation
+    3     53.5    -7.66     16.2      2.63        0     11.5      12.9     Crystal hadElastic
+    4     67.2     -7.6       10      2.63        0     15.1        28     Crystal Transportation
+    5       75    -7.57     6.51      2.63        0     8.52      36.5       world Transportation
+    6      300    -6.66    -94.5      2.63        0      247       283     Tracker Transportation
+    7      312    -6.62     -100      2.63        0     13.4       297       world Transportation
+    8    1e+03    -3.84     -409      2.63        0      754  1.05e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = Lu175,   Track ID = 14,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     74.7    -45.3    -11.1   0.00334        0        0         0     Crystal initStep
-    1     74.7    -45.3    -11.1         0  0.00334 2.19e-05  2.19e-05     Crystal ionIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 13,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     74.7    -45.3    -11.1     0.101        0        0         0     Crystal initStep
-    1     74.1    -44.7    -11.3         0   0.0634    0.836     0.836     Crystal phot
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 15,   Parent ID = 13
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     74.1    -44.7    -11.3    0.0378        0        0         0     Crystal initStep
-    1     74.1    -44.7    -11.3         0   0.0378  0.00664   0.00664     Crystal eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = neutron,   Track ID = 12,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     74.7    -45.3    -11.1     0.386        0        0         0     Crystal initStep
-    1       75    -45.5    -11.1     0.386        0     0.37      0.37       world Transportation
-    2    1e+03     -644     -197     0.386        0 1.12e+03  1.12e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 11,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     74.7    -45.3    -11.1     0.916        0        0         0     Crystal initStep
-    1       75    -45.3    -11.1     0.916        0    0.312     0.312       world Transportation
-    2      300    -44.8    -55.1     0.916        0      229       230     Tracker Transportation
-    3      530    -44.3     -100     0.916        0      234       464       world Transportation
-    4    1e+03    -43.4     -192     0.916        0      479       943  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = O16,   Track ID = 10,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     59.9      -11    -6.45    0.0534        0        0         0     Crystal initStep
-    1     59.9      -11    -6.45         0   0.0534  0.00015   0.00015     Crystal ionIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = O16,   Track ID = 9,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     68.8       11    -3.95     0.282        0        0         0     Crystal initStep
-    1     68.8       11    -3.95         0    0.282 0.000396  0.000396     Crystal ionIoni
+    0     53.5    -7.66     16.2    0.0529        0        0         0     Crystal initStep
+    1     53.5    -7.66     16.2         0   0.0529  8.7e-05   8.7e-05     Crystal ionIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       -0    -9.52     3.05        10        0        0         0       world initStep
-    1       25    -9.52     3.05        10        0       25        25     Crystal Transportation
-    2       75    -9.52     3.05        10        0       50        75       world Transportation
-    3      300    -9.52     3.05        10        0      225       300     Tracker Transportation
-    4      700    -9.52     3.05        10        0      400       700       world Transportation
-    5    1e+03    -9.52     3.05        10        0      300     1e+03  OutOfWorld Transportation
+    0       -0       10    0.102        10        0        0         0       world initStep
+    1       25       10    0.102        10        0       25        25     Crystal Transportation
+    2     63.9       10    0.102         0        0     38.9      63.9     Crystal neutronInelastic
+
+*********************************************************************************************************
+* G4Track Information:   Particle = O16,   Track ID = 6,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     63.9       10    0.102      1.25        0        0         0     Crystal initStep
+    1     63.9       10    0.102         0     1.25 0.000682  0.000682     Crystal ionIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 5,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     63.9       10    0.102     0.232        0        0         0     Crystal initStep
+    1     63.6     9.95 9.16e-06     0.232        0    0.302     0.302     Crystal Transportation
+    2     63.2     9.86   -0.161         0   0.0633    0.478     0.781     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     63.2     9.86   -0.161     0.169        0        0         0     Crystal initStep
+    1     63.2     9.86    -0.16         0    0.169   0.0789    0.0789     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     63.9       10    0.102      1.99        0        0         0     Crystal initStep
+    1     63.9       10    0.102      1.99        0  0.00101   0.00101     Crystal Transportation
+    2     47.1       20    0.755      1.99        0     19.5      19.5       world Transportation
+    3     30.3       30     1.41      1.99        0     19.5      39.1     Crystal Transportation
+    4       25     33.2     1.61      1.99        0     6.21      45.3       world Transportation
+    5   -1e+03      644     41.5      1.99        0 1.19e+03  1.24e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     63.9       10    0.102      2.79        0        0         0     Crystal initStep
+    1     63.8     9.89 9.28e-06      2.79        0    0.181     0.181     Crystal Transportation
+    2     54.7        0    -9.12      2.79        0     16.2      16.4     Crystal Transportation
+    3     53.8   -0.954      -10      2.79        0     1.57        18     Crystal Transportation
+    4     45.5      -10    -18.3      2.79        0     14.8      32.8     Crystal Transportation
+    5     43.9    -11.8      -20      2.79        0     2.95      35.8       world Transportation
+    6     -863   -1e+03     -931      2.79        0 1.62e+03  1.66e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     63.9       10    0.102       3.7        0        0         0     Crystal initStep
+    1       64     6.96     1.18     0.378        0     3.23      3.23     Crystal compt
+    2     66.5       10     5.59     0.378        0     5.91      9.14     Crystal Transportation
+    3       69       13       10     0.378        0     5.92      15.1     Crystal Transportation
+    4     70.1     14.4     11.9         0   0.0633     2.57      17.6     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     70.1     14.4     11.9     0.314        0        0         0     Crystal initStep
+    1     70.1     14.4     11.9         0    0.314    0.204     0.204     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       64     6.96     1.18      3.32        0        0         0     Crystal initStep
+    1     63.7     6.51     1.32      2.78     0.54    0.691     0.691     Crystal msc
+    2       64     6.06     1.81      2.12     0.66    0.891      1.58     Crystal msc
+    3     64.3     5.89     1.77     0.887     1.01     1.18      2.76     Crystal eBrem
+    4     64.2     5.89     1.72         0    0.887     0.84       3.6     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 10,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     64.3     5.89     1.77     0.223        0        0         0     Crystal initStep
+    1     61.4     5.12     0.31         0   0.0633     3.27      3.27     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 10
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     61.4     5.12     0.31     0.159        0        0         0     Crystal initStep
+    1     61.4     5.12    0.302         0    0.159    0.072     0.072     Crystal eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       -0     7.24      6.9        10        0        0         0       world initStep
-    1       25     7.24      6.9        10        0       25        25     Crystal Transportation
-    2     71.4     7.24      6.9        10        0     46.4      71.4     Crystal hadElastic
-    3       75      7.6     6.73        10        0     3.64        75       world Transportation
-    4      300     29.7    -3.42        10        0      226       301     Tracker Transportation
-    5      700     69.1    -21.5        10        0      402       704       world Transportation
-    6    1e+03     98.6      -35        10        0      302  1.01e+03  OutOfWorld Transportation
+    0       -0     5.49     8.36        10        0        0         0       world initStep
+    1       25     5.49     8.36        10        0       25        25     Crystal Transportation
+    2     69.1     5.49     8.36         0        0     44.1      69.1     Crystal neutronInelastic
 
 *********************************************************************************************************
-* G4Track Information:   Particle = Lu175,   Track ID = 2,   Parent ID = 1
+* G4Track Information:   Particle = Lu174,   Track ID = 6,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     71.4     7.24      6.9  0.000673        0        0         0     Crystal initStep
-    1     71.4     7.24      6.9         0 0.000673 9.81e-06  9.81e-06     Crystal ionIoni
+    0     69.1     5.49     8.36    0.0884        0        0         0     Crystal initStep
+    1     69.1     5.49     8.36         0   0.0884 0.000112  0.000112     Crystal ionIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 5,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     69.1     5.49     8.36     0.149        0        0         0     Crystal initStep
+    1     71.5     5.28     6.55     0.149        0     3.03      3.03     Crystal Rayl
+    2       72      5.3     6.62         0   0.0633     0.44      3.47     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       72      5.3     6.62    0.0857        0        0         0     Crystal initStep
+    1       72      5.3     6.62         0   0.0857   0.0262    0.0262     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     69.1     5.49     8.36     0.153        0        0         0     Crystal initStep
+    1     69.2        0     6.89     0.153        0     5.68      5.68     Crystal Transportation
+    2     69.3      -10      4.2     0.153        0     10.4        16     Crystal Transportation
+    3     69.4      -20      1.5     0.153        0     10.4      26.4       world Transportation
+    4     69.5      -30    -1.19     0.153        0     10.4      36.7     Crystal Transportation
+    5     69.7      -40    -3.88     0.153        0     10.4      47.1     Crystal Transportation
+    6     69.8      -50    -6.57     0.153        0     10.4      57.5     Crystal Transportation
+    7     69.9      -60    -9.26     0.153        0     10.4      67.8     Crystal Transportation
+    8     69.9    -62.8      -10     0.153        0     2.86      70.7     Crystal Transportation
+    9       70      -70    -11.9     0.153        0     7.49      78.2       world Transportation
+   10     81.1   -1e+03     -262     0.153        0      963  1.04e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     69.1     5.49     8.36     0.829        0        0         0     Crystal initStep
+    1     72.5     0.46       10     0.829        0     6.27      6.27     Crystal Transportation
+    2     72.8        0     10.2     0.829        0    0.574      6.84     Crystal Transportation
+    3       75    -3.31     11.2     0.829        0     4.12        11       world Transportation
+    4      742   -1e+03      336     0.829        0 1.24e+03  1.25e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     69.1     5.49     8.36       1.1        0        0         0     Crystal initStep
+    1     67.7      5.8       10       1.1        0     2.19      2.19     Crystal Transportation
+    2       59      7.7       20       1.1        0     13.4      15.6       world Transportation
+    3     -793      194    1e+03       1.1        0 1.31e+03  1.33e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       -0     7.98     6.02        10        0        0         0       world initStep
+    1       25     7.98     6.02        10        0       25        25     Crystal Transportation
+    2     37.3     7.98     6.02         0        0     12.3      37.3     Crystal neutronInelastic
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Lu174,   Track ID = 6,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     37.3     7.98     6.02    0.0376        0        0         0     Crystal initStep
+    1     37.3     7.98     6.02         0   0.0376 7.31e-05  7.31e-05     Crystal ionIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 5,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     37.3     7.98     6.02     0.118        0        0         0     Crystal initStep
+    1     37.3     7.78     5.49         0   0.0633    0.571     0.571     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     37.3     7.78     5.49    0.0544        0        0         0     Crystal initStep
+    1     37.3     7.78     5.49         0   0.0544   0.0123    0.0123     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     37.3     7.98     6.02     0.269        0        0         0     Crystal initStep
+    1     35.8       10     2.35     0.269        0     4.43      4.43     Crystal Transportation
+    2     34.9     11.3 -1.02e-05     0.269        0     2.83      7.26     Crystal Transportation
+    3       33       14    -5.01         0        0     6.04      13.3     Crystal neutronInelastic
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Lu175,   Track ID = 10,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       33       14    -5.01  0.000509        0        0         0     Crystal initStep
+    1       33       14    -5.01         0 0.000509 8.53e-06  8.53e-06     Crystal ionIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 9,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       33       14    -5.01    0.0975        0        0         0     Crystal initStep
+    1     34.2     13.7    -5.23    0.0975        0     1.28      1.28     Crystal Rayl
+    2       36     13.4    -4.69    0.0975        0     1.91       3.2     Crystal Rayl
+    3     36.1     13.4    -4.66         0   0.0633   0.0991       3.3     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 9
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     36.1     13.4    -4.66    0.0342        0        0         0     Crystal initStep
+    1     36.1     13.4    -4.66         0   0.0342  0.00562   0.00562     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 8,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       33       14    -5.01    0.0995        0        0         0     Crystal initStep
+    1     27.4     15.3      -10    0.0995        0      7.6       7.6     Crystal Transportation
+    2     26.8     15.4    -10.5         0        0    0.749      8.35     Crystal neutronInelastic
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Lu176,   Track ID = 18,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.8     15.4    -10.5   0.00052        0        0         0     Crystal initStep
+    1     26.8     15.4    -10.5         0  0.00052 8.65e-06  8.65e-06     Crystal ionIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 17,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.8     15.4    -10.5     0.139        0        0         0     Crystal initStep
+    1     26.5     15.4    -10.5         0   0.0109    0.263     0.263     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 19,   Parent ID = 17
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.5     15.4    -10.5     0.128        0        0         0     Crystal initStep
+    1     26.5     15.4    -10.5         0    0.128   0.0504    0.0504     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 16,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.8     15.4    -10.5     0.157        0        0         0     Crystal initStep
+    1     26.8     15.3    -10.7         0   0.0633    0.208     0.208     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 20,   Parent ID = 16
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.8     15.3    -10.7    0.0938        0        0         0     Crystal initStep
+    1     26.8     15.3    -10.7         0   0.0938   0.0305    0.0305     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 15,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.8     15.4    -10.5     0.358        0        0         0     Crystal initStep
+    1     26.9     15.9    -10.8      0.27        0    0.591     0.591     Crystal compt
+    2     31.8       17    -14.3         0   0.0109     6.11       6.7     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 22,   Parent ID = 15
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     31.8       17    -14.3     0.259        0        0         0     Crystal initStep
+    1     31.7       17    -14.3         0    0.259    0.153     0.153     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 21,   Parent ID = 15
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.9     15.9    -10.8    0.0876        0        0         0     Crystal initStep
+    1     26.9     15.9    -10.8         0   0.0876   0.0272    0.0272     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 14,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.8     15.4    -10.5       0.8        0        0         0     Crystal initStep
+    1     26.8     15.8      -10       0.8        0    0.672     0.672     Crystal Transportation
+    2     26.8       20    -5.52       0.8        0     6.12      6.79       world Transportation
+    3     26.8       30     5.22       0.8        0     14.7      21.5     Crystal Transportation
+    4     26.9     34.4       10       0.8        0     6.53        28     Crystal Transportation
+    5     26.9       40       16       0.8        0     8.15      36.1     Crystal Transportation
+    6     26.9     43.8       20       0.8        0     5.51      41.7       world Transportation
+    7     29.7      956    1e+03       0.8        0 1.34e+03  1.38e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 13,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.8     15.4    -10.5      1.27        0        0         0     Crystal initStep
+    1     28.6     14.3      -15     0.474        0     4.94      4.94     Crystal compt
+    2     27.2       20    -19.5     0.474        0     7.42      12.4       world Transportation
+    3     -201    1e+03     -800     0.474        0 1.27e+03  1.29e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 23,   Parent ID = 13
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     28.6     14.3      -15     0.799        0        0         0     Crystal initStep
+    1     28.6     14.2      -15     0.059    0.706     0.66      0.66     Crystal eBrem
+    2     28.6     14.2      -15         0    0.059    0.014     0.674     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 24,   Parent ID = 23
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     28.6     14.2      -15    0.0334        0        0         0     Crystal initStep
+    1     28.7       14    -15.2         0  0.00203    0.299     0.299     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 25,   Parent ID = 24
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     28.7       14    -15.2    0.0313        0        0         0     Crystal initStep
+    1     28.7       14    -15.2         0   0.0313  0.00485   0.00485     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 12,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     26.8     15.4    -10.5      3.63        0        0         0     Crystal initStep
+    1     26.1       15      -10      3.63        0    0.927     0.927     Crystal Transportation
+    2       25     14.3    -9.19      3.63        0     1.53      2.46       world Transportation
+    3   -1e+03     -578      732      3.63        0  1.4e+03   1.4e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     37.3     7.98     6.02     0.734        0        0         0     Crystal initStep
+    1     51.1     8.69       10     0.734        0     14.4      14.4     Crystal Transportation
+    2     51.5     8.71     10.1     0.731        0    0.464      14.8     Crystal hadElastic
+    3     52.7       10     10.2     0.731        0     1.78      16.6     Crystal Transportation
+    4     62.2       20     10.3     0.731        0     13.8      30.4       world Transportation
+    5     71.7       30     10.5     0.731        0     13.8      44.2     Crystal Transportation
+    6       75     33.5     10.6     0.731        0      4.8        49       world Transportation
+    7      992    1e+03       28     0.731        0 1.33e+03  1.38e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Lu175,   Track ID = 26,   Parent ID = 3
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     51.5     8.71     10.1   0.00254        0        0         0     Crystal initStep
+    1     51.5     8.71     10.1         0  0.00254 1.91e-05  1.91e-05     Crystal ionIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     37.3     7.98     6.02      1.14        0        0         0     Crystal initStep
+    1     37.1       10     4.92      1.14        0     2.31      2.31     Crystal Transportation
+    2     36.3       19 -9.21e-06      1.14        0     10.3      12.6     Crystal Transportation
+    3     36.2       20   -0.567      1.14        0     1.18      13.7       world Transportation
+    4     35.4       30    -6.05      1.14        0     11.4      25.2     Crystal Transportation
+    5     35.3     31.1    -6.63      1.04        0     1.21      26.4     Crystal compt
+    6     33.9     39.9    -8.62     0.271        0     9.19      35.6     Crystal compt
+    7     34.5       39      -10     0.271        0     1.76      37.3     Crystal Transportation
+    8     34.7     38.7    -10.5         0   0.0633      0.6      37.9     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 29,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     34.7     38.7    -10.5     0.208        0        0         0     Crystal initStep
+    1     34.7     38.6    -10.5         0    0.208    0.109     0.109     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 28,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     33.9     39.9    -8.62      0.77        0        0         0     Crystal initStep
+    1     33.9       40    -8.64     0.733   0.0376   0.0465    0.0465     Crystal msc
+    2     33.9       40    -8.65     0.722   0.0111   0.0289    0.0754     Crystal msc
+    3     33.9       40    -8.65     0.714  0.00736    0.018    0.0934     Crystal Transportation
+    4     33.9       40    -8.67     0.698   0.0166   0.0294     0.123     Crystal msc
+    5     33.9       40    -8.67     0.658   0.0392   0.0257     0.148     Crystal msc
+    6     33.9     40.1    -8.67     0.639   0.0193   0.0284     0.177     Crystal msc
+    7       34     40.1    -8.65     0.616   0.0232   0.0368     0.214     Crystal msc
+    8       34     40.1    -8.67     0.579   0.0365   0.0485     0.262     Crystal msc
+    9       34     40.1    -8.64     0.554   0.0251   0.0408     0.303     Crystal msc
+   10       34     40.1    -8.61      0.53   0.0239   0.0363     0.339     Crystal msc
+   11       34     40.1    -8.61     0.486   0.0442   0.0397     0.379     Crystal msc
+   12       34     40.1     -8.6     0.464   0.0223   0.0479     0.427     Crystal msc
+   13     33.9     40.1    -8.55     0.397   0.0668   0.0682     0.495     Crystal msc
+   14     33.9     40.1    -8.54     0.356   0.0223   0.0221     0.517     Crystal eBrem
+   15       34     40.1    -8.49     0.287   0.0682   0.0893     0.606     Crystal msc
+   16       34     40.1    -8.47         0    0.287    0.179     0.785     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 30,   Parent ID = 28
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     33.9     40.1    -8.54    0.0192        0        0         0     Crystal initStep
+    1       34     40.2     -8.5         0   0.0109   0.0753    0.0753     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 31,   Parent ID = 30
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       34     40.2     -8.5    0.0083        0        0         0     Crystal initStep
+    1       34     40.2     -8.5         0   0.0083  0.00055   0.00055     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 27,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     35.3     31.1    -6.63    0.0953        0        0         0     Crystal initStep
+    1     35.3     31.1    -6.63         0   0.0953   0.0312    0.0312     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       -0     9.52     3.05        10        0        0         0       world initStep
+    1       25     9.52     3.05        10        0       25        25     Crystal Transportation
+    2     64.2     9.52     3.05         0        0     39.2      64.2     Crystal neutronInelastic
+
+*********************************************************************************************************
+* G4Track Information:   Particle = O16,   Track ID = 6,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     64.2     9.52     3.05      1.55        0        0         0     Crystal initStep
+    1     64.2     9.52     3.05         0     1.55 0.000724  0.000724     Crystal ionIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 5,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     64.2     9.52     3.05      0.58        0        0         0     Crystal initStep
+    1     60.8     6.46 7.28e-06      0.58        0     5.46      5.46     Crystal Transportation
+    2     59.5     5.23    -1.23     0.291        0     2.19      7.66     Crystal compt
+    3     60.7     3.73    -1.52         0   0.0025     1.98      9.63     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     60.7     3.73    -1.52     0.288        0        0         0     Crystal initStep
+    1     60.7     3.71    -1.53         0    0.288    0.179     0.179     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     59.5     5.23    -1.23     0.289        0        0         0     Crystal initStep
+    1     59.5     5.23    -1.24         0    0.289     0.18      0.18     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     64.2     9.52     3.05     0.635        0        0         0     Crystal initStep
+    1     64.3       10     3.09     0.635        0    0.509     0.509     Crystal Transportation
+    2     65.1     12.2     3.24     0.399        0     2.31      2.82     Crystal compt
+    3     67.9     12.9      2.2      0.16        0     3.05      5.87     Crystal compt
+    4     67.5       13     2.39         0   0.0633    0.419      6.29     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     67.5       13     2.39     0.097        0        0         0     Crystal initStep
+    1     67.5       13     2.39         0    0.097   0.0322    0.0322     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     67.9     12.9      2.2     0.239        0        0         0     Crystal initStep
+    1     67.9     12.9     2.19         0    0.239    0.135     0.135     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 4
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     65.1     12.2     3.24     0.236        0        0         0     Crystal initStep
+    1     65.1     12.2     3.24         0    0.236    0.133     0.133     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     64.2     9.52     3.05      1.57        0        0         0     Crystal initStep
+    1     64.9      8.9     4.25     0.463        0     1.53      1.53     Crystal compt
+    2     64.7       10      5.4     0.463        0      1.6      3.13     Crystal Transportation
+    3     63.9     14.4       10     0.463        0     6.41      9.54     Crystal Transportation
+    4     63.8     14.5     10.1         0   0.0633    0.112      9.65     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 13,   Parent ID = 3
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     63.8     14.5     10.1       0.4        0        0         0     Crystal initStep
+    1     63.9     14.5     10.1     0.382   0.0184   0.0475    0.0475     Crystal msc
+    2     63.8     14.5     10.1     0.327   0.0542   0.0654     0.113     Crystal msc
+    3     63.8     14.5     10.1     0.236    0.091   0.0749     0.188     Crystal msc
+    4     63.8     14.5     10.1         0    0.236    0.133     0.321     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 12,   Parent ID = 3
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     64.9      8.9     4.25      1.11        0        0         0     Crystal initStep
+    1       65     8.82     4.33    0.0649     1.04      1.1       1.1     Crystal eIoni
+    2       65     8.82     4.33         0   0.0649   0.0165      1.11     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     64.2     9.52     3.05      5.61        0        0         0     Crystal initStep
+    1     63.7       10     3.54      5.61        0    0.846     0.846     Crystal Transportation
+    2       57     16.4       10      5.61        0     11.3      12.1     Crystal Transportation
+    3     55.2       18     11.7         0        0     2.99      15.1     Crystal neutronInelastic
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Lu175,   Track ID = 18,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     55.2       18     11.7    0.0241        0        0         0     Crystal initStep
+    1     55.2       18     11.7         0   0.0241 5.87e-05  5.87e-05     Crystal ionIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 17,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     55.2       18     11.7     0.657        0        0         0     Crystal initStep
+    1     53.1     14.6       10     0.657        0     4.36      4.36     Crystal Transportation
+    2     50.3       10      7.7     0.657        0     5.87      10.2     Crystal Transportation
+    3     46.6        4      4.7     0.386        0     7.64      17.9     Crystal compt
+    4     43.1     5.04 -4.62e-06     0.386        0     5.93      23.8     Crystal Transportation
+    5     43.1     5.05  -0.0519     0.376        0   0.0656      23.9     Crystal compt
+    6     40.3     5.06     -2.6         0   0.0025     3.77      27.7     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 21,   Parent ID = 17
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     40.3     5.06     -2.6     0.374        0        0         0     Crystal initStep
+    1     40.3     5.05    -2.62         0    0.374    0.262     0.262     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 20,   Parent ID = 17
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     43.1     5.05  -0.0519   0.00951        0        0         0     Crystal initStep
+    1     43.1     5.05   -0.052         0  0.00951 0.000682  0.000682     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 19,   Parent ID = 17
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     46.6        4      4.7     0.271        0        0         0     Crystal initStep
+    1     46.6     3.98      4.7         0    0.271    0.164     0.164     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 16,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     55.2       18     11.7     0.826        0        0         0     Crystal initStep
+    1     50.2     19.1       10     0.826        0     5.38      5.38     Crystal Transportation
+    2     45.9       20     8.53     0.826        0     4.61      9.99       world Transportation
+    3   -1e+03      241     -350     0.826        0 1.13e+03  1.14e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 15,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     55.2       18     11.7      1.58        0        0         0     Crystal initStep
+    1     50.6     15.4       20      1.58        0     9.81      9.81       world Transportation
+    2     -486     -294    1e+03      1.58        0 1.16e+03  1.17e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 14,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     55.2       18     11.7      2.49        0        0         0     Crystal initStep
+    1     44.8       19     17.3      0.34        0     11.8      11.8     Crystal compt
+    2     44.4       20     14.2      0.34        0     3.28      15.1       world Transportation
+    3     39.8       30    -16.3      0.34        0     32.4      47.5     Crystal Transportation
+    4     39.4     30.8    -18.9         0   0.0633     2.75      50.3     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 23,   Parent ID = 14
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     39.4     30.8    -18.9     0.277        0        0         0     Crystal initStep
+    1     39.4     30.8    -18.9         0    0.277    0.169     0.169     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 22,   Parent ID = 14
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     44.8       19     17.3      2.15        0        0         0     Crystal initStep
+    1     44.7     18.9     17.5      1.35    0.157    0.214     0.214     Crystal eIoni
+    2     44.6     18.8     17.5     0.437    0.843     1.19       1.4     Crystal eBrem
+    3     44.6     18.9     17.5         0    0.437    0.327      1.73     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 25,   Parent ID = 22
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     44.6     18.8     17.5     0.067        0        0         0     Crystal initStep
+    1     44.6     18.9     17.6         0   0.0109   0.0356    0.0356     Crystal phot
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 26,   Parent ID = 25
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     44.6     18.9     17.6    0.0561        0        0         0     Crystal initStep
+    1     44.6     18.9     17.6         0   0.0561   0.0129    0.0129     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 24,   Parent ID = 22
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     44.7     18.9     17.5     0.644        0        0         0     Crystal initStep
+    1     44.7     18.9     17.5         0    0.644    0.554     0.554     Crystal eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       -0     -3.5     9.37        10        0        0         0       world initStep
+    1       25     -3.5     9.37        10        0       25        25     Crystal Transportation
+    2       75     -3.5     9.37        10        0       50        75       world Transportation
+    3      300     -3.5     9.37        10        0      225       300     Tracker Transportation
+    4      700     -3.5     9.37        10        0      400       700       world Transportation
+    5    1e+03     -3.5     9.37        10        0      300     1e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = neutron,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       -0     -1.3     9.92        10        0        0         0       world initStep
+    1       25     -1.3     9.92        10        0       25        25     Crystal Transportation
+    2       75     -1.3     9.92        10        0       50        75       world Transportation
+    3      300     -1.3     9.92        10        0      225       300     Tracker Transportation
+    4      700     -1.3     9.92        10        0      400       700       world Transportation
+    5    1e+03     -1.3     9.92        10        0      300     1e+03  OutOfWorld Transportation
  Run terminated.
 Run Summary
   Number of events processed : 10
-  User=0.010000s Real=0.018484s Sys=0.010000s
+  User=0.010000s Real=0.009639s Sys=0.000000s
 @@@@ GmCountProcessesUA
  PART_COUNT: Lu174 = 2
- PART_COUNT: Lu175 = 4
- PART_COUNT: O16 = 6
- PART_COUNT: Si28 = 1
- PART_COUNT: e- = 8
- PART_COUNT: gamma = 8
- PART_COUNT: neutron = 16
+ PART_COUNT: Lu175 = 5
+ PART_COUNT: Lu176 = 1
+ PART_COUNT: O16 = 3
+ PART_COUNT: Si28 = 2
+ PART_COUNT: e- = 45
+ PART_COUNT: gamma = 37
+ PART_COUNT: neutron = 20
  PROC_COUNT Lu174 : ionIoni_NoSeco = 2
  PROC_COUNT Lu174 : ALL = 2
- PROC_COUNT Lu175 : ionIoni_NoSeco = 4
- PROC_COUNT Lu175 : ALL = 4
- PROC_COUNT O16 : ionIoni_NoSeco = 6
- PROC_COUNT O16 : ALL = 6
- PROC_COUNT Si28 : ionIoni_NoSeco = 1
- PROC_COUNT Si28 : ALL = 1
- PROC_COUNT e- : eIoni_NoSeco = 8
- PROC_COUNT e- : ALL = 8
- PROC_COUNT gamma : Transportation = 12
- PROC_COUNT gamma : compt = 3
- PROC_COUNT gamma : phot = 5
- PROC_COUNT gamma : ALL = 20
- PROC_COUNT neutron : Transportation = 70
- PROC_COUNT neutron : hadElastic = 9
- PROC_COUNT neutron : neutronInelastic = 4
-PROC_COUNT neutron : ALL = 83
+ PROC_COUNT Lu175 : ionIoni_NoSeco = 5
+ PROC_COUNT Lu175 : ALL = 5
+ PROC_COUNT Lu176 : ionIoni_NoSeco = 1
+ PROC_COUNT Lu176 : ALL = 1
+ PROC_COUNT O16 : ionIoni_NoSeco = 3
+ PROC_COUNT O16 : ALL = 3
+ PROC_COUNT Si28 : ionIoni_NoSeco = 2
+ PROC_COUNT Si28 : ALL = 2
+ PROC_COUNT e- : Transportation = 1
+ PROC_COUNT e- : eBrem = 9
+ PROC_COUNT e- : eBrem_NoSeco = 1
+ PROC_COUNT e- : eIoni = 1
+ PROC_COUNT e- : eIoni_NoSeco = 47
+ PROC_COUNT e- : msc = 18
+ PROC_COUNT e- : ALL = 77
+ PROC_COUNT gamma : Rayl = 4
+ PROC_COUNT gamma : Transportation = 70
+ PROC_COUNT gamma : compt = 18
+ PROC_COUNT gamma : phot = 26
+ PROC_COUNT gamma : ALL = 118
+ PROC_COUNT neutron : Transportation = 74
+ PROC_COUNT neutron : hadElastic = 4
+ PROC_COUNT neutron : neutronInelastic = 9
+PROC_COUNT neutron : ALL = 87
 PROC_CREATOR_COUNT Lu174 : neutronInelastic = 2
-PROC_CREATOR_COUNT Lu175 : hadElastic = 3
-PROC_CREATOR_COUNT Lu175 : neutronInelastic = 1
-PROC_CREATOR_COUNT O16 : hadElastic = 5
-PROC_CREATOR_COUNT O16 : neutronInelastic = 1
+PROC_CREATOR_COUNT Lu175 : hadElastic = 2
+PROC_CREATOR_COUNT Lu175 : neutronInelastic = 3
+PROC_CREATOR_COUNT Lu176 : neutronInelastic = 1
+PROC_CREATOR_COUNT O16 : hadElastic = 1
+PROC_CREATOR_COUNT O16 : neutronInelastic = 2
 PROC_CREATOR_COUNT Si28 : hadElastic = 1
-PROC_CREATOR_COUNT e- : compt = 3
-PROC_CREATOR_COUNT e- : phot = 5
-PROC_CREATOR_COUNT gamma : neutronInelastic = 8
+PROC_CREATOR_COUNT Si28 : neutronInelastic = 1
+PROC_CREATOR_COUNT e- : compt = 18
+PROC_CREATOR_COUNT e- : eIoni = 1
+PROC_CREATOR_COUNT e- : phot = 26
+PROC_CREATOR_COUNT gamma : eBrem = 9
+PROC_CREATOR_COUNT gamma : neutronInelastic = 28
 PROC_CREATOR_COUNT neutron : Primary = 10
-PROC_CREATOR_COUNT neutron : neutronInelastic = 6
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+PROC_CREATOR_COUNT neutron : neutronInelastic = 10

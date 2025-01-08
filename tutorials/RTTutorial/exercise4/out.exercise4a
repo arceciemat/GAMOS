@@ -3,7 +3,7 @@ Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
 Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
 
 **************************************************************
- Geant4 version Name: geant4-11-00-patch-03    (16-September-2022)
+ Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -24,6 +24,10 @@ Registered graphics systems are:
   RayTracer (RayTracer)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
+  OpenGLImmediateX (OGLIX, OGLI)
+  OpenGLStoredX (OGLSX, OGL, OGLS)
 
 Registering model factories...
 
@@ -103,8 +107,10 @@ Default cuts are used for this region.
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -120,7 +126,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -130,8 +136,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -192,8 +199,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -202,10 +209,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -222,10 +229,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -276,42 +283,59 @@ See commands in /vis/modeling/trajectories/ for other options.
  CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: phot:  log10(Range) = 1030021
  CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: phot:  log10(Energy) = 1030022
  CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: phot:  Safety-Range vs Range) = 1030023
- CreateHisto1D GmProdCutsStudyUA: targetReg: e-: eIoni:  log10(Range) = 1020031
- CreateHisto1D GmProdCutsStudyUA: targetReg: e-: eIoni:  log10(Energy) = 1020032
- CreateHisto2D GmProdCutsStudyUA: targetReg: e-: eIoni:  Safety-Range vs Range) = 1020033
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: conv:  log10(Range) = 1030031
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: conv:  log10(Energy) = 1030032
+ CreateHisto2D GmProdCutsStudyUA: collimatorReg: e+: conv:  Safety-Range vs Range) = 1030033
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: annihil:  log10(Range) = 1030041
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: annihil:  log10(Energy) = 1030042
+ CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: annihil:  Safety-Range vs Range) = 1030043
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: compt:  log10(Range) = 1030051
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: compt:  log10(Energy) = 1030052
+ CreateHisto2D GmProdCutsStudyUA: collimatorReg: e-: compt:  Safety-Range vs Range) = 1030053
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: eBrem:  log10(Range) = 1030011
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: eBrem:  log10(Energy) = 1030012
+ CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: eBrem:  Safety-Range vs Range) = 1030013
  Run terminated.
 Run Summary
   Number of events processed : 200
-  User=0.990000s Real=1.009896s Sys=0.000000s
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020041
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020042
- CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020043
- CreateHisto1D GmProdCutsStudyUA: targetReg: e-: ALL:  log10(Range) = 1020051
- CreateHisto1D GmProdCutsStudyUA: targetReg: e-: ALL:  log10(Energy) = 1020052
- CreateHisto2D GmProdCutsStudyUA: targetReg: e-: ALL:  Safety-Range vs Range) = 1020053
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  log10(Range) = 1030041
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  log10(Energy) = 1030042
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  Safety-Range vs Range) = 1030043
+  User=0.220000s Real=0.223024s Sys=0.010000s
+ CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020061
+ CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020062
+ CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020063
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  log10(Range) = 1030061
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  log10(Energy) = 1030062
+ CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  Safety-Range vs Range) = 1030063
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: ALL:  log10(Range) = 1030071
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: ALL:  log10(Energy) = 1030072
+ CreateHisto2D GmProdCutsStudyUA: collimatorReg: e-: ALL:  Safety-Range vs Range) = 1030073
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: ALL:  log10(Range) = 1030081
+ CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: ALL:  log10(Energy) = 1030082
+ CreateHisto2D GmProdCutsStudyUA: collimatorReg: e+: ALL:  Safety-Range vs Range) = 1030083
 
  %%%%% PRODUCTION CUTS STUDY RESULTS 
-GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 0.134781
-GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 0.134781
-GmProdCutsStudyUA: REGION= targetReg PARTICLE= e- PROCESS= ALL MIN RANGE= 1.68645
-GmProdCutsStudyUA: REGION= targetReg PARTICLE= e- PROCESS= eIoni MIN RANGE= 1.68645
+GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 19.3659
+GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 19.3659
 GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 0.210899
 GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= phot MIN RANGE= 0.210899
+GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 26.8542
+GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= annihil MIN RANGE= 17.0405
+GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e- PROCESS= ALL MIN RANGE= 0.388594
+GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e- PROCESS= compt MIN RANGE= 0.388594
+GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e+ PROCESS= ALL MIN RANGE= 0.178384
+GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e+ PROCESS= conv MIN RANGE= 0.178384
 
  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
 RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
 RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
-RangeRejection: REGION= targetReg PARTICLE= e- PROCESS= ALL NTRACKS= 0
-RangeRejection: REGION= targetReg PARTICLE= e- PROCESS= eIoni NTRACKS= 0
 RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
 RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= phot NTRACKS= 0
-NUMBER OF TRACKS ACCEPTED 17 N ANCESTORS 10
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
+RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= annihil NTRACKS= 0
+RangeRejection: REGION= collimatorReg PARTICLE= e- PROCESS= ALL NTRACKS= 1
+RangeRejection: REGION= collimatorReg PARTICLE= e- PROCESS= compt NTRACKS= 1
+RangeRejection: REGION= collimatorReg PARTICLE= e+ PROCESS= ALL NTRACKS= 1
+RangeRejection: REGION= collimatorReg PARTICLE= e+ PROCESS= conv NTRACKS= 1
+NUMBER OF TRACKS ACCEPTED 11 N ANCESTORS 15
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 prodcuts.exercise4a:NormalizeToNEvents

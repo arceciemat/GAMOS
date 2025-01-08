@@ -1,7 +1,9 @@
 @@@@@ Running GAMOS with script: exercise4b.in
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
 
 **************************************************************
- Geant4 version Name: geant4-11-00-patch-03    (16-September-2022)
+ Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -22,6 +24,8 @@ Registered graphics systems are:
   RayTracer (RayTracer)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
   OpenGLStoredX (OGLSX, OGL, OGLS)
 
@@ -95,8 +99,10 @@ GmPhysicsGammaLowEner::ConstructProcess
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -112,7 +118,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -122,8 +128,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -182,8 +189,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -192,10 +199,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=DistanceToBoundary Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
        LowEnergyIoni : Emin=    0 eV  Emax=    1 GeV  deltaVI
         MollerBhabha : Emin=    1 GeV Emax=  100 TeV
@@ -213,10 +220,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=DistanceToBoundary Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -304,42 +311,39 @@ See commands in /vis/modeling/trajectories/ for other options.
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=1.580000s Real=1.605260s Sys=0.030000s
+  User=0.800000s Real=0.817791s Sys=0.020000s
 @@@@ GmCountProcessesUA
  PART_COUNT: e+ = 10000
- PART_COUNT: e- = 81932
- PART_COUNT: gamma = 28567
- PROC_COUNT e+ : Transportation = 19
+ PART_COUNT: e- = 80991
+ PART_COUNT: gamma = 28594
+ PROC_COUNT e+ : Transportation = 20
  PROC_COUNT e+ : annihil = 10001
- PROC_COUNT e+ : eBrem = 129
- PROC_COUNT e+ : eBrem_NoSeco = 3
- PROC_COUNT e+ : eIoni = 458
- PROC_COUNT e+ : eIoni_NoSeco = 10115
- PROC_COUNT e+ : msc = 412
- PROC_COUNT e+ : ALL = 21137
- PROC_COUNT e- : Transportation = 267
- PROC_COUNT e- : eBrem = 842
- PROC_COUNT e- : eBrem_NoSeco = 59
- PROC_COUNT e- : eIoni = 1227
- PROC_COUNT e- : eIoni_NoSeco = 83380
- PROC_COUNT e- : msc = 5186
- PROC_COUNT e- : ALL = 90961
- PROC_COUNT gamma : Rayl = 3519
- PROC_COUNT gamma : Transportation = 69479
- PROC_COUNT gamma : compt = 60400
- PROC_COUNT gamma : phot = 19846
-PROC_COUNT gamma : ALL = 153244
+ PROC_COUNT e+ : eBrem = 149
+ PROC_COUNT e+ : eBrem_NoSeco = 1
+ PROC_COUNT e+ : eIoni = 453
+ PROC_COUNT e+ : eIoni_NoSeco = 10152
+ PROC_COUNT e+ : msc = 503
+ PROC_COUNT e+ : ALL = 21279
+ PROC_COUNT e- : Transportation = 202
+ PROC_COUNT e- : eBrem = 779
+ PROC_COUNT e- : eBrem_NoSeco = 47
+ PROC_COUNT e- : eIoni = 1250
+ PROC_COUNT e- : eIoni_NoSeco = 82487
+ PROC_COUNT e- : msc = 4386
+ PROC_COUNT e- : ALL = 89151
+ PROC_COUNT gamma : Rayl = 3422
+ PROC_COUNT gamma : Transportation = 69428
+ PROC_COUNT gamma : compt = 59460
+ PROC_COUNT gamma : phot = 19828
+PROC_COUNT gamma : ALL = 152138
 PROC_CREATOR_COUNT e+ : Primary = 10000
-PROC_CREATOR_COUNT e- : compt = 60400
-PROC_CREATOR_COUNT e- : eIoni = 1685
-PROC_CREATOR_COUNT e- : phot = 19847
+PROC_CREATOR_COUNT e- : compt = 59460
+PROC_CREATOR_COUNT e- : eIoni = 1703
+PROC_CREATOR_COUNT e- : phot = 19828
 PROC_CREATOR_COUNT gamma : annihil = 20000
-PROC_CREATOR_COUNT gamma : compt = 66
-PROC_CREATOR_COUNT gamma : eBrem = 971
-PROC_CREATOR_COUNT gamma : phot = 7530
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+PROC_CREATOR_COUNT gamma : compt = 67
+PROC_CREATOR_COUNT gamma : eBrem = 928
+PROC_CREATOR_COUNT gamma : phot = 7599
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 hits.exercise4b:NormalizeToNEvents

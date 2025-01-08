@@ -20,7 +20,7 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/userAction GmHitsHistosUA
 /gamos/userAction GmCountTracksUA
 /gamos/filter radF GmCreatorProcessFilter RadioactiveDecay
-GenericIon GetG4Process RadioactiveDecay RadioactiveDecay 0x55e607a75370
+GenericIon GetG4Process RadioactiveDecay RadioactiveDecay 0x5904a208f700
 /gamos/analysis/histo1Max *Time* 1.E9
 /gamos/setParam GmTrackDataHistosUA:DataList InitialTime/second
 /gamos/userAction GmTrackDataHistosUA
@@ -33,8 +33,10 @@ GenericIon GetG4Process RadioactiveDecay RadioactiveDecay 0x55e607a75370
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -50,7 +52,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -60,8 +62,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -97,8 +100,7 @@ Screening factor                                   1
 ======                 Atomic Deexcitation Parameters          ========
 =======================================================================
 Fluorescence enabled                               1
-Fluorescence Bearden data files enabled            0
-Fluorescence ANSTO data files enabled              0
+Directory in G4LEDATA for fluorescence data files  fluor
 Auger electron cascade enabled                     1
 PIXE atomic de-excitation enabled                  0
 De-excitation module ignores cuts                  1
@@ -128,8 +130,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -138,10 +140,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -158,10 +160,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -182,23 +184,23 @@ msc:  for proton  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for proton  XStype:1  SubType=2
+hIoni:  for proton  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=    2 MeV
           BetheBloch : Emin=    2 MeV Emax=  100 TeV
 
 hBrems:  for proton  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -208,10 +210,10 @@ msc:  for GenericIon  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-ionIoni:  for GenericIon  XStype:1  SubType=2
+ionIoni:  for GenericIon  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.02
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
          ParamICRU73 : Emin=    0 eV  Emax=  100 TeV  deltaVI
 
@@ -221,9 +223,11 @@ nuclearStopping:  for GenericIon SubType=8 BuildTable=0
 ======================================================================
 ======          Radioactive Decay Physics Parameters           =======
 ======================================================================
-Max life time                                     1000 ps
+min MeanLife (from G4NuclideTable)                1 ns 
+Max life time (from G4DeexPrecoParameters)        1 ns 
 Internal e- conversion flag                       1
 Stored internal conversion coefficients           0
+Enabled atomic relaxation mode                    1
 Enable correlated gamma emission                  0
 Max 2J for sampling of angular correlations       10
 Atomic de-excitation enabled                      1
@@ -231,7 +235,7 @@ Auger electron emission enabled                   1
 Check EM cuts disabled for atomic de-excitation   1
 Use Bearden atomic level energies                 0
 Use ANSTO fluorescence model                      0
-Threshold for very long decay time at rest        1e+27  ns
+Threshold for very long decay time at rest        3.171e+10 y  
 ======================================================================
 
 msc:  for alpha  SubType= 10
@@ -239,10 +243,10 @@ msc:  for alpha  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-ionIoni:  for alpha  XStype:1  SubType=2
+ionIoni:  for alpha  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.02
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             BraggIon : Emin=    0 eV  Emax=7.9452 MeV
           BetheBloch : Emin=7.9452 MeV Emax=  100 TeV
@@ -256,10 +260,10 @@ msc:  for anti_proton  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for anti_proton  XStype:1  SubType=2
+hIoni:  for anti_proton  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=    2 MeV
           BetheBloch : Emin=    2 MeV Emax=  100 TeV
@@ -269,23 +273,23 @@ msc:  for kaon+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for kaon+  XStype:1  SubType=2
+hIoni:  for kaon+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=1.05231 MeV
           BetheBloch : Emin=1.05231 MeV Emax=  100 TeV
 
 hBrems:  for kaon+  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for kaon+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -295,23 +299,23 @@ msc:  for kaon-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for kaon-  XStype:1  SubType=2
+hIoni:  for kaon-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV
           BetheBloch : Emin=1.05231 MeV Emax=  100 TeV
 
 hBrems:  for kaon-  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for kaon-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -321,25 +325,24 @@ msc:  for mu+  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-muIoni:  for mu+  XStype:1  SubType=2
+muIoni:  for mu+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=  200 keV
-          BetheBloch : Emin=  200 keV Emax=    1 GeV
-        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+        MuBetheBloch : Emin=  200 keV Emax=  100 TeV
 
 muBrems:  for mu+  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
               MuBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 muPairProd:  for mu+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
-      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -354,25 +357,24 @@ msc:  for mu-  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-muIoni:  for mu-  XStype:1  SubType=2
+muIoni:  for mu-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=  200 keV
-          BetheBloch : Emin=  200 keV Emax=    1 GeV
-        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+        MuBetheBloch : Emin=  200 keV Emax=  100 TeV
 
 muBrems:  for mu-  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
               MuBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 muPairProd:  for mu-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
-      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -387,23 +389,23 @@ msc:  for pi+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for pi+  XStype:1  SubType=2
+hIoni:  for pi+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=297.505 keV
           BetheBloch : Emin=297.505 keV Emax=  100 TeV
 
 hBrems:  for pi+  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for pi+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -413,10 +415,10 @@ msc:  for pi-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for pi-  XStype:1  SubType=2
+hIoni:  for pi-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=297.505 keV
           BetheBloch : Emin=297.505 keV Emax=  100 TeV
@@ -3383,9 +3385,9 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
     8    -17.4     48.1     63.8     0.135        0     3.44       150      BEAKER compt
     9    -14.9     33.2     61.4     0.104        0     15.4       166      BEAKER compt
    10    -47.7     32.1       68     0.089        0     33.4       199      BEAKER compt
-   11      -57    -9.12     56.3     0.089        0     43.8       243      BEAKER Rayl
-   12      -57    -13.7     54.9    0.0706        0     4.79       248      BEAKER compt
-   13    -61.4    -11.1     62.7         0 4.42e-05     9.35       257      BEAKER phot
+   11    -56.7    -7.79     56.6     0.089        0     42.4       241      BEAKER Rayl
+   12    -56.7    -13.7     54.9    0.0706        0     6.21       248      BEAKER compt
+   13    -61.1    -11.2     62.7         0 4.42e-05     9.35       257      BEAKER phot
 29,8,"gamma",112115000
 
 *********************************************************************************************************
@@ -3393,8 +3395,8 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -61.4    -11.1     62.7     0.069        0        0         0      BEAKER initStep
-    1    -61.4    -11.1     62.7         0    0.069   0.0371    0.0371      BEAKER eIoni
+    0    -61.1    -11.2     62.7     0.069        0        0         0      BEAKER initStep
+    1    -61.1    -11.2     62.7         0    0.069   0.0371    0.0371      BEAKER eIoni
 29,19,"e-",112115000
 
 *********************************************************************************************************
@@ -3402,8 +3404,8 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -61.4    -11.1     62.7  6.57e-05        0        0         0      BEAKER initStep
-    1    -61.4    -11.1     62.7         0 6.57e-05  3.5e-06   3.5e-06      BEAKER eIoni
+    0    -61.1    -11.2     62.7  6.57e-05        0        0         0      BEAKER initStep
+    1    -61.1    -11.2     62.7         0 6.57e-05  3.5e-06   3.5e-06      BEAKER eIoni
 29,18,"e-",112115000
 
 *********************************************************************************************************
@@ -3411,8 +3413,8 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -61.4    -11.1     62.7  6.62e-05        0        0         0      BEAKER initStep
-    1    -61.4    -11.1     62.7         0 6.62e-05 3.52e-06  3.52e-06      BEAKER eIoni
+    0    -61.1    -11.2     62.7  6.62e-05        0        0         0      BEAKER initStep
+    1    -61.1    -11.2     62.7         0 6.62e-05 3.52e-06  3.52e-06      BEAKER eIoni
 29,17,"e-",112115000
 
 *********************************************************************************************************
@@ -3420,8 +3422,8 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -61.4    -11.1     62.7   0.00139        0        0         0      BEAKER initStep
-    1    -61.4    -11.1     62.7         0  0.00139 5.84e-05  5.84e-05      BEAKER eIoni
+    0    -61.1    -11.2     62.7   0.00139        0        0         0      BEAKER initStep
+    1    -61.1    -11.2     62.7         0  0.00139 5.84e-05  5.84e-05      BEAKER eIoni
 29,16,"e-",112115000
 
 *********************************************************************************************************
@@ -3429,8 +3431,8 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      -57    -13.7     54.9    0.0184        0        0         0      BEAKER initStep
-    1      -57    -13.7     54.9         0   0.0184  0.00377   0.00377      BEAKER eIoni
+    0    -56.7    -13.7     54.9    0.0184        0        0         0      BEAKER initStep
+    1    -56.7    -13.7     54.9         0   0.0184  0.00377   0.00377      BEAKER eIoni
 29,15,"e-",112115000
 
 *********************************************************************************************************
@@ -3626,7 +3628,7 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
     1    -42.5    -24.8    -30.3      0.38        0     13.5      13.5  SOLUTION_1 compt
     2    -31.2    -25.1    -32.7      0.38        0     11.6      25.1      BEAKER Transportation
     3    -6.17    -25.7    -37.9     0.366        0     25.5      50.7      BEAKER compt
-    4     9.94    -28.2    -46.9     0.366        0     18.6      69.2      BEAKER Rayl
+    4     9.92    -28.2    -46.9     0.366        0     18.6      69.2      BEAKER Rayl
     5     24.8    -31.4    -64.9     0.366        0     23.6      92.8  SOLUTION_1 Transportation
     6     35.2    -33.6    -77.5     0.366        0     16.5       109      BEAKER Transportation
     7       36    -33.8    -78.5     0.366        0     1.31       111       world Transportation
@@ -6935,12 +6937,12 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
     4     16.9       33     46.7     0.106        0     7.71       144      BEAKER compt
     5     16.7     33.2     42.5     0.106        0     4.17       148  SOLUTION_2 Transportation
     6     14.3     35.1     -3.5     0.106        0     46.1       194      BEAKER Transportation
-    7     11.2     37.6    -64.3    0.0985        0     60.9       255      BEAKER compt
-    8     11.1     37.8    -64.4    0.0985        0    0.204       255      BEAKER Rayl
-    9     11.2     38.4    -64.7    0.0985        0    0.676       256  SOLUTION_1 Transportation
-   10     12.3     56.7    -71.8    0.0985        0     19.7       276      BEAKER Transportation
-   11     12.6     61.7    -73.8    0.0985        0     5.43       281       world Transportation
-   12     39.1      500     -245    0.0985        0      471       753  OutOfWorld Transportation
+    7     11.2     37.6    -63.1     0.106        0     59.8       254      BEAKER Rayl
+    8     11.1     37.8    -64.3     0.093        0     1.19       255      BEAKER compt
+    9     11.4     38.3    -64.4     0.093        0    0.622       256  SOLUTION_1 Transportation
+   10     19.1     54.8    -68.6     0.093        0     18.6       274      BEAKER Transportation
+   11     21.2     59.3    -69.8     0.093        0     5.16       280       world Transportation
+   12      228      500     -183     0.093        0      500       779  OutOfWorld Transportation
 60,6,"gamma",121826000
 
 *********************************************************************************************************
@@ -6948,8 +6950,8 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     11.2     37.6    -64.3   0.00711        0        0         0      BEAKER initStep
-    1     11.2     37.6    -64.3         0  0.00711 0.000745  0.000745      BEAKER eIoni
+    0     11.1     37.8    -64.3    0.0126        0        0         0      BEAKER initStep
+    1     11.1     37.8    -64.3         0   0.0126  0.00196   0.00196      BEAKER eIoni
 60,10,"e-",121826000
 
 *********************************************************************************************************
@@ -10483,10 +10485,10 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
     0    -9.76    -2.14    -12.9     0.108        0        0         0      BEAKER initStep
-    1    -27.8    -18.7    -38.5     0.108        0     35.5      35.5      BEAKER Rayl
-    2    -32.2    -23.8    -47.6     0.108        0     11.3      46.8  SOLUTION_1 Transportation
+    1    -27.9    -18.8    -38.6     0.108        0     35.7      35.7      BEAKER Rayl
+    2    -32.2    -23.8    -47.6     0.108        0     11.1      46.7  SOLUTION_1 Transportation
     3    -44.1    -37.7    -72.5     0.108        0     30.9      77.7      BEAKER Transportation
-    4      -47      -41    -78.5     0.108        0     7.41      85.1       world Transportation
+    4      -47      -41    -78.5     0.108        0     7.45      85.1       world Transportation
     5     -249     -276     -500     0.108        0      523       608  OutOfWorld Transportation
 95,13,"gamma",237308000
 
@@ -10597,92 +10599,23 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
     0    -55.7     29.4     34.9     0.598        0        0         0      BEAKER initStep
     1    -55.7     29.4     34.9      0.59  0.00777   0.0284    0.0284       world Transportation
-    2     -167       24      119     0.559   0.0178      142       142       world eIoni
-    3     -170     16.8      129     0.556  0.00227     12.3       154       world eIoni
-    4     -199      -89      246      0.53   0.0246      163       317       world eIoni
-    5     -201     -103      256     0.522  0.00246     17.2       334       world eIoni
-    6     -201     -115      265     0.517   0.0015     15.7       350       world eIoni
-    7     -186     -158      281     0.508  0.00782     48.3       398       world eIoni
-    8     -110     -247      320     0.486    0.021      126       524       world eIoni
-    9     15.5     -350      429     0.446   0.0264      200       724       world eIoni
-   10    -19.4     -277      459     0.434   0.0103     87.5       812       world eIoni
-   11    -28.1     -260      469     0.427  0.00347     21.9       834       world eIoni
-   12    -33.4     -253      474     0.423  0.00123     9.63       843       world eIoni
-   13    -58.3     -218      500     0.412   0.0103     50.9       894  OutOfWorld Transportation
+    2     -160     24.7      113      0.56   0.0166      132       132       world eIoni
+    3     -163     18.1      122     0.558  0.00216     11.4       144       world eIoni
+    4     -217     -101      249     0.531   0.0259      186       330       world eIoni
+    5     -220     -105      250     0.529 0.000698     5.28       335       world eIoni
+    6     -265     -183      249     0.514   0.0127     90.9       426       world eIoni
+    7     -270     -195      251     0.512  0.00165     13.3       439       world eIoni
+    8     -284     -243      250     0.502  0.00848     50.1       489       world eIoni
+    9     -375     -500      256     0.459   0.0431      297       786  OutOfWorld Transportation
 96,9,"e-",41006500
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 21,   Parent ID = 9
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -33.4     -253      474   0.00282        0        0         0       world initStep
-    1    -33.5     -253      474         0  0.00282    0.283     0.283       world eIoni
-96,21,"e-",41006500
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 20,   Parent ID = 9
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -28.1     -260      469   0.00338        0        0         0       world initStep
-    1    -28.1     -260      469         0  0.00338    0.386     0.386       world eIoni
-96,20,"e-",41006500
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 19,   Parent ID = 9
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -19.4     -277      459   0.00181        0        0         0       world initStep
-    1    -19.3     -277      459         0  0.00181    0.138     0.138       world eIoni
-96,19,"e-",41006500
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 18,   Parent ID = 9
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     15.5     -350      429    0.0139        0        0         0       world initStep
-    1     15.6     -350      429   0.00909  9.2e-05    0.174     0.174       world eIoni
-    2     16.3     -349      429   0.00315  0.00594     1.69      1.87       world eIoni
-    3     16.3     -349      429         0  0.00315    0.343      2.21       world eIoni
-96,18,"e-",41006500
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 22,   Parent ID = 18
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     15.6     -350      429   0.00469        0        0         0       world initStep
-    1     15.8     -350      429         0  0.00469    0.616     0.616       world eIoni
-96,22,"e-",41006500
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 17,   Parent ID = 9
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -110     -247      320   0.00124        0        0         0       world initStep
-    1     -110     -247      320         0  0.00124   0.0778    0.0778       world eIoni
-96,17,"e-",41006500
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 16,   Parent ID = 9
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -186     -158      281   0.00101        0        0         0       world initStep
-    1     -186     -158      281         0  0.00101    0.058     0.058       world eIoni
-96,16,"e-",41006500
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 15,   Parent ID = 9
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -201     -115      265   0.00325        0        0         0       world initStep
-    1     -201     -115      265         0  0.00325    0.362     0.362       world eIoni
+    0     -284     -243      250   0.00157        0        0         0       world initStep
+    1     -284     -243      250         0  0.00157    0.111     0.111       world eIoni
 96,15,"e-",41006500
 
 *********************************************************************************************************
@@ -10690,8 +10623,8 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -201     -103      256    0.0056        0        0         0       world initStep
-    1     -202     -103      256         0   0.0056    0.938     0.938       world eIoni
+    0     -265     -183      249    0.0024        0        0         0       world initStep
+    1     -265     -183      249         0   0.0024    0.218     0.218       world eIoni
 96,14,"e-",41006500
 
 *********************************************************************************************************
@@ -10699,8 +10632,8 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -199      -89      246   0.00133        0        0         0       world initStep
-    1     -199      -89      246         0  0.00133   0.0862    0.0862       world eIoni
+    0     -220     -105      250   0.00103        0        0         0       world initStep
+    1     -220     -105      250         0  0.00103   0.0594    0.0594       world eIoni
 96,13,"e-",41006500
 
 *********************************************************************************************************
@@ -10708,8 +10641,8 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -170     16.8      129   0.00112        0        0         0       world initStep
-    1     -170     16.8      129         0  0.00112   0.0668    0.0668       world eIoni
+    0     -217     -101      249   0.00152        0        0         0       world initStep
+    1     -217     -101      249         0  0.00152    0.106     0.106       world eIoni
 96,12,"e-",41006500
 
 *********************************************************************************************************
@@ -10717,20 +10650,21 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -167       24      119    0.0132        0        0         0       world initStep
-    1     -167     24.3      120   0.00829  0.00213    0.943     0.943       world eIoni
-    2     -168     23.9      120    0.0051  0.00318     1.56       2.5       world eIoni
-    3     -168     24.1      120         0   0.0051    0.794      3.29       world eIoni
+    0     -160     24.7      113    0.0132        0        0         0       world initStep
+    1     -161     25.4      113   0.00985  0.00334      2.3       2.3       world eIoni
+    2     -162     24.6      114   0.00548  0.00437     1.81      4.12       world eIoni
+    3     -162     24.7      114   0.00249  0.00128     0.45      4.57       world eIoni
+    4     -162     24.8      114         0  0.00249     0.23       4.8       world eIoni
 96,11,"e-",41006500
 
 *********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 23,   Parent ID = 11
+* G4Track Information:   Particle = e-,   Track ID = 16,   Parent ID = 11
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -167     24.3      120   0.00277        0        0         0       world initStep
-    1     -167     24.3      119         0  0.00277    0.275     0.275       world eIoni
-96,23,"e-",41006500
+    0     -162     24.7      114   0.00172        0        0         0       world initStep
+    1     -162     24.8      114         0  0.00172    0.128     0.128       world eIoni
+96,16,"e-",41006500
 
 *********************************************************************************************************
 * G4Track Information:   Particle = Ni60,   Track ID = 7,   Parent ID = 5
@@ -10747,291 +10681,297 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -47.9    0.936    -75.8         0        0        0         0  SOLUTION_1 initStep
-    1    -47.9    0.936    -75.8         0        0        0         0  SOLUTION_1 RadioactiveDecay
-97,1,"Co60",119504000
+    0     31.2     17.8     11.2         0        0        0         0  SOLUTION_2 initStep
+    1     31.2     17.8     11.2         0        0        0         0  SOLUTION_2 RadioactiveDecay
+97,1,"Co60",93759800
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -47.9    0.936    -75.8    0.0944        0        0         0  SOLUTION_1 initStep
-    1    -47.9    0.896    -75.8         0   0.0944    0.131     0.131  SOLUTION_1 eIoni
-97,4,"e-",119504000
+    0     31.2     17.8     11.2    0.0466        0        0         0  SOLUTION_2 initStep
+    1     31.2     17.8     11.2         0   0.0466   0.0384    0.0384  SOLUTION_2 eIoni
+97,4,"e-",93759800
 
 *********************************************************************************************************
 * G4Track Information:   Particle = anti_nu_e,   Track ID = 3,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -47.9    0.936    -75.8     0.223        0        0         0  SOLUTION_1 initStep
-    1    -49.7     5.61    -77.5     0.223        0     5.31      5.31      BEAKER Transportation
-    2    -50.7     8.29    -78.5     0.223        0     3.04      8.35       world Transportation
-    3     -241      500     -262     0.223        0      558       567  OutOfWorld Transportation
-97,3,"anti_nu_e",119504000
+    0     31.2     17.8     11.2      0.27        0        0         0  SOLUTION_2 initStep
+    1     49.9     36.9     3.83      0.27        0     27.6      27.6      BEAKER Transportation
+    2     50.6     37.6     3.55      0.27        0     1.05      28.7       world Transportation
+    3      500      497     -174      0.27        0      666       695  OutOfWorld Transportation
+97,3,"anti_nu_e",93759800
 
 *********************************************************************************************************
 * G4Track Information:   Particle = Ni60[2505.753],   Track ID = 2,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -47.9    0.936    -75.8   1.2e-06        0        0         0  SOLUTION_1 initStep
-    1    -47.9    0.936    -75.8         0  1.2e-06 1.3e-308  1.3e-308  SOLUTION_1 RadioactiveDecay
-97,2,"Ni60[2505.753]",119504000
+    0     31.2     17.8     11.2  9.28e-07        0        0         0  SOLUTION_2 initStep
+    1     31.2     17.8     11.2         0 9.28e-07 3.93e-308 3.93e-308  SOLUTION_2 RadioactiveDecay
+97,2,"Ni60[2505.753]",93759800
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 6,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -47.9    0.936    -75.8      1.17        0        0         0  SOLUTION_1 initStep
-    1    -57.9     2.65      -58      1.17        0     20.5      20.5      BEAKER Transportation
-    2    -62.9     3.49    -49.3      1.17        0     10.1      30.6       world Transportation
-    3     -375     56.5      500      1.17        0      634       664  OutOfWorld Transportation
-97,6,"gamma",119504000
-
-*********************************************************************************************************
-* G4Track Information:   Particle = Ni60[1332.514],   Track ID = 5,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -47.9    0.936    -75.8  1.23e-05        0        0         0  SOLUTION_1 initStep
-    1    -47.9    0.936    -75.8         0 1.23e-05 3.36e-309 3.36e-309  SOLUTION_1 RadioactiveDecay
-97,5,"Ni60[1332.514]",119504000
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 8,   Parent ID = 5
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -47.9    0.936    -75.8      1.33        0        0         0  SOLUTION_1 initStep
-    1    -39.9    -3.16    -69.6      1.33        0     10.9      10.9      BEAKER Transportation
-    2     20.7    -34.2    -23.3      1.33        0     82.4      93.2  SOLUTION_1 Transportation
-    3     38.5    -43.4    -9.61      1.33        0     24.2       117      BEAKER Transportation
-    4     43.3    -45.8    -5.98      1.33        0     6.45       124       world Transportation
-    5      500     -280      344      1.33        0      621       745  OutOfWorld Transportation
-97,8,"gamma",119504000
-
-*********************************************************************************************************
-* G4Track Information:   Particle = Ni60,   Track ID = 7,   Parent ID = 5
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -47.9    0.936    -75.8  1.59e-05        0        0         0  SOLUTION_1 initStep
-    1    -47.9    0.936    -75.8         0 1.59e-05 5.15e-06  5.15e-06  SOLUTION_1 ionIoni
-    2    -47.9    0.936    -75.8         0        0        0  5.15e-06  SOLUTION_1 NoProcess
-97,7,"Ni60",119504000
-
-*********************************************************************************************************
-* G4Track Information:   Particle = Co60,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     37.6    -26.7      -16         0        0        0         0  SOLUTION_1 initStep
-    1     37.6    -26.7      -16         0        0        0         0  SOLUTION_1 RadioactiveDecay
-98,1,"Co60",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     37.6    -26.7      -16    0.0708        0        0         0  SOLUTION_1 initStep
-    1     37.6    -26.8    -16.1         0   0.0708   0.0798    0.0798  SOLUTION_1 eIoni
-98,4,"e-",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = anti_nu_e,   Track ID = 3,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     37.6    -26.7      -16     0.246        0        0         0  SOLUTION_1 initStep
-    1    0.675      -58    -24.8     0.246        0     49.2      49.2      BEAKER Transportation
-    2       -5    -62.8    -26.1     0.246        0     7.56      56.7       world Transportation
-    3     -500     -482     -143     0.246        0      659       716  OutOfWorld Transportation
-98,3,"anti_nu_e",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = Ni60[2505.753],   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     37.6    -26.7      -16   2.4e-06        0        0         0  SOLUTION_1 initStep
-    1     37.6    -26.7      -16         0  2.4e-06 2.26e-308 2.26e-308  SOLUTION_1 RadioactiveDecay
-98,2,"Ni60[2505.753]",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 6,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     37.6    -26.7      -16      1.17        0        0         0  SOLUTION_1 initStep
-    1     36.6      -45    -39.4      1.17        0     29.7      29.7      BEAKER Transportation
-    2     36.3    -51.5    -47.7      1.17        0     10.6      40.3       world Transportation
-    3     17.1     -405     -500      1.17        0      575       615  OutOfWorld Transportation
-98,6,"gamma",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = Ni60[1332.514],   Track ID = 5,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     37.6    -26.7      -16  1.23e-05        0        0         0  SOLUTION_1 initStep
-    1     37.6    -26.7      -16         0 1.23e-05 3.88e-308 3.88e-308  SOLUTION_1 RadioactiveDecay
-98,5,"Ni60[1332.514]",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 8,   Parent ID = 5
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     37.6    -26.7      -16      1.33        0        0         0  SOLUTION_1 initStep
-    1     45.7    -35.8      -26      1.33        0     15.7      15.7      BEAKER Transportation
-    2     46.9    -37.2    -27.6      0.22        0     2.48      18.2      BEAKER compt
-    3     45.4    -36.1    -26.8      0.22        0     2.05      20.2  SOLUTION_1 Transportation
-    4     31.4      -26    -19.3     0.156        0     18.9      39.1  SOLUTION_1 compt
-    5     27.7    -40.6     -3.5     0.156        0     21.9        61  SOLUTION_2 Transportation
-    6     24.6    -52.7     9.46     0.156        0     17.9      78.9  SOLUTION_2 compt
-    7     24.2    -57.1     15.2     0.156        0     7.22      86.2      BEAKER Transportation
-    8     24.1    -58.2     16.6     0.156        0     1.84        88       world Transportation
-    9    -9.14     -434      500     0.156        0      613       701  OutOfWorld Transportation
-98,8,"gamma",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 8
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     24.6    -52.7     9.46  0.000496        0        0         0  SOLUTION_2 initStep
-    1     24.6    -52.7     9.46         0 0.000496 2.24e-05  2.24e-05  SOLUTION_2 eIoni
-98,11,"e-",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 8
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     31.4      -26    -19.3    0.0635        0        0         0  SOLUTION_1 initStep
-    1     31.4    -25.9    -19.3         0   0.0635   0.0661    0.0661  SOLUTION_1 eIoni
-98,10,"e-",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 8
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     46.9    -37.2    -27.6      1.11        0        0         0      BEAKER initStep
-    1     47.4    -37.8    -28.2     0.367    0.746     1.77      1.77      BEAKER eIoni
-    2     47.6    -37.9    -28.1         0    0.367    0.544      2.31      BEAKER eIoni
-98,9,"e-",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = Ni60,   Track ID = 7,   Parent ID = 5
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     37.6    -26.7      -16  1.59e-05        0        0         0  SOLUTION_1 initStep
-    1     37.6    -26.7      -16         0 1.59e-05 5.15e-06  5.15e-06  SOLUTION_1 ionIoni
-    2     37.6    -26.7      -16         0        0        0  5.15e-06  SOLUTION_1 NoProcess
-98,7,"Ni60",39479300
-
-*********************************************************************************************************
-* G4Track Information:   Particle = Co60,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -49.3      -19    -21.7         0        0        0         0  SOLUTION_1 initStep
-    1    -49.3      -19    -21.7         0        0        0         0  SOLUTION_1 RadioactiveDecay
-99,1,"Co60",407549000
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -49.3      -19    -21.7     0.242        0        0         0  SOLUTION_1 initStep
-    1    -49.6      -19    -21.7         0    0.242    0.612     0.612  SOLUTION_1 eIoni
-99,4,"e-",407549000
-
-*********************************************************************************************************
-* G4Track Information:   Particle = anti_nu_e,   Track ID = 3,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -49.3      -19    -21.7    0.0754        0        0         0  SOLUTION_1 initStep
-    1    -57.9    -3.79    -19.4    0.0754        0     17.6      17.6      BEAKER Transportation
-    2    -62.8      4.9    -18.1    0.0754        0     10.1      27.7       world Transportation
-    3     -344      500     56.5    0.0754        0      574       602  OutOfWorld Transportation
-99,3,"anti_nu_e",407549000
-
-*********************************************************************************************************
-* G4Track Information:   Particle = Ni60[2505.753],   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -49.3      -19    -21.7  3.06e-06        0        0         0  SOLUTION_1 initStep
-    1    -49.3      -19    -21.7         0 3.06e-06 2.97e-308 2.97e-308  SOLUTION_1 RadioactiveDecay
-99,2,"Ni60[2505.753]",407549000
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 6,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -49.3      -19    -21.7      1.17        0        0         0  SOLUTION_1 initStep
-    1    -36.2    -17.1    -14.6      1.17        0       15        15      BEAKER Transportation
-    2    -27.3    -15.7    -9.73     0.227        0     10.2      25.2      BEAKER compt
-    3    -33.9    -21.3      -11     0.227        0      8.7      33.9  SOLUTION_1 Transportation
-    4    -47.8    -32.9    -13.7     0.227        0     18.3      52.2      BEAKER Transportation
-    5    -51.6    -36.1    -14.5     0.227        0     5.08      57.3       world Transportation
-    6     -500     -411     -102     0.227        0      591       648  OutOfWorld Transportation
-99,6,"gamma",407549000
+    0     31.2     17.8     11.2      1.17        0        0         0  SOLUTION_2 initStep
+    1     37.5     9.63     18.4     0.357        0     12.6      12.6  SOLUTION_2 compt
+    2     61.2     9.98    -1.55     0.357        0       31      43.6      BEAKER Transportation
+    3     62.2       10     -2.4     0.357        0     1.32      44.9       world Transportation
+    4      500     16.4     -370     0.357        0      572       617  OutOfWorld Transportation
+97,6,"gamma",93759800
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 6
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -27.3    -15.7    -9.73     0.946        0        0         0      BEAKER initStep
-    1    -26.6    -15.6     -9.4     0.322    0.624     1.61      1.61      BEAKER eIoni
-    2    -26.5    -15.5    -9.47         0    0.322    0.448      2.05      BEAKER eIoni
-99,7,"e-",407549000
+    0     37.5     9.63     18.4     0.816        0        0         0  SOLUTION_2 initStep
+    1     37.9     8.64     19.6     0.458    0.359      2.1       2.1  SOLUTION_2 eIoni
+    2     38.7     8.74     19.7    0.0488    0.409     1.43      3.52  SOLUTION_2 eIoni
+    3     38.7     8.72     19.7         0   0.0488   0.0417      3.57  SOLUTION_2 eIoni
+97,7,"e-",93759800
 
 *********************************************************************************************************
 * G4Track Information:   Particle = Ni60[1332.514],   Track ID = 5,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -49.3      -19    -21.7  1.23e-05        0        0         0  SOLUTION_1 initStep
-    1    -49.3      -19    -21.7         0 1.23e-05 1.93e-308 1.93e-308  SOLUTION_1 RadioactiveDecay
-99,5,"Ni60[1332.514]",407549000
+    0     31.2     17.8     11.2  1.23e-05        0        0         0  SOLUTION_2 initStep
+    1     31.2     17.8     11.2         0 1.23e-05 2.42e-308 2.42e-308  SOLUTION_2 RadioactiveDecay
+97,5,"Ni60[1332.514]",93759800
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 9,   Parent ID = 5
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -49.3      -19    -21.7      1.33        0        0         0  SOLUTION_1 initStep
-    1    -48.4   -0.387     -3.5      1.33        0       26        26  SOLUTION_2 Transportation
-    2    -46.5     41.1       37      1.33        0       58        84      BEAKER Transportation
-    3    -46.4     42.6     38.5      1.33        0      2.2      86.2       world Transportation
-    4    -25.1      500      485      1.33        0      639       726  OutOfWorld Transportation
-99,9,"gamma",407549000
+    0     31.2     17.8     11.2      1.33        0        0         0  SOLUTION_2 initStep
+    1     4.15     51.1    0.238      1.28        0     44.2      44.2  SOLUTION_2 compt
+    2    -2.27       62    -1.59      1.28        0     12.8        57      BEAKER Transportation
+    3    -2.84     62.9    -1.76      1.28        0     1.15      58.2       world Transportation
+    4     -260      500    -75.2      1.28        0      512       571  OutOfWorld Transportation
+97,9,"gamma",93759800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 9
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     4.15     51.1    0.238    0.0554        0        0         0  SOLUTION_2 initStep
+    1     4.13       51    0.222         0   0.0554   0.0521    0.0521  SOLUTION_2 eIoni
+97,10,"e-",93759800
 
 *********************************************************************************************************
 * G4Track Information:   Particle = Ni60,   Track ID = 8,   Parent ID = 5
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -49.3      -19    -21.7  1.59e-05        0        0         0  SOLUTION_1 initStep
-    1    -49.3      -19    -21.7         0 1.59e-05 5.15e-06  5.15e-06  SOLUTION_1 ionIoni
-    2    -49.3      -19    -21.7         0        0        0  5.15e-06  SOLUTION_1 NoProcess
-99,8,"Ni60",407549000
+    0     31.2     17.8     11.2  1.59e-05        0        0         0  SOLUTION_2 initStep
+    1     31.2     17.8     11.2         0 1.59e-05 5.15e-06  5.15e-06  SOLUTION_2 ionIoni
+    2     31.2     17.8     11.2         0        0        0  5.15e-06  SOLUTION_2 NoProcess
+97,8,"Ni60",93759800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Co60,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -36.9     15.9    -4.49         0        0        0         0  SOLUTION_1 initStep
+    1    -36.9     15.9    -4.49         0        0        0         0  SOLUTION_1 RadioactiveDecay
+98,1,"Co60",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -36.9     15.9    -4.49    0.0849        0        0         0  SOLUTION_1 initStep
+    1    -36.9       16     -4.5         0   0.0849    0.109     0.109  SOLUTION_1 eIoni
+98,4,"e-",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = anti_nu_e,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -36.9     15.9    -4.49     0.232        0        0         0  SOLUTION_1 initStep
+    1    -36.7       16    -4.36     0.232        0     0.28      0.28      BEAKER Transportation
+    2    -35.1     16.2     -3.5     0.232        0     1.78      2.06  SOLUTION_2 Transportation
+    3     47.4       32     42.5     0.232        0     95.8      97.8      BEAKER Transportation
+    4     53.6     33.2       46     0.232        0     7.19       105       world Transportation
+    5      500      118      295     0.232        0      518       623  OutOfWorld Transportation
+98,3,"anti_nu_e",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Ni60[2505.753],   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -36.9     15.9    -4.49  1.58e-06        0        0         0  SOLUTION_1 initStep
+    1    -36.9     15.9    -4.49         0 1.58e-06 6.74e-310 6.74e-310  SOLUTION_1 RadioactiveDecay
+98,2,"Ni60[2505.753]",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 6,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -36.9     15.9    -4.49      1.17        0        0         0  SOLUTION_1 initStep
+    1    -57.8    -4.25    -11.7      1.17        0     29.9      29.9      BEAKER Transportation
+    2    -62.4    -8.64    -13.3      1.17        0     6.53      36.5       world Transportation
+    3     -500     -430     -164      1.17        0      626       663  OutOfWorld Transportation
+98,6,"gamma",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Ni60[1332.514],   Track ID = 5,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -36.9     15.9    -4.49  1.23e-05        0        0         0  SOLUTION_1 initStep
+    1    -36.9     15.9    -4.49         0 1.23e-05 3.12e-308 3.12e-308  SOLUTION_1 RadioactiveDecay
+98,5,"Ni60[1332.514]",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 8,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -36.9     15.9    -4.49      1.33        0        0         0  SOLUTION_1 initStep
+    1    -36.7     15.8    -4.45      1.33        0    0.207     0.207      BEAKER Transportation
+    2    -32.2       14     -3.5      1.33        0     4.95      5.16  SOLUTION_2 Transportation
+    3     10.2    -3.05     5.44     0.283        0     46.6      51.8  SOLUTION_2 compt
+    4     6.29    -6.87    0.446     0.223        0     7.42      59.2  SOLUTION_2 compt
+    5     7.56    -7.18     -3.5     0.223        0     4.16      63.3      BEAKER Transportation
+    6     31.7    -13.1    -78.5     0.223        0       79       142 DETECTOR_CONTAINER Transportation
+    7     36.3    -14.2    -92.7     0.223        0       15       157       world Transportation
+    8      168    -46.3     -500     0.223        0      429       586  OutOfWorld Transportation
+98,8,"gamma",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     6.29    -6.87    0.446    0.0598        0        0         0  SOLUTION_2 initStep
+    1     6.26    -6.89    0.449         0   0.0598   0.0595    0.0595  SOLUTION_2 eIoni
+98,10,"e-",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     10.2    -3.05     5.44      1.05        0        0         0  SOLUTION_2 initStep
+    1     11.4    -3.35     5.85     0.749    0.205     1.51      1.51  SOLUTION_2 eIoni
+    2     12.9    -3.02     5.81     0.403    0.346     1.99       3.5  SOLUTION_2 eIoni
+    3     12.6    -2.42     6.12    0.0533     0.35     1.27      4.77  SOLUTION_2 eIoni
+    4     12.6    -2.41     6.14         0   0.0533   0.0487      4.82  SOLUTION_2 eIoni
+98,9,"e-",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 9
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     11.4    -3.35     5.85    0.0948        0        0         0  SOLUTION_2 initStep
+    1     11.5    -3.35     5.91         0   0.0948    0.132     0.132  SOLUTION_2 eIoni
+98,11,"e-",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Ni60,   Track ID = 7,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -36.9     15.9    -4.49  1.59e-05        0        0         0  SOLUTION_1 initStep
+    1    -36.9     15.9    -4.49         0 1.59e-05 5.15e-06  5.15e-06  SOLUTION_1 ionIoni
+    2    -36.9     15.9    -4.49         0        0        0  5.15e-06  SOLUTION_1 NoProcess
+98,7,"Ni60",56122800
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Co60,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.61    -61.4     26.1         0        0        0         0  SOLUTION_2 initStep
+    1     1.61    -61.4     26.1         0        0        0         0  SOLUTION_2 RadioactiveDecay
+99,1,"Co60",46419500
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.61    -61.4     26.1    0.0687        0        0         0  SOLUTION_2 initStep
+    1     1.59    -61.4       26         0   0.0687   0.0757    0.0757  SOLUTION_2 eIoni
+99,4,"e-",46419500
+
+*********************************************************************************************************
+* G4Track Information:   Particle = anti_nu_e,   Track ID = 3,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.61    -61.4     26.1     0.248        0        0         0  SOLUTION_2 initStep
+    1      1.1      -62     26.3     0.248        0    0.796     0.796      BEAKER Transportation
+    2     0.19      -63     26.7     0.248        0     1.43      2.23       world Transportation
+    3     -394     -500      218     0.248        0      619       621  OutOfWorld Transportation
+99,3,"anti_nu_e",46419500
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Ni60[2505.753],   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.61    -61.4     26.1  9.63e-07        0        0         0  SOLUTION_2 initStep
+    1     1.61    -61.4     26.1         0 9.63e-07 4.13e-309 4.13e-309  SOLUTION_2 RadioactiveDecay
+99,2,"Ni60[2505.753]",46419500
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 6,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.61    -61.4     26.1      1.17        0        0         0  SOLUTION_2 initStep
+    1     3.77    -61.9     26.1      1.17        0     2.21      2.21      BEAKER Transportation
+    2     7.13    -62.6     26.1      1.17        0     3.44      5.65       world Transportation
+    3      500     -167     29.8      1.17        0      504       509  OutOfWorld Transportation
+99,6,"gamma",46419500
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Ni60[1332.514],   Track ID = 5,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.61    -61.4     26.1  1.23e-05        0        0         0  SOLUTION_2 initStep
+    1     1.61    -61.4     26.1         0 1.23e-05 1.02e-308 1.02e-308  SOLUTION_2 RadioactiveDecay
+99,5,"Ni60[1332.514]",46419500
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 8,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.61    -61.4     26.1      1.33        0        0         0  SOLUTION_2 initStep
+    1     1.58      -62     25.4      1.33        0    0.896     0.896      BEAKER Transportation
+    2     1.52      -63     24.1      1.33        0     1.63      2.52       world Transportation
+    3    -20.7     -473     -500      1.33        0      666       668  OutOfWorld Transportation
+99,8,"gamma",46419500
+
+*********************************************************************************************************
+* G4Track Information:   Particle = Ni60,   Track ID = 7,   Parent ID = 5
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.61    -61.4     26.1  1.59e-05        0        0         0  SOLUTION_2 initStep
+    1     1.61    -61.4     26.1         0 1.59e-05 5.15e-06  5.15e-06  SOLUTION_2 ionIoni
+    2     1.61    -61.4     26.1         0        0        0  5.15e-06  SOLUTION_2 NoProcess
+99,7,"Ni60",46419500
  Run terminated.
 Run Summary
   Number of events processed : 100
-  User=0.150000s Real=0.314023s Sys=0.050000s
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+  User=0.030000s Real=0.072874s Sys=0.020000s

@@ -36,8 +36,10 @@ GmEnergySplitter::GmEnergySplitter
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -53,7 +55,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -63,8 +65,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -120,8 +123,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -130,10 +133,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -150,10 +153,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -195,31 +198,29 @@ See commands in /vis/modeling/trajectories/ for other options.
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=0.110000s Real=0.106480s Sys=0.000000s
+  User=0.070000s Real=0.066547s Sys=0.000000s
+ GmScoringRun::DumpAllScorer() 3 3
  GmVPSPrinter::SetUnit GmPSPrinterCout 1 New 1 Ratio 1
 
  MultiFunctionalDet: doseEnergyDet
  PrimitiveScorer: energyScorer
  Number of entries= 2
-  index: container:1/detector:1  = 0.00587623 +-(REL) 0.100587 MeV sumV2= 3.52786e-07
-  index: container:2/detector:1  = 0.00290733 +-(REL) 0.141642 MeV sumV2= 1.70408e-07
-energyScorer SUM_ALL: 0.00878356 +-(REL) 0.0820146 MeV
+  index: container:1/detector:1  = 0.00585725 +-(REL) 0.100796 MeV sumV2= 3.51956e-07
+  index: container:2/detector:1  = 0.00296184 +-(REL) 0.14072 MeV sumV2= 1.74572e-07
+energyScorer SUM_ALL: 0.00881909 +-(REL) 0.0819455 MeV
  GmVPSPrinter::SetUnit GmPSPrinterCout 1e-12 New 1e-12 Ratio 1
 
  MultiFunctionalDet: doseEnergyDet
  PrimitiveScorer: doseScorer
  Number of entries= 2
-  index: container:1/detector:1  = 6.43092e-14 +-(REL) 0.100587 Gy sumV2= 4.22533e-29
-  index: container:2/detector:1  = 3.18177e-14 +-(REL) 0.141642 Gy sumV2= 2.04098e-29
-doseScorer SUM_ALL: 9.61269e-14 +-(REL) 0.0820146 Gy
+  index: container:1/detector:1  = 6.41015e-14 +-(REL) 0.100796 Gy sumV2= 4.21539e-29
+  index: container:2/detector:1  = 3.24142e-14 +-(REL) 0.14072 Gy sumV2= 2.09086e-29
+doseScorer SUM_ALL: 9.65158e-14 +-(REL) 0.0819455 Gy
  GmVPSPrinter::SetUnit GmPSPrinterCout 0.01 New 0.01 Ratio 1
 
  MultiFunctionalDet: fluxDet
  PrimitiveScorer: fluxScorer
  Number of entries= 2
-  index: 1  = -0.0070686 +-(REL) -0.0226242 cm-2 sumV2= 3.05688e-08
-  index: 2  = -0.00356739 +-(REL) -0.0434258 cm-2 sumV2= 2.52694e-08
-fluxScorer SUM_ALL: -0.010636 +-(REL) -0.0209338 cm-2
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+  index: 1  = -0.00706845 +-(REL) -0.0226642 cm-2 sumV2= 3.0658e-08
+  index: 2  = -0.00360002 +-(REL) -0.0431205 cm-2 sumV2= 2.53915e-08
+fluxScorer SUM_ALL: -0.0106685 +-(REL) -0.0209097 cm-2

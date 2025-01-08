@@ -27,8 +27,10 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -44,7 +46,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -54,8 +56,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -91,8 +94,7 @@ Screening factor                                   1
 ======                 Atomic Deexcitation Parameters          ========
 =======================================================================
 Fluorescence enabled                               1
-Fluorescence Bearden data files enabled            0
-Fluorescence ANSTO data files enabled              0
+Directory in G4LEDATA for fluorescence data files  fluor
 Auger electron cascade enabled                     1
 PIXE atomic de-excitation enabled                  0
 De-excitation module ignores cuts                  1
@@ -122,8 +124,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -132,10 +134,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -152,10 +154,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -176,23 +178,23 @@ msc:  for proton  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for proton  XStype:1  SubType=2
+hIoni:  for proton  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=    2 MeV
           BetheBloch : Emin=    2 MeV Emax=  100 TeV
 
 hBrems:  for proton  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -202,10 +204,10 @@ msc:  for GenericIon  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-ionIoni:  for GenericIon  XStype:1  SubType=2
+ionIoni:  for GenericIon  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.02
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
          ParamICRU73 : Emin=    0 eV  Emax=  100 TeV  deltaVI
 
@@ -215,9 +217,11 @@ nuclearStopping:  for GenericIon SubType=8 BuildTable=0
 ======================================================================
 ======          Radioactive Decay Physics Parameters           =======
 ======================================================================
-Max life time                                     1000 ps
+min MeanLife (from G4NuclideTable)                1 ns 
+Max life time (from G4DeexPrecoParameters)        1 ns 
 Internal e- conversion flag                       1
 Stored internal conversion coefficients           0
+Enabled atomic relaxation mode                    1
 Enable correlated gamma emission                  0
 Max 2J for sampling of angular correlations       10
 Atomic de-excitation enabled                      1
@@ -225,7 +229,7 @@ Auger electron emission enabled                   1
 Check EM cuts disabled for atomic de-excitation   1
 Use Bearden atomic level energies                 0
 Use ANSTO fluorescence model                      0
-Threshold for very long decay time at rest        1e+27  ns
+Threshold for very long decay time at rest        3.171e+10 y  
 ======================================================================
 
 msc:  for alpha  SubType= 10
@@ -233,10 +237,10 @@ msc:  for alpha  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-ionIoni:  for alpha  XStype:1  SubType=2
+ionIoni:  for alpha  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.02
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.02
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             BraggIon : Emin=    0 eV  Emax=7.9452 MeV
           BetheBloch : Emin=7.9452 MeV Emax=  100 TeV
@@ -250,10 +254,10 @@ msc:  for anti_proton  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for anti_proton  XStype:1  SubType=2
+hIoni:  for anti_proton  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=    2 MeV
           BetheBloch : Emin=    2 MeV Emax=  100 TeV
@@ -263,23 +267,23 @@ msc:  for kaon+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for kaon+  XStype:1  SubType=2
+hIoni:  for kaon+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=1.05231 MeV
           BetheBloch : Emin=1.05231 MeV Emax=  100 TeV
 
 hBrems:  for kaon+  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for kaon+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -289,23 +293,23 @@ msc:  for kaon-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for kaon-  XStype:1  SubType=2
+hIoni:  for kaon-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=1.05231 MeV
           BetheBloch : Emin=1.05231 MeV Emax=  100 TeV
 
 hBrems:  for kaon-  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for kaon-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -315,25 +319,24 @@ msc:  for mu+  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-muIoni:  for mu+  XStype:1  SubType=2
+muIoni:  for mu+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=  200 keV
-          BetheBloch : Emin=  200 keV Emax=    1 GeV
-        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+        MuBetheBloch : Emin=  200 keV Emax=  100 TeV
 
 muBrems:  for mu+  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
               MuBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 muPairProd:  for mu+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
-      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -348,25 +351,24 @@ msc:  for mu-  SubType= 10
         WentzelVIUni : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-muIoni:  for mu-  XStype:1  SubType=2
+muIoni:  for mu-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=  200 keV
-          BetheBloch : Emin=  200 keV Emax=    1 GeV
-        MuBetheBloch : Emin=    1 GeV Emax=  100 TeV
+        MuBetheBloch : Emin=  200 keV Emax=  100 TeV
 
 muBrems:  for mu-  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
               MuBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 muPairProd:  for mu-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
-      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
+      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -381,23 +383,23 @@ msc:  for pi+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for pi+  XStype:1  SubType=2
+hIoni:  for pi+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                Bragg : Emin=    0 eV  Emax=297.505 keV
           BetheBloch : Emin=297.505 keV Emax=  100 TeV
 
 hBrems:  for pi+  XStype:1  SubType=3
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
                hBrem : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 hPairProd:  for pi+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
-      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 0
+      Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
       Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
@@ -407,10 +409,10 @@ msc:  for pi-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=Minimal Rfact=0.2 Gfact=2.5 Sfact=0.6 DispFlag:0 Skin=1 Llim=1 mm
 
-hIoni:  for pi-  XStype:1  SubType=2
+hIoni:  for pi-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 0.1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 0.1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=297.505 keV
           BetheBloch : Emin=297.505 keV Emax=  100 TeV
@@ -488,109 +490,106 @@ See commands in /vis/modeling/trajectories/ for other options.
  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
  %%% EVENT 0 NTRACKS 7 TOTAL NTRACKS 7
- %%% EVENT 1000 NTRACKS 11 TOTAL NTRACKS 9470
- %%% EVENT 2000 NTRACKS 9 TOTAL NTRACKS 18638
- %%% EVENT 3000 NTRACKS 8 TOTAL NTRACKS 28019
- %%% EVENT 4000 NTRACKS 10 TOTAL NTRACKS 37417
- %%% EVENT 5000 NTRACKS 18 TOTAL NTRACKS 46788
- %%% EVENT 6000 NTRACKS 11 TOTAL NTRACKS 56032
- %%% EVENT 7000 NTRACKS 8 TOTAL NTRACKS 65216
- %%% EVENT 8000 NTRACKS 8 TOTAL NTRACKS 74667
- %%% EVENT 9000 NTRACKS 8 TOTAL NTRACKS 83894
- %%% EVENT 10000 NTRACKS 9 TOTAL NTRACKS 93281
- %%% EVENT 11000 NTRACKS 8 TOTAL NTRACKS 102737
- %%% EVENT 12000 NTRACKS 7 TOTAL NTRACKS 112042
- %%% EVENT 13000 NTRACKS 7 TOTAL NTRACKS 121738
- %%% EVENT 14000 NTRACKS 7 TOTAL NTRACKS 131110
- %%% EVENT 15000 NTRACKS 8 TOTAL NTRACKS 140361
- %%% EVENT 16000 NTRACKS 9 TOTAL NTRACKS 149768
- %%% EVENT 17000 NTRACKS 8 TOTAL NTRACKS 159011
- %%% EVENT 18000 NTRACKS 10 TOTAL NTRACKS 168487
- %%% EVENT 19000 NTRACKS 8 TOTAL NTRACKS 178022
- %%% EVENT 20000 NTRACKS 9 TOTAL NTRACKS 187454
- %%% EVENT 21000 NTRACKS 7 TOTAL NTRACKS 196896
- %%% EVENT 22000 NTRACKS 9 TOTAL NTRACKS 206281
- %%% EVENT 23000 NTRACKS 9 TOTAL NTRACKS 215541
- %%% EVENT 24000 NTRACKS 7 TOTAL NTRACKS 224968
- %%% EVENT 25000 NTRACKS 7 TOTAL NTRACKS 234214
- %%% EVENT 26000 NTRACKS 8 TOTAL NTRACKS 243507
- %%% EVENT 27000 NTRACKS 8 TOTAL NTRACKS 252757
- %%% EVENT 28000 NTRACKS 7 TOTAL NTRACKS 261759
- %%% EVENT 29000 NTRACKS 7 TOTAL NTRACKS 271018
- %%% EVENT 30000 NTRACKS 16 TOTAL NTRACKS 280281
- %%% EVENT 31000 NTRACKS 11 TOTAL NTRACKS 289530
- %%% EVENT 32000 NTRACKS 8 TOTAL NTRACKS 298918
- %%% EVENT 33000 NTRACKS 8 TOTAL NTRACKS 308262
- %%% EVENT 34000 NTRACKS 8 TOTAL NTRACKS 317646
- %%% EVENT 35000 NTRACKS 9 TOTAL NTRACKS 327063
- %%% EVENT 36000 NTRACKS 7 TOTAL NTRACKS 336377
- %%% EVENT 37000 NTRACKS 10 TOTAL NTRACKS 345805
- %%% EVENT 38000 NTRACKS 8 TOTAL NTRACKS 355225
- %%% EVENT 39000 NTRACKS 7 TOTAL NTRACKS 364661
- %%% EVENT 40000 NTRACKS 7 TOTAL NTRACKS 373922
- %%% EVENT 41000 NTRACKS 8 TOTAL NTRACKS 383267
- %%% EVENT 42000 NTRACKS 7 TOTAL NTRACKS 392633
- %%% EVENT 43000 NTRACKS 7 TOTAL NTRACKS 401859
- %%% EVENT 44000 NTRACKS 11 TOTAL NTRACKS 411357
- %%% EVENT 45000 NTRACKS 9 TOTAL NTRACKS 420669
- %%% EVENT 46000 NTRACKS 7 TOTAL NTRACKS 430083
- %%% EVENT 47000 NTRACKS 7 TOTAL NTRACKS 439537
- %%% EVENT 48000 NTRACKS 7 TOTAL NTRACKS 449030
- %%% EVENT 49000 NTRACKS 7 TOTAL NTRACKS 458122
- %%% EVENT 50000 NTRACKS 8 TOTAL NTRACKS 467301
- %%% EVENT 51000 NTRACKS 7 TOTAL NTRACKS 476544
- %%% EVENT 52000 NTRACKS 11 TOTAL NTRACKS 486072
- %%% EVENT 53000 NTRACKS 7 TOTAL NTRACKS 495537
- %%% EVENT 54000 NTRACKS 8 TOTAL NTRACKS 504989
- %%% EVENT 55000 NTRACKS 7 TOTAL NTRACKS 514342
- %%% EVENT 56000 NTRACKS 8 TOTAL NTRACKS 523722
- %%% EVENT 57000 NTRACKS 7 TOTAL NTRACKS 533032
- %%% EVENT 58000 NTRACKS 12 TOTAL NTRACKS 542552
- %%% EVENT 59000 NTRACKS 8 TOTAL NTRACKS 552092
- %%% EVENT 60000 NTRACKS 8 TOTAL NTRACKS 561664
- %%% EVENT 61000 NTRACKS 8 TOTAL NTRACKS 571135
- %%% EVENT 62000 NTRACKS 7 TOTAL NTRACKS 580314
- %%% EVENT 63000 NTRACKS 15 TOTAL NTRACKS 589718
- %%% EVENT 64000 NTRACKS 7 TOTAL NTRACKS 599114
- %%% EVENT 65000 NTRACKS 8 TOTAL NTRACKS 608593
- %%% EVENT 66000 NTRACKS 12 TOTAL NTRACKS 617997
- %%% EVENT 67000 NTRACKS 10 TOTAL NTRACKS 627280
- %%% EVENT 68000 NTRACKS 7 TOTAL NTRACKS 636753
- %%% EVENT 69000 NTRACKS 13 TOTAL NTRACKS 646314
- %%% EVENT 70000 NTRACKS 8 TOTAL NTRACKS 655777
- %%% EVENT 71000 NTRACKS 7 TOTAL NTRACKS 664984
- %%% EVENT 72000 NTRACKS 7 TOTAL NTRACKS 674296
- %%% EVENT 73000 NTRACKS 7 TOTAL NTRACKS 683752
- %%% EVENT 74000 NTRACKS 7 TOTAL NTRACKS 693204
- %%% EVENT 75000 NTRACKS 7 TOTAL NTRACKS 702638
- %%% EVENT 76000 NTRACKS 7 TOTAL NTRACKS 711919
- %%% EVENT 77000 NTRACKS 13 TOTAL NTRACKS 721293
- %%% EVENT 78000 NTRACKS 8 TOTAL NTRACKS 730446
- %%% EVENT 79000 NTRACKS 7 TOTAL NTRACKS 739865
- %%% EVENT 80000 NTRACKS 9 TOTAL NTRACKS 748868
- %%% EVENT 81000 NTRACKS 7 TOTAL NTRACKS 758145
- %%% EVENT 82000 NTRACKS 15 TOTAL NTRACKS 767554
- %%% EVENT 83000 NTRACKS 7 TOTAL NTRACKS 776863
- %%% EVENT 84000 NTRACKS 8 TOTAL NTRACKS 786170
- %%% EVENT 85000 NTRACKS 9 TOTAL NTRACKS 795702
- %%% EVENT 86000 NTRACKS 11 TOTAL NTRACKS 805267
- %%% EVENT 87000 NTRACKS 9 TOTAL NTRACKS 814677
- %%% EVENT 88000 NTRACKS 7 TOTAL NTRACKS 824182
- %%% EVENT 89000 NTRACKS 7 TOTAL NTRACKS 833416
- %%% EVENT 90000 NTRACKS 10 TOTAL NTRACKS 842957
- %%% EVENT 91000 NTRACKS 7 TOTAL NTRACKS 852240
- %%% EVENT 92000 NTRACKS 16 TOTAL NTRACKS 861704
- %%% EVENT 93000 NTRACKS 7 TOTAL NTRACKS 870971
- %%% EVENT 94000 NTRACKS 8 TOTAL NTRACKS 880288
- %%% EVENT 95000 NTRACKS 11 TOTAL NTRACKS 889557
- %%% EVENT 96000 NTRACKS 7 TOTAL NTRACKS 899138
- %%% EVENT 97000 NTRACKS 8 TOTAL NTRACKS 908403
- %%% EVENT 98000 NTRACKS 7 TOTAL NTRACKS 917851
- %%% EVENT 99000 NTRACKS 10 TOTAL NTRACKS 927069
+ %%% EVENT 1000 NTRACKS 9 TOTAL NTRACKS 9685
+ %%% EVENT 2000 NTRACKS 8 TOTAL NTRACKS 18856
+ %%% EVENT 3000 NTRACKS 12 TOTAL NTRACKS 28035
+ %%% EVENT 4000 NTRACKS 13 TOTAL NTRACKS 37418
+ %%% EVENT 5000 NTRACKS 7 TOTAL NTRACKS 46800
+ %%% EVENT 6000 NTRACKS 7 TOTAL NTRACKS 56154
+ %%% EVENT 7000 NTRACKS 7 TOTAL NTRACKS 65379
+ %%% EVENT 8000 NTRACKS 7 TOTAL NTRACKS 74892
+ %%% EVENT 9000 NTRACKS 20 TOTAL NTRACKS 84324
+ %%% EVENT 10000 NTRACKS 7 TOTAL NTRACKS 93696
+ %%% EVENT 11000 NTRACKS 10 TOTAL NTRACKS 103078
+ %%% EVENT 12000 NTRACKS 17 TOTAL NTRACKS 112460
+ %%% EVENT 13000 NTRACKS 7 TOTAL NTRACKS 121857
+ %%% EVENT 14000 NTRACKS 7 TOTAL NTRACKS 131365
+ %%% EVENT 15000 NTRACKS 7 TOTAL NTRACKS 140835
+ %%% EVENT 16000 NTRACKS 8 TOTAL NTRACKS 150265
+ %%% EVENT 17000 NTRACKS 10 TOTAL NTRACKS 159661
+ %%% EVENT 18000 NTRACKS 7 TOTAL NTRACKS 169120
+ %%% EVENT 19000 NTRACKS 7 TOTAL NTRACKS 178465
+ %%% EVENT 20000 NTRACKS 8 TOTAL NTRACKS 187887
+ %%% EVENT 21000 NTRACKS 7 TOTAL NTRACKS 197276
+ %%% EVENT 22000 NTRACKS 7 TOTAL NTRACKS 206484
+ %%% EVENT 23000 NTRACKS 7 TOTAL NTRACKS 215852
+ %%% EVENT 24000 NTRACKS 8 TOTAL NTRACKS 225303
+ %%% EVENT 25000 NTRACKS 8 TOTAL NTRACKS 234501
+ %%% EVENT 26000 NTRACKS 7 TOTAL NTRACKS 243839
+ %%% EVENT 27000 NTRACKS 8 TOTAL NTRACKS 253119
+ %%% EVENT 28000 NTRACKS 9 TOTAL NTRACKS 262178
+ %%% EVENT 29000 NTRACKS 7 TOTAL NTRACKS 271493
+ %%% EVENT 30000 NTRACKS 8 TOTAL NTRACKS 280877
+ %%% EVENT 31000 NTRACKS 7 TOTAL NTRACKS 290051
+ %%% EVENT 32000 NTRACKS 8 TOTAL NTRACKS 299467
+ %%% EVENT 33000 NTRACKS 8 TOTAL NTRACKS 308927
+ %%% EVENT 34000 NTRACKS 8 TOTAL NTRACKS 318289
+ %%% EVENT 35000 NTRACKS 8 TOTAL NTRACKS 327679
+ %%% EVENT 36000 NTRACKS 15 TOTAL NTRACKS 337123
+ %%% EVENT 37000 NTRACKS 8 TOTAL NTRACKS 346834
+ %%% EVENT 38000 NTRACKS 9 TOTAL NTRACKS 356325
+ %%% EVENT 39000 NTRACKS 7 TOTAL NTRACKS 365794
+ %%% EVENT 40000 NTRACKS 17 TOTAL NTRACKS 375010
+ %%% EVENT 41000 NTRACKS 8 TOTAL NTRACKS 384456
+ %%% EVENT 42000 NTRACKS 7 TOTAL NTRACKS 393857
+ %%% EVENT 43000 NTRACKS 27 TOTAL NTRACKS 403314
+ %%% EVENT 44000 NTRACKS 9 TOTAL NTRACKS 412634
+ %%% EVENT 45000 NTRACKS 7 TOTAL NTRACKS 422144
+ %%% EVENT 46000 NTRACKS 7 TOTAL NTRACKS 431774
+ %%% EVENT 47000 NTRACKS 10 TOTAL NTRACKS 441140
+ %%% EVENT 48000 NTRACKS 7 TOTAL NTRACKS 450311
+ %%% EVENT 49000 NTRACKS 7 TOTAL NTRACKS 459601
+ %%% EVENT 50000 NTRACKS 7 TOTAL NTRACKS 468777
+ %%% EVENT 51000 NTRACKS 9 TOTAL NTRACKS 478306
+ %%% EVENT 52000 NTRACKS 9 TOTAL NTRACKS 487731
+ %%% EVENT 53000 NTRACKS 7 TOTAL NTRACKS 497340
+ %%% EVENT 54000 NTRACKS 11 TOTAL NTRACKS 506481
+ %%% EVENT 55000 NTRACKS 10 TOTAL NTRACKS 515917
+ %%% EVENT 56000 NTRACKS 12 TOTAL NTRACKS 525356
+ %%% EVENT 57000 NTRACKS 15 TOTAL NTRACKS 534752
+ %%% EVENT 58000 NTRACKS 7 TOTAL NTRACKS 544157
+ %%% EVENT 59000 NTRACKS 7 TOTAL NTRACKS 553708
+ %%% EVENT 60000 NTRACKS 7 TOTAL NTRACKS 563258
+ %%% EVENT 61000 NTRACKS 11 TOTAL NTRACKS 572656
+ %%% EVENT 62000 NTRACKS 13 TOTAL NTRACKS 581967
+ %%% EVENT 63000 NTRACKS 9 TOTAL NTRACKS 591244
+ %%% EVENT 64000 NTRACKS 10 TOTAL NTRACKS 600747
+ %%% EVENT 65000 NTRACKS 9 TOTAL NTRACKS 610095
+ %%% EVENT 66000 NTRACKS 9 TOTAL NTRACKS 619415
+ %%% EVENT 67000 NTRACKS 30 TOTAL NTRACKS 628631
+ %%% EVENT 68000 NTRACKS 11 TOTAL NTRACKS 638097
+ %%% EVENT 69000 NTRACKS 7 TOTAL NTRACKS 647869
+ %%% EVENT 70000 NTRACKS 14 TOTAL NTRACKS 657113
+ %%% EVENT 71000 NTRACKS 7 TOTAL NTRACKS 666554
+ %%% EVENT 72000 NTRACKS 7 TOTAL NTRACKS 676113
+ %%% EVENT 73000 NTRACKS 13 TOTAL NTRACKS 685584
+ %%% EVENT 74000 NTRACKS 7 TOTAL NTRACKS 695071
+ %%% EVENT 75000 NTRACKS 23 TOTAL NTRACKS 704433
+ %%% EVENT 76000 NTRACKS 8 TOTAL NTRACKS 713864
+ %%% EVENT 77000 NTRACKS 7 TOTAL NTRACKS 723051
+ %%% EVENT 78000 NTRACKS 7 TOTAL NTRACKS 732440
+ %%% EVENT 79000 NTRACKS 7 TOTAL NTRACKS 741616
+ %%% EVENT 80000 NTRACKS 7 TOTAL NTRACKS 750814
+ %%% EVENT 81000 NTRACKS 8 TOTAL NTRACKS 760192
+ %%% EVENT 82000 NTRACKS 7 TOTAL NTRACKS 769523
+ %%% EVENT 83000 NTRACKS 14 TOTAL NTRACKS 778973
+ %%% EVENT 84000 NTRACKS 9 TOTAL NTRACKS 788249
+ %%% EVENT 85000 NTRACKS 7 TOTAL NTRACKS 797598
+ %%% EVENT 86000 NTRACKS 8 TOTAL NTRACKS 806895
+ %%% EVENT 87000 NTRACKS 11 TOTAL NTRACKS 816516
+ %%% EVENT 88000 NTRACKS 18 TOTAL NTRACKS 825955
+ %%% EVENT 89000 NTRACKS 18 TOTAL NTRACKS 835480
+ %%% EVENT 90000 NTRACKS 8 TOTAL NTRACKS 844860
+ %%% EVENT 91000 NTRACKS 11 TOTAL NTRACKS 854192
+ %%% EVENT 92000 NTRACKS 13 TOTAL NTRACKS 863545
+ %%% EVENT 93000 NTRACKS 8 TOTAL NTRACKS 872970
+ %%% EVENT 94000 NTRACKS 9 TOTAL NTRACKS 882209
+ %%% EVENT 95000 NTRACKS 8 TOTAL NTRACKS 891549
+ %%% EVENT 96000 NTRACKS 7 TOTAL NTRACKS 900801
+ %%% EVENT 97000 NTRACKS 11 TOTAL NTRACKS 910079
+ %%% EVENT 98000 NTRACKS 24 TOTAL NTRACKS 919420
+ %%% EVENT 99000 NTRACKS 7 TOTAL NTRACKS 928772
  Run terminated.
 Run Summary
   Number of events processed : 100000
-  User=17.740000s Real=17.797103s Sys=0.010000s
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+  User=3.750000s Real=3.792989s Sys=0.000000s

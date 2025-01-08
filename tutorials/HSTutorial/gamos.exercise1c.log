@@ -14,17 +14,26 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter:DataList AccumulatedEnergyLost
 /gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
 /gamos/filter comptonFilter GmProcessFilter compt
-gamma GetG4Process compt compt 0x5614841d2790
-/gamos/filter comptonInHistoryFilter GmHistoryFilter comptonFilter
+gamma GetG4Process compt compt 0x61de33236170
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/filter comptonInGmHistoryFilter GmHistoryFilter comptonFilter
 /gamos/filter detectorEnterFilter GmEnterLogicalVolumeFilter detector
-/gamos/setParam GmStepDataHistosUA_comptonInHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
-/gamos/analysis/histo1Max GmStepDataHistosUA_*HistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy 1.1
-/gamos/userAction GmStepDataHistosUA comptonInHistoryFilter detectorEnterFilter GmPrimaryFilter
-/gamos/filter noComptonInHistoryFilter GmInverseFilter comptonInHistoryFilter
-/gamos/setParam GmStepDataHistosUA_noComptonInHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
-/gamos/userAction GmStepDataHistosUA noComptonInHistoryFilter detectorEnterFilter GmPrimaryFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/setParam GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/analysis/histo1Max GmStepDataHistosUA_*GmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy 1.1
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/userAction GmStepDataHistosUA comptonInGmHistoryFilter detectorEnterFilter GmPrimaryFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/filter noComptonInGmHistoryFilter GmInverseFilter comptonInGmHistoryFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/setParam GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/userAction GmStepDataHistosUA noComptonInGmHistoryFilter detectorEnterFilter GmPrimaryFilter
 /gamos/userAction GmCountProcessesUA
-/gamos/setParam GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:DataList InitialPrimSecoAngle
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING TrackDataHistos GmTrackDataHistosUA
+/gamos/setParam GmSecondaryGmTrackDataHistosUAUA_comptonFilter_GmPrimaryFilter:DataList InitialPrimSecoAngle
 /gamos/userAction GmSecondaryTrackDataHistosUA comptonFilter GmPrimaryFilter
 /gamos/setParam GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:DataList AngleChange
 /gamos/userAction GmStepDataHistosUA comptonFilter GmPrimaryFilter
@@ -35,8 +44,10 @@ gamma GetG4Process compt compt 0x5614841d2790
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -52,7 +63,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -62,8 +73,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -119,8 +131,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -129,10 +141,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -149,10 +161,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -192,33 +204,37 @@ G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
 See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 130000001
- CreateHisto1D GmStepDataHistosUA_noComptonInHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 112000001
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 473000001
+ CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 112000001
+ CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:TrackID = 473000001
+ CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimMinusSecoKineticEnergy = 473000002
+ CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:FinalPrimMinusSecoKineticEnergy = 473000003
+ CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:SecoDividedInitialPrimKineticEnergy = 473000004
+ CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:SecoKineticEnergy = 473000005
+ CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:FinalPrimSecoAngle = 473000006
+ CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimKineticEnergy = 473000007
+ CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:FinalPrimKineticEnergy = 473000008
  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 359000001
- CreateHisto1D GmStepDataHistosUA_comptonInHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 995000001
+ CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 995000001
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=0.130000s Real=0.132416s Sys=0.000000s
+  User=0.070000s Real=0.069040s Sys=0.000000s
 @@@@ GmCountProcessesUA
- PART_COUNT: e- = 478
- PART_COUNT: gamma = 10013
- PROC_COUNT e- : Transportation = 138
- PROC_COUNT e- : eBrem = 13
- PROC_COUNT e- : eIoni = 75
- PROC_COUNT e- : eIoni_NoSeco = 484
- PROC_COUNT e- : msc = 793
- PROC_COUNT e- : ALL = 1503
+ PART_COUNT: e- = 474
+ PART_COUNT: gamma = 10014
+ PROC_COUNT e- : Transportation = 141
+ PROC_COUNT e- : eBrem = 14
+ PROC_COUNT e- : eIoni = 81
+ PROC_COUNT e- : eIoni_NoSeco = 512
+ PROC_COUNT e- : msc = 812
+ PROC_COUNT e- : ALL = 1560
  PROC_COUNT gamma : Rayl = 2
- PROC_COUNT gamma : Transportation = 25104
- PROC_COUNT gamma : compt = 394
- PROC_COUNT gamma : phot = 9
-PROC_COUNT gamma : ALL = 25509
-PROC_CREATOR_COUNT e- : compt = 394
-PROC_CREATOR_COUNT e- : eIoni = 75
-PROC_CREATOR_COUNT e- : phot = 9
+ PROC_COUNT gamma : Transportation = 25085
+ PROC_COUNT gamma : compt = 383
+ PROC_COUNT gamma : phot = 10
+PROC_COUNT gamma : ALL = 25480
+PROC_CREATOR_COUNT e- : compt = 383
+PROC_CREATOR_COUNT e- : eIoni = 81
+PROC_CREATOR_COUNT e- : phot = 10
 PROC_CREATOR_COUNT gamma : Primary = 10000
-PROC_CREATOR_COUNT gamma : eBrem = 13
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+PROC_CREATOR_COUNT gamma : eBrem = 14

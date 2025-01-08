@@ -3,7 +3,7 @@ Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
 Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
 
 **************************************************************
- Geant4 version Name: geant4-11-00-patch-03    (16-September-2022)
+ Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -24,6 +24,8 @@ Registered graphics systems are:
   RayTracer (RayTracer)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
   OpenGLStoredX (OGLSX, OGL, OGLS)
 
@@ -73,13 +75,19 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /control/execute ../../../examples/visVRML2FILE.in
 /vis/scene/create
 /vis/open VRML2FILE
+/vis/sceneHandler/create VRML2FILE
+/vis/sceneHandler/attach
+/vis/viewer/create ! ! none
 Issue /vis/viewer/refresh or flush to see effect.
 /vis/viewer/flush
+/vis/viewer/refresh viewer-0
 Your "world" has no vis attributes or is marked as visible.
   For a better view of the contents, mark the world as invisible, e.g.,
   myWorldLogicalVol -> SetVisAttributes (G4VisAttributes::GetInvisible());
-G4Scene::AddWorldIfEmpty: The scene was empty of run-duration models.
+G4Scene::AddWorldIfEmpty: The scene had no extent.
   "world" has been added.
+/vis/scene/notifyHandlers
+/vis/viewer/update viewer-0
 /vis/viewer/set/viewpointThetaPhi 10 120 deg
 Issue /vis/viewer/refresh or flush to see effect.
 /vis/viewer/zoom 1
@@ -113,12 +121,14 @@ WARNING: The vis manager will keep up to 100 events.
   It may be changed with, e.g., "/vis/scene/endOfEventAction accumulate 10".
 /vis/viewer/update
 /vis/viewer/flush
+/vis/viewer/refresh viewer-0
 ===========================================
-Output VRML 2.0 file: g4_00.wrl
+Output VRML 2.0 file: g4_02.wrl
 Maximum number of files in the destination directory: 100
   (Customizable with the environment variable: G4VRMLFILE_MAX_FILE_NUM) 
 ===========================================
-*** VRML 2.0 File  g4_00.wrl  is generated.
+/vis/viewer/update viewer-0
+*** VRML 2.0 File  g4_02.wrl  is generated.
 MESSAGE from VRML2FILE driver:
     Set an environmental variable  G4VRMLFILE_VIEWER
     if you want to visualize the generated VRML file
@@ -133,8 +143,10 @@ ALSO you may change the file header with G4VRMLFILE_HEADER
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -150,7 +162,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -160,8 +172,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -217,8 +230,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -227,10 +240,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -247,10 +260,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -323,7 +336,7 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
    22     52.2   0.0854  0.00198     0.054  0.00592  0.00407     0.118 scatcrystal msc
    23     52.2   0.0833 0.000877    0.0506   0.0034  0.00467     0.123 scatcrystal msc
    24     52.2   0.0816 9.14e-05    0.0473  0.00332  0.00401     0.127 scatcrystal msc
-   25     52.2   0.0817 1.03e-16    0.0469 0.000375 0.000115     0.127 scatcrystal Transportation
+   25     52.2   0.0817 9.68e-17    0.0469 0.000375 0.000115     0.127 scatcrystal Transportation
    26     52.2   0.0823 -0.000627    0.0459  0.00102 0.000897     0.128 scatcrystal msc
    27     52.2   0.0827 -0.00117    0.0454 0.000523 0.000721     0.128 scatcrystal msc
    28     52.2   0.0829 -0.00209     0.044  0.00133 0.000975     0.129 scatcrystal msc
@@ -333,7 +346,7 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
    32     52.2   0.0817 -0.00876    0.0312  0.00788  0.00484     0.141 scatcrystal msc
    33     52.2   0.0788 -0.00755         0   0.0312   0.0106     0.151 scatcrystal eIoni
 ===========================================
-Output VRML 2.0 file: g4_01.wrl
+Output VRML 2.0 file: g4_03.wrl
 Maximum number of files in the destination directory: 100
   (Customizable with the environment variable: G4VRMLFILE_MAX_FILE_NUM) 
 ===========================================
@@ -382,12 +395,12 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
    25     81.8 -6.28e-17 -0.00765    0.0292 0.000108 0.000161    0.0298  abscrystal Transportation
    26     81.8 -6.28e-17 -0.00765    0.0292        0        0    0.0298  abscrystal Transportation
    27     81.8 -1.26e-05 -0.00786    0.0287 0.000502 0.000251    0.0301  abscrystal msc
-   28     81.8 -9.69e-17 -0.00787    0.0287        0 1.92e-05    0.0301  abscrystal Transportation
+   28     81.8 -9.68e-17 -0.00787    0.0287        0 1.92e-05    0.0301  abscrystal Transportation
    29     81.8 8.29e-05 -0.00801    0.0285 0.000209 0.000222    0.0303  abscrystal msc
    30     81.8 0.000124 -0.00815    0.0282  0.00029 0.000231    0.0306  abscrystal msc
    31     81.8 9.99e-05 -0.00812    0.0281 0.000102 0.000221    0.0308  abscrystal msc
    32     81.8 1.14e-06 -0.00819    0.0279 0.000211 0.000239     0.031  abscrystal msc
-   33     81.8 1.14e-16 -0.00819    0.0279 4.26e-06 1.38e-06     0.031  abscrystal Transportation
+   33     81.8 1.15e-16 -0.00819    0.0279 4.26e-06 1.38e-06     0.031  abscrystal Transportation
    34     81.8 -0.000126 -0.00836    0.0278 7.82e-05 0.000227    0.0312  abscrystal msc
    35     81.8 -0.000275 -0.00847    0.0278 1.96e-05 0.000222    0.0315  abscrystal msc
    36     81.8 -0.000461 -0.00847    0.0274 0.000335 0.000217    0.0317  abscrystal msc
@@ -626,9 +639,9 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
     8     54.3   -0.277       -5    0.0841        0    0.485      60.7 scatcrystal Transportation
     9     58.8    -4.96      -10    0.0841        0     8.19      68.9 scatcrystal Transportation
    10     58.8       -5      -10    0.0841        0   0.0621      68.9 scatcrystal Transportation
-   11     59.3    -5.49    -10.6    0.0841        0    0.858      69.8 scatcrystal Rayl
-   12       60     -6.4    -11.7    0.0841        0     1.62      71.4       world Transportation
-   13      199     -186     -240    0.0841        0      322       394  OutOfWorld Transportation
+   11     59.4    -5.55    -10.6    0.0841        0    0.955      69.9 scatcrystal Rayl
+   12       60    -6.38    -11.7    0.0841        0      1.5      71.4       world Transportation
+   13      199     -187     -240    0.0841        0      322       394  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
@@ -749,7 +762,7 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
     9     56.1 0.000213 0.000902    0.0147 0.000114 0.000132   0.00128 scatcrystal msc
    10     56.1  0.00021  0.00102    0.0144  0.00032 0.000125    0.0014 scatcrystal msc
    11     56.1 8.25e-05  0.00105    0.0141 0.000319 0.000135   0.00154 scatcrystal msc
-   12     56.1 -1.52e-16  0.00102    0.0137 0.000428 8.94e-05   0.00163 scatcrystal Transportation
+   12     56.1 -1.51e-16  0.00102    0.0137 0.000428 8.94e-05   0.00163 scatcrystal Transportation
    13     56.1  -0.0001    0.001    0.0136 9.89e-05 0.000105   0.00173 scatcrystal msc
    14     56.1 -0.000179 0.000984    0.0134 0.000173 0.000104   0.00184 scatcrystal msc
    15     56.1 -0.000259 0.000989    0.0131 0.000262 0.000106   0.00194 scatcrystal msc
@@ -952,17 +965,17 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
     0     83.4    0.011  -0.0186    0.0232        0        0         0  abscrystal initStep
-    1     83.2   0.0114 -0.00209    0.0232        0    0.195     0.195  abscrystal Rayl
-    2     83.2   0.0118 1.84e-16    0.0232        0  0.00253     0.197  abscrystal Transportation
-    3     83.4   0.0657    0.326         0  0.00494    0.396     0.594  abscrystal phot
+    1     83.2   0.0114 -0.00213    0.0232        0    0.194     0.194  abscrystal Rayl
+    2     83.2   0.0118 -2.05e-16    0.0232        0  0.00259     0.197  abscrystal Transportation
+    3     83.4   0.0657    0.327         0  0.00494    0.397     0.594  abscrystal phot
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 4
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     83.4   0.0657    0.326    0.0182        0        0         0  abscrystal initStep
-    1     83.4   0.0659    0.326         0   0.0182  0.00267   0.00267  abscrystal eIoni
+    0     83.4   0.0657    0.327    0.0182        0        0         0  abscrystal initStep
+    1     83.4    0.066    0.327         0   0.0182  0.00267   0.00267  abscrystal eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
@@ -1001,7 +1014,8 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
    18     82.7   -0.018 -0.00835    0.0627  0.00433  0.00595    0.0508  abscrystal msc
    19     82.7  -0.0175 -0.00541    0.0439   0.0188  0.00537    0.0562  abscrystal msc
    20     82.7  -0.0192 -0.00373    0.0317   0.0122  0.00303    0.0592  abscrystal msc
-   21     82.7  -0.0198 -0.00332         0   0.0317  0.00671    0.0659  abscrystal eIoni
+   21     82.7  -0.0205 -0.00443    0.0251  0.00659  0.00201    0.0612  abscrystal msc
+   22     82.7   -0.021 -0.00455         0   0.0251  0.00455    0.0658  abscrystal eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 2,   Parent ID = 1
@@ -1012,40 +1026,40 @@ Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolu
     1     82.7        0        0    0.0272        0        0         0  abscrystal Transportation
     2     82.7        0        0    0.0272        0        0         0  abscrystal Transportation
     3     82.7        0        0    0.0272        0        0         0  abscrystal Transportation
-    4     82.7  -0.0234    -0.03         0 0.000671   0.0486    0.0486  abscrystal phot
+    4     82.7  -0.0025  -0.0032         0  0.00356  0.00519   0.00519  abscrystal phot
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     82.7  -0.0234    -0.03  0.000476        0        0         0  abscrystal initStep
-    1     82.7  -0.0234    -0.03         0 0.000476 1.71e-05  1.71e-05  abscrystal eIoni
+    0     82.7  -0.0025  -0.0032  0.000476        0        0         0  abscrystal initStep
+    1     82.7  -0.0025  -0.0032         0 0.000476 1.71e-05  1.71e-05  abscrystal eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     82.7  -0.0234    -0.03     0.026        0        0         0  abscrystal initStep
-    1     82.7   -0.151  -0.0525     0.026        0    0.139     0.139  abscrystal Rayl
-    2     82.7   -0.182  -0.0525         0  0.00402   0.0317     0.171  abscrystal phot
+    0     82.7  -0.0025  -0.0032    0.0232        0        0         0  abscrystal initStep
+    1     82.7   -0.011 -2.03e-16    0.0232        0  0.00918   0.00918  abscrystal Transportation
+    2     82.7   -0.088   0.0289         0  0.00402   0.0828    0.0919  abscrystal phot
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 4
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     82.7   -0.182  -0.0525     0.022        0        0         0  abscrystal initStep
-    1     82.7   -0.183  -0.0522         0    0.022  0.00366   0.00366  abscrystal eIoni
+    0     82.7   -0.088   0.0289    0.0191        0        0         0  abscrystal initStep
+    1     82.7   -0.088    0.029         0   0.0191   0.0029    0.0029  abscrystal eIoni
  Run terminated.
 Run Summary
   Number of events processed : 10
-  User=0.030000s Real=0.044008s Sys=0.010000s
+  User=0.010000s Real=0.008645s Sys=0.010000s
 10 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
-*** VRML 2.0 File  g4_01.wrl  is generated.
+  "/vis/reviewKeptEvents" to review one by one.
+  To see accumulated, "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild".
+*** VRML 2.0 File  g4_03.wrl  is generated.
 MESSAGE from VRML2FILE driver:
     Set an environmental variable  G4VRMLFILE_VIEWER
     if you want to visualize the generated VRML file

@@ -1,7 +1,9 @@
 @@@@@ Running GAMOS with script: exercise2c3.in
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
 
 **************************************************************
- Geant4 version Name: geant4-11-00-patch-03    (16-September-2022)
+ Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -22,6 +24,8 @@ Registered graphics systems are:
   RayTracer (RayTracer)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
   OpenGLStoredX (OGLSX, OGL, OGLS)
 
@@ -78,8 +82,10 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -95,7 +101,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -105,8 +111,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -162,8 +169,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -172,10 +179,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -192,10 +199,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -240,850 +247,1238 @@ See commands in /vis/modeling/trajectories/ for other options.
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      827      627     -450    0.0428        0        0         0     expHall initStep
-    1    1e+03      644     -622    0.0428        0      244       244  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -827      627     -450    0.0428        0        0         0     expHall initStep
-    1   -1e+03      644     -622    0.0428        0      244       244  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      827      627     -450    0.0428        0        0         0     expHall initStep
-    1    1e+03      644     -622    0.0428        0      244       244  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -827      627     -450    0.0428        0        0         0     expHall initStep
-    1   -1e+03      644     -622    0.0428        0      244       244  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      827      627     -450    0.0428        0        0         0     expHall initStep
-    1    1e+03      644     -622    0.0428        0      244       244  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -2.04    -14.7     -450      1.46        0        0         0     expHall initStep
-    1    -9.15      -65   -2e+03      1.46        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     2.04    -14.7     -450      1.46        0        0         0     expHall initStep
-    1     9.15      -65   -2e+03      1.46        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -2.04    -14.7     -450      1.46        0        0         0     expHall initStep
-    1    -9.15      -65   -2e+03      1.46        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     2.04    -14.7     -450      1.46        0        0         0     expHall initStep
-    1     9.15      -65   -2e+03      1.46        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -2.04    -14.7     -450      1.46        0        0         0     expHall initStep
-    1    -9.15      -65   -2e+03      1.46        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     7.51    -33.7     -450     0.791        0        0         0     expHall initStep
-    1     33.5     -150   -2e+03     0.791        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -7.51    -33.7     -450     0.791        0        0         0     expHall initStep
-    1    -33.5     -150   -2e+03     0.791        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     7.51    -33.7     -450     0.791        0        0         0     expHall initStep
-    1     33.5     -150   -2e+03     0.791        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -7.51    -33.7     -450     0.791        0        0         0     expHall initStep
-    1    -33.5     -150   -2e+03     0.791        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     7.51    -33.7     -450     0.791        0        0         0     expHall initStep
-    1     33.5     -150   -2e+03     0.791        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      227     -319     -450     0.132        0        0         0     expHall initStep
-    1      703   -1e+03 -1.16e+03     0.132        0 1.09e+03  1.09e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -227     -319     -450     0.132        0        0         0     expHall initStep
-    1     -703   -1e+03 -1.16e+03     0.132        0 1.09e+03  1.09e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      227     -319     -450     0.132        0        0         0     expHall initStep
-    1      703   -1e+03 -1.16e+03     0.132        0 1.09e+03  1.09e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -227     -319     -450     0.132        0        0         0     expHall initStep
-    1     -703   -1e+03 -1.16e+03     0.132        0 1.09e+03  1.09e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      227     -319     -450     0.132        0        0         0     expHall initStep
-    1      703   -1e+03 -1.16e+03     0.132        0 1.09e+03  1.09e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -43.5      -13     -450      0.25        0        0         0     expHall initStep
-    1     -231    -73.5   -2e+03      0.25        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     43.5      -13     -450      0.25        0        0         0     expHall initStep
-    1      231    -73.5   -2e+03      0.25        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -43.5      -13     -450      0.25        0        0         0     expHall initStep
-    1     -231    -73.5   -2e+03      0.25        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     43.5      -13     -450      0.25        0        0         0     expHall initStep
-    1      231    -73.5   -2e+03      0.25        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -43.5      -13     -450      0.25        0        0         0     expHall initStep
-    1     -231    -73.5   -2e+03      0.25        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     20.7    -6.28     -450       3.9        0        0         0     expHall initStep
-    1     92.1    -27.9   -2e+03       3.9        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -20.7    -6.28     -450       3.9        0        0         0     expHall initStep
-    1    -92.1    -27.9   -2e+03       3.9        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     20.7    -6.28     -450       3.9        0        0         0     expHall initStep
-    1     92.1    -27.9   -2e+03       3.9        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -20.7    -6.28     -450       3.9        0        0         0     expHall initStep
-    1    -92.1    -27.9   -2e+03       3.9        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     20.7    -6.28     -450       3.9        0        0         0     expHall initStep
-    1     92.1    -27.9   -2e+03       3.9        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -29.8     14.9     -450     0.277        0        0         0     expHall initStep
-    1     -133     66.1   -2e+03     0.277        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     29.8     14.9     -450     0.277        0        0         0     expHall initStep
-    1      133     66.1   -2e+03     0.277        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -29.8     14.9     -450     0.277        0        0         0     expHall initStep
-    1     -133     66.1   -2e+03     0.277        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     29.8     14.9     -450     0.277        0        0         0     expHall initStep
-    1      133     66.1   -2e+03     0.277        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -29.8     14.9     -450     0.277        0        0         0     expHall initStep
-    1     -133     66.1   -2e+03     0.277        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -101     -240     -450     0.349        0        0         0     expHall initStep
-    1    -27.6   -1e+03 -1.55e+03     0.349        0 1.34e+03  1.34e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      101     -240     -450     0.349        0        0         0     expHall initStep
-    1     27.6   -1e+03 -1.55e+03     0.349        0 1.34e+03  1.34e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -101     -240     -450     0.349        0        0         0     expHall initStep
-    1    -27.6   -1e+03 -1.55e+03     0.349        0 1.34e+03  1.34e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      101     -240     -450     0.349        0        0         0     expHall initStep
-    1     27.6   -1e+03 -1.55e+03     0.349        0 1.34e+03  1.34e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -101     -240     -450     0.349        0        0         0     expHall initStep
-    1    -27.6   -1e+03 -1.55e+03     0.349        0 1.34e+03  1.34e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -42.7    -22.8     -450       1.4        0        0         0     expHall initStep
-    1     -189     -102   -2e+03       1.4        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     42.7    -22.8     -450       1.4        0        0         0     expHall initStep
-    1      189     -102   -2e+03       1.4        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -42.7    -22.8     -450       1.4        0        0         0     expHall initStep
-    1     -189     -102   -2e+03       1.4        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     42.7    -22.8     -450       1.4        0        0         0     expHall initStep
-    1      189     -102   -2e+03       1.4        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -42.7    -22.8     -450       1.4        0        0         0     expHall initStep
-    1     -189     -102   -2e+03       1.4        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -161     -463     -450     0.174        0        0         0     expHall initStep
-    1     -352   -1e+03     -874     0.174        0      711       711  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      161     -463     -450     0.174        0        0         0     expHall initStep
-    1      352   -1e+03     -874     0.174        0      711       711  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -161     -463     -450     0.174        0        0         0     expHall initStep
-    1     -352   -1e+03     -874     0.174        0      711       711  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      161     -463     -450     0.174        0        0         0     expHall initStep
-    1      352   -1e+03     -874     0.174        0      711       711  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -161     -463     -450     0.174        0        0         0     expHall initStep
-    1     -352   -1e+03     -874     0.174        0      711       711  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -18.9    -13.2     -450     0.228        0        0         0     expHall initStep
-    1     -171    -94.1   -2e+03     0.228        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     18.9    -13.2     -450     0.228        0        0         0     expHall initStep
-    1      171    -94.1   -2e+03     0.228        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -18.9    -13.2     -450     0.228        0        0         0     expHall initStep
-    1     -171    -94.1   -2e+03     0.228        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     18.9    -13.2     -450     0.228        0        0         0     expHall initStep
-    1      171    -94.1   -2e+03     0.228        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -18.9    -13.2     -450     0.228        0        0         0     expHall initStep
-    1     -171    -94.1   -2e+03     0.228        0 1.56e+03  1.56e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      376     -429     -450     0.107        0        0         0     expHall initStep
-    1      870   -1e+03     -936     0.107        0      898       898  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -376     -429     -450     0.107        0        0         0     expHall initStep
-    1     -870   -1e+03     -936     0.107        0      898       898  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      376     -429     -450     0.107        0        0         0     expHall initStep
-    1      870   -1e+03     -936     0.107        0      898       898  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -376     -429     -450     0.107        0        0         0     expHall initStep
-    1     -870   -1e+03     -936     0.107        0      898       898  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      376     -429     -450     0.107        0        0         0     expHall initStep
-    1      870   -1e+03     -936     0.107        0      898       898  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     33.7     8.09     -450     0.755        0        0         0     expHall initStep
-    1      150       36   -2e+03     0.755        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -33.7     8.09     -450     0.755        0        0         0     expHall initStep
-    1     -150       36   -2e+03     0.755        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     33.7     8.09     -450     0.755        0        0         0     expHall initStep
-    1      150       36   -2e+03     0.755        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -33.7     8.09     -450     0.755        0        0         0     expHall initStep
-    1     -150       36   -2e+03     0.755        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     33.7     8.09     -450     0.755        0        0         0     expHall initStep
-    1      150       36   -2e+03     0.755        0 1.55e+03  1.55e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      292      401     -450     0.213        0        0         0     expHall initStep
-    1      731    1e+03     -974     0.213        0      909       909  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -292      401     -450     0.213        0        0         0     expHall initStep
-    1     -731    1e+03     -974     0.213        0      909       909  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      292      401     -450     0.213        0        0         0     expHall initStep
-    1      731    1e+03     -974     0.213        0      909       909  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -292      401     -450     0.213        0        0         0     expHall initStep
-    1     -731    1e+03     -974     0.213        0      909       909  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      292      401     -450     0.213        0        0         0     expHall initStep
-    1      564      772     -774     0.189        0      563       563     expHall compt
-    2    1e+03      878     -834     0.189        0      453  1.02e+03  OutOfWorld Transportation
+    0     12.1    -14.2     -450      1.76        0        0         0     expHall initStep
+    1     31.3    -36.7 -1.16e+03     0.967        0      713       713     expHall compt
+    2     -637     -172   -2e+03     0.967        0 1.08e+03  1.79e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      564      772     -774    0.0241        0        0         0     expHall initStep
-    1      562      774     -777    0.0173  0.00674     4.21      4.21     expHall eIoni
-    2      562      774     -779    0.0142  0.00314     2.95      7.16     expHall eIoni
-    3      563      774     -780   0.00966  0.00452     2.45      9.61     expHall eIoni
-    4      563      774     -779   0.00378  0.00588     1.78      11.4     expHall eIoni
-    5      563      774     -779         0  0.00378    0.468      11.9     expHall eIoni
+    0     31.3    -36.7 -1.16e+03     0.793        0        0         0     expHall initStep
+    1     58.7    -38.3 -1.21e+03     0.774  0.00935     52.1      52.1     expHall eIoni
+    2     61.1    -37.7 -1.21e+03     0.771 0.000702     4.79      56.9     expHall eIoni
+    3       97    -25.2 -1.26e+03     0.759   0.0103     62.2       119     expHall eIoni
+    4      176     38.5 -1.34e+03     0.738   0.0205      128       247     expHall eIoni
+    5      198     60.4 -1.36e+03     0.731  0.00636     41.5       288     expHall eIoni
+    6      202     64.4 -1.37e+03     0.728  0.00102     6.68       295     expHall eIoni
+    7      230      104 -1.4e+03     0.719  0.00776     57.7       353     expHall eIoni
+    8      287      168 -1.43e+03     0.706   0.0116     93.9       446     expHall eIoni
+    9      452      310 -1.52e+03     0.674   0.0301      238       685     expHall eIoni
+   10      504      353 -1.52e+03     0.662   0.0117     67.1       752     expHall eIoni
+   11      587      387 -1.51e+03     0.651   0.0103     91.4       843     expHall eIoni
+   12      726      461 -1.49e+03     0.623   0.0258      161     1e+03     expHall eIoni
+   13      790      488 -1.49e+03     0.612  0.00905     69.6  1.07e+03     expHall eIoni
+   14      808      494 -1.48e+03     0.608  0.00258     20.1  1.09e+03     expHall eIoni
+   15      932      526 -1.46e+03     0.588   0.0189      130  1.22e+03     expHall eIoni
+   16    1e+03      542 -1.46e+03     0.571   0.0171     71.3  1.29e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -354      814     -450       0.8        0        0         0     expHall initStep
-    1     -439    1e+03     -532       0.8        0      220       220  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      354      814     -450       0.8        0        0         0     expHall initStep
-    1      439    1e+03     -532       0.8        0      220       220  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+* G4Track Information:   Particle = e-,   Track ID = 15,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -354      814     -450       0.8        0        0         0     expHall initStep
-    1     -439    1e+03     -532       0.8        0      220       220  OutOfWorld Transportation
+    0      932      526 -1.46e+03   0.00122        0        0         0     expHall initStep
+    1      932      526 -1.46e+03         0  0.00122    0.076     0.076     expHall eIoni
 
 *********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      354      814     -450       0.8        0        0         0     expHall initStep
-    1      439    1e+03     -532       0.8        0      220       220  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+* G4Track Information:   Particle = e-,   Track ID = 14,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -354      814     -450       0.8        0        0         0     expHall initStep
-    1     -439    1e+03     -532       0.8        0      220       220  OutOfWorld Transportation
+    0      808      494 -1.48e+03   0.00167        0        0         0     expHall initStep
+    1      808      494 -1.48e+03         0  0.00167    0.122     0.122     expHall eIoni
 
 *********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      337      390     -450     0.266        0        0         0     expHall initStep
-    1      856    1e+03     -992     0.266        0      967       967  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+* G4Track Information:   Particle = e-,   Track ID = 13,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -337      390     -450     0.266        0        0         0     expHall initStep
-    1     -856    1e+03     -992     0.266        0      967       967  OutOfWorld Transportation
+    0      790      488 -1.49e+03   0.00159        0        0         0     expHall initStep
+    1      790      488 -1.49e+03         0  0.00159    0.113     0.113     expHall eIoni
 
 *********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      337      390     -450     0.266        0        0         0     expHall initStep
-    1      856    1e+03     -992     0.266        0      967       967  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+* G4Track Information:   Particle = e-,   Track ID = 12,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -337      390     -450     0.266        0        0         0     expHall initStep
-    1     -856    1e+03     -992     0.266        0      967       967  OutOfWorld Transportation
+    0      726      461 -1.49e+03   0.00214        0        0         0     expHall initStep
+    1      726      461 -1.49e+03         0  0.00214     0.18      0.18     expHall eIoni
 
 *********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      337      390     -450     0.266        0        0         0     expHall initStep
-    1      856    1e+03     -992     0.266        0      967       967  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -349     -795     -450     0.482        0        0         0     expHall initStep
-    1     -441   -1e+03     -543     0.482        0      243       243  OutOfWorld Transportation
+    0      587      387 -1.51e+03   0.00103        0        0         0     expHall initStep
+    1      587      387 -1.51e+03         0  0.00103   0.0594    0.0594     expHall eIoni
 
 *********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      349     -795     -450     0.482        0        0         0     expHall initStep
-    1      441   -1e+03     -543     0.482        0      243       243  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -349     -795     -450     0.482        0        0         0     expHall initStep
-    1     -441   -1e+03     -543     0.482        0      243       243  OutOfWorld Transportation
+    0      452      310 -1.52e+03   0.00145        0        0         0     expHall initStep
+    1      452      310 -1.52e+03         0  0.00145    0.098     0.098     expHall eIoni
 
 *********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      349     -795     -450     0.482        0        0         0     expHall initStep
-    1      441   -1e+03     -543     0.482        0      243       243  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -349     -795     -450     0.482        0        0         0     expHall initStep
-    1     -441   -1e+03     -543     0.482        0      243       243  OutOfWorld Transportation
+    0      287      168 -1.43e+03   0.00216        0        0         0     expHall initStep
+    1      287      169 -1.43e+03         0  0.00216    0.184     0.184     expHall eIoni
 
 *********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -32.7    -22.5     -450     0.142        0        0         0     expHall initStep
-    1    -47.3    -32.5     -650     0.105        0      201       201     expHall compt
-    2     -573    1e+03     -335     0.105        0  1.2e+03   1.4e+03  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -47.3    -32.5     -650    0.0373        0        0         0     expHall initStep
-    1    -46.2    -35.5     -656    0.0303    0.007     7.51      7.51     expHall eIoni
-    2      -43    -35.8     -659    0.0252  0.00508     5.62      13.1     expHall eIoni
-    3    -42.2    -35.8     -660    0.0219 0.000792     1.16      14.3     expHall eIoni
-    4    -40.6    -36.6     -662    0.0177  0.00424     3.78      18.1     expHall eIoni
-    5    -39.7    -36.9     -664    0.0098   0.0055     2.77      20.8     expHall eIoni
-    6    -40.2      -36     -664    0.0032   0.0066      1.8      22.7     expHall eIoni
-    7    -40.2      -36     -664         0   0.0032    0.353        23     expHall eIoni
+    0      230      104 -1.4e+03   0.00124        0        0         0     expHall initStep
+    1      230      104 -1.4e+03         0  0.00124   0.0775    0.0775     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      202     64.4 -1.37e+03   0.00119        0        0         0     expHall initStep
+    1      202     64.4 -1.37e+03         0  0.00119    0.073     0.073     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      198     60.4 -1.36e+03   0.00116        0        0         0     expHall initStep
+    1      198     60.3 -1.36e+03         0  0.00116    0.071     0.071     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       97    -25.2 -1.26e+03   0.00254        0        0         0     expHall initStep
+    1     97.1    -25.2 -1.26e+03         0  0.00254    0.238     0.238     expHall eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -39.7    -36.9     -664   0.00239        0        0         0     expHall initStep
-    1    -39.7    -36.8     -664         0  0.00239    0.215     0.215     expHall eIoni
+    0     61.1    -37.7 -1.21e+03   0.00207        0        0         0     expHall initStep
+    1       61    -37.7 -1.21e+03         0  0.00207    0.171     0.171     expHall eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -42.2    -35.8     -660   0.00246        0        0         0     expHall initStep
-    1    -42.2    -35.7     -660         0  0.00246    0.227     0.227     expHall eIoni
+    0     58.7    -38.3 -1.21e+03   0.00981        0        0         0     expHall initStep
+    1     58.5    -39.1 -1.21e+03   0.00522  0.00276     1.19      1.19     expHall eIoni
+    2     58.5    -39.1 -1.21e+03   0.00173  0.00221    0.441      1.63     expHall eIoni
+    3     58.5    -39.1 -1.21e+03         0  0.00173    0.129      1.76     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 17,   Parent ID = 3
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     58.5    -39.1 -1.21e+03   0.00128        0        0         0     expHall initStep
+    1     58.5    -39.1 -1.21e+03         0  0.00128   0.0819    0.0819     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 16,   Parent ID = 3
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     58.5    -39.1 -1.21e+03   0.00183        0        0         0     expHall initStep
+    1     58.4      -39 -1.21e+03         0  0.00183     0.14      0.14     expHall eIoni
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.7    -22.5     -450     0.142        0        0         0     expHall initStep
-    1      145    -99.9   -2e+03     0.142        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+    0    -12.1    -14.2     -450      1.76        0        0         0     expHall initStep
+    1    -53.8    -63.1   -2e+03      1.76        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -32.7    -22.5     -450     0.142        0        0         0     expHall initStep
-    1     -145    -99.9   -2e+03     0.142        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+    0     12.1    -14.2     -450      1.76        0        0         0     expHall initStep
+    1     53.8    -63.1   -2e+03      1.76        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.7    -22.5     -450     0.142        0        0         0     expHall initStep
-    1      145    -99.9   -2e+03     0.142        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+    0    -12.1    -14.2     -450      1.76        0        0         0     expHall initStep
+    1    -53.8    -63.1   -2e+03      1.76        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -32.7    -22.5     -450     0.142        0        0         0     expHall initStep
-    1     -145    -99.9   -2e+03     0.142        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+    0     12.1    -14.2     -450      1.76        0        0         0     expHall initStep
+    1     53.8    -63.1   -2e+03      1.76        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -345      353     -450     0.511        0        0         0     expHall initStep
-    1     -979    1e+03 -1.13e+03     0.511        0 1.13e+03  1.13e+03  OutOfWorld Transportation
+    0     11.2     17.3     -450     0.284        0        0         0     expHall initStep
+    1     49.1     74.5   -2e+03     0.284        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      345      353     -450     0.511        0        0         0     expHall initStep
-    1      979    1e+03 -1.13e+03     0.511        0 1.13e+03  1.13e+03  OutOfWorld Transportation
+    0    -11.2     17.3     -450     0.284        0        0         0     expHall initStep
+    1    -49.1     74.5   -2e+03     0.284        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -345      353     -450     0.511        0        0         0     expHall initStep
-    1     -979    1e+03 -1.13e+03     0.511        0 1.13e+03  1.13e+03  OutOfWorld Transportation
+    0     11.2     17.3     -450     0.284        0        0         0     expHall initStep
+    1     49.1     74.5   -2e+03     0.284        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      345      353     -450     0.511        0        0         0     expHall initStep
-    1      979    1e+03 -1.13e+03     0.511        0 1.13e+03  1.13e+03  OutOfWorld Transportation
+    0    -11.2     17.3     -450     0.284        0        0         0     expHall initStep
+    1    -49.1     74.5   -2e+03     0.284        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -345      353     -450     0.511        0        0         0     expHall initStep
-    1     -979    1e+03 -1.13e+03     0.511        0 1.13e+03  1.13e+03  OutOfWorld Transportation
+    0     11.2     17.3     -450     0.284        0        0         0     expHall initStep
+    1     49.1     74.5   -2e+03     0.284        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.8     6.87     -450      5.01        0        0         0     expHall initStep
-    1      146     30.4   -2e+03      5.01        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+    0    -35.7     5.35     -450      3.84        0        0         0     expHall initStep
+    1     -159     23.8   -2e+03      3.84        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -32.8     6.87     -450      5.01        0        0         0     expHall initStep
-    1     -146     30.4   -2e+03      5.01        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+    0     35.7     5.35     -450      3.84        0        0         0     expHall initStep
+    1      159     23.8   -2e+03      3.84        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.8     6.87     -450      5.01        0        0         0     expHall initStep
-    1      146     30.4   -2e+03      5.01        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+    0    -35.7     5.35     -450      3.84        0        0         0     expHall initStep
+    1     -159     23.8   -2e+03      3.84        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -32.8     6.87     -450      5.01        0        0         0     expHall initStep
-    1     -146     30.4   -2e+03      5.01        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+    0     35.7     5.35     -450      3.84        0        0         0     expHall initStep
+    1      159     23.8   -2e+03      3.84        0 1.55e+03  1.55e+03  OutOfWorld Transportation
 
 *********************************************************************************************************
 * G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
 *********************************************************************************************************
 
 Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.8     6.87     -450      5.01        0        0         0     expHall initStep
-    1      146     30.4   -2e+03      5.01        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+    0    -35.7     5.35     -450      3.84        0        0         0     expHall initStep
+    1     -159     23.8   -2e+03      3.84        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     30.9    -19.1     -450     0.626        0        0         0     expHall initStep
+    1      137    -84.9   -2e+03     0.626        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -30.9    -19.1     -450     0.626        0        0         0     expHall initStep
+    1     -137    -84.9   -2e+03     0.626        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     30.9    -19.1     -450     0.626        0        0         0     expHall initStep
+    1      137    -84.9   -2e+03     0.626        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -30.9    -19.1     -450     0.626        0        0         0     expHall initStep
+    1     -137    -84.9   -2e+03     0.626        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     30.9    -19.1     -450     0.626        0        0         0     expHall initStep
+    1      137    -84.9   -2e+03     0.626        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -13.4    -6.61     -450     0.426        0        0         0     expHall initStep
+    1    -71.9     19.6   -2e+03     0.426        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     13.4    -6.61     -450     0.426        0        0         0     expHall initStep
+    1     71.9     19.6   -2e+03     0.426        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -13.4    -6.61     -450     0.426        0        0         0     expHall initStep
+    1    -71.9     19.6   -2e+03     0.426        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     13.4    -6.61     -450     0.426        0        0         0     expHall initStep
+    1     71.9     19.6   -2e+03     0.426        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -13.4    -6.61     -450     0.426        0        0         0     expHall initStep
+    1    -71.9     19.6   -2e+03     0.426        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      646      679     -450     0.465        0        0         0     expHall initStep
+    1      947    1e+03     -617     0.465        0      471       471  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -646      679     -450     0.465        0        0         0     expHall initStep
+    1     -947    1e+03     -617     0.465        0      471       471  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      646      679     -450     0.465        0        0         0     expHall initStep
+    1      947    1e+03     -617     0.465        0      471       471  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -646      679     -450     0.465        0        0         0     expHall initStep
+    1     -947    1e+03     -617     0.465        0      471       471  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      646      679     -450     0.465        0        0         0     expHall initStep
+    1      947    1e+03     -617     0.465        0      471       471  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     36.3      -44     -450      0.38        0        0         0     expHall initStep
+    1      162     -196   -2e+03      0.38        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -36.3      -44     -450      0.38        0        0         0     expHall initStep
+    1     -162     -196   -2e+03      0.38        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     36.3      -44     -450      0.38        0        0         0     expHall initStep
+    1     77.1    -93.3     -954     0.168        0      508       508     expHall compt
+    2     -301    1e+03    -84.8     0.168        0 1.45e+03  1.95e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     77.1    -93.3     -954     0.212        0        0         0     expHall initStep
+    1      136     -141 -1.05e+03     0.185   0.0272      126       126     expHall eIoni
+    2      150     -140 -1.06e+03      0.18  0.00381     19.4       145     expHall eIoni
+    3      201     -148 -1.12e+03     0.162   0.0177     91.7       237     expHall eIoni
+    4      213     -154 -1.13e+03     0.159   0.0027     18.4       255     expHall eIoni
+    5      230     -169 -1.15e+03     0.149   0.0107     28.3       284     expHall eIoni
+    6      258     -194 -1.19e+03      0.13   0.0186     70.6       354     expHall eIoni
+    7      287     -219 -1.22e+03     0.116   0.0126     51.5       406     expHall eIoni
+    8      308     -250 -1.23e+03     0.101   0.0149       47       453     expHall eIoni
+    9      312     -239 -1.24e+03    0.0915  0.00852     15.4       468     expHall eIoni
+   10      324     -226 -1.26e+03     0.081  0.00883     29.1       497     expHall eIoni
+   11      326     -220 -1.28e+03    0.0698   0.0112     25.6       523     expHall eIoni
+   12      338     -222 -1.28e+03    0.0604  0.00662     15.3       538     expHall eIoni
+   13      338     -222 -1.28e+03    0.0591 0.000217    0.121       538     expHall eIoni
+   14      343     -234 -1.28e+03    0.0516  0.00747     15.3       554     expHall eIoni
+   15      345     -237 -1.28e+03     0.048  0.00226     3.81       558     expHall eIoni
+   16      348     -238 -1.28e+03    0.0444  0.00251     3.37       561     expHall eIoni
+   17      356     -237 -1.28e+03    0.0368  0.00758     9.76       571     expHall eIoni
+   18      361     -235 -1.29e+03    0.0313  0.00555     7.39       578     expHall eIoni
+   19      362     -235 -1.29e+03    0.0215  0.00221     3.53       582     expHall eIoni
+   20      362     -233 -1.29e+03    0.0197  0.00183      3.7       585     expHall eIoni
+   21      361     -231 -1.29e+03    0.0168  0.00293     3.36       589     expHall eIoni
+   22      360     -229 -1.29e+03    0.0123  0.00451     2.86       591     expHall eIoni
+   23      361     -229 -1.29e+03   0.00931 0.000728    0.625       592     expHall eIoni
+   24      361     -230 -1.29e+03   0.00476  0.00454     1.73       594     expHall eIoni
+   25      361     -230 -1.29e+03         0  0.00476    0.703       595     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 12,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      361     -229 -1.29e+03   0.00224        0        0         0     expHall initStep
+    1      361     -229 -1.29e+03         0  0.00224    0.194     0.194     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      362     -235 -1.29e+03   0.00752        0        0         0     expHall initStep
+    1      362     -235 -1.29e+03   0.00354  0.00398     1.42      1.42     expHall eIoni
+    2      362     -235 -1.29e+03         0  0.00354    0.419      1.83     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      348     -238 -1.28e+03   0.00106        0        0         0     expHall initStep
+    1      348     -238 -1.28e+03         0  0.00106   0.0617    0.0617     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      345     -237 -1.28e+03   0.00135        0        0         0     expHall initStep
+    1      345     -237 -1.28e+03         0  0.00135   0.0887    0.0887     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      338     -222 -1.28e+03   0.00115        0        0         0     expHall initStep
+    1      338     -222 -1.28e+03         0  0.00115     0.07      0.07     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      338     -222 -1.28e+03   0.00276        0        0         0     expHall initStep
+    1      338     -222 -1.28e+03   0.00132  0.00143    0.154     0.154     expHall eIoni
+    2      338     -222 -1.28e+03         0  0.00132   0.0859     0.239     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      324     -226 -1.26e+03   0.00168        0        0         0     expHall initStep
+    1      324     -226 -1.26e+03         0  0.00168    0.123     0.123     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      312     -239 -1.24e+03   0.00142        0        0         0     expHall initStep
+    1      312     -239 -1.24e+03         0  0.00142   0.0951    0.0951     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      287     -219 -1.22e+03   0.00108        0        0         0     expHall initStep
+    1      287     -219 -1.22e+03         0  0.00108   0.0637    0.0637     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      150     -140 -1.06e+03   0.00107        0        0         0     expHall initStep
+    1      150     -140 -1.06e+03         0  0.00107   0.0632    0.0632     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -36.3      -44     -450      0.38        0        0         0     expHall initStep
+    1     -162     -196   -2e+03      0.38        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     36.3      -44     -450      0.38        0        0         0     expHall initStep
+    1      162     -196   -2e+03      0.38        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -33.1    -15.2     -450      3.81        0        0         0     expHall initStep
+    1     -147    -67.7   -2e+03      3.81        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     33.1    -15.2     -450      3.81        0        0         0     expHall initStep
+    1      147    -67.7   -2e+03      3.81        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -33.1    -15.2     -450      3.81        0        0         0     expHall initStep
+    1     -147    -67.7   -2e+03      3.81        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     33.1    -15.2     -450      3.81        0        0         0     expHall initStep
+    1      147    -67.7   -2e+03      3.81        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -33.1    -15.2     -450      3.81        0        0         0     expHall initStep
+    1     -147    -67.7   -2e+03      3.81        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     11.1     5.83     -450      1.07        0        0         0     expHall initStep
+    1     49.4     25.9   -2e+03      1.07        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -11.1     5.83     -450      1.07        0        0         0     expHall initStep
+    1    -49.4     25.9   -2e+03      1.07        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     11.1     5.83     -450      1.07        0        0         0     expHall initStep
+    1     49.4     25.9   -2e+03      1.07        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -11.1     5.83     -450      1.07        0        0         0     expHall initStep
+    1    -49.4     25.9   -2e+03      1.07        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     11.1     5.83     -450      1.07        0        0         0     expHall initStep
+    1     49.4     25.9   -2e+03      1.07        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     6.27     5.77     -450      2.98        0        0         0     expHall initStep
+    1     27.9     25.7   -2e+03      2.98        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -6.27     5.77     -450      2.98        0        0         0     expHall initStep
+    1    -27.9     25.7   -2e+03      2.98        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     6.27     5.77     -450      2.98        0        0         0     expHall initStep
+    1     27.9     25.7   -2e+03      2.98        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -6.27     5.77     -450      2.98        0        0         0     expHall initStep
+    1    -27.9     25.7   -2e+03      2.98        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     6.27     5.77     -450      2.98        0        0         0     expHall initStep
+    1     27.9     25.7   -2e+03      2.98        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -43.4     34.9     -450      4.15        0        0         0     expHall initStep
+    1     -193      155   -2e+03      4.15        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     43.4     34.9     -450      4.15        0        0         0     expHall initStep
+    1      193      155   -2e+03      4.15        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -43.4     34.9     -450      4.15        0        0         0     expHall initStep
+    1     -193      155   -2e+03      4.15        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     43.4     34.9     -450      4.15        0        0         0     expHall initStep
+    1      193      155   -2e+03      4.15        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -43.4     34.9     -450      4.15        0        0         0     expHall initStep
+    1     -193      155   -2e+03      4.15        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      595     -164     -450     0.474        0        0         0     expHall initStep
+    1      917     -247     -642     0.209        0      384       384     expHall compt
+    2      960    1e+03     -112     0.209        0 1.36e+03  1.74e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      917     -247     -642     0.265        0        0         0     expHall initStep
+    1    1e+03     -310     -710     0.239   0.0253      138       138  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -595     -164     -450     0.474        0        0         0     expHall initStep
+    1   -1e+03     -268     -692     0.474        0      483       483  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      595     -164     -450     0.474        0        0         0     expHall initStep
+    1    1e+03     -268     -692     0.474        0      483       483  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -595     -164     -450     0.474        0        0         0     expHall initStep
+    1   -1e+03     -268     -692     0.474        0      483       483  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      595     -164     -450     0.474        0        0         0     expHall initStep
+    1    1e+03     -268     -692     0.474        0      483       483  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -39.7     -8.7     -450     0.768        0        0         0     expHall initStep
+    1     -176    -38.7   -2e+03     0.768        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     39.7     -8.7     -450     0.768        0        0         0     expHall initStep
+    1      176    -38.7   -2e+03     0.768        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -39.7     -8.7     -450     0.768        0        0         0     expHall initStep
+    1     -176    -38.7   -2e+03     0.768        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     39.7     -8.7     -450     0.768        0        0         0     expHall initStep
+    1      176    -38.7   -2e+03     0.768        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -39.7     -8.7     -450     0.768        0        0         0     expHall initStep
+    1     -176    -38.7   -2e+03     0.768        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     27.8    -7.67     -450     0.423        0        0         0     expHall initStep
+    1      123    -34.1   -2e+03     0.423        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -27.8    -7.67     -450     0.423        0        0         0     expHall initStep
+    1     -123    -34.1   -2e+03     0.423        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     27.8    -7.67     -450     0.423        0        0         0     expHall initStep
+    1      123    -34.1   -2e+03     0.423        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -27.8    -7.67     -450     0.423        0        0         0     expHall initStep
+    1     -123    -34.1   -2e+03     0.423        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     27.8    -7.67     -450     0.423        0        0         0     expHall initStep
+    1      123    -34.1   -2e+03     0.423        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -17.6    -1.44     -450      2.22        0        0         0     expHall initStep
+    1    -78.3    -6.39   -2e+03      2.22        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     17.6    -1.44     -450      2.22        0        0         0     expHall initStep
+    1     78.3    -6.39   -2e+03      2.22        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -17.6    -1.44     -450      2.22        0        0         0     expHall initStep
+    1    -78.3    -6.39   -2e+03      2.22        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     17.6    -1.44     -450      2.22        0        0         0     expHall initStep
+    1     78.3    -6.39   -2e+03      2.22        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -17.6    -1.44     -450      2.22        0        0         0     expHall initStep
+    1    -78.3    -6.39   -2e+03      2.22        0 1.55e+03  1.55e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     43.8    -20.9     -450      2.33        0        0         0     expHall initStep
+    1      195    -93.7   -2e+03      2.33        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -43.8    -20.9     -450      2.33        0        0         0     expHall initStep
+    1     -195    -93.7   -2e+03      2.33        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     43.8    -20.9     -450      2.33        0        0         0     expHall initStep
+    1      195    -93.7   -2e+03      2.33        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -43.8    -20.9     -450      2.33        0        0         0     expHall initStep
+    1     -195    -93.7   -2e+03      2.33        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     43.8    -20.9     -450      2.33        0        0         0     expHall initStep
+    1      195    -93.7   -2e+03      2.33        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -102     -636     -450    0.0674        0        0         0     expHall initStep
+    1     -177   -1e+03     -656    0.0674        0      425       425  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      102     -636     -450    0.0674        0        0         0     expHall initStep
+    1      177   -1e+03     -656    0.0674        0      425       425  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -102     -636     -450    0.0674        0        0         0     expHall initStep
+    1     -177   -1e+03     -656    0.0674        0      425       425  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      102     -636     -450    0.0674        0        0         0     expHall initStep
+    1      177   -1e+03     -656    0.0674        0      425       425  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -102     -636     -450    0.0674        0        0         0     expHall initStep
+    1     -177   -1e+03     -656    0.0674        0      425       425  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -34.3    -42.7     -450      0.31        0        0         0     expHall initStep
+    1     -153     -189   -2e+03      0.31        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     34.3    -42.7     -450      0.31        0        0         0     expHall initStep
+    1      153     -189   -2e+03      0.31        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -34.3    -42.7     -450      0.31        0        0         0     expHall initStep
+    1     -153     -189   -2e+03      0.31        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     34.3    -42.7     -450      0.31        0        0         0     expHall initStep
+    1      153     -189   -2e+03      0.31        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -34.3    -42.7     -450      0.31        0        0         0     expHall initStep
+    1     -153     -189   -2e+03      0.31        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.99     1.25     -450      2.38        0        0         0     expHall initStep
+    1      217     3.93   -2e+03      2.38        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -1.99     1.25     -450      2.38        0        0         0     expHall initStep
+    1     -217     3.93   -2e+03      2.38        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.99     1.25     -450      2.38        0        0         0     expHall initStep
+    1      217     3.93   -2e+03      2.38        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -1.99     1.25     -450      2.38        0        0         0     expHall initStep
+    1     -217     3.93   -2e+03      2.38        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     1.99     1.25     -450      2.38        0        0         0     expHall initStep
+    1      217     3.93   -2e+03      2.38        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      -23     38.7     -450     0.459        0        0         0     expHall initStep
+    1     -102      172   -2e+03     0.459        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       23     38.7     -450     0.459        0        0         0     expHall initStep
+    1      102      172   -2e+03     0.459        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      -23     38.7     -450     0.459        0        0         0     expHall initStep
+    1     -102      172   -2e+03     0.459        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0       23     38.7     -450     0.459        0        0         0     expHall initStep
+    1      102      172   -2e+03     0.459        0 1.56e+03  1.56e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0      -23     38.7     -450     0.459        0        0         0     expHall initStep
+    1    -48.6     81.6     -950     0.246        0      502       502     expHall compt
+    2       91    1e+03     -912     0.246        0      930  1.43e+03  OutOfWorld Transportation
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -48.6     81.6     -950     0.213        0        0         0     expHall initStep
+    1    -49.5     72.6     -965     0.164  0.00181     17.8      17.8     expHall eIoni
+    2    -72.5       65 -1.01e+03     0.148   0.0122     56.4      74.2     expHall eIoni
+    3    -77.4     65.7 -1.03e+03      0.14  0.00724     20.8        95     expHall eIoni
+    4    -80.4     69.2 -1.04e+03     0.133  0.00551     11.2       106     expHall eIoni
+    5    -87.3     78.5 -1.06e+03     0.124  0.00648     23.2       129     expHall eIoni
+    6     -109     79.7 -1.08e+03    0.0973  0.00606     34.9       164     expHall eIoni
+    7     -119     77.2 -1.09e+03    0.0909  0.00487     16.2       181     expHall eIoni
+    8     -144     70.9 -1.1e+03    0.0784   0.0125     31.1       212     expHall eIoni
+    9     -153     74.6 -1.09e+03    0.0698  0.00415     11.5       223     expHall eIoni
+   10     -159       78 -1.09e+03    0.0594   0.0021     7.74       231     expHall eIoni
+   11     -165     87.6 -1.08e+03    0.0526  0.00684     15.4       246     expHall eIoni
+   12     -166     87.3 -1.08e+03    0.0505  0.00077     1.99       248     expHall eIoni
+   13     -174     85.7 -1.08e+03    0.0444  0.00609     11.9       260     expHall eIoni
+   14     -178     84.2 -1.07e+03    0.0398  0.00459     9.76       270     expHall eIoni
+   15     -184     87.4 -1.07e+03    0.0363  0.00352     8.28       278     expHall eIoni
+   16     -187       83 -1.07e+03    0.0294  0.00692     7.24       286     expHall eIoni
+   17     -186     79.4 -1.07e+03    0.0232  0.00621     5.41       291     expHall eIoni
+   18     -186       79 -1.07e+03     0.022 0.000136    0.427       291     expHall eIoni
+   19     -186     76.5 -1.07e+03    0.0174   0.0033     3.46       295     expHall eIoni
+   20     -184     75.9 -1.07e+03    0.0116   0.0058     2.96       298     expHall eIoni
+   21     -184     75.9 -1.07e+03    0.0113 0.000275    0.222       298     expHall eIoni
+   22     -183     76.1 -1.07e+03   0.00825 0.000684    0.651       299     expHall eIoni
+   23     -183     76.3 -1.07e+03   0.00293  0.00533     1.55       300     expHall eIoni
+   24     -183     76.4 -1.07e+03         0  0.00293    0.302       301     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 15,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -183     76.1 -1.07e+03   0.00239        0        0         0     expHall initStep
+    1     -183       76 -1.07e+03         0  0.00239    0.216     0.216     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 14,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -186     76.5 -1.07e+03   0.00129        0        0         0     expHall initStep
+    1     -186     76.5 -1.07e+03         0  0.00129   0.0831    0.0831     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 13,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -186       79 -1.07e+03   0.00105        0        0         0     expHall initStep
+    1     -186       79 -1.07e+03         0  0.00105    0.061     0.061     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 12,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -166     87.3 -1.08e+03   0.00128        0        0         0     expHall initStep
+    1     -166     87.3 -1.08e+03         0  0.00128   0.0814    0.0814     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -159       78 -1.09e+03    0.0083        0        0         0     expHall initStep
+    1     -160     78.2 -1.09e+03   0.00327  0.00503     1.56      1.56     expHall eIoni
+    2     -160     78.2 -1.09e+03         0  0.00327    0.365      1.92     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -153     74.6 -1.09e+03   0.00443        0        0         0     expHall initStep
+    1     -153     74.5 -1.09e+03         0  0.00443    0.619     0.619     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -119     77.2 -1.09e+03   0.00149        0        0         0     expHall initStep
+    1     -119     77.2 -1.09e+03         0  0.00149    0.103     0.103     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -109     79.7 -1.08e+03    0.0211        0        0         0     expHall initStep
+    1     -111     81.2 -1.08e+03    0.0106  0.00486     2.82      2.82     expHall eIoni
+    2     -110       81 -1.08e+03   0.00651  0.00413     1.93      4.75     expHall eIoni
+    3     -110     81.4 -1.08e+03         0  0.00651     1.19      5.94     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 16,   Parent ID = 8
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0     -111     81.2 -1.08e+03   0.00562        0        0         0     expHall initStep
+    1     -111     81.3 -1.08e+03         0  0.00562    0.942     0.942     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -87.3     78.5 -1.06e+03   0.00237        0        0         0     expHall initStep
+    1    -87.3     78.6 -1.06e+03         0  0.00237    0.213     0.213     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -80.4     69.2 -1.04e+03   0.00114        0        0         0     expHall initStep
+    1    -80.4     69.2 -1.04e+03         0  0.00114   0.0693    0.0693     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -77.4     65.7 -1.03e+03   0.00121        0        0         0     expHall initStep
+    1    -77.4     65.7 -1.03e+03         0  0.00121   0.0748    0.0748     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -72.5       65 -1.01e+03   0.00369        0        0         0     expHall initStep
+    1    -72.6     64.8 -1.01e+03         0  0.00369    0.451     0.451     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -49.5     72.6     -965    0.0468        0        0         0     expHall initStep
+    1    -43.5     66.6     -968    0.0411   0.0057     10.6      10.6     expHall eIoni
+    2    -41.7     59.9     -970    0.0364  0.00472     8.69      19.3     expHall eIoni
+    3    -39.3     54.5     -971    0.0329  0.00348     7.26      26.5     expHall eIoni
+    4    -39.9     49.4     -971    0.0287  0.00424      6.3      32.8     expHall eIoni
+    5    -39.3     48.3     -972    0.0258 0.000668     1.32      34.2     expHall eIoni
+    6    -38.4     44.8     -971    0.0213  0.00444     4.57      38.7     expHall eIoni
+    7    -38.1     42.3     -970    0.0178  0.00358     3.66      42.4     expHall eIoni
+    8    -35.9     42.5     -970    0.0133  0.00445     3.02      45.4     expHall eIoni
+    9    -35.1     43.3     -969   0.00854  0.00477     2.32      47.7     expHall eIoni
+   10    -35.3     44.1     -968    0.0031  0.00544      1.6      49.3     expHall eIoni
+   11    -35.3     44.2     -968         0   0.0031    0.333      49.7     expHall eIoni
+
+*********************************************************************************************************
+* G4Track Information:   Particle = e-,   Track ID = 17,   Parent ID = 3
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0    -39.3     48.3     -972   0.00223        0        0         0     expHall initStep
+    1    -39.3     48.3     -972         0  0.00223    0.193     0.193     expHall eIoni
  Run terminated.
 Run Summary
   Number of events processed : 100
-  User=0.010000s Real=0.006346s Sys=0.000000s
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+  User=0.000000s Real=0.005436s Sys=0.000000s
 Graphics systems deleted.
 Visualization Manager deleting...

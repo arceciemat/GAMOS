@@ -1,7 +1,9 @@
 @@@@@ Running GAMOS with script: exercise1a1.in
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
 
 **************************************************************
- Geant4 version Name: geant4-11-00-patch-03    (16-September-2022)
+ Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -22,6 +24,8 @@ Registered graphics systems are:
   RayTracer (RayTracer)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
+  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
   OpenGLStoredX (OGLSX, OGL, OGLS)
 
@@ -84,8 +88,10 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 LPM effect enabled                                 1
 Enable creation and use of sampling tables         0
 Apply cuts on all EM processes                     0
+Use combined TransportationWithMsc                 Disabled
 Use general process                                0
 Enable linear polarisation for gamma               0
+Enable photoeffect sampling below K-shell          1
 Enable sampling of quantum entanglement            0
 X-section factor for integral approach             0.8
 Min kinetic energy for tables                      100 eV 
@@ -101,7 +107,7 @@ Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
-Livermore data directory                           livermore
+Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
 =======================================================================
@@ -111,8 +117,9 @@ Step function for light ions                       (0.2, 0.1 mm)
 Step function for general ions                     (0.2, 0.1 mm)
 Lowest e+e- kinetic energy                         1 keV
 Lowest muon/hadron kinetic energy                  1 keV
-Fluctuations of dE/dx are enabled                  1
 Use ICRU90 data                                    0
+Fluctuations of dE/dx are enabled                  1
+Type of fluctuation model for leptons and hadrons  Universal
 Use built-in Birks satuaration                     0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
@@ -168,8 +175,8 @@ conv:  for gamma SubType=14 BuildTable=1
      BetheHeitlerLPM : Emin=    0 eV  Emax=  100 TeV  ModifiedTsai
 
 Rayl:  for gamma SubType=11 BuildTable=1
-      Lambda table from 100 eV  to 100 keV, 7 bins/decade, spline: 0
-      LambdaPrime table from 100 keV to 100 TeV in 63 bins 
+      Lambda table from 100 eV  to 150 keV, 7 bins/decade, spline: 0
+      LambdaPrime table from 150 keV to 100 TeV in 62 bins 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    LivermoreRayleigh : Emin=    0 eV  Emax=  100 TeV  CullenGenerator
 
@@ -178,10 +185,10 @@ msc:  for e-  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e-  XStype:1  SubType=2
+eIoni:  for e-  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -198,10 +205,10 @@ msc:  for e+  SubType= 10
             UrbanMsc : Emin=    0 eV  Emax=  100 TeV Nbins=84 100 eV  - 100 TeV
           StepLim=UseSafety Rfact=0.04 Gfact=2.5 Sfact=0.6 DispFlag:1 Skin=1 Llim=1 mm
 
-eIoni:  for e+  XStype:1  SubType=2
+eIoni:  for e+  XStype:3  SubType=2
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      StepFunction=(0.2, 1 mm), integ: 1, fluct: 1, linLossLim= 0.01
+      StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
 
@@ -329,61 +336,57 @@ See commands in /vis/modeling/trajectories/ for other options.
  Run terminated.
 Run Summary
   Number of events processed : 100000
-  User=2.060000s Real=2.060677s Sys=0.000000s
- CreateHisto1D %%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV = 50862853
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:0 = 0.77925
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:1 = 0.60513
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:2 = 0.47002
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:3 = 0.36509
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:4 = 0.28263
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:5 = 0.21858
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:6 = 0.16888
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:7 = 0.12986
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:8 = 0.09969
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:9 = 0.07703
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:10 = 0.06015
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:11 = 0.04664
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:12 = 0.0363
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:13 = 0.02766
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:14 = 0.02106
+  User=1.220000s Real=1.211451s Sys=0.000000s
+ CreateHisto1D %%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV = 37325284
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:0 = 0.77946
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:1 = 0.60488
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:2 = 0.46975
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:3 = 0.36454
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:4 = 0.28208
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:5 = 0.21809
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:6 = 0.16884
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:7 = 0.12981
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:8 = 0.09957
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:9 = 0.07687
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:10 = 0.05995
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:11 = 0.04653
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:12 = 0.03613
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:13 = 0.02767
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:14 = 0.02107
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:15 = 0.01669
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:16 = 0.01274
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:17 = 0.01004
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:18 = 0.00772
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:19 = 0.00596
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:20 = 0.00438
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:21 = 0.00319
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:16 = 0.01266
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:17 = 0.00999
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:18 = 0.00769
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:19 = 0.00594
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:20 = 0.00433
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:21 = 0.00317
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:22 = 0.00241
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:23 = 0.00193
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:24 = 0.0015
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:23 = 0.00196
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:24 = 0.00152
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:25 = 0.00117
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:26 = 0.00089
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:27 = 0.00065
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:28 = 0.00053
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:29 = 0.00042
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:26 = 0.00091
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:27 = 0.00067
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:28 = 0.00054
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:29 = 0.00043
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:30 = 0.00032
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:31 = 0.0002
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:32 = 0.00017
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:33 = 0.00011
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:33 = 0.00012
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:34 = 0.0001
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:35 = 8e-05
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:36 = 4e-05
-%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:37 = 4e-05
+%%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:37 = 3e-05
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:38 = 1e-05
 %%% SHNthValueLayerUA_exitshieldF_ancesC NSTEPS: shield:39 = 1e-05
-Info in <TCanvas::MakeDefCanvas>:  created default TCanvas with name c1
- FCN=53.2665 FROM MIGRAD    STATUS=CONVERGED      54 CALLS          55 TOTAL
-                     EDM=5.13945e-10    STRATEGY= 1      ERROR MATRIX ACCURATE 
+ FCN=47.1413 FROM MIGRAD    STATUS=CONVERGED      54 CALLS          55 TOTAL
+                     EDM=2.04812e-09    STRATEGY= 1      ERROR MATRIX ACCURATE 
   EXT PARAMETER                                   STEP         FIRST   
   NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
-   1  Constant     1.17758e+01   2.24376e-03   5.61515e-06   2.10399e-02
-   2  Slope       -2.50272e+00   3.70027e-03   8.88338e-06   7.90059e-03
-%%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV : FIT chi2= 53.2665 nDoF 36
-%%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV : REDUCTION FROM FIT= 10 reached at depth= 0.920033 +- 0.00136027 mm 
-%%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV : REDUCTION FROM SCORES= 10 reached at depth= 0.798826 mm
-0 events have been kept for refreshing and/or reviewing.
-  "/vis/reviewKeptEvents" to review them one by one.
-  "/vis/enable", then "/vis/viewer/flush" or "/vis/viewer/rebuild" to see them accumulated.
+   1  Constant     1.17758e+01   2.24616e-03   5.61512e-06   4.27216e-02
+   2  Slope       -2.50395e+00   3.70808e-03   8.37836e-06   1.91535e-02
+%%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV : FIT chi2= 47.1413 nDoF 36
+%%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV : REDUCTION FROM FIT= 10 reached at depth= 0.919581 +- 0.0013618 mm 
+%%% SHNthValueLayerUA_exitshieldF_ancesC: gamma G4_Pb 0.1405 MeV : REDUCTION FROM SCORES= 10 reached at depth= 0.798375 mm
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 reduction.exercise1a1:NormalizeToNEvents
