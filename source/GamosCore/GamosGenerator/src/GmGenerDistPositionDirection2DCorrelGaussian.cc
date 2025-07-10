@@ -44,6 +44,11 @@ GmGenerDistPositionDirection2DCorrelGaussian::GmGenerDistPositionDirection2DCorr
 //---------------------------------------------------------------------
 G4ThreeVector GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition( GmParticleSource* partSource )
 {
+  /*  G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::SetParams X: "
+	 << theSigmaX << " " << theSigmaXp << " " << theCorrelationX << " Y: " 
+	 << theSigmaY << " " << theSigmaYp << " " << theCorrelationY << " PHASE: E"
+	 << theXYPhase << G4endl; //GDEB*/
+  
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition Centre=" << theCentre << G4endl;
 #endif

@@ -1,17 +1,18 @@
 #include "GmIsotopeSource.hh"
-#include "CLHEP/Random/RandFlat.h"
-
-#include "GamosCore/GamosGenerator/include/GmGenerVerbosity.hh"
-#include "GamosCore/GamosGenerator/include/GmGenerDistTimeDecay.hh"
-
-#include "G4PrimaryVertex.hh"
-#include "G4PrimaryParticle.hh"
-#include "G4ParticleDefinition.hh"
+#include "GmGenerVerbosity.hh"
+#include "GmGenerDistTimeDecay.hh"
+#include "GmGenerDistEnergyBetaDecay.hh"
 #include "GmGenerDistTimeDecay.hh"
 #include "GmGenerDistDirectionRandom.hh"
 #include "GmGenerDistPositionPoint.hh" 
 #include "GmGenerDistEnergyConstantIsotopeDecay.hh"
- 
+
+#include "G4PrimaryVertex.hh"
+#include "G4PrimaryParticle.hh"
+#include "G4ParticleDefinition.hh"
+
+#include "CLHEP/Random/RandFlat.h"
+
 //-----------------------------------------------------------------------
 GmIsotopeSource::GmIsotopeSource( const G4String& name,  GmIsotope* isotope, G4double activity ): GmParticleSource( name )
 {
@@ -27,10 +28,8 @@ GmIsotopeSource::GmIsotopeSource( const G4String& name,  GmIsotope* isotope, G4d
 
   thePositionDistribution = new GmGenerDistPositionPoint;  // source centered at (0,0,0)
 
-  /*  if( theIsotope->GetName() == "F18" ) {
-    theEnergyDistribution = GmGenerDistEnergyFactory::get()->create("GmGenerDistEnergyBetaDecay"); 
-    } else { */
   theEnergyDistribution = new GmGenerDistEnergyConstantIsotopeDecay; 
+  theEnergyDistributionBetaDecay = new GmGenerDistEnergyBetaDecay; // GmGenerDistEnergyFactory::get()->create("GmGenerDistEnergyBetaDecay"); 
 //-  }
 
   CheckDistributionsExist();
@@ -58,7 +57,11 @@ G4PrimaryVertex* GmIsotopeSource::GenerateVertex( G4double time )
   std::vector<GmIsotopeDecay*>::const_iterator ite;
   for( ite = decs.begin(); ite != decs.end(); ite++ ){
     theCurrentDecay = *ite;
-    theEnergy = theEnergyDistribution->GenerateEnergy( this );
+    if( theCurrentDecay->IsBetaDecay() ) {
+      theEnergy = theEnergyDistributionBetaDecay->GenerateEnergy( this );
+    } else {
+      theEnergy = theEnergyDistribution->GenerateEnergy( this );
+    }
     if( bBiasDistributions ) {
       BiasEnergy();
     }

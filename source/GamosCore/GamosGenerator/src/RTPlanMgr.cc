@@ -83,6 +83,7 @@ void RTPlanMgr::Initialize()
   
   bDumpAtBeam = theParamMgr->GetNumericValue(name+":DumpAtBeam",0);
   bDumpAtCP = theParamMgr->GetNumericValue(name+":DumpAtControlPoint",0);
+  bDumpAtScanSpot = theParamMgr->GetNumericValue(name+":DumpAtScanSpot",0);
   
   /*  if( GmParameterMgr::GetInstance()->GetNumericValue(name+":PlotBeamStates",0)) {
     theRTSource->PlotBeamStates();
@@ -372,12 +373,11 @@ RTBeamStateData RTPlanMgr::GetRTBeamStateData( G4double& time, G4Event* evt, G4b
 #ifndef GAMOS_NO_VERBOSE
       if( GenerVerb(testVerb) ) G4cout << "@@!!  RTPlanMgr::GenerateVertex CHANGED TO NEXT SCAN SPOT in event " << theEventID << " CurrentMetersetEvtID " << ie << G4endl; 
       //t      if( GenerVerb(testVerb) ) G4cout << "@@!!  RTPlanMgr::GenerateVertex NextBeam " << iNextBeam << " !=?Current " << iCurrentBeam << G4endl;
-
       if( ie != 0 ) {	
 	if( bDumpAtBeam ) {
 	  if( theLastBeamCHANGEDSubCPEvt != -1 &&  
 	      theSubCPEvt[ie]->GetControlPoint()->GetBeam()->GetIndex() != theSubCPEvt[theLastBeamCHANGEDSubCPEvt]->GetControlPoint()->GetBeam()->GetIndex() ) {
-	    DumpHistosAndScorers(true); 
+	    DumpHistosAndScorers(1); 
 	  }
 	}
 	theLastBeamCHANGEDSubCPEvt = ie;
@@ -385,16 +385,25 @@ RTBeamStateData RTPlanMgr::GetRTBeamStateData( G4double& time, G4Event* evt, G4b
 	  //	  if( theLastControlPointCHANGEDSubCPEvt != -1 ) G4cout << ie << "IDCP " << theSubCPEvt[ie]->GetControlPoint()->GetIndex() << " !=? " << theLastControlPointCHANGEDSubCPEvt << " IDCPlast " << theSubCPEvt[theLastControlPointCHANGEDSubCPEvt]->GetControlPoint()->GetIndex() << G4endl; //GDEB
 	  if( theLastControlPointCHANGEDSubCPEvt != -1 &&
 	      theSubCPEvt[ie]->GetControlPoint()->GetIndex() != theSubCPEvt[theLastControlPointCHANGEDSubCPEvt]->GetControlPoint()->GetIndex() )  {
-	    DumpHistosAndScorers(false);	      
+	    DumpHistosAndScorers(2);	      
 	  }
 	}
 	theLastControlPointCHANGEDSubCPEvt = ie;
+	if( bDumpAtScanSpot ) {
+	  if( theEventID != 0 ) {
+	    G4cout << theEventID << " theLastBeamCHANGEDSubCPEvt " << theLastBeamCHANGEDSubCPEvt << " " << ie << G4endl; // GDEB
+	    DumpHistosAndScorers(3); 
+	  }
+	}
       }
       
 #endif
     }
     if( ie == ieMax ) {
       if( GenerVerb(debugVerb) ) G4cout << " @ RTPlanMgr::GenerateVertex CHANGED TO NEXT SUB CONTROL POINT " << ie << " CP= " << theSubCPEvt[ie]->GetControlPoint()->GetIndex() << " Beam= " << theSubCPEvt[ie]->GetControlPoint()->GetBeam()->GetIndex() << G4endl;
+      if( bDumpAtScanSpot ) {
+	DumpHistosAndScorers(3);	   
+      }
       G4Exception("RTPlanMgr::GenerateVertex",
 		  "",
 		  JustWarning,
@@ -707,20 +716,23 @@ void RTPlanMgr::DumpHistosAndScorersBeam( G4bool bIsBeam )
 */
 
 //------------------------------------------------------------------------
-void RTPlanMgr::DumpHistosAndScorers( G4bool bIsBeam )
+void RTPlanMgr::DumpHistosAndScorers( G4int iType )
 {
   G4String suffix = theParamMgr->GetStringValue("GmAnalysisMgr:FileNameSuffix","");
   G4String suffixNew;
   G4int idBeam = theSubCPEvt[theLastBeamCHANGEDSubCPEvt]->GetControlPoint()->GetBeam()->GetIndex();
   G4int idCP = theSubCPEvt[theLastControlPointCHANGEDSubCPEvt]->GetControlPoint()->GetIndex(); 
   //  G4cout << "DumpHistosAndScorers IDCP " << idCP << " =: " << theLastControlPointCHANGEDSubCPEvt << " IDCPlast " << theSubCPEvt[theLastControlPointCHANGEDSubCPEvt]->GetControlPoint()->GetIndex() << G4endl; //GDEB
-  if( bIsBeam ) {    
+  if( iType == 1 ) { // bIsBeam ) {    
     suffixNew = suffix + ".b"+GmGenUtils::itoa(idBeam);
-  } else {
+  } else if( iType == 2 ) { // bIsCP ) {    
     suffixNew = suffix + ".b"+GmGenUtils::itoa(idBeam)+ ".cp"+GmGenUtils::itoa(idCP);
-}
+  } else if( iType == 3 ) { // bIsSubCP (ScanSpot) ) {    
+    suffixNew = suffix + ".b"+GmGenUtils::itoa(idBeam)+ ".cp"+GmGenUtils::itoa(idCP) + ".ss"+GmGenUtils::itoa(theSubCPEvt[theLastControlPointCHANGEDSubCPEvt]->GetID());
+  }
+
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(warningVerb) ) G4cout << "@@@@  RTPlanMgr::DumpHistosAndScorersBeam IsChangeBeam(or CP) " << bIsBeam << " suffixNew " << suffixNew << G4endl;
+  if( GenerVerb(warningVerb) ) G4cout << "@@@@  RTPlanMgr::DumpHistosAndScorersBeam IsChangeBeam(or CP) " << iType << " suffixNew " << suffixNew << G4endl;
 #endif
   theParamMgr->AddParam("GmAnalysisMgr:FileNameSuffix "+suffixNew,PTstring);
 

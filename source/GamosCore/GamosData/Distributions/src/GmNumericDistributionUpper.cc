@@ -3,7 +3,6 @@
 
 #include "GamosCore/GamosData/Management/include/GmVData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include "GamosCore/GamosUtils/include/GmFileIn.hh"
 
 //---------------------------------------------------------------------
 GmNumericDistributionUpper::GmNumericDistributionUpper(G4String name)

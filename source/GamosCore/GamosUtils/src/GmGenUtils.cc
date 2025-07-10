@@ -405,7 +405,7 @@ G4String GmGenUtils::ftoa(float flo)
 }
 
 //-----------------------------------------------------------------------
-G4String GmGenUtils::FileInPath( G4String fileName )
+G4String GmGenUtils::FileInPath( G4String fileName, G4bool bMustExist )
 {
   std::ifstream* in = new std::ifstream(fileName);
   if (in->is_open()) return fileName;
@@ -417,11 +417,11 @@ G4String GmGenUtils::FileInPath( G4String fileName )
 			   "No GAMOS_SEARCH_PATH variable defined, please define it as in config/confgamos.sh or config/confgamos.csh");
   G4String path( getenv( "GAMOS_SEARCH_PATH" ) );
 
-  return GmGenUtils::FileInPath( path, fileName );
+  return GmGenUtils::FileInPath( path, fileName, bMustExist );
 }
 
 //-----------------------------------------------------------------------
-G4String GmGenUtils::FileInPath( G4String& filepath, const G4String fileName )
+G4String GmGenUtils::FileInPath( G4String& filepath, G4String fileName, G4bool bMustExist)
 {
   if( fileName == "" ) return "";
 
@@ -465,12 +465,13 @@ G4String GmGenUtils::FileInPath( G4String& filepath, const G4String fileName )
 
   //  G4cout << file << " openFINAL " << in->is_open() << G4endl; //GDEB
   if (!in->is_open() )  {
-    G4Exception("GmGenUtils::FileInPath",
-		"Wrong argument",
-		FatalErrorInArgument,
-		("file " + fileName + " not found in path " + filepath ).c_str());
+    if( bMustExist ) {
+      G4Exception("GmGenUtils::FileInPath",
+		  "Wrong argument",
+		  FatalErrorInArgument,
+		  ("file " + fileName + " not found in path " + filepath ).c_str());
+    }
   }
-  in->close();
 //PWIN  delete in;
   
   return file;

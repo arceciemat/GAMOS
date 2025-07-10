@@ -12,6 +12,7 @@
 #include "G4RotationMatrix.hh"
 #include "G4Transform3D.hh"
 class G4VPhysicalVolume;
+class G4LogicalVolume;
 class G4VSolid;
 #include "G4VTouchable.hh"
 
@@ -59,6 +60,8 @@ private:
     return theMaterialName;}
   const G4VSolid* GetSolid() const {
     return theSolid;}
+  G4LogicalVolume* GetTopLogicalVolume() const {
+    return theTopLogicalVolume;}
 
  private: 
   G4Transform3D CalculateTransformation( G4VPhysicalVolume* pv, G4int index );
@@ -84,6 +87,7 @@ private:
   //! the solid shape and parameters
   G4VSolid* theSolid; 
 
+  G4LogicalVolume* theTopLogicalVolume;
 }; 
 
 #endif

@@ -4,7 +4,7 @@
 #include "G4ParticleTable.hh"
 #include "G4tgrUtils.hh"
 
-GmIsotopeDecay::GmIsotopeDecay( const G4String& energy, const G4String& prob, const G4String& product )
+GmIsotopeDecay::GmIsotopeDecay( const G4String& energy, const G4String& prob, G4String& product )
 {
   if( !GmGenUtils::IsNumber( energy ) ){
     G4Exception("GmIsotopeDecay::GmIsotopeDecay",
@@ -22,6 +22,12 @@ GmIsotopeDecay::GmIsotopeDecay( const G4String& energy, const G4String& prob, co
   }
   theProbability = GmGenUtils::GetValue( prob );
 
+  if( product == "beta-" || product == "beta+" ) {
+    bIsBetaDecay = true;
+    product = product.replace(0,4,"e");
+  } else {
+    bIsBetaDecay = false;
+  }
   G4ParticleTable* partTable = G4ParticleTable::GetParticleTable(); 
   theProduct = partTable->FindParticle(product);
   if( !theProduct ) {

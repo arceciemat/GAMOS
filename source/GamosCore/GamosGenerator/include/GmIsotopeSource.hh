@@ -3,6 +3,7 @@
 //
 #include "GmParticleSource.hh"
 #include "GmIsotope.hh"
+class GmGenerDistEnergyBetaDecay;
 
 class GmIsotopeSource : public GmParticleSource
 {
@@ -19,9 +20,8 @@ public:
 
 private:
   GmIsotope* theIsotope;
-
   GmIsotopeDecay* theCurrentDecay; 
-
+  GmGenerDistEnergyBetaDecay* theEnergyDistributionBetaDecay;
 };
 
 #endif // GmIsotopeSource_H

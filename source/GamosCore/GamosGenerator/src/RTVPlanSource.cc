@@ -9,10 +9,14 @@
 #include "GmGenerDistDirectionCone2DGaussian.hh"
 #include "GmGenerDistPositionDirection2DCorrelGaussian.hh"
 #include "GmGenerDistPositionDirection2DCorrelDoubleGaussian.hh"
+#include "GmGenerDistPositionDirection2DCorrelTripleGaussian.hh"
 #include "GmGenerDistPositionDisc.hh" 
 #include "GmGenerDistPositionDiscGaussian.hh" 
 #include "GmGenerDistEnergyConstant.hh"
 #include "GmGenerDistEnergyGaussian.hh"
+#include "GmGenerDistEnergyFromMultiFileE.hh"
+#include "GmGenerDistEnergyFromFile.hh"
+
 #include "GmGeneratorMgr.hh"
 #include "RTPlanMessenger.hh"
 #include "RTPlanMgr.hh"
@@ -20,6 +24,8 @@
 #include "GamosCore/GamosGenerator/include/GmGenerVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmGetParticleMgr.hh"
+#include "GamosCore/GamosBase/Base/include/GmPhysicsLinearVector.hh"
+#include "GamosCore/GamosBase/Base/include/GmHistoReaderCSV.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 #include "GamosCore/GamosGeometry/include/GmVModule.hh"
@@ -95,7 +101,7 @@ void RTVPlanSource::Initialize( const G4String& partName)
   theRTPlanMgr->SetRTSource(this);
 
   bRTHistoControlPoint = G4bool(theParamMgr->GetNumericValue(theName+":RTHistoControlPoint",0.));
-    
+
 }
 
 //-----------------------------------------------------------------------
@@ -217,16 +223,23 @@ G4PrimaryVertex* RTVPlanSource::GenerateVertex( G4double time )
     }
     theEnergyDistribution->SetParams( paramsE );
 
-    //    G4cout << " CHANGED BEAM STATE " << bsdata.Energy << G4endl; //GDEB
+    //G4cout << " CHANGED BEAM STATE " << bsdata.Energy << G4endl; //GDEB
     if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(thePositionDistribution) != 0 ) {
       GmGenerDistPositionDirection2DCorrelDoubleGaussian* posDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution);
       posDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy));
+      //std::vector<G4String> params = theDirectionDistribution->GetParams();
     }
-      
+
+    if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(thePositionDistribution) != 0 ) {
+      G4cout << " TO CHANGE TRIPLE POS " << G4endl; //GDEB
+      GmGenerDistPositionDirection2DCorrelTripleGaussian* posDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(thePositionDistribution);
+      G4cout << " CHANGE POS " << posDist << " FROM " << thePositionDistribution << G4endl; //GDEB
+      posDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy));
+    }    
       
     MoveBeam( bsdata );
     SetSpotSize( thePositionDistribution2D, bsdata );
-    
+   
     MoveAccelerator(bsdata);
     if( bMovePhantom ) MovePhantom( bsdata ); // it is not necessary to move it each CP, because it only uses the IsocentrePos
 
@@ -250,9 +263,23 @@ G4PrimaryVertex* RTVPlanSource::GenerateVertex( G4double time )
 
   if( !bOK ) return (G4PrimaryVertex*)0;
 
+  theEnergy = theEnergyDistribution->GenerateEnergy(this);
   thePosition = thePositionDistribution->GeneratePosition( this );
   theDirection = theDirectionDistribution->GenerateDirection(this);
-  theEnergy = theEnergyDistribution->GenerateEnergy(this);
+  if( bCorrectPosDir ) {
+    for(;;) {
+      G4bool bOKPD = CorrectPosDir();
+      //      G4cout << " CorrectPosDir bOKPD " << bOKPD << G4endl; //GDEB
+      if ( bOKPD ) break;
+      thePosition = thePositionDistribution->GeneratePosition( this );
+      theDirection = theDirectionDistribution->GenerateDirection(this);
+    }
+  }
+  /*  G4double distZ = thePosition.z(); 
+  G4double posX = thePosition.x() + theDirection.x()*distZ;
+  G4double posY = thePosition.y() + theDirection.y()*distZ;
+    G4cout << " POSXY " <<posX << " " <<posY << " POS " << thePosition << " DIR " << theDirection << G4endl; //GDEB
+  */
 
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(infoVerb) ) G4cout << "RTVPlanSource::GenerateVertex pos " << thePosition << G4endl;
@@ -1127,16 +1154,29 @@ void RTVPlanSource::MoveBeam(const RTBeamStateData& bsdata)
       dynamic_cast< GmGenerDistDirectionCone2DGaussian*>(theDirectionDistribution) != 0 ||
       dynamic_cast< GmGenerDistDirectionCone*>(theDirectionDistribution) != 0 ||
       dynamic_cast< GmGenerDistPositionDirection2DCorrelGaussian*>(theDirectionDistribution) != 0 || 
-      dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution) ) { 
+      dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution) != 0 ||  
+      dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(theDirectionDistribution) != 0 ) { 
     GmVGenerDistDirection* dirDist = dynamic_cast< GmVGenerDistDirection*>(theDirectionDistribution);
     dirDist->SetDirection( direction );
   } else {
     G4Exception("RTVPlanSource::MoveBeam",
 		"",
 		FatalException,
-		G4String(" Direction distribution is not of type GmGenerDistDirectionConst/GmGenerDistDirectionCone/GmGenerDistDirectionCone2D/GmGenerDistDirectionConeGaussian/GmGenerDistDirectionCone2DGaussian/GmGenerDistPositionDirection2DCorrelGaussian/GmGenerDistPositionDirection2DCorrelDoubleGaussian").c_str());
+		G4String(" Direction distribution is not of type GmGenerDistDirectionConst/GmGenerDistDirectionCone/GmGenerDistDirectionCone2D/GmGenerDistDirectionConeGaussian/GmGenerDistDirectionCone2DGaussian/GmGenerDistPositionDirection2DCorrelGaussian/GmGenerDistPositionDirection2DCorrelDoubleGaussian/GmGenerDistPositionDirection2DCorrelTripleGaussian ").c_str());
   }
-
+  if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution) != 0 ) {
+    G4cout << " TO CHANGE DOUBLE DIR " << theDirectionDistribution << G4endl; //GDEB
+    GmGenerDistPositionDirection2DCorrelDoubleGaussian* dirDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution);
+    dirDist->SetDirection( direction );
+    dirDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy)); // TO READ NEW conf3E
+  }
+  if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(theDirectionDistribution) != 0 ) {
+    G4cout << " TO CHANGE TRIPLE DIR " << theDirectionDistribution << G4endl; //GDEB
+    GmGenerDistPositionDirection2DCorrelTripleGaussian* dirDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(theDirectionDistribution);
+    dirDist->SetDirection( direction );
+    dirDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy)); // TO READ NEW conf3E
+  }
+  
   if( theRTBeamG4PVs.size() != 0 ) {
     G4GeometryManager* geomMgr = G4GeometryManager::GetInstance();
     geomMgr->OpenGeometry();
@@ -1230,6 +1270,7 @@ void RTVPlanSource::PredictInitialDisplacement(const RTBeamStateData& bsdata )
   
 }
 
+
 //------------------------------------------------------------------------
 void RTVPlanSource::CheckParamInAllControlPoints(G4String rtVName)
 {
@@ -1268,3 +1309,4 @@ void RTVPlanSource::CheckParamInAllControlPoints(G4String rtVName)
   }
 
 }
+

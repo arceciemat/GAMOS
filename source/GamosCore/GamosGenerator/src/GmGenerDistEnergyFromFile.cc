@@ -59,7 +59,7 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
     }*/
 
   //----- Sanity checks
-  std::map<G4double,G4double>::iterator ite, ite2;
+  mdd::iterator ite, ite2;
   //--- For all: Check that energies are positive
   if( theCalculationType != EFFCT_InterpolateLog ){
     for(ite = theEnerProb.begin(); ite != theEnerProb.end(); ite++){
@@ -115,11 +115,17 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
     } 
   }
 
+  BuildAccumProbEnergy();
+}
+
+//-----------------------------------------------------------------------
+void GmGenerDistEnergyFromFile::BuildAccumProbEnergy()
+{
   //--- Get the inverse of probabilities - energies distribution
   G4double tp = 0.;
-  std::multimap<G4double,G4double> probaccumEner0; // multimap <added up probability, energy> not normalized
-
-  for(ite = theEnerProb.begin(); ite != theEnerProb.end(); ite++){
+  mmdd probaccumEner0; // multimap <added up probability, energy> not normalized
+  mdd::iterator ite2;
+  for(mdd::iterator ite = theEnerProb.begin(); ite != theEnerProb.end(); ite++){
     G4double prob = 0.;
     //-    if( prob == 0. && std::distance( theEnerProb.begin(), ite ) == G4int(theEnerProb.size())-1 ) {
     //-      prob = 1.E-10; // for last bin limit the probability is set to 0. by convention
@@ -128,14 +134,14 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
 	theCalculationType == EFFCT_Histogram ){
       prob = (*ite).second; 
       tp += prob;
-      probaccumEner0.insert( std::multimap<G4double,G4double>::value_type(tp, (*ite).first));
+      probaccumEner0.insert( mmdd::value_type(tp, (*ite).first));
     } else if( theCalculationType == EFFCT_Interpolate ) {
       if( ite != theEnerProb.begin() ) {
 	ite2 = ite; ite2--;
 	// get area between the two points
 	prob = ((*ite).second+(*ite2).second)/2.*((*ite).first-(*ite2).first);
 	tp += prob;
-	probaccumEner0.insert( std::multimap<G4double,G4double>::value_type(tp, (*ite).first));
+	probaccumEner0.insert( mmdd::value_type(tp, (*ite).first));
 #ifndef GAMOS_NO_VERBOSE
 	if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistEnergyFromFile  PROB_SUM " << tp << " " << prob << " " << (*ite).first << " " << (*ite).second << " " << (*ite2).second << " " << (*ite).first << " " << (*ite2).first << G4endl;
 #endif
@@ -145,7 +151,7 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
 	ite2 = ite; ite2--;
 	prob = ((*ite).second+(*ite2).second)/2.*(log((*ite).first)-log((*ite2).first));
 	tp += prob;
-	probaccumEner0.insert( std::multimap<G4double,G4double>::value_type(tp, (*ite).first));
+	probaccumEner0.insert( mmdd::value_type(tp, (*ite).first));
 #ifndef GAMOS_NO_VERBOSE
 	if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistEnergyFromFile  PROB " << prob << " PROB_SUM " << tp << " " << (*ite).first << " " << (*ite).second << " " << (*ite2).second << " " << log((*ite).first) << " " << log((*ite2).first) << G4endl;
 #endif
@@ -161,9 +167,9 @@ void GmGenerDistEnergyFromFile::ReadEnergyDist()
 #ifndef GAMOS_NO_VERBOSE
   if( tp != 1. && GenerVerb(warningVerb) ) G4cerr << "GmGenerDistEnergyFromFile::ReadEnergyDist probabilities do not sum up to 1., but to " << tp << " They will be normalized to 1. " << G4endl;
 #endif
-  std::multimap<G4double,G4double>::iterator itea;
+  mmdd::iterator itea;
   for( itea = probaccumEner0.begin(); itea != probaccumEner0.end(); itea++ ) {
-    theProbaccumEner.insert( std::multimap<G4double,G4double>::value_type((*itea).first / tp, (*itea).second));
+    theProbaccumEner.insert( mmdd::value_type((*itea).first / tp, (*itea).second));
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(infoVerb) ) G4cout << "GmGenerDistEnergyFromFile  Reading data: Energy =  " << (*itea).second 
 				     << " Integrated normalized probability= " << (*itea).first/tp << G4endl;
@@ -177,7 +183,7 @@ G4double GmGenerDistEnergyFromFile::GenerateEnergy( const GmParticleSource* )
 {
   G4double energy;
   G4double pv = CLHEP::RandFlat::shoot();
-  std::multimap<G4double,G4double>::iterator ite = theProbaccumEner.upper_bound( pv );
+  mmdd::iterator ite = theProbaccumEner.upper_bound( pv );
   if( ite == theProbaccumEner.end() ) ite--; // precision problems if prob = 1.0000
   energy = (*ite).second;
 
@@ -210,8 +216,9 @@ G4double GmGenerDistEnergyFromFile::GenerateEnergy( const GmParticleSource* )
     energy += (-0.5 + CLHEP::RandFlat::shoot() ) * theHBin;
   } else if( theCalculationType == EFFCT_Interpolate ){
     //--- Get the slope of the interpolating line (energy corresponds to upper limit)
-    std::map<G4double,G4double>::const_iterator iteU = theEnerProb.find(energy);
-    std::map<G4double,G4double>::const_iterator iteD = iteU; iteD--;
+    //    G4cout << " FIND ENERGY " << energy << G4endl; //GDEB
+    mdd::const_iterator iteU = theEnerProb.find(energy);
+    mdd::const_iterator iteD = iteU; iteD--;
     G4double diffP = (*iteU).second-(*iteD).second;
     G4double diffE = (*iteU).first-(*iteD).first;
     G4double slope = diffP/diffE;
@@ -225,7 +232,7 @@ G4double GmGenerDistEnergyFromFile::GenerateEnergy( const GmParticleSource* )
     }
     //    energy = ((*iteU).second-(*iteD).second) * CLHEP::RandFlat::shoot() / slope + (*iteD).first;
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistEnergyFromFile energy =  " << energy 
+    if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistEnergyFromFile interpolated energy =  " << energy 
 				      << " randomProb " << randomProb
 				      << " ener-prob D " << (*iteD).first << " " << (*iteD).second
 				      << " ener-prob U " << (*iteU).first << " " << (*iteU).second
@@ -234,8 +241,8 @@ G4double GmGenerDistEnergyFromFile::GenerateEnergy( const GmParticleSource* )
 #endif
   } else if( theCalculationType == EFFCT_InterpolateLog ){
     //--- Get the slope of the interpolating line (energy corresponds to upper limit)
-    std::map<G4double,G4double>::const_iterator iteU = theEnerProb.find(energy);
-    std::map<G4double,G4double>::const_iterator iteD = iteU; iteD--;
+    mdd::const_iterator iteU = theEnerProb.find(energy);
+    mdd::const_iterator iteD = iteU; iteD--;
     G4double diffP = (*iteU).second-(*iteD).second;
     G4double diffE = log((*iteU).first)-log((*iteD).first);
     G4double slope = diffP/diffE;
@@ -257,7 +264,8 @@ G4double GmGenerDistEnergyFromFile::GenerateEnergy( const GmParticleSource* )
 				      << " ener-prob U " << (*iteU).first << " " << (*iteU).second
 							     << " slope " << slope << G4endl;
   }
-
+#endif
+  
   return energy;
 
 }
@@ -321,4 +329,28 @@ void GmGenerDistEnergyFromFile::SetParams( const std::vector<G4String>& params )
 
 }
 
-#endif
+//-----------------------------------------------------------------------
+void GmGenerDistEnergyFromFile::SetCalculationType( G4String type )
+{
+  if( type == "fixed" ) {
+    theCalculationType = EFFCT_Fixed;
+  } else if( type == "histogram" ) {
+    theCalculationType =EFFCT_Histogram;
+  } else if( type == "interpolate" ) {
+    theCalculationType = EFFCT_Interpolate;
+  } else if( type == "interpolateLog" ) {
+    theCalculationType = EFFCT_InterpolateLog;
+  } else {
+      G4Exception("GmGenerDistEnergyFromFile::SetCalculationType",
+		  "",
+		  FatalErrorInArgument,
+		  G4String("Error in calculation type, it must be fixed/histogram/interpolate/interpolateLog , and it is "+type).c_str());
+  }
+  //G4cout << " GmGenerDistEnergyFromFile::SetCalculationType( " << type << " = " << theCalculationType << G4endl; //GDEB
+}
+
+//-----------------------------------------------------------------------
+void GmGenerDistEnergyFromFile::SetEnerProb( mdd enerProb )  {
+  theEnerProb = enerProb;
+  BuildAccumProbEnergy();
+}

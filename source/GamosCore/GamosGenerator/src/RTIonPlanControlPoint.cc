@@ -49,7 +49,7 @@ RTIonPlanControlPoint::RTIonPlanControlPoint( const G4String& fileName, RTIonPla
 		      ("ScanSpotPosition should have 3 words (POS_X POS_Y METERSET), but it has "
 		       + GmGenUtils::itoa(wl.size())).c_str());
 	}
-	RTIonPlanSubControlPoint* subCP = new RTIonPlanSubControlPoint(wl,this);
+	RTIonPlanSubControlPoint* subCP = new RTIonPlanSubControlPoint(ii, wl,this);
 	theSubCPs.push_back(subCP);
 	//	G4cout<< this << " " << ii << " ADD SUBCP " << theSubCPs[ii] << " " << theSubCPs.size() << G4endl; //GDEB
       }

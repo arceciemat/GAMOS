@@ -16,8 +16,9 @@
 
 
 //-----------------------------------------------------------------------
-RTPlanSubControlPoint::RTPlanSubControlPoint( G4double ms, RTPlanControlPoint* CP)
+RTPlanSubControlPoint::RTPlanSubControlPoint( G4int id, G4double ms, RTPlanControlPoint* CP)
 {  
+  theID = id;
   theControlPoint = CP;
   //  G4cout << this << " RTPlanSubControlPoint::RTPlanSubControlPoint " << CP << G4endl; //GDEB
   theMeterset = ms;

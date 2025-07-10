@@ -15,7 +15,12 @@ public:
   virtual void SetParams( const std::vector<G4String>& params );
 
   void SetEnergy( G4double ener ){
-    theEnergy = ener; }
+    theEnergy = ener;
+  }
+
+  G4double GetEnergy() const {
+    return theEnergy;
+  }
 
 private:
 

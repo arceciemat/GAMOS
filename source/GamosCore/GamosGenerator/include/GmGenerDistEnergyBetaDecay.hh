@@ -1,12 +1,12 @@
 #ifndef GmGenerDistEnergyBetaDecay_HH
 #define GmGenerDistEnergyBetaDecay_HH
 
-#include "GamosCore/GamosGenerator/include/GmVGenerDistEnergy.hh"
+#include "GamosCore/GamosGenerator/include/GmGenerDistEnergyFromFile.hh"
 #include "globals.hh"
 #include <vector>
 class GmParticleSource;
 
-class GmGenerDistEnergyBetaDecay : public GmVGenerDistEnergy
+class GmGenerDistEnergyBetaDecay : public GmGenerDistEnergyFromFile
 {
 public:
   GmGenerDistEnergyBetaDecay();
@@ -19,8 +19,6 @@ private:
 
 private:
   G4String theIsotope;
-  std::vector<float> theProb;
-  float theProbMax;
   G4bool bFileRead;
 };
 

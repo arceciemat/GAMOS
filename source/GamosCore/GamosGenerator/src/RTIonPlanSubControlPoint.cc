@@ -16,8 +16,9 @@
 
 
 //-----------------------------------------------------------------------
-RTIonPlanSubControlPoint::RTIonPlanSubControlPoint( const std::vector<G4String> wl, RTIonPlanControlPoint* CP)
-{  
+RTIonPlanSubControlPoint::RTIonPlanSubControlPoint( G4int id, const std::vector<G4String> wl, RTIonPlanControlPoint* CP)
+{
+  theID = id;
   theControlPoint = CP;
   
   thePosX = GmGenUtils::GetValue(wl[0]);

@@ -80,9 +80,8 @@ void GmScoringMgr::CreateMFD( const std::vector<G4String>& wl )
 
   G4SDManager::GetSDMpointer()->AddNewDetector(det);
  
-
   for( unsigned int ii = 1; ii < wl.size(); ii++ ){
-    std::vector<G4LogicalVolume*> lvs = GmGeometryUtils::GetInstance()->GetLogicalVolumes(wl[ii], true); 
+    std::vector<G4LogicalVolume*> lvs = GmGeometryUtils::GetInstance()->GetLogicalVolumes(wl[ii], true);
     
     std::vector<G4LogicalVolume*>::const_iterator ite;
     for( ite = lvs.begin(); ite != lvs.end(); ite++ ){

@@ -33,7 +33,10 @@ public:
   void SetParticleSource( GmParticleSource* src ) {
     theParticleSource = src; }
 
-
+  virtual std::vector<G4String> GetParams() const {
+    return theOrigParams;
+  }
+  
 protected:
   G4String theName;
 

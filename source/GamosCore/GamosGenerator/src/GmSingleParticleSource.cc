@@ -112,6 +112,16 @@ G4PrimaryVertex* GmSingleParticleSource::GenerateVertex( G4double time )
   if( bLocalVolume ) {
     theDirection = DirectionInLocalVolume(theDirection);
   }
+  if( bCorrectPosDir ) {
+    for(;;) {
+      G4bool bOKPD = CorrectPosDir();
+      //      G4cout << " CorrectPosDir bOKPD " << bOKPD << G4endl; //GDEB
+      if ( bOKPD ) break;
+      thePosition = thePositionDistribution->GeneratePosition( this );
+      theDirection = theDirectionDistribution->GenerateDirection(this);
+    }
+  }
+
   
   G4ThreeVector mom = theDirection * std::sqrt(theEnergy*theEnergy + 2.*theParticleDef->GetPDGMass()*theEnergy);
 #ifndef GAMOS_NO_VERBOSE

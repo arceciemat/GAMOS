@@ -46,7 +46,7 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
   G4String argvstr = argv[iPar];
   G4String argvstr1 = argv[iPar+1];
   G4String argvName = argvstr.substr(1,999);
-  if( argvstr == "-verb" ) {
+  if( argvstr == "-verb" || argvstr == "-verbose" ) {
     G4String verbstr = G4String(argvstr1);
     if(verbstr == "test" ) {
       GmVVerbosity::SetVerbosityLevel( "DicomVerbosity", testVerb );

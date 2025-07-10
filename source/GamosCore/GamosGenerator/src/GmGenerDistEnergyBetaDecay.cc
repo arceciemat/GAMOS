@@ -10,6 +10,7 @@
 GmGenerDistEnergyBetaDecay::GmGenerDistEnergyBetaDecay()
 {
   bFileRead = FALSE;
+  SetCalculationType("interpolate");
 }
 
 
@@ -23,13 +24,14 @@ G4double GmGenerDistEnergyBetaDecay::GenerateEnergy( const GmParticleSource* sou
 		"Source is not isotope");
   }
 
-  GmIsotopeSource* isoSource = static_cast<GmIsotopeSource*>(const_cast<GmParticleSource*>(source));
+  G4double energy = 0.;
+  GmIsotopeSource* isoSource = dynamic_cast<GmIsotopeSource*>(const_cast<GmParticleSource*>(source));
 
   if( isoSource->GetCurrentDecay()->GetProductName() == "gamma" ){
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistEnergyBetaDecay decays to gamma, using constant energy " << isoSource->GetName() << G4endl;
 #endif
-    return isoSource->GetCurrentDecay()->GetEnergy();
+    energy = isoSource->GetCurrentDecay()->GetEnergy();
   } else {
     G4String filename;
     if( isoSource->GetCurrentDecay()->GetProductName() == "e+" ){
@@ -41,22 +43,11 @@ G4double GmGenerDistEnergyBetaDecay::GenerateEnergy( const GmParticleSource* sou
       ReadFile( filename );
       bFileRead = TRUE;
     }
-    
-#ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistEnergyBetaDecay::Generate " << G4endl;
-#endif
-    G4bool bFound = false;
-    G4double energy, prob;
-    do{
-      energy = CLHEP::RandFlat::shoot(theProb.size()-1.E-6);
-      prob = CLHEP::RandFlat::shoot(theProbMax);
-      if( prob < theProb[int(energy)] ) bFound = true;
-    }while(!bFound);
-    
-    return energy*CLHEP::keV;    
+    energy = GmGenerDistEnergyFromFile::GenerateEnergy( source );
+  
   }
 
-  return 0; //for compilation warning
+  return energy;
 }
 
 
@@ -64,55 +55,74 @@ G4double GmGenerDistEnergyBetaDecay::GenerateEnergy( const GmParticleSource* sou
 void GmGenerDistEnergyBetaDecay::ReadFile( const G4String fname )
 {
 
-#ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistEnergyBetaDecay reading file " << fname << G4endl;
-#endif
-
   // read input file 
   G4String filename = fname;
-  filename = GmGenUtils::FileInPath( filename );
-  GmFileIn fin = GmFileIn::GetInstance( filename );
-  fin.SetSuppressQuotes(0);
-
-  std::vector<G4String> wl;
-  G4bool readingData = false;
-  for( ;; ){
-    if(! fin.GetWordsInLine( wl ) ) break;
-    if( readingData == true ) {
-      //      if( wl.size() == 1 && wl[0] == "\">" ) break;
-      if( wl[0].find(";") == std::string::npos ) break;
-      //--- separate line in words by ";"
-      unsigned int i1 = 0;
-      for(unsigned int ii = 0; ii < wl[0].length(); ii++ ) {
-	if( wl[0][ii] == ';' ) {
-	  G4String val = wl[0].substr(i1,ii-i1);
-	  theProb.push_back( GmGenUtils::GetValue( val ) );
-	  i1 = ii+1;
+  filename = GmGenUtils::FileInPath( filename, false );
+  G4bool bOldFormat = true;
+  std::ifstream* fintest = new std::ifstream(filename);
+  if ( ! fintest->is_open() ) {
+    size_t pos = filename.find(".dat");    
+    filename.replace(pos,4,".csv");
+    filename = GmGenUtils::FileInPath( filename, false );
+    bOldFormat = false;
+  }
+  delete fintest;
 #ifndef GAMOS_NO_VERBOSE
-	  if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistEnergyBetaDecay " << theProb.size()-1 << " prob " << theProb[theProb.size()-1] << " = " << val <<  G4endl;
+  if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistEnergyBetaDecay reading file " << filename << G4endl;
 #endif
+
+
+  GmFileIn fin = GmFileIn::GetInstance( filename );
+  std::map<G4double,G4double> enerProb;
+  
+  if( bOldFormat ) {
+    fin.SetSuppressQuotes(0);
+
+    std::vector<G4String> wl;
+    G4bool readingData = false;
+    for( ;; ){
+      if(! fin.GetWordsInLine( wl ) ) break;
+      if( readingData == true ) {
+	//      if( wl.size() == 1 && wl[0] == "\">" ) break;
+	if( wl[0].find(";") == std::string::npos ) break;
+	//--- separate line in words by ";"
+	unsigned int i1 = 0;
+	for(unsigned int ii = 0; ii < wl[0].length(); ii++ ) {
+	  if( wl[0][ii] == ';' ) {
+	    G4String val = wl[0].substr(i1,ii-i1);
+	    enerProb[(ii+1)*CLHEP::keV] = GmGenUtils::GetValue( val );
+	    i1 = ii+1;
+#ifndef GAMOS_NO_VERBOSE
+	    if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistEnergyBetaDecay  ener " << (ii+1)*CLHEP::keV << " prob " << val <<  G4endl;
+#endif
+	  }
+    }
+      }
+      for( unsigned int iw = 0; iw < wl.size(); iw++ ){
+	//      if( wl[iw] == "name=\"y[]\"" ) {
+	if( wl[iw] == "name=y[]" ) {
+	  readingData = true;
+	  break;
 	}
       }
     }
-    for( unsigned int iw = 0; iw < wl.size(); iw++ ){
-      //      if( wl[iw] == "name=\"y[]\"" ) {
-      if( wl[iw] == "name=y[]" ) {
-	readingData = true;
-	break;
-      }
+    unsigned int siz = enerProb.size();
+    if( siz == 0 ) G4Exception(" GmGenerDistEnergyBetaDecay::ReadFile",	
+			       "Wrong argument",
+			       FatalErrorInArgument,
+			       G4String("Data file is wrong: " + fname + " Please contact the GAMOS experts").c_str());
+
+  } else {
+    fin.SetSeparator(',');
+    std::vector<G4String> wl;
+    fin.GetWordsInLine( wl ); // Skip first line
+    for(;;) {
+      if(! fin.GetWordsInLine( wl ) ) break;
+      enerProb[GmGenUtils::GetValue(wl[1])] = GmGenUtils::GetValue(wl[2]);
     }
   }
 
-  unsigned int siz = theProb.size();
-  if( siz == 0 ) G4Exception(" GmGenerDistEnergyBetaDecay::ReadFile",	
-			     "Wrong argument",
-			     FatalErrorInArgument,
-			     G4String("Data file is wrong: " + fname + " Please contact the GAMOS experts").c_str());
-
-  theProbMax = 0.;
-  for( unsigned int ii = 0; ii < siz; ii++ ) {
-    theProbMax = std::max( theProbMax, theProb[ii] );
-  }
+  SetEnerProb(enerProb);
 
   fin.Close();
 

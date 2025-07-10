@@ -43,7 +43,7 @@ DicomVReaderImage::DicomVReaderImage(DcmDataset* dset, DRModality mod) : DicomVR
   theReaderMgr = DicomReaderMgr::GetInstance();
   theReaderMgr->AddImageReader( this, mod );
   if( DicomVerb(debugVerb) ) {
-    G4cout << this << " DicomVReaderImage AddImageReader " << this->GetName() << " " << DicomVReader::GetModalityStr(mod) << G4endl;
+    G4cout << " DicomVReaderImage AddImageReader " << this->GetName() << " " << DicomVReader::GetModalityStr(mod) << G4endl;
   }
   theDataset = dset;
   theModality = mod;
@@ -631,7 +631,7 @@ void DicomVReaderImage::ReadPixelData()
 	    }
 	    theVoxelData->at(newCopyNo) = val;
 	    if( DicomVerb(testVerb) ) {
-	      if( val1U != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << " = " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << "="  << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl;           
+	      if( val1U != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << " = " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << "="  << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl;    
 	    }	  
           }
         }
@@ -696,7 +696,7 @@ void DicomVReaderImage::ReadPixelData()
 	    if( DicomVerb(testVerb) ) {
 	      if( val != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << "  " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; 
 	    }
-	    if( iz == theNoVoxelsZ-1 && val != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << "  " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; 
+	    //	    if( iz == theNoVoxelsZ-1 && val != 0 )  G4cout << GetName() << " DicomVReaderImage::Pixel " << ic << " : " << ir << " : " << iz << " copyNo " << newCopyNo << " = " << val << "  " << pixData[ic+ir*theNoVoxelsX+iz*theNoVoxelsXY] << " * " <<theRescaleSlope << " * " << theDoseGridScaling << " + " << theRescaleIntercept << G4endl; //GDEB
 
           }
 	}
@@ -984,7 +984,7 @@ DicomVImage* DicomVReaderImage::CreateImage(G4String name, DIModality modality, 
   if( bImageFromData ) {
     theDicomImage = image;
     theDicomImage->SetData( theVoxelData );
-    if( DicomVerb(debugVerb) ) G4cout<< this << " " << theDicomImage << " DicomVReaderImage SetData " << theVoxelData << " " << theVoxelData->size() << G4endl;
+    if( DicomVerb(debugVerb) ) G4cout<< theDicomImage << " DicomVReaderImage SetData " << theVoxelData << " " << theVoxelData->size() << G4endl;
   } else {
     std::vector<G4double>* imageData = new std::vector<G4double>(theNoVoxelsX/theCompression*theNoVoxelsY/theCompression*theNoVoxelsZ);
     image->SetData(imageData);

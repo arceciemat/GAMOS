@@ -44,7 +44,6 @@ void GmIsotopeMgr::ReadIsotopes( GmFileIn& fin )
 #ifndef GAMOS_NO_VERBOSE
     if( GenerVerb(infoVerb) ) G4cout << G4endl;
 #endif
-
     if( wl[0] == ":ISOTOPE" ) {
       if( wl.size() != 2 ) {
 	G4cerr << " GmIsotopeMgr::ReadIsotopes line without 2 words " << wl.size() << ": " << G4endl;
@@ -72,8 +71,24 @@ void GmIsotopeMgr::ReadIsotopes( GmFileIn& fin )
 		    FatalErrorInArgument,
 		    "");
       }
-      GmIsotopeDecay* dec = new GmIsotopeDecay( wl[0], wl[1], wl[2] );
-      currentIsotope->AddDecay( dec );
+      G4double prob = GmGenUtils::GetValue(wl[1]);
+      if ( prob > 1. ) { //probability > 1, e.g. when beta's are merged into one because there is only one energy distribution
+	G4int nProbs = int(prob);
+	G4double lastProb = prob - nProbs;
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(infoVerb) ) G4cout << " Probability " << wl[2] << " is > 1 , split in " << nProbs << " decays, plus last decay with probability "<< lastProb << G4endl; 
+#endif
+	for( int ii = 0; ii < nProbs; ii++ ) {
+	  GmIsotopeDecay* dec = new GmIsotopeDecay( wl[0], "1.", wl[2] );
+	  currentIsotope->AddDecay( dec );
+	}
+	GmIsotopeDecay* dec = new GmIsotopeDecay( wl[0], GmGenUtils::ftoa(lastProb), wl[2] );
+	currentIsotope->AddDecay( dec );
+	  
+      } else {
+	GmIsotopeDecay* dec = new GmIsotopeDecay( wl[0], wl[1], wl[2] );
+	currentIsotope->AddDecay( dec );
+      }
     }
   }
 

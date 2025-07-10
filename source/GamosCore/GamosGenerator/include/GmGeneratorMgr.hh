@@ -22,7 +22,16 @@ public:
   
 private:
   static GmGeneratorMgr* theInstance;
-  
+
+  // GDEB
+public: 
+  G4int idXYTripleGaussian;
+  G4int GetIdXYTripleGaussian() const {
+    return  idXYTripleGaussian;
+  }
+  void SetIdXYTripleGaussian( G4int id ) {
+    idXYTripleGaussian = id;
+  }
 };
 
 #endif

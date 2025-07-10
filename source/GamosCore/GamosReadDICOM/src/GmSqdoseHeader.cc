@@ -74,7 +74,7 @@ void GmSqdoseHeader::Read( FILE* fin )
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( ReadDICOMVerb(-warningVerb) ) G4cout << " GmSqdoseHeader::Read NEvent " << theNoEvent << G4endl; 
+  if( ReadDICOMVerb(-warningVerb) ) G4cout << " GmSqdoseHeader::Read NEvent " << std::setprecision(4) << (theNoEvent) << G4endl; 
 #endif
   
   if( GmGenUtils::freadLittleEndian8(&theNoVoxelsX, sizeof(size_t),  1, fin) != 1) {

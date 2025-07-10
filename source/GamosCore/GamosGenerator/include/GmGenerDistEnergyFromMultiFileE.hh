@@ -24,6 +24,9 @@ public:
   virtual void SetParams( const std::vector<G4String>& params );
 
   void BuildEnergyDists();
+  GmGenerDistEnergyFromFile* GetCurrentDist() const {;
+  return theCurrentDist;
+  }
 
 private:
   std::map<G4double,GmGenerDistEnergyFromFile*> theEnergyDists;

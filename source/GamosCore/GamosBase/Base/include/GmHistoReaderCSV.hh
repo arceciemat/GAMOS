@@ -29,10 +29,10 @@ public:
   void FillHistoProfile1D( std::vector<G4String>& wl );
   void FillHistoProfile2D( std::vector<G4String>& wl );
 
-  GmHisto1* GetHisto1( const G4String& histoName );
-  GmHisto2* GetHisto2( const G4String& histoName );
-  GmHistoProfile1* GetHistoProfile1( const G4String& histoName );
-  GmHistoProfile2* GetHistoProfile2( const G4String& histoName );
+  GmHisto1* GetHisto1( const G4String& histoName, G4bool bExists = true );
+  GmHisto2* GetHisto2( const G4String& histoName, G4bool bExists = true );
+  GmHistoProfile1* GetHistoProfile1( const G4String& histoName, G4bool bExists = true );
+  GmHistoProfile2* GetHistoProfile2( const G4String& histoName, G4bool bExists = true );
 
   std::map<G4String,GmHisto1*> GetHistos1() const {
     return theHistos1;

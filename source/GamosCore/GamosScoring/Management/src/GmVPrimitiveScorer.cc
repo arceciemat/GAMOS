@@ -78,6 +78,7 @@ GmVPrimitiveScorer::GmVPrimitiveScorer(G4String name)
     theConvergenceTester = 0;
   }
 
+  //t  theEnergySplitter = new GmEnergySplitter;
   theEnergySplitter = new GmEnergySplitter;
 
   bSkipEqualMaterials = G4bool(paramMgr->GetNumericValue("GmReadPhantomGeometry:Phantom:SkipEqualMaterials",0));

@@ -51,6 +51,9 @@
 #include "CLHEP/Random/RandomEngine.h"
 
 #include <sstream>
+#include <chrono> 
+#include <ctime> 
+#include <iomanip> 
 
 GmRunManager* GmRunManager::theRunManager = 0;
 //----------------------------------------------------------------------
@@ -68,6 +71,12 @@ GmRunManager::GmRunManager()
 		FatalException,
 		"Constructed twice."); 
   }
+  // Print current time 
+  auto now = std::chrono::system_clock::now();
+  std::time_t current_time_t = std::chrono::system_clock::to_time_t(now);
+  std::tm* local_tm = std::localtime(&current_time_t);
+  std::cout << "GAMOS starts RUN at : ";
+  std::cout << std::put_time(local_tm, "%a %b %e %H:%M:%S %Z %Y") << std::endl;
 
   theRunManager = this;
 
@@ -149,6 +158,12 @@ GmRunManager::~GmRunManager()
   }
 #endif
 
+  // Print current time 
+  auto now = std::chrono::system_clock::now();
+  std::time_t current_time_t = std::chrono::system_clock::to_time_t(now);
+  std::tm* local_tm = std::localtime(&current_time_t);
+  std::cout << "GAMOS ends RUN at : ";
+  std::cout << std::put_time(local_tm, "%a %b %e %H:%M:%S %Z %Y") << std::endl;
 
 }
 

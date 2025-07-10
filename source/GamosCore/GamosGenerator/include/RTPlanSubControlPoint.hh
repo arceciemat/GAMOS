@@ -10,7 +10,7 @@ class RTPlanControlPoint;
 class RTPlanSubControlPoint : public RTVPlanSubControlPoint
 {
 public:
-  RTPlanSubControlPoint( G4double ms, RTPlanControlPoint* CP);
+  RTPlanSubControlPoint( G4int id, G4double ms, RTPlanControlPoint* CP);
   ~RTPlanSubControlPoint(){}
 
   virtual RTBeamStateData GetBeamStateData();

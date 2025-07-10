@@ -10,7 +10,7 @@ class RTIonPlanControlPoint;
 class RTIonPlanSubControlPoint : public RTVPlanSubControlPoint 
 {
 public:
-  RTIonPlanSubControlPoint( const std::vector<G4String> wl, RTIonPlanControlPoint* CP);
+  RTIonPlanSubControlPoint( G4int id, const std::vector<G4String> wl, RTIonPlanControlPoint* CP);
   ~RTIonPlanSubControlPoint(){}
 
   G4double GetPosX() const {

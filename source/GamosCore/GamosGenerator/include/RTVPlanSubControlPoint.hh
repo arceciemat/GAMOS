@@ -33,6 +33,10 @@ public:
  
   virtual RTBeamStateData GetBeamStateData() = 0;
   
+  G4int GetID() const {
+    return theID;
+  }
+  
   G4double GetMeterset() const {
     return theMeterset;
   }
@@ -47,6 +51,7 @@ public:
   RTVPlanBeam* GetBeam() const;
 
 protected:
+  G4int theID;
   G4double theMeterset;
   RTVPlanControlPoint* theControlPoint;
 

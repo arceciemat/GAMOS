@@ -65,7 +65,14 @@ public:
 private:
   DicomPolygonSet* VoxelsInUseClosest( DicomPolygonSet* polySet, DicomVImage* image );
   virtual G4double GetValueSurrounding(size_t ix, size_t iy, size_t iz, G4double value, DicomVImage* image, std::vector<G4double>* imgDatap );
-  
+
+  virtual G4bool GetFigureTitle() const {
+    return bFigureTitle;
+  }
+  virtual void SetFigureTitle( G4bool bst ) {
+    bFigureTitle = bst;
+  }
+
 private:
   G4int theCanvasNPixelsX;
   G4int theCanvasNPixelsY;
@@ -78,7 +85,7 @@ private:
   G4bool bRotateXY180;
   msldo theLineDrawingOptions;
   G4bool bLineDrawingOptions;
-  G4bool bShowTitle;
+  G4bool bFigureTitle;
   std::set<DicomVImage*> theRotateXY180Images;
 
   TFile* theOutputFile;

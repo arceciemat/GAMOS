@@ -42,8 +42,8 @@ public:
   static std::vector<G4String> GetWordsInString( const G4String& stemp);
   static G4String itoa(int current, int nChars = -1);
   static G4String ftoa(float flo);
-  static G4String FileInPath( G4String filename );
-  static G4String FileInPath( G4String& filepath, const G4String filename );
+  static G4String FileInPath( G4String filename, G4bool bMustExist = true );
+  static G4String FileInPath( G4String& filepath, G4String filename, G4bool bMustExist = true );
   static G4bool CheckNWords( const G4String& line, G4int nWords, const G4String& msg, G4bool error = 1 );
   
   //---- Looks if word1 and word2 are equivalent, considering that word1 may have '*', meaning 'any character'

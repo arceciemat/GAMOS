@@ -13,6 +13,7 @@ class GmVGenerDistTime;
 class GmVGenerDistPosition;
 class GmVGenerDistDirection;
 class GmVNumericDistribution;
+class GmPhysicsLinearVector;
 
 class GmParticleSource 
 {
@@ -131,5 +132,14 @@ protected:
   G4ThreeVector theLocalVolumePosition;
   G4RotationMatrix theLocalVolumeRotation;
   G4bool bLocalVolume;
+
+  // bCorrectPosDir
+  G4bool bCorrectPosDir;
+  G4bool CorrectPosDir();
+  void ReadEnerDistF();
+  std::map<G4String,G4String> theCorrectPosDirEnergyDistFiles;
+  void ReadCorrectPosDirExpMCProfAir1D(G4String energyNominal);
+  std::map<G4String,GmPhysicsLinearVector*> theCorrectPosDirDistributionsX;
+  std::map<G4String,GmPhysicsLinearVector*> theCorrectPosDirDistributionsY;
 };
 #endif // GmParticleSource_H

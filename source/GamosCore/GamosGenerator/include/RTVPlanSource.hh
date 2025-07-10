@@ -145,6 +145,7 @@ protected:
   G4double theLastLimitingDeviceAngle;
   G4String theLateralSpreadingDevice;
   //  G4bool bPhantomMoved;
+
 };
 
 #endif // RTVPlanSource_H

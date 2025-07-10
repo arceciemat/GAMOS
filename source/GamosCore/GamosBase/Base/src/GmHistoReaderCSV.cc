@@ -11,9 +11,9 @@ G4bool GmHistoReaderCSV::bHistoCSVErrors = TRUE;
 //----------------------------------------------------------------------
 GmHistoReaderCSV::GmHistoReaderCSV(const G4String& filename)
 {
-  theFile = GmFileIn::GetInstance(filename);
+  theFile = GmFileIn::GetInstance(filename, true);
   //  G4cout << "GmHistoReaderCSV: creating histo file " << filename << G4endl;
-  //  theFileName = filename;  
+  theFileName = filename;  
   theFile.SetSeparator(',');
   ReadFile();
 }
@@ -30,7 +30,7 @@ void GmHistoReaderCSV::ReadFile()
   std::vector<G4String> wl;
   for(;;) {
     if( ! theFile.GetWordsInLine(wl) ) break;
-    G4cout << " GmHistoReaderCSV::ReadFile() " << wl[0] << G4endl;
+    //   G4cout << " GmHistoReaderCSV::ReadFile() " << wl[0] << G4endl;
     if( wl[0] == "1D" ) {
       FillHisto1D(wl);
     } else if( wl[0] == "2D" ) {
@@ -74,16 +74,17 @@ void GmHistoReaderCSV::FillHisto1D( std::vector<G4String>& wl, GmHisto1* his )
   G4double hmin = GmGenUtils::GetValue(wl[3]); //ROOT uses TAxis, GmHisto don't 
   G4double hmax = GmGenUtils::GetValue(wl[4]);
   G4double hstep = (hmax-hmin)/nbins; 
-  G4bool bHistoCSVErrors = (G4int(wl.size()) > nbins+8);
+  bHistoCSVErrors = (G4int(wl.size()) > nbins+8);
 #ifdef GAMOS_NO_ROOT
   if( bHistoCSVErrors ) {
     his->SetUseErrors(true);
   }
 #endif
-  G4int ii = 5;
-  for( ; ii < 5+nbins+1; ii++ ) {
-    G4double valX = hmin + (ii-0.5) * hstep;
+  G4int ii = 5; // “1D”, his_name,number_of_bins,Xaxis_minimum, Xaxis_maximum, underflow,underflow_error,bin_content, bin_error,overflow, overflow_error (It has indeed number_of_binsX+2 pairs valueerror, as the first one is the underflow (entries below axis_minimum) and the last one is the overflow (entries above axis maximum).
+  for( G4int iiX = 0; iiX < nbins+2; iiX++, ii++ ) {
+    G4double valX = hmin + (iiX-1+0.5) * hstep;
     his->Fill( valX, GmGenUtils::GetValue(wl[ii]) );
+    if( G4String(his->GetName()).find("+000") != std::string::npos ) G4cout << iiX << " " << ii << " " << his->GetName() << " GmHistoReaderCSV::FillHisto1D " << valX << " " << GmGenUtils::GetValue(wl[ii]) << G4endl; //GDEB
     if( bHistoCSVErrors ) {
       ii++; 
       his->SetBinError(ii, GmGenUtils::GetValue(wl[ii]));
@@ -142,12 +143,12 @@ void GmHistoReaderCSV::FillHisto2D( std::vector<G4String>& wl, GmHisto2* his )
   G4double hmaxY = GmGenUtils::GetValue(wl[7]);
   G4double hstepY = (hmaxY-hminY)/nbinsY; 
 
-  G4bool bHistoCSVErrors = (G4int(wl.size()) > nbinsX*nbinsY+13);
+  bHistoCSVErrors = (G4int(wl.size()) > nbinsX*nbinsY+13);
   G4int ii = 8;
-  for( G4int iiX = 0; iiX < nbinsX+1; iiX++ ) {
-    G4double valX = hminX + (iiX-0.5) * hstepX;
-    for( G4int iiY = 0; ii < nbinsY+1; iiY++, ii++ ) {
-      G4double valY = hminY + (iiY-0.5) * hstepY;
+  for( G4int iiX = 0; iiX < nbinsX+2; iiX++ ) {
+    G4double valX = hminX + (iiX-1+0.5) * hstepX;
+    for( G4int iiY = 0; ii < nbinsY+2; iiY++, ii++ ) {
+      G4double valY = hminY + (iiY-1+0.5) * hstepY;
       his->Fill( valX, valY, GmGenUtils::GetValue(wl[ii]) );
       if( bHistoCSVErrors ) {
 	ii++; 
@@ -163,9 +164,8 @@ void GmHistoReaderCSV::FillHisto2D( std::vector<G4String>& wl, GmHisto2* his )
 
 
 //----------------------------------------------------------------------
-GmHisto1* GmHistoReaderCSV::GetHisto1( const G4String& histoName )
+GmHisto1* GmHistoReaderCSV::GetHisto1( const G4String& histoName, G4bool bExists )
 {
-
   GmHisto1* his = 0;
 
   std::map<G4String,GmHisto1*>::const_iterator ite = theHistos1.find( histoName );
@@ -175,14 +175,22 @@ GmHisto1* GmHistoReaderCSV::GetHisto1( const G4String& histoName )
 
   if( his == 0 ) {
     for( ite = theHistos1.begin(); ite != theHistos1.end(); ite++) {
-      G4cout << "HISTO1 " << his->GetName() << " <> " << histoName << ":" << G4endl;
+      G4cerr << "HISTO1 " << ite->first << " <> " << histoName << ":" << G4endl;
     }
+    G4ExceptionSeverity excepSever = FatalException;
+    if ( ! bExists ) {
+      excepSever = JustWarning;
+    }
+    G4Exception("GmHistoReaderCSV::GetHisto1",
+		"",
+		excepSever,
+		("!!! Histogram "+histoName+" not found in "+theFileName).c_str());
   }
   return his;
 }
 
 //----------------------------------------------------------------------
-GmHisto2* GmHistoReaderCSV::GetHisto2( const G4String& histoName )
+GmHisto2* GmHistoReaderCSV::GetHisto2( const G4String& histoName, G4bool bExists )
 {
   GmHisto2* his = 0;
 
@@ -190,11 +198,25 @@ GmHisto2* GmHistoReaderCSV::GetHisto2( const G4String& histoName )
   if( ite != theHistos2.end() ) {
     his = (*ite).second;
   }
-
+  if( his == 0 ) {
+    for( ite = theHistos2.begin(); ite != theHistos2.end(); ite++) {
+      G4cerr << "HISTO2 " << ite->first << " <> " << histoName << ":" << G4endl;
+    }
+    G4ExceptionSeverity excepSever = FatalException;
+    if ( ! bExists ) {
+      excepSever = JustWarning;
+    }
+    G4Exception("GmHistoReaderCSV::GetHisto2",
+		"",
+		excepSever,
+		("!!! Histogram "+histoName+" not found in "+theFileName).c_str());
+  }
+  
   return his;
 }
 //----------------------------------------------------------------------
-GmHistoProfile1* GmHistoReaderCSV::GetHistoProfile1( const G4String& histoName ){
+GmHistoProfile1* GmHistoReaderCSV::GetHistoProfile1( const G4String& histoName, G4bool bExists)
+{
 
   GmHistoProfile1* his = 0;
 
@@ -202,12 +224,25 @@ GmHistoProfile1* GmHistoReaderCSV::GetHistoProfile1( const G4String& histoName )
   if( ite != theHistosProfile1.end() ) {
     his = (*ite).second;
   }
+  if( his == 0 ) {
+    for( ite = theHistosProfile1.begin(); ite != theHistosProfile1.end(); ite++) {
+      G4cerr << "HISTO_PROFILE1 " << ite->first << " <> " << histoName << ":" << G4endl;
+    }
+    G4ExceptionSeverity excepSever = FatalException;
+    if ( ! bExists ) {
+      excepSever = JustWarning;
+    }
+    G4Exception("GmHistoReaderCSV::GetHistoProfile1",
+		"",
+		excepSever,
+		("!!! Histogram "+histoName+" not found in "+theFileName).c_str());
+  }
 
   return his;
 }
 
 //----------------------------------------------------------------------
-GmHistoProfile2* GmHistoReaderCSV::GetHistoProfile2( const G4String& histoName )
+GmHistoProfile2* GmHistoReaderCSV::GetHistoProfile2( const G4String& histoName, G4bool bExists )
 {
 
   GmHistoProfile2* his = 0;
@@ -216,6 +251,19 @@ GmHistoProfile2* GmHistoReaderCSV::GetHistoProfile2( const G4String& histoName )
   if( ite != theHistosProfile2.end() ) {
     his = (*ite).second;
   }
-
+  if( his == 0 ) {
+    for( ite = theHistosProfile2.begin(); ite != theHistosProfile2.end(); ite++) {
+      G4cerr << "HISTO1 " << ite->first << " <> " << histoName << ":" << G4endl;
+    }
+    G4ExceptionSeverity excepSever = FatalException;
+    if ( ! bExists ) {
+      excepSever = JustWarning;
+    }
+    G4Exception("GmHistoReaderCSV::GetHistoProfile2",
+		"",
+		excepSever,
+		("!!! Histogram "+histoName+" not found in "+theFileName).c_str());
+  }
+  
   return his;
 }

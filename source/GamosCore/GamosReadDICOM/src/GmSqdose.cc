@@ -362,11 +362,13 @@ GmSqdose GmSqdose::operator*=( G4double factor )
   size_t siz = theDoses.size();
   
   for( size_t ii = 0; ii < siz; ii++ ) {
-    //    if( ii == 0 ) G4cout << this << " dose1 " << theDoses[ii] << " " << &gmdose << " dose2 " << dose2[ii] << G4endl;
+    if( theDoses[ii] > 4.5e-10 ) G4cout << ii << " dose1 " << theDoses[ii] << " dose2 " << theDoseSqs[ii] << G4endl;
+    //    if( ii == 0 ) G4cout << this << " dose1 " << theDoses[ii] << " dose2 " << dose2[ii] << G4endl;
     //    theDoses[ii] = (theDoses[ii]*nevA + doses[ii]*nevB) / nevSUM;
     //   theDoseSqs[ii] = (theDoseSqs[ii]*nevA*nevA + doseSqs[ii]*nevB*nevB)/(nevSUM*nevSUM);
     theDoses[ii] *= factor;
     theDoseSqs[ii] *= factor2;
+
     // if( ii == 0 )  G4cout << "summed dose1 " << theDoses[ii] << " dose2 " << doses[ii] << G4endl;
     // if( ii == 0)  G4cout << "summed doseSq1 " << theDoseSqs[ii] << " dose2 " << doseSqs[ii] << G4endl;
   }

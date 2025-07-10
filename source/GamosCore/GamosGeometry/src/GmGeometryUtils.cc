@@ -934,6 +934,7 @@ std::vector<G4LogicalVolume*> GmGeometryUtils::GetLogicalVolumes( const G4String
   std::vector<G4LogicalVolume*>::iterator citelv;
   for( citelv = lvs->begin(); citelv != lvs->end(); citelv++ ) {
     //    if( name == (*citelv)->GetName() ) {
+    G4cout << name << " LVS " << (*citelv)->GetName()  << G4endl; //GDEB
     if( GmGenUtils::AreWordsEquivalent(name,(*citelv)->GetName()) ) {
       //      G4cout << " GmGeometryUtils::GetLogicalVolumes vol found " << (*citelv)->GetName() << " looking for " << name << G4endl;
       vvolu.push_back( *citelv );

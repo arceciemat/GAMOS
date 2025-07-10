@@ -66,7 +66,7 @@ void RTIonPlanBeam::ReorderControlPoints()
 	bZero = false;
       }
     }
-    G4cout << " RTIonPlanBeam::ReorderControlPoints " <<  subCPs.size() << G4endl; //GDEB
+    //    G4cout << " RTIonPlanBeam::ReorderControlPoints " <<  subCPs.size() << G4endl; //GDEB
     if( bZero ) {
       if( ite == theControlPoints.begin() ) {
 	G4Exception("RTIonPlanBeam::ReorderControlPoints",

@@ -40,7 +40,7 @@ DicomDrawerROOT::DicomDrawerROOT()
   thePaletteMin = DicomParameterMgr::GetInstance()->GetNumericValue("paletteMin",-DBL_MAX);
   thePaletteMax = DicomParameterMgr::GetInstance()->GetNumericValue("paletteMax",DBL_MAX);
 
-  bShowTitle = bool(DicomParameterMgr::GetInstance()->GetNumericValue("bFigureTitle",1));
+  bFigureTitle = bool(DicomParameterMgr::GetInstance()->GetNumericValue("bFigureTitle",bFigureTitle));
 /*  G4bool drawLog = G4bool(DicomParameterMgr::GetInstance()->GetNumericValue("drawLog",0));
   if( drawLog ) {
     theOperatorLog = new DicomOperLog();
@@ -302,7 +302,7 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
     theImageFormat = DicomParameterMgr::GetInstance()->GetStringValue("imageFormat","jpg");
     std::string hisName = image->GetName()+"_XY"+extraFileName+"_"+zstr;
     TH2F* his = new TH2F(hisName.c_str(), hisName.c_str(), imNVoxX, imMinX, imMaxX, imNVoxY, imMinY, imMaxY );
-    gStyle->SetOptTitle(bShowTitle);
+    gStyle->SetOptTitle(bFigureTitle);
     for( size_t iy = 1; iy <= imNVoxY; iy++ ) {
       for( size_t ix = 1; ix <= imNVoxX; ix++ ) {
 	//	if( *imgData > -60 )
@@ -506,7 +506,7 @@ void DicomDrawerROOT::DrawXZ( DicomVImage* image, std::vector<DicomVLineSet*> li
     std::string hisName = image->GetName()+"_XZ"+extraFileName+"_"+ystr;
     imgData = imgData0 + iy*imNVoxX;
     TH2F* his = new TH2F(hisName.c_str(), hisName.c_str(), imNVoxX, imMinX, imMaxX, imNVoxZ, imMinZ, imMaxZ);
-    gStyle->SetOptTitle(bShowTitle);
+    gStyle->SetOptTitle(bFigureTitle);
     for( size_t iz = 1; iz <= imNVoxZ; iz++ ) {
       for( size_t ix = 1; ix <= imNVoxX; ix++ ) {
 	//	size_t copyNo = (ix-1) + iy*imNVoxX + (iz-1)*imNVoxXY;
@@ -635,7 +635,7 @@ void DicomDrawerROOT::DrawYZ( DicomVImage* image, std::vector<DicomVLineSet*> li
     }      
     std::string hisName = image->GetName()+"_YZ"+extraFileName+"_"+xstr;
     TH2F* his = new TH2F(hisName.c_str(), hisName.c_str(), imNVoxY, imMinY, imMaxY, imNVoxZ, imMinZ, imMaxZ );
-    gStyle->SetOptTitle(bShowTitle);
+    gStyle->SetOptTitle(bFigureTitle);
 
     for( size_t iz = 1; iz <= imNVoxZ; iz++ ) {
       for( size_t iy = 1; iy <= imNVoxY; iy++ ) {

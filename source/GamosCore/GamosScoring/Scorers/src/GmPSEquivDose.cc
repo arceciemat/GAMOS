@@ -30,6 +30,7 @@ GmPSEquivDose::GmPSEquivDose(G4String name)
 
   GmParameterMgr* paramMgr = GmParameterMgr::GetInstance();
   G4String fParticle = paramMgr->GetStringValue(name+":Particle","");
+  G4cout << " GmPSEquivDose fParticle " << fParticle << G4endl; //GDEB 
   if( fParticle == "" ) {
     G4Exception("GmPSEquivDose::GmPSEquivDose",
 		"",

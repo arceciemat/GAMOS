@@ -32,7 +32,7 @@ std::vector<GVSTouchableInfo*> GmPositionG4Volumes::AddTouchableInfos( const std
       tinfo->rotmat = (*ite)->GetGlobalRotation();
 
 #ifndef GAMOS_NO_VERBOSE
-      if( GenerVerb(infoVerb) ) G4cout << tinfos.size() << " ADDING tinfo pos " <<  tinfo->pos << G4endl;
+      if( GenerVerb(infoVerb) ) G4cout << tinfos.size() << " ADDING tinfo pos " <<  tinfo->name << " "<< tinfo->pos << G4endl;
 #endif
       tinfos.push_back(tinfo);
       delete *ite;

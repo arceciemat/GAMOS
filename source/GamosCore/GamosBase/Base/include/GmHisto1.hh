@@ -23,6 +23,8 @@ public:
   int GetNbinsX() const { return theNBins; }
   double GetLowerEdge() const { return theLowerEdge; }
   double GetUpperEdge() const { return theUpperEdge; }
+  double GetLowEdge() const { return theLowerEdge; }
+  double GetUppEdge() const { return theUpperEdge; }
   double GetBinWidth() const { return theBinWidth; }
   double GetBinWidth( int ) const { return theBinWidth; }
   double GetBinLowEdge( int ibin ) const;

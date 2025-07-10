@@ -48,6 +48,7 @@
 #include "GmGenerDistPositionInVoxelsFromFile.hh"
 #include "GmGenerDistPositionDirection2DCorrelGaussian.hh"
 #include "GmGenerDistPositionDirection2DCorrelDoubleGaussian.hh"
+#include "GmGenerDistPositionDirection2DCorrelTripleGaussian.hh"
 #include "GmGenerDistPositionDirectionInUserSurfaces.hh"
 #include "GmGenerDistEnergyIsolethargical.hh"
 #include "GmGenerDistEnergyMCNPisolethargical.hh"
@@ -108,6 +109,8 @@ PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelGaussian,GmVGenerDistPosit
 PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelGaussian,GmVGenerDistDirection*())
 PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelDoubleGaussian,GmVGenerDistPosition*())
 PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelDoubleGaussian,GmVGenerDistDirection*())
+PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelTripleGaussian,GmVGenerDistPosition*())
+PLUGINSVC_FACTORY(GmGenerDistPositionDirection2DCorrelTripleGaussian,GmVGenerDistDirection*())
 PLUGINSVC_FACTORY(GmGenerDistDirectionFan,GmVGenerDistDirection*())
 
 PLUGINSVC_FACTORY(GmGenerDistPositionDirectionInVolumeSurface,GmVGenerDistPosition*())
@@ -183,6 +186,8 @@ DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDirection2DCorrelGaussian);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistPositionDirection2DCorrelGaussian);
 DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDirection2DCorrelDoubleGaussian);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistPositionDirection2DCorrelDoubleGaussian);
+DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDirection2DCorrelTripleGaussian);
+DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistPositionDirection2DCorrelTripleGaussian);
 
 DEFINE_GAMOS_GENER_DIST_POSITION(GmGenerDistPositionDirectionInVolumeSurface);
 DEFINE_GAMOS_GENER_DIST_DIRECTION(GmGenerDistPositionDirectionInVolumeSurface);

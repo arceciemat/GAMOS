@@ -46,6 +46,9 @@ protected:
 #endif
   virtual void ReadFileCSV( G4String& fileName );
   virtual void ReadFileText( G4String& fileName );
+  void SetValues( std::map<G4double,G4double> values) {
+    theValues = values;
+  }
 
 protected:
   virtual G4double GetMinimum(GmHisto1* his );

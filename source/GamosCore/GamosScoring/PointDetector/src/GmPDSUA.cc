@@ -42,7 +42,7 @@ void GmPDSUA::BeginOfRunAction(const G4Run*)
   G4String histosFileName = paramMgr->GetStringValue("GmPDS:HistosFileName","pds");
   GmAnalysisMgr* anaMgr = GmAnalysisMgr::GetInstance(histosFileName);
   
-  bScoreNeutrons = G4bool(paramMgr->GetNumericValue("GmPDS:ScoreNeutrons",1));
+  bScoreNeutrons = G4bool(paramMgr->GetNumericValue("GmPDS:ScoreNeutrons",0));
   bScoreGammas = G4bool(paramMgr->GetNumericValue("GmPDS:ScoreGammas",1));
 #ifdef PDS_OP
   bScoreOpticalPhotons = G4bool(paramMgr->GetNumericValue("GmPDS:ScoreOpticalPhotons",0));
@@ -193,8 +193,8 @@ void GmPDSUA::AddNeutronScoringProcess()
     if( particle == G4Geantino::Geantino() ) continue;
     G4ProcessManager* pmanagerN = particle->GetProcessManager();
     pmanagerN->AddProcess( theNeutronScoringProcess, 20, -1, 20 );
-    pmanagerN->SetProcessOrderingToLast(theNeutronScoringProcess,idxPostStep);
-    pmanagerN->SetProcessOrderingToLast(theNeutronScoringProcess,idxAtRest);
+    //    pmanagerN->SetProcessOrderingToLast(theNeutronScoringProcess,idxPostStep);
+    //  pmanagerN->SetProcessOrderingToLast(theNeutronScoringProcess,idxAtRest);
 #ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << " GmPDSUA::AddScoringProcess added NeutronScoringProcess to particle " << particle->GetParticleName() << G4endl;
@@ -227,8 +227,8 @@ void GmPDSUA::AddGammaScoringProcess()
     if( particle == G4Geantino::Geantino() ) continue;
     G4ProcessManager* pmanagerN = particle->GetProcessManager();
     pmanagerN->AddProcess( theGammaScoringProcess, 2, -1, 2 );
-    pmanagerN->SetProcessOrderingToLast(theGammaScoringProcess,idxPostStep);
-    pmanagerN->SetProcessOrderingToLast(theGammaScoringProcess,idxAtRest);
+    //  pmanagerN->SetProcessOrderingToLast(theGammaScoringProcess,idxPostStep);
+    //  pmanagerN->SetProcessOrderingToLast(theGammaScoringProcess,idxAtRest);
 #ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << " GmPDSUA::AddScoringProcess added GammaScoringProcess to particle " << particle->GetParticleName() << G4endl;
@@ -266,8 +266,8 @@ void GmPDSUA::AddOpticalPhotonScoringProcess()
     if( particle == G4Geantino::Geantino() ) continue;
     G4ProcessManager* pmanagerN = particle->GetProcessManager();
     pmanagerN->AddProcess( theOpticalPhotonScoringProcess, 2, -1, 2 );
-    pmanagerN->SetProcessOrderingToLast(theOpticalPhotonScoringProcess,idxPostStep);
-    pmanagerN->SetProcessOrderingToLast(theOpticalPhotonScoringProcess,idxAtRest);
+    // pmanagerN->SetProcessOrderingToLast(theOpticalPhotonScoringProcess,idxPostStep);
+    // pmanagerN->SetProcessOrderingToLast(theOpticalPhotonScoringProcess,idxAtRest);
 #ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) G4cout << " GmPDSUA::AddScoringProcess added OpticalPhotonScoringProcess to particle " << particle->GetParticleName() << G4endl;

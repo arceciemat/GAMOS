@@ -242,7 +242,7 @@ void RTPSPDoseHistos::FillHisto1N_X( const G4String& hisName, G4double nXmin, G4
     G4int iy = (copyNo/theNVoxelX)%theNVoxelY;
     //    G4cout << " FillHisto1N_X Y: " <<  nYmin << " < " << iy << " < " << nYmax << G4endl; //GDEB
     if( iy < nYmin || iy > nYmax ) continue;
-    G4int iz = copyNo/theNVoxelX/theNVoxelY;
+    G4int iz = copyNo/theNVoxelX/theNVoxelY; 
     //    G4cout << " FillHisto1N_X Z: " <<  nZmin << " < " << iz << " < " << nZmax << G4endl; //GDEB
     //    G4cout << " FillHisto1N_X copyNo " << copyNo << " " << ix << " " << iy << " " << iz << G4endl; //GDEB
     G4double hx = ConvertN2DimX(ix);
@@ -274,6 +274,8 @@ void RTPSPDoseHistos::FillHisto1N_X( const G4String& hisName, G4double nXmin, G4
 	//	G4cout << " FRACTION4 " << fraction << " iz " << iz << " " << nZmax << G4endl;//GDEB
       }
     }
+    if( fraction == 0. ) continue;
+    //    G4cout << hisName << " FillHisto1N_X copyNo " << copyNo << " " << ix << " " << iy << " " << iz << " fraction= " << fraction<< G4endl; //GDEB
     dose *= fraction;
     doseError *= fraction;
     //    if( fraction != 0 ) G4cout << " FILLX " << copyNo << " " << ix << " " << iy << " " << iz << " hx " << hx << " = " << dose << " +- " << doseError << " REL " << G4endl; //GDEB
@@ -290,18 +292,18 @@ void RTPSPDoseHistos::FillHisto1N_Y( const G4String& hisName, G4double nXmin, G4
 { 
 #ifndef GAMOS_NO_VERBOSE
   if( RTVerb(debugVerb) ) G4cout << " FillHisto1N_Y " << hisName 
-	 << " nXmin " << nXmin << " nXmax " << nXmax 
+				 << " nXmin " << nXmin << " nXmax " << nXmax 
 	 << " nYmin " << nYmin << " nYmax " << nYmax 
 	 << " nZmin " << nZmin << " nZmax " << nZmax 
 	 << G4endl;
 #endif
-
+  
   theNHistos++;
   G4int ih = 66300+theNHistos;
   theAnaMgr->CreateHisto1D(hisName.c_str(),nYmax-nYmin+1,ConvertN2DimY(nYmin)-theDimY,ConvertN2DimY(nYmax)+theDimY,ih);
-
+  
   GmHisto1* his = theAnaMgr->GetHisto1( ih );
-
+  
   std::map<G4int,G4double*>::const_iterator ite;
   //  G4int nZVoxelsN = (ConvertN2DimY(nYmin)-theDimY)*ZSlope;
   //  G4int nZVoxelsP = (ConvertN2DimY(nYmax)+theDimY)*ZSlope;
@@ -315,6 +317,7 @@ void RTPSPDoseHistos::FillHisto1N_Y( const G4String& hisName, G4double nXmin, G4
     G4double nZminSlo = nZmin + ZSlope*hy;
     G4double nZmaxSlo = nZmax + ZSlope*hy;
     G4int iz = copyNo/theNVoxelX/theNVoxelY;
+    if( iz < nZmin || iz > nZmax ) continue;
     //-    G4cout << " FillHisto1N_Y Z: nZminSlo " << nZminSlo << " " << nZmin << " + " << ZSlope << " * " << hy << std::endl; //GDEB
     //    G4cout << " FillHisto1N_Y Z: " << nZminSlo << " <? "<< iz << " <? " << nZmaxSlo << std::endl;//GDEB
     if( iz < int(nZminSlo) || iz > int(nZmaxSlo+0.9999) ) continue;
@@ -366,7 +369,7 @@ void RTPSPDoseHistos::FillHisto1N_Y( const G4String& hisName, G4double nXmin, G4
 void RTPSPDoseHistos::FillHisto1N_Z( const G4String& hisName, G4double nXmin, G4double nXmax, G4double nYmin, G4double nYmax, G4double nZmin, G4double nZmax, G4double )
 { 
 #ifndef GAMOS_NO_VERBOSE
-  if( RTVerb(-debugVerb) ) G4cout << " FillHisto1N_Z " << hisName 
+  if( RTVerb(debugVerb) ) G4cout << " FillHisto1N_Z " << hisName 
 	 << " nXmin " << nXmin << " nXmax " << nXmax 
 	 << " nYmin " << nYmin << " nYmax " << nYmax 
 	 << " nZmin " << nZmin << " nZmax " << nZmax 

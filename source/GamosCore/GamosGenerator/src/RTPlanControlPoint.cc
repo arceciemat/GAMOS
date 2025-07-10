@@ -57,7 +57,7 @@ RTPlanControlPoint::RTPlanControlPoint( const G4String& fileName, RTPlanBeam* be
   } else {
     beamMS = theBeam->GetParam("FinalCumulativeMetersetWeight",1);
   }
-  RTPlanSubControlPoint* subCP = new RTPlanSubControlPoint(beamMS*metersetWeight,this);
+  RTPlanSubControlPoint* subCP = new RTPlanSubControlPoint(0,beamMS*metersetWeight,this);
   theSubCPs.push_back(subCP);
   //-  theMetersets.push_back(GetParam("MetersetWeight",1)*beamMS);
   theNumberOfPaintings = 1; //only one meterset for RTPlan, several for RTPlan

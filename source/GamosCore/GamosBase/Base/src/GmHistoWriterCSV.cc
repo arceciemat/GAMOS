@@ -77,7 +77,7 @@ void GmHistoWriterCSV::SaveHisto1D(const G4String& hisType, const TH1* his )
 {
   G4int nbins = his->GetXaxis()->GetNbins();
   theFile << '"' << hisType << '"' << "," << '"' << his->GetName() << '"' << "," << nbins << "," << his->GetXaxis()->GetXmin() << "," << his->GetXaxis()->GetXmax();
-  for( G4int ii = 0; ii <= nbins+1; ii++ ){
+  for( G4int ii = 0; ii < nbins+2; ii++ ){
     theFile << "," << his->GetBinContent(ii);
     if( bHistoCSVErrors ) {
       theFile << "," << his->GetBinError(ii);
@@ -102,7 +102,7 @@ void GmHistoWriterCSV::SaveHisto1D(const G4String& hisType, const GmHisto1* his 
 {
   G4int nbins = his->GetNbins();
   theFile << '"' << hisType << '"' << "," << '"' << his->GetName() << '"' << "," << nbins << "," << his->GetLowerEdge() << "," << his->GetUpperEdge();
-  for( G4int ii = 0; ii <= nbins+1; ii++ ){
+  for( G4int ii = 0; ii < nbins+2; ii++ ){ // first is underflow,underflow_err, last is overflow,overflow_err
     theFile << "," << his->GetBinContent(ii);
     if( bHistoCSVErrors ) {
       theFile << "," << his->GetBinError(ii);
@@ -128,7 +128,7 @@ void GmHistoWriterCSV::SaveHisto1D(const G4String& hisType, const GmHistoProfile
 {
   G4int nbins = his->GetNbins();
   theFile << '"' << hisType << '"' << "," << '"' << his->GetName() << '"' << "," << nbins << "," << his->GetLowerEdge() << "," << his->GetUpperEdge();
-  for( G4int ii = 0; ii <= nbins+1; ii++ ){
+  for( G4int ii = 0; ii < nbins+2; ii++ ){
     theFile << "," << his->GetBinContent(ii);
     if( bHistoCSVErrors ) {
       theFile << "," << his->GetBinError(ii);
@@ -156,8 +156,8 @@ void GmHistoWriterCSV::SaveHisto2D(const G4String& hisType,  const TH2* his )
   G4int nbinsx = his->GetXaxis()->GetNbins();
   G4int nbinsy = his->GetYaxis()->GetNbins();
   theFile << '"' << hisType << '"' << "," << '"' << his->GetName() << '"' << "," << nbinsx << "," << his->GetXaxis()->GetXmin() << "," << his->GetXaxis()->GetXmax() << "," << nbinsy << "," << his->GetYaxis()->GetXmin() << "," << his->GetYaxis()->GetXmax();
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
-    for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( G4int ii = 0; ii < nbinsx+2; ii++ ){
+    for( G4int jj = 0; jj < nbinsy+2; jj++ ){
       theFile << "," << his->GetBinContent(ii,jj);
       if( bHistoCSVErrors ) {
 	theFile << "," << his->GetBinError(ii,jj);
@@ -195,8 +195,8 @@ void GmHistoWriterCSV::SaveHisto2D(const G4String& hisType, const GmHisto2* his 
   G4int nbinsx = his->GetNbinsX();
   G4int nbinsy = his->GetNbinsY();
   theFile << '"' << hisType << '"' << "," << '"' << his->GetName() << '"' << "," << nbinsx << "," << his->GetLowerEdgeX() << "," << his->GetUpperEdgeX() << "," << nbinsy << "," << his->GetLowerEdgeY() << "," << his->GetUpperEdgeY();
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
-    for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( G4int ii = 0; ii < nbinsx+2; ii++ ){
+    for( G4int jj = 0; jj < nbinsy+2; jj++ ){
       theFile << "," << his->GetBinContent(ii,jj);
       if( bHistoCSVErrors ) {
 	theFile << "," << his->GetBinError(ii,jj);
@@ -234,8 +234,8 @@ void GmHistoWriterCSV::SaveHisto2D(const G4String& hisType, const GmHistoProfile
   G4int nbinsx = his->GetNbinsX();
   G4int nbinsy = his->GetNbinsY();
   theFile << '"' << hisType << '"' << "," << '"' << his->GetName() << '"' << "," << nbinsx << "," << his->GetLowerEdgeX() << "," << his->GetUpperEdgeX() << "," << nbinsy << "," << his->GetLowerEdgeY() << "," << his->GetUpperEdgeY();
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
-    for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( G4int ii = 0; ii < nbinsx+2; ii++ ){
+    for( G4int jj = 0; jj < nbinsy+2; jj++ ){
       theFile << "," << his->GetBinContent(ii,jj);
       if( bHistoCSVErrors ) {
 	theFile << "," << his->GetBinError(ii,jj);

@@ -8,6 +8,8 @@
 class G4Event;
 class GmAnalysisMgr;
 #include <map>
+typedef std::map<G4double,G4double> mdd;
+typedef std::multimap<G4double,G4double> mmdd;
 
 #include "GamosCore/GamosGenerator/include/GmVGenerDistEnergy.hh"
 class GmParticleSource;
@@ -25,12 +27,12 @@ public:
   G4String GetFileName() const {
     return theFileName;
   }
+  void SetEnerProb( mdd );
+  void SetCalculationType( G4String type );
   
 private:
   G4String theFileName;
   
-  void ReadEnergyDist();
-
   G4double theEnergyUnit;
 
   std::multimap<G4double,G4double> theProbaccumEner; // multimap <added up probability, energy>
@@ -42,6 +44,9 @@ private:
   G4String theCalculationTypeOld;
 
   G4double theUnit;
+
+  void ReadEnergyDist();
+  void BuildAccumProbEnergy();
 
 };
 

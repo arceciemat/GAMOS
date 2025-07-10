@@ -103,7 +103,7 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
   } 
 
   //---------- Loop lines while there is an ending '\' or line is blank   
-  const G4int NMAXLIN = 10000;
+  const G4int NMAXLIN = 100000;
   char ltemp[NMAXLIN]; //there won't be lines longer than NMAXLIN characters
   for (;;) {
     (theLineNo[theCurrentFile])++;
@@ -147,23 +147,23 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
       if( *tt != theSeparator && *(tt) != '\0' ) {
 	if( tt == ltemp) {
 	  NoWords++;
-#ifdef DEBUG_FILEIN
-	  G4cout << it << " NoWords" << NoWords << ltemp << G4endl;
-#endif 
+	  //#ifdef DEBUG_FILEIN
+	  // G4cout << it << " NoWords" << NoWords << ltemp << G4endl;
+	  //#endif 
 	  separators.push_back(it);
 	} else if( *(tt-1) == theSeparator || *(tt-1) == '\015' ||  *(tt-1) == '\t') {
 	  NoWords++; 
 	  separators.push_back(it);
-#ifdef DEBUG_FILEIN
-	  G4cout << it << " NoWords" << NoWords << ltemp << G4endl;
-#endif
+	  //#ifdef DEBUG_FILEIN
+	  // G4cout << it << " NoWords" << NoWords << ltemp << G4endl;
+	  //#endif
 	}
       } else if( theSeparator != ' ' && *(tt-1) == theSeparator ) { // two separators together
 	NoWords++; 
 	separators.push_back(it);
-#ifdef DEBUG_FILEIN
-	G4cout << it << " NoWords" << NoWords << ltemp << G4endl;
-#endif 
+	//#ifdef DEBUG_FILEIN
+	//	G4cout << it << " NoWords" << NoWords << ltemp << G4endl;
+	//#endif 
      }
       tt++;
       it++;
@@ -206,17 +206,20 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
       }
       
 #ifdef DEBUG_FILEIN
-      G4cout << "!!!GmFileIn COMMENT" << comment << theStrTemp.c_str() << G4endl;
+      G4cout << "!!!GmFileIn COMMENT" << comment << " " << theStrTemp.c_str() << G4endl;
 #endif
       if ( comment == 0 ) {
 	break; 
       } else if ( comment != G4String::npos && comment > 0 ) {
-	theStrTemp = theStrTemp.substr( 0, comment );
+	theStrTemp = theStrTemp.substr( 0, comment ); // do not read after comment
 	wordlist.push_back(theStrTemp);
 	break;
 	//-   for( int jj=0; jj < theStrTemp.length()-comment; jj++) theStrTemp.pop_back();
       } 
       wordlist.push_back(theStrTemp);
+#ifdef DEBUG_FILEIN
+      G4cout << wordlist.size()-1 << " ADD wordlist " << theStrTemp << G4endl;
+#endif
     }
     
     //These two algorithms should be the more STL-like way, but they don't work for files whose lines end without '\015'=TAB (STL problem: doesn't find end of string??)

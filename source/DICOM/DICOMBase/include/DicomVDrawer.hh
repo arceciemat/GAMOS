@@ -36,7 +36,10 @@ public:
     theOverSurrounding = val;
     bAverageSurroundingBig = true;
   }
-  
+
+  virtual G4bool GetFigureTitle() const = 0;
+  virtual void SetFigureTitle( G4bool bst ) = 0;
+
 protected:
   G4bool bColorsInitialized;
   G4bool bAverageSurroundingBig;
