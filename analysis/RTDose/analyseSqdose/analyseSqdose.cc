@@ -153,13 +153,20 @@ int main(int argc,char** argv)
   //  GmParameterMgr::GetInstance()->AddParam("RTPSPDoseHistos::NormalizeToNEvents 0",PTdouble); 
 
   if( RTVerb(warningVerb) ) G4cout << "READING FILE " << theFileName << G4endl;
-  GmSqdose dose;
+  std::ifstream fcheck(theFileName.c_str(), std::ios::binary | std::ios::ate); // Open in binary mode and seek to end    
+  if( ! fcheck.good() || fcheck.tellg() <= 0 ) {      // Check if file opened successfully and size > 0
+    G4Exception("sumSqdose",
+		"",
+		FatalErrorInArgument,
+		G4String("File dose not exist and it has zero size  "+theFileName).c_str());
+  }
+  GmSqdose dose;  
   dose = GmSqdose();
   dose.Read(theFileName);
   
   if(nRead == -1 ) nRead = dose.GetDoses().size();
 
-  G4cout << " NREAD " << nRead << G4endl;
+  if( RTVerb(warningVerb) ) G4cout << " NREAD " << nRead << G4endl;
   //--- create RunMap and PrimitiveScorer with dose squared
   if( theContainerType == 1 ) {
     if( RTVerb(warningVerb) ) G4cout << " USING std::map to store doses" << G4endl;

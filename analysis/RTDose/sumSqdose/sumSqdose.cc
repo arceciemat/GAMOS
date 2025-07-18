@@ -97,7 +97,14 @@ int main(int argc,char** argv)
     G4double multFactor = 1.; 
     if( wl.size() == 2 ) multFactor = GmGenUtils::GetValue(wl[1]);
     if( ii == 0 ) {
-      dose = new GmSqdose();
+      std::ifstream fcheck(wl[0].c_str(), std::ios::binary | std::ios::ate); // Open in binary mode and seek to end    
+      if( ! fcheck.good() || fcheck.tellg() <= 0 ) {      // Check if file opened successfully and size > 0
+	G4Exception("sumSqdose",
+		    "",
+		    FatalErrorInArgument,
+		    G4String("File dose not exist and it has zero size  "+theFileName).c_str());
+      }
+      dose = new GmSqdose();      
       dose->Read(wl[0]);
       if( multFactor != 1. ) *dose *= multFactor;
       nevents += dose->GetHeader()->GetNumberOfEvents();
@@ -121,10 +128,11 @@ int main(int argc,char** argv)
       *dose += *dose2;
       //      G4cout << " adding doses " << nevents << G4endl;
       delete dose2;
+
     }
     G4cout << "$$$$$ MERGED " << ii+1 << " files into " << fNameOut <<  " NEVENTS= "<< nevents << G4endl;
   }
-  
+
   //  G4cout << "$$$$$ MERGED " << ii << " files into " << fNameOut <<  " NEVENTS= "<< nevents << G4endl;
   if( ii != 0 ) dose->Print(fout);
 

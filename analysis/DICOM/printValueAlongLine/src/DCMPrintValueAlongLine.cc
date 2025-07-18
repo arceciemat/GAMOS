@@ -221,7 +221,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
       std::vector<DicomVLine*> lines = lineLists[ill]->GetLines();
       for( size_t il = 0; il < lines.size(); il++ ) {
 	DicomLine* line = static_cast<DicomLine*>(lines[il]);
-	G4cout << " DCMPrintValueAlongLine::GetInfoFromImages(lineStep " << theLineStep << G4endl; //GDEB
+	G4cout << ill << " " << il << " DCMPrintValueAlongLine::GetInfoFromImages(lineStep " << theLineStep << G4endl; //GDEB
 	std::map<G4double,G4double> intersValues = line->FindValues(image, theLineStep);
 	if( thePos0 != G4ThreeVector(DBL_MAX,DBL_MAX,DBL_MAX) ){
 	  G4ThreeVector linePoint0 = line->GetPoint(0);
