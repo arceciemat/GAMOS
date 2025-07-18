@@ -456,7 +456,11 @@ class Histo1D(MutableMapping):
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GaussianFit(self, idHis, bFitPlot) :
-#        print("GaussianFit bFitPlot ",bFitPlot)
+        # idHis is used to select color
+        # bFitPlot controls what to print on histogram
+        #      bFitPlot%10 == 1: draws gaussian fit histogram
+        #     (bFitPlot/10) == 1 : print parameters on histogram
+        #        print("GaussianFit bFitPlot ",bFitPlot)
         hx = self.Xbins()
         hy = self.data
         hxysum = 0

@@ -1,0 +1,11 @@
+DICOM2G4
+========
+void DicomReaderMgr::CreateImagesCT( DicomReaderCT* imgMergedReaderCT )
+  DicomVImageStr* imageDicomStructures = new DicomVImageStr( imageDens, "RTStruct", DIM_RTStruct );
+  std::vector<DicomVReader*> structReaders = GetReaders(DRM_RTStruct,false);
+  DicomReaderRTStruct* structRead = (DicomReaderRTStruct*)(structReaders[0]);
+  DicomPolygonSet* polygonSet = structRead->GetPolygonSet();
+  DicomPolygonSet* polygonSetNew = new DicomPolygonSet(polygonSet, imageDicomStructures, polygonSet->GetOrientation() );
+  structRead->FindVoxelsInXY( imageDicomStructures, polygonSetNew );
+  delete polygonSetNew;
+      => imageDicomStructures contains struct list for each voxel
