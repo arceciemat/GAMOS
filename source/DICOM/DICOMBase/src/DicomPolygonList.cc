@@ -605,7 +605,7 @@ G4int DicomPolygonList::GetPolygonZIndex( DicomVImage* image, G4double planeZ )
 
   G4double polyZ = planeZ;
   G4int iPolygonZ = ( polyZ - imMinZ ) / imVoxelDimZ;
-  G4cout << " DicomPolygonList::GetPolygonZIndex " <<iPolygonZ << " = ( " << polyZ << " - " << imMinZ << " ) / " <<imVoxelDimZ << G4endl;//GDEB
+  //  G4cout << " DicomPolygonList::GetPolygonZIndex " <<iPolygonZ << " = ( " << polyZ << " - " << imMinZ << " ) / " <<imVoxelDimZ << G4endl;//GDEB
   if( DicomVerb(debugVerb) ) {
     if( iPolygonZ < 0 ) {
       G4cerr << " iPolygonZ= " << iPolygonZ

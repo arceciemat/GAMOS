@@ -42,7 +42,6 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
 #endif
   theFileName = fileName;
   bDefaultNormalize = true;  
-  bNormalizeToNEvents = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theFileName+":NormalizeToNEvents",bDefaultNormalize));
   
   G4String prefix = GmParameterMgr::GetInstance()->GetStringValue("GmAnalysisMgr:FileNamePrefix","");
   theFileName = prefix + theFileName;
@@ -84,6 +83,7 @@ GmAnalysisMgr* GmAnalysisMgr::GetInstance( const G4String& fileName )
 //----------------------------------------------------------------------
 GmAnalysisMgr::~GmAnalysisMgr()
 { 
+  bNormalizeToNEvents = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theFileName+":NormalizeToNEvents",bDefaultNormalize));
 
   G4cout << " GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents " << bNormalizeToNEvents << " " << theFileName+":NormalizeToNEvents" << G4endl;
   //  Normalize();
@@ -93,7 +93,7 @@ GmAnalysisMgr::~GmAnalysisMgr()
   std::set<G4String>::const_iterator ite;
   for( ite = GmAnalysisMgr::theFileFormats.begin(); ite != GmAnalysisMgr::theFileFormats.end(); ite++ ){
     Save( theFileName, *ite ); 
-  } 
+  }
 
   mih1::const_iterator ite1;
   mih2::const_iterator ite2;

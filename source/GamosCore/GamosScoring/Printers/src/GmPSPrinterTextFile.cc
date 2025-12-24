@@ -15,14 +15,14 @@
 
 GmPSPrinterTextFile::GmPSPrinterTextFile(G4String name) : GmVPSPrinter( name )
 {
-  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(theName+":PrintSumV2",1));
+  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(thePrinterName+":PrintSumV2",1));
 }
 
 
 void GmPSPrinterTextFile::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* scorer )
 {
   // Variables fo GmTextIOMgr
-  theOutputType = theName;
+  theOutputType = thePrinterName;
   Init();
   OpenFileOut();
 

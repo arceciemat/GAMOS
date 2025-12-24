@@ -1053,3 +1053,22 @@ std::string GmGenUtils::rtrim(const std::string &s)
     size_t end = s.find_last_not_of(" \n\r\t\f\v");
     return (end == std::string::npos) ? "" : s.substr(0, end + 1);
 }
+
+//------------------------------------------------------------------------
+G4String GmGenUtils::ReplaceAll(const G4String& input,
+				const G4String& from,
+				const G4String& to)
+{
+  if (from.empty()) return input;  // avoid infinite loop
+  
+  G4String result = input;
+  size_t pos = 0;
+  //  G4cout << " ReplaceAll " << result << " " << from << " " << to << " : " <<  result.find(from, pos) << G4endl; //GDEB
+  while ((pos = result.find(from, pos)) != G4String::npos) {    
+    result.replace(pos, from.length(), to);
+    //G4cout << " ReplaceAll REPLACED " << result << " " << pos  << G4endl; //GDEB
+    pos += to.length();  // move past replaced part
+  }
+
+  return result;
+}

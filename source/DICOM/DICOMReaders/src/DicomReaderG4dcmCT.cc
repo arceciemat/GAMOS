@@ -169,9 +169,9 @@ void DicomReaderG4dcmCT::DumpHeaderToTextFile(std::ofstream& fout)
 {
   std::map<G4int,G4String>::iterator ite;
   fout << theMaterialNames.size() << G4endl;
-  G4cout << " DumpHeaderToTextFile theMaterialNames " << theMaterialNames.size() << G4endl; //GDEB
+  //  G4cout << " DumpHeaderToTextFile N MaterialNames " << theMaterialNames.size() << G4endl; //GDEB
   for( ite = theMaterialNames.begin(); ite != theMaterialNames.end(); ite++ ) {
-    G4cout << " DumpHeaderToTextFile MaterialName " << ite->first << " " << ite->second << G4endl; //GDEB
+    //    G4cout << " DumpHeaderToTextFile MaterialName " << ite->first << " " << ite->second << G4endl; //GDEB
     fout << ite->first << " \"" << ite->second << "\"" << std::endl;
   }
   fout << thePatientPosition << G4endl;

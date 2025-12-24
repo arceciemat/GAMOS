@@ -34,26 +34,42 @@ GmScoringMessenger::GmScoringMessenger()
   Scorer2MFDCmd->SetGuidance("Creates a scorer of one of the predefined classes or one created by the user and adds it to a multi functional detector. It must have as arguments the scorer name, the scorer class, the MFD name and the scorer parameters ");
   Scorer2MFDCmd->SetParameterName("choice",true);
   Scorer2MFDCmd->AvailableForStates(G4State_Idle);
+  ScorerToMFDCmd = new GmUIcmdWithAString("/gamos/scoring/addScorerToMFD",this);
+  ScorerToMFDCmd->SetGuidance("Creates a scorer of one of the predefined classes or one created by the user and adds it to a multi functional detector. It must have as arguments the scorer name, the scorer class, the MFD name and the scorer parameters ");
+  ScorerToMFDCmd->SetParameterName("choice",true);
+  ScorerToMFDCmd->AvailableForStates(G4State_Idle);
 
   ScorerCmd = new GmUIcmdWithAString("/gamos/scoring/createScorer",this);
   ScorerCmd->SetGuidance("Creates a scorer of one of the predefined classes. It must have as arguments the scorer name, the scorer class and the scorer parameters (integer's)");
   ScorerCmd->SetParameterName("choice",true);
   ScorerCmd->AvailableForStates(G4State_Idle);
 
-  FilterCmd = new GmUIcmdWithAString("/gamos/scoring/addFilter2Scorer",this);
-  FilterCmd->SetGuidance("Creates a filter of one of the predefined classs (filter GmFilterFactory plug-in's) and adds it to an scorer. It must have as arguments the filter class/name and the scorer name");
-  FilterCmd->SetParameterName("choice",true);
-  FilterCmd->AvailableForStates(G4State_Idle);
+  Filter2ScorerCmd = new GmUIcmdWithAString("/gamos/scoring/addFilter2Scorer",this);
+  Filter2ScorerCmd->SetGuidance("Creates a filter of one of the predefined classs (filter GmFilterFactory plug-in's) and adds it to an scorer. It must have as arguments the filter class/name and the scorer name");
+  Filter2ScorerCmd->SetParameterName("choice",true);
+  Filter2ScorerCmd->AvailableForStates(G4State_Idle);
+  FilterToScorerCmd = new GmUIcmdWithAString("/gamos/scoring/addFilterToScorer",this);
+  FilterToScorerCmd->SetGuidance("Creates a filter of one of the predefined classs (filter GmFilterFactory plug-in's) and adds it to an scorer. It must have as arguments the filter class/name and the scorer name");
+  FilterToScorerCmd->SetParameterName("choice",true);
+  FilterToScorerCmd->AvailableForStates(G4State_Idle);
 
   Printer2ScorerCmd = new GmUIcmdWithAString("/gamos/scoring/addPrinter2Scorer",this);
   Printer2ScorerCmd->SetGuidance("Creates a printer of one of the predefined classs (Gmprinter GmScorerPrinter plug-in's) and adds it to an scorer. It must have as arguments the printer class/name and the scorer name");
   Printer2ScorerCmd->SetParameterName("choice",true);
   Printer2ScorerCmd->AvailableForStates(G4State_Idle);
+  PrinterToScorerCmd = new GmUIcmdWithAString("/gamos/scoring/addPrinterToScorer",this);
+  PrinterToScorerCmd->SetGuidance("Creates a printer of one of the predefined classs (Gmprinter GmScorerPrinter plug-in's) and adds it to an scorer. It must have as arguments the printer class/name and the scorer name");
+  PrinterToScorerCmd->SetParameterName("choice",true);
+  PrinterToScorerCmd->AvailableForStates(G4State_Idle);
 
-  ClassifierCmd = new GmUIcmdWithAString("/gamos/scoring/assignClassifier2Scorer",this);
-  ClassifierCmd->SetGuidance("Creates a classifier of one of the predefined classs (GmClassifierFactory plug-in's) and adds it to an scorer. It must have as arguments the classifier class/name and the scorer name");
-  ClassifierCmd->SetParameterName("choice",true);
-  ClassifierCmd->AvailableForStates(G4State_Idle);
+  Classifier2ScorerCmd = new GmUIcmdWithAString("/gamos/scoring/assignClassifier2Scorer",this);
+  Classifier2ScorerCmd->SetGuidance("Creates a classifier of one of the predefined classs (GmClassifierFactory plug-in's) and adds it to an scorer. It must have as arguments the classifier class/name and the scorer name");
+  Classifier2ScorerCmd->SetParameterName("choice",true);
+  Classifier2ScorerCmd->AvailableForStates(G4State_Idle);
+  ClassifierToScorerCmd = new GmUIcmdWithAString("/gamos/scoring/assignClassifierToScorer",this);
+  ClassifierToScorerCmd->SetGuidance("Creates a classifier of one of the predefined classs (GmClassifierFactory plug-in's) and adds it to an scorer. It must have as arguments the classifier class/name and the scorer name");
+  ClassifierToScorerCmd->SetParameterName("choice",true);
+  ClassifierToScorerCmd->AvailableForStates(G4State_Idle);
   
   TrkWeightCmd = new GmUIcmdWithAString("/gamos/scoring/useTrackWeight",this);
   TrkWeightCmd->SetGuidance("Selects if track weight is going to be used or not for an scorer. It must have as arguments the scorer name TRUE/FLASE");
@@ -90,10 +106,14 @@ GmScoringMessenger::~GmScoringMessenger()
   if (PrinterCmd) delete PrinterCmd;
   if (PrinterCmd2) delete PrinterCmd2;
   if (Scorer2MFDCmd) delete Scorer2MFDCmd;
+  if (ScorerToMFDCmd) delete ScorerToMFDCmd;
   if (ScorerCmd) delete ScorerCmd;
-  if (FilterCmd) delete FilterCmd;
+  if (Filter2ScorerCmd) delete Filter2ScorerCmd;
+  if (FilterToScorerCmd) delete FilterToScorerCmd;
   if (Printer2ScorerCmd) delete Printer2ScorerCmd;
-  if (ClassifierCmd) delete ClassifierCmd;
+  if (PrinterToScorerCmd) delete PrinterToScorerCmd;
+  if (Classifier2ScorerCmd) delete Classifier2ScorerCmd;
+  if (ClassifierToScorerCmd) delete ClassifierToScorerCmd;
   if (TrkWeightCmd) delete TrkWeightCmd;
   if (ScoreErrorsCmd) delete ScoreErrorsCmd;
   if (PrintByEventCmd) delete PrintByEventCmd;
@@ -125,12 +145,12 @@ void GmScoringMessenger::SetNewValue(G4UIcommand * command,
 
     theAction->CreateMFD( wl );
 
-  } else if (command == Scorer2MFDCmd) {
+  } else if (command == Scorer2MFDCmd || command == ScorerToMFDCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
 #ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb) ) G4cout << " CALL AddScorer2MFD " << wl[0] << " " << wl[1] << G4endl;
+    if( ScoringVerb(debugVerb) ) G4cout << " CALL AddScorerToMFD " << wl[0] << " " << wl[1] << G4endl;
 #endif
-    theAction->AddScorer2MFD( wl );
+    theAction->AddScorerToMFD( wl );
 
   } else if (command == ScorerCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
@@ -145,11 +165,11 @@ void GmScoringMessenger::SetNewValue(G4UIcommand * command,
     }
 
 #ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb) ) G4cout << " CALL AddScorer2MFD " << wl[0] << " " << wl[1] << G4endl;
+    if( ScoringVerb(debugVerb) ) G4cout << " CALL AddScorerToMFD " << wl[0] << " " << wl[1] << G4endl;
 #endif
     theAction->CreateScorer( wl[0], wl[1], params );
 
-  } else if (command == FilterCmd) {
+  } else if (command == Filter2ScorerCmd || command == FilterToScorerCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
     if( wl.size() < 2 ) G4Exception("GmScoringMessenger::SetNewVAlue",
 				    "Wrong argument",
@@ -169,9 +189,9 @@ void GmScoringMessenger::SetNewValue(G4UIcommand * command,
 		  G4String("Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + " has more than 3 arguments, it must have only two").c_str());       
     }
 
-    theAction->AddFilter2Scorer( wl );
+    theAction->AddFilterToScorer( wl );
 
-  } else if (command == Printer2ScorerCmd) {
+  } else if (command == Printer2ScorerCmd || command == PrinterToScorerCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
     if( wl.size() < 2 ) G4Exception("GmScoringMessenger::SetNewVAlue",
 				    "Wrong argument",
@@ -192,9 +212,9 @@ void GmScoringMessenger::SetNewValue(G4UIcommand * command,
 		  G4String("Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + " has more than 3 arguments, it must have only two").c_str());       
     }
 
-    theAction->AddPrinter2Scorer( wl );
+    theAction->AddPrinterToScorer( wl );
 
-  } else if (command == ClassifierCmd) {
+  } else if (command == Classifier2ScorerCmd || command == ClassifierToScorerCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
     if( wl.size() < 2 ) G4Exception("GmScoringMessenger::SetNewVAlue",
 				    "Wrong argument",
@@ -215,7 +235,7 @@ void GmScoringMessenger::SetNewValue(G4UIcommand * command,
 		  G4String("Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + " has more than 3 arguments, it must have only two").c_str());       
     }
 
-    theAction->AssignClassifier2Scorer( wl );
+    theAction->AssignClassifierToScorer( wl );
 
   } else if (command == TrkWeightCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
@@ -224,7 +244,7 @@ void GmScoringMessenger::SetNewValue(G4UIcommand * command,
 				    FatalErrorInArgument,
 				    G4String("Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 2 arguments: ScorerName TRUE/FALSE").c_str()); 
 
-    theAction->AddTrkWeight2Scorer( wl[0], wl[1] );
+    theAction->AddTrkWeightToScorer( wl[0], wl[1] );
 
   } else if (command == ScoreErrorsCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
@@ -233,7 +253,7 @@ void GmScoringMessenger::SetNewValue(G4UIcommand * command,
 				    FatalErrorInArgument,
 				    G4String("Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 2 arguments: ScorerName TRUE/FALSE").c_str()); 
 
-    theAction->AddScoreErrors2Scorer( wl[0], wl[1] );
+    theAction->AddScoreErrorsToScorer( wl[0], wl[1] );
     
   } else if (command == PrintByEventCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
@@ -242,7 +262,7 @@ void GmScoringMessenger::SetNewValue(G4UIcommand * command,
 				    FatalErrorInArgument,
 				    G4String("Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 2 arguments: ScorerName TRUE/FALSE").c_str()); 
 
-    theAction->AddPrintByEvent2Scorer( wl[0], wl[1] );
+    theAction->AddPrintByEventToScorer( wl[0], wl[1] );
 
   } else if (command == PrintNEventsTypeCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
@@ -251,7 +271,7 @@ void GmScoringMessenger::SetNewValue(G4UIcommand * command,
 				    FatalErrorInArgument,
 				    G4String("Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 2 arguments: ScorerName TRUE/FALSE").c_str()); 
 
-    theAction->AddPrintNEventsType2Scorer( wl[0], wl[1] );
+    theAction->AddPrintNEventsTypeToScorer( wl[0], wl[1] );
 
   } else if (command == UnitCmd) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );

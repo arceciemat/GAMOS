@@ -4,7 +4,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
 //-------------------------------------------------------------------
-GmVPSPrinter::GmVPSPrinter(G4String name) : theName( name )
+GmVPSPrinter::GmVPSPrinter(G4String name) : thePrinterName( name )
 {
   theNewUnit = -1;
 }
@@ -17,7 +17,7 @@ void GmVPSPrinter::SetParameters( const std::vector<G4String>& params )
     for( unsigned int ii = 0; ii < params.size(); ii++ ){
       parastr += params[ii] + " ";
     }
-    G4Exception((theName+"::SetParameters").c_str(),
+    G4Exception((thePrinterName+"::SetParameters").c_str(),
 		"There should be two parameters: UNIT UNIT_NAME",
 		FatalErrorInArgument,
 		G4String("They are: "+parastr).c_str());
@@ -28,7 +28,7 @@ void GmVPSPrinter::SetParameters( const std::vector<G4String>& params )
     theUnitName = params[1];
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(debugVerb) )
-      G4cout << this << theName + "::SetParameters " << theUnit << " " << theUnitName << G4endl;
+      G4cout << this << thePrinterName + "::SetParameters " << theUnit << " " << theUnitName << G4endl;
 #endif
   }
 
@@ -48,7 +48,7 @@ void GmVPSPrinter::CheckSpectrum(GmVPrimitiveScorer* scorer, G4bool bMustBeSpect
     G4Exception("GmVPSPrinter::DumpAll",
 		"",
 		FatalException,
-		(msg+ G4String("Trying to assign printer ")+GetName()+G4String(" to scorer ")+scorer->GetName()).c_str());
+		(msg+ G4String("Trying to assign printer ")+GetPrinterName()+G4String(" to scorer ")+scorer->GetName()).c_str());
   }
 }
 
@@ -59,12 +59,12 @@ void GmVPSPrinter::SetUnit(GmVPrimitiveScorer* scorer )
   if( theNewUnit == -1 ) {
     theNewUnit = scorer->GetUnit();
     theUnitName = scorer->GetUnitName();
-    // G4cout << "SetUnit " <<  theName << " " << theNewUnit << " Name " << theUnitName << G4endl; //GDEB
+    // G4cout << "SetUnit " <<  thePrinterName << " " << theNewUnit << " Name " << theUnitName << G4endl; //GDEB
   }
   theUnitRatio = theUnit/theNewUnit;
   theUnitRatio2 = theUnitRatio*theUnitRatio;
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(-debugVerb) ) 
-    G4cout << " GmVPSPrinter::SetUnit " << theName << " " << theUnit << " New " << theNewUnit << " Ratio " << theUnitRatio << G4endl;
+    G4cout << " GmVPSPrinter::SetUnit " << thePrinterName << " " << theUnit << " New " << theNewUnit << " Ratio " << theUnitRatio << G4endl;
 #endif
 }

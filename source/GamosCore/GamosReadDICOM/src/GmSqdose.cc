@@ -52,7 +52,6 @@ GmSqdose::~GmSqdose()
 //Size of float: 4
 //Size of double: 8
 
-
 //-----------------------------------------------------------------------
 void GmSqdose::Print( FILE* out )
 {
@@ -223,7 +222,8 @@ void GmSqdose::Read( FILE* fin )
       G4int iz = G4int(iv/nVoxXY);
       G4int ix = G4int(iv%nVoxX);
       G4int iy = G4int(iv/nVoxX%nVoxY);
-      //      if( iy == nVoxY-1 && ftmp != 0 )  G4cout << " GmSqdose " << ix << ":" << iy << ":" << iz << " copyNo " << iv << " XYZ  " << minX+voxX*(ix+0.5) << " " <<minY+voxY*(iy+0.5) << " " <<minZ+voxZ*(iz+0.5) <<  " = " << ftmp << G4endl; //GDEB RATON.Water
+      //      if( iy == nVoxY-1 && ftmp != 0 )
+      //G4cout << iv << " GmSqdose " << ix << ":" << iy << ":" << iz << " copyNo " << iv << " XYZ  " << minX+voxX*(ix+0.5) << " " <<minY+voxY*(iy+0.5) << " " <<minZ+voxZ*(iz+0.5) <<  " = " << ftmp << G4endl; //GDEB RATON.Water
 
       // G4cout << this << "  " << iv << " 1SQDOSE " << ftmp << " N " << theDoses.size() << G4endl; //GDEB 
       //      G4cout << " 1SQDOSE " << ftmp << " " << iv << G4endl; //GDEB
@@ -362,7 +362,7 @@ GmSqdose GmSqdose::operator*=( G4double factor )
   size_t siz = theDoses.size();
   
   for( size_t ii = 0; ii < siz; ii++ ) {
-    if( theDoses[ii] > 4.5e-10 ) G4cout << ii << " dose1 " << theDoses[ii] << " dose2 " << theDoseSqs[ii] << G4endl;
+    //    if( theDoses[ii] > 4.5e-10 ) G4cout << ii << " dose1 " << theDoses[ii] << " dose2 " << theDoseSqs[ii] << G4endl; //GDEB
     //    if( ii == 0 ) G4cout << this << " dose1 " << theDoses[ii] << " dose2 " << dose2[ii] << G4endl;
     //    theDoses[ii] = (theDoses[ii]*nevA + doses[ii]*nevB) / nevSUM;
     //   theDoseSqs[ii] = (theDoseSqs[ii]*nevA*nevA + doseSqs[ii]*nevB*nevB)/(nevSUM*nevSUM);

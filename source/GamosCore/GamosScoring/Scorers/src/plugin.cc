@@ -1,4 +1,4 @@
- #include "GmG4PSCellCharge.hh"
+#include "GmG4PSCellCharge.hh"
 #include "GmG4PSCellFlux.hh"
 #include "GmG4PSDoseDeposit_old.hh"
 #include "GmG4PSDoseDeposit.hh"
@@ -24,6 +24,15 @@
 #include "GmG4PSKerma.hh"
 #include "GmPSConstant.hh"
 #include "GmPSRBEPhenom_Carabe.hh"
+#include "GmPSRBEPhenom_Chen.hh"
+#include "GmPSRBEPhenom_McNamara.hh"
+#include "GmPSRBEPhenom_Peeler.hh"
+#include "GmPSRBEPhenom_Rorvik.hh"
+#include "GmPSRBEPhenom_Tilly.hh"
+#include "GmPSRBEPhenom_Wedenberg.hh"
+#include "GmPSRBEPhenom_Wilkens.hh"
+#include "GmPSDummyRBEScorer.hh"
+#include "GmPSKineticEnergyVoxelSpectrum.hh"
 
 #include "GmG4PSData.hh"
 
@@ -60,6 +69,8 @@
 #include "GmPSElectronicdEdx.hh"
 #include "GmPSdEdxElectronicELoss.hh"
 
+#include "GmPSRBEBWFy.hh"
+
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
 
@@ -83,6 +94,7 @@ PLUGINSVC_FACTORY(GmG4PSTrackCounter,GmVPrimitiveScorer*(G4String))
 PLUGINSVC_FACTORY(GmG4PSTrackLength,GmVPrimitiveScorer*(G4String))
 PLUGINSVC_FACTORY(GmG4PSKerma,GmVPrimitiveScorer*(G4String))
 PLUGINSVC_FACTORY(GmPSConstant,GmVPrimitiveScorer*(G4String))
+PLUGINSVC_FACTORY(GmPSRBEPhenom_Carabe,GmVPrimitiveScorer*(G4String))
 PLUGINSVC_FACTORY(GmPSRBEPhenom_Carabe,GmVPrimitiveScorer*(G4String))
 PLUGINSVC_FACTORY(GmG4PSData,GmVPrimitiveScorer*(G4String))
 PLUGINSVC_FACTORY(GmPSSurfaceFlux,GmVPrimitiveScorer*(G4String))
@@ -114,6 +126,10 @@ PLUGINSVC_FACTORY(GmPSLET_ESpectT,GmVPrimitiveScorer*(G4String))
 PLUGINSVC_FACTORY(GmPSEnergyDeposit_PrimaryGamma1stInter,GmVPrimitiveScorer*(G4String))
 PLUGINSVC_FACTORY(GmPSEnergyDeposit_PrimaryGamma1stInterAttenuation,GmVPrimitiveScorer*(G4String))
 PLUGINSVC_FACTORY(GmPSEnergyDeposit_PrimaryGammaAnyInter,GmVPrimitiveScorer*(G4String))
+PLUGINSVC_FACTORY(GmPSDummyRBEScorer,GmVPrimitiveScorer*(G4String))
+PLUGINSVC_FACTORY(GmPSKineticEnergyVoxelSpectrum,GmVPrimitiveScorer*(G4String))
+
+PLUGINSVC_FACTORY(GmPSRBEBWFy,GmVPrimitiveScorer*(G4String))
 
 #else
 
@@ -146,6 +162,13 @@ DEFINE_GAMOS_SCORER(GmG4PSTrackLength);
 DEFINE_GAMOS_SCORER(GmG4PSKerma);
 DEFINE_GAMOS_SCORER(GmPSConstant);
 DEFINE_GAMOS_SCORER(GmPSRBEPhenom_Carabe);
+DEFINE_GAMOS_SCORER(GmPSRBEPhenom_Chen);
+DEFINE_GAMOS_SCORER(GmPSRBEPhenom_McNamara);
+DEFINE_GAMOS_SCORER(GmPSRBEPhenom_Peeler);
+DEFINE_GAMOS_SCORER(GmPSRBEPhenom_Rorvik);
+DEFINE_GAMOS_SCORER(GmPSRBEPhenom_Tilly);
+DEFINE_GAMOS_SCORER(GmPSRBEPhenom_Wedenberg);
+DEFINE_GAMOS_SCORER(GmPSRBEPhenom_Wilkens);
 DEFINE_GAMOS_SCORER(GmG4PSData);
 DEFINE_GAMOS_SCORER(GmPSSurfaceFlux);
 DEFINE_GAMOS_SCORER(GmPSVolumeFlux);
@@ -218,6 +241,10 @@ DEFINE_SEAL_PLUGIN(GmPrimitiveScorerFactory,GmG4PSPopulation,"GmPSPopulation");
 DEFINE_SEAL_PLUGIN(GmPrimitiveScorerFactory,GmG4PSTermination,"GmPSTermination");
 DEFINE_SEAL_PLUGIN(GmPrimitiveScorerFactory,GmG4PSTrackCounter,"GmPSTrackCounter");
 DEFINE_SEAL_PLUGIN(GmPrimitiveScorerFactory,GmG4PSTrackLength,"GmPSTrackLength");
+
+DEFINE_GAMOS_SCORER(GmPSDummyRBEScorer);
+DEFINE_GAMOS_SCORER(GmPSKineticEnergyVoxelSpectrum);
+DEFINE_GAMOS_SCORER(GmPSRBEBWFy);
 
 #endif
 

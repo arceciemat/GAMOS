@@ -40,7 +40,6 @@ GmGenerDistPositionDirection2DCorrelTripleGaussian::GmGenerDistPositionDirection
 
   theConfFileNamePrefix = GmParameterMgr::GetInstance()->GetStringValue("GmGenerDistPositionDirection2DCorrelTripleGaussian:ConfFileNamePrefix","conf3E");
 
-  //GDEBTG
   theGenerMgr = GmGeneratorMgr::GetInstance();
 	
 }
@@ -57,7 +56,7 @@ G4ThreeVector GmGenerDistPositionDirection2DCorrelTripleGaussian::GeneratePositi
   int iY = std::lower_bound(theProbabilitiesAccumY.begin(),theProbabilitiesAccumY.end(),ranY) - theProbabilitiesAccumY.begin() + 1; 
   //  G4cout << "GmGenerDistPositionDirection2DCorrelTripleGaussian::GeneratePosition " << iY << " ranY " << ranY << "  theProbabilitiesAccumY " << theProbabilitiesAccumY[0] << " " << theProbabilitiesAccumY[1] << " " << theProbabilitiesAccumY[2] << G4endl; //GDEB
   //  G4cout << " SAMPLED GAUSSIAN " << iX << iY << G4endl; //GDEB
-  G4cout << this << " GAUSSIANran " << iX << iY << " " << ranX << " " << ranY << "PROB " << theProbabilitiesAccumX[iX-1] << " " << theProbabilitiesAccumY[iY-1] << G4endl; //GDEB
+  //G4cout << this << " GAUSSIANran " << iX << iY << " " << ranX << " " << ranY << "PROB " << theProbabilitiesAccumX[iX-1] << " " << theProbabilitiesAccumY[iY-1] << G4endl; //GDEB
   if( iX == 1 && iY == 1 ) {
     thePosition = theCorrelGaussianX1Y1->GeneratePosition(partSource);
     theDirection = theCorrelGaussianX1Y1->GetDirection();
@@ -140,9 +139,9 @@ G4ThreeVector GmGenerDistPositionDirection2DCorrelTripleGaussian::GenerateDirect
 void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::vector<G4String>& params )
 {
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(-debugVerb) ) {
+  if( GenerVerb(debugVerb) ) {
     G4cout << this << " GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams ";
-    for( int ii = 0 ; ii < params.size(); ii++ ) {
+    for( size_t ii = 0 ; ii < params.size(); ii++ ) {
       G4cout << ii << " PARAM=" << params[ii] << G4endl;
 
     }
@@ -224,25 +223,25 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
   theProbabilitiesAccumX.clear();
   theProbabilitiesAccumY.clear();
   theProbabilitiesAccumX.push_back(theProbabilityX1);
-  for( size_t ii = 0 ; ii < theProbabilitiesAccumX.size(); ii++ ) {
-    G4cout << ii << " " << theProbabilityX1 << "  1theProbabilitiesAccumX " << theProbabilitiesAccumX[ii] << G4endl;
-  }
+  /*  for( size_t ii = 0 ; ii < theProbabilitiesAccumX.size(); ii++ ) {
+    G4cout << ii << " " << theProbabilityX1 << "  1theProbabilitiesAccumX " << theProbabilitiesAccumX[ii] << G4endl; //GDEB
+    }*/
   theProbabilitiesAccumX.push_back(theProbabilityX1 + theProbabilityX2);
   theProbabilitiesAccumX.push_back(theProbabilityX1 + theProbabilityX2 + theProbabilityX3);
   theProbabilitiesAccumY.push_back(theProbabilityY1);
   theProbabilitiesAccumY.push_back(theProbabilityY1 + theProbabilityY2);
   theProbabilitiesAccumY.push_back(theProbabilityY1 + theProbabilityY2 + theProbabilityY3);
-  G4cout << "PROBS X " << theProbabilityX1 << " " << theProbabilityX2 << " " << theProbabilityX3 << G4endl; 
-  for( size_t ii = 0 ; ii < theProbabilitiesAccumX.size(); ii++ ) {
-    G4cout << ii << " " << " theProbabilitiesAccumX " << theProbabilitiesAccumX[ii] << G4endl;
+  //  G4cout << "PROBS X " << theProbabilityX1 << " " << theProbabilityX2 << " " << theProbabilityX3 << G4endl;  //GDEB
+  //  for( size_t ii = 0 ; ii < theProbabilitiesAccumX.size(); ii++ ) {
+  //  G4cout << ii << " " << " theProbabilitiesAccumX " << theProbabilitiesAccumX[ii] << G4endl;
+  // }
+  /*  for( double prob : theProbabilitiesAccumX ) {
+    G4cout << " PROBACCUM X " << prob << G4endl; //GDEB
   }
-  for( double prob : theProbabilitiesAccumX ) {
-    G4cout << " PROBACCUM X " << prob << G4endl;
-  }
-    G4cout << "PROBS Y " << theProbabilityY1 << " " << theProbabilityY2 << " " << theProbabilityY3 << G4endl; 
+  G4cout << "PROBS Y " << theProbabilityY1 << " " << theProbabilityY2 << " " << theProbabilityY3 << G4endl;  // GDEB
   for( double prob : theProbabilitiesAccumY ) {
-    G4cout << " PROBACCUM Y " << prob << G4endl;
-  }
+    G4cout << " PROBACCUM Y " << prob << G4endl;// GDEB
+    } */
   if( params.size() >= 28 ) {
     theCentre = G4ThreeVector(GmGenUtils::GetValue(params[25]), GmGenUtils::GetValue(params[26]), GmGenUtils::GetValue(params[27]) );
   } else {
@@ -477,7 +476,7 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy( G4Stri
     energyFinal = "0"+energy+".0";  // conf3E74. -> conf3E074.0
   } 
   GmFileIn fin = GmFileIn::GetInstance(theConfFileNamePrefix+energyFinal,true);
-  G4cout << " GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy " << theConfFileNamePrefix+energy << G4endl; //GDEB
+  //  G4cout << " GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy " << theConfFileNamePrefix+energy << G4endl; //GDEB
   
   std::vector<G4String> params;
   fin.GetWordsInLine(params);
@@ -487,7 +486,7 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy( G4Stri
   SetParams(params);
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) {
-    G4cout << " GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy " << G4endl;
+    G4cout << " GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy " << G4endl; 
     for(size_t ii = 0; ii < params.size(); ii++ ) {
       G4cout << params[ii] << " ";
     }

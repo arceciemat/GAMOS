@@ -14,7 +14,7 @@
 
 GmPSPrinterCout::GmPSPrinterCout(G4String name) : GmVPSPrinter( name )
 {
-  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(theName+":PrintSumV2",1));
+  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(thePrinterName+":PrintSumV2",1));
 
 }
 

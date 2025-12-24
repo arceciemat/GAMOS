@@ -29,7 +29,7 @@ void GmPSPrinter3ddoseSplitZ::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiv
   G4String fileName = "3ddose.out";
   G4String scorerName = "";
   if( scorer ) scorerName = scorer->GetName();
-  fileName = GmParameterMgr::GetInstance()->GetStringValue(theName+"_"+scorerName+":FileName",fileName);
+  fileName = GmParameterMgr::GetInstance()->GetStringValue(thePrinterName+"_"+scorerName+":FileName",fileName);
 
   G4String suffix = GmParameterMgr::GetInstance()->GetStringValue("GmAnalysisMgr:FileNameSuffix","");
   if(suffix != "" ) fileName += suffix;

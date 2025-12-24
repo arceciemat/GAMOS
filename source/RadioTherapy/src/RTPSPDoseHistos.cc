@@ -16,7 +16,7 @@
 RTPSPDoseHistos::RTPSPDoseHistos(G4String name, GmSqdoseHeader* doseh) :
   GmVPSPrinter( name )
 {
-  G4String fileName = GmParameterMgr::GetInstance()->GetStringValue(theName+":FileName","");
+  G4String fileName = GmParameterMgr::GetInstance()->GetStringValue(thePrinterName+":FileName","");
   if( fileName == "" ) fileName = "dose_"+name;
   theAnaMgr = GmAnalysisMgr::GetInstance( fileName );
 
@@ -595,10 +595,10 @@ void RTPSPDoseHistos::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer*
   }
   BookHistos(doseMin, doseMax);
 #ifndef GAMOS_NO_VERBOSE
-  if( RTVerb(warningVerb) ) G4cout << theName << " MINIMUM DOSE " << doseMin << " Gy " << G4endl;
+  if( RTVerb(warningVerb) ) G4cout << thePrinterName << " MINIMUM DOSE " << doseMin << " Gy " << G4endl;
 #endif
 #ifndef GAMOS_NO_VERBOSE
-  if( RTVerb(warningVerb) ) G4cout << theName << " MAXIMUM DOSE " << doseMax << " Gy " << G4endl;
+  if( RTVerb(warningVerb) ) G4cout << thePrinterName << " MAXIMUM DOSE " << doseMax << " Gy " << G4endl;
 #endif
 //--- Average errors
   G4double theF20 = 0.;
@@ -718,16 +718,16 @@ void RTPSPDoseHistos::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer*
   }
 #ifndef GAMOS_NO_VERBOSE
   if( RTVerb(warningVerb) ) {
-    G4cout << theName << " AVERAGE ERROR 20% = " << theF20 << G4endl;
-    G4cout << theName << " AVERAGE ERROR 50% = " << theF50 << G4endl;
-    G4cout << theName << " AVERAGE ERROR 90% = " << theF90 << G4endl;
+    G4cout << thePrinterName << " AVERAGE ERROR 20% = " << theF20 << G4endl;
+    G4cout << thePrinterName << " AVERAGE ERROR 50% = " << theF50 << G4endl;
+    G4cout << thePrinterName << " AVERAGE ERROR 90% = " << theF90 << G4endl;
     if( theTotalDose != 0 ) theTotalError = sqrt(theTotalError)/theTotalDose;
-    G4cout << theName << " TOTAL DOSE = " << theTotalDose << " +-(REL) " << theTotalError << G4endl;
+    G4cout << thePrinterName << " TOTAL DOSE = " << theTotalDose << " +-(REL) " << theTotalError << G4endl;
   }
 #endif
 
   
-  G4String fileName = GmParameterMgr::GetInstance()->GetStringValue(theName+":HistosFileName","");
+  G4String fileName = GmParameterMgr::GetInstance()->GetStringValue(thePrinterName+":HistosFileName","");
   if( fileName != "" ) {
     FillHistosFromFile( fileName );
   } else {
@@ -741,7 +741,7 @@ void RTPSPDoseHistos::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer*
   }   
   
   std::vector<G4String> h2d;
-  h2d = GmParameterMgr::GetInstance()->GetVStringValue(theName+":AllHistos2D",h2d);
+  h2d = GmParameterMgr::GetInstance()->GetVStringValue(thePrinterName+":AllHistos2D",h2d);
   for( unsigned int ii = 0; ii < h2d.size(); ii++)  {
     FillAllHistos2D(h2d[ii]);
   }

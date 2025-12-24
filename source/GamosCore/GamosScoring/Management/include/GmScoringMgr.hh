@@ -25,15 +25,15 @@ public:
 
   void CreateMFD( const std::vector<G4String>& wl );
   void CreateScorer( const G4String& scorerName, const G4String& scorerClass, std::vector<G4String>& params );
-  void AddScorer2MFD( std::vector<G4String>& wl );
-  GmVPrimitiveScorerSpectrum* AddScorerSpectrum2MFD( std::vector<G4String>& wl );
-  void AddFilter2Scorer( std::vector<G4String> params ); 
-  void AddPrinter2Scorer(std::vector<G4String> params ); 
-  void AssignClassifier2Scorer( std::vector<G4String>& params ); 
-  void AddTrkWeight2Scorer( const G4String& scorerName, G4String& val );
-  void AddScoreErrors2Scorer( const G4String& scorerName, G4String& val );
-  void AddPrintByEvent2Scorer( const G4String& scorerName, G4String& val );
-  void AddPrintNEventsType2Scorer( const G4String& scorerName, G4String& val );
+  void AddScorerToMFD( std::vector<G4String>& wl );
+  GmVPrimitiveScorerSpectrum* AddScorerSpectrumToMFD( std::vector<G4String>& wl );
+  void AddFilterToScorer( std::vector<G4String> params ); 
+  void AddPrinterToScorer(std::vector<G4String> params ); 
+  void AssignClassifierToScorer( std::vector<G4String>& params ); 
+  void AddTrkWeightToScorer( const G4String& scorerName, G4String& val );
+  void AddScoreErrorsToScorer( const G4String& scorerName, G4String& val );
+  void AddPrintByEventToScorer( const G4String& scorerName, G4String& val );
+  void AddPrintNEventsTypeToScorer( const G4String& scorerName, G4String& val );
   void ChangeScorerUnit( const G4String& scorerName, const G4String& unitName, G4String& unitValue );
 
   void PrintAllScorers();
@@ -52,7 +52,7 @@ public:
     theScoringRun = sr;
   }
 
-  GmVPrimitiveScorer* GetScore( G4String, G4bool bMsutExists ) const;
+  GmVPrimitiveScorer* GetScorer( G4String, G4bool bMustExists ) const;
 
 private:
   static GmScoringMgr* theInstance;

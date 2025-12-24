@@ -42,10 +42,11 @@ GmVPSPrinter* GmPSPrinterMgr::CreatePSPrinter( std::vector<G4String> params, G4b
 #else
   GmVPSPrinter* PSPrinter = GmPSPrinterFactory::get()->create(params[1],params[0]);
 #endif
-  
+
   if( PSPrinter == 0 ) {
     PSPrinter = GmPSPrinterSpectrumFactory::get()->create(params[1],params[0]);
   }
+  //  G4cout << " GmPSPrinterMgr::CreatePSPrinter " << PSPrinter << "  " <<  params[0] << " " << params[1] << G4endl; //GDEB
   if( PSPrinter == 0 ) {
     G4Exception(" GmPSPrinterMgr::CreatePSPrinter",
 		"Wrong argument",
@@ -65,12 +66,12 @@ GmVPSPrinter* GmPSPrinterMgr::CreatePSPrinter( std::vector<G4String> params, G4b
 //----------------------------------------------------------------------
 void GmPSPrinterMgr::AddPSPrinter( GmVPSPrinter* PSPrinter )
 {
-  std::map<G4String,GmVPSPrinter*>::const_iterator ite = thePSPrinters.find( PSPrinter->GetName() );
+  std::map<G4String,GmVPSPrinter*>::const_iterator ite = thePSPrinters.find( PSPrinter->GetPrinterName() );
   if( ite == thePSPrinters.end() ) {
-    thePSPrinters[PSPrinter->GetName()] = PSPrinter;
+    thePSPrinters[PSPrinter->GetPrinterName()] = PSPrinter;
   } else {
     G4Exception("GmPSPrinterMgr::AddPSPrinter",
-" Adding two PSPrinters with the same name, review your '/gamos/scoring/printer' commands",FatalErrorInArgument,PSPrinter->GetName());
+" Adding two PSPrinters with the same name, review your '/gamos/scoring/printer' commands",FatalErrorInArgument,PSPrinter->GetPrinterName());
   }
 
 }
@@ -79,6 +80,8 @@ void GmPSPrinterMgr::AddPSPrinter( GmVPSPrinter* PSPrinter )
 //----------------------------------------------------------------------
 GmVPSPrinter* GmPSPrinterMgr::FindOrBuildPSPrinter(std::vector<G4String> params, G4bool bExists )
 {
+  //  G4cout << " GmPSPrinterMgr::FindOrBuildPSPrinter " <<  params[0] << " " << params[1] << G4endl; //GDEB
+
   GmVPSPrinter* PSPrinter = GetPSPrinterFromList( params[0] );
   if( PSPrinter != 0 ) {
     return PSPrinter;

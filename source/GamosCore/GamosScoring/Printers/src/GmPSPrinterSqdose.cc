@@ -24,6 +24,7 @@ GmPSPrinterSqdose::GmPSPrinterSqdose(G4String name) : GmVPSPrinter( name )
 //-----------------------------------------------------------------------
 void GmPSPrinterSqdose::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* scorer )
 {
+  G4cout << " GmPSPrinterSqdose::DumpAll " << G4endl; //GDEB
   SetUnit(scorer);
   
   if( !scorer->ScoreErrors() ) {
@@ -38,6 +39,7 @@ void GmPSPrinterSqdose::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScore
 //-----------------------------------------------------------------------
 GmSqdoseHeader* GmPSPrinterSqdose::BuildSqdoseHeader()
 {
+  G4cout << " GmPSPrinterSqdose::WriteSqdoseHeader " << G4endl; //GDEB
   GmSqdoseHeader* header = new GmSqdoseHeader;
 
   float nev = GmNumberOfEvent::GetNumberOfEvent();
@@ -191,10 +193,13 @@ GmSqdoseHeader* GmPSPrinterSqdose::BuildSqdoseHeader()
 //-----------------------------------------------------------------------
 void GmPSPrinterSqdose::WriteSqdose( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* scorer )
 {
+  G4cout << " GmPSPrinterSqdose::WriteSqdose " << G4endl; //GDEB
   G4String fileName = "sqdose.out";
   G4String scorerName = "";
   if( scorer ) scorerName = scorer->GetName();
-  fileName = GmParameterMgr::GetInstance()->GetStringValue(theName+"_"+scorerName+":FileName",fileName);
+  
+  fileName = GmParameterMgr::GetInstance()->GetStringValue(thePrinterName+"_"+scorerName+":FileName",fileName);
+  //  G4cout << "  GmPSPrinterSqdose::WriteSqdose( fileName " << fileName << "   " << thePrinterName << " _+ " << scorerName << G4endl; //GDEB
   if( GmParameterMgr::GetInstance()->GetNumericValue("GmScoringUA:DoseEachNEvents",0) != 0 ) {
     int nev = int(GmNumberOfEvent::GetNumberOfEvent());
     fileName += "_"+GmGenUtils::itoa(nev);
@@ -209,7 +214,6 @@ void GmPSPrinterSqdose::WriteSqdose( G4THitsMap<G4double>* RunMap, GmVPrimitiveS
   OpenFileOut(fileName);
 
   GmSqdoseHeader* header = BuildSqdoseHeader();
-
 
   G4int nvoxels = 0;
   bool bCrossPhantom = 0;
@@ -266,10 +270,10 @@ void GmPSPrinterSqdose::WriteSqdose( G4THitsMap<G4double>* RunMap, GmVPrimitiveS
     float dose;
     if( ite != scorerMap->end() ){
       dose = (*(ite->second))*theUnitRatio;
+      //      G4cerr << " SCORE Sqdose " << (*ite).first << " : " <<  (*(ite->second))*theUnitRatio << G4endl; //GDEB
     } else {
       dose = 0.;
     }
-    //    G4cerr << " SCORE Sqdose " << (*ite).first << " : " <<  (*(ite->second))*theUnitRatio << G4endl; //GDEB
     
     doses.push_back( dose );
     /*    G4int nx = ii % nVoxelsX;

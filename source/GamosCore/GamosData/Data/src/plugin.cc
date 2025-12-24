@@ -282,6 +282,13 @@
 
 #include "GmDataNofHits.hh"
 
+//FROM Machiel Kolstein
+#include "GmDataInitialTouchablePosX.hh"
+#include "GmDataInitialTouchablePosY.hh"
+#include "GmDataInitialTouchablePosZ.hh"
+#include "GmDataInitialUnitID.hh"
+
+
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
 
@@ -561,6 +568,11 @@ PLUGINSVC_FACTORY(GmDataSecoInitialDirTheta,GmVData*())
 PLUGINSVC_FACTORY(GmDataFinalDirNormalAngle,GmVData*())
 
 PLUGINSVC_FACTORY(GmDataNofHits,GmVData*())
+
+PLUGINSVC_FACTORY(GmDataInitialTouchablePosX,GmVData*())
+PLUGINSVC_FACTORY(GmDataInitialTouchablePosY,GmVData*())
+PLUGINSVC_FACTORY(GmDataInitialTouchablePosZ,GmVData*())
+PLUGINSVC_FACTORY(GmDataInitialUnitID,GmVData*())
 
 #else
 
@@ -855,5 +867,10 @@ DEFINE_GAMOS_DATA(GmDataSecoInitialDirTheta);
 DEFINE_GAMOS_DATA(GmDataFinalDirNormalAngle);
 
 DEFINE_GAMOS_DATA(GmDataNofHits);
+
+DEFINE_GAMOS_DATA(GmDataInitialTouchablePosX);
+DEFINE_GAMOS_DATA(GmDataInitialTouchablePosY);
+DEFINE_GAMOS_DATA(GmDataInitialTouchablePosZ);
+DEFINE_GAMOS_DATA(GmDataInitialUnitID);
 
 #endif

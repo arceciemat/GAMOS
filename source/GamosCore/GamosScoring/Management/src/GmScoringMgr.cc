@@ -125,9 +125,9 @@ void GmScoringMgr::CreateScorer( const G4String& scorerName, const G4String& sco
 }
 
 //----------------------------------------------------------------------
-void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
+void GmScoringMgr::AddScorerToMFD( std::vector<G4String>& wl )
 {
-  if( ScoringVerb(debugVerb) ) G4cout << " @@@ AddScorer2MFD " << wl[0] << " " << wl[1] << " " << wl.size() << G4endl; 
+  if( ScoringVerb(debugVerb) ) G4cout << " @@@ AddScorerToMFD " << wl[0] << " " << wl[1] << " " << wl.size() << G4endl; 
   G4String scorerName = wl[0];
   G4String scorerClass = "";
   G4String MFDName = "";
@@ -143,12 +143,12 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
     if( wl.size() < 2 ) G4Exception("GmScoringMgr::AddScorerToMFD",
 				    "Wrong argument",
 				    FatalErrorInArgument,
-				    G4String("/gamos/scoring/addScorer2MFD  needs only 2 arguments: ScorerName MFDname").c_str()); 
+				    G4String("/gamos/scoring/addScorerToMFD  needs only 2 arguments: ScorerName MFDname").c_str()); 
     
     if( wl.size() > 2 ) G4Exception("GmScoringMgr::AddScorerToMFD",
 				    "Wrong argument",
 				    FatalErrorInArgument,
-				    G4String("/gamos/scoring/addScorer2MFD  used for attaching to a MFD an existing scorer needs only 2 arguments: ScorerName MFDname \n . If you need to give parameters to the scorers, use the command  /gamos/scoring/createScorer" ).c_str()); 
+				    G4String("/gamos/scoring/addScorerToMFD  used for attaching to a MFD an existing scorer needs only 2 arguments: ScorerName MFDname \n . If you need to give parameters to the scorers, use the command  /gamos/scoring/createScorer" ).c_str()); 
 
     scorer = (*itesco).second;
     MFDName = wl[1];
@@ -158,15 +158,15 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
     if( wl.size() < 3 ) G4Exception("GmScoringMgr::AddScorerToMFD",
 				    "Wrong argument",
 				    FatalErrorInArgument,
-				    G4String("/gamos/scoring/addScorer2MFD  needs only 3 arguments: ScorerName ScorerClass MFDname ").c_str()); 
+				    G4String("/gamos/scoring/addScorerToMFD  needs only 3 arguments: ScorerName ScorerClass MFDname ").c_str()); 
     if( wl.size() > 3 ) G4Exception("GmScoringMgr::AddScorerToMFD",
 				    "Wrong argument",
 				    FatalErrorInArgument,
-				    G4String("/gamos/scoring/addScorer2MFD  needs only 3 arguments: ScorerName ScorerClass MFDname \n . If you need to give parameters to the scorers, use the command  /gamos/scoring/createScorer" ).c_str()); 
+				    G4String("/gamos/scoring/addScorerToMFD  needs only 3 arguments: ScorerName ScorerClass MFDname \n . If you need to give parameters to the scorers, use the command  /gamos/scoring/createScorer" ).c_str()); 
 
     scorerClass = wl[1];
     /*    if( scorerClass == "GmCompoundScorer" ) {
-    G4Exception("GmScoringMgr::AddScorer2MFD",
+    G4Exception("GmScoringMgr::AddScorerToMFD",
 		"Wrong argument",
 		FatalErrorInArgument,
 		(" Trying to add an scorer of type 'GmCompoundScorer', please defined it previously with user command /gamos/scoring/createScorer: " + scorerName).c_str() );
@@ -179,10 +179,10 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
 #endif
     //    G4cout << " SCORER " << scorer << G4endl; //GDEB
     if( !scorer ) {
-      G4Exception(" GmScoringMgr::AddScorer2MFD",
+      G4Exception(" GmScoringMgr::AddScorerToMFD",
 		  "Wrong argument",
 		  FatalErrorInArgument,
-		  G4String("Scorer class not found " + scorerClass + " Please check documentation and your /gamos/scoring/addScorer2MFD commands").c_str());
+		  G4String("Scorer class not found " + scorerClass + " Please check documentation and your /gamos/scoring/addScorerToMFD commands").c_str());
     }
 
     MFDName = wl[2];
@@ -193,9 +193,9 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
   //----- Check that MFD exists
   std::map<G4String,G4MultiFunctionalDetector*>::iterator itemfd = theMFDs.find(MFDName);
   if( itemfd == theMFDs.end() ) {
-    G4cerr << "!!! ERROR: at command /gamos/scoring/addScorer2MFD " << scorerName << " " << scorerClass
+    G4cerr << "!!! ERROR: at command /gamos/scoring/addScorerToMFD " << scorerName << " " << scorerClass
 	   << " " << MFDName << std::endl;
-    G4Exception("GmScoringMgr::AddScorer2MFD",
+    G4Exception("GmScoringMgr::AddScorerToMFD",
 		"Wrong argument",
 		FatalErrorInArgument,
 		(" Trying to add an scorer to a non-existing multifunctional detector named: " + MFDName).c_str() );
@@ -212,14 +212,14 @@ void GmScoringMgr::AddScorer2MFD( std::vector<G4String>& wl )
 }
 
 //----------------------------------------------------------------------
-void GmScoringMgr::AddFilter2Scorer( std::vector<G4String> params )
+void GmScoringMgr::AddFilterToScorer( std::vector<G4String> params )
 {
   G4String scorerName = params[1];
 
   std::map<G4String,GmVPrimitiveScorer*>::iterator itesco = theScorers.find(scorerName);
   if( itesco == theScorers.end() ) {
-    G4cerr << "!!! ERROR: at command /gamos/scoring/addFilter2Scorer " << params[0] << " " << params[1] << " " << scorerName << std::endl;
-      G4Exception("GmScoringMgr::AddFilter2Scorer",
+    G4cerr << "!!! ERROR: at command /gamos/scoring/addFilterToScorer " << params[0] << " " << params[1] << " " << scorerName << std::endl;
+      G4Exception("GmScoringMgr::AddFilterToScorer",
 		  "Wrong argument",
 		  FatalErrorInArgument,
 		  (" Trying to add a filter to a non-existing scorer named: " + scorerName).c_str() );
@@ -239,14 +239,14 @@ void GmScoringMgr::AddFilter2Scorer( std::vector<G4String> params )
 }
 
 //----------------------------------------------------------------------
-void GmScoringMgr::AddPrinter2Scorer( std::vector<G4String> params )
+void GmScoringMgr::AddPrinterToScorer( std::vector<G4String> params )
 {
   G4String scorerName = params[1];
 
   std::map<G4String,GmVPrimitiveScorer*>::iterator itesco = theScorers.find(scorerName);
   if( itesco == theScorers.end() ) {
-    G4cerr << "!!! ERROR: at command /gamos/scoring/addPrinter2Scorer " << params[0] << " " << scorerName << std::endl;
-    G4Exception("GmScoringMgr::AddPrinter2Scorer",
+    G4cerr << "!!! ERROR: at command /gamos/scoring/addPrinterToScorer " << params[0] << " " << scorerName << std::endl;
+    G4Exception("GmScoringMgr::AddPrinterToScorer",
 		"Wrong argument",
 		FatalErrorInArgument,
 		(" Trying to add a printer to a non-existing scorer named: " + scorerName).c_str() );
@@ -271,14 +271,14 @@ void GmScoringMgr::AddPrinter2Scorer( std::vector<G4String> params )
 
 
 //----------------------------------------------------------------------
-void GmScoringMgr::AssignClassifier2Scorer( std::vector<G4String>& params )   
+void GmScoringMgr::AssignClassifierToScorer( std::vector<G4String>& params )   
 {
   G4String scorerName = params[1];
 
   std::map<G4String,GmVPrimitiveScorer*>::iterator itesco = theScorers.find(scorerName);
   if( itesco == theScorers.end() ) {
-    G4cerr << "!!! ERROR: at command /gamos/scoring/addClassifier2Scorer " << params[0] << " " << scorerName << std::endl;
-    G4Exception("GmScoringMgr::AddClassifier2Scorer",
+    G4cerr << "!!! ERROR: at command /gamos/scoring/addClassifierToScorer " << params[0] << " " << scorerName << std::endl;
+    G4Exception("GmScoringMgr::AddClassifierToScorer",
 		"Wrong argument",
 		FatalErrorInArgument,
 		G4String(" Trying to add a classifier to a non-existing scorer named: " + scorerName).c_str() );
@@ -298,7 +298,7 @@ void GmScoringMgr::AssignClassifier2Scorer( std::vector<G4String>& params )
   //GmG4PSDoseDeposit uses voxel numbers calculated by G4RegularNavigationHelper, so the classifier should be GmClassifierBy1Ancestor. It should check it 
   /*
   if( static_cast<GmG4PSDoseDeposit*>((*itesco).second) && params[1] != "GmClassifierBy1Ancestor" ){
-    G4Exception("GmScoringMgr::AssignClassifier2Scorer",
+    G4Exception("GmScoringMgr::AssignClassifierToScorer",
 		"scorer of type GmG4PSDoseDeposit should have as classifier GmClassifierBy1Ancestor, because it uses the voxel numbers calculated by G4RegularNavigationHelper, when SkipEqualMaterials is 1",
 		JustWarning,
 		G4String("classifier set is: "+params[1]).c_str());
@@ -311,12 +311,12 @@ void GmScoringMgr::AssignClassifier2Scorer( std::vector<G4String>& params )
 
 
 //----------------------------------------------------------------------
-void GmScoringMgr::AddTrkWeight2Scorer( const G4String& scorerName, G4String& val )   
+void GmScoringMgr::AddTrkWeightToScorer( const G4String& scorerName, G4String& val )   
 {
   std::map<G4String,GmVPrimitiveScorer*>::iterator itesco = theScorers.find(scorerName);
   if( itesco == theScorers.end() ) {
     G4cerr << "!!! ERROR: at command /gamos/scoring/useTrackWeight " << scorerName << std::endl;
-    G4Exception("GmScoringMgr::AddTrkWeight2Scorer",
+    G4Exception("GmScoringMgr::AddTrkWeightToScorer",
 		"Wrong argument",
 		FatalErrorInArgument,
 		G4String(" Trying to set track weight to a non-existing scorer named: " + scorerName).c_str() );
@@ -329,7 +329,7 @@ void GmScoringMgr::AddTrkWeight2Scorer( const G4String& scorerName, G4String& va
 }
 
 //----------------------------------------------------------------------
-void GmScoringMgr::AddScoreErrors2Scorer( const G4String& scorerName, G4String& val )   
+void GmScoringMgr::AddScoreErrorsToScorer( const G4String& scorerName, G4String& val )   
 {
   std::map<G4String,GmVPrimitiveScorer*>::iterator itesco;
   for( itesco = theScorers.begin(); itesco != theScorers.end(); itesco++ ) {
@@ -338,7 +338,7 @@ void GmScoringMgr::AddScoreErrors2Scorer( const G4String& scorerName, G4String& 
 
   if( itesco == theScorers.end() ) {
     G4cerr << "!!! ERROR: at command /gamos/scoring/scoreErrors " << scorerName << std::endl;
-    G4Exception("GmScoringMgr::AddScoreErrors2Scorer",
+    G4Exception("GmScoringMgr::AddScoreErrorsToScorer",
 		"Wrong argument",
 		FatalErrorInArgument,
 		G4String(" Trying to set track weight to a non-existing scorer named: " + scorerName).c_str() );
@@ -351,7 +351,7 @@ void GmScoringMgr::AddScoreErrors2Scorer( const G4String& scorerName, G4String& 
 }
 
 //----------------------------------------------------------------------
-void GmScoringMgr::AddPrintByEvent2Scorer( const G4String& scorerName, G4String& val )   
+void GmScoringMgr::AddPrintByEventToScorer( const G4String& scorerName, G4String& val )   
 {
 
   std::map<G4String,GmVPrimitiveScorer*>::iterator itesco;
@@ -361,7 +361,7 @@ void GmScoringMgr::AddPrintByEvent2Scorer( const G4String& scorerName, G4String&
 
   if( itesco == theScorers.end() ) {
     G4cerr << "!!! ERROR: at command /gamos/scoring/scoreByEvent " << scorerName << std::endl;
-    G4Exception("GmScoringMgr::AddScoreErrors2Scorer",
+    G4Exception("GmScoringMgr::AddScoreErrorsToScorer",
 		"Wrong argument",
 		FatalErrorInArgument,
 		G4String(" Trying to set track weight to a non-existing scorer named: " + scorerName).c_str() );
@@ -373,7 +373,7 @@ void GmScoringMgr::AddPrintByEvent2Scorer( const G4String& scorerName, G4String&
 }
 
 //----------------------------------------------------------------------
-void GmScoringMgr::AddPrintNEventsType2Scorer( const G4String& scorerName, G4String& val )   
+void GmScoringMgr::AddPrintNEventsTypeToScorer( const G4String& scorerName, G4String& val )   
 {
 
   std::map<G4String,GmVPrimitiveScorer*>::iterator itesco;
@@ -383,7 +383,7 @@ void GmScoringMgr::AddPrintNEventsType2Scorer( const G4String& scorerName, G4Str
 
   if( itesco == theScorers.end() ) {
     G4cerr << "!!! ERROR: at command /gamos/scoring/scoreNEventsType " << scorerName << std::endl;
-    G4Exception("GmScoringMgr::AddScoreErrors2Scorer",
+    G4Exception("GmScoringMgr::AddScoreErrorsToScorer",
 		"Wrong argument",
 		FatalErrorInArgument,
 		G4String(" Trying to set track weight to a non-existing scorer named: " + scorerName).c_str() );
@@ -398,7 +398,7 @@ void GmScoringMgr::AddPrintNEventsType2Scorer( const G4String& scorerName, G4Str
     net = SNET_ByNFilled;
   } else {
     G4cerr << "!!! ERROR: at command /gamos/scoring/scoreNEventsType " << scorerName << std::endl;
-    G4Exception("GmScoringMgr::AddScoreErrors2Scorer",
+    G4Exception("GmScoringMgr::AddScoreErrorsToScorer",
 		"Wrong argument",
 		FatalErrorInArgument,
 		G4String(" Second argument must be ByRun / ByEvent / ByNFilled, while it is:  " + val).c_str() );
@@ -443,7 +443,7 @@ G4THitsMap<G4double>* GmScoringMgr::GetRunMap(GmVPrimitiveScorer* scorer )
 }
 
 //----------------------------------------------------------------------
-GmVPrimitiveScorer* GmScoringMgr::GetScore( G4String name, G4bool bMustExist ) const
+GmVPrimitiveScorer* GmScoringMgr::GetScorer( G4String name, G4bool bMustExist ) const
 {
   GmVPrimitiveScorer* scorer = 0;
   
@@ -451,12 +451,12 @@ GmVPrimitiveScorer* GmScoringMgr::GetScore( G4String name, G4bool bMustExist ) c
 
   if( ite == theScorers.end() ) {
     if( bMustExist ) {
-      G4Exception("GmcoringMgr::GetScore",
+      G4Exception("GmcoringMgr::GetScorer",
 		  "",
 		  FatalException,
 		  ("Scorer does not exists " + name).c_str());
     } else {
-      G4Exception("GmcoringMgr::GetScore",
+      G4Exception("GmcoringMgr::GetScorer",
 		  "",
 		  JustWarning,
 		  ("Scorer does not exists " + name).c_str());

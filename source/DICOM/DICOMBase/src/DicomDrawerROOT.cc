@@ -375,7 +375,7 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
     if( theOutputFile ) {
       theOutputFile->cd();
       his->Write();
-      G4cout << " WRITE HISTO " << hisName << G4endl; //GDEB
+      //      G4cout << " WRITE HISTO " << hisName << G4endl; //GDEB
     }
     
     if( bRotateXY180 ) {

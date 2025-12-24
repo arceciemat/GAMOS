@@ -14,7 +14,7 @@
 //--------------------------------------------------------------------
 GmPSPrinterCoutSpectrum::GmPSPrinterCoutSpectrum(G4String name) : GmVPSPrinterSpectrum( name )
 {
-  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(theName+":PrintSumV2",1));
+  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(thePrinterName+":PrintSumV2",1));
 
 }
 
@@ -33,7 +33,7 @@ void GmPSPrinterCoutSpectrum::DumpAll( G4THitsMap<G4double>* , GmVPrimitiveScore
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) {
     G4cout <<" GmPSPrinterCoutSpectrum::DumpAll() " << G4endl;
-    G4cout << G4endl << " MultiFunctionalDet: " << scorer->GetMultiFunctionalDetector()->GetName() << G4endl; //GDEB
+    G4cout << G4endl << " MultiFunctionalDet: " << scorer->GetMultiFunctionalDetector()->GetName() << G4endl; 
     G4cout << " PrimitiveScorer: " << scorer->GetName() << G4endl;
     G4cout << " Number of entries= " << scorerVal.size() << G4endl;
   }
@@ -58,7 +58,7 @@ void GmPSPrinterCoutSpectrum::DumpAll( G4THitsMap<G4double>* , GmVPrimitiveScore
       G4double aveX;
       //	   << "  dose deposit= " << G4BestUnit(*(ite->second),"Dose")
       aveX = sumX *theUnitRatio;
-      G4cout << " IBIN " << ibin << " " << G4endl; //GDEB
+      //      G4cout << " IBIN " << ibin << " " << G4endl; //GDEB
       if( ! bBinLog10 ) {
 	G4cout << "  index: " << classifier->GetIndexName(index) << " " << minimum+ibin*binWidth << " - " << minimum+(ibin+1)*binWidth << ":  = " << aveX;
       } else {

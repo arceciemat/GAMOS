@@ -13,14 +13,14 @@
 
 GmPSPrinterBinFile::GmPSPrinterBinFile(G4String name) : GmVPSPrinter( name )
 {
-  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(theName+":PrintSumV2",1));
+  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(thePrinterName+":PrintSumV2",1));
 
 }
 
 void GmPSPrinterBinFile::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* scorer )
 {
   // Variables fo GmBinIOMgr
-  theOutputType = theName;
+  theOutputType = thePrinterName;
   Init();
   OpenFileOut();
 

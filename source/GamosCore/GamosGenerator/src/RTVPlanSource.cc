@@ -231,9 +231,9 @@ G4PrimaryVertex* RTVPlanSource::GenerateVertex( G4double time )
     }
 
     if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(thePositionDistribution) != 0 ) {
-      G4cout << " TO CHANGE TRIPLE POS " << G4endl; //GDEB
+      //      G4cout << " TO HANGE TRIPLE POS " << G4endl; //GDEB
       GmGenerDistPositionDirection2DCorrelTripleGaussian* posDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(thePositionDistribution);
-      G4cout << " CHANGE POS " << posDist << " FROM " << thePositionDistribution << G4endl; //GDEB
+      // G4cout << " CHANGE POS " << posDist << " FROM " << thePositionDistribution << G4endl; //GDEB
       posDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy));
     }    
       
@@ -1165,13 +1165,13 @@ void RTVPlanSource::MoveBeam(const RTBeamStateData& bsdata)
 		G4String(" Direction distribution is not of type GmGenerDistDirectionConst/GmGenerDistDirectionCone/GmGenerDistDirectionCone2D/GmGenerDistDirectionConeGaussian/GmGenerDistDirectionCone2DGaussian/GmGenerDistPositionDirection2DCorrelGaussian/GmGenerDistPositionDirection2DCorrelDoubleGaussian/GmGenerDistPositionDirection2DCorrelTripleGaussian ").c_str());
   }
   if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution) != 0 ) {
-    G4cout << " TO CHANGE DOUBLE DIR " << theDirectionDistribution << G4endl; //GDEB
+    //    G4cout << " TO CHANGE DOUBLE DIR " << theDirectionDistribution << G4endl; //GDEB
     GmGenerDistPositionDirection2DCorrelDoubleGaussian* dirDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution);
     dirDist->SetDirection( direction );
     dirDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy)); // TO READ NEW conf3E
   }
   if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(theDirectionDistribution) != 0 ) {
-    G4cout << " TO CHANGE TRIPLE DIR " << theDirectionDistribution << G4endl; //GDEB
+    //    G4cout << " TO CHANGE TRIPLE DIR " << theDirectionDistribution << G4endl; //GDEB
     GmGenerDistPositionDirection2DCorrelTripleGaussian* dirDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(theDirectionDistribution);
     dirDist->SetDirection( direction );
     dirDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy)); // TO READ NEW conf3E

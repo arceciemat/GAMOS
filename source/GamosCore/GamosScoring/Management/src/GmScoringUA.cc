@@ -49,7 +49,6 @@ void GmScoringUA::BeginOfEventAction( const G4Event* )
     //    if ( int(GmNumberOfEvent::GetNumberOfEvent()) < 1181000 ) return;
     if( int(GmNumberOfEvent::GetNumberOfEvent()) % nEvents == 0 && int(GmNumberOfEvent::GetNumberOfEvent()) != 0 ) {
       const G4Run* aRun = G4RunManager::GetRunManager()->GetCurrentRun();
-      std::cout << "GmScoringUA::BeginOfEventAction DUMP SCORES " << GmNumberOfEvent::GetNumberOfEvent() << std::endl;//GDEB
       GmScoringRun* scrun = (GmScoringRun*)aRun;
       //--- Dump all scored quantities involved in GmScoringRun.
       scrun->DumpAllScorers();

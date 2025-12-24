@@ -15,17 +15,17 @@
 
 GmPSPrinterCSVFile::GmPSPrinterCSVFile(G4String name) : GmVPSPrinter( name )
 {
-  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(theName+":PrintSumV2",1));
-  bPrintHeader = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(theName+":PrintHeader",0));
+  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(thePrinterName+":PrintSumV2",1));
+  bPrintHeader = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(thePrinterName+":PrintHeader",0));
 
-  G4cout << theName << G4endl;
+  G4cout << thePrinterName << G4endl;
 }
 
 
 void GmPSPrinterCSVFile::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* scorer )
 {
   // Variables fo GmTextIOMgr
-  theOutputType = theName + ".csv";
+  theOutputType = thePrinterName + ".csv";
   Init();
   OpenFileOut();
 

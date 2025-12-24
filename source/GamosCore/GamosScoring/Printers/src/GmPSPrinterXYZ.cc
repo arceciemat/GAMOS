@@ -49,7 +49,7 @@ void GmPSPrinterXYZ::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* 
   G4String fileName = "XYZdose.out";
   G4String scorerName = "";
   if( theScorer ) scorerName = theScorer->GetName();
-  fileName = GmParameterMgr::GetInstance()->GetStringValue(theName+"_"+scorerName+":FileName",fileName);
+  fileName = GmParameterMgr::GetInstance()->GetStringValue(thePrinterName+"_"+scorerName+":FileName",fileName);
 
   G4String suffix = GmParameterMgr::GetInstance()->GetStringValue("GmAnalysisMgr:FileNameSuffix","");
   if(suffix != "" ) fileName += suffix;

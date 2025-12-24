@@ -39,7 +39,6 @@ void GmTouchable::BuildTouchable( std::vector<G4VPhysicalVolume*> vpv, std::vect
 
   //------ physical volume is the first one in vector, others are ancestors of it
   G4VPhysicalVolume* pv = vpv[0];
-  theTopLogicalVolume = pv->GetLogicalVolume();
   bool isReplica = pv->IsReplicated();
 #ifndef GAMOS_NO_VERBOSE
   if( GeomVerb(debugVerb) ) G4cout << "GmTouchable::GmTouchable " << pv->GetName()  << G4endl;

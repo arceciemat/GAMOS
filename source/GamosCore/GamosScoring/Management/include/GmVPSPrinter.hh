@@ -20,8 +20,8 @@ public: // with description
   virtual void DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* theScorer ) = 0;
   virtual void DumpAllVector( std::vector<G4double>*, GmVPrimitiveScorerVector* ){};
 
-  G4String GetName() const {
-    return theName; }
+  G4String GetPrinterName() const {
+    return thePrinterName; }
 
   virtual void SetParameters( const std::vector<G4String>& );
 
@@ -35,7 +35,7 @@ public: // with description
   
 protected:
 
-  G4String theName;
+  G4String thePrinterName;
 
   G4bool bPrintSumV2;
 

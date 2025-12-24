@@ -14,9 +14,9 @@
 
 GmPSPrinterCoutContIndex::GmPSPrinterCoutContIndex(G4String name) : GmVPSPrinter( name )
 {
-  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(theName+":PrintSumV2",1));
-  theFirstIndex = G4int( GmParameterMgr::GetInstance()->GetNumericValue(theName+":FirstIndex",0));
-  theLastIndex = G4int( GmParameterMgr::GetInstance()->GetNumericValue(theName+":LastIndex",100));
+  bPrintSumV2 = G4bool( GmParameterMgr::GetInstance()->GetNumericValue(thePrinterName+":PrintSumV2",1));
+  theFirstIndex = G4int( GmParameterMgr::GetInstance()->GetNumericValue(thePrinterName+":FirstIndex",0));
+  theLastIndex = G4int( GmParameterMgr::GetInstance()->GetNumericValue(thePrinterName+":LastIndex",100));
 
   
 }

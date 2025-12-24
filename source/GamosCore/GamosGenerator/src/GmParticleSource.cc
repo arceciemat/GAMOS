@@ -528,7 +528,8 @@ G4ThreeVector GmParticleSource::DirectionInLocalVolume( G4ThreeVector direction 
 //-----------------------------------------------------------------------
 void GmParticleSource::ReadEnerDistF()
 {
-  GmFileIn fin = GmFileIn::GetInstance("enerDistF.lis", true);
+  G4String enerDistFileName = GmParameterMgr::GetInstance()->GetStringValue(theName+":EnerDistFileName","enerDistF.lis");
+  GmFileIn fin = GmFileIn::GetInstance(enerDistFileName, true);
   std::vector<G4String> wl;
   for( ;; ){
     if( !fin.GetWordsInLine(wl) ) break;

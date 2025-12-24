@@ -41,9 +41,9 @@ void GmPSPrinterHistosSpectrum::SetParameters( const std::vector<G4String>& para
   }
 
   if( params.size() >= 1 ) {
-    theName = params[0];
+    thePrinterName = params[0];
   } else {
-    theName = "";
+    thePrinterName = "";
   }
   if( params.size() >= 2 ) {
     theNBins = G4int(GmGenUtils::GetValue( params[1] ));
@@ -61,7 +61,7 @@ void GmPSPrinterHistosSpectrum::SetParameters( const std::vector<G4String>& para
     theMax = DBL_MAX;
   }
 #ifndef GAMOS_NO_VERBOSE 
-  if( ScoringVerb(debugVerb) ) G4cout << this << " GmPSPrinterHistosSpectrum::SetParameters for axis " << theName 
+  if( ScoringVerb(debugVerb) ) G4cout << this << " GmPSPrinterHistosSpectrum::SetParameters for axis " << thePrinterName 
 				      << " NBINS= " << theNBins 
 				      << " MIN= " << theMin
 				      << " MAX= " << theMax << G4endl;
@@ -74,8 +74,8 @@ void GmPSPrinterHistosSpectrum::SetParameters( const std::vector<G4String>& para
 void GmPSPrinterHistosSpectrum::DumpAll( G4THitsMap<G4double>* , GmVPrimitiveScorer* scorer )
 {
   SetUnit(scorer);
-  if( theName == "" ) {
-    theName = "hist"+scorer->GetName() + "_" + GetName();
+  if( thePrinterName == "" ) {
+    thePrinterName = "hist"+scorer->GetName() + "_" + GetPrinterName();
   }
   if( theNBins == INT_MAX ) {
     theNBins = scorer->GetSpectrumNBins();
@@ -89,7 +89,7 @@ void GmPSPrinterHistosSpectrum::DumpAll( G4THitsMap<G4double>* , GmVPrimitiveSco
   
   // Variables fo GmTextIOMgr
   std::vector<GmVFilter*> filters;
-  SetHistoNameAndNumber(theName,filters,(GmVClassifier*)0);
+  SetHistoNameAndNumber(thePrinterName,filters,(GmVClassifier*)0);
   theAnaMgr->SetDefaultNormalize(false);
 
   mimid scorerVal = scorer->GetSpectrumSumV();
@@ -110,9 +110,9 @@ void GmPSPrinterHistosSpectrum::DumpAll( G4THitsMap<G4double>* , GmVPrimitiveSco
     G4double nev = scorer->GetNEvents( index );
     mid* sumVIdx = itemm->second;
     if( !bBinLog10 ) {
-      theAnaMgr->CreateHisto1D( theName+GmGenUtils::itoa(index),theNBins,theMin,theMax,theHistoNumber + index);
+      theAnaMgr->CreateHisto1D( thePrinterName+GmGenUtils::itoa(index),theNBins,theMin,theMax,theHistoNumber + index);
     } else {
-      theAnaMgr->CreateHisto1D( theName+GmGenUtils::itoa(index),theNBins,log10(theMin),log10(theMax),theHistoNumber + index);
+      theAnaMgr->CreateHisto1D( thePrinterName+GmGenUtils::itoa(index),theNBins,log10(theMin),log10(theMax),theHistoNumber + index);
     }
     GmHisto1* his = theAnaMgr->GetHisto1D( theHistoNumber + index);
     for( mid::const_iterator item = sumVIdx->begin(); item != sumVIdx->end(); item++ ) {

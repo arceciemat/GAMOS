@@ -18,12 +18,15 @@ private:
   GmUIcmdWithAString* PrinterCmd;
   GmUIcmdWithAString* PrinterCmd2;
   GmUIcmdWithAString* MFDetectorCmd;
-  GmUIcmdWithAString* AssocMFD2LVCmd;
   GmUIcmdWithAString* Scorer2MFDCmd;
+  GmUIcmdWithAString* ScorerToMFDCmd;
   GmUIcmdWithAString* ScorerCmd;
-  GmUIcmdWithAString* FilterCmd;
+  GmUIcmdWithAString* Filter2ScorerCmd;
+  GmUIcmdWithAString* FilterToScorerCmd;
   GmUIcmdWithAString* Printer2ScorerCmd;
-  GmUIcmdWithAString* ClassifierCmd;
+  GmUIcmdWithAString* PrinterToScorerCmd;
+  GmUIcmdWithAString* Classifier2ScorerCmd;
+  GmUIcmdWithAString* ClassifierToScorerCmd;
   GmUIcmdWithAString* TrkWeightCmd;
   GmUIcmdWithAString* ScoreErrorsCmd;
   GmUIcmdWithAString* PrintByEventCmd;

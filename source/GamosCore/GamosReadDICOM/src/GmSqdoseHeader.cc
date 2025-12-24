@@ -205,7 +205,6 @@ void GmSqdoseHeader::Read( FILE* fin )
 }
 
 
-
 //-----------------------------------------------------------------------
 void GmSqdoseHeader::Print( FILE* fout )
 {

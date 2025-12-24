@@ -28,33 +28,49 @@ public:
 public:
 
   GmSqdoseHeader* GetHeader() const {
-    return theHeader; }
+    return theHeader;
+  }
   std::vector<float> GetDoses() const {
-    return theDoses; }
+    return theDoses;
+  }
   std::vector<float> GetDoseSqs() const {
-    return theDoseSqs; }
+    return theDoseSqs;
+  }
   float GetDose(G4int ii ) const {
-    return theDoses[ii]; }
+    return theDoses[ii];
+  }
   float GetDoseSq(G4int ii ) const {
-    return theDoseSqs[ii]; }
+    return theDoseSqs[ii];
+  }
   std::vector<float> GetDoseErrors() const {
-    return theDoseErrors; }
+    return theDoseErrors;
+  }
   float GetDoseError(G4int ii) const {
-    return theDoseErrors[ii]; }
+    return theDoseErrors[ii];
+  }
 
   void SetHeader( GmSqdoseHeader* header ){
-    theHeader = header; }
+    theHeader = header;
+  }
   void SetDoses( std::vector<float>& doses ) {
-    theDoses = doses; }
+    theDoses = doses;
+  }
   void SetDoseSqs( std::vector<float>& dosesqs ) {
-    theDoseSqs = dosesqs; }
+    theDoseSqs = dosesqs;
+  }
 
   void SetSqdoseType( SqdoseType typ ) {
-    theType = typ; }
+    theType = typ;
+  }
+
+  SqdoseType GetSqdoseType() const {
+    return theType;
+  }
 
   SqdoseType GetType() const {
-    return theType; }
-
+    return GetSqdoseType();
+  }
+  
   G4String GetTypeStr() const;
 
   static G4bool bNo0Dose; 

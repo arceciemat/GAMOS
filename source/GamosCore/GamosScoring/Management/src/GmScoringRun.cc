@@ -204,13 +204,18 @@ void GmScoringRun::DumpAllScorers()
   //  PrintAllScorers();
   std::map<G4String,GmVPrimitiveScorer*> scorers = theScoringMgr->GetScorers();
   if( scorers.size() == 0 ) return; // somebody has initialized a G4Run
-
+  /*  for( auto itep = scorers.begin(); itep != scorers.end(); itep++ ) {
+   G4cout << "GmScoringRun scorers " << itep->first << " " << itep->second << G4endl; //GDEB
+   } */
+  
   // - Number of HitsMap in this RUN.
   G4int n = GetNumberOfHitsMap();
-  G4cout << " GmScoringRun::DumpAllScorer() " << n << " " << theRunMap.size() << G4endl;
+  // G4cout << " GmScoringRun::DumpAllScorer() " << n << " " << theRunMap.size() << G4endl; //GDEB
   // - GetHitsMap and dump values.
   for ( G4int i = 0; i < n ; i++ ){
-    G4THitsMap<G4double>* RunMap = GetHitsMap(i);
+    //    G4cout << "GmScoringRun GETHITSMAP N= " << GetHitsMap(i)->entries() << G4endl; //GDEB
+
+   G4THitsMap<G4double>* RunMap = GetHitsMap(i);
     //    G4cout << " GmScoringRun::DumpAllScorer RunMap " << RunMap << G4endl;
     //      G4cout << " PrimitiveScorer RUN: SD = " 
     //	     << RunMap->GetSDname() <<" SCORER = "<< RunMap->GetName() << G4endl;
@@ -218,7 +223,7 @@ void GmScoringRun::DumpAllScorers()
     scorer->Normalize(RunMap);
     
     scorer->CalculateErrors(RunMap);
-    
+
     scorer->DumpAll(RunMap);
     /*      G4cout << " Number of entries " << RunMap->entries() << G4endl;
 	    std::map<G4int,G4double*>::iterator itr = RunMap->GetMap()->begin();
@@ -242,7 +247,7 @@ G4THitsMap<G4double>* GmScoringRun::GetRunMap(GmVPrimitiveScorer* scorer )
     RunMap =GetHitsMap(i);
     //    G4cout << " GmScoringRun::DumpAllScorer RunMap " << RunMap << G4endl;
     if ( RunMap ) {
-      GmVPrimitiveScorer* scorer2 = theScoringMgr->GetScore( RunMap->GetName(), true );
+      GmVPrimitiveScorer* scorer2 = theScoringMgr->GetScorer( RunMap->GetName(), true );
       if( scorer == scorer2 ) {
 	 RunMap = GetHitsMap(i);
 	 break;

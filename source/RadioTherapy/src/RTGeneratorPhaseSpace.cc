@@ -447,7 +447,7 @@ void RTGeneratorPhaseSpace::GeneratePrimaries(G4Event* evt)
   }
 
   particle = new G4PrimaryParticle( theParticleDef, momV.x(), momV.y(), momV.z() );
-  particle->SetWeight( p_iaea_read->weight / theMaxNReuse );  
+  particle->SetWeight( p_iaea_read->weight / abs(theMaxNReuse) );  
 
   //  if( theParticleDef->GetPDGCharge() == 0 ){
   theNReused = (theNReused+1)%theMaxNReuse;

@@ -30,6 +30,7 @@ DicomLine::DicomLine( G4ThreeVector point, G4ThreeVector dir, G4String name, DPO
 //-----------------------------------------------------------------------------
 std::map<G4double,G4double> DicomLine::FindValues( DicomVImage* image, G4double step )
 {
+  //  G4cout << " DicomLine::FindValues( DicomVImage* image " <<  step << G4endl; //GDEB
   if ( step == -DBL_MAX ) {
     return FindValuesInVoxels( image );
   } else {
@@ -250,7 +251,7 @@ std::map<G4double,G4double> DicomLine::FindValuesInSteps( DicomVImage* image, G4
   G4ThreeVector pos0 = thePos0;
   std::vector<G4double>* data = image->GetData();
 #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(infoVerb) ) G4cout << theName << " DicomLine::FindValuesInSteps pos " << pos << " dir " << dir << " pos0 " << pos0 << G4endl;
+  if( DicomVerb(infoVerb) ) G4cout << theName << " " << bUsePos0 << " DicomLine::FindValuesInSteps pos " << pos << " dir " << dir << " pos0 " << pos0 << G4endl;
 #endif
  
   //--- Store XYZ variables in  vectors
@@ -410,8 +411,8 @@ std::map<G4double,G4double> DicomLine::FindValuesInSteps( DicomVImage* image, G4
     size_t iz = (hvoxelID[2]-1)/2;
     G4double XLocal = pos.x()-(fMinV[0]+(ix+0.5)*fVoxelDimV[0]);
     G4double YLocal = pos.y()-(fMinV[1]+(iy+0.5)*fVoxelDimV[1]);
-    G4cout << pos << " YLocal " << YLocal << "= " << pos.y() << " - " << (fMinV[1]+(iy+0.5)*fVoxelDimV[1]) << "   " << fMinV[1] << "+"<<iy+0.5<<"*"<<fVoxelDimV[1]<< G4endl; //GDEB
-    G4cout << " pos " << pos << " ixyz " << ix<<":"<<iy<<":"<< iz << " XYLocal " << XLocal << " " << YLocal << G4endl; //GDEB
+    // G4cout << pos << " YLocal " << YLocal << "= " << pos.y() << " - " << (fMinV[1]+(iy+0.5)*fVoxelDimV[1]) << "   " << fMinV[1] << "+"<<iy+0.5<<"*"<<fVoxelDimV[1]<< G4endl; //GDEB
+    //    G4cout << " pos " << pos << " ixyz " << ix<<":"<<iy<<":"<< iz << " XYLocal " << XLocal << " " << YLocal << G4endl; //GDEB
     size_t copyNo;
     //---- BUILD TRIANGLE at Z- (from x,y=0,0 to x,y=widthX,widhtY)
     // corner down left
@@ -477,7 +478,7 @@ std::map<G4double,G4double> DicomLine::FindValuesInSteps( DicomVImage* image, G4
     value = valueZN + slope * (ZLocal-0.);
     //    G4cout << " VOXEL_VALUE " << value << " slope=" << slope << " ZLocal=" << ZLocal << G4endl; //GDEB
 
-      G4double distHis = distAccum;
+    G4double distHis = distAccum;
     if( bUsePos0 ) {
       G4ThreeVector diffPos = pos - pos0;
       distHis = diffPos.mag() * cos(diffPos.angle(dir));
@@ -492,7 +493,7 @@ std::map<G4double,G4double> DicomLine::FindValuesInSteps( DicomVImage* image, G4
     distAccum += step;
     pos += dir*step;
 #ifndef GAMOS_NO_VERBOSE
-    if( DicomVerb(testVerb) )  G4cout << " DicomLine FINAL VALUE " << value << " at " << pos << " dist= " << distHis << G4endl; //GDEB
+    if( DicomVerb(testVerb) )  G4cout << " DicomLine FINAL VALUE " << value << " at " << pos << " dist= " << distHis << G4endl;
 #endif
    }
 

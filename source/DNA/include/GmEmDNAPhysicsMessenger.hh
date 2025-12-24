@@ -18,7 +18,7 @@
 #include "globals.hh"
 #include "G4UImessenger.hh"
 
-class GmEmDNAPhysics;
+class GmVEmDNAPhysics;
 class G4UIdirectory;
 class GmUIcmdWithAString;
 
@@ -26,7 +26,7 @@ class GmEmDNAPhysicsMessenger: public G4UImessenger {
 
 public:
   
-  GmEmDNAPhysicsMessenger(GmEmDNAPhysics* physList);
+  GmEmDNAPhysicsMessenger(GmVEmDNAPhysics* physList);
   
   ~GmEmDNAPhysicsMessenger();
   
@@ -34,7 +34,7 @@ public:
   
 private:
   
-  GmEmDNAPhysics* theGmPhysicsList;   
+  GmVEmDNAPhysics* theGmPhysicsList;   
   G4UIdirectory* listDir;
   GmUIcmdWithAString* theGmPhysicsListCmd;
 };

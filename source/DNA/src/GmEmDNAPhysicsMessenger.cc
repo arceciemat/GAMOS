@@ -1,10 +1,10 @@
 #include "GmEmDNAPhysicsMessenger.hh"
-#include "GmEmDNAPhysics.hh"
+#include "GmVEmDNAPhysics.hh"
 #include "G4UIdirectory.hh"
 #include "GamosCore/GamosBase/Base/include/GmUIcmdWithAString.hh"
 
 // ----------------------------------------------------------------------------
-GmEmDNAPhysicsMessenger::GmEmDNAPhysicsMessenger(GmEmDNAPhysics * physList)
+GmEmDNAPhysicsMessenger::GmEmDNAPhysicsMessenger(GmVEmDNAPhysics * physList)
 :theGmPhysicsList(physList)
 {  
  listDir = new G4UIdirectory("/gamos/GmEmDNAPhysics/");

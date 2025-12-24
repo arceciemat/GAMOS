@@ -12,6 +12,8 @@
 #include "GmPSPrinterCoutSpectrum.hh"
 #include "GmPSPrinterHistosSpectrum.hh"
 
+#include "GmPSPrinterRBE.hh"
+
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
 
@@ -25,6 +27,7 @@ PLUGINSVC_FACTORY(GmPSPrinterBinFile,GmVPSPrinter*(G4String))
 PLUGINSVC_FACTORY(GmPSPrinterTextFile,GmVPSPrinter*(G4String))
 PLUGINSVC_FACTORY(GmPSPrinterHistos,GmVPSPrinter*(G4String))
 PLUGINSVC_FACTORY(GmPSPrinterCSVFile,GmVPSPrinter*(G4String))
+PLUGINSVC_FACTORY(GmPSPrinterRBE,GmVPSPrinter*(G4String))
 
 #else
 
@@ -42,6 +45,7 @@ DEFINE_GAMOS_SCORER_PRINTER(GmPSPrinterBinFile);
 DEFINE_GAMOS_SCORER_PRINTER(GmPSPrinterTextFile);
 DEFINE_GAMOS_SCORER_PRINTER(GmPSPrinterHistos);
 DEFINE_GAMOS_SCORER_PRINTER(GmPSPrinterCSVFile);
+DEFINE_GAMOS_SCORER_PRINTER(GmPSPrinterRBE);
 
 #include "GamosCore/GamosScoring/Management/include/GmPSPrinterSpectrumFactory.hh"
 DEFINE_GAMOS_SCORER_SPECTRUM_PRINTER(GmPSPrinterCoutSpectrum);

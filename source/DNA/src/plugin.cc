@@ -5,6 +5,7 @@
 #include "GmDNAStackingAction.hh"
 #include "GmDataDNAInitialVolumeType.hh"
 #include "GmEmDNAPhysics.hh"
+#include "GmEmDNAPhysicsNotChem.hh"
 #include "GmDNAVerbosity.hh"
 #include "GmMicroyzUA.hh" 
 #include "GmMicroyzVolUA.hh" 
@@ -26,6 +27,7 @@ DEFINE_SEAL_MODULE ();
 DEFINE_GAMOS_GEOMETRY(GmDNAGeometry);
 
 DEFINE_GAMOS_PHYSICS(GmEmDNAPhysics);
+DEFINE_GAMOS_PHYSICS(GmEmDNAPhysicsNotChem);
 DEFINE_GAMOS_USER_ACTION(GmDNASteppingAction);
 DEFINE_GAMOS_USER_ACTION(GmDNAStackingAction);
 DEFINE_GAMOS_USERTIMESTEP_ACTION(GmDNATimeStepAction);

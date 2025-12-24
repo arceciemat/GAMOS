@@ -203,6 +203,8 @@ G4bool GmVPrimitiveScorer::FillScorer(G4Step* aStep, G4double val, G4double wei)
 //--------------------------------------------------------------------
 G4bool GmVPrimitiveScorer::FillScorer(G4Step* aStep, G4int index, G4double val, G4double wei)
 {
+  //  G4cout << " GmVPrimitiveScorer::ProcessHits CALLING FillScorer index " << index << " val " << val << " wei " << wei << G4endl; //GDEB
+
 #ifndef GAMOS_NO_VERBOSE
   // if( ScoringVerb(debugVerb) ) G4cout << EvtMap << " EvtMap Number of entries " << EvtMap->entries() << " tmp " << theSumV_tmp.size() << " val " << val << " weight " << wei << G4endl;
 #endif
@@ -299,7 +301,7 @@ void GmVPrimitiveScorer::SumEndOfEvent()
   if( theConvergenceTester ) {
     theConvergenceTester->AddScore( eventSum );
   }
-
+  
   if( !bSubScorer ) {
     theSumV_tmp.clear();
     theNFilled_tmp.clear();
@@ -363,6 +365,7 @@ void GmVPrimitiveScorer::Normalize(G4THitsMap<G4double>* RunMap, G4bool bInverse
   }
   
 }
+
 
 //--------------------------------------------------------------------
 void GmVPrimitiveScorer::CalculateErrors(G4THitsMap<G4double>* RunMap)
@@ -604,7 +607,7 @@ G4bool GmVPrimitiveScorer::FillScorerSpectrum(G4Step* , G4int index, G4double va
   } else {
     ibin = GmGenUtils::GetBelowInt( (log10(val)-log10(theSpectrumMinimum))/theSpectrumBinWidth );
   }    
-  G4cout << bSpectrumBinLog10 << " ibin= " << ibin << " val " << val << " MIN " << theSpectrumMinimum << " WIDTH " << theSpectrumBinWidth << G4endl; //GDEB
+  G4cout << bSpectrumBinLog10 << " FillScorerSpectrum ibin= " << ibin << " val " << val << " MIN " << theSpectrumMinimum << " WIDTH " << theSpectrumBinWidth << G4endl; //GDEB
   mid::const_iterator item = sumVIdx_tmp->find(ibin);
   if( item == sumVIdx_tmp->end() ) {
     (*sumVIdx_tmp)[ibin] = 0;
@@ -653,7 +656,7 @@ void GmVPrimitiveScorer::AddToScoresSpectrum()
     }
     mid* sumVIdx = theSpectrumSumV[idx];
     mid* sumV2Idx = theSpectrumSumV2[idx];
-    G4cout << idx << " AddToScoresSpectrum TMP SIZE " << theSpectrumSumV_tmp.size() << " : " << sumVIdx_tmp->size() << G4endl; //GDEB
+    //    G4cout << idx << " AddToScoresSpectrum TMP SIZE " << theSpectrumSumV_tmp.size() << " : " << sumVIdx_tmp->size() << G4endl; //GDEB
     //      theSpectrumSumV[idx] += (*ite).second; // this magnitude is stored in the usual G4 mechanism
     for( mid::const_iterator item = sumVIdx_tmp->begin(); item != sumVIdx_tmp->end(); item++ ) {
       G4int ibin = item->first;
@@ -668,7 +671,7 @@ void GmVPrimitiveScorer::AddToScoresSpectrum()
 	sumVIdx->at(ibin) += val;
 	sumV2Idx->at(ibin) += val * val;
       }
-      G4cout<< GetName() << " AddToScoresSpectrum " << idx << " " << ibin << " " << val << " theSumV= " << theSpectrumSumV[idx]->at(ibin) << " theSumV2= " <<  theSpectrumSumV2[idx]->at(ibin) << G4endl; //GDEB
+      //      G4cout<< GetName() << " AddToScoresSpectrum " << idx << " " << ibin << " " << val << " theSumV= " << theSpectrumSumV[idx]->at(ibin) << " theSumV2= " <<  theSpectrumSumV2[idx]->at(ibin) << G4endl; //GDEB
     }
    
 #ifndef GAMOS_NO_VERBOSE

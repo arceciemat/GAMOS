@@ -91,6 +91,8 @@ public:
   static G4String GetEnv(const G4String& var, bool bExists = true);
   
   static std::string rtrim(const std::string &s);
+
+  static G4String ReplaceAll(const G4String& input, const G4String& from, const G4String& to);
   
 };
 

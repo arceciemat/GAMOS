@@ -723,10 +723,15 @@ std::pair<G4VEmModel*,G4VEmModel*> GmExtraPhysicsMessenger::ChangeMsc(G4String n
   } else if( newModelName == "GoudsmitSaunderson" ) {
     newModel = new G4GoudsmitSaundersonMscModel();
   } else if( newModelName == "GS_WVI" ) {
-    newModel = new G4GoudsmitSaundersonMscModel();
     //    G4GoudsmitSaundersonMscModel* newModel = new G4GoudsmitSaundersonMscModel();
     // G4WentzelVIModel* newModel2 = new G4WentzelVIModel();
     newModel = new G4GoudsmitSaundersonMscModel();
+    newModel2 = new G4WentzelVIModel();
+    G4double highEnergyLimit = G4EmParameters::Instance()->MscEnergyLimit();
+    newModel->SetHighEnergyLimit(highEnergyLimit);
+    newModel2->SetLowEnergyLimit(highEnergyLimit);
+  } else if( newModelName == "Urb_WVI" ) {
+    newModel = new G4UrbanMscModel();
     newModel2 = new G4WentzelVIModel();
     G4double highEnergyLimit = G4EmParameters::Instance()->MscEnergyLimit();
     newModel->SetHighEnergyLimit(highEnergyLimit);

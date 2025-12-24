@@ -124,7 +124,7 @@ void GmPSPrinterInterfile::WriteInterfile( G4THitsMap<G4double>* RunMap, GmVPrim
   G4String fileName = "interfile.out";
   G4String scorerName = "";
   if( scorer ) scorerName = scorer->GetName();
-  fileName = GmParameterMgr::GetInstance()->GetStringValue(theName+"_"+scorerName+":FileName",fileName);
+  fileName = GmParameterMgr::GetInstance()->GetStringValue(thePrinterName+"_"+scorerName+":FileName",fileName);
   if( GmParameterMgr::GetInstance()->GetNumericValue("GmScoringUA:DoseEachNEvents",0) != 0 ) {
     int nev = int(GmNumberOfEvent::GetNumberOfEvent());
     fileName += "_"+GmGenUtils::itoa(nev);

@@ -1,0 +1,33 @@
+/////////////////////////
+G4double G4EmCalculator::GetDEDX(G4double kinEnergy, 
+                                 const G4ParticleDefinition* p,
+                                 const G4Material* mat, 
+                                 const G4Region* region)
+  res = manager->GetDEDX(p, kinEnergy, couple); // manager = G4LossTableManager::Instance();
+
+inline G4double G4LossTableManager::GetDEDX(const G4ParticleDefinition *aParticle,
+                                     G4double kineticEnergy,
+                                     const G4MaterialCutsCouple *couple){
+  if(aParticle != currentParticle) { GetEnergyLossProcess(aParticle); } // sets currentLoss
+  return currentLoss ? currentLoss->GetDEDX(kineticEnergy, couple) : 0.0; //  G4VEnergyLossProcess* currentLoss;
+
+inline G4double  G4VEnergyLossProcess::GetDEDX(G4double kinEnergy,
+                              const G4MaterialCutsCouple* couple) {
+  DefineMaterial(couple);
+  return GetDEDXForScaledEnergy(kinEnergy*massRatio);
+
+  
+inline G4double G4VEnergyLossProcess::GetDEDXForScaledEnergy(G4double e) {
+  G4double x = fFactor*(*theDEDXTable)[basedCoupleIndex]->Value(e, idxDEDX);
+  if(e < minKinEnergy) { x *= std::sqrt(e/minKinEnergy); }
+  return x;
+
+
+--------------------------------------
+
+G4double G4EmCalculator::ComputeElectronicDEDX(G4double kinEnergy,
+                                               const G4ParticleDefinition* part,
+                                               const G4Material* mat,
+                                               G4double cut)
+ if(UpdateParticle(part, kinEnergy)) {
+    if(part != currentParticle) {

@@ -80,7 +80,7 @@ void GmHistoReaderCSV::FillHisto1D( std::vector<G4String>& wl, GmHisto1* his )
     his->SetUseErrors(true);
   }
 #endif
-  G4int ii = 5; // “1D”, his_name,number_of_bins,Xaxis_minimum, Xaxis_maximum, underflow,underflow_error,bin_content, bin_error,overflow, overflow_error (It has indeed number_of_binsX+2 pairs valueerror, as the first one is the underflow (entries below axis_minimum) and the last one is the overflow (entries above axis maximum).
+  G4int ii = 5; // "1D", his_name,number_of_bins,Xaxis_minimum, Xaxis_maximum, underflow,underflow_error,bin_content, bin_error,overflow, overflow_error (It has indeed number_of_binsX+2 pairs valueerror, as the first one is the underflow (entries below axis_minimum) and the last one is the overflow (entries above axis maximum).
   for( G4int iiX = 0; iiX < nbins+2; iiX++, ii++ ) {
     G4double valX = hmin + (iiX-1+0.5) * hstep;
     his->Fill( valX, GmGenUtils::GetValue(wl[ii]) );
