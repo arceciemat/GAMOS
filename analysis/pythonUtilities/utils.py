@@ -130,3 +130,19 @@ def firstLevelSubDirsWithString(directory, search_string):
 def gauss(x, A, x0, sigma):
     return A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2))
 
+##------------------------------------------------------------
+def isFloat(word):
+    try:
+        float(word)
+        return True
+    except ValueError:
+        return False
+
+##------------------------------------------------------------
+def isInteger(word):
+    try:
+        int(word)
+        return True
+    except ValueError:
+        return False
+    

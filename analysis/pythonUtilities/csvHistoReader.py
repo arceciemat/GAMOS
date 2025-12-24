@@ -29,19 +29,17 @@ class csvHistoReader:
             #           print("csvHistoReader N READ ",len(self.fHistos2D)," fHistos2D's")
         
         except IOError :
-             print("!!!ERROR FILE NOT FOUND",csvFileName)
+             print("csvHistoReader.py !!!ERROR FILE NOT FOUND",csvFileName)
              sys.exit()
              
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GetHisto1(self, hisName, bExists = True ) :
-#        print("GetHisto1",hisName,"bExists",bExists)
         for his in self.fHistos1D :
             if his.name == hisName :
                 return his
         if bExists :
-            print("!!! FATAL_ERROR at GetHisto1 HISTO DOES NOT EXIST:",hisName)
-            sys.exit()            
+            print("csvHistoReader.py !!! FATAL_ERROR at GetHisto1 HISTO DOES NOT EXIST:",hisName)
         return None
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.

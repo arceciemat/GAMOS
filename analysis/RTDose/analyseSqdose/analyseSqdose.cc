@@ -35,12 +35,12 @@
 #include "GamosCore/GamosScoring/Scorers/include/GmG4PSDoseDepositVector.hh"
 #include "RadioTherapy/include/RTPSPDoseHistos.hh"
 #include "RadioTherapy/include/RTPSPDoseHistosVector.hh"
-#include "RadioTherapy/include/RTVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmNumberOfEvent.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
 #include "GamosCore/GamosRunManager/include/GmRunManager.hh"
+#include "RadioTherapy/include/RTVerbosity.hh"
 
 #include "G4THitsMap.hh"
 #include "G4UImanager.hh"
@@ -72,7 +72,7 @@ int main(int argc,char** argv)
 
   if( argc == 2 ) {
     if( G4String(argv[1]) == "-help" ) {
-      G4cout << "  -f    sqdose file name " << G4endl
+      G4cout << "  -f    phase space file name (in this case do not use the file name alone as first argument as before)" << G4endl
 	     << "  -NRead   number of particles to be read from the phase space file" << G4endl
 	     << "  -fOut    output file name " << G4endl
 	     << "  -fHistos    name of file with list of histograms " << G4endl
@@ -81,7 +81,7 @@ int main(int argc,char** argv)
 	     << "  -cont    type of the STL container that will be used to store the doses and dose errors. It can be MAP or map, that uses a std::map; it is the default one, the one used by the Geant4 scorers. "
 	     << " It can also be VECTOR or vector, that uses a std::vector; it occupies about ten times less than the std::map. The std::map container occupies a big amount of space, about 500 Mb for 10 million voxels, so we recommend you that you use std::vector if your phantom is big" << G4endl
 	     << "  -NVoxels   total number of voxels in phantom (argument needed if sqdose file is of type FILLED" << G4endl
-	     << "  -verb    verbosity: it sets the ReadDICOMVerbosity. Default is warning, that will print the above lines; debug, that will print each particle read form the phase space file" << G4endl
+	     << "  -verb    verbosity: it sets the GmReadVerbosity. Default is warning, that will print the above lines; debug, that will print each particle read form the phase space file" << G4endl
 	     << "  -help    prints the set of arguments" << G4endl;
       return 0;
     } else {
@@ -132,7 +132,7 @@ int main(int argc,char** argv)
 	nTotalVoxels = GmGenUtils::GetInt(argv[ii+1]);
 
       } else if( argvstr == "-verb" ) {
-	G4String verbstr = "RTVerbosity " + G4String(argv[ii+1]);
+	G4String verbstr = "GmReadDICOMVerbosity " + G4String(argv[ii+1]);
 	runManager->SelectVerbosity(verbstr);
 
       } else {
@@ -153,20 +153,13 @@ int main(int argc,char** argv)
   //  GmParameterMgr::GetInstance()->AddParam("RTPSPDoseHistos::NormalizeToNEvents 0",PTdouble); 
 
   if( RTVerb(warningVerb) ) G4cout << "READING FILE " << theFileName << G4endl;
-  std::ifstream fcheck(theFileName.c_str(), std::ios::binary | std::ios::ate); // Open in binary mode and seek to end    
-  if( ! fcheck.good() || fcheck.tellg() <= 0 ) {      // Check if file opened successfully and size > 0
-    G4Exception("sumSqdose",
-		"",
-		FatalErrorInArgument,
-		G4String("File dose not exist and it has zero size  "+theFileName).c_str());
-  }
-  GmSqdose dose;  
+  GmSqdose dose;
   dose = GmSqdose();
   dose.Read(theFileName);
   
   if(nRead == -1 ) nRead = dose.GetDoses().size();
 
-  if( RTVerb(warningVerb) ) G4cout << " NREAD " << nRead << G4endl;
+  G4cout << " NREAD " << nRead << G4endl;
   //--- create RunMap and PrimitiveScorer with dose squared
   if( theContainerType == 1 ) {
     if( RTVerb(warningVerb) ) G4cout << " USING std::map to store doses" << G4endl;

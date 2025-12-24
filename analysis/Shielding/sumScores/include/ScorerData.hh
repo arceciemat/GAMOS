@@ -76,7 +76,6 @@ protected:
   G4String theName;
   G4double theNEvents;
   G4double theNScores; // not counting the 'TOTAL' score
-  std::map<G4String,G4double> theNScoresFilled; // not counting the 'TOTAL' score
   G4int theNumberOfFiles;
   ScoreType theScoreType;
 };

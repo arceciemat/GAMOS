@@ -31,65 +31,81 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosReadDICOM/include/GmSqdose.hh"
+
 #include "GamosCore/GamosRunManager/include/GmRunManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 int main(int argc,char** argv) 
 {
-  G4String fListName;
-  G4String fNameOut;
+
+  G4String theFileListName = "";
+  G4String theFileNameOut = "";
+  G4String theSqdoseType = "";
+  G4bool bNo0Dose = false;
+  GmRunManager* runManager = new GmRunManager();
   
   if( argc == 2 ) {
     if( G4String(argv[1]) == "-help" ) {
-      G4cout << "  -fl     file with list of sqdose file names " << G4endl
+      G4cout << "  -fl    list of sqdose files" << G4endl
 	     << "  -fOut    output file name " << G4endl
-	     << "  -bNo0Dose 0/1   if 1, when a file has 0 dose it will be skipped (1: value will be the average of this 0 and the previous value" << G4endl
-	     << "  -verb    verbosity: it sets the ReadDICOMVerbosityVerbosity. Default is warning" << G4endl
+	     << "  -sqdoseType   sets the sqdose type: ALL / FILLED" << G4endl
+	     << "  -bNo0Dose    do not take into account dose counts that are 0 (designed for LET sqdose files)" << G4endl
+	     << "  -verb    verbosity: it sets the GmReadVerbosity. Default is warning, that will print the above lines; debug, that will print each particle read form the phase space file" << G4endl
 	     << "  -help    prints the set of arguments" << G4endl;
       return 0;
+    } else {
+      G4Exception("sumSqdose",
+		  "wrong argument",
+		  FatalErrorInArgument,
+		  "YOU MUST SUPPLY AT LEAST TWO ARGUMENTS: FILE_WITH_LIST_OF_SQDDOSE_FILES SQDOSE_TYPE ");
     }
 
   } else if( argc == 3 ) {
-    fListName = argv[1];
-    fNameOut = argv[2];
+    theFileListName = argv[1];
+    theFileNameOut = argv[2];
+  } else if( argc == 4 ) {
+    theFileListName = argv[1];
+    theFileNameOut = argv[2];
+    theSqdoseType = argv[3];
   } else {
     if(argc%2 != 1) { 
-    G4Exception("sumSqdose",
-		"Wrong argument",
-		FatalErrorInArgument,
-		"WRONG NUMBER OF ARGUMENTS: THEY MUST BE -XX1 VAL_XX1 -XX2 VAL_XX2 ... ");
+      G4Exception("analyseSqdose",
+		  "Wrong argument",
+		  FatalErrorInArgument,
+		  "WRONG NUMBER OF ARGUMENTS: THEY MUST BE -XX1 VAL_XX1 -XX2 VAL_XX2 ... ");
     }
     for( G4int ii = 1; ii < argc; ii+=2 ){
       G4String argvstr = argv[ii];
       if( argvstr == "-fl" ) {
-	fListName = argv[ii+1];
+	theFileListName = argv[ii+1];
       } else if( argvstr == "-fOut" ) {
-	fNameOut = argv[ii+1];
+	theFileNameOut = argv[ii+1];
+      } else if( argvstr == "-sqdoseType" ) {
+	theSqdoseType = argv[ii+1];
       } else if( argvstr == "-bNo0Dose" ) {
-	GmSqdose::SetNo0Dose( G4bool(argv[ii+1]) );
+	bNo0Dose = G4bool(argv[ii+1]);
+	GmSqdose::SetNo0Dose(bNo0Dose);
       } else if( argvstr == "-verb" ) {
-	G4String verbstr = "ReadDICOMVerbosity " + G4String(argv[ii+1]);
-	GmRunManager* runManager = GmRunManager::GetRunManager();
+	G4String verbstr = "GmReadDICOMVerbosity " + G4String(argv[ii+1]);
 	runManager->SelectVerbosity(verbstr);
-
       } else {
 	G4Exception("sumSqdose",
 		    "Wrong argument",
 		    FatalErrorInArgument,
-		    G4String("Argument can be -f -hf -t, it is"+argvstr).c_str());
+		    G4String("Argument can be -ff -fOut -sqdoseType -bNo0Dose -verb, it is"+argvstr).c_str());
       }
     }
   }
-
-  FILE* fout  = fopen(fNameOut,"wb");
+  
+  FILE* fout  = fopen(theFileNameOut,"wb");
 
   std::vector<G4String> wl;
-  GmFileIn finlis = GmFileIn::GetInstance(fListName,1);
+  GmFileIn finlis = GmFileIn::GetInstance(theFileListName,1);
   G4double nevents = 0.;
 
-  GmSqdose* dose = 0;
-  GmSqdose* dose2 = 0;
+  GmSqdose* dose;
+  GmSqdose* dose2;
   G4int ii;
   for( ii = 0;; ii++){
     if( ! finlis.GetWordsInLine(wl) ) break;      
@@ -97,27 +113,20 @@ int main(int argc,char** argv)
     G4double multFactor = 1.; 
     if( wl.size() == 2 ) multFactor = GmGenUtils::GetValue(wl[1]);
     if( ii == 0 ) {
-      std::ifstream fcheck(wl[0].c_str(), std::ios::binary | std::ios::ate); // Open in binary mode and seek to end    
-      if( ! fcheck.good() || fcheck.tellg() <= 0 ) {      // Check if file opened successfully and size > 0
-	G4Exception("sumSqdose",
-		    "",
-		    FatalErrorInArgument,
-		    G4String("File dose not exist and it has zero size  "+theFileName).c_str());
-      }
-      dose = new GmSqdose();      
+      dose = new GmSqdose();
       dose->Read(wl[0]);
       if( multFactor != 1. ) *dose *= multFactor;
       nevents += dose->GetHeader()->GetNumberOfEvents();
       if( argc == 4 ) {
-	if( std::string(argv[3]) == "ALL" ) {
+	if( theSqdoseType == "ALL" ) {
 	  dose->SetSqdoseType(SqTALL);
-	} else if( std::string(argv[3]) == "FILLED" ) {
+	} else if( theSqdoseType == "FILLED" ) {
 	  dose->SetSqdoseType(SqTFILLED);
 	} else {
 	  G4Exception("sumSqdose",
 		      "Wrong type of output file (third argument)",
 		      FatalErrorInArgument,
-		      G4String("It can only be 'ALL' or 'FILLED', it is " + G4String(argv[3])).c_str());
+		      G4String("It can only be 'ALL' or 'FILLED', it is " + theSqdoseType).c_str());
 	}
       }
     } else {
@@ -128,12 +137,11 @@ int main(int argc,char** argv)
       *dose += *dose2;
       //      G4cout << " adding doses " << nevents << G4endl;
       delete dose2;
-
     }
-    G4cout << "$$$$$ MERGED " << ii+1 << " files into " << fNameOut <<  " NEVENTS= "<< nevents << G4endl;
+    G4cout << "$$$$$ MERGED " << ii+1 << " files into " << theFileNameOut <<  " NEVENTS= "<< nevents << G4endl;
   }
-
-  //  G4cout << "$$$$$ MERGED " << ii << " files into " << fNameOut <<  " NEVENTS= "<< nevents << G4endl;
+  
+  //  G4cout << "$$$$$ MERGED " << ii << " files into " << theFileNameOut <<  " NEVENTS= "<< nevents << G4endl;
   if( ii != 0 ) dose->Print(fout);
 
   delete dose;

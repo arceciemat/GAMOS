@@ -204,7 +204,8 @@ class UI(tk.Frame):
         self.showStat()
 
         #### FIT button
-        self.fitBut = tk.Button(self.theFrameHL, text="Gaussian Fit", command=self.GaussianFit, font= ('Helvetica 14 bold italic')) #, state=tk.DISABLED) 
+        self.fitBut = tk.Button(self.theFrameHL, text="Gaussian Fit", command=self.GaussianFit, font= ('Helvetica 14 bold italic')) #, state=tk.DISABLED)
+        #self.fitBut = tk.Button(self.theFrameHL, text="Gaussian Fit", command=self.TripleGaussianCenters0Fit, font= ('Helvetica 14 bold italic')) #, state=tk.DISABLED) 
         self.fitBut.grid(column=1, row=3)
 
         #### FIT button
@@ -325,8 +326,8 @@ class UI(tk.Frame):
 #                    print("hisCurrentN ",hisCurrentN.nbin,hisCurrentN.xmin,hisCurrentN.xmax)
 #                    print("his1 ",his1.nbin,his1.xmin,his1.xmax)
                     if self.bPlotNorm.get() :
-                        self.prevHisto1N.normToMax(1.)
-                        hisCurrentN.normToMax(1.)
+                        self.prevHisto1N.normToValue(1.)
+                        hisCurrentN.normToValue(1.)
                     #                   print("N hisCurrentN ",hisCurrentN.nbin,hisCurrentN.xmin,hisCurrentN.xmax,hisCurrentN.Xbins())
                     #                  print("N his1 ",his1.nbin,his1.xmin,his1.xmax,his1.Xbins())
                     #                    self.theSubPlotArea.bar(self.prevHisto1N.Xbins(),self.prevHisto1N.data, color='None', errcolor='blue', yerr=self.prevHisto1N.dataErr, width=xStep,linewidth=0)
@@ -369,8 +370,8 @@ class UI(tk.Frame):
                     hisCurrentN = Histo1D()
                     hisCurrentN.copy(his1)
                     if self.bPlotNorm.get() :
-                        self.prevHisto1N.norm(1.)
-                        hisCurrentN.norm(1.)
+                        self.prevHisto1N.normToValue(1.)
+                        hisCurrentN.normToValue(1.)
                  #   print("hisCurrentN ",hisCurrentN.nbin,hisCurrentN.xmin,hisCurrentN.xmax)
                  #   print("his1 ",his1.nbin,his1.xmin,his1.xmax)
                     plt.xlim(self.prevHisto1N.xmin, self.prevHisto1N.xmax)
@@ -385,8 +386,8 @@ class UI(tk.Frame):
                     hisCurrentN = Histo1D()
                     hisCurrentN.copy(his1)
                     if self.bPlotNorm.get() :
-                        self.prevHisto1N.norm(1.)
-                        hisCurrentN.norm(1.)
+                        self.prevHisto1N.normToValue(1.)
+                        hisCurrentN.normToValue(1.)
                     self.theSubPlotArea.plot(hisCurrentN.Xbins(),hisCurrentN.data,color='black') #, color='None', edgecolor='black', yerr=his1.dataErr, width=xStep) # !!! Does not resize well
                     self.printStatistics(his1)
 #                    for ii in range(len(hisCurrentN.data)) :
@@ -604,16 +605,23 @@ class UI(tk.Frame):
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GaussianFit(self) :
         #        print("start Gaussian Fit")
-        param,cov = self.lastHisto1.GaussianFit(0, 11) # 10: print text but do not superimpose fit line
+        param,cov = self.lastHisto1.GaussianFit(1, 11) # 10: print text but do not superimpose fit line
         if self.bPlotSame.get() :
-            param,cov = self.prevHisto1N.GaussianFit(1, 11)
+            param,cov = self.prevHisto1N.GaussianFit(0, 11)
         
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def DoubleGaussianCenters0Fit(self) :
         #        print("start Gaussian Fit")
-        param,cov = self.lastHisto1.DoubleGaussianCenters0Fit(0, 11) # 10: print text but do not superimpose fit line
+        param,cov = self.lastHisto1.DoubleGaussianCenters0Fit(1, 11) # 10: print text but do not superimpose fit line
         if self.bPlotSame.get() :
-            param,cov = self.prevHisto1N.DoubleGaussianCenters0Fit(1, 11)
+            param,cov = self.prevHisto1N.DoubleGaussianCenters0Fit(0, 11)
+
+                #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def TripleGaussianCenters0Fit(self) :
+        #        print("start Gaussian Fit")
+        param,cov = self.lastHisto1.TripleGaussianCenters0Fit(1, 11) # 10: print text but do not superimpose fit line
+        if self.bPlotSame.get() :
+            param,cov = self.prevHisto1N.TripleGaussianCenters0Fit(0, 11)
 
             
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -75,7 +75,8 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
 		 || argvstr == "-bDrawStructID1Fig" 
 		 || argvstr == "-bDrawStruct1Fig"
 		 || argvstr == "-bDrawIsodLines" 
-		 || argvstr == "-overSurrounding" ) {
+		 || argvstr == "-overSurrounding" 
+		 || argvstr == "-bFigureTitle" ) {
 	theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
 	ii++;
       } else if( argvstr == "-doseVar" ) {
@@ -121,10 +122,6 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
 	}
 	ii+=1+nIPC;
 
-      } else if( argvstr == "-bFigureTitle" ) {
-	theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
-	ii++;
-
       } else {
 	G4int iAddPar = theParamMgr->ReadParameter( argv, ii );
 	if( iAddPar == -1 ) {
@@ -138,7 +135,6 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
       }
     }
   }
-
 
   //------ StLines and IsodLines
   G4String drawLinesFN = theParamMgr->GetStringValue("fDrawLines","");
@@ -176,6 +172,8 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
   bDrawStruct1Fig = G4bool(theParamMgr->GetNumericValue("bDrawStruct1Fig",0));
   bDrawIsodLines = G4bool(theParamMgr->GetNumericValue("bDrawIsodLines",0));
 
+  theDrawer->SetFigureTitle(G4bool(theParamMgr->GetNumericValue("bFigureTitle",1)));
+
   if( theIsodPerCents.size() != 0 &&  theIsodPerCentsAbs.size() != 0 ) {
     G4Exception("DCMDrawDICOM::DCMDrawDICOM",
 		"",
@@ -196,6 +194,9 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
     theIsodPerCents.push_back(50.);
     theIsodPerCents.push_back(10.);
   }
+
+  if( DicomVerb(debugVerb) ) G4cout << " DCMDrawDICOM::ProcessArguments bDrawMateID " << bDrawMateID << " bDrawMateID1Fig " << bDrawMateID1Fig << " bDrawStructID " <<  bDrawStructID << " bDrawStructID1Fig " << bDrawStructID1Fig << " bDrawStruct1Fig " << bDrawStruct1Fig << " bDrawIsodLines " <<bDrawIsodLines << G4endl; 
+
 
 }
 
@@ -229,12 +230,6 @@ void DCMDrawDICOM::CheckArguments()
   if( theParamMgr->GetNofImageFiles("fRTStruct") > 1 ) {
     DicomException("THERE MUST BE ONLY ONE IMAGE FILE OF TYPE RTSTRUCT");
   }
-  if( theParamMgr->GetNofImageFiles("fVOIStruct") > 1 ) {
-    DicomException("THERE MUST BE ONLY ONE IMAGE FILE OF TYPE VOISTRUCT");
-  }
-  if( theParamMgr->GetNofImageFiles("fRTStruct") + theParamMgr->GetNofImageFiles("fVOIStruct") > 1 ) {
-    DicomException("THERE MUST BE ONLY ONE IMAGE FILE OF TYPE RTSTRUCT OR VOISTRUCT");
-  }
   if( theParamMgr->GetNofImageFiles("fInterfile") > 1 ) {
     DicomException("THERE MUST BE ONLY ONE IMAGE FILE OF TYPE Sqdose");
   }
@@ -247,7 +242,7 @@ void DCMDrawDICOM::CheckArguments()
     }
   }
 	 
-  if(bDrawStruct1Fig && (theParamMgr->GetNofImageFiles("fRTStruct") + theParamMgr->GetNofImageFiles("fVOIStruct") != 1) ) {
+  if(bDrawStruct1Fig && theParamMgr->GetNofImageFiles("fRTStruct") != 1 ) {
     DicomException("TO DRAW STRUCTURES IN ONE FIGURE THERE MUST BE ONE IMAGE FILE OF TYPE RTSTRUCT");
   }
 
@@ -288,6 +283,8 @@ void DCMDrawDICOM::DrawImages()
   } else if( VRTFiles.size() == 1 ) {
     RTFile = dynamic_cast<DicomReaderRTStruct*>(VRTFiles[0]);
     theStPolygonSet = RTFile->GetPolygonSet();
+    DicomPolygonSet* polyset = dynamic_cast<DicomPolygonSet*>(theStPolygonSet);
+    G4cout << " CREATE POLYSET " << polyset << " " << theStPolygonSet << G4endl; //GDEB
     theVLineSets.push_back(theStPolygonSet);
     // GDEB
     /*    G4cout << " DCMDrawDICOM::DrawImages ( GOT POLYGON SET " << theStPolygonSet->GetName() << " Nlists " <<  theStPolygonSet->GetLineLists().size() << G4endl;
@@ -352,8 +349,7 @@ void DCMDrawDICOM::DrawImages()
 	  std::vector<G4double>* data = imgStIDDraw->GetData();
 	  for( size_t iid = 0; iid < nData; iid++ ) {
 	    std::set<G4int> ists = imgStID->GetIDList(iid );
-	    /*	    G4cout << "DATASTR " << dataStr->at(iid) << " " << iid << G4endl; //GDEB
-		    G4cout << " ISTS " << ists.size() << " " << *(ists.begin()) << " " << iid << G4endl; //GDEB */
+	    //	    G4cout << "DATASTR " << iid << " ISTS " << ists.size() << " " << *(ists.begin())<< G4endl; //GDEB
 	    if( ists.size() > 1 ) {
 	      G4Exception("DCMDrawDICOM",
 			  "",
@@ -370,10 +366,10 @@ void DCMDrawDICOM::DrawImages()
     }
     if( !bFound ) {
       if( bDrawMateID ) {
-      G4Exception(theExeName.c_str(),
-		  "",
-		  FatalException,
-		  "No MateID image found while -bDrawMateID 1");
+	G4Exception(theExeName.c_str(),
+		    "",
+		    FatalException,
+		    "No MateID image found while -bDrawMateID 1");
       }
       if( bDrawStructID ) {
             G4Exception(theExeName.c_str(),
@@ -425,6 +421,7 @@ void DCMDrawDICOM::DrawImages()
     } else if( doseVar == "doseErrRel" ) {
       imgs = theDicomMgr->GetImages(DIM_Sqdose_errRel,false);
     } else if( doseVar == "dose" ) {
+      imgs = theDicomMgr->GetImages(DIM_Sqdose,false);
     } else {
       G4Exception("DCMDrawDICOM::DrawImages",
 		  "",
@@ -438,10 +435,12 @@ void DCMDrawDICOM::DrawImages()
   }
 
   //----- DRAW IMAGES
-  for( size_t ii = 0; ii < images.size(); ii ++ ) {
-    DrawImage(images[ii],theVLineSets);
+  if( ! bDrawMateID1Fig && ! bDrawStructID1Fig ) {
+    for( size_t ii = 0; ii < images.size(); ii ++ ) {
+      DrawImage(images[ii],theVLineSets);
+    }
   }
-
+  
   //---- Print 1 image per MateID
   if( bDrawMateID1Fig ) {
     G4bool bFound = false;
@@ -470,7 +469,8 @@ void DCMDrawDICOM::DrawImages()
 	  if( mateID == 0 ) mateID = 999; // else MATEID=0 would be a bla
 	  img1->SetData(ii,mateID);
 	  bFound = true;;
-	} 
+	}
+	G4cout << " bDrawMateID1Fig theVLineSets " << theVLineSets.size() << G4endl; //GDEB
 	for( std::map<size_t,DicomVImage*>::const_iterator iteid = theMateIDImages.begin(); iteid != theMateIDImages.end(); iteid++ ) {
 	  DrawImage((*iteid).second,theVLineSets);
 	}	
@@ -501,17 +501,16 @@ void DCMDrawDICOM::DrawImages()
 	theStructIDImages.clear();
 	size_t nVox = imageStructID->GetNoVoxels();
 	for( size_t ii = 0; ii < nVox; ii++) {
-	  //	  if( ii%100000 == 1 ) G4cout << ii << " IDST1 " << nVox << " " << imageStructID->GetData(ii) << " = " << imgData->at(ii) << G4endl; //GDEB
 	  //	  G4cout << imageStructID << " " << ii << " PREVSTDATA " << " : " << imageStructID->GetData(ii) << G4endl;
 	  std::set<G4int> ists = imageStructID->GetIDList(ii);
-	  
+	  if( ii%1000 == 1 ) G4cout << ii << " IDST1 " << nVox << " " << imageStructID->GetDataStr(ii) << G4endl; //GDEB
 	  for( std::set<G4int>::const_iterator itest = ists.begin(); itest != ists.end(); itest++ ) {
 	    size_t ist1 = *itest;
 	    if( ist1 == 0 ) continue;
 	    std::map<size_t,DicomVImage*>::const_iterator iteimg = theStructIDImages.find(ist1);
 	    DicomVImage* img1 = 0;	      
 	    if( iteimg == theStructIDImages.end() ) {
-	      G4cout << " NEW theStructIDImages " << imageStructID << G4endl;
+	      G4cout << " NEW theStructIDImages " << ist1 << G4endl;
 	      img1 = new DicomVImage(imageStructID,imageStructID->GetName()+"_"+readerCT->GetStructName(ist1),DIM_G4dcmCT_StructID);
 	      img1->SetData(new std::vector<G4double>(nVox));
 	      theStructIDImages[ist1] = img1;
@@ -522,7 +521,10 @@ void DCMDrawDICOM::DrawImages()
 	    //	    if( ist1 != 0 ) G4cout << img1 << " SETDATA " << ii << " = " << ist1 << G4endl; //GDEB
 	  }
 	}
-	if( theVLineSets.size() > 0 ) {
+	for( std::map<size_t,DicomVImage*>::const_iterator iteid = theStructIDImages.begin(); iteid != theStructIDImages.end(); iteid++ ) {
+	  DrawImage((*iteid).second,theVLineSets);
+	}	
+	/*?	if( theVLineSets.size() > 0 ) {
 	  DicomVLineSet* lineSet = theVLineSets[0];
 	  for( std::map<size_t,DicomVImage*>::const_iterator iteid = theStructIDImages.begin(); iteid != theStructIDImages.end(); iteid++ ) {
 	    //	    G4cout << (*iteid).second << " STDATA DrawImage " << stNames[(*iteid).first] << " " << (*iteid).first << " " <<(*iteid).second->GetName() << G4endl; //GDEB
@@ -539,7 +541,7 @@ void DCMDrawDICOM::DrawImages()
 	    size_t stID = (*iteid).first;
 	    DrawImage((*iteid).second,std::vector<DicomVLineSet*>(),"."+stNames[stID]);
 	  }
-	}
+	  }*/
       }
     }
   }
@@ -576,9 +578,10 @@ void DCMDrawDICOM::DrawImages()
 //-------------------------------------------------------------------
 void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lineSets, G4String extraFileName)
 {
-  //  G4cout << " DrawImage DrawXY " << bDrawXY << G4endl; //GDEB
+  std::vector<DicomVLineSet*> newLineSets;
+   G4cout << " DrawImage DrawXY " << bDrawXY << G4endl; //GDEB
   for( size_t ils = 0; ils < lineSets.size(); ils++ ) { // only polygons from RTStruct are included 
-    //    DicomVLineSet* lineSet = lineSets[ils];
+    DicomVLineSet* lineSet = lineSets[ils];
     // GDEB
     /*    G4cout << " DCMDrawDICOM::DrawImage( BEFORE DRAW POLYGON SET " << lineSet->GetName() << " Nlists " <<  lineSet->GetLineLists().size() << G4endl;
     for( size_t ii = 0; ii <  lineSet->GetLineLists().size(); ii++ ) {
@@ -589,21 +592,21 @@ void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lin
 	G4cout << jj << " POLYGON LINE " << line->GetName() << " Nlines "<< line->GetPoints().size() << G4endl;
       }
       } */
-    lineSets[ils] = new DicomPolygonSet(dynamic_cast<DicomPolygonSet*>(lineSets[ils]), image, lineSets[ils]->GetOrientation());
-    if( DicomVerb(debugVerb) ) {
-      G4cout << " DCMDrawDICOM::DrawImage( DRAW POLYGON SET " << lineSets[ils]->GetName() << " Nlists " <<  lineSets[ils]->GetLineLists().size() << G4endl;
-      for( size_t ii = 0; ii <  lineSets[ils]->GetLineLists().size(); ii++ ) {
-	DicomVLineList* lineList =  lineSets[ils]->GetLineLists()[ii];
-	G4cout << ii << " POLYGON LINELIST " << lineList->GetName() << " Nlines "<< lineList->GetLines().size() << G4endl; 
-	for( size_t jj = 0; jj < lineList->GetLines().size(); jj++ ) {
-	  DicomVLine* line = lineList->GetLines()[jj];
-	  G4cout << jj << " POLYGON LINE " << line->GetName() << " Nlines "<< line->GetPoints().size() << G4endl;
-	  for( size_t ipt = 0; ipt < line->GetPoints().size(); ipt++ ) {
-	    G4cout << line << " " << ipt << " POLYGON POINT " << line->GetPoints()[ipt] << G4endl;
-	  }
-	}
+    DicomPolygonSet* polyset = dynamic_cast<DicomPolygonSet*>(lineSets[ils]);
+    G4cout << ils << " DRAW POLYSET " << polyset << " " << lineSets[ils] << G4endl; //GDEB
+    //    DicomVLineSet* VlineSet = new
+    DicomPolygonSet(dynamic_cast<DicomPolygonSet*>(lineSets[ils]), image, lineSets[ils]->GetOrientation());
+    newLineSets.push_back(lineSets[ils]);
+    // GDEB
+    /*    G4cout << " DCMDrawDICOM::DrawImage( DRAW POLYGON SET " << lineSets[ils]->GetName() << " Nlists " <<  lineSets[ils]->GetLineLists().size() << G4endl;
+    for( size_t ii = 0; ii <  lineSets[ils]->GetLineLists().size(); ii++ ) {
+      DicomVLineList* lineList =  lineSets[ils]->GetLineLists()[ii];
+      G4cout << ii << " POLYGON LINELIST " << lineList->GetName() << " Nlines "<< lineList->GetLines().size() << G4endl; 
+      for( size_t jj = 0; jj < lineList->GetLines().size(); jj++ ) {
+	DicomVLine* line = lineList->GetLines()[jj];
+	G4cout << jj << " POLYGON LINE " << line->GetName() << " Nlines "<< line->GetPoints().size() << G4endl;
       }
-    }
+      }*/
     //    delete lineSet;
   }
   
@@ -611,7 +614,7 @@ void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lin
   for( size_t ii = 0; ii < VRTFiles.size(); ii++ ) {
     DicomReaderTextLines* lineReader = dynamic_cast<DicomReaderTextLines*>(VRTFiles[ii]);
     //    G4cout << " DCMDrawDICOM::DrawImage( GetReaders(DRM_TextLines lineReader "<< lineReader << G4endl; //GDEB
-    lineSets.push_back( lineReader->GetLineSet() );
+    newLineSets.push_back( lineReader->GetLineSet() );
   }
   //@@@ build isodose values
   std::vector<G4double> isodoseValues;
@@ -632,24 +635,24 @@ void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lin
     if( bDrawIsodLines ) {
     //    if( bDrawIsodLines && image->IsDose() ) {      
       image->BuildIsodLinesXY(isodoseValues);
-      lineSets.push_back(image->GetIsodosesXY());
+      newLineSets.push_back(image->GetIsodosesXY());
     }
-    theDrawer->DrawXY(image,lineSets,extraFileName);
+    theDrawer->DrawXY(image,newLineSets,extraFileName);
   }
   if( bDrawXZ ) {
     if( bDrawIsodLines && image->IsDose() ) {
       image->BuildIsodLinesXZ(isodoseValues);
-      lineSets.push_back(image->GetIsodosesXZ());
+      newLineSets.push_back(image->GetIsodosesXZ());
     } 
-    theDrawer->DrawXZ(image,lineSets,extraFileName);
+    theDrawer->DrawXZ(image,newLineSets,extraFileName);
 
   }
   if( bDrawYZ ) {
     if( bDrawIsodLines && image->IsDose() ) {
       image->BuildIsodLinesYZ(isodoseValues);
-      lineSets.push_back(image->GetIsodosesYZ());
+      newLineSets.push_back(image->GetIsodosesYZ());
     } 
-    theDrawer->DrawYZ(image,lineSets,extraFileName);
+    theDrawer->DrawYZ(image,newLineSets,extraFileName);
   }
 
 }
@@ -678,10 +681,11 @@ void DCMDrawDICOM::PrintHelp()
   	 << " -rotateXY DEGREES   figures are rotated by VAL in XY plane (=around Z axis)" << G4endl
 	 << " -printMax  0/1   prints the maximum value of any voxel in each image together with the X/Y/Z voxel id's and X/Y/Z position of the voxel center" << G4endl
 	 << " -printValueAtPoint POINT_X POINT_Y POINT_Z*: prints the value at the voxel in each image corresponding to the POINT together with the X/Y/Z voxel id's and X/Y/Z position of the voxel center" << G4endl
-	 << " -bDrawIsodLines 1/0   draw isodose lines or not (default)" << G4endl  
-	 << " -isodPerCents N_VALUES %VALUE_1 %VALUE_2 ...    Define the isodose percentages (w.r.t. to maximum value in image). Default is 90 50 10" << G4endl
-	 << " -isodPerCentsAbs N_VALUES %VALUE_1 %VALUE_2 ...    Define the isodose percentages (in absolute values). Default is 90 50 10" << G4endl
+	 << " -bDrawIsodLines 1/0   draw isodose lines or not (default = 0)" << G4endl  
+	 << " -isodPerCents N_VALUES %VALUE_1 %VALUE_2 ...    Define the isodose percentages (w.r.t. to maximum value in image) (default = 90 50 10)" << G4endl
+	 << " -isodPerCentsAbs N_VALUES %VALUE_1 %VALUE_2 ...    Define the isodose percentages (in absolute values) (default = 90 50 10)" << G4endl
 	 << " -overSurrounding FACTOR   limit voxel values to FACTOR*average values of surrounding voxels" << G4endl
-	 << " -bFigureTitle 0/1 (1)   print the figure title in figure files " << G4endl; 
+	 << " -bFigureTitle    Show the figure titleor not (1) " << G4endl;
 }
+
   

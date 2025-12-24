@@ -1,4 +1,3 @@
-### PLOT IN 1 HISTOGRAM THE VALUES IN A COLUMN OF A FILE. COLUMN MAY BE SELECTED WITH -col col_number
 import sys
 #https://www.tutorialspoint.com/python/python_gui_programming.htm
 import matplotlib as mpl
@@ -84,7 +83,7 @@ if lines[0][0:5] == ":DATA" :
     if len(words) < 2:
         print("!!! ERROR: first line must contain at least two words: ':DATA' <X_axis>, it is",lines[0])
         sys.exit()
-    XAxisName = words[icolumn+1]
+    XAxisName = words[1]
     line1st = 1
 else :
     XAxisName = "data"
@@ -96,12 +95,12 @@ mean=0
 mean2=0
 nData=len(lines)
 for il in range(line1st,nData):
-    wl = lines[il].rstrip().split()
-    if len(wl) == 0 : continue
+    words = lines[il].rstrip().split()
+    if len(words) == 0 : continue
     if il%10000 == 0:
-        print(il,icolumn,"Reading line",wl)
-    print(il,icolumn,"Reading line",wl[icolumn],wl)        
-    val = float(wl[icolumn])
+        print(il,icolumn,"Reading line",words)
+    print(il,icolumn,"Reading line",words[icolumn],words)        
+    val = float(words[icolumn])
     XPos.append(val)
     XPosNP = np.append(XPosNP,val)
     mean += val

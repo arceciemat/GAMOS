@@ -123,7 +123,11 @@ void DCMGetImageValue::CheckArguments()
 void DCMGetImageValue::ReadFilesAndGetImages()
 {
   //--- READ AND BUILD IMAGES
-  theReaderMgr->ProcessData();
+  theReaderMgr = DicomReaderMgr::GetInstance();
+  //  theReaderMgr->ProcessData();
+  theReaderMgr->CreateReaders();
+  theReaderMgr->SetCTOnlyHU(true);
+  theReaderMgr->CreateImages();
   
   //--- GET IMAGE TO ANALYSE. IF OTHER IMAGE THAN G4dcmCT, TAKE IT AND USE G4dcmCT ONLY FOR STRUCT
   std::vector<DicomVImage*> images = theDicomMgr->GetImages(DIM_NM,false);

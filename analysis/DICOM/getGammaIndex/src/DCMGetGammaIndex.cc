@@ -19,7 +19,6 @@
 #include "DICOM/DICOMBase/include/DicomDrawerROOT.hh"
 #include "DICOM/DICOMBase/include/DicomOperIntersectStruct.hh"
 
-#include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
 #include "TStyle.h"
@@ -156,7 +155,15 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
 	  }
 	  thePointNorm = G4ThreeVector(GmGenUtils::GetValue(argv[ii+2]),GmGenUtils::GetValue(argv[ii+3]),GmGenUtils::GetValue(argv[ii+4]));
 	  ii += 4;
-	}
+	} else if( G4String(argvstr1) == "None" ) {
+	  theNormType = GIDN_None;
+	  ii++;
+	} else {
+	  G4Exception("getGammaIndex",
+		      "",
+		      FatalErrorInArgument,
+		      ("WRONG NUMBER AFTER -norm "+G4String(argvstr1)+" IT MUST BE: atMaxima/atMaximum1/atPoint/None").c_str());
+	  }
       } else if( argvstr == "-perCentType" ) {
 	if( G4String(argvstr1) == "voxel" ) {
 	  thePerCentType = GIPCT_Voxel;
@@ -176,7 +183,7 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
 	  }
 	  thePerCentType = GIPCT_AtPoint;
 	  thePointPerCent = G4ThreeVector(GmGenUtils::GetValue(argv[ii+2]),GmGenUtils::GetValue(argv[ii+3]),GmGenUtils::GetValue(argv[ii+4]));
-	  ii += 4;
+	  ii += 4;	  
 	} else if( G4String(argvstr1) == "gammaOverCut" ) {
 	  theGammaOverCut = GmGenUtils::GetValue( argvstr1 );
 	  ii++;
@@ -305,8 +312,13 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
   G4double theMaxGammaValue = DBL_MAX; 
   theMaxGammaValue = theParamMgr->GetNumericValue("maxGammaValue",theMaxGammaValue);
   if( theMaxGammaValue != DBL_MAX ) bMaxGammaValue = 1;
-
-  theReaderMgr->ProcessData();
+  
+  //--- READ AND BUILD IMAGES
+  theReaderMgr = DicomReaderMgr::GetInstance();
+  //  theReaderMgr->ProcessData();
+  theReaderMgr->CreateReaders();
+  theReaderMgr->SetCTOnlyHU(true);
+  theReaderMgr->CreateImages();
 
   //--- Check that there is an structure file it output by structure is requested
   if( bPerSt || bDiffPerSt ) {

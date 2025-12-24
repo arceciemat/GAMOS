@@ -308,7 +308,7 @@ void DCMGamosToDICOM::fillImageToCT( DicomVImage* image, DcmDataset* dataset, DI
   if( DicomVerb(infoVerb) ) G4cout << " DCMGamosToDICOM::fillImageToCT( " << image->GetName() << " MOD " << modality << " " << DicomVImage::GetModalityStr(modality) << G4endl;
 #endif
   
-  Uint16 theNBits = 16;
+  Uint32 theNBits = 32;
   size_t nVoxelX = image->GetNoVoxelsX();
   size_t nVoxelY = image->GetNoVoxelsY();
   size_t nVoxelZ = (iLastSlice-iFirstSlice)+1;
@@ -442,13 +442,13 @@ void DCMGamosToDICOM::fillImageToCT( DicomVImage* image, DcmDataset* dataset, DI
   }
   
   // --- ImagePixelModule (C) ---
-  DcmUnsignedShort Rows(DCM_Rows); Rows.putUint16(nVoxelY);
+  DcmUnsignedShort Rows(DCM_Rows); Rows.putUint32(nVoxelY);
   addElementToDataset(result, dataset, new DcmUnsignedShort(Rows), "1", "1", "ImagePixelModule");
-  DcmUnsignedShort Columns(DCM_Columns); Columns.putUint16(nVoxelX);
+  DcmUnsignedShort Columns(DCM_Columns); Columns.putUint32(nVoxelX);
   addElementToDataset(result, dataset, new DcmUnsignedShort(Columns), "1", "1", "ImagePixelModule");
   
   unsigned long nVoxels = nVoxelX*nVoxelY*nVoxelZ;
-  Uint16* pd = new Uint16[nVoxels];
+  Uint32* pd = new Uint32[nVoxels];
   std::vector<G4double>* voxDataP = image->GetData();
   //--- NORMALIZE TO MAXIMUM
   G4double maxData = 0;
@@ -468,7 +468,7 @@ void DCMGamosToDICOM::fillImageToCT( DicomVImage* image, DcmDataset* dataset, DI
     DcmUniqueIdentifier SOPClassUID(DCM_SOPClassUID);
     SOPClassUID.putString(UID_CTImageStorage);
     addElementToDataset(result, dataset, new DcmUniqueIdentifier(SOPClassUID), "1", "1", "SOPCommonModule");
-    DcmUnsignedShort PixelRepresentation(DCM_PixelRepresentation); PixelRepresentation.putUint16(1);
+    DcmUnsignedShort PixelRepresentation(DCM_PixelRepresentation); PixelRepresentation.putUint32(1);
     addElementToDataset(result, dataset, new DcmUnsignedShort(PixelRepresentation), "1", "1C", "ImagePixelModule");
     factor = 1;
   } else if( modality == DIM_NM ) {
@@ -476,14 +476,14 @@ void DCMGamosToDICOM::fillImageToCT( DicomVImage* image, DcmDataset* dataset, DI
     SOPClassUID.putString(UID_NuclearMedicineImageStorage);
     addElementToDataset(result, dataset, new DcmUniqueIdentifier(SOPClassUID), "1", "1", "SOPCommonModule");
     factor = (pow(2,theNBits)-1)/maxData;
-    DcmUnsignedShort PixelRepresentation(DCM_PixelRepresentation); PixelRepresentation.putUint16(0);
+    DcmUnsignedShort PixelRepresentation(DCM_PixelRepresentation); PixelRepresentation.putUint32(0);
     addElementToDataset(result, dataset, new DcmUnsignedShort(PixelRepresentation), "1", "1C", "ImagePixelModule");
   } else if( modality == DIM_RTDose ) {
     DcmUniqueIdentifier SOPClassUID(DCM_SOPClassUID);
     SOPClassUID.putString(UID_RTDoseStorage);
     addElementToDataset(result, dataset, new DcmUniqueIdentifier(SOPClassUID), "1", "1", "SOPCommonModule");
     factor = (pow(2,theNBits)-1)/maxData;
-    DcmUnsignedShort PixelRepresentation(DCM_PixelRepresentation); PixelRepresentation.putUint16(0);
+    DcmUnsignedShort PixelRepresentation(DCM_PixelRepresentation); PixelRepresentation.putUint32(0);
     addElementToDataset(result, dataset, new DcmUnsignedShort(PixelRepresentation), "1", "1C", "ImagePixelModule");
     DcmDecimalString DoseGridScaling(DCM_DoseGridScaling); DoseGridScaling.putString(GmGenUtils::ftoa(1./factor));
     addElementToDataset(result, dataset, new DcmDecimalString(DoseGridScaling), "1", "1C", "RTDoseModule");
@@ -518,39 +518,39 @@ void DCMGamosToDICOM::fillImageToCT( DicomVImage* image, DcmDataset* dataset, DI
     // invert Z axis !!!
       iiInvZ = ix + iy*nVoxelX + (nVoxelZ-iz-1)*nVoxelXY;
     }
-    pd[ii] = Uint16(voxData[iiInvZ]*factor+1);
+    pd[ii] = Uint32(voxData[iiInvZ]*factor+1);
 #ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(infoVerb) && ii%100000 == 0 ) G4cout << ii << "=" << ix<<":"<<iy<<":"<<iz << " PIXEL_DATA " << pd[ii] << " = " << voxData[iiInvZ] *factor << " <- " << *voxData << " factor " << factor << G4endl; //GDEB
     //    if(  doses[iiInvZ] != 0 ) G4cout << ii << " -> " << iiInvZ << " DOSE " << pd[ii] << " = " <<doses[iiInvZ]*factor << " <- " <<  doses[iiInvZ] << G4endl; //GDEB
 #endif
   }
-  DcmPixelData PixelData(DCM_PixelData); PixelData.putUint16Array (pd,nVoxels);
-  //utUint16Array (c(const Uint16 *wordValue, const unsigned long length);
+  DcmPixelData PixelData(DCM_PixelData); PixelData.putUint32Array (pd,nVoxels);
+  //utUint32Array (c(const Uint32 *wordValue, const unsigned long length);
   addElementToDataset(result, dataset, new DcmPixelData(PixelData), "1", "1C", "ImagePixelModule");
 
-  DcmUnsignedShort SmallestImagePixelValue(DCM_SmallestImagePixelValue); SmallestImagePixelValue.putUint16(0);
+  DcmUnsignedShort SmallestImagePixelValue(DCM_SmallestImagePixelValue); SmallestImagePixelValue.putUint32(0);
   addElementToDataset(result, dataset, new DcmUnsignedShort(SmallestImagePixelValue), "1", "3", "ImagePixelModule");
-  DcmUnsignedShort LargestImagePixelValue(DCM_LargestImagePixelValue); LargestImagePixelValue.putUint16(pow(2,theNBits)-1);
+  DcmUnsignedShort LargestImagePixelValue(DCM_LargestImagePixelValue); LargestImagePixelValue.putUint32(pow(2,theNBits)-1);
   addElementToDataset(result, dataset, new DcmUnsignedShort(LargestImagePixelValue), "1", "3", "ImagePixelModule");
 
   // --- MultiFrameModule (C) ---
   DcmIntegerString NumberOfFrames(DCM_NumberOfFrames); NumberOfFrames.putString(GmGenUtils::itoa(nVoxelZ));
   addElementToDataset(result, dataset, new DcmIntegerString(NumberOfFrames), "1", "1", "MultiFrameModule");
 
-  DcmUnsignedShort NumberOfSlices(DCM_NumberOfSlices); NumberOfSlices.putUint16(nVoxelZ);
+  DcmUnsignedShort NumberOfSlices(DCM_NumberOfSlices); NumberOfSlices.putUint32(nVoxelZ);
   addElementToDataset(result, dataset, new DcmUnsignedShort(NumberOfSlices), "1", "1C", "ImagePixelModule");
 
   //  addElementToDataset(result, dataset, new DcmAttributeTag(FrameIncrementPointer), "1-n", "1", "MultiFrameModule");
 
-  DcmUnsignedShort SamplesPerPixel(DCM_SamplesPerPixel); SamplesPerPixel.putUint16(1);
+  DcmUnsignedShort SamplesPerPixel(DCM_SamplesPerPixel); SamplesPerPixel.putUint32(1);
   addElementToDataset(result, dataset, new DcmUnsignedShort(SamplesPerPixel), "1", "1C", "ImagePixelModule");
   DcmCodeString PhotometricInterpretation(DCM_PhotometricInterpretation); PhotometricInterpretation.putString("MONOCHROME2"); 
   addElementToDataset(result, dataset, new DcmCodeString(PhotometricInterpretation), "1", "1C", "ImagePixelModule");
-  DcmUnsignedShort BitsAllocated(DCM_BitsAllocated); BitsAllocated.putUint16(theNBits);
+  DcmUnsignedShort BitsAllocated(DCM_BitsAllocated); BitsAllocated.putUint32(theNBits);
   addElementToDataset(result, dataset, new DcmUnsignedShort(BitsAllocated), "1", "1C", "ImagePixelModule");
-  DcmUnsignedShort BitsStored(DCM_BitsStored); BitsStored.putUint16(theNBits);
+  DcmUnsignedShort BitsStored(DCM_BitsStored); BitsStored.putUint32(theNBits);
   addElementToDataset(result, dataset, new DcmUnsignedShort(BitsStored), "1", "1C", "ImagePixelModule");
-  DcmUnsignedShort HighBit(DCM_HighBit); HighBit.putUint16(theNBits-1);
+  DcmUnsignedShort HighBit(DCM_HighBit); HighBit.putUint32(theNBits-1);
   addElementToDataset(result, dataset, new DcmUnsignedShort(HighBit), "1", "1C", "ImagePixelModule");
   DcmIntegerString InstanceNumber(DCM_InstanceNumber); InstanceNumber.putString("1");
   addElementToDataset(result, dataset, new DcmIntegerString(InstanceNumber), "1", "3", "ImagePixelModule");

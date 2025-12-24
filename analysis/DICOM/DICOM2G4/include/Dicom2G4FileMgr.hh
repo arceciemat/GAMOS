@@ -14,7 +14,6 @@ class DicomReaderRTStruct;
 class DicomReaderRTPlan;
 class DicomReaderRTIonPlan;
 class DicomReaderInterfile;
-class DicomReaderInterfileCT;
 class DicomVReaderImage;
 class DicomReaderMgr;
 class DicomMgr;
@@ -39,9 +38,7 @@ public:
   void SetCompression( G4String fComp );
   void AddFile( G4String fComp );
   void AddFileInterfile( G4String fComp );
-  void AddFileInterfileCT( G4String fComp );
-  void AddFileVOIStruct( G4String fileName );
-  
+
   void ProcessFiles();
   void DumpToTextFile();
   
@@ -69,7 +66,6 @@ private:
   DicomReaderRTPlan* theRTPlanReader = 0;
   DicomReaderRTIonPlan* theRTIonPlanReader = 0;
   DicomReaderInterfile* theIFReaderAll = 0;
-  DicomReaderInterfileCT* theIFCTReaderAll = 0;
   
   //  DicomVReaderImeDICOM* theCTFileAll;
   //  DicomVReaderImage* theNMFileAll;

@@ -10,7 +10,14 @@ from checkPythonVersion import *
 from MyHistos import Histo1D
 from GetColor import *
 
+from scipy.optimize import curve_fit
+
 verbose = 3
+
+def poly0( xx, const, slope ) :
+    print("poly0(", xx, const, slope )
+    return const + slope*xx
+           
 ###################################
 def line_fit(X, Y):
 
@@ -19,14 +26,19 @@ def line_fit(X, Y):
     n = len(X) # or len(Y)
 
     numer = sum([xi*yi for xi,yi in zip(X, Y)]) - n * xbar * ybar
-    denum = sum([xi**2 for xi in X]) - n * xbar**2
+    denom = sum([xi**2 for xi in X]) - n * xbar**2
 
-    slope = numer / denum
+    slope = numer / denom
     const = ybar - slope * xbar
 
-    if verbose >= 3 : print('line fit: y = {:.2f} + {:.4f} x'.format(const, slope))
+    if verbose >= 1 : print('line fit: y = {:.2g} + {:.4f} x'.format(const, slope))
 
-    return const, slope
+    param, covariance = curve_fit(poly0, X, Y, p0=[const*2, slope*1.1])
+
+    print("PARAM",param)
+    
+    #    return const, slope
+    return param[0], param[1]
 
 ###################################
 def split_line_with_quotes(line):
@@ -83,9 +95,6 @@ else :
             for line in lines :
                 words = line.rstrip().split()
                 theFileNames.append(words[0])
-            ii = ii+1
-        elif sys.argv[ii] == "-bFit" :
-            bFit = bool(int(sys.argv[ii+1]))
             ii = ii+1
         elif sys.argv[ii] == "-bFit" :
             bFit = bool(int(sys.argv[ii+1]))
@@ -177,12 +186,14 @@ for fileName in theFileNames :
     if bError == False :
         plt.figure(figsize=(1000/100, 1000/100))        
         plt.plot(XPos,YPos, color=lcolor,marker="s",markersize=1.)
+        print("XPOS",XPos)
+        print("YPOS",YPos)
     else :
         plt.errorbar(XPos,YPos, color=lcolor, yerr=YPosErr,fmt="-o",markersize=2.,linestyle='-')
     plt.grid()
     #    print(il,"PLT.PLOT",XPos,YPos[il])#GDEB
     #    plt.legend()
-    xtPos = min(XPos)+(max(XPos)-min(XPos))*0.85
+    xtPos = min(XPos)+(max(XPos)-min(XPos))*0.5
     if verbose >= 3 : print("MAXY ",max(YPos),"*",(0.7-ifn*0.1)) 
     if verbose >= 3 : print(ifn,"TEXT POS",yMax)
 
@@ -190,17 +201,18 @@ for fileName in theFileNames :
     ### Fit to a line
     if bFit == True :
         const,slope = line_fit(XPos, YPos)
-        if verbose >= 3 : print(YAxisName,'SLOPE fit: {:.2f}e-3'.format(slope*1000.))
+        print("CONST",const,"SLOPE",slope)
         hXFit = []
         hYFit = []
         hXFit.append(XPos[0])
         hXFit.append(XPos[NPoints-1])
-        hYFit.append(YPos[0])
-        hYFit.append(YPos[NPoints-1])
+        hYFit.append(poly0(XPos[0],const,slope))
+        hYFit.append(poly0(XPos[NPoints-1],const,slope)) 
         plt.plot(hXFit, hYFit, linestyle='dotted',color=lcolor)
-        ytPos = yMin+(yMax-yMin)*(0.3-(ifn*0.1)-0.05)
-        if verbose >= 3 : print(YAxisName,'SLOPE fit: {:.2f}e-3'.format(slope*1000.))
-        plt.text(xtPos,ytPos,'s={:.2f}e-3'.format(slope*1000.))
+        ytPos = yMin+(yMax-yMin)*(0.3-(ifn*0.2)) 
+        #print(ifn,"DYTPOS",ytPos,yMin,yMax-yMin,0.3-(ifn*0.2)) #GDEB
+        if verbose >= 3 : print(ytPos,YAxisNames[ifn],'SLOPE fit: {:.2g}'.format(slope))
+        plt.text(xtPos,ytPos,'c={:.2g}'.format(const)+' s={:.2g}'.format(slope),color=lcolor)
         
     fhis = open("plotNFiles.csv",'w')
     his = Histo1D
@@ -231,7 +243,8 @@ for ifn in range(len(YAxisNames)) :
     #    if verbose >= 3 : print(ifn,"PLOT",XPos,YPos)#GDEB
     #    if verbose >= 3 : print("YAXIS",ifn,len(YAxisName))    
     lcolor = GetColor(ifn)
-    ytPos = yMin+(yMax-yMin)*(1.-(ifn*0.07))
+    ytPos = yMin+(yMax-yMin)*(1.-(ifn*0.1))
+    print(ifn,"SYTPOS",ytPos,yMin,yMax-yMin,1.-(ifn*0.1)) #GDEB
     if verbose >= 3 : print(ifn,"TEXT POS",xtPos,ytPos,YAxisNames[ifn])
     if len(YPos) != 1 :
         plt.text(xtPos,ytPos,YAxisNames[ifn], color=lcolor)

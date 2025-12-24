@@ -40,7 +40,7 @@ if __name__ == "__main__":
     theHisNames = set()
     bErrors = 0
     bLog = False
-    print("ERROR 0 " ,bErrors)
+#    print("ERROR 0 " ,bErrors)
     bNorm = 0
     theFitType = ""
     bFitPlot = 11
@@ -222,7 +222,8 @@ if __name__ == "__main__":
                     if bLog : 
                         plt.yscale('log')
                     if bErrors == 1 :
-                        ax1.bar(hX,hY, color='None', edgecolor=lcolor, yerr=his1.dataErr, width=xStep)
+                        ax1.errorbar(hX,hY, color=lcolor, yerr=his1.dataErr,fmt='-o',markersize=1)
+                        #ax1.bar(hX,hY, color='None', edgecolor=lcolor, yerr=his1.dataErr, width=xStep)
                     elif bErrors == 0 :
                         if(verbose >= -4) : print("HX ",len(hX)," HY ",len(hY))
                         if(verbose >= 4) : print("HX ",hX," HY ",hY)
@@ -439,7 +440,7 @@ if __name__ == "__main__":
             if not bPlot2 or len(hisList) != 999 :
 #            if not bPlot2 or len(hisList) >= 1 :
                 print("SAVING hist"+hisn+".jpg")    
-                plt.savefig("hist"+hisn+".jpg")    
+                plt.savefig("hist"+hisn+".jpg",dpi=600)
                 plt.clf()
 
     if theCompType == "chi2" and verbose >= 1 : print("CHI2_TOTAL",chi2Total)

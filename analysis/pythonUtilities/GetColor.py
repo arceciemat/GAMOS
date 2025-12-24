@@ -2,10 +2,10 @@ def GetColor( icol ) :
     
     if icol == 0 :
         lcolor = 'black'
-    elif icol == 1 :
-        lcolor = 'red'
     elif icol == 2 :
         lcolor = 'blue'
+    elif icol == 1 :
+        lcolor = 'red'
     elif icol == 3 :
         lcolor = 'green'
     elif icol == 4 :

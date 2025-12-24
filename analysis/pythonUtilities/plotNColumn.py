@@ -49,7 +49,9 @@ bFit = False
 bSort = True
 bError = False
 bHLine = True
+fdpi=100
 fileName = ""
+
 
 ### Manage arguments 
 if len(sys.argv) == 2 :
@@ -66,13 +68,17 @@ else :
         elif sys.argv[ii] == "-bSort" :
             bSort = bool(int(sys.argv[ii+1]))
             ii = ii+1
-        elif sys.argv[ii] == "-bErr" or sys.argv[ii] == "err" :
+        elif sys.argv[ii] == "-bErr" or sys.argv[ii] == "-err" :
             bError = bool(int(sys.argv[ii+1]))
             ii = ii+1
         elif sys.argv[ii] == "-bHLine" :
             bHLine  = bool(int(sys.argv[ii+1]))
             print("CHANGE bHLine",bHLine,ii,sys.argv[ii+1])
             ii = ii+1
+        elif sys.argv[ii] == "-dpi" :
+            fdpi  = float(sys.argv[ii+1])
+            ii = ii+1
+            
 ### Read file
 file = open(fileName)
 
@@ -84,32 +90,33 @@ if print(len(lines)) == 0 :
     
 if lines[0][0:5] == ":DATA" :
     bData = 1
-    wl = split_line_with_quotes(lines[0])
-    nColumns = len(wl)-2
+    words = split_line_with_quotes(lines[0])
+    nColumns = len(words)-2
     if bError :
         nColumns = int(nColumns/2)
-    if len(wl) < 3:
-        if verbose >= 0 : print("!!! ERROR: first line must contain at least three wl: ':DATA' <X_axis> <Y_axis_1> (... <Y_axis_N>, it is",lines[0])
+#    print("NCOL ",nColumns,len(words))
+    if len(words) < 3:
+        if verbose >= 0 : print("!!! ERROR: first line must contain at least three words: ':DATA' <X_axis> <Y_axis_1> (... <Y_axis_N>, it is",lines[0])
         sys.exit()
-    XAxisName = wl[1]
+    XAxisName = words[1]
     YAxisNames = []
-    for ii in range (2,len(wl)):
-        YAxisNames.append(wl[ii])
-    print("NCOLUMNS",nColumns,"xAxis ",XAxisName,"yAxis ",YAxisNames)  #GDEB
+    for ii in range (2,len(words)):
+        YAxisNames.append(words[ii])
+    if verbose >= 2 : print("NCOLUMNS",nColumns,"xAxis ",XAxisName,"yAxis ",YAxisNames)  #GDEB
 else :
     if verbose >= 1 : print("!!! WARNING: first word of file ",fileName," should be ':DATA'; first line is",lines[0])
     #    sys.exit()
-    wl = lines[1].rstrip().split()
-    nColumns = len(wl)-1
+    words = lines[1].rstrip().split()
+    nColumns = len(words)-1
     if bError :
         nColumns = int(nColumns/2)
-#        print("NCOLUMS",nColumns) #GDEB
-    if len(wl) < 2:
-        if verbose >= 0 : print("!!! ERROR: first line must contain at least two wl: <X_axis> <Y_axis_1> (... <Y_axis_N>, it is",lines[1])
+    if verbose >= 2 : print("NCOLUMS",nColumns) #GDEB
+    if len(words) < 2:
+        if verbose >= 0 : print("!!! ERROR: first line must contain at least two words: <X_axis> <Y_axis_1> (... <Y_axis_N>, it is",lines[1])
         sys.exit()
     XAxisName = "XVALs"
     YAxisNames = []
-    for ii in range (1,len(wl)):
+    for ii in range (1,len(words)):
         YAxisNames.append("YVAL"+str(ii))
         
 XPos = []
@@ -122,20 +129,20 @@ for il in range(nColumns) :
     YPosErr.append(ylistErr)
     
 for il in range(bData,len(lines)) :
-    wl = lines[il].rstrip().split()
-    XPos.append(float(wl[0]))
+    words = lines[il].rstrip().split()
+    XPos.append(float(words[0]))
     if bError == False :
         for iy in range(nColumns) :
-            if verbose >= 3 : print(iy,"NCOLUM",nColumns,len(wl),wl)
-            YPos[iy].append(float(wl[iy+1]))
-#            print(il,iy,"NO ERR YPOS",float(wl[iy+1]),len(YPos[iy]))#GDEB
+            if verbose >= 3 : print(iy,"NCOLUM",nColumns,len(words),words)
+            YPos[iy].append(float(words[iy+1]))
+#            print(il,iy,"NO ERR YPOS",float(words[iy+1]),len(YPos[iy]))#GDEB
     else:
         for iy in range(nColumns) :
-            # if verbose >= 3 : print(iy,"NCOLUM",nColumns,len(wl),wl)
-            #print("Y id ",int(iy/2),iy,len(wl))  #GDEB
-            YPos[iy].append(float(wl[2*iy+1]))
-            YPosErr[iy].append(float(wl[2*iy+2]))
-#            print(il,iy,"YPOS",float(wl[2*iy+1]),"+-",float(wl[2*iy+2]),len(YPos[iy]),len(YPosErr[iy]))#GDEB
+            if verbose >= 3 : print(iy,"NCOLUM",nColumns,len(words),words)
+            #print("Y id ",int(iy/2),iy,len(words))  #GDEB
+            YPos[iy].append(float(words[2*iy+1]))
+            YPosErr[iy].append(float(words[2*iy+2]))
+#            print(il,iy,"YPOS",float(words[2*iy+1]),"+-",float(words[2*iy+2]),len(YPos[iy]),len(YPosErr[iy]))#GDEB
 
 #print("BEFORE ORDER",YPos[0]) #GDEB
 NPoints = len(XPos)
@@ -179,10 +186,11 @@ for il in range(nColumns) :
     else : 
         hLS='None'
     if bError == False :
-        plt.plot(XPos,YPos[il], color=lcolor,marker="o",markersize=4.,linestyle=hLS)
+        plt.plot(XPos,YPos[il], color=lcolor,marker="o",markersize=1.,lw=0.5,linestyle=hLS)
 #        print(il,"PLT.PLOT",XPos,YPos[il])#GDEB
-    else :        
-        plt.errorbar(XPos,YPos[il], color=lcolor, yerr=YPosErr[il],fmt='o',markersize=2.,linestyle=hLS,elinewidth=1)
+    else :
+        print(il,"errorbar",XPos,YPos[il], YPosErr[il])
+        plt.errorbar(XPos,YPos[il], color=lcolor, yerr=YPosErr[il],fmt='o',markersize=2.)#,linestyle=hLS,linewidth=1)
 #    plt.legend()
     xtPos = min(XPos)+(max(XPos)-min(XPos))*0.9
     if verbose >= 3 : print("MAXY ",max(YPos[il]),"*",(0.7-il*0.1)) 
@@ -213,7 +221,7 @@ for il in range(nColumns) :
         if verbose >= 3 : print(YAxisNames[il],'SLOPE fit: {:.2f}e-3'.format(slope*1000.))
         plt.text(xtPos,ytPos,'s={:.2f}e-3'.format(slope*1000.))
         
-plt.savefig("plotNColumn.jpg")
+plt.savefig("plotNColumn.jpg",dpi=fdpi)
 
 fhis = open("plotNColumn.csv",'w')
 for il in range(nColumns) :

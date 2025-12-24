@@ -14,6 +14,8 @@ class DicomPolygonSet;
 
 enum GIPCT_Values { GIPCT_None, GIPCT_Max2Images, GIPCT_ImageMax, GIPCT_Voxel, GIPCT_AtPoint };
 
+class GmAnalysisMgr;
+
 class DCM2DOperGammaIndex 
 {
 public:
@@ -79,6 +81,7 @@ private:
   G4bool bHisto1D;
   G4double theGammaOverCut;
   G4bool bGammaOverCutDone;
+  GmAnalysisMgr* theAnaMgr;
 };
 
 #endif

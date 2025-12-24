@@ -1,0 +1,151 @@
+//
+// ********************************************************************
+// * License and Disclaimer                                           *
+// *                                                                  *
+// * The  GAMOS software  is  copyright of the Copyright  Holders  of *
+// * the GAMOS Collaboration.  It is provided  under  the  terms  and *
+// * conditions of the GAMOS Software License,  included in the  file *
+// * LICENSE and available at  http://fismed.ciemat.es/GAMOS/license .*
+// * These include a list of copyright holders.                       *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.  Please see the license in the file  LICENSE  and URL above *
+// * for the full disclaimer and the limitation of liability.         *
+// *                                                                  *
+// * This  code  implementation is the result of  the  scientific and *
+// * technical work of the GAMOS collaboration.                       *
+// * By using,  copying,  modifying or  distributing the software (or *
+// * any work based  on the software)  you  agree  to acknowledge its *
+// * use  in  resulting  scientific  publications,  and indicate your *
+// * acceptance of all terms of the GAMOS Software license.           *
+// ********************************************************************
+//
+
+#include "G4GeometryManager.hh"
+#include "GamosCore/GamosUtils/include/GmFileIn.hh"
+#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosReadDICOM/include/GmSqdose.hh"
+
+#include "G4tgrUtils.hh"
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+int main(int argc,char** argv) 
+{
+  G4tgrUtils::bAllowErrors = true;
+  
+  if(argc != 5 ) {    
+    G4Exception("sumSqdose",
+		"wrong argument",
+		FatalErrorInArgument,
+		"YOU MUST SUPPLY FOUR ARGUMENTS: OPERATION SQDOSE_OUT SQDOSE1 SQDOSE2 ... SQDOSEn");
+  }
+
+  G4String theOperation = argv[1];
+  G4int nFilesInOper = 0;
+  for( G4int ii=1; ; ii++ ) {
+    if( theOperation.find("X"+GmGenUtils::itoa(ii)) != std::string::npos ) {
+      nFilesInOper ++;
+      G4cout << ii << " operateSqdose " << nFilesInOper << " " << argc << G4endl; //GDEB
+    } else {
+      G4cout << ii << " " << "X"+GmGenUtils::itoa(ii) << " operateSqdose " << nFilesInOper << " " << argc << G4endl; //GDEB
+      break;
+    }
+  }
+  G4int nFilesInArguments = argc - 3;
+  if( nFilesInOper != nFilesInArguments ) { 
+	  G4Exception("operateSqdose",
+		      "Wrong type of output file (third argument)",
+		      FatalErrorInArgument,
+		      "Number of sqdose files must be the same that number of Xi in operation");   
+  }
+  
+  G4String fNameOut = argv[2];
+  FILE* fout  = fopen(fNameOut,"wb");
+
+  std::vector<GmSqdose*> theSqdoseFiles;
+  std::vector<std::vector<float>> theDoseValues;
+  std::vector<float> theDoseSqs;
+  size_t nVoxels = 0;
+  SqdoseType sqtype;
+
+  for( G4int ii = 3; ii < argc; ii++){
+    G4cout << "operateSqdose: Reading file " << argv[ii] << G4endl; //GDEB
+    GmSqdose* sqdose = new GmSqdose();
+    sqdose->Read(argv[ii]);
+    theSqdoseFiles.push_back(sqdose);
+    std::vector<float> doses = sqdose->GetDoses();
+    G4cout << "operateSqdose: Read file " << argv[ii] << " NDOSES " << doses.size() << G4endl; //GDEB
+    theDoseValues.push_back(doses);
+    if( ii == 3 ) {
+      nVoxels = doses.size();
+      theDoseSqs = sqdose->GetDoseSqs(); 
+      sqtype = sqdose->GetSqdoseType();
+    } else {
+      if( nVoxels != doses.size() ) {
+	G4ExceptionDescription msg;
+	msg << "Two sqdose files with different number of voxels: "
+	    << argv[3] <<": " << GmGenUtils::itoa(nVoxels)
+	    << argv[ii] <<": " << GmGenUtils::itoa(doses.size()) << G4endl;
+	G4Exception("operateSqdose",
+		    "",
+		    FatalErrorInArgument,
+		    msg);
+      }
+      if( sqtype != sqdose->GetSqdoseType() ) {
+	G4ExceptionDescription msg;
+	msg << "Two sqdose files with different type: "
+	    << argv[3] <<": " << theSqdoseFiles[0]->GetTypeStr()
+	    << argv[ii] <<": " << sqdose->GetTypeStr() << G4endl;
+	G4Exception("operateSqdose",
+		    "",
+		    FatalErrorInArgument,
+		    msg);
+      }
+    }
+  }
+
+  //---- Initialize sqdose out with 1st sqdose (any would serve) 
+  GmSqdose sqdoseOut;
+  GmSqdose* sqdose1st = theSqdoseFiles[0];
+  GmSqdoseHeader* sqdoseOutHeader = sqdose1st->GetHeader();
+  sqdoseOut.SetHeader(sqdoseOutHeader);
+  std::vector<float> doses1st = sqdose1st->GetDoses(); 
+  sqdoseOut.SetDoses( doses1st );
+  std::vector<float> doseSqs1st = sqdose1st->GetDoses(); 
+  sqdoseOut.SetDoseSqs( doseSqs1st );
+  std::vector<float> dosesOut = sqdoseOut.GetDoses();
+  SqdoseType sqtypeOut = sqdose1st->GetSqdoseType();
+  sqdoseOut.SetSqdoseType(sqtypeOut);
+    
+  //----- Loop to voxels and fill using the operation
+  for( size_t ii =0; ii < nVoxels; ii++ ) {
+    G4String operSubs = theOperation;
+    for( G4int jj=0; jj < nFilesInOper; jj++ ) {
+      G4String xstr = "X"+GmGenUtils::itoa(jj+1);
+      G4String doseStr = GmGenUtils::ftoa(theDoseValues[jj][ii]);
+      operSubs = GmGenUtils::ReplaceAll(operSubs, xstr, doseStr);
+      // G4cout << ii << jj << " operSubs.replace " << operSubs << " " << xstr << " -> " << doseStr <<G4endl; //GDEB
+    }
+    G4double newDose = GmGenUtils::GetValue(operSubs);
+    /*    if (std::isnan(newDose)) {
+      newDose = 0.0;  
+    }
+    if (std::isinf(newDose)) {
+      newDose = 0.0;  
+      } */
+    dosesOut[ii] = newDose;
+    if( dosesOut[ii] != 0. ) G4cout << ii << " " <<operSubs << " dosesOut " << dosesOut[ii] << G4endl; //GDEB
+  }
+
+  sqdoseOut.SetDoses(dosesOut);
+  sqdoseOut.Print(fout);
+
+  return 0;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+

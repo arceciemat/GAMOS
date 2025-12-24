@@ -12,13 +12,13 @@ from csvHistoReader import csvHistoReader
 from scipy import stats
 
 bPlotErrors = 0
-verbose = 3
+verbose = 1
 
 ###### -------------- main ----------- ######
 #histoData = pd.read_csv(sys.argv[1])
 checkPythonVersion()
 histoFile = csvHistoReader(sys.argv[1])
-iStat = 22222
+iStat = 0000 #22222
 
 if len(sys.argv) > 2 :
     bPlotErrors = int(sys.argv[2])

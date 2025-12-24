@@ -57,8 +57,13 @@ void DCMChangeStructure::ProcessArguments(int argc,char** argv)
   if( argc == 6 ) {
     theParamMgr->AddParam(G4String("fG4dcmCT ")+argv[1],PTVstring);
     StructData stData;
-    stData.stName = argv[2];
-    stData.mateName = argv[3];
+    G4String stnam = argv[2];
+    stnam.erase(std::remove(stnam.begin(), stnam.end(), '"'), stnam.end());
+    //    G4cout << " NO QUOTES " << stnam << "   " << argv[2] << G4endl; //GDEB
+    stData.stName = stnam;
+    G4String matenam = argv[3];
+    matenam.erase(std::remove(matenam.begin(), matenam.end(), '"'), matenam.end());
+    stData.mateName = matenam;
     stData.density = GmGenUtils::GetValue(argv[4]);
     stData.bOnly = 0;
     theStructData.push_back(stData);
@@ -82,7 +87,7 @@ void DCMChangeStructure::ProcessArguments(int argc,char** argv)
 	bGivenStructData = true;
 	if( theMaterialName != "" || theMaterialName != "NONE" ) bChangeMaterials = true;
 	ii++;
-      } else if( argvstr == "-density" ) {
+      } else if( argvstr == "-density" || argvstr == "-dens" ) {
 	theDensity = GmGenUtils::GetValue(argv[ii+1]);
 	bChangeDensities = true;
 	bGivenStructData = true;
@@ -99,8 +104,12 @@ void DCMChangeStructure::ProcessArguments(int argc,char** argv)
 		"WRONG NUMBER OF ARGUMENTS, THERE MUST BE AT LEAST 4 AFTER -stMateDens");
 	}
 	StructData stData;
-	stData.stName = argv[ii+1];
-	stData.mateName = argv[ii+2];
+	G4String stnam = argv[2];
+	stnam.erase(std::remove(stnam.begin(), stnam.end(), '"'), stnam.end());
+	stData.stName = stnam;
+	G4String matenam = argv[3];
+	matenam.erase(std::remove(matenam.begin(), matenam.end(), '"'), matenam.end());
+	stData.mateName = matenam;
 	if( stData.mateName != "" || stData.mateName != "NONE" ) bChangeMaterials = true;
 	stData.density = GmGenUtils::GetValue(argv[ii+3]);
 	if( stData.density != -1 ) bChangeDensities = true;
@@ -164,7 +173,7 @@ void DCMChangeStructure::CheckArguments()
       G4Exception(theExeName,
 		  "",
 		  FatalException,
-		  "Not material nor material density to be changed");
+		  "Not material nor material density to be changed, please use parameters -mate -dens ");
     }
   }
 						    
@@ -220,7 +229,7 @@ void DCMChangeStructure::ReadFilesAndGetImages()
 		"NO STRUCTURE IMAGE FOUND");
 		} */
 
-  //--- GET IMAGE TO ANALYSE. IF OTHER IMAGE THAN G4dcmCT, TAKE IT AND USE G4dcmCT ONLY FOR STRUCT
+  //--- GET IMAGE TO ANALYSE. IF OTHER IMAGE THAN G4dcmCT, TAKE IT AND USE G4dcmCT ONLY FOR STRUCT/MATE/DENS
   bImageG4dcmCT = false;
   images = theDicomMgr->GetImages(DIM_NM,false);
   if( images.size() != 0 ) {
@@ -275,8 +284,13 @@ void DCMChangeStructure::BuildStructData()
 		    "Line should have four words: STRUCTURE_NAME MATERIAL_NAME DENSITY bONLY_IN_THIS_STRUCTURE(0/1)");
       }
       StructData stData;
-      stData.stName = wl[0];
-      stData.mateName = wl[1];
+      G4String stnam = wl[0];
+      stnam.erase(std::remove(stnam.begin(), stnam.end(), '"'), stnam.end());
+      G4cout << " NO QUOTES " << stnam << "   " << wl[0] << G4endl; //GDEB
+      stData.stName = stnam;
+      G4String matenam = wl[1];
+      matenam.erase(std::remove(matenam.begin(), matenam.end(), '"'), matenam.end());
+      stData.mateName = matenam;
       if( stData.mateName != "" || stData.mateName != "NONE" ) bChangeMaterials = true;
       stData.density = GmGenUtils::GetValue(wl[2]);
       if( stData.density != -1 ) bChangeDensities = true;
@@ -291,18 +305,24 @@ void DCMChangeStructure::BuildStructData()
       G4Exception("changeStructure",
 		  "Error",
 		  FatalErrorInArgument,
-		  "MATERIAL_NAME CANNOT BE EMTPY AND AT THE SAME TIME DENSITY < 0 ");
+		  "MATERIAL_NAME CANNOT BE EMTPY AND AT THE SAME TIME DENSITY < ");
     }
     if( !bImageLimits ) {
+      StructData stData;
       if( theStructureName == "" ) {
 	G4Exception(theExeName,
 		    "Error",
-		    FatalErrorInArgument,
-		    "STRUCTURE_NAME CANNOT BE EMTPY");
+		    JustWarning, 
+		    "STRUCTURE_NAME IS EMTPY, making STRUCT ID = 0");
+	stData.stID = 0;
       }
-      StructData stData;
-      stData.stName = theStructureName;
-      stData.mateName = theMaterialName;
+      G4String stnam = theStructureName;
+      stnam.erase(std::remove(stnam.begin(), stnam.end(), '"'), stnam.end());
+      // G4cout << " NO QUOTES " << stnam << "   " <<theStructureName << G4endl; //GDEB
+      stData.stName = stnam;
+      G4String matenam = theMaterialName;
+      matenam.erase(std::remove(matenam.begin(), matenam.end(), '"'), matenam.end());
+      stData.mateName = matenam;
       stData.density = theDensity;
       stData.bOnly = bStOnly;
       theStructData.push_back(stData);
@@ -317,8 +337,14 @@ void DCMChangeStructure::BuildStructData()
     if( theStructData[ii].stName == "ALL" ) {
       for( itepv = theStNames.begin(); itepv != theStNames.end(); itepv++ ) {
 	StructData stData;
-	stData.stName = (*itepv).second;
-	stData.mateName = theStructData[ii].mateName;
+	G4String stnam = (*itepv).second;
+	stnam.erase(std::remove(stnam.begin(), stnam.end(), '"'), stnam.end());
+	//	G4cout << " NO QUOTES " << stnam << "   " << (*itepv).second << G4endl; //GDEB
+	stData.stName = stnam;
+	G4String matenam = theStructData[ii].mateName;
+	matenam.erase(std::remove(matenam.begin(), matenam.end(), '"'), matenam.end());
+	stData.stName = stnam;
+	stData.mateName = matenam;
 	stData.density = theStructData[ii].density;
 	stData.bOnly = theStructData[ii].bOnly;
 	theStructData.push_back(stData);
@@ -337,7 +363,7 @@ void DCMChangeStructure::BuildStructData()
   std::set< std::vector<StructData>::iterator >::iterator itesvsd;
   for( itesvsd = setAll.begin(); itesvsd != setAll.end(); itesvsd++ ){
     theStructData.erase(*itesvsd);
-  }      
+  }   
   
   //----- CHECK THAT AT LEAST 1 StructData IS FILLED
   if( theStructData.size() == 0 && !bImageLimits ) {
@@ -372,8 +398,9 @@ void DCMChangeStructure::BuildStructData()
   if( bChangeMaterials ) {
     for( itepv = theStNames.begin(); itepv != theStNames.end(); itepv++ ) {
       G4String StName = (*itepv).second;
+      G4cout << " FINDING StID in g4dcm " << StName << " ID " <<  (*itepv).first << G4endl; //GDEB
       for( size_t ii = 0; ii < theStructData.size(); ii++ ) {
-	//	G4cerr << " LOOPING theStructData " << ii << " stID " << theStructData[ii].stID << " stName " <<  theStructData[ii].stName << G4endl; //GDEB
+	G4cerr << " LOOPING theStructData " << ii << " stID " << theStructData[ii].stID << " stNameg4dcm " <<StName << " ? " << theStructData[ii].stName << G4endl; //GDEB
 	if( StName == theStructData[ii].stName ) {
 	  theStructData[ii].stID = (*itepv).first;
 	  if( DicomVerb(infoVerb) ) G4cout << ii << " StructData found stID " <<  (*itepv).first << " : " << StName << G4endl;
@@ -381,14 +408,16 @@ void DCMChangeStructure::BuildStructData()
 	}
       }
     }
-    //--- CHECK THAT ALL StrucData.stName's HAVE BEEN FOUND
+    //--- CHECK THAT ALL StrucData.stName's HAVE BEEN FOUND IN FILE
     for( size_t ii = 0; ii < theStructData.size(); ii++ ) {
       if( theStructData[ii].stID == 0 ) {
-	G4cerr << " !!! theStructData " << ii << " stID " << theStructData[ii].stID << " stName " <<  theStructData[ii].stName << G4endl;
-	G4Exception("changeStructure",
-		    "",
-		    FatalErrorInArgument,
-		    (G4String("Structure name not found: ") + theStructData[ii].stName).c_str());
+	if( theStructData[ii].stName != "" ) {
+	  G4cerr << " !!! theStructData " << ii << " stID " << theStructData[ii].stID << " stName " <<  theStructData[ii].stName << G4endl;
+	  G4Exception("changeStructure",
+		      "",
+		      FatalErrorInArgument,
+		      (G4String("Structure name not found: ") + theStructData[ii].stName).c_str());
+	}
       }
     }
     
@@ -397,7 +426,7 @@ void DCMChangeStructure::BuildStructData()
     std::vector<DicomVReaderImage*> vireaders = theReaderMgr->GetImageReaders(DRM_G4dcmCT); // there must be 1
     theG4dcmCTReader = static_cast<DicomReaderG4dcmCT*>(vireaders[0]);
     std::map<G4int,G4String> materialNames = theG4dcmCTReader->GetMaterialNames();
-    //    G4cout << theG4dcmCTReader << " N_MATERIALS = " << materialNames.size() << G4endl; //GDEB
+    G4cout << theG4dcmCTReader << " N_MATERIALS = " << materialNames.size() << G4endl; //GDEB
     std::map<G4int,G4String>::const_iterator ite;
     for( ite = materialNames.begin(); ite != materialNames.end(); ite++ ){
       //      G4cout << " LOOPING MATERIAL: " <<  (*ite).first << " = " <<  (*ite).second << G4endl; //GDEB
@@ -430,7 +459,7 @@ void DCMChangeStructure::BuildStructData()
 	G4int newMateID = (*(materialNamesNow.rbegin())).first + 1;
 	theG4dcmCTReader->AddMaterialName(newMateID, theMaterialName);
 	theMaterialID = newMateID;
-	if( DicomVerb(infoVerb) ) G4cout << " newMaterial " << theMaterialID << " : " << theMaterialName << G4endl;
+	if( DicomVerb(infoVerb) ) G4cout << "bImageLimits newMaterial " << theMaterialID << " : " << theMaterialName << G4endl;
       }
     }
   }
@@ -461,7 +490,7 @@ void DCMChangeStructure::ChangeImagesByStruct()
   //--- LOOP TO VOXELS TO CHANGE MATERIAL OR DENSITY
   G4int nVoxels = theAnalyseImage->GetNoVoxels();
   //  G4cout << " DCMChangeStructure::ChangeImagesByStruct " << nVoxels << G4endl; //GDEB
-  StructData stData = theStructData[0]; //GDEB
+  //  StructData stData = theStructData[0]; //GDEB
   //    G4cout << " STID SEARCHED " << stData.stID << G4endl; //GDEB
   for( G4int ii = 0; ii < nVoxels; ii++ ) {
     std::set<G4int> stIDList = theStructImage->GetIDList(ii);
@@ -497,7 +526,7 @@ void DCMChangeStructure::ChangeImagesByStruct()
 		      "Not material nor material density to be changed for one StructData");
 	}    
 	//	std::cout << ii << " " << id1 << " " << iis << " stid1 == stData.stID " << stid1 << " == " << stData.stID << std::endl; //GDEB
-	if( stid1 == stData.stID ) {
+	if( stid1 == stData.stID ) {  // VOXEL IN STRUCTURE: CHANGE IT!
 	  //	  std::cout << ii << " stid1 FOUND " << stid1 << " -> " << stData.mateID << " " <<  stData.bOnly << " " <<nSTs << " bImageG4dcmCT " << bImageG4dcmCT << std::endl; //GDEB
 	  //	  if( posZ < -867 && posZ > -871 && posY < -100 && posY > -140 ) G4cout << " CHANGE StIDLIST " << stData.bOnly << " " << nSTs << " " << bImageG4dcmCT << " " << bChangeMaterials << G4endl; //GDEB 
 
@@ -534,32 +563,63 @@ void DCMChangeStructure::ChangeImagesByLimits()
   G4double imVoxDimY = theAnalyseImage->GetVoxelDimY();
   G4double imVoxDimZ = theAnalyseImage->GetVoxelDimZ();
   //  G4cout << " DCMChangeStructure::ChangeImagesByLimits " << nVoxels << G4endl; //GDEB
+  G4int nVoxelChanged = 0;
   for( G4int ii = 0; ii < nVoxels; ii++ ) {
     G4int ix = ii%imNVoxelX;
     G4int iy = (ii/imNVoxelX)%imNVoxelY;
     G4int iz = ii/imNVoxelXY;
-    double voxXmin = imMinX + (ix+1)*imVoxDimX; // if minX line crosses voxel do not take it
-    double voxXmax = imMinX + (ix)*imVoxDimX; // if maxX line crosses voxel do not take it
-    double voxYmin = imMinY + (iy+1)*imVoxDimY; // if minY line crosses voxel do not take it
-    double voxYmax = imMinY + (iy)*imVoxDimY; // if maxY line crosses voxel do not take it
-    double voxZmin = imMinZ + (iz+1)*imVoxDimZ; // if minZ line crosses voxel do not take it
-    double voxZmax = imMinZ + (iz)*imVoxDimZ; // if maxZ line crosses voxel do not take it
-    /*      G4cout << ii << " " << ix << " CUT X " << voxXmin << " > " << theImageMinX << " && " << voxXmax << " < " << theImageMaxX << G4endl; //GDEB
-      G4cout << ii << " " << iy << " CUT Y " << voxYmin << " > " << theImageMinY << " && " << voxYmax << " < " << theImageMaxY << G4endl; //GDEB
-      G4cout << ii << " " << iz << " CUT Z " << voxZmin << " > " << theImageMinZ << " && " << voxZmax << " < " << theImageMaxZ << G4endl; //GDEB*/
-    if( voxXmin > theImageMinX && voxXmax < theImageMaxX 
-	&& voxYmin > theImageMinY && voxYmax < theImageMaxY
-	&& voxZmin > theImageMinZ && voxZmax < theImageMaxZ ) {
+    double voxXmin = imMinX + (ix)*imVoxDimX; // if minX line crosses voxel do not take it
+    double voxXmax = imMinX + (ix+1)*imVoxDimX; // if maxX line crosses voxel do not take it
+    double voxYmin = imMinY + (iy)*imVoxDimY; // if minY line crosses voxel do not take it
+    double voxYmax = imMinY + (iy+1)*imVoxDimY; // if maxY line crosses voxel do not take it
+    double voxZmin = imMinZ + (iz)*imVoxDimZ; // if minZ line crosses voxel do not take it
+    double voxZmax = imMinZ + (iz+1)*imVoxDimZ; // if maxZ line crosses voxel do not take it
+    // G4cout << ii << " " << ix << " CUT X " << voxXmin << " > " << theImageMinX << " && " << voxXmax << " < " << theImageMaxX << G4endl; //GDEB
+    //    G4cout << ii << " " << iy << " CUT Y " << voxYmin << " > " << theImageMinY << " && " << voxYmax << " < " << theImageMaxY << G4endl; //GDEB
+    //  G4cout << ii << " " << iz << " CUT Z " << voxZmin << " > " << theImageMinZ << " && " << voxZmax << " < " << theImageMaxZ << G4endl; //GDEB*/
+    if( voxXmax > theImageMinX && voxXmin < theImageMaxX 
+	&& voxYmax > theImageMinY && voxYmin < theImageMaxY
+	&& voxZmax > theImageMinZ && voxZmin < theImageMaxZ ) {
+      //      G4cout << ii << " " << iy << " PASS CUT Y " << voxYmin << " > " << theImageMinY << " && " << voxYmax << " < " << theImageMaxY << G4endl; //GDEB
       if( bChangeMaterials ) theAnalyseImage->SetData(ii,theMaterialID);
-      if( bChangeDensities ) theMateDensImage->SetData(ii,theDensity);
-      if( DicomVerb(debugVerb ) ) {
-	G4cout << ii << " " << ix << " CUT X " << voxXmin << " > " << theImageMinX << " && " << voxXmax << " < " << theImageMaxX << G4endl; 
-	G4cout << ii << " " << iy << " CUT Y " << voxYmin << " > " << theImageMinY << " && " << voxYmax << " < " << theImageMaxY << G4endl; 
-	G4cout << ii << " " << iz << " CUT Z " << voxZmin << " > " << theImageMinZ << " && " << voxZmax << " < " << theImageMaxZ << G4endl; 
+      G4double fractionIn = 1.;
+      if( voxXmin < theImageMinX ) {
+	fractionIn *= (voxXmax - theImageMinX)/imVoxDimX;
+	//G4cout << " fractionIn CHANGED voxXmin " << fractionIn << G4endl; //GDEB
       }
+      if( voxXmax > theImageMaxX ) {
+	fractionIn *= (theImageMaxX - voxXmin )/imVoxDimX;
+	//	G4cout << " fractionIn CHANGED voxYmax " << fractionIn << G4endl; //GDEB
+      }
+      if( voxYmin < theImageMinY ) {
+	fractionIn *= (voxYmax - theImageMinY)/imVoxDimY;
+	//G4cout << " fractionIn CHANGED voxYmin " << fractionIn << G4endl; //GDEB
+      }
+      if( voxYmax > theImageMaxY ) {
+	fractionIn *= (theImageMaxY - voxYmin )/imVoxDimY;
+	//	G4cout << " fractionIn CHANGED voxYmax " << fractionIn << G4endl; //GDEB
+      }
+      if( voxZmin < theImageMinZ ) {
+	fractionIn *= (voxZmax - theImageMinZ)/imVoxDimZ;
+	//	G4cout << " fractionIn CHANGED voxZmin " << fractionIn << G4endl; //GDEB
+      }
+      if( voxZmax > theImageMaxZ ) {
+	fractionIn *= (theImageMaxZ - voxZmin )/imVoxDimZ;
+	//	G4cout << " fractionIn CHANGED voxZmax " << fractionIn << G4endl; //GDEB
+      }
+      G4double oldDens = theMateDensImage->GetData(ii);
+      G4double newDens = oldDens * (1-fractionIn) + theDensity * fractionIn;
+      if( bChangeDensities ) theMateDensImage->SetData(ii,newDens);
+      if( DicomVerb(debugVerb ) ) {
+	G4cout << ii << " CHANGED " << ix << " CUT X " << voxXmin << " > " << theImageMinX << " && " << voxXmax << " < " << theImageMaxX << G4endl; 
+	G4cout << ii << " CHANGED " << iy << " CUT Y " << voxYmin << " > " << theImageMinY << " && " << voxYmax << " < " << theImageMaxY << G4endl; 
+	G4cout << ii << " CHANGED " << iz << " CUT Z " << voxZmin << " > " << theImageMinZ << " && " << voxZmax << " < " << theImageMaxZ << G4endl; 
+      }
+      nVoxelChanged++;
     }
     //    G4cout << ii << " MATE ID  " << mateIDs[ii] << " " << mateDens[ii] << G4endl; //GDEB
   }
+  if( DicomVerb(infoVerb ) ) G4cout << " DCMChangeStructure::ChangeImagesByLimits CHANGED " << nVoxelChanged << " OUT OF " << nVoxels << G4endl;
 }
 
 //---------------------------------------------------------------------------

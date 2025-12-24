@@ -1,3 +1,4 @@
+# python fit3GaussianExp.py profAir1D.ScoreAir_175.5_confE175.5_9911_1000000_50.Exp.csv
 from collections.abc import MutableMapping
 import numpy as np
 import math
@@ -7,6 +8,7 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import matplotlib
 from scipy.interpolate import interp1d, griddata,bisplrep,interp2d
+from scipy.optimize import minimize
 
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
 def CleanName(name):
@@ -54,14 +56,14 @@ class Histo1D(MutableMapping):
     def __init__(self, args=[]):
         if len(args) == 0 :
             return
-        #        print("MyHistos args",args," N=",len((args)))#GDEB
+        # print("MyHistos args",args," N=",len((args)))#GDEB
         self.type = args[0]
         self.name = CleanName(args[1])
         self.nbin = int(args[2])
         self.data = np.zeros([self.nbin])
         self.dataErr = np.zeros([self.nbin])
         if len(args) != 2*self.nbin+14 :
-            print("!! ERROR: Histo1D ",self.name," should have nbin ",2*self.nbin+14," and it has ",len(args))
+            print("!! ERROR: Histo1D __init__ ",self.name," should have nbin ",2*self.nbin+14," and it has ",len(args))
             sys.exit()
         self.xmin = float(args[3])
         self.xmax = float(args[4])
@@ -79,7 +81,11 @@ class Histo1D(MutableMapping):
         self.RMSErr = float(args[2*self.nbin+13])
         
         #        self.num_holes = kwargs.get('num_holes',random_holes())
-
+        #print("HISNAME",self.name,self.nbin,"xminmax",self.xmin,self.xmax)
+        #xbins=self.Xbins()
+        #        for ii in range(self.nbin) :
+        #           print(ii,"hisXY",xbins[ii],self.data[ii])
+        
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def FillFromLine(self,line):
         self.type = "1D"
@@ -105,17 +111,21 @@ class Histo1D(MutableMapping):
         self.RMS = 0.
         self.RMSErr = 0.
 
-
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def FillFromArrays(self,data,dataErr,minX,maxX) :
         self.nbin = len(data)
         self.xmin = minX
         self.xmax = maxX
-        self.data = data
-        self.dataErr = dataErr 
+        self.data = np.zeros(self.nbin)
+        self.dataErr = np.zeros(self.nbin)
+        for ii in range(self.nbin) :
+            self.data[ii] = data[ii]
+            self.dataErr[ii] = dataErr[ii]
+#            print(ii,self.name,"FillFromArrays", self.data[ii],"+-",self.dataErr[ii])
+#        self.data = data
+ #       self.dataErr = dataErr 
         self.nent = self.data.sum()
-
-        CalculateMeanAndRMS()
+        self.CalculateMeanAndRMS()
         self.under = (self.data < self.xmin).sum()
         self.over = (self.data > self.xmax).sum()
         self.underErr = 0. #??
@@ -123,11 +133,14 @@ class Histo1D(MutableMapping):
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def copy(self, his1orig):
-        self.data = his1orig.data
-        self.dataErr = his1orig.dataErr
         self.type = his1orig.type
         self.name = his1orig.name
         self.nbin = his1orig.nbin
+        self.data = np.zeros(self.nbin)
+        self.dataErr = np.zeros(self.nbin)
+        for ii in range(self.nbin) :
+            self.data[ii] = his1orig.data[ii]
+            self.dataErr[ii] = his1orig.dataErr[ii]
         self.xmin = his1orig.xmin
         self.xmax = his1orig.xmax
         self.under = his1orig.under
@@ -144,6 +157,8 @@ class Histo1D(MutableMapping):
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     ### NORM TO INTEGRAL
     def norm(self,normValue):
+        return self.normToIntegral(normValue)
+    def normToIntegral(self,normValue):
         dataSum = reduce(lambda nn,mm: nn+mm,self.data)
 #        dataSum2 = sum(self.data)
 #        print("DATASUM",dataSum,dataSum2)
@@ -151,17 +166,18 @@ class Histo1D(MutableMapping):
             factor = normValue/dataSum
         else :
             factor = 1.
-        print(self.name,"NORM=",normValue,"factor=", factor,"dataSum=",dataSum)
+        #print(self.name,"NORM=",normValue,"factor=", factor,"dataSum=",dataSum)
         self.data *= factor
         self.dataErr *= factor
 
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def normToValue(self,normValue):
         max = np.max(self.data)
         factor = normValue/max 
         print(self.name,"NORM=",normValue,"factor=", factor,"max=",max)
         self.data *= factor
         self.dataErr *= factor
-        print(self.name,"NORMDONE= max=",np.max(self.data))
+        #print(self.name,"NORMDONE= max=",np.max(self.data))
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     ### NORM TO VALUE AT A POINT
@@ -267,65 +283,89 @@ class Histo1D(MutableMapping):
         return True
             
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def Add(self,obj,bCheckEqual=True):
+    def Add(self,hobj,bCheckEqual=True):
 
-        if bCheckEqual and not self.CheckEqual(obj) :
+        if bCheckEqual and not self.CheckEqual(hobj) :
             return self
 
-        newData = sum2(self.under,self.underErr,obj.under,obj.underErr)
-        self.under = self.under+obj.under
-        self.underErr = np.sqrt(pow(self.underErr,2)+pow(obj.underErr,2))
-        self.data += obj.data
-        self.dataErr = np.sqrt(np.power(self.dataErr,2)+np.power(obj.dataErr,2))
-        self.over = self.over+obj.over
-        self.overErr = np.sqrt(pow(self.overErr,2)+pow(obj.overErr,2))
-        self.nent += obj.nent
+        self.under = self.under+hobj.under
+        self.underErr = np.sqrt(pow(self.underErr,2)+pow(hobj.underErr,2))
+        self.data += hobj.data
+        self.dataErr = np.sqrt(np.power(self.dataErr,2)+np.power(hobj.dataErr,2))
+        self.over = self.over+hobj.over
+        self.overErr = np.sqrt(pow(self.overErr,2)+pow(hobj.overErr,2))
+        self.nent += hobj.nent
 
-        newData = sum2(self.mean,self.meanErr,obj.mean,obj.meanErr)
+        newData = sum2(self.mean,self.meanErr,hobj.mean,hobj.meanErr)
   #        print("HISTO1 Add mean",newData[0],newData[1],"<-",self.mean,self.meanErr)
         self.mean = newData[0]
         self.meanErr = newData[1]
 
-        newData = sum2(self.RMS,self.RMSErr,obj.RMS,obj.RMSErr)
+        newData = sum2(self.RMS,self.RMSErr,hobj.RMS,hobj.RMSErr)
         self.RMS = newData[0]
         self.RMSErr = newData[1]
 
         return self
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def Average(self,obj,bCheckEqual=True):
+    def Average(self,hobj, bCheckEqual=True, bUseErrors=True):
 
-        if bCheckEqual and not self.CheckEqual(obj) :
+        if bCheckEqual and not self.CheckEqual(hobj) :
             return self
         
-        newData = sum2(self.under,self.underErr,obj.under,obj.underErr)
+        if bUseErrors : 
+            newData = sum2(self.under,self.underErr,hobj.under,hobj.underErr)
+        else :
+            newData = [] 
+            newData.append((self.under+hobj.under)/2)
+            newData.append((self.underErr+hobj.underErr)/2)
         self.under = newData[0]
         self.underErr = newData[1]
         # !!! MASK != 0
-        weiself = np.zeros(self.nbin)
-        weiobj = np.zeros(self.nbin)
+        #weiself = np.zeros(self.nbin)
+        # weihobj = np.zeros(self.nbin)
         for ii in range(0,self.nbin) :
-            newData = sum2(self.data[ii],self.dataErr[ii],obj.data[ii],obj.dataErr[ii])
+            if bUseErrors :
+                newData = sum2(self.data[ii],self.dataErr[ii],hobj.data[ii],hobj.dataErr[ii])
+            else :
+                newData = []
+                newData.append((self.data[ii]+hobj.data[ii])/2.)
+                #print(self.name,ii,"AVERAGE",(self.data[ii]+hobj.data[ii])/2.,self.data[ii],hobj.data[ii]) #GDEB
+                newData.append((self.dataErr[ii]+hobj.dataErr[ii])/2.)
             self.data[ii] = newData[0]
             self.dataErr[ii] = newData[1]
         # gives error if bin error is 0     weidat = 1. / np.power(self.dataErr,2) 
-        # gives error if bin error is 0     weiobj = 1. / np.power(obj.dataErr,2)
-         # gives error if bin error is 0    self.data = (self.data * weidat + obj.data * weiobj ) / (weidat+weiobj)
-        # gives error if bin error is 0     self.dataErr = np.sqrt(1. / (weidat+weiobj) )
-        newData = sum2(self.over,self.overErr,obj.over,obj.overErr)
+        # gives error if bin error is 0     weihobj = 1. / np.power(hobj.dataErr,2)
+        # gives error if bin error is 0    self.data = (self.data * weidat + hobj.data * weihobj ) / (weidat+weihobj)
+        # gives error if bin error is 0     self.dataErr = np.sqrt(1. / (weidat+weihobj) )
+        
+        if bUseErrors : 
+            newData = sum2(self.over,self.overErr,hobj.over,hobj.overErr)
+        else :
+            newData = [] 
+            newData.append((self.over+hobj.over)/2)
+            newData.append((self.overErr+hobj.overErr)/2)
         self.over = newData[0]
         self.overErr = newData[1]
-        self.nent += obj.nent
+        self.nent += hobj.nent
 
-        if not math.isnan(self.meanErr) and not math.isnan(obj.meanErr) :
-            newData = sum2(self.mean,self.meanErr,obj.mean,obj.meanErr)
-            #print("HISTO1 Average mean",newData[0],newData[1],"<-",self.mean,self.meanErr)
-            self.mean = newData[0]
-            self.meanErr = newData[1]
+        if bUseErrors : 
+            #            if not math.isnan(self.meanErr) and not math.isnan(hobj.meanErr) :
+            newData = sum2(self.mean,self.meanErr,hobj.mean,hobj.meanErr)
         else :
-            self.mean = (self.mean+obj.mean)/2.
-            self.meanErr = 0.
-        newData = sum2(self.RMS,self.RMSErr,obj.RMS,obj.RMSErr)
+            newData = [] 
+            newData.append((self.mean+hobj.mean)/2)
+            newData.append((self.meanErr+hobj.meanErr)/2)
+        self.mean = newData[0]
+        self.meanErr = newData[1]
+        #print("HISTO1 Average mean",newData[0],newData[1],"<-",self.mean,self.meanErr) #GDEB
+
+        if bUseErrors : 
+            newData = sum2(self.RMS,self.RMSErr,hobj.RMS,hobj.RMSErr)
+        else :
+            newData = [] 
+            newData.append((self.RMS+hobj.RMS)/2)
+            newData.append((self.RMSErr+hobj.RMSErr)/2)
         self.RMS = newData[0]
         self.RMSErr = newData[1]
 
@@ -357,32 +397,32 @@ class Histo1D(MutableMapping):
         return self
             
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def AddDisp(self,obj):
+    def AddDisp(self,hobj):
         
-        newData = sum2(self.under,self.underErr,obj.under,obj.underErr)
+        newData = sum2(self.under,self.underErr,hobj.under,hobj.underErr)
         self.under = newData[0]
         self.underErr = newData[1]
         hXold = self.Xbins()
-        hXnew = obj.Xbins()
+        hXnew = hobj.Xbins()
         for ix in range(0,len(hXold)) :
             hx = hXold[ix]
             if hx in hXnew :
                 ix2 = hXnew.index(hx)
-                newData = sum2(self.data[ix],self.dataErr[ix],obj.data[ix2],obj.dataErr[ix2])
-            # if self.data[ix] != 0. : print(ix,ix2,"AddDisp BEF",self.data[ix],obj.data[ix2]) //GDEB
+                newData = sum2(self.data[ix],self.dataErr[ix],hobj.data[ix2],hobj.dataErr[ix2])
+            # if self.data[ix] != 0. : print(ix,ix2,"AddDisp BEF",self.data[ix],hobj.data[ix2]) //GDEB
             self.data[ix] = newData[0]
             self.dataErr[ix] = newData[1]
             # if self.data[ix] != 0. : print(ix,"AddDisp AFT",self.data[ix]) # GDEB
-        newData = sum2(self.over,self.overErr,obj.over,obj.overErr)
+        newData = sum2(self.over,self.overErr,hobj.over,hobj.overErr)
         self.over = newData[0]
         self.overErr = newData[1]
-        self.nent += obj.nent
+        self.nent += hobj.nent
 
-        newData = sum2(self.mean,self.meanErr,obj.mean,obj.meanErr)
+        newData = sum2(self.mean,self.meanErr,hobj.mean,hobj.meanErr)
         self.mean = newData[0]
         self.meanErr = newData[1]
 
-        newData = sum2(self.RMS,self.RMSErr,obj.RMS,obj.RMSErr)
+        newData = sum2(self.RMS,self.RMSErr,hobj.RMS,hobj.RMSErr)
         self.RMS = newData[0]
         self.RMSErr = newData[1]
 
@@ -456,11 +496,7 @@ class Histo1D(MutableMapping):
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GaussianFit(self, idHis, bFitPlot) :
-        # idHis is used to select color
-        # bFitPlot controls what to print on histogram
-        #      bFitPlot%10 == 1: draws gaussian fit histogram
-        #     (bFitPlot/10) == 1 : print parameters on histogram
-        #        print("GaussianFit bFitPlot ",bFitPlot)
+        print("GaussianFit bFitPlot ",bFitPlot)
         hx = self.Xbins()
         hy = self.data
         hxysum = 0
@@ -496,7 +532,7 @@ class Histo1D(MutableMapping):
 
         # #        parameters, covariance = curve_fit(self.Gauss, hX, hY)
         hyFit = self.gauss(hx,param[0],param[1],param[2])
-#        print("GaussianFit par",param) #GDEB
+        # print("GaussianFit par",param) #GDEB
 #        print("GaussianFit cov",covariance) #GDEB
         #        print("hyFit ",hyFit)
         #-      plt.plot(hx,*self.gauss(hx,param[0],param[1],param[2],param[3]))
@@ -517,26 +553,31 @@ class Histo1D(MutableMapping):
             #t DO NOT PLOT FIT
             plt.plot(hxt, hyt, label='fit', linestyle='dotted',color=lcolor) #(0, (1, 10)),color='black')  # https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
             plt.plot(hx, hyFit, label='fit', linestyle='dotted',color=lcolor) #(0, (1, 10)),color='black')  # https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
+            #print("GaussianFIT hx",hx)
+            #print("GaussianFIT hyFit",hyFit)
             plt.draw()
             #            plt.legend()
-        #print("GaussianFit bFitPlot ",int(bFitPlot/10)) #GDEB
+        #print("GaussianFit bFitPlot ",int(bFitPlot/10)) #GDEB        
         if int(bFitPlot/10) == 1 :
+            stext=""
+            #print("IDHIS ",idHis)#GDEB
             if idHis == 0:
                 lcolor = 'black'
                 stext="MC sigma="
             elif idHis == 1:
                 lcolor = 'red'
                 stext="Exp. sigma="
-            print("STEXT",idHis)#GDEB
+            #print("STEXT",idHis)#GDEB
             xPos = self.xmax*0.2
-            yPos = self.maximumY()*(0.7-idHis*0.1)
+            yPos = self.maximumY()*(0.7-idHis*0.1)            
             #            plt.text(xPos,yPos,"mean= "+"{:.4e}".format(param[1]), color=lcolor)
             #            yPos = self.maximumY()*(0.65-idHis*0.1)
             #print("SIGMA COLOR",lcolor,"xytext",xPos,yPos,) #GDEB
             matplotlib.rcParams.update({'font.size': 15})
             plt.text(xPos,yPos,stext+" "+"{:.4g}".format(param[2]), color=lcolor)
-            print("GAUSS TEXT",xPos,yPos,"sigma= "+"{:.4e}".format(param[2])) #GDEB
+            #print("GAUSS TEXT",xPos,yPos,"sigma= "+"{:.4e}".format(param[2])) #GDEB
             print("GAUSS RES",param[0],param[1],param[2]) #GDEB
+            print("GAUSS ERRORS",covariance[0][0],covariance[0][1],covariance[0][2],covariance[1][0],covariance[1][1],covariance[1][2],covariance[2][0],covariance[2][1],covariance[2][2])
             plt.draw()
 
         return param,covariance
@@ -547,6 +588,14 @@ class Histo1D(MutableMapping):
         #print("gauss ", A,x0,sigma,"X=",x)
         #print("gauss ", A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2)))
         return A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2))
+
+        #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def gaussCenters0(self,x, A, sigma):
+        x0 = 0
+        #print(self.name,x0, sigma,"gauss", A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2))) # GDEB
+        #print("gauss ", A,x0,sigma,"X=",x)
+        #print("gauss ", A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2)))
+        return self.gauss(self,x, A, x0, sigma)
 #    def gauss_fit(self,x, y):
 #        xysum = 0
 #        xsum = 0
@@ -568,7 +617,7 @@ class Histo1D(MutableMapping):
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def DoubleGaussianCenters0Fit(self, idHis, bFitPlot) :
-#        print("GaussianFit bFitPlot ",bFitPlot)
+        #print("DoubleGaussianCenters0Fit bFitPlot ",bFitPlot)
         hx = self.Xbins()
         hy = self.data
         hxysum = 0
@@ -625,22 +674,32 @@ class Histo1D(MutableMapping):
             hxt = []
             hyt = []
             if idHis == 1:
-                lcolor = 'grey'
+                lcolor = 'green'
             elif idHis == 0:
                 lcolor = 'red'
             #t DO NOT PLOT FIT
             plt.plot(hxt, hyt, label='fit', linestyle='dotted',color=lcolor) #(0, (1, 10)),color='black')  # https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
             plt.plot(hx, hyFit, label='fit', linestyle='dotted',color=lcolor) #(0, (1, 10)),color='black')  # https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
+            #            print("DoubleGaussianFIT hx",hx) #GDEB
+ #           print("DoubleGaussianFIT hyFit",hyFit) #GDEB
+            chi2= 0.
+            for ii in range(len(self.data)) :                
+                if hy[ii] >= 1. :
+                    diff=hyFit[ii]-hy[ii]
+                    chi2 += np.abs(diff)
+                    #print(ii,"{:.4e}".format(chi2),"X",hx[ii],"{:.4e}".format(diff),"=","{:.4e}".format(hyFit[ii]),"-","{:.4e}".format(hy[ii]))           #GDEB
+#                print(ii,chi2,"X",hx[ii],hyFit[ii]-hy[ii],"=",hyFit[ii],"-",hy[ii])
             plt.draw()
+            
             #            plt.legend()
         #print("GaussianFit bFitPlot ",int(bFitPlot/10)) #GDEB
         if int(bFitPlot/10) == 1 :
             if idHis == 0:
                 lcolor = 'black'
-                stext="MC sigma="
+                stext="MC "
             elif idHis == 1:
                 lcolor = 'red'
-                stext="Exp. sigma="
+                stext="Exp. "
             # print("STEXT",idHis)#GDEB
             xPos = self.xmax*0.2
             yPos = self.maximumY()*(0.7-idHis*0.1)
@@ -648,13 +707,16 @@ class Histo1D(MutableMapping):
             #            yPos = self.maximumY()*(0.65-idHis*0.1)
             #print("SIGMA COLOR",lcolor,"xytext",xPos,yPos,) #GDEB
             matplotlib.rcParams.update({'font.size': 15})
-            plt.text(xPos,yPos,stext+" "+"{:.4g}".format(param[2]), color=lcolor)
-            print("GAUSS TEXT",xPos,yPos,"sigma1= "+"{:.4e}".format(param[1]),"sigma2= "+"{:.4e}".format(param[3]),"ratio= "+"{:.4e}".format(param[0]/param[2])) #GDEB
-            print("GAUSS RES",param[0],param[1],param[2],param[3]) #GDEB
+            #plt.text(xPos,yPos,stext+" "+"{:.4g}".format(param[2]), color=lcolor)
+            plt.text(xPos,yPos,stext+" "+"s1={:.4g}".format(param[1])+" s2={:.4g}".format(param[3]), color=lcolor)
+            # print("GAUSS TEXT",xPos,yPos,"sigma1= "+"{:.4e}".format(param[1]),"sigma2= "+"{:.4e}".format(param[3]),"fraction_1= "+"{:.4e}".format(param[0]/(param[0]+param[2]))) #GDEB
+            # print(self.name,"GAUSS RES",param[0],param[1],param[2],param[3]) #GDEB
             plt.draw()
 
             #      print("doubleGaussCenters0 return", param)
-    
+            
+            "{:.4e}".format(param[1])
+        print(self.name,"GAUSS RES","{:.4f}".format(param[0]),"{:.4f}".format(param[1]),"{:.4f}".format(param[2]),"{:.4f}".format(param[3])) #GDEB
         return param,covariance
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
@@ -665,14 +727,201 @@ class Histo1D(MutableMapping):
        # print(A2 * np.exp(-(x-x0) ** 2 / (2 * sigma2 ** 2)))
         return A1 * np.exp(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)) +  A2 * np.exp(-(x-x0) ** 2 / (2 * sigma2 ** 2))
 
-        #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def doubleGaussCenters0(self,x, A1, sigma1, A2, sigma2):
-   #     print("doubleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"X=",x)
-        if x == -75.0 :  print("doubleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"75X=",x)
+        #     print("doubleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"X=",x)
+        # if x == -75.0 :  print("doubleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"75X=",x) #GDEB
         x0 = 0.  # needed to avoid : TypeError: unsupported operand type(s) for -: 'list' and 'float'
         #print(A1 * np.exp(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)))
         #print(A2 * np.exp(-(x-x0) ** 2 / (2 * sigma2 ** 2)))
-        return A1 * np.exp(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)) +  A2 * np.exp(-(x-x0) ** 2 / (2 * sigma2 ** 2))
+        #        return A1 * np.exp(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)) +  A2 * np.exp(-(x-x0) ** 2 / (2 * sigma2 ** 2))
+        return self.doubleGauss(x, A1, x0, sigma1, x0, A2, sigma2)
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def doubleGauss(self,x, A1, x01, sigma1, x02, A2, sigma2):
+   #     print("doubleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"X=",x)
+        # if x == -75.0 :  print("doubleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"75X=",x) #GDEB
+        #print(A1 * np.exp(-(x-x01 ) ** 2 / (2 * sigma1 ** 2)))
+        #print(A2 * np.exp(-(x-x01) ** 2 / (2 * sigma2 ** 2)))
+        return A1 * np.exp(-(x-x01 ) ** 2 / (2 * sigma1 ** 2)) +  A2 * np.exp(-(x-x02) ** 2 / (2 * sigma2 ** 2))
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def TripleGaussianCenters0Fit(self, idHis, bFitPlot, paramP0=[], paramBounds=[]) :
+        #print("TripleGaussianCenters0Fit bFitPlot ",bFitPlot)
+        hx = self.Xbins()
+        hy = self.data
+        hxysum = 0
+        hxsum = 0
+        hysum = 0
+        for ii in range(0,len(hy)):
+            hxysum += hx[ii]*hy[ii]
+            hxsum += hx[ii]
+            hysum += hy[ii]
+            #            print("hxysum",hxysum,hx[ii],"*",hy[ii]) # GDEB
+        if hysum != 0. :
+            mean = hxysum/hysum
+        else :
+            print("!!! ERROR IN TripleGaussianCenters0Fit. Returning param=0 for ",self.name," BECAUSE hysum = ",hysum,"HY",self.data)
+            param = [0.,0.,0.,0.,0.,0.]
+            covariance = [ [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.]]
+            return param,covariance
+        #        mean = sum(hx * hy) / sum(hy)
+        hxysum = 0
+        for ii in range(0,len(hy)):
+            hxysum += hy[ii]*(hx[ii]-mean)**2
+            #            print("2hxysum",hxysum,hy[ii],"*(",hx[ii],"-",mean) #GDEB
+        #         A, x0, sigma = self.gauss_fit(hx, hy)
+        #        sigma = np.sqrt(sum(hy * (hx - mean) ** 2) / sum(hy))
+        #        print("CALL curve_fit gauss",hy)
+        try:
+            #            print("self.tripleGaussCenters0np",hx, hy)
+            #           print("self.tripleGaussCenters0np",max(hy), sigma1, max(hy)/3., sigma2, max(hy/10.), sigma3)
+            #            param, covariance = curve_fit(self.tripleGaussCenters0np, hx, hy, p0=[max(hy), sigma1, max(hy)/3., sigma2, max(hy)/10., sigma3])
+            param, covariance = curve_fit(self.tripleGaussCenters0, hx, hy, p0=paramP0, bounds=paramBounds)
+        except RuntimeError:
+            print("!!! ERROR IN TripleGaussianCenters0Fit. Gaussian fit cannot be done for ",self.name,"HY",self.data)
+            param = [0.,0.,0.,0.,0.,0.]
+            covariance = [ [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.]]
+            return param,covariance
+        
+        # #        parameters, covariance = curve_fit(self.Gauss, hX, hY)
+        #t?!?!?         hyFit = self.tripleGaussCenters0( hx, param[0],param[1],param[2], param[3])
+        hyFit = []
+        for hx1 in hx :
+            hyFit.append(self.tripleGaussCenters0( hx1, param[0],param[1],param[2],param[3],param[4], param[5]))
+
+        #        print("GaussianFit par",param) #GDEB
+        #        print("GaussianFit cov",covariance) #GDEB
+        #        print("hyFit ",hyFit)
+        #-      plt.plot(hx,*self.gauss(hx,param[0],param[1],param[2],param[3]))
+        #        plt.plot(hx, self.gauss(hx, *self.gauss_fit(hx, hy)), '--r', label='fit')
+        lcolor = 'black'
+        if idHis == 0:
+            lcolor = 'black'
+        elif idHis == 1:
+            lcolor = 'black'
+        #        bFitPlot = 1
+        if bFitPlot%10 == 1 :
+            hxt = []
+            hyt = []
+            if idHis == 1:
+                lcolor = 'green'
+            elif idHis == 0:
+                lcolor = 'red'
+            #t DO NOT PLOT FIT
+            plt.plot(hxt, hyt, label='fit', linestyle='dotted',color=lcolor) #(0, (1, 10)),color='black')  # https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
+            plt.plot(hx, hyFit, label='fit', linestyle='dotted',color=lcolor) #(0, (1, 10)),color='black')  # https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
+            #            print("TripleGaussianFIT hx",hx) #GDEB
+            #           print("TripleGaussianFIT hyFit",hyFit) #GDEB
+            chi2= 0.
+            for ii in range(len(self.data)) :                
+                if hy[ii] >= 1. :
+                    diff=hyFit[ii]-hy[ii]
+                    chi2 += np.abs(diff)
+                    #print(ii,"{:.4e}".format(chi2),"X",hx[ii],"{:.4e}".format(diff),"=","{:.4e}".format(hyFit[ii]),"-","{:.4e}".format(hy[ii]))           #GDEB
+            #         print(ii,chi2,"X",hx[ii],hyFit[ii]-hy[ii],"=",hyFit[ii],"-",hy[ii])
+            plt.draw()
+            
+            #            plt.legend()
+        #print("GaussianFit bFitPlot ",int(bFitPlot/10)) #GDEB
+        if int(bFitPlot/10) == 1 :
+            if idHis == 0:
+                lcolor = 'black'
+                stext="MC "
+            elif idHis == 1:
+                lcolor = 'red'
+                stext="Exp. "
+            # print("STEXT",idHis)#GDEB
+            xPos = self.xmin+(self.xmax-self.xmin)*0.2
+            yPos = self.maximumY()*(0.7-idHis*0.1)
+            #            plt.text(xPos,yPos,"mean= "+"{:.4e}".format(param[1]), color=lcolor)
+            #            yPos = self.maximumY()*(0.65-idHis*0.1)
+            #print("SIGMA COLOR",lcolor,"xytext",xPos,yPos,) #GDEB
+            matplotlib.rcParams.update({'font.size': 15})
+            #plt.text(xPos,yPos,stext+" "+"{:.4g}".format(param[2]), color=lcolor)
+            plt.text(xPos,yPos,stext+" "+"s1={:.4g}".format(param[1])+" s2={:.4g}".format(param[3])+" s3={:.4g}".format(param[5]), color=lcolor)
+            # print("GAUSS TEXT",xPos,yPos,"sigma1= "+"{:.4e}".format(param[1]),"sigma2= "+"{:.4e}".format(param[3]),"fraction_1= "+"{:.4e}".format(param[0]/(param[0]+param[2]))) #GDEB
+            # print(self.name,"GAUSS RES",param[0],param[1],param[2],param[3]) #GDEB
+            plt.draw()
+            
+            #      print("tripleGaussCenters0 return", param)
+            
+        #tprint(self.name,"GAUSS RES","{:.4f}".format(param[0]),"{:.4f}".format(param[1]),"{:.4f}".format(param[2]),"{:.4f}".format(param[3]),"{:.4f}".format(param[4]),"{:.4f}".format(param[5]))
+        return param,covariance
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def tripleGaussCenters0np(self,x, A1, sigma1, A2, sigma2, A3, sigma3):
+        #    print("tripleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"X=",x)
+        x0 = 0.  # needed to avoid : TypeError: unsupported operand type(s) for -: 'list' and 'float'
+        # print(A2 * np.exp(-(x-x0) ** 2 / (2 * sigma2 ** 2)))
+        return A1 * np.exp(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)) +  A2 * np.exp(-(x-x0) ** 2 / (2 * sigma2 ** 2)) +  A3 * np.exp(-(x-x0) ** 2 / (2 * sigma3 ** 2))
+    
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def tripleGaussCenters0(self,x, A1, sigma1, A2, sigma2, A3, sigma3):
+   #     print("tripleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"X=",x)
+        # if x == -75.0 :  print("tripleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"75X=",x) #GDEB
+        x0 = 0.  # needed to avoid : TypeError: unsupported operand type(s) for -: 'list' and 'float'
+        #print(A1 * np.exp(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)))
+        #print(A2 * np.exp(-(x-x0) ** 2 / (2 * sigma2 ** 2)))
+        #        if np.abs(x) < 2 :
+        #print(x,"TGC0 G1",A1 * np.exp(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)),A1," * ",(-(x-x0 ) ** 2," / ",(2 * sigma1 ** 2)),(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)))#GDEB
+        #print("TGC0 G1b",A1 * np.exp(-(0-x0 ) ** 2 / (2 * sigma1 ** 2)))#GDEB
+        # print(",tripleGaussCenters0",x, A1, sigma1, A2, sigma2, A3, sigma3) #GDEB
+        return A1 * np.exp(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)) +  A2 * np.exp(-(x-x0) ** 2 / (2 * sigma2 ** 2)) + A3 * np.exp(-(x-x0) ** 2 / (2 * sigma3 ** 2))
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+ #    def TripleGaussianCenters0WeightedFit(self, idHis, bFitPlot, paramP0=[]) :
+        # fit a triple Gaussian, but Y values are weighted, for example to get a flat distribution (so that deviations in all points have the same weight a curve_fit makes the chi2)
+    def TripleGaussianCenters0FlatWeightFit(self, idHis, bFitPlot, paramP0=[], paramBounds=[]) :
+        # fit a triple Gaussian, but Y values are equally weighted to get a flat distribution (so that deviations in all points have the same weight a curve_fit makes the chi2), we compare Y_fitted/Y_expected - 1 
+        #print("TripleGaussianCenters0Fit bFitPlot ",bFitPlot)
+        hx = self.Xbins()
+        hy = self.data
+        if sum(self.data) == 0. :
+            print("!!! ERROR IN TripleGaussianCenters0Fit. Returning param=0 for ",self.name," BECAUSE dat asum is 0",self.data)
+            param = [0.,0.,0.,0.,0.,0.]
+            covariance = [ [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.]]
+            return param,covariance
+        try:
+            #            print("self.tripleGaussCenters0np",hx, hy)
+            #           print("self.tripleGaussCenters0np",max(hy), sigma1, max(hy)/3., sigma2, max(hy/10.), sigma3)
+            #            param, covariance = curve_fit(self.tripleGaussCenters0np, hx, hy, p0=[max(hy), sigma1, max(hy)/3., sigma2, max(hy)/10., sigma3])
+#            result = minimize(self.loss, paramP0, args=(hx,hy))
+            param = minimize(self.tripleGaussCenters0Compare, paramP0, args=(hx, hy), bounds=paramBounds).x
+            covariance = [ [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.]]
+#            param, covariance = curve_fit(self.tripleGaussCenters0, hx, hy p0=paramP0, bounds=paramBounds)
+        except RuntimeError:
+            print("!!! ERROR IN TripleGaussianCenters0Fit. Gaussian fit cannot be done for ",self.name,"HY",self.data)
+            param = [0.,0.,0.,0.,0.,0.]
+            covariance = [ [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.], [0.,0.,0.,0.]]
+            return param,covariance
+
+        #print(self.name,"GAUSS RES","{:.4f}".format(param[0]),"{:.4f}".format(param[1]),"{:.4f}".format(param[2]),"{:.4f}".format(param[3]),"{:.4f}".format(param[4]),"{:.4f}".format(param[5]))
+        return param,covariance
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def tripleGaussCenters0Compare(self,params, x, y):
+        w1, s1, w2, s2, w3, s3 = params
+        fitted_values = self.tripleGaussCenters0List(x, w1, s1, w2, s2, w3, s3)  # Compute fitted values
+        #      print("Y",y)
+        # print(self.name,"tripleGaussCenters0Compare params",params) #GDEB
+        #    residuals = (fitted_values / predicted) - 1  # Compute relative difference from 1
+        #    residuals = (y / predicted) - (fitted_values / predicted)  # Compute relative difference from 1
+        residuals = (np.array(y) / np.array(fitted_values) ) -1  # Compute relative difference from 1
+        print(self.name,"@#@# tripleGaussCenters0Compare ", np.sum(residuals ** 2), params) #GDEB
+        return np.sum(residuals ** 2)  # Minimize squared deviations
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def tripleGaussCenters0List(self,x, A1, sigma1, A2, sigma2, A3, sigma3):
+   #     print("tripleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"X=",x)
+        # if x == -75.0 :  print("tripleGaussCenters0(self,x", A1, sigma1, A2, sigma2,"75X=",x) #GDEB
+        x0 = 0.  # needed to avoid : TypeError: unsupported operand type(s) for -: 'list' and 'float'
+        #print(x,"TGC0 G1",A1 * np.exp(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)),A1," * ",(-(x-x0 ) ** 2," / ",(2 * sigma1 ** 2)),(-(x-x0 ) ** 2 / (2 * sigma1 ** 2)))#GDEB
+        result = []
+        for x1 in x :
+            result.append(A1 * np.exp(-(x1-x0 ) ** 2 / (2 * sigma1 ** 2)) +  A2 * np.exp(-(x1-x0) ** 2 / (2 * sigma2 ** 2)) + A3 * np.exp(-(x1-x0) ** 2 / (2 * sigma3 ** 2)) )
+        #print(",tripleGaussCenters0",x, A1, sigma1, A2, sigma2, A3, sigma3) #GDEB
+        return result
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def maximumY(self) :
@@ -708,19 +957,20 @@ class Histo1D(MutableMapping):
 
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def reduceLimits(self,minX,maxX,bNSteps=True) :
+        #print( "reduceLimits ", minX, self.xmin, maxX, self.xmax) # GDEB
         xstep = self.Xstep()
         idMinX = int((minX-self.xmin)/xstep) # bin corresponding to minX
         if bNSteps :
-            #            print( "idMinX ", idMinX, (minX-self.xmin),xstep,minX,self.xmin) # GDEB
+            #print( "idMinX ", idMinX, (minX-self.xmin),xstep,minX,self.xmin) # GDEB
             if (minX-self.xmin)/xstep - idMinX != 0 : # not integer
                 minX = self.xmin + xstep*(idMinX-1) # decrease to bin lower value
                 idMinX -= 1
-             #   print("newMinX",minX) # GDEB
+                #   print("newMinX",minX) # GDEB
             idMaxX = int((maxX-self.xmin)/xstep) # bin corresponding to maxX
-#            print( "idMaxX ", idMaxX,(maxX-self.xmin)/xstep,xstep,maxX,self.xmin) # GDEB
+            #print( "idMaxX ", idMaxX,(maxX-self.xmin)/xstep,xstep,maxX,self.xmin) # GDEB
             if (maxX-self.xmin)/xstep - idMaxX != 0 : # not integer
                 maxX = self.xmin + xstep*(idMaxX+1) # increase to bin higher value
-#                print("newMaxX ",maxX) # GDEB
+                #print("newMaxX ",maxX) # GDEB
             nStepNew = int((maxX-minX)/xstep)
             idMaxX += 1
 
@@ -729,6 +979,32 @@ class Histo1D(MutableMapping):
         self.data = []
         self.dataErr = []
         self.nbin = idMaxX-idMinX
+ #       print(self.nbin,idMinX,"reduceLimits append",len(self.data),len(dataOld))
+        for ii in range(self.nbin) :
+            self.data.append(dataOld[ii+idMinX])
+            self.dataErr.append(dataErrOld[ii+idMinX])
+                    
+        self.xmin = minX
+        self.xmax = maxX
+        
+        return 
+
+#....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def reduceLimitsExact(self,minX,maxX,bNSteps=True) :
+        #print( "reduceLimits ", minX, self.xmin, maxX, self.xmax) # GDEB
+        xstep = self.Xstep()
+        idMinX = int((minX-self.xmin+xstep*0.0001)/xstep) # bin corresponding to minX
+        idMaxX = int((maxX-self.xmin+xstep*0.0001)/xstep) # bin corresponding to maxX
+        #print( "idMinX ", idMinX, (minX-self.xmin),xstep,minX,self.xmin) # GDEB
+        #print( "idMaxX ", idMaxX,(maxX-self.xmin)/xstep,xstep,maxX,self.xmin) # GDEB
+        nStepNew = idMaxX-idMinX
+
+        dataOld = self.data
+        dataErrOld = self.dataErr
+        self.data = []
+        self.dataErr = []
+        self.nbin = nStepNew
+        #print(self.nbin,"reduceLimits append",len(self.data),len(dataOld))
         for ii in range(self.nbin) :
             self.data.append(dataOld[ii+idMinX])
             self.dataErr.append(dataErrOld[ii+idMinX])
@@ -739,21 +1015,32 @@ class Histo1D(MutableMapping):
         return 
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def GetBin( self, xval, bIsOK ) :
-        ibin = (xval-self.xmin)/self.Xstep()
-        if bIsOK :
-            if ibin < 0 or ibin >= self.nbin :
-                print("!! WARNING MyHistos::GetBin: value ",xval," is out of X axis =(",self.xmin,",",self.xmax)
-                return -1
-            return int(ibin)
+    def GetBelowBin( self, xval ) :
+        xstep = self.Xstep()
+        ibin = (xval-self.xmin-xstep*1.e-4)/xstep
+        return int(ibin)
         
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def GetValueErr(self, xval) :
-        ibin = self.GetBin(xval,True)
-        if ibin != -1 :
+    def GetValueErr(self, xval, bInterpLin=True) :
+        if xval < self.xmin or xval > self.xmax :
+            return(None,None)
+       
+        xstep = self.Xstep()
+        ibin = (xval-self.xmin-0.5*xstep)/xstep
+        # print("ibin",ibin,"=",xval,"-",self.xmin,"-",0.5*xstep,")/",xstep) #GDEB
+        if isinstance(ibin, int): # xval in the middle of step
+            print("IBIN INTEGER",ibin)
             return(self.data[ibin],self.dataErr[ibin])
         else :
-            return(None,None)
+            ibin = self.GetBelowBin(xval)
+            if ibin == self.nbin-1 :
+                return(self.data[ibin],self.dataErr[ibin])
+            firstBinCenter = self.xmin+0.5*xstep 
+            val = self.data[ibin] + (self.data[ibin+1]-self.data[ibin])/xstep*(xval-(firstBinCenter+ibin*xstep))
+           #  print("VAL=",val, self.data[ibin],"+ (",self.data[ibin+1]-self.data[ibin],")/",xstep,"*(",xval-(self.xmin+0.5*xstep+ibin*xstep))
+            valErr = self.dataErr[ibin] + (self.dataErr[ibin+1]-self.dataErr[ibin])/xstep*(xval-(firstBinCenter+ibin*xstep))
+            return(val,valErr)
+        
 #@@ START GetClosestX:  13038.780740348151 34.239999999999995
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GetClosestX(self, yval, xval) :
@@ -781,7 +1068,7 @@ class Histo1D(MutableMapping):
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def GetIdInterpolatedValue(self, xval) :
-        print(self.name,"START  GetIdInterpolatedValue",xval) #GDEB
+        #print(self.name,"START  GetIdInterpolatedValue",xval) #GDEB
         xBinsLE = self.XbinsLowEdge()
         xBinsHE = self.XbinsHighEdge()
         xstep = self.Xstep()
@@ -807,7 +1094,7 @@ class Histo1D(MutableMapping):
         ibin = -1 
         for ib1 in range(len(xBinsLE)) :
             if abs(xBinsLE[ib1] - xval) < PRECISION*xstep :
-                print("Exact GetIdInterpolatedValue1",ibin,ib1,xBinsLE[ib1],xval) #GDEB
+                #print("Exact GetIdInterpolatedValue1",ibin,ib1,xBinsLE[ib1],xval) #GDEB
                 ibin = ib1
                 return ibin
 
@@ -819,12 +1106,12 @@ class Histo1D(MutableMapping):
             idBigger = 0
             if xval < xBinsHE[ix] : ## look at lower bin limit
                 idBigger = ix
-                print(ix,"GetIdInterpolatedValue",idBigger,xval," > ",xBinsHE[ix]) #GDEB
+                #print(ix,"GetIdInterpolatedValue",idBigger,xval," > ",xBinsHE[ix]) #GDEB
                 break
             
         #        idBigger = next(xx for xx, val in enumerate(xBinsLE)
         #                           if val > xval)
-        print("GetIdInterpolatedValue2",idBigger) #GDEB
+        #print("GetIdInterpolatedValue2",idBigger) #GDEB
         return idBigger
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
@@ -913,7 +1200,7 @@ class Histo1D(MutableMapping):
    
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def CalculateMeanAndRMS(self) :
-        
+
         xbins = np.array(self.Xbins())
         sumY = np.sum(self.data)
         # weigthed mean and rms
@@ -929,14 +1216,15 @@ class Histo1D(MutableMapping):
             #- term2 = np.sum(self.dataErr**2 * (xbins**2)**2) / sumY2X
             #-       self.RMSErr = 0.5 * self.RMS * np.sqrt(term1 + term2)           
         else :
+            #print("np.sum(self.data)",np.sum(self.data))
             self.mean = np.sum(self.data*xbins) / np.sum(self.data) 
             self.meanErr = 0.
             sumYX2 = np.sum(self.data * xbins**2)
             self.RMS = np.sqrt(sumYX2 / sumY )
             self.RMSErr = 0.
         
-        #print("MEAN ",self.mean,"+-",self.meanErr) #GDEB
-        #print("RMS ",self.RMS,"+-",self.RMSErr) #GDEB
+        print(self.name,"MEAN_MyHistos",self.mean,"+-",self.meanErr) #GDEB
+        print(self.name,"RMS_MyHistos ",self.RMS,"+-",self.RMSErr) #GDEB
 
         
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
@@ -969,18 +1257,20 @@ class Histo1D(MutableMapping):
             #print(id1,hX[id1],"test xPCn ",hY[id1],ymax*perCent) #GDEB
             if hY[id1] < ymax*perCent :
                 #                xPCn = hX[id1]-(hX[id1]-hX[id1+1])*(hY[id1]-perCent*ymax)/(hY[id1]-hY[id1+1])
-                xPCn = hX[id1]-(hX[id1+1]-hX[id1])*(hY[id1+1]-perCent*ymax)/(hY[id1+1]-hY[id1])
-                # print(self.name,"XPCn",xPCn,"id1",hX[id1],hY[id1],hX[id1+1],hY[id1+1])  #GDEB
+                xPCn = hX[id1]+(hX[id1+1]-hX[id1])*(perCent*ymax-hY[id1])/(hY[id1+1]-hY[id1])
+              #  print(self.name,"XPCn",xPCn,"=",hX[id1],"+(",hX[id1+1],"-",hX[id1],")*(",perCent*ymax,"-",hY[id1],")/(",hY[id1+1],"-",hY[id1]) #GDEB
+                      #id1",hX[id1],hY[id1],hX[id1+1],hY[id1+1])  #GDEB
                 break
         for id1 in range(idMax,len(hX)) :
-            # print(id1,hX[id1],"test xPCp ",hY[id1],ymax*perCent) #GDEB
+           # print(id1,hX[id1],"test xPCp ",hY[id1],ymax*perCent) #GDEB
             if hY[id1] < ymax*perCent :
-                xPCp = hX[id1]-(hX[id1-1]-hX[id1])*(hY[id1-1]-perCent*ymax)/(hY[id1-1]-hY[id1])
-                # print(self.name,"XPCp",xPCp,hX[id1-1],hY[id1-1],hX[id1],hY[id1])     #GDEB
+                xPCp = hX[id1]+(hX[id1-1]-hX[id1])*(perCent*ymax-hY[id1])/(hY[id1-1]-hY[id1])
+                #print(self.name,"XPCp",xPCp,hX[id1-1],hY[id1-1],hX[id1],hY[id1])     #GDEB
+                #print(self.name,"XPCp",xPCp,"=",hX[id1],"+(",hX[id1-1],"-",hX[id1],")*(",perCent*ymax,"-",hY[id1],")/(",hY[id1-1],"-",hY[id1]) #GDEB
                 break
         return xPCp,xPCn
-
-    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+ 
+   #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def FWPC(self, perCent ) : 
         xPCp,xPCn = self.FWPCPosNeg(perCent)
         fwPC = xPCp-xPCn
@@ -1026,13 +1316,13 @@ class Histo1D(MutableMapping):
             #print(id1,hX[id1],"test xPCn ",hYFit[id1],ymax*perCent) #GDEB
             if hYFit[id1] < ymax*perCent :
                 #                xPCn = hX[id1]-(hX[id1]-hX[id1+1])*(hYFit[id1]-perCent*ymax)/(hYFit[id1]-hYFit[id1+1])
-                xPCn = hX[id1]-(hX[id1+1]-hX[id1])*(hYFit[id1+1]-perCent*ymax)/(hYFit[id1+1]-hYFit[id1])
+                xPCn = hX[id1]+(hX[id1+1]-hX[id1])*(perCent*ymax-hYFit[id1])/(hYFit[id1+1]-hYFit[id1])
                 # print(self.name,"XPCn",xPCn,"id1",hX[id1],hYFit[id1],hX[id1+1],hYFit[id1+1])  #GDEB
                 break
         for id1 in range(idMax,len(hX)) :
             # print(id1,hX[id1],"test xPCp ",hYFit[id1],ymax*perCent) #GDEB
             if hYFit[id1] < ymax*perCent :
-                xPCp = hX[id1]-(hX[id1-1]-hX[id1])*(hYFit[id1-1]-perCent*ymax)/(hYFit[id1-1]-hYFit[id1])
+                xPCp = hX[id1]+(hX[id1-1]-hX[id1])*(perCent*ymax-hYFit[id1])/(hYFit[id1-1]-hYFit[id1])
                 # print(self.name,"XPCp",xPCp,hX[id1-1],hYFit[id1-1],hX[id1],hYFit[id1])     #GDEB
                 break
         return xPCp,xPCn
@@ -1042,6 +1332,18 @@ class Histo1D(MutableMapping):
         xPCp,xPCn = self.FWPCPosNegFit2g(perCent)
         fwPC = xPCp-xPCn
         return fwPC
+
+    #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
+    def InvertX(self ) :
+        dataNew = np.zeros(self.nbin)
+        dataErrNew = np.zeros(self.nbin)
+        xvals = self.Xbins()
+        for ii in range(self.nbin) :
+            dataNew[ii],dataErrNew[ii] = self.GetValueErr(-xvals[ii])
+        for ii in range(self.nbin) :
+            self.data[ii] = dataNew[ii]
+            self.dataErr[ii] = dataErrNew[ii]
+#        self.data[:] = self.data[::-1]
 
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 class Histo2D(MutableMapping):
@@ -1428,11 +1730,11 @@ class Histo2D(MutableMapping):
                 )
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def Xstep(obj):
-        xStep = (float(obj.xmax)-float(obj.xmin))/int(obj.xnbin)
+    def Xstep(hobj):
+        xStep = (float(hobj.xmax)-float(hobj.xmin))/int(hobj.xnbin)
         return xStep
-    def Ystep(obj):
-        yStep = (float(obj.ymax)-float(obj.ymin))/int(obj.ynbin)
+    def Ystep(hobj):
+        yStep = (float(hobj.ymax)-float(hobj.ymin))/int(hobj.ynbin)
         return yStep
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
     def Xbins(self):
@@ -1488,81 +1790,81 @@ class Histo2D(MutableMapping):
         return Ybins
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def CheckEqual(self,obj):
-#        if self.name != obj.name :
+    def CheckEqual(self,hobj):
+#        if self.name != hobj.name :
 #            print("!!! ERROR: two histograms with different name ",
-#                  self.name," !=? ", obj.name)
+#                  self.name," !=? ", hobj.name)
 
-        if self.xnbin != obj.xnbin or self.xmin != obj.xmin or self.xmax != obj.xmax or self.ynbin != obj.ynbin or self.ymin != obj.ymin or self.ymax != obj.ymax :
+        if self.xnbin != hobj.xnbin or self.xmin != hobj.xmin or self.xmax != hobj.xmax or self.ynbin != hobj.ynbin or self.ymin != hobj.ymin or self.ymax != hobj.ymax :
             print("!!! ERROR: two histograms with same name do not have same data ",
-                  self.name,"XNBIN:",self.xnbin," !=? ", obj.xnbin,
-                  "XMIN:",self.xmin," !=? ",obj.xmin,
-                  "XMAX:",self.xmax," !=? ",obj.xmax,
-                  "YNBIN:",self.ynbin," !=? ", obj.ynbin,
-                  "YMIN:",self.ymin," !=? ",obj.ymin,
-                  "YMAX:",self.ymax," !=? ",obj.ymax)
+                  self.name,"XNBIN:",self.xnbin," !=? ", hobj.xnbin,
+                  "XMIN:",self.xmin," !=? ",hobj.xmin,
+                  "XMAX:",self.xmax," !=? ",hobj.xmax,
+                  "YNBIN:",self.ynbin," !=? ", hobj.ynbin,
+                  "YMIN:",self.ymin," !=? ",hobj.ymin,
+                  "YMAX:",self.ymax," !=? ",hobj.ymax)
             return False
             # sys.exit()
         return True
 
     #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
-    def Add(self,obj,bCheckEqual=True):
-        if bCheckEqual and not self.CheckEqual(obj) :
+    def Add(self,hobj,bCheckEqual=True):
+        if bCheckEqual and not self.CheckEqual(hobj) :
             return self
 
-        newData = sum2(self.xunderyunder,self.xunderyunderErr,obj.xunderyunder,obj.xunderyunderErr)
+        newData = sum2(self.xunderyunder,self.xunderyunderErr,hobj.xunderyunder,hobj.xunderyunderErr)
         self.xunderyunder = newData[0]
         self.xunderyunderErr = newData[1]
         
         for iiy in range(0,self.ynbin) : # LOOP TO OUNDER 
-            newData = sum2(self.xunderV[iiy],self.xunderErrV[iiy],obj.xunderV[iiy],obj.xunderErrV[iiy])
+            newData = sum2(self.xunderV[iiy],self.xunderErrV[iiy],hobj.xunderV[iiy],hobj.xunderErrV[iiy])
             self.xunderV[iiy] = newData[0]
             self.xunderErrV[iiy] = newData[1]
-        newData = sum2(self.xunderyover,self.xunderyoverErr,obj.xunderyover,obj.xunderyoverErr)
+        newData = sum2(self.xunderyover,self.xunderyoverErr,hobj.xunderyover,hobj.xunderyoverErr)
         self.xunderyover = newData[0]
         self.xunderyoverErr = newData[1]
 
         for iix in range(0,self.xnbin) : # LOOP TO BIN[X,Y] DATA
-            newData = sum2(self.yunderV[iix],self.yunderErrV[iix],obj.yunderV[iix],obj.yunderErrV[iix])
+            newData = sum2(self.yunderV[iix],self.yunderErrV[iix],hobj.yunderV[iix],hobj.yunderErrV[iix])
             self.yunderV[iix] = newData[0]
             self.yunderErrV[iix] = newData[1]
             for iiy in range(0,self.ynbin) : # LOOP TO BIN[X,Y] DATA
                 iixy = iix+iiy*self.xnbin
-                newData = sum2(self.dataNP[iiy,iix],self.dataErrNP[iiy,iix],obj.dataNP[iiy,iix],obj.dataErrNP[iiy,iix])
-#                print(iix,iiy,"NEWDATA ",newData[0],self.data[iixy],obj.data[iixy])
+                newData = sum2(self.dataNP[iiy,iix],self.dataErrNP[iiy,iix],hobj.dataNP[iiy,iix],hobj.dataErrNP[iiy,iix])
+#                print(iix,iiy,"NEWDATA ",newData[0],self.data[iixy],hobj.data[iixy])
                 self.dataNP[iiy,iix] = newData[0]
                 self.dataErrNP[iiy,iix] = newData[1]
 
-            newData = sum2(self.yoverV[iix],self.yoverErrV[iix],obj.yoverV[iix],obj.yoverErrV[iix])
+            newData = sum2(self.yoverV[iix],self.yoverErrV[iix],hobj.yoverV[iix],hobj.yoverErrV[iix])
             self.yoverV[iix] = newData[0]
             self.yoverErrV[iix] = newData[1]
 
-        newData = sum2(self.xoveryunder,self.xoveryunderErr,obj.xoveryunder,obj.xoveryunderErr)
+        newData = sum2(self.xoveryunder,self.xoveryunderErr,hobj.xoveryunder,hobj.xoveryunderErr)
         self.xoveryunder = newData[0]
         self.xoveryunderErr = newData[1]
         for iiy in range(0,self.ynbin) : # LOOP TO OOVER 
-            newData = sum2(self.xoverV[iiy],self.xoverErrV[iiy],obj.xoverV[iiy],obj.xoverErrV[iiy])
+            newData = sum2(self.xoverV[iiy],self.xoverErrV[iiy],hobj.xoverV[iiy],hobj.xoverErrV[iiy])
             self.xoverV[iiy] = newData[0]
             self.xoverErrV[iiy] = newData[1]
 
-        newData = sum2(self.xoveryover,self.xoveryoverErr,obj.xoveryover,obj.xoveryoverErr)
+        newData = sum2(self.xoveryover,self.xoveryoverErr,hobj.xoveryover,hobj.xoveryoverErr)
         self.xoveryover = newData[0]
         self.xoveryoverErr = newData[1]
         
-        self.nent += obj.nent
+        self.nent += hobj.nent
 
-        newData = sum2(self.xmean,self.xmeanErr,obj.xmean,obj.xmeanErr)
-        #        print("ADD MEAN ",self.xmean,self.xmeanErr,obj.xmean,obj.xmeanErr)
+        newData = sum2(self.xmean,self.xmeanErr,hobj.xmean,hobj.xmeanErr)
+        #        print("ADD MEAN ",self.xmean,self.xmeanErr,hobj.xmean,hobj.xmeanErr)
         self.xmean = newData[0]
         self.xmeanErr = newData[1]
-        newData = sum2(self.xRMS,self.xRMSErr,obj.xRMS,obj.xRMSErr)
+        newData = sum2(self.xRMS,self.xRMSErr,hobj.xRMS,hobj.xRMSErr)
         self.xRMS = newData[0]
         self.xRMSErr = newData[1]
 
-        newData = sum2(self.ymean,self.ymeanErr,obj.ymean,obj.ymeanErr)
+        newData = sum2(self.ymean,self.ymeanErr,hobj.ymean,hobj.ymeanErr)
         self.ymean = newData[0]
         self.ymeanErr = newData[1]
-        newData = sum2(self.yRMS,self.yRMSErr,obj.yRMS,obj.yRMSErr)
+        newData = sum2(self.yRMS,self.yRMSErr,hobj.yRMS,hobj.yRMSErr)
         self.yRMS = newData[0]
         self.yRMSErr = newData[1]
 

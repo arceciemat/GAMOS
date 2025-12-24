@@ -3,11 +3,12 @@
 #include "DICOM/DICOMBase/include/DicomParameterMgr.hh"
 #include "DICOM/DICOMBase/include/DicomVerbosity.hh"
 #include "DICOM/DICOMBase/include/DicomPolygonSet.hh"
-
 #include "DICOM/DICOMBase/include/DicomDrawerROOT.hh" 
 #include "DICOM/DICOMBase/include/DicomMgr.hh" 
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
+
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TProfile.h"
@@ -48,6 +49,7 @@ DCM2DOperGammaIndex::DCM2DOperGammaIndex( G4int , G4String )
   theNErrorSigmas = 0.; 
   bGammaOverCutDone = false;
 
+  theAnaMgr = GmAnalysisMgr::GetInstance("getGammaIndex");
 }
 
 //------------------------------------------------------------------------
@@ -84,6 +86,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
   //  std::vector<G4double>* iDataOut = new std::vector<G4double>(nVoxXY1*nVoxZ1);
   //  G4cout << " START iDataOut " << iDataOut << G4endl; //GDEB
   TH1F* histoGI = 0;
+  GmHisto1* histoGIgm = 0;
   double theHGILim;
   TCanvas* canvas = 0;
   if( bHisto1D ) {
@@ -134,10 +137,6 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
   std::vector<G4double> iDataErr2;
   if( imageErr2 != 0 ) iDataErr2 = *(imageErr2->GetData());
 
-  /*  for(int ii = 0; ii < 1000; ii++ ) {
-    G4cout << ii << " IMAGE1= " << iData1[ii] << " IMAGE2= " << iData2[ii] << G4endl; //GDEB
-    } */
-  
   if( DicomVerb(infoVerb) )
     std::cout << "@@@ READ sqdose2 nVoxX/Y/Z " << nVoxX2 << " " << nVoxY2 << " " << nVoxZ2 << G4endl
 	      << " fMinX/Y/Z " << fMinX2 << " " << fMinY2 << " " << fMinZ2 << G4endl
@@ -178,8 +177,11 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
   //----- Histogram with all Z planes
   std::string limstrALL = "GammaIndex_XY_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_1D_ALL";
   TH1F* histoGIALL = 0;
+  GmHisto1* histoGIALLgm = 0;
   if( bHisto1D ) {
     histoGIALL = new TH1F((limstrALL).c_str(),(limstrALL).c_str(),std::max(100,int(theHGILim*10)),0.,theHGILim);
+    theAnaMgr->CreateHisto1D((limstrALL).c_str(),std::max(100,int(theHGILim*10)),0.,theHGILim, 81219);
+    histoGIALLgm = theAnaMgr->GetHisto1D(81219);
   }
 
   float maxDosePC = 0;
@@ -215,6 +217,8 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
 
     if( bHisto1D ) {
       histoGI = new TH1F((limstr).c_str(),(limstr).c_str(),std::max(100,int(theHGILim*10)),0.,theHGILim);
+      theAnaMgr->CreateHisto1D((limstr).c_str(),std::max(100,int(theHGILim*10)),0.,theHGILim,81211);
+			 histoGIgm = theAnaMgr->GetHisto1D(81211);
     }
     //    histoXSvsGI = new TH2F(limstr.c_str(),limstr.c_str(),nVoxX1, fMinX1, fMinX1+nVoxX1*widthX1, nVoxY1, fMinY1, fMinY1+nVoxY1*widthY1);
     //    histoXSvsGI = new TH2F(limstr.c_str(),limstr.c_str(),nVoxX1X2, std::max(fMinX1,fMinX2), std::min(fMaxX1,fMaxX2), nVoxY1Y2,  std::max(fMinY1,fMinY2), std::min(fMaxY1,fMaxY2));
@@ -573,6 +577,8 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
       if( bHisto1D ) {
 	histoGI->Fill(minGamma);
 	histoGIALL->Fill(minGamma);
+	histoGIgm->Fill(minGamma);
+	histoGIALLgm->Fill(minGamma);
       }
       iDataOut->at(nv1) = minGamma;
       //      if( minGamma != 0 ) G4cout << " FILL iDataOut " << nv1 << ": " << iDataOut->at(nv1) << "= " <<minGamma << G4endl; //GDEB
@@ -587,7 +593,6 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
     //    pad1->cd();
     if( bHisto1D ) {
       histoGI->Draw("histo");
-      theDrawer->WriteHisto1D(histoGI);
     }
     double gammaPVal = 0.;
     std::multiset<double>::const_iterator iteg;
@@ -614,6 +619,14 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
       //    pad1->cd(); 
       DrawWordInPave( histoGI, "G" + GmGenUtils::ftoa(perCentLim)+"/"+GmGenUtils::ftoa(minDistLim)+ ": " + GmGenUtils::ftoa(mean) + "+-" + GmGenUtils::ftoa(rms) + " P" + GmGenUtils::itoa(pval*100) + "= " + GmGenUtils::ftoa(int(gammaPVal*100)/100.), xInit, yInit, color, 0.02 );
       canvas->Print(("his"+G4String(histoGI->GetName())+".jpg").c_str());
+      G4cout << " PRINTER " << "his"+G4String(histoGI->GetName())+".jpg" << G4endl; //GDEB
+
+      gPad->SetLogy(1);
+      canvas->SetLogy(1);
+      histoGI->Draw("histo");
+      canvas->Print(("his"+G4String(histoGI->GetName())+".logY.jpg").c_str());
+      G4cout << " PRINTER " << "his"+G4String(histoGI->GetName())+".logY.jpg" << G4endl; //GDEB 
+
     }
    //    pad1->cd(); 
     //    theHistosXSvsGI[zMin+fVoxDimZ1/2.] = histoXSvsGI;
@@ -632,8 +645,8 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
      //    pad1->cd(); 
     gStyle->SetOptStat(1111111);
     histoGIALL->SetMaximum(50000);
+    gPad->SetLogy(0);
     histoGIALL->Draw("histo");
-    theDrawer->WriteHisto1D(histoGIALL);
     // double xInit = 200*theMaxGammaValue/2.*canvas->GetWw()/500;
       //      xInit = 290*canvas->GetWw()/500;    
     // double yInit= 25000.*canvas->GetWh()/500;
@@ -643,10 +656,13 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
     //    DrawWordInPave( histoGI, "HOLA AQUI ESTAaMOS", xInit, yInit, color, 0.02 );
 
     canvas->Print(("his"+G4String(histoGIALL->GetName())+".jpg").c_str());
+    G4cout << " PRINTER " << "his"+G4String(histoGIALL->GetName())+".jpg" << G4endl; //GDEB 
+    gPad->SetLogy(1);
     canvas->SetLogy(1);
     histoGIALL->Draw("histo");
-    canvas->Print(("his"+G4String(histoGIALL->GetName())+"logY.jpg").c_str());
-  }
+    canvas->Print(("his"+G4String(histoGIALL->GetName())+".logY.jpg").c_str());
+    G4cout << " PRINTER " << "his"+G4String(histoGIALL->GetName())+".logY.jpg" << G4endl; //GDEB 
+}
 
   if( bGammaOverCutDone ) G4cout << "@@@@ N Gamma over " << theGammaOverCut << " = " << gammaOverN << " out of " << nVoxZ1*nVoxXY1 << G4endl;
   bGammaOverCutDone = true;
@@ -1137,7 +1153,6 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
     if( bHisto1D ) {
       gStyle->SetOptStat(1111111);
       histoGI->Draw("colz");
-      theDrawer->WriteHisto1D(histoGI);
     }
     double gammaPVal = 0.;
     std::multiset<double>::const_iterator iteg;
@@ -1782,7 +1797,6 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
     if( bHisto1D ) {
       gStyle->SetOptStat(1111111);
       histoGI->Draw("colz");
-      theDrawer->WriteHisto1D(histoGI);
     }
     double gammaPVal = 0.;
     std::multiset<double>::const_iterator iteg;
