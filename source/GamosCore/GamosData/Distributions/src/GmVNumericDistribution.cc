@@ -107,7 +107,7 @@ void GmVNumericDistribution::ReadFile()
     ReadFileUnknown( fileName );
   }
   else {
-    G4cout << " IS NUMERIC UPPER " <<  dynamic_cast<GmNumericDistributionUpper*>(this)  << G4endl; //GDEB
+    //    G4cout << " IS NUMERIC UPPER " <<  dynamic_cast<GmNumericDistributionUpper*>(this)  << G4endl; //GDEB
     if( dynamic_cast<GmNumericDistributionLinLin*>(this) || dynamic_cast<GmNumericDistributionLinLog*>(this) || 
 	dynamic_cast<GmNumericDistributionLogLin*>(this) || dynamic_cast<GmNumericDistributionLogLog*>(this) || 
 	dynamic_cast<GmNumericDistributionLower*>(this) || dynamic_cast<GmNumericDistributionUpper*>(this) || 

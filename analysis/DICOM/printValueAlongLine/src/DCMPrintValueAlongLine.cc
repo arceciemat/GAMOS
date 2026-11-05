@@ -15,7 +15,6 @@
 
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 
 #include "ROOTUtilities/PlotData/Definitions.C"
 #include "ROOTUtilities/PlotData/PlotUtils.C"
@@ -101,6 +100,9 @@ void DCMPrintValueAlongLine::ProcessArguments(int argc,char** argv)
       } else if( argvstr == "-lineStep" ) {
 	theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
 	ii++;
+      } else if( argvstr == "-multFactor" ) {
+	theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
+	ii++;
       } else {
 	G4int iAddPar = theParamMgr->ReadParameter( argv, ii );
 	if( iAddPar == -1 ) {
@@ -118,6 +120,7 @@ void DCMPrintValueAlongLine::ProcessArguments(int argc,char** argv)
   bHistos = G4bool(theParamMgr->GetNumericValue("bHistos",0));
   theLineListFN = theParamMgr->GetStringValue("fLineList","");
   theLineStep = theParamMgr->GetNumericValue("lineStep",-DBL_MAX);
+  theMultFactor = theParamMgr->GetNumericValue("multFactor",1.);
 }
 
 //---------------------------------------------------------------------------
@@ -200,7 +203,7 @@ void DCMPrintValueAlongLine::ReadFilesAndGetImages()
       DicomLine* line = new DicomLine(pos,dir,lineName,DPOrientNone);
       line->SetPos0( pos0 );
       lineList->AddLine(line);
-      G4cout << "2 BUILD DicomLine " << pos << " " << dir << " " << pos0 << " " << lineName << G4endl; //GDEB
+      //      G4cout << "2 BUILD DicomLine " << pos << " " << dir << " " << pos0 << " " << lineName << G4endl; //GDEB
     }
   }
 }
@@ -220,9 +223,14 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
       std::vector<DicomVLine*> lines = lineLists[ill]->GetLines();
       for( size_t il = 0; il < lines.size(); il++ ) {
 	DicomLine* line = static_cast<DicomLine*>(lines[il]);
-	G4cout << " DCMPrintValueAlongLine::GetInfoFromImages(lineStep " << theLineStep << G4endl; //GDEB
+	//G4cout << " DCMPrintValueAlongLine::GetInfoFromImages(lineStep " << theLineStep << G4endl; //GDEB
 	std::map<G4double,G4double> intersValues = line->FindValues(image, theLineStep);
-	G4cout << " DCMPrintValueAlongLine::GetInfoFromImages( n lines " << intersValues.size() << G4endl; //GDEB
+	std::map<G4double,G4double>::iterator iteivm;
+	for( iteivm = intersValues.begin(); iteivm != intersValues.end(); iteivm++ ) {
+	  //	  G4cout << theMultFactor << " CHECK intersValues " << iteivm->first << " " << iteivm->second << G4endl; //GDEB
+	  iteivm->second *= theMultFactor;
+	}
+	//G4cout << " DCMPrintValueAlongLine::GetInfoFromImages( n lines " << intersValues.size() << G4endl; //GDEB
 	
 	G4double distBefore0;
 	G4double distToOut = DBL_MAX;

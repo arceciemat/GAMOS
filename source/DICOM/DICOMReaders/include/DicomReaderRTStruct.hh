@@ -56,7 +56,11 @@ public:
   DicomVImage* GetStructImage() const {
     return theStructImage;
   }    
-  
+
+  G4bool IsVOI() const {
+    return bVOI;
+  }
+
 protected:
   void BuildPolygonSet();
   std::map<G4int,DicomROI*> theROIs;
@@ -64,6 +68,8 @@ protected:
   DicomPolygonSet* thePolygonSet;
 
   DicomVImageStr* theStructImage;
+
+  G4bool bVOI;
 };
 
 #endif

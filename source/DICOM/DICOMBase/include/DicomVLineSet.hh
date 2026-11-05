@@ -33,16 +33,23 @@ public:
   
   void AddLineList(DicomVLineList*);
   std::map<int, G4String> GetLineListNames();
+  void ReflectY( G4ThreeVector rotPoint );
+  G4bool HasBeenReflectedY() const {
+    return bHasBeenReflectedY; }
+  void SetHasBeenReflectedY( bool bhbr ) {
+    bHasBeenReflectedY = bhbr;
+  }
   void RotateXY180( G4double angle, G4ThreeVector rotPoint );
   G4bool HasBeenRotatedXY180() const {
     return bHasBeenRotatedXY180; }
   void SetHasBeenRotatedXY180( bool bhbr ) {
     bHasBeenRotatedXY180 = bhbr;
   }
-
+  
 protected:
   std::vector<DicomVLineList*> theLineLists;
   G4String theName;
+  G4bool bHasBeenReflectedY;
   G4bool bHasBeenRotatedXY180;
   DPOrientation theOrientation;
 };

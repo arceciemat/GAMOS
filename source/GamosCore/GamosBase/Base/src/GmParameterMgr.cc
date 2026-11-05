@@ -165,6 +165,7 @@ G4String GmParameterMgr::GetStringValue( const G4String& parstr, const G4String&
   }
   for( GmParameterList<G4String>::iterator ites = theParametersString.begin(); ites != theParametersString.end(); ites++ ) {
     GmParameter<G4String> param = ites->second;
+    //    G4cout << " GmParameterMgr::GetStringValue " << ites->first << G4endl; //GDEB
   }
 
   theParametersInCode.insert(parstr);
@@ -235,7 +236,20 @@ std::vector<G4double> GmParameterMgr::GetVNumericValue( const G4String& parstr, 
       valvd.push_back( val1 );
       return valvd;
     } else {
-      return def;
+      std::vector<G4String> vals = theParametersVString.GetValue( parstr, parExists );
+      if( parExists ) {
+	std::vector<G4double> valvd;
+	for( size_t ii = 0; ii < vals.size(); ii++ ) {
+	  valvd.push_back( GmGenUtils::GetValue(vals[ii]) );
+	}
+	G4Exception("GmParameterMgr::GetVNumericValue",
+		    "",
+		    JustWarning,
+		    ("is classified as GetVStringValue "+parstr).c_str());
+	return valvd;
+      } else {
+	return def;
+      }
     } 
 
     //    G4double val1 = GetNumericValue( parstr, def[0], 0 );

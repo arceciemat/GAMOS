@@ -3,6 +3,8 @@
 #include "DICOM/DICOMBase/include/DicomParameterMgr.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderMgr.hh"
 #include "DICOM/DICOMReaders/include/DicomUIDInfo.hh"
+#include "DICOM/DICOMReaders/include/DicomReaderSqdose.hh"
+#include "DICOM/DICOMReaders/include/DicomReaderRTDose.hh"
 
 #include "GamosCore/GamosReadDICOM/include/GmSqdose.hh"
 #include "GamosCore/GamosReadDICOM/include/GmSqdoseHeader.hh"
@@ -32,8 +34,6 @@ DCMSqToRT::DCMSqToRT()
 void DCMSqToRT::ProcessArguments( int argc, char** argv ) 
 {
   theExeName = "sqdoseToRTDose";
-  theSqDoseFN = "";
-  theRTDoseFN = "";
   thePatientPosition = "HFS";
   
   //--------- PROCESS ARGUMENTS
@@ -54,16 +54,17 @@ void DCMSqToRT::ProcessArguments( int argc, char** argv )
 		"",
 		FatalErrorInArgument,
 		"NO ARGUMENT PROVIDED");
-  } else if( argc == 3 ) {    
-    theSqDoseFN = argv[1];
-    theRTDoseFN = argv[2];
-    if( theSqDoseFN[0] == '-' || theRTDoseFN[0] == '-' ) {
+  } else if( argc == 4 ) {    
+    theSqDoseInFN = argv[1];
+    theRTDoseOutFN = argv[2];
+    theRTDoseReferenceFN = argv[3];
+    if( theSqDoseInFN[0] == '-' || theRTDoseOutFN[0] == '-' || theRTDoseReferenceFN[0] == '-' ) {
       G4Exception(theExeName,
 		  "",
 		  FatalErrorInArgument,
-		  "TWO ARGUMENTS MUST BE SQDOSE_INPUT_FILE RTDOSE_OUTPUT_FILE");
+		  "THREE ARGUMENTS MUST BE SQDOSE_INPUT_FILE RTDOSE_OUTPUT_FILE RTDOSE_REFERENCE_FILE");
     }
-    G4cout << " theSqDoseFN " << theSqDoseFN << " theRTDoseFN " << theRTDoseFN << " thePatientPosition " << thePatientPosition << G4endl;
+    G4cout << " theSqDoseInFN " << theSqDoseInFN << " theRTDoseOutFN " << theRTDoseOutFN << " thePatientPosition " << thePatientPosition << G4endl;
     return;
   } else {
     if(argc%2 != 1) { 
@@ -83,6 +84,9 @@ void DCMSqToRT::ProcessArguments( int argc, char** argv )
       } else if( argvstr == "-fRTDoseOut" ) {
 	theParamMgr->AddParam( argvName + " " + argvstr1, PTstring );
 	ii++;
+      } else if( argvstr == "-fRTDoseRef" ) {
+	theParamMgr->AddParam( argvName + " " + argvstr1, PTstring );
+	ii++;
       } else if( argvstr == "-patientPosition" ) {
 	theParamMgr->AddParam( argvName + " " + argvstr1, PTstring );
 	ii++;
@@ -99,32 +103,39 @@ void DCMSqToRT::ProcessArguments( int argc, char** argv )
       }
     }
   }
-  theSqDoseFN = theParamMgr->GetStringValue("fSqdoseIn",theSqDoseFN);
-  theRTDoseFN = theParamMgr->GetStringValue("fRTDoseOut",theRTDoseFN);
+  theSqDoseInFN = theParamMgr->GetStringValue("fSqdoseIn",theSqDoseInFN);
+  theRTDoseOutFN = theParamMgr->GetStringValue("fRTDoseOut",theRTDoseOutFN);
+  theRTDoseReferenceFN = theParamMgr->GetStringValue("fRTDoseRef",theRTDoseReferenceFN);
   thePatientPosition = theParamMgr->GetStringValue("patientPosition","HFS");
-  G4cout << " theSqDoseFN " << theSqDoseFN << " theRTDoseFN " << theRTDoseFN << " thePatientPosition " << thePatientPosition << G4endl;
+  G4cout << " theSqDoseInFN " << theSqDoseInFN << " theRTDoseOutFN " << theRTDoseOutFN << " theRTDoseReferenceFN " << theRTDoseReferenceFN << " thePatientPosition " << thePatientPosition << G4endl;
 }
 
 //---------------------------------------------------------------------------
 void DCMSqToRT::CheckArguments()
 {
   //------ At least one image file!
-  if( theSqDoseFN == "" ) {
+  if( theSqDoseInFN == "" ) {
     PrintHelp();
     G4Exception(theExeName,
-		"No SqDose input file",
+		"No SqDoseIn input file",
 		FatalException,
 		"Use -fSqdoseIn in command line");
   }
-  if( theRTDoseFN == "" ) {
+  if( theRTDoseOutFN == "" ) {
     PrintHelp();
     G4Exception(theExeName,
-		"No RTDoseFN output file",
+		"No RTDoseOut output file",
 		FatalException,
 		"Use -fRTDoseOut in command line");
   }
-
-  // OPTIONALLY ONE DICOM FILE TO SET UID VALUES
+  // ONE DICOM FILE TO SET UID VALUES
+  if( theRTDoseReferenceFN == "" ) {
+    PrintHelp();
+    G4Exception(theExeName,
+		"No RTDose reference file",
+		FatalException,
+		"Use -fRTDoseRef in command line");
+  }
 
   //----- CHECK CORRECT ARGUMENTS
   if( theParamMgr->GetNofImageFiles("fG4dcmCT") != 0 ) {
@@ -142,11 +153,18 @@ void DCMSqToRT::CheckArguments()
   if( theParamMgr->GetNofImageFiles("fRTStruct") > 1 ) {
     G4Exception("DCMSqToRT::CheckArguments","",FatalException,"THERE CANNOT BE ANY IMAGE FILE OF TYPE RTSTRUCT");
   }
-  G4int ndcm = theParamMgr->GetNofImageFiles("fCT");
-  ndcm += theParamMgr->GetNofImageFiles("fNM");
-  ndcm += theParamMgr->GetNofImageFiles("fRTDOSE");
-  if( ndcm > 1 ) {
+  /*t FOR CASES WHEN THERE IS NO RTDOSE file
+   G4int ndcm = theParamMgr->GetNofImageFiles("fCT");
+   ndcm += theParamMgr->GetNofImageFiles("fNM");
+   ndcm += theParamMgr->GetNofImageFiles("fRTDOSE");
+   if( ndcm > 1 ) {
     G4Exception("DCMSqToRT::CheckArguments","",FatalException,"THERE CAN ONLY BE ONE IMAGE OF TYPES CT, NM AND RTDOSE");
+    }*/
+ if( theParamMgr->GetNofImageFiles("fCT") > 1 ) {
+    G4Exception("DCMSqToRT::CheckArguments","",FatalException,"THERE CANNOT BE ANY IMAGE FILE OF TYPE CT");
+  }
+  if( theParamMgr->GetNofImageFiles("fNM") > 1 ) {
+    G4Exception("DCMSqToRT::CheckArguments","",FatalException,"THERE CANNOT BE ANY IMAGE FILE OF TYPE NM");
   }
   
 }
@@ -156,57 +174,55 @@ void DCMSqToRT::ConvertImages()
 {
   //-----  Get DicomUIDInfo from one of the DICOM files
   //--- READ DICOM FILES FOR UID
-  theReaderMgr->ProcessData();
-  theDicomUIDInfo = 0;
-  std::vector<DicomVReaderImage*> VRTFiles = theReaderMgr->GetImageReaders(DRM_RTDose, false);
-  if( VRTFiles.size() != 0 ) {
-    theDicomUIDInfo = VRTFiles[0]->GetUIDInfo();
-    bUIDfromRT = true;
-  }
-  //  G4cout << VRTFiles.size() << "RTDose Readers to VRTFiles " << VRTFiles.size() << " theDicomUIDInfo " << theDicomUIDInfo << G4endl; //GDEB
-  if( theDicomUIDInfo == 0 ) {
-    VRTFiles = theReaderMgr->GetImageReaders(DRM_CT, false);
-    if( VRTFiles.size() != 0 ) {
-      theDicomUIDInfo =  VRTFiles[0]->GetUIDInfo();
-      bUIDfromRT = false;
-    }
-  }
-  //  G4cout << VRTFiles.size() << "CT Readers to VRTFiles " << VRTFiles.size() << " theDicomUIDInfo " << theDicomUIDInfo << G4endl; //GDEB
-  if( theDicomUIDInfo == 0 ) {
-    VRTFiles = theReaderMgr->GetImageReaders(DRM_NM, false);
-    if( VRTFiles.size() != 0 ) {
-      theDicomUIDInfo =  VRTFiles[0]->GetUIDInfo();
-      bUIDfromRT = false;
-    }
-  }
-  //--------- READ Sqdose
-  GmSqdose* sqdose = 0; 
-  if( DicomVerb(infoVerb) ) G4cout << "@@@@@@@ READING SQDOSE FILE: " << theSqDoseFN << G4endl;
-  sqdose = new GmSqdose();
-  sqdose->Read(theSqDoseFN);
-  //    sqdose->CalculateErrors();
+  //  theReaderMgr->ProcessData(); // do it by hand, as ReaderMgr will look for -fSqdose, not -fSqdoseIn
+  DicomReaderSqdose* readerSqIn = new DicomReaderSqdose(theSqDoseInFN);
+  //new DicomReaderRTDose(theRTDoseOutFN);
+  DicomReaderRTDose* readerRTDRef = new DicomReaderRTDose(theRTDoseReferenceFN);
+  theReaderMgr->CreateImages();
+  
+  theDicomUIDInfo = readerRTDRef->GetUIDInfo();
+  bUIDfromRT = true;
 
+  //--------- READ Sqdose
+  GmSqdose* sqdose = readerSqIn->GetSqdose(); 
+  /*  if( DicomVerb(infoVerb) ) G4cout << "@@@@@@@ READING SQDOSE FILE: " << theSqDoseInFN << G4endl;
+  sqdose = new GmSqdose();
+  sqdose->Read(theSqDoseInFN);
+  //    sqdose->CalculateErrors();
+  */
+  
   DcmDataset* dataset = new DcmDataset();
   //DRTDoseIOD rtdose;
-  fillRTDoseFromSqdose( sqdose, *dataset );
+  fillRTDoseFromSqdose( sqdose, dataset );
 
+  //  G4cout << " @@@ DATASET " << G4endl; //GDEB
+ // dataset->print(G4cout); //GDEB
+  //  DcmOutputStream rtout(theRTDoseOutFN+"ds");
+  //dataset->write(rtout);
   // CAN FILL DATASET DIRECTLY, WITHOUT DRTDoseIOD ???
-  DcmFileFormat fileformat( dataset );
-  if( DicomVerb(infoVerb) )   G4cout << "@@@@@@@ SAVING RTDOSE FILE " << theRTDoseFN << G4endl;
+  DcmFileFormat fileFormat( dataset );
+  if( DicomVerb(infoVerb) )   G4cout << "@@@@@@@ SAVING RTDOSE FILE " << theRTDoseOutFN << G4endl;
 
-  OFCondition status = fileformat.saveFile(OFFilename(theRTDoseFN),EXS_LittleEndianExplicit);
+  OFCondition status = fileFormat.saveFile(OFFilename(theRTDoseOutFN),
+    EXS_LittleEndianExplicit,
+    EET_ExplicitLength,   // ← this is what controls undefined vs explicit length
+    EGL_recalcGL
+);
+  //  OFCondition status = fileFormat.saveFile(OFFilename(theRTDoseOutFN),EXS_LittleEndianImplicit);
   if (status.bad()) {
     std::cerr << "Error: cannot save DICOM file (" << status.text() << ")" << std::endl;
   }
 }
 
-void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset& dataset )
+//---------------------------------------------------------------------------
+void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset* dataset )
 {
   Uint16 theNBits = 16;
   GmSqdoseHeader* sqdoseHeader = sqdose->GetHeader();
   size_t nVoxelX = sqdoseHeader->GetNoVoxelsX();
   size_t nVoxelY = sqdoseHeader->GetNoVoxelsY();
   size_t nVoxelZ = sqdoseHeader->GetNoVoxelsZ();
+  unsigned long nVoxels = nVoxelX*nVoxelY*nVoxelZ;
   std::vector<float> voxelLimitsX = sqdoseHeader->GetVoxelLimitsX();
   std::vector<float> voxelLimitsY = sqdoseHeader->GetVoxelLimitsY();
   std::vector<float> voxelLimitsZ = sqdoseHeader->GetVoxelLimitsZ();
@@ -219,7 +235,7 @@ void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset& dataset )
   GmGenUtils::DateAndTimeNow( date, time );
 
   OFCondition result;
-  G4String myUID = "1.1.1.1.1.1.1111.111.1.1.11111111111111111111111111111111111111";
+  G4String myUID = theDicomUIDInfo->GetInfo(DCM_MediaStorageSOPInstanceUID);
 
   /*  DcmUniqueIdentifier TransferSyntaxUID(DCM_TransferSyntaxUID);
   if( GmGenUtils::IsLittleEndian() ) {
@@ -228,128 +244,150 @@ void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset& dataset )
     TransferSyntaxUID.putString("BigEndianExplicit");
   }
   addElementToDataset(result, dataset, new DcmUniqueIdentifier(TransferSyntaxUID), "1", "1", "MetaInformationHeader");
-
-  DcmUniqueIdentifier ImplementationClassUID(DCM_ImplementationClassUID);
-  if( bUIDfromRT && theDicomUIDInfo != 0 ) {
-    ImplementationClassUID.putString(theDicomUIDInfo->GetInfo(DCM_ImplementationClassUID));
-  } else {
-    ImplementationClassUID.putString("1.1.11.1.1111.1.1.11111111");
-  }
-  addElementToDataset(result, dataset, new DcmUniqueIdentifier(ImplementationClassUID), "1", "1", "MetaInformationHeader");
   */
+
+  DcmUniqueIdentifier MediaStorageSOPClassUID(DCM_MediaStorageSOPClassUID); MediaStorageSOPClassUID.putString(UID_RTDoseStorage);
+  addElementToDataset(result, dataset, new DcmUniqueIdentifier(MediaStorageSOPClassUID), "1", "1", "SOPCommonModule");
+  SetFromReference( dataset, DCM_MediaStorageSOPInstanceUID, "1", "1", "MetaInformationHeader");
   
-  DcmUniqueIdentifier InstanceCreatorUID(DCM_InstanceCreatorUID);
-  if( bUIDfromRT && theDicomUIDInfo != 0 ) {
-    InstanceCreatorUID.putString(theDicomUIDInfo->GetInfo(DCM_InstanceCreatorUID));
-  } else {
-    InstanceCreatorUID.putString((myUID+"5").c_str());
-  }
-  addElementToDataset(result, dataset, new DcmUniqueIdentifier(InstanceCreatorUID), "1", "1", "SOPCommonModule");
+  SetFromReference( dataset,DCM_ImplementationClassUID, "1", "1", "MetaInformationHeader");
+  
+  SetFromReference( dataset,DCM_ImplementationVersionName, "1", "1", "MetaInformationHeader","ShortString");
+  SetFromReference( dataset,DCM_PrivateInformationCreatorUID, "1", "1", "MetaInformationHeader");
+  G4cout << " @@@ DATASET PrivateInformationCreatorUID " << G4endl; //GDEB
+  dataset->print(G4cout); //GDEB  
+  SetFromReference( dataset,DCM_PrivateInformation, "1", "1", "MetaInformationHeader","OtherByteOtherWord");
+  G4cout << " @@@ DATASET PrivateInformation  " << G4endl; //GDEB
+  dataset->print(G4cout); //GDEB  
 
-  // --- PatientModule (M) ---
-  addElementToDataset(result, dataset, new DcmPersonName(DCM_PatientName), "1", "2", "PatientModule");
-  addElementToDataset(result, dataset, new DcmLongString(DCM_PatientID), "1", "2", "PatientModule");
-  //  if (result.good()) result = IssuerOfPatientIDQualifiersSequence.write(dataset, "1-n" ,"3", "PatientModule");
-  addElementToDataset(result, dataset, new DcmDate(DCM_PatientBirthDate), "1", "2", "PatientModule");
-  addElementToDataset(result, dataset, new DcmCodeString(DCM_PatientSex), "1", "2", "PatientModule");
-  //  if (result.good()) result = ReferencedPatientPhotoSequence.write(dataset, "1-n" ,"3", "PatientModule");
-  // addElementToDataset(result, dataset, new DcmCodeString(QualityControlSubject), "1", "3", "PatientModule");
-  //  if (result.good()) result = ReferencedPatientSequence.write(dataset, "1-n" ,"3", "PatientModule");
-  addElementToDataset(result, dataset, new DcmTime(DCM_PatientBirthTime), "1", "3", "PatientModule");
-
-  // --- GeneralStudyModule (M) ---
-  DcmUniqueIdentifier StudyInstanceUID(DCM_StudyInstanceUID);
-  if( theDicomUIDInfo != 0 ) {
-    StudyInstanceUID.putString(theDicomUIDInfo->GetInfo(DCM_StudyInstanceUID));
-  } else {
-    StudyInstanceUID.putString((myUID+"1").c_str());
-  }
-  addElementToDataset(result, dataset, new DcmUniqueIdentifier(StudyInstanceUID), "1", "1", "GeneralStudyModule");
+  SetFromReference( dataset,DCM_SpecificCharacterSet, "1", "1", "GeneralStudyModule","CodeString");
+  DcmDate InstanceCreationDate(DCM_InstanceCreationDate); InstanceCreationDate.putString(date);
+  addElementToDataset(result, dataset, new DcmDate(InstanceCreationDate), "1", "3", "SOPCommonModule");
+  DcmTime InstanceCreationTime(DCM_InstanceCreationTime); InstanceCreationTime.putString(time);
+  addElementToDataset(result, dataset, new DcmTime(InstanceCreationTime), "1", "3", "SOPCommonModule");
+  DcmUniqueIdentifier SOPClassUID(DCM_SOPClassUID);
+  SOPClassUID.putString(UID_RTDoseStorage);
+  addElementToDataset(result, dataset, new DcmUniqueIdentifier(SOPClassUID), "1", "1", "SOPCommonModule");
+  SetFromReference( dataset,DCM_SOPInstanceUID, "1", "1", "SOPCommonModule");
   DcmDate StudyDate(DCM_StudyDate); StudyDate.putString(date);
   addElementToDataset(result, dataset, new DcmDate(StudyDate), "1", "2", "GeneralStudyModule");
+  DcmDate SeriesDate(DCM_SeriesDate); SeriesDate.putString(date);
+  addElementToDataset(result, dataset, new DcmDate(SeriesDate), "1", "2", "GeneralStudyModule");
+  DcmDate ContentDate(DCM_ContentDate); ContentDate.putString(date);
+  addElementToDataset(result, dataset, new DcmDate(ContentDate), "1", "2", "GeneralStudyModule");
   DcmTime StudyTime(DCM_StudyTime); StudyTime.putString(time);
   addElementToDataset(result, dataset, new DcmTime(StudyTime), "1", "2", "GeneralStudyModule");
-  addElementToDataset(result, dataset, new DcmPersonName(DCM_ReferringPhysicianName), "1", "2", "GeneralStudyModule");
-  addElementToDataset(result, dataset, new DcmShortString(DCM_StudyID), "1", "2", "GeneralStudyModule");
-  addElementToDataset(result, dataset, new DcmShortString(DCM_AccessionNumber), "1", "2", "GeneralStudyModule");
-  DcmLongString StudyDescription(DCM_StudyDescription); StudyDescription.putString("GAMOS");
-  addElementToDataset(result, dataset, new DcmLongString(StudyDescription), "1", "3", "GeneralStudyModule");
-
-  
-  // --- PatientStudyModule (U) ---
-  // --- ClinicalTrialSubjectModule (U) ---
-  
-  // --- RTSeriesModule (M) ---
+  DcmTime SeriesTime(DCM_SeriesTime); SeriesTime.putString(time);
+  addElementToDataset(result, dataset, new DcmTime(SeriesTime), "1", "2", "GeneralStudyModule");
+  DcmTime ContentTime(DCM_ContentTime); ContentTime.putString(time);
+  addElementToDataset(result, dataset, new DcmTime(ContentTime), "1", "2", "GeneralStudyModule");
+  addElementToDataset(result, dataset, new DcmShortString(DCM_AccessionNumber), "1", "2", "GeneralStudyModule"); //(no value available)            
   DcmCodeString Modality(DCM_Modality); Modality.putString("RTDOSE");
   addElementToDataset(result, dataset, new DcmCodeString(Modality), "1", "1", "RTSeriesModule");
-  DcmUniqueIdentifier SeriesInstanceUID(DCM_SeriesInstanceUID);
-  if( bUIDfromRT && theDicomUIDInfo != 0 ) {
-    SeriesInstanceUID.putString(theDicomUIDInfo->GetInfo(DCM_SeriesInstanceUID));
-  } else {
-    SeriesInstanceUID.putString((myUID+"2").c_str());
-  }
-  addElementToDataset(result, dataset, new DcmUniqueIdentifier(SeriesInstanceUID), "1", "1", "RTSeriesModule");
-  DcmIntegerString SeriesNumber(DCM_SeriesNumber); SeriesNumber.putOFStringArray("1");
-  addElementToDataset(result, dataset, new DcmIntegerString(SeriesNumber), "1", "2", "RTSeriesModule");
-
-  // --- GeneralSeriesModule (M) ---
-  DcmCodeString PatientPosition(DCM_PatientPosition); PatientPosition.putString(thePatientPosition);
-  addElementToDataset(result, dataset, new DcmCodeString(PatientPosition), "1", "1", "GeneralSeriesModule");
-
-  // --- ClinicalTrialSeriesModule (U) ---
-  // --- FrameOfReferenceModule (M) ---
-  DcmUniqueIdentifier FrameOfReferenceUID(DCM_FrameOfReferenceUID); 
-  if( bUIDfromRT && theDicomUIDInfo != 0 ) {
-    FrameOfReferenceUID.putString(theDicomUIDInfo->GetInfo(DCM_FrameOfReferenceUID));
-  } else {
-    FrameOfReferenceUID.putString((myUID+"3").c_str());
-  }
-  addElementToDataset(result, dataset, new DcmUniqueIdentifier(FrameOfReferenceUID), "1", "1", "FrameOfReferenceModule");
-  addElementToDataset(result, dataset, new DcmLongString(DCM_PositionReferenceIndicator), "1", "2", "FrameOfReferenceModule");
 
   // --- GeneralEquipmentModule (M) ---
-  DcmLongString ManufacturerModelName(DCM_ManufacturerModelName); ManufacturerModelName.putString("GAMOS");
-  addElementToDataset(result, dataset, new DcmLongString(ManufacturerModelName), "1", "3", "GeneralEquipmentModule");
-  DcmLongString SoftwareVersions(DCM_SoftwareVersions); SoftwareVersions.putString(getenv("GAMOS_VER"));
-  addElementToDataset(result, dataset, new DcmLongString(SoftwareVersions), "1-n", "3", "GeneralEquipmentModule");
+  //  DcmLongString Manufacturer(DCM_Manufacturer); Manufacturer.putString("GAMOS");
+  // addElementToDataset(result, dataset, new DcmLongString(Manufacturer), "1", "3", "GeneralEquipmentModule");
+  SetFromReference( dataset,DCM_Manufacturer, "1", "1", "GeneralStudyModule","LongString");
+  //  DcmLongString InstitutionName(DCM_InstitutionName); InstitutionName.putString("CIEMAT");
+  //  addElementToDataset(result, dataset, new DcmLongString(InstitutionName), "1", "3", "GeneralEquipmentModule");
+  SetFromReference( dataset,DCM_InstitutionName, "1", "1", "GeneralStudyModule","LongString");
+  
+  addElementToDataset(result, dataset, new DcmPersonName(DCM_ReferringPhysicianName), "1", "2", "GeneralStudyModule");
+  SetFromReference( dataset,DCM_SeriesDescription, "1", "1", "GeneralStudyModule");
+  addElementToDataset(result, dataset, new DcmPersonName(DCM_OperatorsName), "1", "2", "GeneralStudyModule");
+  //  DcmLongString ManufacturerModelName(DCM_ManufacturerModelName); ManufacturerModelName.putString("GAMOS");
+  // addElementToDataset(result, dataset, new DcmLongString(ManufacturerModelName), "1", "3", "GeneralEquipmentModule");
+  SetFromReference( dataset,DCM_ManufacturerModelName, "1", "1", "GeneralStudyModule","LongString");
+  
+  // --- PatientModule (M) ---
+  SetFromReference( dataset,DCM_PatientName, "1", "1", "PatientModule","PersonName");
+  SetFromReference( dataset,DCM_PatientID, "1", "1", "PatientModule","LongString");
+  SetFromReference( dataset,DCM_PatientBirthDate, "1", "1", "PatientModule","Date");
+  SetFromReference( dataset,DCM_PatientSex, "1", "1", "PatientModule","CodeString");
+  
+  DcmDecimalString SliceThickness(DCM_SliceThickness); SliceThickness.putString(GmGenUtils::ftoa(widthZ));
+  addElementToDataset(result, dataset, new DcmDecimalString(SliceThickness), "1", "2", "ImagePlaneModule");
+  
+  //  DcmLongString SoftwareVersions(DCM_SoftwareVersions); SoftwareVersions.putString(getenv("GAMOS_VER"));
+  // addElementToDataset(result, dataset, new DcmLongString(SoftwareVersions), "1-n", "3", "GeneralEquipmentModule");
+  SetFromReference( dataset,DCM_SoftwareVersions, "1", "1", "GeneralStudyModule","LongString");
 
-  // --- GeneralImageModule (C) ---
-  // --- ImagePlaneModule (C) ---
-  OFString value;
-  value.append("2"); value.append("3");
-  //  std::cout << " STRING OK " << (DcmDecimalString::checkStringValue(value, "2")).good() << std::endl; //GDEB
+  // --- GeneralStudyModule (M) ---
+  SetFromReference( dataset,DCM_StudyInstanceUID, "1", "1", "GeneralStudyModule");
+  SetFromReference( dataset,DCM_SeriesInstanceUID, "1", "1", "GeneralStudyModule");
+  addElementToDataset(result, dataset, new DcmShortString(DCM_StudyID), "1", "2", "GeneralStudyModule"); //(no value available)            
+  SetFromReference( dataset,DCM_SeriesNumber, "1", "1", "GeneralStudyModule","IntegerString");
+  DcmIntegerString InstanceNumber(DCM_InstanceNumber); InstanceNumber.putString("3");
+  addElementToDataset(result, dataset, new DcmIntegerString(InstanceNumber), "1", "1", "GeneralEquipmentModule");
+  G4cout << " @@@ DATASET InstanceNumber " << G4endl; //GDEB
+  dataset->print(G4cout); //GDEB  
+
+  // imagePositionPatient: hadd 1/2 voxel size 
   double PixelWidth = widthX;
   double PixelHeight = widthY;
+  G4double imagePosPatX = voxelLimitsX[0] + 0.5*PixelWidth;
+  G4double imagePosPatY = voxelLimitsY[0] + 0.5*PixelHeight;
+  G4double imagePosPatZ = voxelLimitsZ[0] + 0.5*widthZ;
+  G4cout << " imagePosPatZ " << imagePosPatZ << " " << voxelLimitsZ[0] << "+ *widthZ" << widthZ<< G4endl;//GDEB
+  G4String imagePos = GmGenUtils::ftoa(imagePosPatX) + "\\" +
+    GmGenUtils::ftoa(imagePosPatY) + "\\" +
+    GmGenUtils::ftoa(imagePosPatZ);  
+  DcmDecimalString ImagePositionPatient(DCM_ImagePositionPatient); ImagePositionPatient.putString(imagePos);
+  addElementToDataset(result, dataset, new DcmDecimalString(ImagePositionPatient), "3", "1", "ImagePlaneModule");
+  G4String imageOrient = "1\\0\\0\\0\\1\\0";
+  DcmDecimalString ImageOrientationPatient(DCM_ImageOrientationPatient); ImageOrientationPatient.putString(imageOrient);
+  addElementToDataset(result, dataset, new DcmDecimalString(ImageOrientationPatient), "6", "1", "ImagePlaneModule");
+    G4cout << " @@@ DATASET ImageOrientationPatient " << G4endl; //GDEB
+  dataset->print(G4cout); //GDEB  
+
+  // --- FrameOfReferenceModule (M) ---
+  SetFromReference( dataset,DCM_FrameOfReferenceUID, "1", "1", "FrameOfReferenceModule");
+  addElementToDataset(result, dataset, new DcmLongString(DCM_PositionReferenceIndicator), "1", "2", "FrameOfReferenceModule");
+  
+  DcmUnsignedShort SamplesPerPixel(DCM_SamplesPerPixel); SamplesPerPixel.putUint16(1);
+  addElementToDataset(result, dataset, new DcmUnsignedShort(SamplesPerPixel), "1", "1C", "RTDoseModule");
+  DcmCodeString PhotometricInterpretation(DCM_PhotometricInterpretation); PhotometricInterpretation.putString("MONOCHROME2"); 
+  addElementToDataset(result, dataset, new DcmCodeString(PhotometricInterpretation), "1", "1C", "RTDoseModule");
+  // --- MultiFrameModule (C) ---
+  DcmIntegerString NumberOfFrames(DCM_NumberOfFrames); NumberOfFrames.putString(GmGenUtils::itoa(nVoxelZ));
+  addElementToDataset(result, dataset, new DcmIntegerString(NumberOfFrames), "1", "1", "MultiFrameModule");
+  SetFromReference( dataset,DCM_FrameIncrementPointer, "1", "1", "PatientModule","AttributeTag");
+		      
+  // --- ImagePixelModule (C) ---
+  DcmUnsignedShort Rows(DCM_Rows); Rows.putUint16(nVoxelY);
+  addElementToDataset(result, dataset, new DcmUnsignedShort(Rows), "1", "1", "ImagePixelModule");
+  DcmUnsignedShort Columns(DCM_Columns); Columns.putUint16(nVoxelX);
+  addElementToDataset(result, dataset, new DcmUnsignedShort(Columns), "1", "1", "ImagePixelModule");
   char buffer[32];
   OFStandard::ftoa(buffer, 15, PixelWidth, OFStandard::ftoa_format_f);
   strcat(buffer, "\\");
   OFStandard::ftoa(strchr(buffer, 0), 15, PixelHeight, OFStandard::ftoa_format_f);
   DcmDecimalString PixelSpacing(DCM_PixelSpacing); PixelSpacing.putString(buffer);
   addElementToDataset(result, dataset, new DcmDecimalString(PixelSpacing), "2", "1", "ImagePlaneModule");
-  G4String imageOrient = "1\\0\\0\\0\\1\\0";
-  DcmDecimalString ImageOrientationPatient(DCM_ImageOrientationPatient); ImageOrientationPatient.putString(imageOrient);
-  addElementToDataset(result, dataset, new DcmDecimalString(ImageOrientationPatient), "6", "1", "ImagePlaneModule");
-  // imagePositionPatient: hadd 1/2 voxel size
-  G4double imagePosPatX = voxelLimitsX[0] + 0.5*PixelWidth;
-  G4double imagePosPatY = voxelLimitsY[0] + 0.5*PixelHeight;
-  G4double imagePosPatZ = voxelLimitsZ[0];
-  G4String imagePos = GmGenUtils::ftoa(imagePosPatX) + "\\" +
-    GmGenUtils::ftoa(imagePosPatY) + "\\" +
-    GmGenUtils::ftoa(imagePosPatZ);  
-  DcmDecimalString ImagePositionPatient(DCM_ImagePositionPatient); ImagePositionPatient.putString(imagePos);
-  addElementToDataset(result, dataset, new DcmDecimalString(ImagePositionPatient), "3", "1", "ImagePlaneModule");
-  DcmDecimalString SliceThickness(DCM_SliceThickness); SliceThickness.putString(GmGenUtils::ftoa(widthZ));
-  addElementToDataset(result, dataset, new DcmDecimalString(SliceThickness), "1", "2", "ImagePlaneModule");
-  // addElementToDataset(result, dataset, new DcmDecimalString(SliceLocation), "1", "3", "ImagePlaneModule");
+  DcmUnsignedShort BitsAllocated(DCM_BitsAllocated); BitsAllocated.putUint16(theNBits);
+  addElementToDataset(result, dataset, new DcmUnsignedShort(BitsAllocated), "1", "1C", "RTDoseModule");
+  DcmUnsignedShort BitsStored(DCM_BitsStored); BitsStored.putUint16(theNBits);
+  addElementToDataset(result, dataset, new DcmUnsignedShort(BitsStored), "1", "1C", "RTDoseModule");
+  DcmUnsignedShort HighBit(DCM_HighBit); HighBit.putUint16(theNBits-1);
+  addElementToDataset(result, dataset, new DcmUnsignedShort(HighBit), "1", "1C", "RTDoseModule");
+  DcmUnsignedShort PixelRepresentation(DCM_PixelRepresentation); PixelRepresentation.putUint16(0);
+  addElementToDataset(result, dataset, new DcmUnsignedShort(PixelRepresentation), "1", "1C", "RTDoseModule");
+  DcmCodeString DoseUnits(DCM_DoseUnits); DoseUnits.putString("GY"); 
+  addElementToDataset(result, dataset, new DcmCodeString(DoseUnits), "1", "1", "RTDoseModule");
+  DcmCodeString DoseType(DCM_DoseType); DoseType.putString("PHYSICAL"); 
+  addElementToDataset(result, dataset, new DcmCodeString(DoseType), "1", "1", "RTDoseModule");
+  addElementToDataset(result, dataset, new DcmLongString(DCM_DoseComment), "1", "2", "GeneralStudyModule"); //(no value available)            
 
-  // --- ImagePixelModule (C) ---
-  DcmUnsignedShort Rows(DCM_Rows); Rows.putUint16(nVoxelY);
-  addElementToDataset(result, dataset, new DcmUnsignedShort(Rows), "1", "1", "ImagePixelModule");
-  DcmUnsignedShort Columns(DCM_Columns); Columns.putUint16(nVoxelX);
-  addElementToDataset(result, dataset, new DcmUnsignedShort(Columns), "1", "1", "ImagePixelModule");
+  SetFromReference( dataset,DCM_DoseSummationType, "1", "1", "","CodeString");
+  G4String offv = "";
+  for( size_t ii = 0; ii < nVoxelZ; ii++ ) {
+    if( ii != 0 ) offv += "\\";
+    offv += GmGenUtils::itoa(ii*widthZ);
+  }
+  DcmDecimalString GridFrameOffsetVector(DCM_GridFrameOffsetVector); GridFrameOffsetVector.putString(offv);
+  addElementToDataset(result, dataset, new DcmDecimalString(GridFrameOffsetVector), "2-n", "1C", "RTDoseModule");
 
-  unsigned long nVoxels = nVoxelX*nVoxelY*nVoxelZ;
-  Uint16* pd = new Uint16[nVoxels];
   std::vector<float> doses = sqdose->GetDoses();
   //--- NORMALIZE TO MAXIMUM
   float maxDose = 0;
@@ -361,7 +399,30 @@ void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset& dataset )
   DcmDecimalString DoseGridScaling(DCM_DoseGridScaling); DoseGridScaling.putString(GmGenUtils::ftoa(1./factor));
   addElementToDataset(result, dataset, new DcmDecimalString(DoseGridScaling), "1", "1C", "RTDoseModule");
 
+  DcmCodeString TissueHeterogeneityCorrection(DCM_TissueHeterogeneityCorrection); TissueHeterogeneityCorrection.putString("IMAGE\\ROI_OVERRIDE");
+  addElementToDataset(result, dataset, new DcmCodeString(TissueHeterogeneityCorrection), "1", "3", "GeneralEquipmentModule");
 
+  /*  DcmCodeString PatientPosition(DCM_PatientPosition); PatientPosition.putString(thePatientPosition);
+      addElementToDataset(result, dataset, new DcmCodeString(PatientPosition), "1", "1", "GeneralSeriesModule"); //extra*/
+
+  //  if (result.good()) result = ReferencedPatientPhotoSequence.write(dataset, "1-n" ,"3", "PatientModule");
+  // addElementToDataset(result, dataset, new DcmCodeString(QualityControlSubject), "1", "3", "PatientModule");
+  //  if (result.good()) result = ReferencedPatientSequence.write(dataset, "1-n" ,"3", "PatientModule");
+
+  
+  // --- PatientStudyModule (U) ---
+  // --- ClinicalTrialSubjectModule (U) ---
+  
+  // --- RTSeriesModule (M) ---
+
+  // --- GeneralSeriesModule (M) ---
+
+  // --- ClinicalTrialSeriesModule (U) ---
+
+  // --- GeneralImageModule (C) ---
+  // --- ImagePlaneModule (C) ---
+
+  Uint16* pd = new Uint16[nVoxels];
   size_t nVoxelXY = nVoxelX*nVoxelY;
   for( size_t ii = 0; ii < nVoxels; ii++ ) {
     // invert Z axis !!!
@@ -376,49 +437,35 @@ void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset& dataset )
     //    if( ii%1000 == 0 ) G4cout << ii << " DOSE " << pd[ii] << " = " <<doses[ii]*factor << " <- " <<  doses[ii] << G4endl; //GDEB
     //    if(  doses[iiInvZ] != 0 ) G4cout << ii << " -> " << iiInvZ << " DOSE " << pd[ii] << " = " <<doses[iiInvZ]*factor << " <- " <<  doses[iiInvZ] << G4endl; //GDEB
   }
+
+  // (300C,0002) ReferencedRTPlanSequence
+  DcmSequenceOfItems* referencedRTPlanSeq = new DcmSequenceOfItems(DCM_ReferencedRTPlanSequence);
+  //-  referencedRTPlanSeq->setEncodeWithExplicitLength(OFTrue);
+  DcmItem* item = new DcmItem();
+  //  item->setEncodeWithExplicitLength(OFTrue);
+  //-  DcmUniqueIdentifier ReferencedSOPClassUID(DCM_ReferencedSOPClassUID); 
+  //- DcmDecimalString DoseGridScaling(DCM_DoseGridScaling); DoseGridScaling.putString(GmGenUtils::ftoa(1./factor));
+  //  item->putAndInsertString(DCM_ReferencedSOPClassUID, UID_RTIonPlanStorage);
+  item->putAndInsertString(DCM_ReferencedSOPClassUID, theDicomUIDInfo->GetInfo(DCM_ReferencedSOPClassUID));
+  item->putAndInsertString(DCM_ReferencedSOPInstanceUID, theDicomUIDInfo->GetInfo(DCM_ReferencedSOPInstanceUID) ); 
+
+  referencedRTPlanSeq->insert(item);
+  dataset->insert(referencedRTPlanSeq, OFTrue);
+  
   DcmPixelData PixelData(DCM_PixelData); PixelData.putUint16Array (pd,nVoxels);
   //utUint16Array (c(const Uint16 *wordValue, const unsigned long length);
   addElementToDataset(result, dataset, new DcmPixelData(PixelData), "1", "1C", "ImagePixelModule");
 
-  DcmUnsignedShort SmallestImagePixelValue(DCM_SmallestImagePixelValue); SmallestImagePixelValue.putUint16(0);
+  /*  DcmUnsignedShort SmallestImagePixelValue(DCM_SmallestImagePixelValue); SmallestImagePixelValue.putUint16(0);
   addElementToDataset(result, dataset, new DcmUnsignedShort(SmallestImagePixelValue), "1", "3", "ImagePixelModule");
   DcmUnsignedShort LargestImagePixelValue(DCM_LargestImagePixelValue); LargestImagePixelValue.putUint16(pow(2,theNBits)-1);
   addElementToDataset(result, dataset, new DcmUnsignedShort(LargestImagePixelValue), "1", "3", "ImagePixelModule");
-
-  // --- MultiFrameModule (C) ---
-  DcmIntegerString NumberOfFrames(DCM_NumberOfFrames); NumberOfFrames.putString(GmGenUtils::itoa(nVoxelZ));
-  addElementToDataset(result, dataset, new DcmIntegerString(NumberOfFrames), "1", "1", "MultiFrameModule");
+  */
   
   //  addElementToDataset(result, dataset, new DcmAttributeTag(FrameIncrementPointer), "1-n", "1", "MultiFrameModule");
 
   // --- RTDoseModule (M) ---
-  DcmUnsignedShort SamplesPerPixel(DCM_SamplesPerPixel); SamplesPerPixel.putUint16(1);
-  addElementToDataset(result, dataset, new DcmUnsignedShort(SamplesPerPixel), "1", "1C", "RTDoseModule");
-  DcmCodeString PhotometricInterpretation(DCM_PhotometricInterpretation); PhotometricInterpretation.putString("MONOCHROME2"); 
-  addElementToDataset(result, dataset, new DcmCodeString(PhotometricInterpretation), "1", "1C", "RTDoseModule");
-  DcmUnsignedShort BitsAllocated(DCM_BitsAllocated); BitsAllocated.putUint16(theNBits);
-  addElementToDataset(result, dataset, new DcmUnsignedShort(BitsAllocated), "1", "1C", "RTDoseModule");
-  DcmUnsignedShort BitsStored(DCM_BitsStored); BitsStored.putUint16(theNBits);
-  addElementToDataset(result, dataset, new DcmUnsignedShort(BitsStored), "1", "1C", "RTDoseModule");
-  DcmUnsignedShort HighBit(DCM_HighBit); HighBit.putUint16(theNBits-1);
-  addElementToDataset(result, dataset, new DcmUnsignedShort(HighBit), "1", "1C", "RTDoseModule");
-  DcmUnsignedShort PixelRepresentation(DCM_PixelRepresentation); PixelRepresentation.putUint16(0);
-  addElementToDataset(result, dataset, new DcmUnsignedShort(PixelRepresentation), "1", "1C", "RTDoseModule");
-  DcmCodeString DoseUnits(DCM_DoseUnits); DoseUnits.putString("GY"); 
-  addElementToDataset(result, dataset, new DcmCodeString(DoseUnits), "1", "1", "RTDoseModule");
-  DcmCodeString DoseType(DCM_DoseType); DoseType.putString("MONTECARLO"); 
-  addElementToDataset(result, dataset, new DcmCodeString(DoseType), "1", "1", "RTDoseModule");
-  DcmIntegerString InstanceNumber(DCM_InstanceNumber); InstanceNumber.putString("1");
-  addElementToDataset(result, dataset, new DcmIntegerString(InstanceNumber), "1", "3", "RTDoseModule");
-  DcmCodeString DoseSummationType(DCM_DoseSummationType); DoseSummationType.putString("BEAM");
-  addElementToDataset(result, dataset, new DcmCodeString(DoseSummationType), "1", "1", "RTDoseModule");
-  G4String offv = "";
-  for( size_t ii = 0; ii < nVoxelZ; ii++ ) {
-    if( ii != 0 ) offv += "\\";
-    offv += GmGenUtils::itoa(ii*widthZ);
-  }
-  DcmDecimalString GridFrameOffsetVector(DCM_GridFrameOffsetVector); GridFrameOffsetVector.putString(offv);
-  addElementToDataset(result, dataset, new DcmDecimalString(GridFrameOffsetVector), "2-n", "1C", "RTDoseModule");
+
 
   // --- RTDVHModule (U) ---
   // --- StructureSetModule (C) ---
@@ -434,31 +481,15 @@ void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset& dataset )
   */
 
   // --- SOPCommonModule (M) ---  
-  DcmUniqueIdentifier SOPClassUID(DCM_SOPClassUID);
-  SOPClassUID.putString(UID_RTDoseStorage);
-  addElementToDataset(result, dataset, new DcmUniqueIdentifier(SOPClassUID), "1", "1", "SOPCommonModule");
-  DcmUniqueIdentifier SOPInstanceUID(DCM_SOPInstanceUID);
-  if( bUIDfromRT && theDicomUIDInfo != 0 ) {
-    SOPInstanceUID.putString(theDicomUIDInfo->GetInfo(DCM_SOPInstanceUID));
-  } else {
-    SOPInstanceUID.putString((myUID+"4").c_str());
-  }
-  addElementToDataset(result, dataset, new DcmUniqueIdentifier(SOPInstanceUID), "1", "1", "SOPCommonModule");
-
-  DcmCodeString SpecificCharacterSet(DCM_SpecificCharacterSet); SpecificCharacterSet.putString("ISO_IR 100");  //Latin alphabet No. 1
-  addElementToDataset(result, dataset, new DcmCodeString(SpecificCharacterSet), "1-n", "1C", "SOPCommonModule");
-  DcmDate InstanceCreationDate(DCM_InstanceCreationDate); InstanceCreationDate.putString(date);
-  addElementToDataset(result, dataset, new DcmDate(InstanceCreationDate), "1", "3", "SOPCommonModule");
-  DcmTime InstanceCreationTime(DCM_InstanceCreationTime); InstanceCreationTime.putString(time);
-  addElementToDataset(result, dataset, new DcmTime(InstanceCreationTime), "1", "3", "SOPCommonModule");
 
   // --- CommonInstanceReferenceModule (U) ---
   // --- FrameExtractionModule (C) ---
   
 }
 
+//------------------------------------------------------------------------
 OFCondition DCMSqToRT::addElementToDataset(OFCondition &result,
-					   DcmItem &dataset,
+					   DcmItem *dataset,
 					   DcmElement *element,
 					   const OFString &vm,
 					   const OFString &type,
@@ -470,7 +501,7 @@ OFCondition DCMSqToRT::addElementToDataset(OFCondition &result,
       if ((type == "2") || !element->isEmpty())  {
 	triedToInsert = OFTrue;
 	/* insert non-empty element or empty "type 2" element */
-	result = dataset.insert(element, OFTrue /*replaceOld*/);
+	result = dataset->insert(element, OFTrue /*replaceOld*/);
 	if (DCM_dcmrtLogger.isEnabledFor(OFLogger::WARN_LOG_LEVEL))
 	  checkElementValue(*element, vm, type, result, moduleName);
       } else if (type == "1") {
@@ -488,6 +519,7 @@ OFCondition DCMSqToRT::addElementToDataset(OFCondition &result,
   return result;
 }
 
+//------------------------------------------------------------------------
 OFBool DCMSqToRT::checkElementValue(DcmElement &element,
 				   const OFString &vm,
 				   const OFString &type,
@@ -538,6 +570,70 @@ OFBool DCMSqToRT::checkElementValue(DcmElement &element,
   return result;
 }
 
+//------------------------------------------------------------------------
+OFCondition DCMSqToRT::SetFromReference( DcmItem *dataset, const DcmTag &tag, const OFString &vm, const OFString &type, const char *moduleName, G4String elemType)
+{
+  OFCondition result;
+  if( elemType == "UniqId" ) {
+    DcmUniqueIdentifier dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmUniqueIdentifier(dcmEl), vm, type, moduleName);
+  } else if( elemType == "PersonName" ) {
+    DcmPersonName dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmPersonName(dcmEl), vm, type, moduleName);
+  } else if( elemType == "LongString" ) {
+    DcmLongString  dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmLongString(dcmEl), vm, type, moduleName);
+  } else if( elemType == "Date" ) {
+    DcmDate  dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmDate(dcmEl), vm, type, moduleName);
+  } else if( elemType == "CodeString" ) {
+    DcmCodeString  dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmCodeString(dcmEl), vm, type, moduleName);
+  } else if( elemType == "Time" ) {
+    DcmTime  dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmTime(dcmEl), vm, type, moduleName);
+  } else if( elemType == "ShortString" ) {
+    DcmShortString  dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmShortString(dcmEl), vm, type, moduleName);
+  } else if( elemType == "IntegerString" ) {
+    DcmIntegerString  dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmIntegerString(dcmEl), vm, type, moduleName);
+  } else if( elemType == "DecimalString" ) {
+    DcmDecimalString  dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmDecimalString(dcmEl), vm, type, moduleName);
+  } else if( elemType == "UnsignedShort" ) {
+    DcmUnsignedShort dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmUnsignedShort(dcmEl), vm, type, moduleName);
+  } else if( elemType == "AttributeTag" ) {
+    DcmAttributeTag dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmAttributeTag(dcmEl), vm, type, moduleName);
+  } else if( elemType == "OtherByteOtherWord" ) {
+    DcmOtherByteOtherWord dcmEl(tag);
+    dcmEl.putString( theDicomUIDInfo->GetInfo(tag) );
+    result = addElementToDataset(result, dataset, new DcmOtherByteOtherWord(dcmEl), vm, type, moduleName);
+  } else {
+    G4Exception("DCMSqToRT::SetFromReference",
+		"",
+		FatalErrorInArgument,
+		("elemType not found: "+elemType).c_str());
+    result = RT_EC_InvalidValue;
+  }
+
+  return result;
+}
+
+//------------------------------------------------------------------------
 void DCMSqToRT::PrintHelp()
 {
    G4cout << " -fSqdoseIn   Input file in Sqdose format" << G4endl
@@ -545,3 +641,29 @@ void DCMSqToRT::PrintHelp()
 	  << " -patientPosition   PatientPosition (default is HFS)"<< G4endl; 
 }
   
+/*
+VR to DCMTK class mapping (common ones) VRDCMTK Class
+UI DcmUniqueIdentifier
+LO DcmLongString
+SH DcmShortString
+ST DcmShortText
+LT DcmLongText
+PN DcmPersonName
+DA DcmDate
+TM DcmTime
+DT DcmDateTime
+DS DcmDecimalString
+IS DcmIntegerString
+US DcmUnsignedShort
+SS DcmSignedShort
+UL DcmUnsignedLong
+SL DcmSignedLong
+FL DcmFloatingPointSingle
+FD DcmFloatingPointDouble
+CS DcmCodeString
+AS DcmAgeString
+SQ DcmSequenceOfItems
+OB DcmOtherByteOtherWord
+OW DcmOtherByteOtherWord
+UN DcmUnknown
+*/

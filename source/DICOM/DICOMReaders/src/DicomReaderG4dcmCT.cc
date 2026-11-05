@@ -71,7 +71,7 @@ void DicomReaderG4dcmCT::ReadHeaderAndPixels( G4bool bReadPixelData )
   theMateDensImage = new DicomVImage(theMateIDImage,"G4dcmCT_MateDens",DIM_G4dcmCT_MateDens);
   G4bool bEOF = theMateDensImage->ReadDataFromTextFile( *fin, false );
   if( DicomVerb(testVerb) ) G4cout << " DicomReaderG4dcmCT::ReadHeaderAndPixels theMateDensImage NDATA " << theMateDensImage->GetNoVoxels() << G4endl; 
-  if( DicomVerb(testVerb) ) G4cout << " DicomReaderG4dcmCT::ReadHeaderAndPixels bEOF " << bEOF << G4endl; 
+  if( DicomVerb(-testVerb) ) G4cout << " DicomReaderG4dcmCT::ReadHeaderAndPixels bEOF " << bEOF << G4endl; 
 
   // }
   //-- read structure names
@@ -81,7 +81,13 @@ void DicomReaderG4dcmCT::ReadHeaderAndPixels( G4bool bReadPixelData )
     theStructIDImage = new DicomVImageStr(theMateIDImage,"G4dcmCT_StructID",DIM_G4dcmCT_StructID);
     //    G4cout << theStructIDImage << " TO READ STRUCT READ " << theStructIDImage->GetNoVoxels() << G4endl;  //GDEB
     G4bool bEOFSt = theStructIDImage->ReadDataFromTextFile( *fin, false );
-    if( bEOFSt ) return;
+    if( bEOFSt ) {
+      G4Exception("DicomReaderG4dcmCT::ReadHeaderAndPixels",
+		  "",
+		  JustWarning, //GDEB
+		  //		  FatalException,
+		  "File structures read but they do not end with list of structures");
+    } //-return;
     /*    size_t nVoxelX = theStructIDImage->GetNoVoxelsX();
     size_t nVoxelY = theStructIDImage->GetNoVoxelsY();
     size_t nVoxelXY = nVoxelX*nVoxelY;
@@ -94,7 +100,7 @@ void DicomReaderG4dcmCT::ReadHeaderAndPixels( G4bool bReadPixelData )
     G4double fMinY = theStructIDImage->GetMinY();
     //  G4double fMinZ = theStructIDImage->GetMinZ();
     //  std::map<int,double> stMinY; // GDEB
-    std::set<G4int> ists;
+    std::set<G4int> ists; */
     /*  for( size_t ii = 0; ii < nVoxelXYZ; ii++ ){
     //    G4int ix = ii%nVoxelX;
     G4int iy = (ii/nVoxelX)%nVoxelY;
@@ -122,10 +128,12 @@ void DicomReaderG4dcmCT::ReadHeaderAndPixels( G4bool bReadPixelData )
       //--- AVOID REPEATED NAMES
       for( std::map<G4int,G4String>::const_iterator itest =  theStructNames.begin(); itest != theStructNames.end(); itest++ ) {
 	if( (*itest).second == stName ) {
-	  G4Exception("DicomReaderG4dcmCT::ReadHeaderAndPixels",
-		      "",
-		      JustWarning,
-		      ("Repeated Structure Name " + stName + " ,  a '_2' will be added").c_str());
+	  if( DicomVerb(infoVerb) ) {
+	    G4Exception("DicomReaderG4dcmCT::ReadHeaderAndPixels",
+			"",
+			JustWarning,
+			("Repeated Structure Name " + stName + " ,  a '_2' will be added").c_str());
+	  }
 	  stName = stName+"_2";
 	}
       }

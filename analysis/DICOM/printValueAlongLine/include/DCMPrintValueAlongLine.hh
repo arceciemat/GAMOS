@@ -65,6 +65,7 @@ private:
   G4String theLineListFN;
   G4int theAlongLineInput;
   G4double theLineStep;
+  G4double theMultFactor;
 };
 
 #endif

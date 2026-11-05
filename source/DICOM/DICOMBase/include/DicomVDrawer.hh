@@ -19,9 +19,10 @@ public:
 
 public:
   virtual void SetOutputFile( G4String foutName ) = 0;
-  virtual void DrawXY( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "" ) = 0;
-  virtual void DrawXZ( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "" ) = 0;
-  virtual void DrawYZ( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "" ) = 0;
+  virtual void CloseOutputFile() = 0; 
+  virtual void DrawXY( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "", G4bool bOnlyNonZero = false ) = 0;
+  virtual void DrawXZ( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "", G4bool bOnlyNonZero = false ) = 0;
+  virtual void DrawYZ( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "", G4bool bOnlyNonZero = false ) = 0;
   virtual void DrawWithLinesXY( DicomVImage*, DicomVLineList* ) = 0;
   virtual void DrawWithLinesXZ( DicomVImage*, DicomVLineList* ) = 0;
   virtual void DrawWithLinesYZ( DicomVImage*, DicomVLineList* ) = 0;
@@ -39,11 +40,15 @@ public:
 
   virtual G4bool GetFigureTitle() const = 0;
   virtual void SetFigureTitle( G4bool bst ) = 0;
+  void SetDrawHisto1( G4bool bdh ) {
+    bDrawHisto1 = G4bool(bdh);
+  }
 
 protected:
   G4bool bColorsInitialized;
   G4bool bAverageSurroundingBig;
   G4double theOverSurrounding;
+  G4bool bDrawHisto1;
   
 };
 

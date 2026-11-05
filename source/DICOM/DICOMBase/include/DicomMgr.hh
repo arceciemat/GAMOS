@@ -11,7 +11,8 @@ class DicomVOperator;
 class DcmDataset;
 typedef std::multimap<DIModality,DicomVImage*> mmmodi;
 
-typedef std::map<G4String,DicomLineDrawingOptions*> msldo;
+typedef std::pair<G4String,DicomLineDrawingOptions*> psldo;
+typedef std::vector<std::pair<G4String,DicomLineDrawingOptions*> > vpsldo;
 
 class DicomMgr 
 {
@@ -42,6 +43,12 @@ public:
 
   G4int GetNofImages( DIModality mod ) const;
 
+  void SetReflectY( G4bool brot ) {
+    bReflectY = brot;
+  }
+  G4bool GetReflectY() const {
+    return bReflectY;
+  }
   void SetRotateXY180( G4bool brot ) {
     bRotateXY180 = brot;
   }
@@ -49,8 +56,8 @@ public:
     return bRotateXY180;
   }
 
-  void ReadLineDrawingOptios( G4String drawLinesFN );  
-  msldo GetLineDrawingOptions() const {
+  void ReadLineDrawingOptions( G4String drawLinesFN );  
+  vpsldo GetLineDrawingOptions() const {
     return theLineDrawingOptions;
   }
   std::vector<DicomVOperator*> GetOperators() const {
@@ -59,7 +66,11 @@ public:
 
 public:
   std::vector<DicomVImage*> GetImages(DIModality mod, G4bool bMustExist = true) const;
-
+  std::vector<DicomVImage*> GetImagesVector();
+  mmmodi GetImages() const {
+    return theImages;
+  }
+  
   void SetImagePositionPatientIsPosVoxelCentre( G4bool pvc ) {
     bImagePositionPatientIsPosVoxelCentre = pvc;
   }
@@ -75,9 +86,10 @@ private:
   std::multimap<G4int,DicomVOperator*> theOperatorsOrdered;
   G4int theInPolygonNCheck;
   
+  G4bool bReflectY;
   G4bool bRotateXY180;
 
-  msldo theLineDrawingOptions;
+  vpsldo theLineDrawingOptions;
   G4bool bImagePositionPatientIsPosVoxelCentre;
 };
 

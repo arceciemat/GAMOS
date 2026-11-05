@@ -20,7 +20,6 @@ DicomOperResize::DicomOperResize( G4int iOrder, G4String name)
 }
 
 //-----------------------------------------------------------------------------
-//void DicomOperResize::BuildMaterials( DicomVImage* image )
 void DicomOperResize::Operate( DicomVImage* image )
 {
 #ifndef GAMOS_NO_VERBOSE
@@ -39,28 +38,34 @@ void DicomOperResize::Operate( DicomVImage* image )
   size_t newNoVoxelsZ = paramMgr->GetNumericValue("nVoxZ",image->GetNoVoxelsZ()); 
   G4bool bInterpolate = G4bool(paramMgr->GetNumericValue("bInterpolate",1));
   
-  G4double PRECISION = std::min(1e-4,2*image->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
-  //  G4cout << " 1PRECISION " << PRECISION << " " << image->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
+  G4double PRECISION = std::min(2e-5,2*image->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
+  //  PRECISION /= 10.;
+  //G4cout << " 1PRECISION " << PRECISION << " " << image->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
 
   G4bool bChangeNX = newNoVoxelsX == image->GetNoVoxelsX();
   G4bool bChangeNY = newNoVoxelsY == image->GetNoVoxelsY();
   G4bool bChangeNZ = newNoVoxelsZ == image->GetNoVoxelsZ();
   //----- DO NOT INTERPOLATE: MOVE MIN/MAX TO VOXEL EDGES
+  //  G4cout << " BINTERPOLATE " << bInterpolate << "=" << paramMgr->GetNumericValue("bInterpolate",1) << G4endl; //GDEB
+  bInterpolate = true; //GDEB
   G4cout << " BINTERPOLATE " << bInterpolate << G4endl; //GDEB
   if( !bInterpolate ) {
     if( bChangeNX ) {
+      G4cout << bChangeNX << " newNoVoxelsX " << newNoVoxelsX << "==" << image->GetNoVoxelsX() << G4endl;
       G4Exception("DicomOperResize::Operate",
 		  "",
 		  FatalException,
 		  "No interpolation: nVoxX will be calculated as (newMaxX - newMinX)/stepX, it cannot be set by the user");
     }
     if( bChangeNY ) {
+      G4cout << bChangeNY << " newNoVoxelsY " << newNoVoxelsY << "==" << image->GetNoVoxelsY() << G4endl;
       G4Exception("DicomOperResize::Operate",
 		  "",
 		  FatalException,
 		  "No interpolation: nVoxY will be calculated as (newMaxY - newMinY)/stepY, it cannot be set by the user");
     }
     if( bChangeNZ ) {
+      G4cout << bChangeNZ << " newNoVoxelsZ " << newNoVoxelsZ << "==" << image->GetNoVoxelsZ() << G4endl;
       G4Exception("DicomOperResize::Operate",
 		  "",
 		  FatalException,
@@ -82,7 +87,7 @@ void DicomOperResize::Operate( DicomVImage* image )
       newMinX = image->GetMinX()+ibinX*image->GetVoxelDimX();
       if( ibinX >= 0 && bChangeNX ) newNoVoxelsX -= ibinX;
     }
-    //  G4cout << " XLIM " << newNoVoxelsX << " " << newMinX << " " << newMaxX << G4endl; //GDEB
+    //    G4cout << " XLIM " << newNoVoxelsX << " " << newMinX << " " << newMaxX << G4endl; //GDEB
     
     if( newMaxX != image->GetMaxX() && bChangeNX ) {
       int ibinX = GmGenUtils::GetAboveInt((newMaxX-image->GetMinX())/image->GetVoxelDimX(),PRECISION);
@@ -154,21 +159,21 @@ void DicomOperResize::Operate( DicomVImage* image )
     //    G4cout << " ZLIM " << newNoVoxelsZ << " " << newMinZ << " " << newMaxZ << G4endl; //GDEB
   }
   
-    //  G4cout << " NEWMINX " << newMinX << " != " << image->GetMinX() << " && " << paramMgr->IsParameterInScript("nVoxX") << G4endl; //GDEB
-      if( newMinX != image->GetMinX() && bChangeNX ) {
-	int ibinX = GmGenUtils::GetBelowInt((newMinX-image->GetMinX())/image->GetVoxelDimX(),PRECISION);
-	if( ibinX < 0 ) ibinX = 0;
+  //  G4cout << " NEWMINX " << newMinX << " != " << image->GetMinX() << " && " << paramMgr->IsParameterInScript("nVoxX") << G4endl; //GDEB
+  if( newMinX != image->GetMinX() && bChangeNX ) {
+    int ibinX = GmGenUtils::GetBelowInt((newMinX-image->GetMinX())/image->GetVoxelDimX(),PRECISION);
+    if( ibinX < 0 ) ibinX = 0;
 #ifndef GAMOS_NO_VERBOSE
-      if( DicomVerb(infoVerb) ) {
-	G4cout << " DicomOperResize MINX " << newMinX << " ->IBINX " << ibinX << " = (" << newMinX << " - " << image->GetMinX() << " )/ " << image->GetVoxelDimX() << " " << (newMinX-image->GetMinX())/image->GetVoxelDimX() << " " << GmGenUtils::GetBelowInt((newMinX-image->GetMinX())/image->GetVoxelDimX(),PRECISION) << G4endl;
-	G4cout << " DicomOperResize NEW MINX " << image->GetMinX()+ibinX*image->GetVoxelDimX() << G4endl;
-      }
-#endif      
-      newMinX = image->GetMinX()+ibinX*image->GetVoxelDimX();
-      if( ibinX >= 0 && bChangeNX ) newNoVoxelsX -= ibinX;
+    if( DicomVerb(infoVerb) ) {
+      G4cout << " DicomOperResize MINX " << newMinX << " ->IBINX " << ibinX << " = (" << newMinX << " - " << image->GetMinX() << " )/ " << image->GetVoxelDimX() << " " << (newMinX-image->GetMinX())/image->GetVoxelDimX() << " " << GmGenUtils::GetBelowInt((newMinX-image->GetMinX())/image->GetVoxelDimX(),PRECISION) << G4endl;
+      G4cout << " DicomOperResize NEW MINX " << image->GetMinX()+ibinX*image->GetVoxelDimX() << G4endl;
     }
-    //  G4cout << " XLIM " << newNoVoxelsX << " " << newMinX << " " << newMaxX << G4endl; //GDEB
-				
+#endif      
+    newMinX = image->GetMinX()+ibinX*image->GetVoxelDimX();
+    if( ibinX >= 0 && bChangeNX ) newNoVoxelsX -= ibinX;
+  }
+  //  G4cout << " XLIM " << newNoVoxelsX << " " << newMinX << " " << newMaxX << G4endl; //GDEB
+  
   return Operate( image, newNoVoxelsX, newMinX, newMaxX, newNoVoxelsY, newMinY, newMaxY, newNoVoxelsZ, newMinZ, newMaxZ);
   
 }
@@ -177,109 +182,107 @@ void DicomOperResize::Operate( DicomVImage* image )
 void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double newMinX, G4double newMaxX, G4int newNoVoxelsY, G4double newMinY, G4double newMaxY, G4int newNoVoxelsZ, G4double newMinZ, G4double newMaxZ)
 { 
   //  G4cout << "   DicomOperResize::Operate( " << image->GetModalityStr() << G4endl; //GDEB
-  G4double PRECISION = 2*image->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ));
-  //  G4cout << " 1PRECISION " << PRECISION << " " << image->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
+  G4double PRECISION = std::min(1e-5,2*image->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
+  PRECISION *= 1.2;
+  //-G4double PRECISION = 2*image->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ));
+  G4cout << " 2PRECISION " << PRECISION << " " << image->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
   G4int newNoVoxelsXY = newNoVoxelsX*newNoVoxelsY;
   //----- Extract the old image data
-  size_t imNVoxX = image->GetNoVoxelsX();
-  size_t imNVoxY = image->GetNoVoxelsY();
-  size_t imNVoxZ = image->GetNoVoxelsZ();
-  size_t imNVoxXY = imNVoxX*imNVoxY;
-  //  size_t imNVoxZ = image->GetNoVoxelsZ();
-  G4double imMinX = image->GetMinX();
-  G4double imMinY = image->GetMinY();
-  G4double imMinZ = image->GetMinZ();
-  G4double imMaxX = image->GetMaxX();
-  G4double imMaxY = image->GetMaxY();
-  G4double imMaxZ = image->GetMaxZ();
-  G4double imVoxDimX = image->GetVoxelDimX();
-  G4double imVoxDimY = image->GetVoxelDimY();
-  G4double imVoxDimZ = image->GetVoxelDimZ();
+  size_t oldNVoxX = image->GetNoVoxelsX();
+  size_t oldNVoxY = image->GetNoVoxelsY();
+  size_t oldNVoxZ = image->GetNoVoxelsZ();
+  size_t oldNVoxXY = oldNVoxX*oldNVoxY;
+  //  size_t oldNVoxZ = image->GetNoVoxelsZ();
+  G4double oldMinX = image->GetMinX();
+  G4double oldMinY = image->GetMinY();
+  G4double oldMinZ = image->GetMinZ();
+  G4double oldMaxX = image->GetMaxX();
+  G4double oldMaxY = image->GetMaxY();
+  G4double oldMaxZ = image->GetMaxZ();
+  G4double oldVoxDimX = image->GetVoxelDimX();
+  G4double oldVoxDimY = image->GetVoxelDimY();
+  G4double oldVoxDimZ = image->GetVoxelDimZ();
 
 #ifndef GAMOS_NO_VERBOSE
   if( DicomVerb(warningVerb) ) {
     G4cout << "IMAGE SIZE " << G4endl
-	   << " X: " << imNVoxX << " " << imMinX << " " << imMaxX << G4endl
-	   << " Y: " << imNVoxY << " " << imMinY << " " << imMaxY << G4endl
-	   << " Z: " << imNVoxZ << " " << imMinZ << " " << imMaxZ << G4endl;
+	   << " X: " << oldNVoxX << " " << oldMinX << " " << oldMaxX << G4endl
+	   << " Y: " << oldNVoxY << " " << oldMinY << " " << oldMaxY << G4endl
+	   << " Z: " << oldNVoxZ << " " << oldMinZ << " " << oldMaxZ << G4endl;
     G4cout << "NEW REQUESTED SIZE " << G4endl
 	   << " X: " << newNoVoxelsX << " " << newMinX << " " << newMaxX << G4endl
 	   << " Y: " << newNoVoxelsY << " " << newMinY << " " << newMaxY << G4endl
 	   << " Z: " << newNoVoxelsZ << " " << newMinZ << " " << newMaxZ << G4endl;
-    G4cout << "DIFFERENCE IN LIMITS " << G4endl
-	   << " X: " << -imMinX + newMinX << " " << imMaxX - newMaxX << G4endl
-	   << " Y: " << -imMinY + newMinY << " " << imMaxY - newMaxY << G4endl
-	   << " Z: " << -imMinZ + newMinZ << " " << imMaxZ - newMaxZ << G4endl;
+    G4cout << "DIFFERENCE IN LIMITS<?0 " << G4endl
+	   << " X: " << -oldMinX + newMinX << " " << oldMaxX - newMaxX << G4endl
+	   << " Y: " << -oldMinY + newMinY << " " << oldMaxY - newMaxY << G4endl
+	   << " Z: " << -oldMinZ + newMinZ << " " << oldMaxZ - newMaxZ << G4endl;
     G4cout << "PRECISION " << PRECISION << G4endl;
   }
 #endif
 
-  G4double theVoxelDimX = (newMaxX-newMinX)/newNoVoxelsX;
-  G4double theVoxelDimY = (newMaxY-newMinY)/newNoVoxelsY;
-  G4double theVoxelDimZ = (newMaxZ-newMinZ)/newNoVoxelsZ;
-
   //----- Check that new limits are inside old limits
   G4bool bInLimits = true;
-  if( imMinX - newMinX > PRECISION ) {
+  if( oldMinX - newMinX > PRECISION ) {
     bInLimits = false;
     G4cerr << "!! MINX IMAGE LIMITS " << G4endl
-	   << " X: " << imMinX << " " << imMaxX << G4endl;
+	   << " X: " << oldMinX << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
-	   << " X: " << newMinX << " " << newMaxX << G4endl;
+	   << " X: " << newMinX << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS " << G4endl
-	   << " X: " << imMinX - newMinX << " " << imMaxX - newMaxX << G4endl;
-    newMinX = imMinX;
+	   << " X:>0? " << oldMinX - newMinX << G4endl;
+    newMinX = oldMinX;
   }
-  if( imMinY - newMinY > PRECISION ) {
+  if( oldMinY - newMinY > PRECISION ) {
     bInLimits = false;
     G4cerr << "!! MINY IMAGE LIMITS " << G4endl
-	   << " Y: " << imMinY << " " << imMaxY << G4endl;
+	   << " Y: " << oldMinY << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
-	   << " Y: " << newMinY << " " << newMaxY << G4endl;
+	   << " Y: " << newMinY << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS " << G4endl
-	   << " Y: " << imMinY - newMinY << " " << imMaxY - newMaxY << G4endl;
-    newMinY = imMinY;
+	   << " Y:>0? " << oldMinY - newMinY << G4endl;
+    newMinY = oldMinY;
   }
-  if( imMinZ - newMinZ > PRECISION ) {
+  if( oldMinZ - newMinZ > PRECISION ) {
     bInLimits = false;
-    G4cerr << "!! MINZ IMAGE LIMITS " << imMinZ - newMinZ << G4endl
-	   << " Z: " << imMinZ << " " << imMaxZ << G4endl;
+    G4cerr << "!! MINZ IMAGE LIMITS " << oldMinZ - newMinZ << G4endl
+	   << " Z: " << oldMinZ << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
-	   << " Z: " << newMinZ << " " << newMaxZ << G4endl;
+	   << " Z: " << newMinZ << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS " << G4endl
-	   << " Z: " << imMinZ - newMinZ << " " << imMaxZ - newMaxZ << G4endl;
-    newMinZ = imMinZ;
+	   << " Z:>0? " << oldMinZ - newMinZ << G4endl;
+    newMinZ = oldMinZ;
   }
-  if( newMaxX - imMaxX > PRECISION ) {
+  if( oldMaxX - newMaxX < -PRECISION ) {
     bInLimits = false;
     G4cerr << "!! MAXX IMAGE LIMITS " << G4endl
-	   << " X: " << imMinX << " " << imMaxX << G4endl;
+	   << " X: " << oldMaxX << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
-	   << " X: " << newMinX << " " << newMaxX << G4endl;
+	   << " X: " << newMaxX << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS " << G4endl
-	   << " X: " << imMinX - newMinX << " " << imMaxX - newMaxX << G4endl;
-    newMaxX = imMaxX;
+	   << " X:<?0 " << oldMaxX - newMaxX << G4endl;
+    newMaxX = oldMaxX;
   }
-  if( newMaxY - imMaxY > PRECISION ) {
+  if( oldMaxY - newMaxY < -PRECISION ) {
     bInLimits = false;
     G4cerr << "!! MAXY IMAGE LIMITS " << G4endl
-	   << " Y: " << imMinY << " " << imMaxY << G4endl;
+	   << " Y: " << oldMaxY << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
-	   << " Y: " << newMinY << " " << newMaxY << G4endl;
+	   << " Y: " << newMaxY << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS " << G4endl
-	   << " Y: " << imMinY - newMinY << " " << imMaxY - newMaxY << G4endl;
-    newMaxY = imMaxY;
+	   << " Y:<?0 " << oldMaxY - newMaxY << G4endl;
+    newMaxY = oldMaxY;
   }
-  if( newMaxZ - imMaxZ > PRECISION ) {
+  if( oldMaxZ - newMaxZ < -PRECISION ) {
     bInLimits = false;
-    G4cerr << "!! MAXZ IMAGE LIMITS " << imMaxZ - newMaxZ << G4endl
+    G4cerr << "!! MAXZ IMAGE LIMITS " << G4endl
       //	   << " PREC " << PRECISION //GDEB
-	   << " Z: " << imMinZ << " " << imMaxZ << G4endl;
+	   << " Z: " << oldMaxZ << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
-	   << " Z: " << newMinZ << " " << newMaxZ << G4endl;
+	   << " Z: " << newMaxZ << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS " << G4endl
-	   << " Z: " << imMinZ - newMinZ << " " << imMaxZ - newMaxZ << G4endl;
-    newMaxZ = imMaxZ;
+	   << " Z:<?0 " << oldMaxZ - newMaxZ << G4endl;
+    newMaxZ = oldMaxZ;
   }
   if( !bInLimits ) {
     G4Exception("DicomOperResize::Operate",
@@ -302,96 +305,103 @@ void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double 
   }
 
   std::vector<G4double>* newData = new std::vector<G4double>(newNoVoxelsX*newNoVoxelsY*newNoVoxelsZ);
+  G4double newVoxDimX = (newMaxX-newMinX)/newNoVoxelsX;
+  G4double newVoxDimY = (newMaxY-newMinY)/newNoVoxelsY;
+  G4double newVoxDimZ = (newMaxZ-newMinZ)/newNoVoxelsZ;
 
   //----- Loop to voxels of new image
   for( G4int ixn = 0; ixn < newNoVoxelsX; ixn++ ) {
-    G4double minXn = newMinX+ixn*theVoxelDimX; // left wall of new voxel
-    G4double maxXn = newMinX+(ixn+1)*theVoxelDimX; // right wall of new voxel
-    size_t im1stVoxX = GmGenUtils::GetBelowInt((minXn-imMinX)/imVoxDimX,PRECISION); // image ID of voxel corresponding to minXnv G4DEB
+    G4double minXn = newMinX+ixn*newVoxDimX; // left wall of new voxel
+    G4double maxXn = newMinX+(ixn+1)*newVoxDimX; // right wall of new voxel
+    size_t im1stVoxXo = GmGenUtils::GetBelowInt((minXn-oldMinX)/oldVoxDimX,PRECISION); // image ID of old voxel corresponding to minXn 
     G4double imVoxMinX = 0;
     G4double imVoxMaxX = image->GetNoVoxelsX();
-    /*t
+    //    G4cout << ixn << " im1stVoxXo " << im1stVoxXo << " " << int((minXn-oldMinX)/oldVoxDimX) << " " << (minXn-oldMinX)/oldVoxDimX << " ("<<minXn<<"-"<<oldMinX<<")/"<<oldVoxDimX<< G4endl; //GDEB
+ 
+  /*t
 #ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(testVerb) ) {
-      if( ixn < 10 ) G4cout << ixn << "DicomOperResize::Operate X minXn " << imMinX+im1stVoxX*imVoxDimX << G4endl;
-      if( ixn < 10000 ) G4cout << ixn << "/" << newNoVoxelsX << ": DicomOperResize::Operate X minXn " << minXn << " maxXn " << maxXn << " im1st " << im1stVoxX << " imVoxMinMax " << imVoxMinX << " " << imVoxMaxX << " imVoxDimX " << imVoxDimX << G4endl;
+      if( ixn < 10 ) G4cout << ixn << "DicomOperResize::Operate X minXn " << oldMinX+im1stVoxXo*oldVoxDimX << G4endl;
+      if( ixn < 10000 ) G4cout << ixn << "/" << newNoVoxelsX << ": DicomOperResize::Operate X minXn " << minXn << " maxXn " << maxXn << " im1st " << im1stVoxXo << " imVoxMinMax " << imVoxMinX << " " << imVoxMaxX << " oldVoxDimX " << oldVoxDimX << G4endl;
     }
 #endif
     */
     for( G4int iyn = 0; iyn < newNoVoxelsY; iyn++ ) {
-      G4double minYn = newMinY+iyn*theVoxelDimY; // left wall of new voxel
-      G4double maxYn = newMinY+(iyn+1)*theVoxelDimY; // right wall of new voxel
-      size_t im1stVoxY = GmGenUtils::GetBelowInt((minYn-imMinY)/imVoxDimY,PRECISION); // image ID of voxel corresponding to minYn      
+      G4double minYn = newMinY+iyn*newVoxDimY; // left wall of new voxel
+      G4double maxYn = newMinY+(iyn+1)*newVoxDimY; // right wall of new voxel
+      size_t im1stVoxYo = GmGenUtils::GetBelowInt((minYn-oldMinY)/oldVoxDimY,PRECISION); // image ID of voxel corresponding to minYn      
       G4double imVoxMinY = 0;
       G4double imVoxMaxY = image->GetNoVoxelsY();
-      /*t
 #ifndef GAMOS_NO_VERBOSE
       if( DicomVerb(testVerb) ) {
-	if( iyn < 10000 ) G4cout << iyn << "/" << newNoVoxelsY << ": DicomOperResize::Operate Y minYn " << minYn << " " << maxYn << " im1st " << im1stVoxY << " imVoxMinMax " << imVoxMinY << " " << imVoxMaxY << G4endl;
+	G4cout << iyn << "/" << newNoVoxelsY << ": DicomOperResize::Operate Y minYn " << minYn << " " << maxYn << " im1st " << im1stVoxYo << " imVoxMinMax " << imVoxMinY << " " << imVoxMaxY << G4endl;
       }
 #endif
-      */
       for( G4int izn = 0; izn < newNoVoxelsZ; izn++ ) {
-	G4double minZn = newMinZ+izn*theVoxelDimZ; // left wall of new voxel
-	G4double maxZn = newMinZ+(izn+1)*theVoxelDimZ; // left wall of new voxel
-	size_t im1stVoxZ = GmGenUtils::GetBelowInt((minZn-imMinZ)/imVoxDimZ,PRECISION); // image ID of voxel corresponding to minZn
-	//	G4cout << " im1stVoxZ " << im1stVoxZ << " " << (minZn-imMinZ)/imVoxDimZ << " -64 " << (minZn-imMinZ)/imVoxDimZ -64 << " minZn " << minZn << " imMinZ " <<imMinZ << " newMinZ " << newMinZ <<  G4endl; //GDEB
-	//-	G4cout << " im1stVoxZ " << im1stVoxZ << " " << minZn << " " << imMinZ << " " << imVoxDimZ << " : " << (minZn-imMinZ) << " " << (minZn-imMinZ)/imVoxDimZ << G4endl;
+	G4double minZn = newMinZ+izn*newVoxDimZ; // left wall of new voxel
+	G4double maxZn = newMinZ+(izn+1)*newVoxDimZ; // left wall of new voxel
+	size_t im1stVoxZo = GmGenUtils::GetBelowInt((minZn-oldMinZ)/oldVoxDimZ,PRECISION); // image ID of voxel corresponding to minZn
+	//	G4cout << " im1stVoxZo " << im1stVoxZo << " " << (minZn-oldMinZ)/oldVoxDimZ << " -64 " << (minZn-oldMinZ)/oldVoxDimZ -64 << " minZn " << minZn << " oldMinZ " <<oldMinZ << " newMinZ " << newMinZ <<  G4endl; //GDEB
+	//-	G4cout << " im1stVoxZo " << im1stVoxZo << " " << minZn << " " << oldMinZ << " " << oldVoxDimZ << " : " << (minZn-oldMinZ) << " " << (minZn-oldMinZ)/oldVoxDimZ << G4endl;
 	G4double imVoxMinZ = 0;
 	G4double imVoxMaxZ = image->GetNoVoxelsZ();
-	/*t 
+	/*
 #ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(testVerb) ) {
-	  if( izn < 10 ) G4cout << izn << "/" << newNoVoxelsZ << ": DicomOperResize::Operate Z minZn " << minZn << " " << maxZn << " im1st " << im1stVoxZ << " imVoxMinMax " << imVoxMinZ << " " << imVoxMaxZ << G4endl;
+	  if( izn < 10 ) G4cout << izn << "/" << newNoVoxelsZ << ": DicomOperResize::Operate Z minZn " << minZn << " " << maxZn << " im1st " << im1stVoxZo << " imVoxMinMax " << imVoxMinZ << " " << imVoxMaxZ << G4endl;
 	}
 #endif
 	*/
+	//---- LOOP TO OLD IMAGE VOXELS COVERED BY NEW VOXEL
+	size_t newCopyNo = ixn + newNoVoxelsX*iyn + newNoVoxelsXY*izn;
 	G4double fracTOT = 0.;
-	for( size_t ix = im1stVoxX;; ix++ ) {
-	  if ( ix == im1stVoxX ) {
-	    imVoxMinX = std::max(minXn,imMinX+im1stVoxX*imVoxDimX); // image left wall of old voxel
-	    //	    imVoxMaxX = std::min(maxXn,imVoxMinX+theVoxelDimX); // image right wall of old voxel
-	    imVoxMaxX = std::min(maxXn,imMinX+(im1stVoxX+1)*imVoxDimX); // image right wall of old voxel
+	G4int nOldVox = 0; 
+	//	G4cout << "@@ LOOP old VOXELS FOR " << ixn << " " << iyn << " " << izn << " X: " << minXn << " " << maxXn << " Y: " << minYn << " " << maxYn << " Z: " << minZn << " " << maxZn << G4endl; //GDEB
+	for( size_t ix = im1stVoxXo;; ix++ ) {
+	  if ( ix == im1stVoxXo ) {
+	    imVoxMinX = std::max(minXn,oldMinX+im1stVoxXo*oldVoxDimX); // image left wall of old voxel
+	    //	    G4cout << " imVoxMinX=" << imVoxMinX << " std::max("<<minXn<<","<<oldMinX+im1stVoxXo*oldVoxDimX<<")" <<G4endl; //GDEB
+	    //	    imVoxMaxX = std::min(maxXn,imVoxMinX+newVoxDimX); // image right wall of old voxel
+	    imVoxMaxX = std::min(maxXn,oldMinX+(im1stVoxXo+1)*oldVoxDimX); // image right wall of old voxel
 	  }
-	  G4double fracX = (imVoxMaxX-imVoxMinX)/theVoxelDimX;
-	  //	  G4cout << ix << " fracX " << fracX << " = (" << imVoxMaxX << "-" << imVoxMinX << ")/" << theVoxelDimX << G4endl; //GDEB
-	  for( size_t iy = im1stVoxY;; iy++ ) {
-	    if( iy == im1stVoxY ) {
-	      imVoxMinY = std::max(minYn,imMinY+im1stVoxY*imVoxDimY); // image left wall of old voxel
-	      imVoxMaxY = std::min(maxYn,imMinY+(im1stVoxY+1)*imVoxDimY); // image right wall of old voxel
+	  G4double fracX = (imVoxMaxX-imVoxMinX)/newVoxDimX;
+	  //	  G4cout << ix << " fracX " << fracX << " = (" << imVoxMaxX << "-" << imVoxMinX << ")/" << newVoxDimX << G4endl; //GDEB
+	  for( size_t iy = im1stVoxYo;; iy++ ) {
+	    if( iy == im1stVoxYo ) {
+	      imVoxMinY = std::max(minYn,oldMinY+im1stVoxYo*oldVoxDimY); // image left wall of old voxel
+	      imVoxMaxY = std::min(maxYn,oldMinY+(im1stVoxYo+1)*oldVoxDimY); // image right wall of old voxel
 	    }
-	    G4double fracXY = fracX*((imVoxMaxY-imVoxMinY)/theVoxelDimY);
-	    //	    G4cout << iy << " fracY " << fracXY/fracX << " = (" << imVoxMaxY << "-" << imVoxMinY << ")/" << theVoxelDimY << G4endl; //GDEB
-	    for( size_t iz = im1stVoxZ;; iz++ ) {
-	      if( iz == im1stVoxZ ) {
-		imVoxMinZ = std::max(minZn,imMinZ+im1stVoxZ*imVoxDimZ); // image left wall of old voxel
-		imVoxMaxZ = std::min(maxZn,imMinZ+(im1stVoxZ+1)*imVoxDimZ); // image right wall of old voxel
+	    G4double fracXY = fracX*((imVoxMaxY-imVoxMinY)/newVoxDimY);
+	    //	    G4cout << iy << " fracY " << fracXY/fracX << " = (" << imVoxMaxY << "-" << imVoxMinY << ")/" << newVoxDimY << " fracXY=" << fracXY << G4endl; //GDEB
+	    for( size_t iz = im1stVoxZo;; iz++ ) {
+	      nOldVox++;
+	      if( iz == im1stVoxZo ) {
+		imVoxMinZ = std::max(minZn,oldMinZ+im1stVoxZo*oldVoxDimZ); // image left wall of old voxel
+		imVoxMaxZ = std::min(maxZn,oldMinZ+(im1stVoxZo+1)*oldVoxDimZ); // image right wall of old voxel
 	      }
-	      G4double fracXYZ = fracXY*(imVoxMaxZ-imVoxMinZ)/theVoxelDimZ;
-	      //	      G4cout << iz << " fracZ " << fracXYZ/fracXY << " = (" << imVoxMaxZ << "-" << imVoxMinZ << ")/" << theVoxelDimZ << G4endl; //GDEB
-	      size_t copyNo = ixn + newNoVoxelsX*iyn + newNoVoxelsXY*izn;
-	      size_t imCopyNo = ix + imNVoxX*iy + imNVoxXY*iz;
-	      //	      G4cout << "@@ copyNo " << copyNo << " " << imCopyNo << " : " << ixn << " " << iyn << " " << izn << " < " << image->GetData(imCopyNo)*fracXYZ << " " << image->GetData(imCopyNo)<< " * " << fracXYZ << G4endl; //GDEB
-	      //	      G4cout << "@@ imCopyNo " << imCopyNo << " : " << ix << " " << iy << " " << iz  << " < " << image->GetNoVoxels() << G4endl; //GDEB
-	      newData->at(copyNo) += image->GetData(imCopyNo)*fracXYZ;
+	      G4double fracXYZ = fracXY*(imVoxMaxZ-imVoxMinZ)/newVoxDimZ;
+	      //	      G4cout << iz << " fracZ " << fracXYZ/fracXY << " = (" << imVoxMaxZ << "-" << imVoxMinZ << ")/" << newVoxDimZ << " fracXYZ=" << fracXYZ << G4endl; //GDEB
+	      size_t oldCopyNo = ix + oldNVoxX*iy + oldNVoxXY*iz;
+	      //	      G4cout << "@@ newCopyNo " << newCopyNo << " " << oldCopyNo << " : " << ixn << " " << iyn << " " << izn << " < " << image->GetData(oldCopyNo)*fracXYZ << " " << image->GetData(oldCopyNo)<< " * " << fracXYZ << G4endl; //GDEB
+	      newData->at(newCopyNo) += image->GetData(oldCopyNo)*fracXYZ;
 	      fracTOT += fracXYZ;
-	      //	      G4cout << "@@ fracTOT " << fracTOT << " " << fracXYZ << " " << copyNo << ": " << newData->at(copyNo) << " " << imCopyNo << " : " << ix << " " << iy << " " << iz << " " << image->GetData(imCopyNo) << G4endl; //GDEB
+	      //	      G4cout << "@@ fracTOT " << fracTOT << " " << newCopyNo << ": " << newData->at(newCopyNo) << " " << oldCopyNo << " : " << ix << " " << iy << " " << iz << " oldData " << image->GetData(oldCopyNo) << G4endl; //GDEB
 #ifndef GAMOS_NO_VERBOSE
 	      if( DicomVerb(testVerb) ) {
 		if( ixn < 10 && iyn < 10 && izn < 10) G4cout << ix << " " << iy << " " << iz << "DicomOperResize::Operate fractions " << fracX << " " << fracXY/fracX << " " << fracXYZ/fracXY << G4endl;
 	      }
 #endif
 	      imVoxMinZ = imVoxMaxZ;
-	      imVoxMaxZ = std::min( maxZn, imVoxMaxZ+imVoxDimZ);
+	      imVoxMaxZ = std::min( maxZn, imVoxMaxZ+oldVoxDimZ);
 	      //	      G4cout << " Z BREAK? " << (imVoxMinZ - maxZn) << " =( " << imVoxMinZ << " - " << imVoxMaxZ << " >? " << " maxZn " << maxZn << " " << -PRECISION << G4endl; //GDEB
 	      if( (imVoxMinZ - maxZn) >= -PRECISION ) break;
 	    }
 	    imVoxMinY = imVoxMaxY;
-	    imVoxMaxY = std::min( maxYn, imVoxMaxY+imVoxDimY);
+	    imVoxMaxY = std::min( maxYn, imVoxMaxY+oldVoxDimY);
 	    if( (imVoxMinY - maxYn) >= -PRECISION ) break;
 	  }
 	  imVoxMinX = imVoxMaxX;
-	  imVoxMaxX = std::min( maxXn, imVoxMaxX+imVoxDimX);
+	  imVoxMaxX = std::min( maxXn, imVoxMaxX+oldVoxDimX);
 	  if( (imVoxMinX - maxXn) >= -PRECISION ) break;
 	}
 	/*	if( fabs(fracTOT-1.) > 2.*PRECISION ) {
@@ -401,6 +411,16 @@ void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double 
 		      FatalException,
 		      ("voxel fraction sum -1. should be 0., while it is "+GmGenUtils::ftoa(fracTOT-1.)).c_str());
 		      } */
+	if( fracTOT < 0.99 ) {
+	  G4cerr << "@@FINAL newData: " << newData->at(newCopyNo) << " " << newCopyNo << "    fracTot " << fracTOT << "nOldVox " << nOldVox << G4endl;
+	  G4Exception("DicomOperResize::Operate",
+		      "",
+		      JustWarning,
+		      ("Sum of old voxels volumes it is not 1., but "+GmGenUtils::ftoa(fracTOT)+", correct it").c_str());
+	}
+	newData->at(newCopyNo) /= fracTOT; // !!! FRACTOT SHOULD ALWAYS BE 1, sometimes it is e.g. 0.9913 (precision problem of multipying ~20 numbers?)
+	//	G4cout << "@@FINAL newData: " << newData->at(newCopyNo) << " " << newCopyNo << "    fracTot " << fracTOT << " nOldVox " << nOldVox << G4endl; //GDEB
+	
       }
     }
   }
@@ -439,14 +459,14 @@ void DicomOperResize::OperateStr( DicomVImageStr* imageStr )
   size_t newNoVoxelsZ = paramMgr->GetNumericValue("nVoxZ",imageStr->GetNoVoxelsZ()); 
   G4bool bInterpolate = G4bool(paramMgr->GetNumericValue("bInterpolate",1));
   
-  G4double PRECISION = std::min(1e-4,2*imageStr->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
+  G4double PRECISION = std::min(1e-5,2*imageStr->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
   //  G4cout << " 1PRECISION " << PRECISION << " " << imageStr->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
 
   G4bool bChangeNX = newNoVoxelsX == imageStr->GetNoVoxelsX();
   G4bool bChangeNY = newNoVoxelsY == imageStr->GetNoVoxelsY();
   G4bool bChangeNZ = newNoVoxelsZ == imageStr->GetNoVoxelsZ();
   //----- DO NOT INTERPOLATE: MOVE MIN/MAX TO VOXEL EDGES
-  G4cout << " BINTERPOLATE2 " << bInterpolate << G4endl; //GDEB
+  G4cout << " BINTERPOLATE= " << bInterpolate << G4endl; //GDEB
   if( !bInterpolate ) {
     if( bChangeNX ) {
       G4Exception("DicomOperResize::Operate",
@@ -577,109 +597,110 @@ void DicomOperResize::OperateStr( DicomVImageStr* imageStr )
 void DicomOperResize::OperateStr( DicomVImageStr* imageStr, G4int newNoVoxelsX, G4double newMinX, G4double newMaxX, G4int newNoVoxelsY, G4double newMinY, G4double newMaxY, G4int newNoVoxelsZ, G4double newMinZ, G4double newMaxZ)
 { 
   //  G4cout << imageStr <<" 2DicomOperResize::OperateStr( " << imageStr->GetModalityStr() << G4endl; //GDEB
-  G4double PRECISION = 2*imageStr->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ));
-  //  G4cout << " 1PRECISION " << PRECISION << " " << image->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
+  G4double PRECISION = std::min(1e-5,2*imageStr->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
+  //- G4double PRECISION = 2*imageStr->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ));
+  G4cout << " 1PRECISION " << PRECISION << " " << imageStr->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
   G4int newNoVoxelsXY = newNoVoxelsX*newNoVoxelsY;
   //----- Extract the old imageStr data
-  size_t imNVoxX = imageStr->GetNoVoxelsX();
-  size_t imNVoxY = imageStr->GetNoVoxelsY();
-  size_t imNVoxZ = imageStr->GetNoVoxelsZ();
-  size_t imNVoxXY = imNVoxX*imNVoxY;
-  //  size_t imNVoxZ = imageStr->GetNoVoxelsZ();
-  G4double imMinX = imageStr->GetMinX();
-  G4double imMinY = imageStr->GetMinY();
-  G4double imMinZ = imageStr->GetMinZ();
-  G4double imMaxX = imageStr->GetMaxX();
-  G4double imMaxY = imageStr->GetMaxY();
-  G4double imMaxZ = imageStr->GetMaxZ();
-  G4double imVoxDimX = imageStr->GetVoxelDimX();
-  G4double imVoxDimY = imageStr->GetVoxelDimY();
-  G4double imVoxDimZ = imageStr->GetVoxelDimZ();
+  size_t oldNVoxX = imageStr->GetNoVoxelsX();
+  size_t oldNVoxY = imageStr->GetNoVoxelsY();
+  size_t oldNVoxZ = imageStr->GetNoVoxelsZ();
+  //  size_t oldNVoxXY = oldNVoxX*oldNVoxY;
+  //  size_t oldNVoxZ = imageStr->GetNoVoxelsZ();
+  G4double oldMinX = imageStr->GetMinX();
+  G4double oldMinY = imageStr->GetMinY();
+  G4double oldMinZ = imageStr->GetMinZ();
+  G4double oldMaxX = imageStr->GetMaxX();
+  G4double oldMaxY = imageStr->GetMaxY();
+  G4double oldMaxZ = imageStr->GetMaxZ();
+  //  G4double oldVoxDimX = imageStr->GetVoxelDimX();
+  // G4double oldVoxDimY = imageStr->GetVoxelDimY();
+  // G4double oldVoxDimZ = imageStr->GetVoxelDimZ();
 
 #ifndef GAMOS_NO_VERBOSE
   if( DicomVerb(warningVerb) ) {
     G4cout << "IMAGESTR SIZE " << G4endl
-	   << " X: " << imNVoxX << " " << imMinX << " " << imMaxX << G4endl
-	   << " Y: " << imNVoxY << " " << imMinY << " " << imMaxY << G4endl
-	   << " Z: " << imNVoxZ << " " << imMinZ << " " << imMaxZ << G4endl;
+	   << " X: " << oldNVoxX << " " << oldMinX << " " << oldMaxX << G4endl
+	   << " Y: " << oldNVoxY << " " << oldMinY << " " << oldMaxY << G4endl
+	   << " Z: " << oldNVoxZ << " " << oldMinZ << " " << oldMaxZ << G4endl;
     G4cout << "NEW REQUESTED SIZE " << G4endl
 	   << " X: " << newNoVoxelsX << " " << newMinX << " " << newMaxX << G4endl
 	   << " Y: " << newNoVoxelsY << " " << newMinY << " " << newMaxY << G4endl
 	   << " Z: " << newNoVoxelsZ << " " << newMinZ << " " << newMaxZ << G4endl;
     G4cout << "DIFFERENCE IN LIMITS (MUST BE <= 0) " << G4endl
-	   << " X: " << -imMinX + newMinX << " " << imMaxX - newMaxX << G4endl
-	   << " Y: " << -imMinY + newMinY << " " << imMaxY - newMaxY << G4endl
-	   << " Z: " << -imMinZ + newMinZ << " " << imMaxZ - newMaxZ << G4endl;
+	   << " X: " << -oldMinX + newMinX << " " << oldMaxX - newMaxX << G4endl
+	   << " Y: " << -oldMinY + newMinY << " " << oldMaxY - newMaxY << G4endl
+	   << " Z: " << -oldMinZ + newMinZ << " " << oldMaxZ - newMaxZ << G4endl;
     G4cout << "PRECISION " << PRECISION << G4endl;
   }
 #endif
 
-  G4double theVoxelDimX = (newMaxX-newMinX)/newNoVoxelsX;
-  G4double theVoxelDimY = (newMaxY-newMinY)/newNoVoxelsY;
-  G4double theVoxelDimZ = (newMaxZ-newMinZ)/newNoVoxelsZ;
+  //  G4double newVoxDimX = (newMaxX-newMinX)/newNoVoxelsX;
+  //  G4double newVoxDimY = (newMaxY-newMinY)/newNoVoxelsY;
+  //  G4double newVoxDimZ = (newMaxZ-newMinZ)/newNoVoxelsZ;
 
   //----- Check that new limits are inside old limits
   G4bool bInLimits = true;
-  if( imMinX - newMinX > PRECISION ) {
+  if( oldMinX - newMinX > PRECISION ) {
     bInLimits = false;
     G4cerr << "!! MINX IMAGESTR LIMITS " << G4endl
-	   << " X: " << imMinX << " " << imMaxX << G4endl;
+	   << " X: " << oldMinX << " " << oldMaxX << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
 	   << " X: " << newMinX << " " << newMaxX << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS (MUST BE <= 0) " << G4endl
-	   << " X: " << imMinX - newMinX << " " << imMaxX - newMaxX << G4endl;
-    newMinX = imMinX;
+	   << " X: " << oldMinX - newMinX << " " << oldMaxX - newMaxX << G4endl;
+    newMinX = oldMinX;
   }
-  if( imMinY - newMinY > PRECISION ) {
+  if( oldMinY - newMinY > PRECISION ) {
     bInLimits = false;
     G4cerr << "!! MINY IMAGESTR LIMITS " << G4endl
-	   << " Y: " << imMinY << " " << imMaxY << G4endl;
+	   << " Y: " << oldMinY << " " << oldMaxY << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
 	   << " Y: " << newMinY << " " << newMaxY << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS (MUST BE <= 0) " << G4endl
-	   << " Y: " << imMinY - newMinY << " " << imMaxY - newMaxY << G4endl;
-    newMinY = imMinY;
+	   << " Y: " << oldMinY - newMinY << " " << oldMaxY - newMaxY << G4endl;
+    newMinY = oldMinY;
   }
-  if( imMinZ - newMinZ > PRECISION ) {
+  if( oldMinZ - newMinZ > PRECISION ) {
     bInLimits = false;
-    G4cerr << "!! MINZ IMAGESTR LIMITS " << imMinZ - newMinZ << G4endl
-	   << " Z: " << imMinZ << " " << imMaxZ << G4endl;
+    G4cerr << "!! MINZ IMAGESTR LIMITS " << oldMinZ - newMinZ << G4endl
+	   << " Z: " << oldMinZ << " " << oldMaxZ << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
 	   << " Z: " << newMinZ << " " << newMaxZ << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS (MUST BE <= 0) " << G4endl
-	   << " Z: " << imMinZ - newMinZ << " " << imMaxZ - newMaxZ << G4endl;
-    newMinZ = imMinZ;
+	   << " Z: " << oldMinZ - newMinZ << " " << oldMaxZ - newMaxZ << G4endl;
+    newMinZ = oldMinZ;
   }
-  if( newMaxX - imMaxX > PRECISION ) {
+  if( newMaxX - oldMaxX > PRECISION ) {
     bInLimits = false;
     G4cerr << "!! MAXX IMAGESTR LIMITS " << G4endl
-	   << " X: " << imMinX << " " << imMaxX << G4endl;
+	   << " X: " << oldMinX << " " << oldMaxX << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
 	   << " X: " << newMinX << " " << newMaxX << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS (MUST BE <= 0) " << G4endl
-	   << " X: " << imMinX - newMinX << " " << imMaxX - newMaxX << G4endl;
-    newMaxX = imMaxX;
+	   << " X: " << oldMinX - newMinX << " " << oldMaxX - newMaxX << G4endl;
+    newMaxX = oldMaxX;
   }
-  if( newMaxY - imMaxY > PRECISION ) {
+  if( newMaxY - oldMaxY > PRECISION ) {
     bInLimits = false;
     G4cerr << "!! MAXY IMAGESTR LIMITS " << G4endl
-	   << " Y: " << imMinY << " " << imMaxY << G4endl;
+	   << " Y: " << oldMinY << " " << oldMaxY << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
 	   << " Y: " << newMinY << " " << newMaxY << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS " << G4endl
-	   << " Y: " << imMinY - newMinY << " " << imMaxY - newMaxY << G4endl;
-    newMaxY = imMaxY;
+	   << " Y: " << oldMinY - newMinY << " " << oldMaxY - newMaxY << G4endl;
+    newMaxY = oldMaxY;
   }
-  if( newMaxZ - imMaxZ > PRECISION ) {
+  if( newMaxZ - oldMaxZ > PRECISION ) {
     bInLimits = false;
-    G4cerr << "!! MAXZ IMAGESTR LIMITS " << imMaxZ - newMaxZ << G4endl
+    G4cerr << "!! MAXZ IMAGESTR LIMITS " << oldMaxZ - newMaxZ << G4endl
       //	   << " PREC " << PRECISION //GDEB
-	   << " Z: " << imMinZ << " " << imMaxZ << G4endl;
+	   << " Z: " << oldMinZ << " " << oldMaxZ << G4endl;
     G4cerr << "!! NEW REQUESTED LIMITS " << G4endl
 	   << " Z: " << newMinZ << " " << newMaxZ << G4endl;
     G4cerr << "!! DIFFERENCE IN LIMITS " << G4endl
-	   << " Z: " << imMinZ - newMinZ << " " << imMaxZ - newMaxZ << G4endl;
-    newMaxZ = imMaxZ;
+	   << " Z: " << oldMinZ - newMinZ << " " << oldMaxZ - newMaxZ << G4endl;
+    newMaxZ = oldMaxZ;
   }
   if( !bInLimits ) {
     G4Exception("DicomOperResize::Operate",
@@ -701,7 +722,7 @@ void DicomOperResize::OperateStr( DicomVImageStr* imageStr, G4int newNoVoxelsX, 
 		(" New limits Minimum is greater or equal than Maximum for imageStr "+imageStr->GetName()).c_str());
   }
 
-  std::vector<G4double>* newData = new std::vector<G4double>(newNoVoxelsX*newNoVoxelsY*newNoVoxelsZ);
+  std::vector<G4double>* newData = new std::vector<G4double>(newNoVoxelsXY*newNoVoxelsZ);
 
   //----- Change imageStr
   imageStr->SetMinX(newMinX);

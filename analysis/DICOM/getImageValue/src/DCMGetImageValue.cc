@@ -142,6 +142,10 @@ void DCMGetImageValue::ReadFilesAndGetImages()
   if( images.size() != 0 ) {
     theAnalyseImage = images[0];
   }
+  images = theDicomMgr->GetImages(DIM_G4dcmCT_MateDens,false);
+  if( images.size() != 0 ) {
+    theAnalyseImage = images[0];
+  }
   images = theDicomMgr->GetImages(DIM_G4dcmNM,false);
   if( images.size() != 0 ) {
     theAnalyseImage = images[0];

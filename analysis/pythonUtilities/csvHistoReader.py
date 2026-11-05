@@ -16,17 +16,17 @@ class csvHistoReader:
                 for row in histoData :
                     if len(row) == 0: continue
                     if row[0] == '1D' or row[0] == 'Prof1D' :
-                        # print("csvHistoReader 1D HISTOGRAM",len(row))    
+                        # print("csvHistoReader 1D HISTOGRAM",len(row))  #GDEB
                         his1 = Histo1D(row)
                         self.fHistos1D.append(his1)
-                        #                    print("csvHistoReader READ ",his1)
+                        #                    print("csvHistoReader READ ",his1)  #GDEB
                     elif row[0] == '2D' or row[0] == 'Prof2D' :
-                        #                    print("csvHistoReader 2D HISTOGRAM",len(row))
+                        #                    print("csvHistoReader 2D HISTOGRAM",len(row))  #GDEB
                         his2 = Histo2D(row)
                         self.fHistos2D.append(his2)
-                        # print("csvHistoReader READ ",his2.name)
-            #            print("csvHistoReader N READ ",len(self.fHistos1D)," fHistos1D's")
-            #           print("csvHistoReader N READ ",len(self.fHistos2D)," fHistos2D's")
+                        # print("csvHistoReader READ ",his2.name)  #GDEB
+                        # print("csvHistoReader N READ ",len(self.fHistos1D)," fHistos1D's")  #GDEB
+                        # print("csvHistoReader N READ ",len(self.fHistos2D)," fHistos2D's")  #GDEB
         
         except IOError :
              print("csvHistoReader.py !!!ERROR FILE NOT FOUND",csvFileName)

@@ -14,6 +14,7 @@
 #include "DICOM/DICOMReaders/include/DicomReaderSqdose.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderMgr.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderRTStruct.hh"
+#include "DICOM/DICOMReaders/include/DicomReaderVOIStruct.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderG4dcmNM.hh"
 #include "DICOM/DICOMBase/include/Dicom2DOperAddError.hh"
 #include "DICOM/DICOMBase/include/DicomNDOperArithm.hh"
@@ -163,9 +164,9 @@ void DCMGetOrganInfo::ProcessArguments(int argc,char** argv)
 
   bDepoEnergy = G4bool(theParamMgr->GetNumericValue("bDepoEnergy",0));
   if( !bDepoEnergy ) {
-    theOutputName = "getOrganDose";
+    theOutputName = "organDose";
   } else {
-    theOutputName = "getOrganEDep";
+    theOutputName = "organEDep";
   }
   bPerMate = G4bool(theParamMgr->GetNumericValue("bPerMate",0));
   bHistos = G4bool(theParamMgr->GetNumericValue("bHistos",1));
@@ -292,9 +293,17 @@ void DCMGetOrganInfo::ReadFilesAndGetImages()
   //--- IF fSt EXISTS USE IT FOR STRUCTURES
   if( !bPerMate ) {
     std::vector<DicomVReader*> VRTFiles = theReaderMgr->GetReaders(DRM_RTStruct, false);
+    G4cout << " N VRTFiles "  << VRTFiles.size() << G4endl; //GDEB
     if( VRTFiles.size() == 1 ) { 
       DicomReaderRTStruct* RTFile = dynamic_cast<DicomReaderRTStruct*>(VRTFiles[0]);
+      if (RTFile->IsVOI() ) {
+	RTFile = dynamic_cast<DicomReaderVOIStruct*>(VRTFiles[0]);
+      } else {
+	RTFile = dynamic_cast<DicomReaderRTStruct*>(VRTFiles[0]);
+      }
+
       theStructIDImage = new DicomVImageStr( theAnalyseImage, "RTStruct", DIM_RTStruct );
+      //-      G4cout << theStructIDImage << "READ theStructIDImage N " << theStructIDImage->GetData()->size() << " ID " << theStructIDImage->GetIDList( 0 ).size() << " " << theStructIDImage->GetIDList( 1 ).size() <<G4endl; //GDEB
       DicomPolygonSet* polygonSet = RTFile->GetPolygonSet();
       G4bool bVoxelsInUseClosest = DicomParameterMgr::GetInstance()->GetNumericValue("closestPolygon",1);
       if( bVoxelsInUseClosest ) {
@@ -303,7 +312,7 @@ void DCMGetOrganInfo::ReadFilesAndGetImages()
 	delete polygonSetNew;
       } else {
 	RTFile->FindVoxelsInXY( theStructIDImage, polygonSet );
-      }	  
+      }	
 
       //--- SET CLASSIFICATION NAMES
       DicomPolygonSet* thePolygonSet = RTFile->GetPolygonSet();
@@ -334,7 +343,6 @@ void DCMGetOrganInfo::ReadFilesAndGetImages()
 	    G4cout << " ReadFilesAndGetImages STRUCT IMAGE FROM G4dcmCT " << theStructIDImage << G4endl;
 	    theStructIDImage->DumpHeaderToTextFile( G4cout );
 	  }
-
 	  //--- SET CLASSIFICATION NAMES 
 	  theClassifNames = g4dcmReader->GetStructNames();
 	  theClassifNames[0] = "NO_STRUCT";
@@ -410,7 +418,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
   G4double fMinY_st = theStructIDImage->GetMinY();
   G4double fMinZ_st = theStructIDImage->GetMinZ();
   theStructIDImage->DumpHeaderToTextFile( G4cout ); 
-
+  
   size_t nVoxelX_anal = theAnalyseImage->GetNoVoxelsX();
   size_t nVoxelY_anal = theAnalyseImage->GetNoVoxelsY();
   size_t nVoxelXY_anal = nVoxelX_anal*nVoxelY_anal;
@@ -458,7 +466,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
     G4cerr << "STRUCTURE VOXEL MIN = " << fMinX_st << " " << fMinY_st << " " << fMinZ_st << G4endl
 	   << "ANALYSE VOXEL MIN= " << fMinX_anal << " " << fMinY_anal << " " << fMinZ_anal << G4endl
       	   << " DIFF " << fabs(fMinX_st - fMinX_anal) << " " << fabs(fMinY_st - fMinY_anal) << " " << fabs(fMinZ_st - fMinZ_anal) << " < " << theAnalyseImage->GetPrecision() << G4endl;
-
+    
     std::ofstream fo("bad.txt");
     theAnalyseImage->DumpHeaderToTextFile(fo);
     
@@ -517,7 +525,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
       
     }
     theAnaMgr = GmAnalysisMgr::GetInstance(theOutputName);
-    
+  
   }
 
   //----- CALCULATE theDosesPerSt . ALSO theVoxelDoseErrPerSt FOR DOSIMETRIC QUANTITIES
@@ -525,7 +533,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
   std::map<size_t, int> theNVoxels0PerSt;  // number of voxels in each structure with dose <> 0
   std::map<size_t, long double> theDoseSqsPerSt;
   std::map<size_t, long double> theMassesPerSt; //=the Densities, as all voxels are assumed to have the same volume
-  std::map<size_t,std::map<size_t,mmdd> > theVoxelDoseErrPerSt;  // ist, iRandom, dose and dose err sorted in dose 
+  std::map<size_t,std::map<size_t,mmdd> > theVoxelDoseErrPerSt;  // ist, iRandom, dose and dose err sorted in dose (=multimap<dose*nEvents,doseErr*nEvents>)
   
   std::vector<G4double>* theDoseErrors = 0;
   if( theAnalyseErrorImage ){
@@ -535,6 +543,10 @@ void DCMGetOrganInfo::GetInfoFromImage()
   if( theAnalyseSqImage ){
     theDoseSqs = theAnalyseSqImage->GetData();
   }
+  /*  G4cout << " THEDOSES SIZE " << theDoses->size() << G4endl; //GDEB
+  for( int ii = 0; ii < theDoses->size(); ii++ ) {
+    if( theDoses->at(ii) != 0) G4cout << ii << " THEDOSES " << theDoses->at(ii) << G4endl; //GDEB
+  }*/
   G4int nDoseNon0 = 0;
   G4String magnitude = "Dose";
   if( bDepoEnergy ) magnitude = "EDepo";
@@ -543,20 +555,19 @@ void DCMGetOrganInfo::GetInfoFromImage()
   if( theDoseErrors ) doseErrP = &(theDoseErrors->at(0));
   G4double* doseSqP = 0;
   if( theDoseSqs ) doseSqP = &(theDoseSqs->at(0));
-  G4double dose;
+  G4double dose = 0;
   G4double doseErr = 0.;
-  G4double doseSq;
+  G4double doseSq = 0;
   std::set<G4int> ists;
   theVoxelVolume_anal = fWidthX_anal*fWidthY_anal*fWidthZ_anal;
   //  G4double voxelVolume_st = fWidthX_st*fWidthY_st*fWidthZ_st;
-  
   for( size_t ii = 0; ii < nVoxelXYZ_anal; ii++, doseP++, doseErrP++, doseSqP++){
     dose = *doseP;
     if( theDoseErrors ) {
       if( theDoseErrors ) doseErr = *doseErrP;
       if( theDoseSqs ) doseSq = *doseSqP;
     }
-      //    G4cout << " DOSEERR " << doseErr << " " << theDoseErrors << G4endl; //GDEB
+    //    G4cout << " DOSEERR " << doseErr << " " << theDoseErrors << G4endl; //GDEB
     ists.clear();
     size_t iiSt = ii;
     if( bDiffDim ) { // sqdose and dcm have different voxels, interpolate
@@ -569,9 +580,9 @@ void DCMGetOrganInfo::GetInfoFromImage()
       G4int ix_st = GmGenUtils::GetBelowInt((X_anal-fMinX_st)/fWidthX_st-0.01);
       G4int iy_st = GmGenUtils::GetBelowInt((Y_anal-fMinY_st)/fWidthY_st-0.01);
       G4int iz_st = GmGenUtils::GetBelowInt((Z_anal-fMinZ_st)/fWidthZ_st-0.01);
-      G4double X_st = fMinX_st+fWidthX_st*(ix_st+0.5);
+      /*      G4double X_st = fMinX_st+fWidthX_st*(ix_st+0.5);
       G4double Y_st = fMinY_st+fWidthY_st*(iy_st+0.5);
-      G4double Z_st = fMinZ_st+fWidthZ_st*(iz_st+0.5);
+      G4double Z_st = fMinZ_st+fWidthZ_st*(iz_st+0.5);*/
       if( ix_st < 0 || ix_st >= G4int(nVoxelX_st) || 
 	  iy_st < 0 || iy_st >= G4int(nVoxelY_st) ||
 	  iz_st < 0 || iz_st >= G4int(nVoxelZ_st) ) {
@@ -581,16 +592,37 @@ void DCMGetOrganInfo::GetInfoFromImage()
       //      G4cout << " ANAL" << X_anal << " " << Y_anal << " " << Z_anal << " ST " << X_st << " " << Y_st << " " << Z_st << G4endl; //GDEB
       //??      dose = theDoses->at(iiSt);
     }
+    //    G4cout << theStructIDImage << "USE theStructIDImage N " << theStructIDImage->GetData()->size() << G4endl; //GDEB
     if( bPerMate ) {
       ists.insert( theStructIDImage->GetData(iiSt) ); //using MateID from G4dcmCT
     } else {
       ists = theStructIDImage->GetIDList( iiSt );
     }
+    //    G4cout << iiSt << " theStructIDImage->GetIDList " <<  theStructIDImage->GetIDList(iiSt).size() << " str "<< theStructIDImage->GetDataStr(iiSt) << G4endl; //GDEB
     if( dose != 0. ) {
       nDoseNon0++;
     }
     for( std::set<G4int>::const_iterator itest = ists.begin(); itest != ists.end(); itest++ ) {
       size_t ist = *itest;
+      if( ist == 99995 ) { //GDEB
+	G4int ix_anal = ii%nVoxelX_anal;
+	G4int iy_anal = (ii/nVoxelX_anal)%nVoxelY_anal;
+	G4int iz_anal = ii/nVoxelXY_anal;
+	G4double X_anal = fMinX_anal+fWidthX_anal*(ix_anal+0.5);
+	G4double Y_anal = fMinY_anal+fWidthY_anal*(iy_anal+0.5);
+	G4double Z_anal = fMinZ_anal+fWidthZ_anal*(iz_anal+0.5);
+	G4int ix_st = ii%nVoxelX_st;
+	G4int iy_st = (ii/nVoxelX_st)%nVoxelY_st;
+	G4int iz_st = ii/nVoxelXY_st;
+	G4double X_st = fMinX_st+fWidthX_st*(ix_st+0.5);
+	G4double Y_st = fMinY_st+fWidthY_st*(iy_st+0.5);
+	G4double Z_st = fMinZ_st+fWidthZ_st*(iz_st+0.5);
+	G4cout << ist << " " << ii << " iianal " << ix_anal << " : " <<iy_anal<<" :" << iz_anal 
+	       << " iist " << ix_st << " : " <<iy_st<<" :" << iz_st <<G4endl;
+	G4cout << ist << " " << ii << "=" << iiSt << " Xanal " << X_anal << " : " <<Y_anal<<" :" << Z_anal 
+	       << " Xst " << X_st << " : " <<Y_st<<" :" << Z_st << " DOSE "  << dose << " +- " << doseErr <<G4endl;
+     }
+          
       if( G4int(ist) == thePrintStID ) {
 	G4cout << ist << " : " << theClassifNames[ist] << " " << ii << " VALUE: " << dose << " +- " << doseErr << G4endl;  
       }
@@ -603,20 +635,20 @@ void DCMGetOrganInfo::GetInfoFromImage()
       if( bDosimQ ) {
 	//	if( ii%100000 == 0 ) G4cout << ist << " : 0 " << " theVoxelDoseErrPerSt " << ii << " " << dose*theNofEvents << " +- " <<doseErr*theNofEvents << " dose " << dose << G4endl; //GDEB
 	theVoxelDoseErrPerSt[ist][0].insert( mmdd::value_type(dose*theNofEvents, doseErr*theNofEvents) );
-	//	if( ist == 3 ) G4cout << "0 theVoxelDosePerSt " << ist << " " <<  dose*theNofEvents << " N=" << theVoxelDoseErrPerSt[ist][0].size() << G4endl; //GDEB
+	//	if( ist == 2 ) G4cout << ii << " 0 theVoxelDoseErrPerSt " << ist << " " <<  dose*theNofEvents << ","<< doseErr*theNofEvents <<" N=" << theVoxelDoseErrPerSt[ist][0].size() << G4endl; //GDEB
+	//	if( ist == 73 ) G4cout << ii << " 0 theVoxelDoseErrPerSt " << ist << " DOSE " << dose << "+-" << doseErr << "NEVENTS="<< theNofEvents << G4endl; //GDEB
       }
       if( dose != 0 ) {
-	// if stored is energy deposited do not multiply
-       	dose = *doseP * dens * theNofEvents;
-	doseSq *= dens * theNofEvents * dens * theNofEvents;
-	doseErr *= dens * theNofEvents;	
+	// To get Doses per St, sum the energies and at the end divide by total St volume. If stored is energy deposited do not multiply
+       	G4double dosest = dose * dens * theNofEvents;
+	G4double dosestSq = doseSq * (dens * theNofEvents * dens * theNofEvents);
 	//	if ( ist == 13 || ist == 14 ) G4cout << ii << " " << iiSt << " : " << ist << " FINAL IST DOSE " << theDosesPerSt[ist] << " " << dose << G4endl; //GDEB
-	theDosesPerSt[ist] += dose; //multiply by volume to get energy, not dose	
-	theDoseSqsPerSt[ist] += doseSq; //multiply by volume to get energy, not dose
-	G4int nCounts = theNVoxelsPerSt[ist];	
+	theDosesPerSt[ist] += dosest; //multiply by volume to get energy, not dose	
+	theDoseSqsPerSt[ist] += dosestSq; //multiply by volume to get energy, not dose
+      	G4int nCounts = theNVoxelsPerSt[ist];	
 	//	G4cout << ist << " DOSE ST dose "  << dose/(dens*theNofEvents) << " edep " << dose << " -> " << theDosesPerSt[ist] << " dens " <<dens << " XYZ " << X_anal << " " << Y_anal << " " << Z_anal << G4endl; //GDEB
 	//	if( ist == 4 ) G4cout << " DOSE ST dose "  << dose/(dens*theNofEvents) << "edep " <<  dose << " -> " << theDosesPerSt[ist] << " dens " <<dens <<  G4endl; 
-
+	
 	nCounts = 1;
 	if( DicomVerb(testVerb) ) G4cout << " DOSE " << dose << " -> " << theDosesPerSt[ist] << " dose*dose " << dose*dose << " sq " << doseSq << " -> " << theDoseSqsPerSt[ist] << " DIFF " << doseSq - dose*dose << G4endl; 
 	if( nCounts != 1 ) {
@@ -627,12 +659,12 @@ void DCMGetOrganInfo::GetInfoFromImage()
 	if( DicomVerb(testVerb) ) G4cout<< ii << " theDosesPerSt " << ist << " " << dose << " +- " << doseErr << " -> " << theDosesPerSt[ist] << " +- " << sqrt(theDoseErrorsPerSt[ist]) << " sq " <<  theDoseSqsPerSt[ist] << " : " << (theDoseSqsPerSt[ist])*nCounts << " - " << theDosesPerSt[ist]*theDosesPerSt[ist] << " = " << ((theDoseSqsPerSt[ist])*nCounts - theDosesPerSt[ist]*theDosesPerSt[ist]) << " dens " << dens << " nCounts " <<nCounts  << G4endl;
 	//	  theDoseErrorsPerSt[ist] = doseErr*doseErr;
       }
+      
       if( !bDepoEnergy ) { // dose: voxel masses summed up for dividing sum of voxel doses
 	theMassesPerSt[ist] += dens; 
 	//	theMassesPerSt[ist] += 1./(dens/CLHEP::joule/(theVoxelVolume_anal*1e-6)); //if stored is energy deposited
 	//	if( ist == 132 ) G4cout << 1./CLHEP::joule << " / " << theVoxelVolume_anal*1e-6 << " MASS ST " << dens/CLHEP::joule/(theVoxelVolume_anal*1e-6) << " -> " << theMassesPerSt[ist] << " mass " << dens << G4endl; 
       }
-
     }
   }
 
@@ -853,6 +885,8 @@ void DCMGetOrganInfo::GetInfoFromImage()
 	    size_t ist = *itest;
  	    if( bDosimQ ) {
 	      theVoxelDoseErrPerSt[ist][ir+1].insert( mmdd::value_type(dose*theNofEvents, doseErr*theNofEvents) );
+	      //if( ist == 2 )
+	      //G4cout << ir+1 <<" theVoxelDoseErrPerSt " << ist << " " <<  dose*theNofEvents << "m"<< doseErr*theNofEvents <<" N=" << theVoxelDoseErrPerSt[ist][0].size() << G4endl; //GDEB
 	      //	      if( ii%100000 == 0 ) G4cout << ist << " : " << ir+1  << " theVoxelDoseErrPerSt " << ii << " " << dose*theNofEvents << " +- " <<doseErr*theNofEvents << " dose " << dose << G4endl; //GDEB
 	      //	      if( ist == 3 ) G4cout << ir+1 << " theVoxelDosePerSt " << ist << " " << dose*theNofEvents << " N=" << theVoxelDoseErrPerSt[ist].size() << G4endl; //GDEB
 	    }
@@ -869,13 +903,15 @@ void DCMGetOrganInfo::GetInfoFromImage()
 		  "Asking to calculate errors by recalculating images with voxel errors, but no histogram or dosimetric quantity is requested");
     }
   }
-
+  
   if( bDosimQ ) {
     std::map<size_t,std::map<size_t,mmdd> >::const_iterator iteis;
     for( iteis = theVoxelDoseErrPerSt.begin(); iteis != theVoxelDoseErrPerSt.end(); iteis++ ) {
       size_t id = (*iteis).first;
       //      std::set<G4double> voxelDoseErrors1 = theDoseErrorsPerSt[id];
+      // extract voxelDoseErrors11 (=ist,mmpp<dose,doserr>), one per random try
       std::map<size_t,mmdd> voxelDoseErrors11 = theVoxelDoseErrPerSt[id];
+      
       for( size_t ii = 0; ii < theDosimQuantities.size(); ii++ ){
 	//classify dosimetry quantity
 	G4String dosimq = theDosimQuantities[ii];
@@ -913,7 +949,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
       }
     }
   }
-      
+    
   fout.close();
 
   //----- FILL DOSE & DOSE-VOLUME HISTOGRAMS
@@ -996,8 +1032,8 @@ void DCMGetOrganInfo::GetInfoFromImage()
     theDrawer->DrawYZ(imageDoseInSt,theLineSets,extraFileName);
   }
 
-}
-  
+  }
+
 //---------------------------------------------------------------------------
 std::pair< std::map<size_t,TH1F*>,std::map<size_t,TH1F*> > DCMGetOrganInfo::FillDoseHistos( DicomVImage* analyseImage, DicomVImage* voxelPerCentImage )
 {
@@ -1188,8 +1224,10 @@ void DCMGetOrganInfo::WriteHistosToFile( pmhmh hpair, TFile* histosFile )
     }
     his->SetYTitle("N Voxels");
     if( ite == doseHistos.begin() ) {
+      his->SetLineColor(0);
       his->Draw("histo");
     } else {
+      his->SetLineColor(1);
       his->Draw("histoSames");
     }
     histosFile->cd();
@@ -1221,7 +1259,8 @@ void DCMGetOrganInfo::WriteHistosToFile( pmhmh hpair, TFile* histosFile )
     canvas1->cd();
     his->Draw("histo");
     G4String hisNameD = theOutputName+"_Dose_";
-    hisNameD += organName+".jpg";    
+    hisNameD += organName+".jpg";
+    std::replace(hisNameD.begin(), hisNameD.end(), '/','-');
     canvas1->Print(hisNameD.c_str());
   }
   canvasD->Print((theOutputName+"_Dose.ALL.jpg").c_str());
@@ -1242,10 +1281,12 @@ void DCMGetOrganInfo::WriteHistosToFile( pmhmh hpair, TFile* histosFile )
     }
     his->SetYTitle("% N Voxels");
     if( ite == doseHistos.begin() ) {
+      his->SetLineColor(0);
       his->Draw("histo");
-    } else {
+    } else { 
+      his->SetLineColor(1);
       his->Draw("histoSames");
-      }
+    }
     histosFile->cd();
     his->Write();
     if( DicomVerb(infoVerb) ){
@@ -1446,7 +1487,7 @@ DicomVImage* DCMGetOrganInfo::FillImageDoseInSt( std::map<size_t, long double> d
   std::map<G4int,G4String> theStructs = dynamic_cast<DicomReaderG4dcmCT*>(VG4dcmCTFiles[0])->GetStructNames();
   if( DicomVerb(debugVerb) ){
     for( std::map<G4int,G4String>::const_iterator ite= theStructs.begin(); ite != theStructs.end(); ite++ ) {
-      G4cout << " STRUCTS " << ite->first << " : " << ite->second << G4endl; //GDEB
+      G4cout << " STRUCTS " << ite->first << " : " << ite->second << G4endl; 
     }
   }
 
@@ -1514,9 +1555,11 @@ void DCMGetOrganInfo::DicomException(G4String msg, G4ExceptionSeverity sever )
 //---------------------------------------------------------------------------
 std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_t,mmdd> voxelDoseErrors11, G4String dosimq, size_t id )
 {
-    if( DicomVerb(infoVerb) ) std::cout << dosimq << " " << id << " GetDosimDPercentage " << " N " << voxelDoseErrors11.size() << std::endl; 
-
-      //  D95=  minimum dose received by >= 95% of each planning target volume
+  // minimum dose received by at least D% of the volume of a structure. voxel dose is ordered, so = dose of 100-D% voxel
+  
+  if( DicomVerb(-infoVerb) ) std::cout << dosimq << " " << id << " START GetDosimDPercentage " << " Nrandom " << voxelDoseErrors11.size() << " NVox " << voxelDoseErrors11[0].size() << std::endl;
+      
+  //  D95=  minimum dose received by >= 95% of each planning target volume
   std::pair<G4double,G4double> dosimQE;
   G4double dosimVal = GmGenUtils::GetValue(dosimq.substr(1,dosimq.length()))/100.;
   if( dosimVal < 0 || dosimVal > 1 ) {
@@ -1525,37 +1568,52 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
 		FatalException,
 		("Value is negative or bigger than 100 = "+ dosimq).c_str());
   }
-  std::cout << id << " GetDosimDPercentage N11 " << voxelDoseErrors11.size() << std::endl; //GDEB
+  //  std::cout << id << " GetDosimDPercentage Nerr11 " << voxelDoseErrors11.size() << std::endl; //GDEB
+  mmdd voxelDoseErrors1t = ((*voxelDoseErrors11.begin())).second;
+  G4int nVoxelD = voxelDoseErrors1t.size();
+  G4int NVox = G4int(nVoxelD*(dosimVal))-1; // must include the D% highest voxels, so start from rbegin()
+  if( DicomVerb(-debugVerb) ){
+    std::cout << id << " GetDosimDPercentage dosimVal " << dosimVal << " NVox " << NVox << " nVoxel_TOT  " << nVoxelD << std::endl; 
+  }
+  if( NVox < 0 ) {
+    G4Exception("DCMGetOrganInfo::GetDosimDPercentage",
+		"",
+		JustWarning,
+		(theClassifNames[id]+" "+ dosimq +": NVox negative " + GmGenUtils::itoa(NVox) + " nVox_TOT " + GmGenUtils::itoa(nVoxelD) + " make it = 0 ").c_str());
+    NVox = 0;
+  }
   if( voxelDoseErrors11.size() == 1 ) { // no nRandom values
     mmdd voxelDoseErrors1 = ((*voxelDoseErrors11.begin())).second;
-    G4int nVoxelD = voxelDoseErrors1.size();
-    G4int NVox = G4int(nVoxelD*dosimVal+1e-6);
-    mmdd::iterator ite1 = voxelDoseErrors1.begin();
+    /*    if( id == 73 ) {
+      G4int iib = 0;
+      for( mmdd::reverse_iterator ite1b = voxelDoseErrors1.rbegin(); ite1b != voxelDoseErrors1.rend(); iib++, ite1b++ ) {
+	std::cout << id << " " << iib << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1b) << " dosimQ " << (*ite1b).first << " +- " <<(*ite1b).second << std::endl;
+	if( iib > NVox ) break;
+      }
+      }*/
+    mmdd::reverse_iterator ite1 = voxelDoseErrors1.rbegin();
+    G4cout << NVox << " BEFORE ADVANCE " << (*ite1).first << " +- " << (*ite1).second << G4endl; //GDEB
     //  mmdd::iterator ite1 = voxelDoseErrors1.begin();
     std::advance( ite1, NVox);
+    G4cout << NVox << " AFTER ADVANCE " << (*ite1).first << " +- " << (*ite1).second << G4endl; //GDEB
     //    G4cout << " GetDosimDPercentage advance " << NVox << " : " << (*ite1).first << "N VOXELS " << voxelDoseErrors1.size() <<  G4endl; //GDEB
     dosimQE = std::pair<G4double,G4double>((*ite1).first,(*ite1).second);
-    if( DicomVerb(debugVerb) ){
-      std::cout << id << " " << NVox << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.begin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << std::endl;
+    if( DicomVerb(-debugVerb) ){
+      std::cout << id << " NVox= " << NVox << " nvoxelD " << nVoxelD << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << std::endl;
     }
   } else {
     G4double val = 0.;
     G4double valP = 0.;
     G4double valN = 0.;
     G4double valSq = 0.;
-    if( DicomVerb(debugVerb) ){
-      std::cout << id << " GetDosimDPercentage " << dosimVal << " N " << voxelDoseErrors11.size() << std::endl; 
-    }
     std::map<size_t,mmdd>::iterator ite11 = voxelDoseErrors11.begin();
     ite11++; // first is without modifications
     G4int nErr = voxelDoseErrors11.size()-1;
     int ii11 = 0;
     for( ; ite11 != voxelDoseErrors11.end(); ite11++, ii11++ ) {
       mmdd voxelDoseErrors1 = ite11->second;
-      G4int nVoxelD = voxelDoseErrors1.size();
-      G4int NVox = G4int(nVoxelD*dosimVal+1e-6);
-      //      std::cout << id << " GetDosimDPercentage N1 " << nVoxelD << " " << NVox << std::endl; //GDEB
-      mmdd::iterator ite1 = voxelDoseErrors1.begin();
+      if( DicomVerb(-debugVerb) ) std::cout << id << " " << ite11->first << " GetDosimDPercentage N1 " << nVoxelD << " NVox= " << NVox << std::endl;
+      mmdd::reverse_iterator ite1 = voxelDoseErrors1.rbegin();
       //  mmdd::iterator ite1 = voxelDoseErrors1.begin();
       std::advance( ite1, NVox);
       if( bRandom ) {
@@ -1566,8 +1624,8 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
 	  G4cout << ii11 << " " << ii << " VOXELDOSE " << ite->first << " " << ite->second << G4endl; //GDEB
 	  }*/
 
-	if( DicomVerb(debugVerb) ){
-	  std::cout << ii11 << " " << id << " " << NVox << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.begin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << " -> " << val << " " << valSq << std::endl;
+	if( DicomVerb(-debugVerb) ){
+	  std::cout << ii11 << " " << id << " " << NVox << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << " -> " << val << " " << valSq << std::endl;
 	}
 	//	  G4cout << id << ":" << std::distance(voxelDoseErrors11.begin(),ite11) << " GetDosimDPercentage dose " << (*ite1).first << G4endl;
       } else {
@@ -1575,11 +1633,11 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
 	  val = (*ite1).first;
 	} else if( std::distance( voxelDoseErrors11.begin(), ite11) == 1 ) {
 	  valP = (*ite1).first; // DOSE+DOSE_ERROR
-	  if( DicomVerb(debugVerb) ){
-	    std::cout << id << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.begin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << " -> " << valP << std::endl;
-	  }
 	} else if( std::distance( voxelDoseErrors11.begin(), ite11) == 2 ) {
 	  valN = (*ite1).first; // DOSE-DOSE_ERROR
+	}
+	if( DicomVerb(-debugVerb) ){
+	  std::cout << id << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << " -> " << valP << std::endl;
 	}
       }
     }
@@ -1590,21 +1648,22 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
     } else {
       valErr = fabs(valP-valN)/2;
     }
-    if( DicomVerb(debugVerb) ){
+    if( DicomVerb(-debugVerb) ){
       std::cout << id << " GetDosimDPercentage dosimQE " << val << " +- " << valErr << std::endl;
     }
     
     dosimQE = std::pair<G4double,G4double>(val,valErr);
 
   }
-
+  
+  //  if( id == 73 ) G4cout << " GetDosimDPercentage " << dosimq << " NVox= " << NVox <<" "<< nVoxelD<< " " << dosimQE.first << " +- " << dosimQE.second << G4endl;//GDEB  
   return dosimQE;
-  }
+}
 
 //---------------------------------------------------------------------------
-std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmincc(std::map<size_t,mmdd> voxelDoseErrors11, G4String dosimq, size_t id)
+std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmincc(std::map<size_t,mmdd> voxelDoseErrors11, G4String dosimq, size_t id) //  voxelDoseErrors11 : 
 {
-  //  Dmin_Xcc =  minimum dose received by target without counting the X cubic centimeters with smaller dose (sum volume of voxels with smaller dose until V > X cc) " << G4endl
+  //  Dmin_Xcc = is the maximum dose received by the "coldest" X cubic centimeters. voxel dose is ordered, so = dose of D% voxel
   std::pair<G4double,G4double> dosimQE;
   if( dosimq.substr(dosimq.length()-2,2) != "cc" ) {
     G4Exception("DCMGetOrganInfo::GetDosimDmincc",
@@ -1614,24 +1673,33 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmincc(std::map<size_t,mmd
   }
   G4double dosimVal = GmGenUtils::GetValue(dosimq.substr(4,dosimq.length()-6));
   dosimVal *= CLHEP::cm3/CLHEP::mm3;
+  mmdd voxelDoseErrors1t = ((*voxelDoseErrors11.begin())).second;
+  G4int nVoxelD = voxelDoseErrors1t.size();
+  G4int NVox = G4int(dosimVal/theVoxelVolume_anal-0.00001)-1;
+  if( NVox > nVoxelD ) {
+    G4Exception("DCMGetOrganInfo::GetDosimDmincc",
+		"",
+		JustWarning,
+		(theClassifNames[id]+" "+ dosimq +": Volume requested = "+ GmGenUtils::itoa(NVox) + " has more voxels than total structure volume = " + GmGenUtils::itoa(nVoxelD)).c_str());
+    dosimQE = std::pair<G4double,G4double>(0.,0.);
+    return dosimQE;
+  }
   if( voxelDoseErrors11.size() == 1 ) {
     mmdd voxelDoseErrors1 = ((*voxelDoseErrors11.begin())).second;
-    G4int nVoxelD = voxelDoseErrors1.size();
-    G4int NVox = G4int(dosimVal/theVoxelVolume_anal-0.00001)+1;
+    /*    if( id == 73 ) {
+      G4int iib = 0;
+      for( mmdd::iterator ite1b = voxelDoseErrors1.begin(); ite1b != voxelDoseErrors1.end(); iib++, ite1b++ ) {
+	std::cout << id << " " << iib << " GetDosimDmincc " << std::distance( voxelDoseErrors1.begin(), ite1b) << " dosimQ " << (*ite1b).first << " +- " <<(*ite1b).second << std::endl;
+	if( iib > NVox ) break;
+      }
+      }*/
     mmdd::iterator ite1 = voxelDoseErrors1.begin();
-    if( NVox > nVoxelD ) {
-      G4Exception("DCMGetOrganInfo::GetDosimDmincc",
-		  "",
-		  JustWarning,
-		  (theClassifNames[id]+": Volume requested = "+ dosimq + " is bigger than total structure volume = " + GmGenUtils::ftoa(theVoxelVolume_anal*nVoxelD)).c_str());
-    } else {
-      std::advance( ite1, NVox);
-      G4cout << voxelDoseErrors1.size() << " GetDosimDmincc advance " << NVox << " : " << (*ite1).first << " = " << (*ite1).second <<G4endl; //GDEB
-      /*      int ii1 = 0;
+    std::advance( ite1, NVox);
+    //      G4cout << voxelDoseErrors1.size() << " GetDosimDmincc advance " << NVox << " : " << (*ite1).first << " = " << (*ite1).second <<G4endl; //GDEB
+    /*      int ii1 = 0;
             for(mmdd::iterator ite1d = voxelDoseErrors1.begin(); ite1d !=  voxelDoseErrors1.end(); ite1d++, ii1++ ){
-	G4cout << " " << ii1 << " DMINCC " << ite1d->first << " " << ite1d->second << " " << G4endl; //GDEB
-	}*/
-    }
+	    G4cout << " " << ii1 << " DMINCC " << ite1d->first << " " << ite1d->second << " " << G4endl; //GDEB
+	    }*/
     dosimQE = std::pair<G4double,G4double>((*ite1).first,(*ite1).second);
   } else {
     G4double val = 0.;
@@ -1644,41 +1712,28 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmincc(std::map<size_t,mmd
     G4int nErr = voxelDoseErrors11.size() -1;
     for( ; ite11 != voxelDoseErrors11.end(); ite11++ ) {
       mmdd voxelDoseErrors1 = ite11->second;
-      G4int nVoxelD = voxelDoseErrors1.size();
-      G4int NVox = G4int(dosimVal/theVoxelVolume_anal-0.00001)+1;
       mmdd::iterator ite1 = voxelDoseErrors1.begin();
       //      G4cerr << " dosimVal=" <<dosimVal << "NVox=" << NVox << " > " << " nVoxelD=" << nVoxelD << G4endl;
       // 	G4cerr << "NVox=" << NVox << " = " << dosimVal << "/" << theVoxelVolume_anal << G4endl; 
-      if( NVox > nVoxelD ) {
-	G4ExceptionSeverity excSever = JustWarning;
-	if( voxelDoseErrors11.size() == 2 ) {
-	  excSever = FatalException;
-	}
-	G4Exception("DCMGetOrganInfo::GetDosimDmincc",
-		    "",
-		    excSever,
-		    (theClassifNames[id]+": Volume requested = "+ dosimq + " is bigger than total structure volume = " + GmGenUtils::ftoa(theVoxelVolume_anal*nVoxelD)).c_str());
-	nErr -= 1; 
-      } else {
-	std::advance( ite1, NVox);
-	//  G4cout << voxelDoseErrors1.size() << " GetDosimDmincc advance " << NVox << " : " << dose  << " TOTAL VOL " << theVoxelVolume_anal*nVoxelD << " mm3 " <<G4endl; //GDEB
-	val += (*ite1).first;
-	valSq += (*ite1).first*(*ite1).first;
-	G4cout << id << ":" << std::distance(voxelDoseErrors11.begin(),ite11) << " GetDosimDmincc dose " << (*ite1).first << G4endl;
-      }
+      std::advance( ite1, NVox);
+      //  G4cout << voxelDoseErrors1.size() << " GetDosimDmincc advance " << NVox << " : " << dose  << " TOTAL VOL " << theVoxelVolume_anal*nVoxelD << " mm3 " <<G4endl; //GDEB
+      val += (*ite1).first;
+      valSq += (*ite1).first*(*ite1).first;
+      G4cout << id << ":" << std::distance(voxelDoseErrors11.begin(),ite11) << " GetDosimDmincc dose " << (*ite1).first << G4endl;
     }
     double valErr = sqrt((valSq-val*val/nErr)/(nErr+1));
     val /= nErr;
 
     dosimQE = std::pair<G4double,G4double>(val,valErr);
   }
+  //  G4cout << id << " GetDosimDmincc " << dosimq << " NVox= " << NVox <<" "<< nVoxelD<< " " << dosimQE.first << " +- " << dosimQE.second << G4endl;//GDEB
   return dosimQE;
 }
 
 //---------------------------------------------------------------------------
 std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmaxcc(std::map<size_t,mmdd> voxelDoseErrors11, G4String dosimq, size_t id)
 {
-  //  Dmax_Xcc =  maximum dose received by target without counting the X cubic centimeters of bigger dose (sum volume of voxels with bigger dose until V > X cc) " << G4endl
+  //  Dmax_Xcc = is the minimum dose received by the "hottest" 3 cubic centimeters. voxel dose is ordered, so = dose of 100-D% voxel
   std::pair<G4double,G4double> dosimQE;
   if( dosimq.substr(dosimq.length()-2,2) != "cc" ) {
     G4Exception("DCMGetOrganInfo::GetDosimDmaxcc",
@@ -1688,17 +1743,33 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmaxcc(std::map<size_t,mmd
   }
   G4double dosimVal = GmGenUtils::GetValue(dosimq.substr(4,dosimq.length()-6));
   dosimVal *= CLHEP::cm3/CLHEP::mm3;
-  G4int NVox = G4int(dosimVal/theVoxelVolume_anal-0.00001)+1;
+  mmdd voxelDoseErrors1t = ((*voxelDoseErrors11.begin())).second;
+  G4int nVoxelD = voxelDoseErrors1t.size();
+  G4int NVox = G4int(dosimVal/theVoxelVolume_anal-0.00001)-1;  //NVox must include N highest voxels, so start with rbegin()
+  if( NVox > nVoxelD ) {
+    G4Exception("DCMGetOrganInfo::GetDosimDmaxcc",
+		"",
+		JustWarning,
+		(theClassifNames[id]+" "+ dosimq +": Volume requested = "+ GmGenUtils::itoa(NVox) + " has more voxels than total structure volume = " + GmGenUtils::itoa(nVoxelD)).c_str());
+    dosimQE = std::pair<G4double,G4double>(0.,0.);
+    return dosimQE;
+  }
   if( voxelDoseErrors11.size() == 1 ) {
     mmdd voxelDoseErrors1 = ((*voxelDoseErrors11.begin())).second;
-    G4int nVoxelD = voxelDoseErrors1.size();
+    /*    if( id == 73 ) {
+      G4int iib = 0;
+      for( mmdd::reverse_iterator ite1b = voxelDoseErrors1.rbegin(); ite1b != voxelDoseErrors1.rend(); iib++, ite1b++ ) {
+	std::cout << id << " " << iib << " GetDosimDmaxcc " << std::distance( voxelDoseErrors1.rbegin(), ite1b) << " dosimQ " << (*ite1b).first << " +- " <<(*ite1b).second << std::endl;
+	if( iib > NVox ) break;
+      }
+      }*/
     mmdd::reverse_iterator ite1 = voxelDoseErrors1.rbegin();
     if( NVox > nVoxelD ) {
       G4cerr << " NVoxREQ " << NVox << " = " << dosimVal << " / " << theVoxelVolume_anal << G4endl; 
       G4Exception("DCMGetOrganInfo::GetDosimDmaxcc",
 		  "",
 		  JustWarning,
-		  (theClassifNames[id]+": Volume requested = "+ dosimq + " is bigger than total structure volume = " + GmGenUtils::ftoa(theVoxelVolume_anal*nVoxelD)).c_str());
+		(theClassifNames[id]+" "+ dosimq +": Volume requested = "+ GmGenUtils::itoa(NVox) + " has more voxels than total structure volume = " + GmGenUtils::itoa(nVoxelD)).c_str());
     } else {
       std::advance( ite1, NVox);
     }
@@ -1715,25 +1786,11 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmaxcc(std::map<size_t,mmd
     G4int nErr = voxelDoseErrors11.size() - 1;
     for( ; ite11 != voxelDoseErrors11.end(); ite11++ ) {
       mmdd voxelDoseErrors1 = ite11->second;
-      G4int nVoxelD = voxelDoseErrors1.size();
       mmdd::reverse_iterator ite1 = voxelDoseErrors1.rbegin();
-      if( NVox > nVoxelD ) {
-	G4cerr << " NVoxREQ " << NVox << " = " << dosimVal << " / " << theVoxelVolume_anal << G4endl; 
-	G4ExceptionSeverity excSever = JustWarning;
-	if( voxelDoseErrors11.size() == 2 ) {
-	  excSever = FatalException;
-	}
-	G4Exception("DCMGetOrganInfo::GetDosimDmaxcc",
-		    "",
-		    excSever,
-		    (theClassifNames[id]+": Volume requested = "+ dosimq + " is bigger than total structure volume = " + GmGenUtils::ftoa(theVoxelVolume_anal*nVoxelD)).c_str());
-	nErr -= 1; 
-      } else {
-	std::advance( ite1, NVox);
-	val += (*ite1).first;
-	valSq += (*ite1).first*(*ite1).first;
-	G4cout << id << ":" << std::distance(voxelDoseErrors11.begin(),ite11) << " GetDosimDmaxcc dose " << (*ite1).first << G4endl;
-      }
+      std::advance( ite1, NVox);
+      val += (*ite1).first;
+      valSq += (*ite1).first*(*ite1).first;
+      G4cout << id << ":" << std::distance(voxelDoseErrors11.begin(),ite11) << " GetDosimDmaxcc dose " << (*ite1).first << G4endl;
       //-  G4cout << voxelDoseErrors1.size() << " GetDosimDmaxcc advance " << NVox << " : " << dose << " TOTAL VOL " << theVoxelVolume_anal*nVoxelD << " mm3 " <<G4endl; //GDEB
     }
     double valErr = sqrt((valSq-val*val/nErr)/(nErr+1));
@@ -1741,7 +1798,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmaxcc(std::map<size_t,mmd
 
     dosimQE = std::pair<G4double,G4double>(val,valErr);
   }
-  
+  //  if( id == 73 ) G4cout << " GetDosimDmaxcc " << dosimq << " NVox= " << NVox <<" "<< nVoxelD<< " " << dosimQE.first << " +- " << dosimQE.second << G4endl;//GDEB  
   return dosimQE;
 }
 
@@ -1762,7 +1819,6 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmean(std::map<size_t,mmdd
     dmean /= nVoxelD;
     dmeanErr /= nVoxelD;
     dosimQE = std::pair<G4double,G4double>(dmean,dmeanErr);
-     //     G4cout << voxelDoseErrors1.size() << " GetDosimDmaxcc advance " << NVox << " : " << (*ite1).first << " TOTAL VOL " << theVoxelVolume_anal*nVoxelD << " mm3 " <<G4endl; //GDEB
   } else {
     G4double val = 0.;
     G4double valSq = 0.;
@@ -1783,7 +1839,6 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmean(std::map<size_t,mmdd
       val += dmean;
       valSq += dmean*dmean;
       G4cout << id << ":" << std::distance(voxelDoseErrors11.begin(),ite11) << " GetDosimDmean " << dmean << G4endl;
-      //-  G4cout << voxelDoseErrors1.size() << " GetDosimDmaxcc advance " << NVox << " : " << dose << " TOTAL VOL " << theVoxelVolume_anal*nVoxelD << " mm3 " <<G4endl; //GDEB
     }
     double valErr = sqrt((valSq-val*val/nErr)/(nErr+1));
     val /= nErr;
@@ -1810,7 +1865,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimVolume(std::map<size_t,mmd
   
   G4double dosimVal = GmGenUtils::GetValue(dosimq.substr(1,dosimq.length()))/100.;
   G4double dose = dosimVal * thePrescribedDose;
-  G4cout << "DCMGetOrganInfo::GetDosimVolume NVoxelDoseErrors11 " << voxelDoseErrors11.size() << G4endl; //GDEB
+  //  G4cout << "DCMGetOrganInfo::GetDosimVolume NVoxelDoseErrors11 " << voxelDoseErrors11.size() << G4endl; //GDEB
   if( voxelDoseErrors11.size() == 1 ) {
     mmdd voxelDoseErrors1 = ((*voxelDoseErrors11.begin())).second;
     mmdd::iterator ite1 = voxelDoseErrors1.upper_bound(dose); // bigger than
@@ -1825,7 +1880,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimVolume(std::map<size_t,mmd
       NVox = (std::distance(ite1,voxelDoseErrors1.end()));
     }
     G4double volume = float(NVox)/voxelDoseErrors1.size();
-    G4cout << dosimVal << " " << dose << " DOSIMQ V " << volume << "= " << NVox << "/" << voxelDoseErrors1.size() << G4endl; //GDEB
+    //    G4cout << dosimVal << " " << dose << " DOSIMQ V " << volume << "= " << NVox << "/" << voxelDoseErrors1.size() << G4endl; //GDEB
     
     G4double doseErr = (*ite1).second;
     ite1 = voxelDoseErrors1.upper_bound(dose+doseErr); // bigger than
@@ -1878,7 +1933,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimVolume(std::map<size_t,mmd
     G4double val = 0.;
     G4double valSq = 0.;
     if( DicomVerb(infoVerb) ){
-      std::cout << id << " GetDosimDmaxcc" << dosimVal << " N " << voxelDoseErrors11.size() << std::endl; //GDEB
+      std::cout << id << " GetDosimDmaxcc" << dosimVal << " N " << voxelDoseErrors11.size() << std::endl; 
     }
     std::map<size_t,mmdd>::iterator ite11 = voxelDoseErrors11.begin();
     ite11++; // first is without modifications

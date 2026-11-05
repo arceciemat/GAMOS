@@ -47,39 +47,39 @@ GmGeneratorMessenger::GmGeneratorMessenger(GmGenerator* myua)
   AddFromTextFileCmd->AvailableForStates(G4State_Idle,G4State_PreInit);
 
   DistTimeCmd = new GmUIcmdWithAString("/gamos/generator/timeDist",this);
-  DistTimeCmd->SetGuidance("Sets the time distribution type for one source");
+  DistTimeCmd->SetGuidance("Sets the time distribution for one source");
   DistTimeCmd->SetParameterName("SOURCE_NAME DISTRIBUTION_TYPE (EXTRA_PARAMETERS)",false);
   DistTimeCmd->AvailableForStates(G4State_Idle);
 
   DistEnergyCmd = new GmUIcmdWithAString("/gamos/generator/energyDist",this);
-  DistEnergyCmd->SetGuidance("Sets the energy distribution type for one source");
+  DistEnergyCmd->SetGuidance("Sets the energy distribution for one source");
   DistEnergyCmd->SetParameterName("SOURCE_NAME DISTRIBUTION_TYPE (EXTRA_PARAMETERS)",false);
   DistEnergyCmd->AvailableForStates(G4State_Idle);
 
   DistPositionCmd = new GmUIcmdWithAString("/gamos/generator/positionDist",this);
-  DistPositionCmd->SetGuidance("Sets the position distribution type for one source");
+  DistPositionCmd->SetGuidance("Sets the position and direction distributions for one source");
   DistPositionCmd->SetParameterName("SOURCE_NAME DISTRIBUTION_TYPE (EXTRA_PARAMETERS)",false);
   DistPositionCmd->AvailableForStates(G4State_Idle);
 
   DistDirectionCmd = new GmUIcmdWithAString("/gamos/generator/directionDist",this);
-  DistDirectionCmd->SetGuidance("Sets the direction distribution type for one source");
+  DistDirectionCmd->SetGuidance("Sets the direction distribution for one source");
   DistDirectionCmd->SetParameterName("SOURCE_NAME DISTRIBUTION_TYPE (EXTRA_PARAMETERS)",false);
   DistDirectionCmd->AvailableForStates(G4State_Idle);
 
   DistPositionDirectionCmd = new GmUIcmdWithAString("/gamos/generator/positionDirectionDist",this);
-  DistPositionDirectionCmd->SetGuidance("Sets the position distribution type for one source");
+  DistPositionDirectionCmd->SetGuidance("Sets the position distribution for one source");
   DistPositionDirectionCmd->SetParameterName("SOURCE_NAME DISTRIBUTION_TYPE (EXTRA_PARAMETERS)",false);
   DistPositionDirectionCmd->AvailableForStates(G4State_Idle);
 
   PositionAddVolumeCmd = new GmUIcmdWithAString("/gamos/generator/GmPositionVolumesAndSurfaces/addVolumeOrSurface",this);
-  PositionAddVolumeCmd->SetGuidance("Add a new volume to the position distribution of type GmPositionUserVolumes");
+  PositionAddVolumeCmd->SetGuidance("Add a new volume to the position distribution of GmPositionUserVolumes");
   PositionAddVolumeCmd->SetParameterName("NAME SOLID_TYPE POS_X POS_Y POS_Z ANG_X ANG_Y ANG_Z SOLID_PARAM_1 (SOLID_PARAM_2 ...)",false);
   PositionAddVolumeCmd->AvailableForStates(G4State_Idle,G4State_PreInit);
 
-  DistributionCmd = new GmUIcmdWithAString("/gamos/generator/addBiasDistribution",this);
-  DistributionCmd->SetGuidance("Add a new distribution to bias a variable");
-  DistributionCmd->SetParameterName("GENERATOR_DIST_TYPE BIAS_DIST_NAME",false);
-  DistributionCmd->AvailableForStates(G4State_Idle);
+  BiasDistCmd = new GmUIcmdWithAString("/gamos/generator/addBiasDistribution",this);
+  BiasDistCmd->SetGuidance("Add a new distribution to bias a variable");
+  BiasDistCmd->SetParameterName("GENERATOR_DIST_TYPE BIAS_DIST_NAME",false);
+  BiasDistCmd->AvailableForStates(G4State_Idle);
 
 }
 
@@ -103,7 +103,7 @@ GmGeneratorMessenger::~GmGeneratorMessenger()
   if (EnergyCmd) delete EnergyCmd;
   if (ActivityCmd) delete ActivityCmd;
   if (PositionAddVolumeCmd) delete PositionAddVolumeCmd;
-  if (DistributionCmd) delete DistributionCmd;
+  if (BiasDistCmd) delete BiasDistCmd;
 }
 
 
@@ -163,7 +163,7 @@ void GmGeneratorMessenger::SetNewValue(G4UIcommand * command,
       }
       distPos->SetParams(wl);
     }
-  } else if (command == DistributionCmd ){
+  } else if (command == BiasDistCmd ){
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
     if( wl.size() != 3 ) {
       G4Exception(" GmGeneratorMessenger::SetNewValue"

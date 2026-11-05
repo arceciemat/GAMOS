@@ -20,10 +20,11 @@ public:
 
 public:
   virtual void SetOutputFile( G4String foutName );
-
-  virtual void DrawXY( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "" );
-  virtual void DrawXZ( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "" );
-  virtual void DrawYZ( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "" );
+  virtual void CloseOutputFile();
+  
+  virtual void DrawXY( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "", G4bool bOnlyNonZero = false );
+  virtual void DrawXZ( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "", G4bool bOnlyNonZero = false );
+  virtual void DrawYZ( DicomVImage*, std::vector<DicomVLineSet*>, G4String extraFileName = "", G4bool bOnlyNonZero = false );
   virtual void DrawWithLinesXY( DicomVImage*, DicomVLineList* );
   virtual void DrawWithLinesXZ( DicomVImage*, DicomVLineList* );
   virtual void DrawWithLinesYZ( DicomVImage*, DicomVLineList* );
@@ -82,10 +83,12 @@ private:
   G4double thePaletteMax;
   //  DicomOperLog* theOperatorLog;
   DicomParameterMgr* theParamMgr;
+  G4bool bReflectY;
   G4bool bRotateXY180;
-  msldo theLineDrawingOptions;
+  vpsldo theLineDrawingOptions;
   G4bool bLineDrawingOptions;
   G4bool bFigureTitle;
+  std::set<DicomVImage*> theReflectYImages;
   std::set<DicomVImage*> theRotateXY180Images;
 
   TFile* theOutputFile;

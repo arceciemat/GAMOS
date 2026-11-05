@@ -41,7 +41,17 @@ GmGenerDistPositionDirection2DCorrelTripleGaussian::GmGenerDistPositionDirection
   theConfFileNamePrefix = GmParameterMgr::GetInstance()->GetStringValue("GmGenerDistPositionDirection2DCorrelTripleGaussian:ConfFileNamePrefix","conf3E");
 
   theGenerMgr = GmGeneratorMgr::GetInstance();
-	
+
+  theCorrelGaussianX1Y1 = new GmGenerDistPositionDirection2DCorrelGaussian();
+  theCorrelGaussianX1Y2 = new GmGenerDistPositionDirection2DCorrelGaussian();
+  theCorrelGaussianX1Y3 = new GmGenerDistPositionDirection2DCorrelGaussian();
+  theCorrelGaussianX2Y1 = new GmGenerDistPositionDirection2DCorrelGaussian();
+  theCorrelGaussianX2Y2 = new GmGenerDistPositionDirection2DCorrelGaussian();
+  theCorrelGaussianX2Y3 = new GmGenerDistPositionDirection2DCorrelGaussian();
+  theCorrelGaussianX3Y1 = new GmGenerDistPositionDirection2DCorrelGaussian();
+  theCorrelGaussianX3Y2 = new GmGenerDistPositionDirection2DCorrelGaussian();
+  theCorrelGaussianX3Y3 = new GmGenerDistPositionDirection2DCorrelGaussian();
+
 }
 
 //---------------------------------------------------------------------
@@ -57,6 +67,9 @@ G4ThreeVector GmGenerDistPositionDirection2DCorrelTripleGaussian::GeneratePositi
   //  G4cout << "GmGenerDistPositionDirection2DCorrelTripleGaussian::GeneratePosition " << iY << " ranY " << ranY << "  theProbabilitiesAccumY " << theProbabilitiesAccumY[0] << " " << theProbabilitiesAccumY[1] << " " << theProbabilitiesAccumY[2] << G4endl; //GDEB
   //  G4cout << " SAMPLED GAUSSIAN " << iX << iY << G4endl; //GDEB
   //G4cout << this << " GAUSSIANran " << iX << iY << " " << ranX << " " << ranY << "PROB " << theProbabilitiesAccumX[iX-1] << " " << theProbabilitiesAccumY[iY-1] << G4endl; //GDEB
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelTripleGaussian::GeneratePosition CorrelGaussian iX= " << iX << " iY= " << iY << G4endl;
+#endif
   if( iX == 1 && iY == 1 ) {
     thePosition = theCorrelGaussianX1Y1->GeneratePosition(partSource);
     theDirection = theCorrelGaussianX1Y1->GetDirection();
@@ -253,12 +266,11 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
     G4ThreeVector dir(GmGenUtils::GetValue( params[28] ), GmGenUtils::GetValue( params[29] ), GmGenUtils::GetValue( params[30] ) );
     theDirection = dir;
   } else {
-    theDirection = G4ThreeVector(0.,0.,-1.);
+    theDirection = G4ThreeVector(0.,0.,1.);    
   }
 
   std::vector<G4String> paramsIJ;
 
-  theCorrelGaussianX1Y1 = new GmGenerDistPositionDirection2DCorrelGaussian();
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaX1));
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaXp1));
   paramsIJ.push_back(GmGenUtils::ftoa(theCorrelationX1));
@@ -275,7 +287,6 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
   theCorrelGaussianX1Y1->SetParams(paramsIJ);
   paramsIJ.clear();
   
-  theCorrelGaussianX1Y2 = new GmGenerDistPositionDirection2DCorrelGaussian();
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaX1));
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaXp1));
   paramsIJ.push_back(GmGenUtils::ftoa(theCorrelationX1));
@@ -292,7 +303,6 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
   theCorrelGaussianX1Y2->SetParams(paramsIJ);
   paramsIJ.clear();
 
-  theCorrelGaussianX1Y3 = new GmGenerDistPositionDirection2DCorrelGaussian();
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaX1));
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaXp1));
   paramsIJ.push_back(GmGenUtils::ftoa(theCorrelationX1));
@@ -309,7 +319,6 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
   theCorrelGaussianX1Y3->SetParams(paramsIJ);
   paramsIJ.clear();
 
-  theCorrelGaussianX2Y1 = new GmGenerDistPositionDirection2DCorrelGaussian();
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaX2));
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaXp2));
   paramsIJ.push_back(GmGenUtils::ftoa(theCorrelationX2));
@@ -326,7 +335,6 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
   theCorrelGaussianX2Y1->SetParams(paramsIJ);
   paramsIJ.clear();
 
-  theCorrelGaussianX2Y2 = new GmGenerDistPositionDirection2DCorrelGaussian();
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaX2));
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaXp2));
   paramsIJ.push_back(GmGenUtils::ftoa(theCorrelationX2));
@@ -343,7 +351,6 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
   theCorrelGaussianX2Y2->SetParams(paramsIJ);
   paramsIJ.clear();
 
-  theCorrelGaussianX2Y3 = new GmGenerDistPositionDirection2DCorrelGaussian();
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaX2));
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaXp2));
   paramsIJ.push_back(GmGenUtils::ftoa(theCorrelationX2));
@@ -360,7 +367,6 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
   theCorrelGaussianX2Y3->SetParams(paramsIJ);
   paramsIJ.clear();
 
-  theCorrelGaussianX3Y1 = new GmGenerDistPositionDirection2DCorrelGaussian();
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaX3));
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaXp3));
   paramsIJ.push_back(GmGenUtils::ftoa(theCorrelationX3));
@@ -377,7 +383,6 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
   theCorrelGaussianX3Y1->SetParams(paramsIJ);
   paramsIJ.clear();
 
-  theCorrelGaussianX3Y2 = new GmGenerDistPositionDirection2DCorrelGaussian();
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaX3));
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaXp3));
   paramsIJ.push_back(GmGenUtils::ftoa(theCorrelationX3));
@@ -394,7 +399,6 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
   theCorrelGaussianX3Y2->SetParams(paramsIJ);
   paramsIJ.clear();
 
-  theCorrelGaussianX3Y3 = new GmGenerDistPositionDirection2DCorrelGaussian();
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaX3));
   paramsIJ.push_back(GmGenUtils::ftoa(theSigmaXp3));
   paramsIJ.push_back(GmGenUtils::ftoa(theCorrelationX3));
@@ -442,6 +446,7 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParams( const std::v
 //---------------------------------------------------------------------
 void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy( G4String energy )
 {
+  
   // try all options conf3E90 conf3E090 conf3E90.0 conf3E090.0
   G4bool bFileOK = true;
   G4String energyFinal = energy;
@@ -486,6 +491,7 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy( G4Stri
   SetParams(params);
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) {
+    G4cout << " GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy E= " << energy << " " << theConfFileNamePrefix+energyFinal << G4endl; 
     G4cout << " GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy " << G4endl; 
     for(size_t ii = 0; ii < params.size(); ii++ ) {
       G4cout << params[ii] << " ";
@@ -511,15 +517,17 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetDirection( G4ThreeVe
   theCorrelGaussianX3Y2->SetDirection(dir);
   theCorrelGaussianX3Y3->SetDirection(dir);
 
+  /* dir and pos use the same pointer 
   //  G4cout << " theCorrelGaussianX1Y1->SetDirection(dir); " << theCorrelGaussianX1Y1 << " " << theCorrelGaussianX1Y1->GetDirection() << G4endl; //GDEB
   //--- SetDirection of Position Dist (the one that calculates direction)
   GmVGenerDistDirection* dirDist = dynamic_cast<GmVGenerDistDirection*>(this);
   if( dirDist && dirDist->GetParticleSource() ) {
     GmVGenerDistPosition* posDist = dirDist->GetParticleSource()->GetPositionDistribution();
     GmGenerDistPositionDirection2DCorrelTripleGaussian* posDistDG = dynamic_cast<GmGenerDistPositionDirection2DCorrelTripleGaussian*>(posDist);
+    G4cout << this << " posDistDG " << posDistDG << G4endl; //GDEB
     posDistDG->SetDirection(dir);
   }
-
+  */ 
 }
 
 //---------------------------------------------------------------------
@@ -538,7 +546,8 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetRotation( G4Rotation
   theCorrelGaussianX3Y2->SetRotation(rotm);
   theCorrelGaussianX3Y3->SetRotation(rotm);
 
-  //  G4cout << " theCorrelGaussianX1Y1->SetRotation(rotm); " << theCorrelGaussianX1Y1 << " " << theCorrelGaussianX1Y1->GetRotation() << G4endl; //GDEB
+  /* dir and pos use the same pointer 
+//  G4cout << " theCorrelGaussianX1Y1->SetRotation(rotm); " << theCorrelGaussianX1Y1 << " " << theCorrelGaussianX1Y1->GetRotation() << G4endl; //GDEB
   //--- SetDirection of Position Dist (the one that calculates direction)
   GmVGenerDistDirection* dirDist = dynamic_cast<GmVGenerDistDirection*>(this);
   if( dirDist && dirDist->GetParticleSource() ) {
@@ -546,7 +555,7 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetRotation( G4Rotation
     GmGenerDistPositionDirection2DCorrelTripleGaussian* posDistDG = dynamic_cast<GmGenerDistPositionDirection2DCorrelTripleGaussian*>(posDist);
     posDistDG->SetRotation(rotm);
   }
-
+  */
 }
 
 

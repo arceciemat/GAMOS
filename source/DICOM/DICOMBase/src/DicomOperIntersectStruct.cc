@@ -33,7 +33,7 @@ void DicomOperIntersectStruct::Operate( DicomVImage* image, DicomPolygonList* po
   
   std::vector<DicomVLine*> lines = polyList->GetLines();
   for( size_t ii = 0; ii < lines.size(); ii++ ) {
-    G4cout << " DicomOperIntersect poly " << ii << " " << G4endl; //GDEB
+    G4cout << " DicomOperIntersect poly id " << ii << " " << G4endl; //GDEB
     DicomPolygon* poly = static_cast<DicomPolygon*>(lines[ii]);
 
     //----- Extract image data
@@ -51,6 +51,7 @@ void DicomOperIntersectStruct::Operate( DicomVImage* image, DicomPolygonList* po
     G4double imVoxelDimZ = image->GetVoxelDimZ();
     G4double imVoxelVolume = imVoxelDimX*imVoxelDimY*imVoxelDimZ;
 
+    //--- Get INTERSECTION OF POLYGONE AND IMAGE Z PLANE BY BUILDING A G4ExtrudedSolid AND LETTING GEANT4 FIND IF THERE IS AN INTERSECTION WITH EACH VOXEL
     G4ExtrudedSolid* extrSolid = poly->BuildExtrudedSolid(imVoxelDimZ);
     G4cout << " DicomOperIntersect extr " << extrSolid->GetName() << " " << extrSolid->GetNofVertices() << " " << extrSolid->GetNofZSections() << G4endl; //GDEB
 
@@ -89,21 +90,22 @@ void DicomOperIntersectStruct::Operate( DicomVImage* image, DicomPolygonList* po
     int idMaxX = std::min(int(imNoVoxelsX-1),int((maxXc-imMinX)/imVoxelDimX+1));
     int idMinY = std::max(0,int((minYc-imMinY)/imVoxelDimY));
     int idMaxY = std::min(int(imNoVoxelsY-1),int((maxYc-imMinY)/imVoxelDimY+1));
-    if( DicomVerb(debugVerb) )
+    if( DicomVerb(debugVerb) ) {
       G4cout << " OK CONTOUR INSIDE X/Y OF Z SLICE "
 	     << " minXc " << minXc << " < " << imMinX
 	     << " maxXc " << maxXc << " > " << imMaxX
 	     << " minYc " << minYc << " < " << imMinY
 	     << " maxYc " << maxYc << " > " << imMaxY << G4endl;
-    if( DicomVerb(debugVerb) )
-      G4cout << " VOXEL ID LIMITS OF CONTOUR : idMinX " << idMinX 
+      G4cout << " VOXEL ID LIMITS OUT OF CONTOUR : idMinX " << idMinX 
 	     << " idMaxX " << idMaxX 
 	     << " idMinY " << idMinY 
 	     << " idMaxY " << idMaxY << G4endl;
+    }
     //for each voxel: build 4 lines from the corner towards the center and check how many contour segments it crosses, and the minimum distance to a segment
     
-    //  if( DicomVerb(debugVerb) ) G4cout << " LOOPING POLYGON " << theName << " from " << theLineList->GetName() << G4endl; 
+    //if( DicomVerb(debugVerb) ) G4cout << " LOOPING POLYGON " << theName << " from " << theLineList->GetName() << G4endl; 
     for( int ix = idMinX; ix <= idMaxX; ix++ ) {
+     G4cout << ix << "ix loop @@@@@ CHECKING VOXEL AT (" << imMinX + imVoxelDimX*(ix+0.5) << G4endl;
       for( int iy = idMinY; iy <= idMaxY; iy++ ) {
 	if( DicomVerb(testVerb) ) G4cout << ix << " " << iy << "@@@@@ CHECKING VOXEL AT (" <<  imMinX + imVoxelDimX*(ix+0.5) << "," <<  imMinY + imVoxelDimY*(iy+0.5) << ")" << G4endl;
 	// intersect a G4Box of this voxel with polygon G4ExtrudedSolid

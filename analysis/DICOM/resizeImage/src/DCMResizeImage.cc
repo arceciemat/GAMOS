@@ -11,6 +11,7 @@
 #include "DICOM/DICOMReaders/include/DicomReaderG4dcmNM.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderG4dcmDose.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderSqdose.hh"
+#include "DICOM/DICOMReaders/include/DicomReaderRTStruct.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
@@ -53,6 +54,9 @@ void DCMResizeImage::ProcessArguments(int argc,char** argv)
     if( argvstr == "-bInterpolate" ) {
       theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
       ii++;
+    } else if( argvstr == "-densToMate" ) {
+      theParamMgr->AddParam( argvName + " " + argvstr1, PTstring );
+      ii++;
     } else {
       G4int iAddPar = theParamMgr->ReadParameter( argv, ii );
       if( iAddPar == -1 ) {
@@ -65,7 +69,7 @@ void DCMResizeImage::ProcessArguments(int argc,char** argv)
       ii += iAddPar;
     }
   }
-  
+    
 }
 
 //---------------------------------------------------------------------------
@@ -139,39 +143,116 @@ void DCMResizeImage::ReadFilesAndGetImages()
   //  G4cout << " N READERS CT " << imageReaders.size() << G4endl; //GDEB
   for( size_t ii = 0; ii < imageReaders.size(); ii++ ) {    
     DicomReaderG4dcmCT* readerCT = dynamic_cast<DicomReaderG4dcmCT*>(imageReaders[ii]);
-    if( fileName == "" ) fileName = readerCT->GetFileName()+".new";
-    G4cout << " @@@ Dumping To Text File: " << fileName << G4endl;
-    std::ofstream fout(fileName.c_str());
 
-    static std::map<G4int,G4String> materialNames = readerCT->GetMaterialNames();
+    /*    static std::map<G4int,G4String> materialNames = readerCT->GetMaterialNames();
     fout << materialNames.size() << std::endl;
     std::map<G4int,G4String>::const_iterator ite;
     for(ite = materialNames.begin(); ite != materialNames.end(); ite++){
       fout << (*ite).first << " \"" << (*ite).second << "\"" << std::endl;
+      } */
+    //-- Resize G4dcmCT_MateDens 
+    DicomVImage* imageMateDens = readerCT->GetMateDensImage();
+    operResize->Operate(imageMateDens);
+
+    //-- Recalculate G4dcmCT_MateID (it cannot be resized interpolatin values)
+    DicomVImage* imageMateID = new DicomVImage(*imageMateDens);
+    //--- Read dens to material conversion factors
+    G4String dens2MateFN = theParamMgr->GetStringValue("densToMate","");
+    if ( dens2MateFN == "" ) {
+      G4Exception("DCMResizeImage::ReadFilesAndGetImages",
+		  "",
+		  FatalException,
+		  "No file to calculate material from density, please use parameter  -densToMate <FILE_NAME>");
     }
-        
-    DicomVImage* image = readerCT->GetMateIDImage();
-    if( bInterpolate ) {
+    std::vector<G4String> wl; 
+    //----- Open file
+    GmFileIn fin = GmFileIn::GetInstance(dens2MateFN, true);
+    if( DicomVerb(-warningVerb) ) G4cout << "@@@@@@@ Reading FILE: " << dens2MateFN << G4endl;
+    for( int ii2 = 0;; ii2++) {      
+      if( ! fin.GetWordsInLine(wl) ) break;
+      //      G4cout << " dicom.mdat " << wl[0] << G4endl; //GDEB
+      if( wl[0] == ":MATE" ) {
+	theMaterials[GmGenUtils::GetValue(wl[2])] = wl[1];
+	//	G4cout << " ADDED theMaterials " << GmGenUtils::GetValue(wl[2]) <<" = "<< wl[1] << G4endl; //GDEB
+      }
+    }
+    //--- Loop to image voxels and calculate mate ID
+    G4int nVox = imageMateDens->GetNoVoxels();
+    std::vector<G4double>* dataDens = imageMateDens->GetData();
+    std::vector<G4double>* dataID = imageMateID->GetData();
+    for( int iid = 0; iid < nVox; iid++ ){
+      size_t materialIndex = GetMaterialIndex(dataDens->at(iid));
+      dataID->at(iid) = materialIndex;
+      // G4cout << " FILLMATEID " << materialIndex << " at " << iid << G4endl;//GDEB
+      if ( materialIndex >= theMaterials.size() ) {
+	G4Exception("DCMResizeImage::ReadFilesAndGetImages",
+		    "",
+		    FatalException,
+		    ("TOO BIG DENSITY "+GmGenUtils::ftoa(materialIndex)).c_str());
+      }
+    }
+    /*    if( bInterpolate ) {
       G4Exception("DCMResizeImage::ReadFilesAndGetImages",
 		  "",
 		  JustWarning,
 		  "No interpolation can be done for G4dcmCT images");
     }
-    theParamMgr->AddParam("bInterpolate 0");
-    operResize->Operate(image);
-    image->DumpHeaderToTextFile(fout);
-    image->DumpDataToTextFile(fout);
-    image = readerCT->GetMateDensImage();
-    operResize->Operate(image);
-    image->DumpDataToTextFile(fout,true);
+    theParamMgr->AddParam("bInterpolate 0");*/
+
+    //--- Write mate images to file
+    if( fileName == "" ) fileName = readerCT->GetFileName()+".new";
+    G4cout << " @@@ Dumping To Text File: " << fileName << G4endl;
+    std::ofstream fout(fileName.c_str());
+
+    fout << theMaterials.size() << std::endl;
+    std::map<G4double,G4String>::const_iterator ite;
+    G4int imate = 0;
+    for( ite = theMaterials.begin(); ite != theMaterials.end(); ite++, imate++){
+      fout << imate << " \"" << (*ite).second << "\"" << std::endl;
+    } 
+    imageMateID->DumpHeaderToTextFile(fout);
+    imageMateID->DumpDataToTextFile(fout);
+
+    imageMateDens->DumpDataToTextFile(fout,true);
+    
+
+    /* St cannot be resized, it has to be redone from RTStruct file
     image = readerCT->GetStructIDImage();
     operResize->Operate(image);
     if( image ) image->DumpDataToTextFile(fout);
     std::map<G4int,G4String> structNames = readerCT->GetStructNames();
     for( std::map<G4int,G4String>::const_iterator itest = structNames.begin(); itest != structNames.end(); itest++ ) {
       fout << itest->first << " \"" << itest->second << "\""<< G4endl;
+      } */
+    std::vector<DicomVReader*> readers;
+    readers =  theReaderMgr->GetReaders(DRM_RTStruct,false);
+    //    G4cout << "DCMResizeImage  N READERS DRM_RTStruct " << readers.size() << G4endl; //GDEB
+    if(readers.size() == 1 ) {      
+      DicomReaderRTStruct* readerStr = dynamic_cast<DicomReaderRTStruct*>(readers[0]);
+      DicomPolygonSet* polygonSet = readerStr->GetPolygonSet();
+      /*DicomVImageStr* imageDicomStructures = new DicomVImageStr( imageReaders[0], "RTStruct", DIM_RTStruct );
+	    	      DicomPolygonSet* polygonSetNew = new DicomPolygonSet(polygonSet, imageDicomStructures, polygonSet->GetOrientation() );
+	       structRead->FindVoxelsInXY( imageDicomStructures, polygonSetNew );
+	       delete polygonSetNew;
+	       } else { */
+      //      G4cout << " readerStr->FindVoxelsInXY( " << G4endl; //GDEB
+      DicomVImageStr* imageCTID = new DicomVImageStr(imageMateDens, readerCT->GetStructIDImage()->GetName(), readerCT->GetStructIDImage()->GetModality(), DIO_XY);
+      readerStr->FindVoxelsInXY( imageCTID, polygonSet );
+      DicomVImage* imageDicomStructures = readerStr->GetStructImage();
+      imageDicomStructures->DumpDataToTextFile( fout );
+      std::map<G4int,DicomROI*> rois = readerStr->GetROIs();
+      std::map<G4int,DicomROI*>::const_iterator iter; 
+      for( iter = rois.begin(); iter != rois.end(); iter++ ) {
+	DicomROI* roi = (*iter).second;
+	fout << roi->GetNumber() << " \"" << roi->GetName() << "\"" <<G4endl;
+      }
+      //-     }	  
+    } else if(imageReaders.size() > 1 ) {
+      G4Exception("DCMResizeImage::ReadFilesAndGetImages",
+		  "",
+		  FatalException,
+		  "more than one RTStruct file");	
     }
-
   }
   
   imageReaders =  theReaderMgr->GetImageReaders(DRM_G4dcmNM,false);
@@ -362,3 +443,28 @@ void DCMResizeImage::PrintHelp()
 	 << " -help        prints the set of arguments " << G4endl;
 }
   
+//-----------------------------------------------------------------------------
+size_t DCMResizeImage::GetMaterialIndex( G4double Hval)
+{
+  std::map<G4double,G4String>::iterator ite = theMaterials.upper_bound(Hval);  
+  if( ite == theMaterials.end() ) {
+    ite--;
+    G4Exception("DicomReaderCT::GetMaterialIndex",
+		"",
+		FatalException,
+		("Hounsfield value too big, change input file "+std::to_string(Hval) + " > " + std::to_string((*ite).first)).c_str());
+  }
+
+  size_t dist = std::distance( theMaterials.begin(), ite );
+
+  if ( dist >= theMaterials.size() ) {
+    G4Exception("DCMResizeImage::GetMaterialIndex",
+		"",
+		FatalException,
+		("TOO BIG DENSITY "+GmGenUtils::ftoa(Hval)).c_str());
+  }
+
+  //  G4cout << " GetMaterialIndex " << dist << " from " << Hval << G4endl; //GDEB
+  return  dist;
+  
+}

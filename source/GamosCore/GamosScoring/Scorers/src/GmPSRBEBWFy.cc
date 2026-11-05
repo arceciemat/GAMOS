@@ -35,7 +35,8 @@ GmPSRBEBWFy::GmPSRBEBWFy(G4String name)
 
   // Assume energy steps start at 0.
   theEnergyStart = GmParameterMgr::GetInstance()->GetNumericValue(GetName()+":EnergyStart",0.);
-
+  b1StepInVoxel = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(GetName()+":1StepInVoxel",0));
+  G4cout << " b1StepInVoxel " <<b1StepInVoxel << G4endl; //GDEB 
   ReadBWFLinealEnergy();
 }
 
@@ -53,7 +54,7 @@ void GmPSRBEBWFy::ReadBWFLinealEnergy()
 		FatalException,
 		("No Biogical Weighting Function linear energy file name, please use parameter: "+GetName()+":BWFyFileName").c_str());
   }
-  GmFileIn fin = GmFileIn::GetInstance(fileName);
+  GmFileIn fin = GmFileIn::GetInstance(fileName, true);
   std::vector<G4String> wl;
   for(;;) {
     if(! fin.GetWordsInLine( wl ) ) break;
@@ -83,52 +84,68 @@ void GmPSRBEBWFy::ReadBWFLinealEnergy()
 //---------------------------------------------------------
 G4bool GmPSRBEBWFy::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 {
+  if( aStep == 0 ) return FALSE;  // it is 0 when called by GmScoringMgr after last event
+  if( !AcceptByFilter( aStep ) ) return false;
+
   // When particle enters in voxel, calculate the energy at the entry and at the exit (taking into account multiple scattering and energy loss). Divide the interval in energy intervals and score 1 per each energy interval. If last energy interval is only a fraction of the given interval, assign a weight equal to that fraction
-  // It is meant to be used with a microdosimetry lineal energy, read from lineal energy file constructed multiplying y spectrum by Biological Weighting Function for a list of energies
+  // It is meant to be used with a microdosimetry Biological Weighting Function using lineal energy, as Loncol's one. The BWF is read from a lineal energy file constructed calculating for a list of energies the average Biological Weight (computes the y spectrum for that energy, convolutes it with the BWF and get the average)
 
   //----- Check particle enters volume
   const G4StepPoint* preSP = aStep->GetPreStepPoint();
-  if( preSP->GetStepStatus() != fGeomBoundary ) {
+  const G4StepPoint* postSP = 0;
+  if ( b1StepInVoxel ) {
+    if( preSP->GetStepStatus() != fGeomBoundary ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( ScoringVerb(debugVerb) ) G4cout << " GmPSRBEBWFy::ProcessHits Step not entering volume " << G4endl;
+      if( ScoringVerb(debugVerb) ) G4cout << "GmPSRBEBWFy::ProcessHits Step not entering volume" << G4endl;
 #endif
-    return false;
+      return false;
+    }
+  } else {
+     postSP = aStep->GetPostStepPoint();
   }
   
-  if( aStep == 0 ) return FALSE;  // it is 0 when called by GmScoringMgr after last event
-
-  if( !AcceptByFilter( aStep ) ) return false;
   //  G4cout << " 3GmPSRBEBWFy::ProcessHits( " << G4endl; //GDEB
 
   G4double weight = aStep->GetPreStepPoint()->GetWeight(); 
 
-  //--- Get distance to out
-  G4LogicalVolume* LV = preSP->GetPhysicalVolume()->GetLogicalVolume();
-  G4VSolid* solid = LV->GetSolid();
-  G4Box* box = dynamic_cast<G4Box*>(solid);
-  if( box == 0 ) {
-    G4Exception("GmPSRBEBWFy::ProcessHits",
-		"",
-		FatalException,
-		("Scoring volume = "+LV->GetName()+" is not a solid, but a ",solid->GetEntityType()).c_str());
-  }
-  G4AffineTransform transform = G4TransportationManager::GetTransportationManager()->
-    GetNavigatorForTracking()->GetGlobalToLocalTransform();
-  G4ThreeVector globalPos = preSP->GetPosition();
-  G4ThreeVector localPos = transform.TransformPoint(globalPos);
-  G4ThreeVector globalDir = preSP->GetMomentumDirection();
-  G4ThreeVector localDir = transform.TransformAxis(globalDir);
-  G4double distToOut = box->DistanceToOut(localPos, localDir);
-  G4Material* mate = LV->GetMaterial();
-  G4ParticleDefinition* part = aStep->GetTrack()->GetDefinition();
-  G4double kinEnergyPre = preSP->GetKineticEnergy();
+  G4double kinEnergyPre = 0.;
+  G4double kinEnergyPost = 0.;
+  if ( b1StepInVoxel ) {
+    //--- Get distance to out
+    G4LogicalVolume* LV = preSP->GetPhysicalVolume()->GetLogicalVolume();
+    G4VSolid* solid = LV->GetSolid();
+    G4Box* box = dynamic_cast<G4Box*>(solid);
+    if( box == 0 ) {
+      G4Exception("GmPSRBEBWFy::ProcessHits",
+		  "",
+		  FatalException,
+		  ("Scoring volume = "+LV->GetName()+" is not a solid, but a ",solid->GetEntityType()).c_str());
+    }
+    G4AffineTransform transform = G4TransportationManager::GetTransportationManager()->
+      GetNavigatorForTracking()->GetGlobalToLocalTransform();
+    G4ThreeVector globalPos = preSP->GetPosition();
+    G4ThreeVector localPos = transform.TransformPoint(globalPos);
+    G4ThreeVector globalDir = preSP->GetMomentumDirection();
+    G4ThreeVector localDir = transform.TransformAxis(globalDir);
+    G4double distToOut = box->DistanceToOut(localPos, localDir);
+    G4Material* mate = LV->GetMaterial();
+    G4ParticleDefinition* part = aStep->GetTrack()->GetDefinition();
+    kinEnergyPre = preSP->GetKineticEnergy();
   
-  G4double distIn = theElossExt->TrueStepLength( kinEnergyPre, distToOut , mate, part );
-  G4double kinEnergyPost = theElossExt->EnergyAfterStep(kinEnergyPre, distToOut, mate, part);
+    G4double distIn = theElossExt->TrueStepLength( kinEnergyPre, distToOut , mate, part );
+    kinEnergyPost = theElossExt->EnergyAfterStep(kinEnergyPre, distToOut, mate, part);
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(testVerb) )
       G4cout << "GmPSRBEBWFy kinEnergyPre " << kinEnergyPre << " kinEnergyPost " << kinEnergyPost << " distToOut " <<distToOut << " ->distIn " << distIn << " DENSITY " << mate->GetDensity()/(CLHEP::g/CLHEP::cm3) << G4endl; 
-#endif  
+#endif
+  } else {
+    kinEnergyPre = preSP->GetKineticEnergy();
+    kinEnergyPost = postSP->GetKineticEnergy();
+#ifndef GAMOS_NO_VERBOSE
+    if( ScoringVerb(testVerb) )
+      G4cout << "GmPSRBEBWFy kinEnergyPre " << kinEnergyPre << " kinEnergyPost " << kinEnergyPost << G4endl; 
+#endif
+  }
   
   G4int iEnerPre = G4int((kinEnergyPre-theEnergyStart)/theEnergyStep);
   G4int iEnerPost = G4int((kinEnergyPost-theEnergyStart-0.01*theEnergyStep)/theEnergyStep);
@@ -155,18 +172,19 @@ G4bool GmPSRBEBWFy::ProcessHits(G4Step* aStep,G4TouchableHistory*)
       weightFS *= (enerPost-kinEnergyPost)/theEnergyStep; 
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(testVerb) )
-	G4cout << "V:" << index << " " << enerPre-kinEnergyPre << " 1GmPSRBEBWFy LOOP ener " << ener << " weightFS " <<weightFS << G4endl; 
+	G4cout << "V:" << index << " 1GmPSRBEBWFy LOOP ener " << ener  << " " << enerPost-kinEnergyPost << " = " << enerPost <<"-"<<kinEnergyPost << " weightFS " <<weightFS << G4endl;
 #endif
-    } else if( ener == enerPre ) {
+    } else if( fabs(ener-enerPre) < 1e-5 ) {
       weightFS *= 1. - (enerPre-kinEnergyPre)/theEnergyStep;
 #ifndef GAMOS_NO_VERBOSE
       if( ScoringVerb(testVerb) )
-	G4cout <<"V:" << index << " " << enerPost-kinEnergyPost << " 2GmPSRBEBWFy LOOP ener " << ener << " weightFS " <<weightFS << G4endl; 
+	G4cout <<"V:" << index << " 2GmPSRBEBWFy LOOP ener " << ener << " " << enerPre-kinEnergyPre << " = " << enerPre << "-" << kinEnergyPre << " weightFS " <<weightFS << G4endl; 
 #endif
     } else {
 #ifndef GAMOS_NO_VERBOSE
-      if( ScoringVerb(testVerb) )
+      if( ScoringVerb(testVerb) ) {
 	G4cout << "V:" << index << " " << " 0GmPSRBEBWFy LOOP ener " << ener << " enerPre " << enerPre << " enerPost " << enerPost << " weightFS " <<weightFS << G4endl;
+      }
 #endif
      
     }

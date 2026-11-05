@@ -151,7 +151,8 @@ void Dicom2G4FileMgr::AddFile( G4String fileName )
   }
   
   if( sopClassUID == UID_CTImageStorage 
-    || sopClassUID == UID_RTImageStorage ) {   
+    || sopClassUID == UID_RTImageStorage
+    || sopClassUID == UID_EnhancedCTImageStorage ) { 
     //  if( dModality == "CT" ) {
     DicomReaderCT* df = new DicomReaderCT(dset);
     if( fCompression != 1 ) df->SetCompression( fCompression );
@@ -232,7 +233,7 @@ void Dicom2G4FileMgr::ProcessFiles()
     G4Exception("Dicom2G4FileMgr::ProcessFiles",
 		"",
 		FatalException,
-		"more then one RTStruct file");
+		"more than one RTStruct file");
   }
 
   std::vector<DicomVReader*> RTPlanReaders = theReaderMgr->GetReaders(DRM_RTPlan,false);

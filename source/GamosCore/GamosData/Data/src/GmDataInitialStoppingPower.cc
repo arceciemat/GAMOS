@@ -7,6 +7,7 @@
 #include "G4TouchableHistory.hh"
 #include "G4TransportationManager.hh"
 #include "G4PVParameterised.hh"
+#include "G4DensityEffectData.hh" //GDEB
 
 //----------------------------------------------------------------
 GmDataInitialStoppingPower::GmDataInitialStoppingPower()
@@ -48,6 +49,7 @@ G4double GmDataInitialStoppingPower::GetValueFromStep( const G4Step* aStep, G4in
 						   DBL_MAX);
   //  G4cout << " GmDataInitialStoppingPower::GetValueFromStep dEdx= " << dEdx	 << " dEdx.GetDEDX " << dEdx1 << " dEdxrest " << dEdx2 << " cutRange " << cutInRange << " <-> " << cut << G4endl; //GDEB
   
+    //      G4cout << preStep->GetMaterial() << " MATE " << *mate ; //GDEB
   return dEdx;
 }
 

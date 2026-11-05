@@ -50,6 +50,7 @@ public:
   G4double GetPlanePosition() const {
     return thePlanePosition;
   }
+  void ReflectY( G4ThreeVector rotPoint );
   void RotateXY180( G4double angle, G4ThreeVector rotPoint );
   
 protected:

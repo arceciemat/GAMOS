@@ -36,6 +36,8 @@ public:
   void PrintHelp();
 
 private:
+  size_t GetMaterialIndex( G4double Hval);
+    
   G4String theExeName;
 
   std::vector<StructData> theStructData;
@@ -67,6 +69,9 @@ private:
   DicomParameterMgr* theParamMgr;
   DicomReaderMgr* theReaderMgr;
   DicomMgr* theDicomMgr;
+
+  std::map<G4double,G4String> theMaterials;
+
 };
 
 #endif

@@ -15,6 +15,7 @@ public:
 
   DicomVImageStr operator=( const DicomVImageStr& rhs );
   DicomVImageStr operator!=( const DicomVImageStr& rhs );
+  DicomVImageStr operator!=( const DicomVImage& rhs );
   // Get and set methods
    
   virtual G4bool ReadDataFromTextFile( std::ifstream& fin, G4bool bReadHeader = true );

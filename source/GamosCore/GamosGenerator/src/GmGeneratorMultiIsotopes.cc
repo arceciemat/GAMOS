@@ -157,7 +157,7 @@ void GmGeneratorMultiIsotopes::BuildIsotopeSources( G4String fnamesfl )
   std::vector<G4String> wl;
   for( ;; ){
     if( !flIn.GetWordsInLine(wl) ) break;
-    G4cout << fnamesfl << " LOOP TO ISOTOPE FILES " << wl[0] << G4endl; //GDEB
+    //    G4cout << fnamesfl << " LOOP TO ISOTOPE FILES " << wl[0] << G4endl; //GDEB
     //-- FIND THE ISOTOPE IN THE NAME
     std::map<G4String,GmGenerIsotopeData>::iterator itei;
     G4String fName;
@@ -330,12 +330,12 @@ void GmGeneratorMultiIsotopes::GeneratePrimaries(G4Event* evt)
     if ( bOnlyDecay ) {
       theLastEventTime += thePreviousDecayTime;
       GmHitsEventMgr::GetInstance()->SetEventTime(thePreviousDecayTime); // thePreviousProductionTime is only used to get the number of isotopes produced before starting the decay
-      G4cout << " GmHitsEventMgr::GetInstance()->SetEventTime( " << thePreviousDecayTime << G4endl; //GDEB
+      //      G4cout << " GmHitsEventMgr::GetInstance()->SetEventTime( " << thePreviousDecayTime << G4endl; //GDEB
       theLastEventTime = thePreviousDecayTime;
     } else {
       theLastEventTime = thePreviousProductionTime;
       GmHitsEventMgr::GetInstance()->SetEventTime(thePreviousProductionTime+thePreviousDecayTime );
-      G4cout << " GmHitsEventMgr::GetInstance()->SetEventTime( " << thePreviousProductionTime+thePreviousDecayTime << G4endl; //GDEB
+      // G4cout << " GmHitsEventMgr::GetInstance()->SetEventTime( " << thePreviousProductionTime+thePreviousDecayTime << G4endl; //GDEB
     }
   }
   //#endif
@@ -344,7 +344,7 @@ void GmGeneratorMultiIsotopes::GeneratePrimaries(G4Event* evt)
   if( bPrintEventTime ) {
     if ( theFirstEventTime == 0.) theFirstEventTime = theLastEventTime;
     //    G4cout << "GmGeneratorMultiIsotopes::GeneratePrimaries  event_time= " << theLastEventTime << " increase= " << timeMin << " FirstEventTime " << theFirstEventTime << G4endl;
-    G4cout << "GmGeneratorMultiIsotopes::GeneratePrimaries  event_time= " << theLastEventTime-theFirstEventTime << " increase= " << timeMin << " FirstEventTime " << theFirstEventTime << G4endl;
+    //    G4cout << "GmGeneratorMultiIsotopes::GeneratePrimaries  event_time= " << theLastEventTime-theFirstEventTime << " increase= " << timeMin << " FirstEventTime " << theFirstEventTime << G4endl;
   }
 
 #ifndef GAMOS_NO_VERBOSE
@@ -378,7 +378,7 @@ void GmGeneratorMultiIsotopes::GenerateParticle( const GenerTextFileData& evtDat
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( !partDef ) if( GenerVerb(debugVerb) ) G4cout << " partDef " << partDef << " partName " << evtDat.partName << G4endl;
+  if( !partDef && GenerVerb(debugVerb) ) G4cout << " partDef " << partDef << " partName " << evtDat.partName << G4endl;
 #endif
   G4PrimaryParticle* particle = new G4PrimaryParticle( partDef, evtDat.momx, evtDat.momy, evtDat.momz);
   particle->SetWeight( evtDat.weight );  

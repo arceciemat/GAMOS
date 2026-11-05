@@ -89,8 +89,9 @@ int main(int argc,char** argv)
     }
 
   } else {
+    //      for( G4int ii = 1; ii < argc; ii++ ){ 	G4cout << ii << " ARG " << argv[ii] << G4endl;       }
     if(argc%2 != 1) { 
-    G4Exception("analyseSqdose",
+      G4Exception("analyseSqdose",
 		"Wrong argument",
 		FatalErrorInArgument,
 		"WRONG NUMBER OF ARGUMENTS: THEY MUST BE -XX1 VAL_XX1 -XX2 VAL_XX2 ... ");

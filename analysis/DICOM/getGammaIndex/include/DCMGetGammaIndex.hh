@@ -11,6 +11,7 @@ class DicomReaderMgr;
 class DicomParameterMgr;
 class DicomVImage;
 class DicomVLineSet;
+class DCM2DOperGammaIndex;
 
 enum GIDNormType {GIDN_None, GIDN_atMaxima, GIDN_atMaximum1, GIDN_atPoint };
 
@@ -37,7 +38,7 @@ private:
 
   void SetImageMaxValue(DicomVImage* image, G4double maxValue);
 
-  void CalculateDiffPerSt();
+  void CalculateDumpPerSt();
   
 protected:
 
@@ -47,10 +48,11 @@ protected:
   G4double theMaxAtPointFactor;
   G4ThreeVector theMaxAtPoint;
   DicomReaderCT* theDicomReaderCT;
-  G4bool bPerSt;
-  G4bool bDiffPerSt;
+  std::vector<G4String> theStListPerSt; // histos per Structure
+  G4bool bDumpPerSt;
   G4bool bOnly1St;
   G4String theOnly1StName;
+  G4bool bDrawPerSt;
   G4bool bGetGammaIndex;
   G4bool bAdjustVoxels;
 
@@ -79,6 +81,8 @@ protected:
   G4bool bErrors;
   G4bool bOutputFile;
   G4double theGammaOverCut;
+
+  DCM2DOperGammaIndex* theOperGammaIndex;
 };
 
 #endif

@@ -26,17 +26,20 @@
 //-----------------------------------------------------------------------------
 DicomReaderRTStruct::DicomReaderRTStruct() : DicomVReader(DRM_RTStruct)
 {
+  bVOI = false;
 }
 
 //-----------------------------------------------------------------------------
 DicomReaderRTStruct::DicomReaderRTStruct(DcmDataset* dset) : DicomVReader(dset, DRM_RTStruct)
 {
+  bVOI = false;
   ReadData();
 }
 
 //-----------------------------------------------------------------------------
 DicomReaderRTStruct::DicomReaderRTStruct(G4String fName ): DicomVReader(DRM_RTStruct)
 {
+  bVOI = false;
   theFileName = fName;
   if( DicomVerb(infoVerb) ) G4cout << " DicomReaderRTStruct " << fName << G4endl; 
   DcmFileFormat dfile;
@@ -353,7 +356,12 @@ void DicomReaderRTStruct::BuildPolygonSet()
 //-----------------------------------------------------------------------------
 void DicomReaderRTStruct::FindVoxelsInXY( DicomVImageStr* imageStruct, DicomPolygonSet* polygonSet )
 {
-  //  G4cout << imageStruct << " DicomReaderRTStruct::FindVoxelsInXY( " << G4endl; //GDEB
+ //  G4cout << imageStruct << " DicomReaderRTStruct::FindVoxelsInXY( " << G4endl; //GDEB
   theStructImage = imageStruct;
+  for( size_t ii = 0; ii < imageStruct->GetNoVoxels(); ii++ ) {
+    imageStruct->SetDataStr(ii, "0");
+  }
+  G4cout << " DicomReaderRTStruct::FindVoxelsInXY BEF " << imageStruct->GetDataStr(0) << G4endl; //GDEB
   polygonSet->FindVoxelsInXY( imageStruct );
+  G4cout << " DicomReaderRTStruct::FindVoxelsInXY AFT " << imageStruct->GetDataStr(0) << G4endl; //GDEB
 }

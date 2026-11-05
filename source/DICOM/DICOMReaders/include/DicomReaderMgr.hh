@@ -33,6 +33,7 @@ private:
 public:
   void ProcessData();
   void CreateReaders();
+  void CreateReaders_InReadingOrder();
   void CreateImages();
   void CreateImagesCT( DicomReaderCT* imgMergedReaderCT );
   

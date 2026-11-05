@@ -52,11 +52,13 @@ DicomVLine::DicomVLine( std::vector<G4ThreeVector> points, std::vector<G4ThreeVe
 		JustWarning,
 		("Building Line with 0 points: "+name).c_str());
   }
-  if( points.size() != dirs.size() ) {
-    G4Exception("DicomVLine::DicomVLine",
-		"",
-		JustWarning,
-		("Building Line with different number of points = " + GmGenUtils::itoa(points.size())+ " than of directions = "+ GmGenUtils::itoa(dirs.size())).c_str());
+  if( DicomVerb(debugVerb) ) {
+    if( points.size() != dirs.size() ) {
+      G4Exception("DicomVLine::DicomVLine",
+		  "",
+		  JustWarning,
+		  ("Building Line with different number of points = " + GmGenUtils::itoa(points.size())+ " than of directions = "+ GmGenUtils::itoa(dirs.size())).c_str());
+    }
   }
   SetPoints( points );
   SetDirections( dirs );
@@ -264,6 +266,30 @@ void DicomVLine::SetLineList( DicomVLineList* ll )
 {
   theLineList = ll;
   theLineList->SetOrientation(ll->GetOrientation(),false);
+}
+
+//-----------------------------------------------------------------------------
+void DicomVLine::ReflectY( G4ThreeVector rotPoint )
+{
+  //    G4cout << "ReflectY: " << angle << " = " << rotPoint << G4endl; //GDEB
+  if( theOrientation != DPOrientXY ) {
+    G4Exception("DicomVLine::ReflectY",
+		"",
+		JustWarning,
+		//t FatalException,
+		"Line does not have XY orientation");
+  }
+
+  for( size_t iip = 0; iip < thePoints.size(); iip++ ) {
+    G4ThreeVector ptLocal = thePoints[iip] - rotPoint;
+    //    G4cout << "ReflectY 1 : " << ptLocal << " = " << thePoints[iip] << " - " << rotPoint << G4endl; //GDEB
+    ptLocal.setY(-ptLocal.y());
+    //   G4cout << "ReflectY 2 : " << ptLocal << " " << rotmZ << G4endl; //GDEB
+    thePoints[iip] = ptLocal + rotPoint;
+    //    G4cout << "ReflectY 3 : " << thePoints[iip] << G4endl; //GDEB
+  }
+  BuildDirections();
+  
 }
 
 //-----------------------------------------------------------------------------

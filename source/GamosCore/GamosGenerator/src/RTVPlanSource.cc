@@ -141,7 +141,7 @@ void RTVPlanSource::InitializeDistributions()
 		JustWarning,
 		G4String(GetName() + " No direction distribution defined, using GmGenerDistDirectionConst with direction (0,0,-1)").c_str());    
   }
-  
+
   theEnergySigma = theParamMgr->GetNumericValue(theName+":EnergySigma",0.);
   if( theEnergySigma == 0. ) {
     bEGauss = false;
@@ -190,6 +190,15 @@ void RTVPlanSource::InitializeGeometry()
   } else {
     bMovePhantom = false;
   }
+  /*  if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelGaussian*>(thePositionDistribution) != 0 ) {
+     thePositionDistribution = dynamic_cast< GmGenerDistPositionDirection2DCorrelGaussian*>(theDirectionDistribution);
+    } else if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(thePositionDistribution) != 0 ) {
+      thePositionDistribution = dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution);
+    } else if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(theDirectionDistribution) != 0 ) {
+      //      G4cout << " TO HANGE TRIPLE POS " << G4endl; //GDEB
+      theDirectionDistribution = dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(thePositionDistribution);
+    }  
+  */
 }   
 
 //-----------------------------------------------------------------------
@@ -223,19 +232,21 @@ G4PrimaryVertex* RTVPlanSource::GenerateVertex( G4double time )
     }
     theEnergyDistribution->SetParams( paramsE );
 
-    //G4cout << " CHANGED BEAM STATE " << bsdata.Energy << G4endl; //GDEB
-    if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(thePositionDistribution) != 0 ) {
+    /*    //G4cout << " CHANGED BEAM STATE " << bsdata.Energy << G4endl; //GDEB
+    if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelGaussian*>(thePositionDistribution) != 0 ) {
+      GmGenerDistPositionDirection2DCorrelGaussian* posDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelGaussian*>(theDirectionDistribution);
+      posDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy));
+      //std::vector<G4String> params = theDirectionDistribution->GetParams();
+    } else if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(thePositionDistribution) != 0 ) {
       GmGenerDistPositionDirection2DCorrelDoubleGaussian* posDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution);
       posDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy));
       //std::vector<G4String> params = theDirectionDistribution->GetParams();
-    }
-
-    if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(thePositionDistribution) != 0 ) {
+    } else if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(thePositionDistribution) != 0 ) {
       //      G4cout << " TO HANGE TRIPLE POS " << G4endl; //GDEB
       GmGenerDistPositionDirection2DCorrelTripleGaussian* posDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(thePositionDistribution);
       // G4cout << " CHANGE POS " << posDist << " FROM " << thePositionDistribution << G4endl; //GDEB
       posDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy));
-    }    
+      } */ 
       
     MoveBeam( bsdata );
     SetSpotSize( thePositionDistribution2D, bsdata );
@@ -275,6 +286,9 @@ G4PrimaryVertex* RTVPlanSource::GenerateVertex( G4double time )
       theDirection = theDirectionDistribution->GenerateDirection(this);
     }
   }
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(testVerb) )  G4cout << " RTVPlanSource POS " << thePosition << " DIR " << theDirection << G4endl;
+#endif
   /*  G4double distZ = thePosition.z(); 
   G4double posX = thePosition.x() + theDirection.x()*distZ;
   G4double posY = thePosition.y() + theDirection.y()*distZ;
@@ -1076,8 +1090,9 @@ void RTVPlanSource::MoveBeam(const RTBeamStateData& bsdata)
   }
 
   pos2D->SetCentre( position );
+  
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam centre " << position << G4endl;
+  if( GenerVerb(testVerb) ) G4cout << "@@@@  RTVPlanSource::MoveBeam centre " << position << " TO " << pos2D << G4endl;
 #endif
   
   //@@@@@ SET BEAM DIRECTION
@@ -1164,17 +1179,24 @@ void RTVPlanSource::MoveBeam(const RTBeamStateData& bsdata)
 		FatalException,
 		G4String(" Direction distribution is not of type GmGenerDistDirectionConst/GmGenerDistDirectionCone/GmGenerDistDirectionCone2D/GmGenerDistDirectionConeGaussian/GmGenerDistDirectionCone2DGaussian/GmGenerDistPositionDirection2DCorrelGaussian/GmGenerDistPositionDirection2DCorrelDoubleGaussian/GmGenerDistPositionDirection2DCorrelTripleGaussian ").c_str());
   }
-  if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution) != 0 ) {
+  if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelGaussian*>(theDirectionDistribution) != 0 ) {
+    //    G4cout << " TO CHANGE DOUBLE DIR " << theDirectionDistribution << G4endl; //GDEB
+    GmGenerDistPositionDirection2DCorrelGaussian* dirDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelGaussian*>(theDirectionDistribution);
+    dirDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy)); // TO READ NEW conf1E
+    dirDist->SetDirection( direction );  // after setParams, because direction is given by RTPlan, not by conf1E
+    dirDist->SetCentre( position ); // SetParamsEnergy calls SetParams which changes the center to the one in the confE file
+  } else if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution) != 0 ) {
     //    G4cout << " TO CHANGE DOUBLE DIR " << theDirectionDistribution << G4endl; //GDEB
     GmGenerDistPositionDirection2DCorrelDoubleGaussian* dirDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelDoubleGaussian*>(theDirectionDistribution);
+    dirDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy)); // TO READ NEW conf2E
     dirDist->SetDirection( direction );
-    dirDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy)); // TO READ NEW conf3E
-  }
-  if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(theDirectionDistribution) != 0 ) {
+    dirDist->SetCentre( position ); // SetParamsEnergy calls SetParams which changes the center to the one in the confE file
+  } else if ( dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(theDirectionDistribution) != 0 ) {
     //    G4cout << " TO CHANGE TRIPLE DIR " << theDirectionDistribution << G4endl; //GDEB
     GmGenerDistPositionDirection2DCorrelTripleGaussian* dirDist = dynamic_cast< GmGenerDistPositionDirection2DCorrelTripleGaussian*>(theDirectionDistribution);
-    dirDist->SetDirection( direction );
     dirDist->SetParamsEnergy(GmGenUtils::ftoa(theEnergy)); // TO READ NEW conf3E
+    dirDist->SetDirection( direction );
+    dirDist->SetCentre( position ); // SetParamsEnergy calls SetParams which changes the center to the one in the confE file
   }
   
   if( theRTBeamG4PVs.size() != 0 ) {

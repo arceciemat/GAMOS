@@ -131,7 +131,7 @@ void GmParticleSource::SetDistributionEnergy( const G4String& distName, const st
 
 
 //-----------------------------------------------------------------------
-void GmParticleSource::SetDistributionPosition( const G4String& distName, const std::vector<G4String>& wl )
+GmVGenerDist* GmParticleSource::SetDistributionPosition( const G4String& distName, const std::vector<G4String>& wl )
 {
 #ifdef ROOT5
   thePositionDistribution = Reflex::PluginService::Create<GmVGenerDistPosition*>(distName);
@@ -148,11 +148,12 @@ void GmParticleSource::SetDistributionPosition( const G4String& distName, const 
   thePositionDistribution->SetParams( wl );
 
   //  G4cout << this << " thePositionDistribution" << thePositionDistribution << " " << thePositionDistribution->GetParticleSource() <<  G4endl; //GDEB
-  
+  return  thePositionDistribution;
+
 }
 
 //-----------------------------------------------------------------------
-void GmParticleSource::SetDistributionDirection( const G4String& distName, const std::vector<G4String>& wl )
+GmVGenerDist* GmParticleSource::SetDistributionDirection( const G4String& distName, const std::vector<G4String>& wl )
 {
 #ifdef ROOT5
   theDirectionDistribution = Reflex::PluginService::Create<GmVGenerDistDirection*>(distName);
@@ -168,6 +169,7 @@ void GmParticleSource::SetDistributionDirection( const G4String& distName, const
   theDirectionDistribution->CopyParams( wl );
   theDirectionDistribution->SetParams( wl );
 
+  return theDirectionDistribution;
   // G4cout << this << " theDirectionDistribution" << theDirectionDistribution << " " << theDirectionDistribution->GetParticleSource() <<  G4endl; //GDEB
 }
 //-----------------------------------------------------------------------
@@ -253,6 +255,9 @@ void GmParticleSource::BiasPosition()
       G4double rnd = CLHEP::RandFlat::shoot();
       if( rnd < val ) {
 	theWeight /= val;	
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(debugVerb) ) G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasPosition "  << theName << " BIAS=" << ite->first << " : " << ite->second->GetName() << " val " << val << " rnd " << rnd << " WEIGHT " << theWeight << G4endl;
+#endif
 	break;
       }
       thePosition = thePositionDistribution->GeneratePosition( this );
@@ -276,6 +281,9 @@ void GmParticleSource::BiasPosition()
       G4double rnd = CLHEP::RandFlat::shoot();
       if( rnd < val ) {
 	theWeight /= val;	
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(debugVerb) ) G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasPosition "  << theName << " BIAS=" << ite->first << " : " << ite->second->GetName() << " val " << val << " rnd " << rnd << " WEIGHT " << theWeight << G4endl;
+#endif
 	break;
       }
       thePosition = thePositionDistribution->GeneratePosition( this );
@@ -296,11 +304,15 @@ void GmParticleSource::BiasPosition()
     for( ;; ) {
       G4double val = (*ite).second->GetNumericValueFromIndex( thePosition.z() );
       G4double rnd = CLHEP::RandFlat::shoot();
+      //      G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasPosition val " << val << " rnd " << rnd << G4endl; //GDEB
       if( rnd < val ) {
 	theWeight /= val;	
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(infoVerb) ) G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasPosition "  << theName << " BIAS=" << ite->first << " : " << ite->second << " val " << val << " rnd " << rnd << " WEIGHT " << theWeight << G4endl;
+#endif
 	break;
       }
-      thePosition = thePositionDistribution->GeneratePosition( this );
+      thePosition = thePositionDistribution->GeneratePosition( this );  // previous position not OK, recalculate it
       ii++;
       if( ii == theMaxBiasIterations ) {
 	G4Exception("GmParticleSource::BiasPosition",
@@ -320,6 +332,9 @@ void GmParticleSource::BiasPosition()
       G4double val = (*ite).second->GetNumericValueFromIndex( thePosition.perp() );
       G4double rnd = CLHEP::RandFlat::shoot();
       if( rnd < val ) {
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(debugVerb) ) G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasPosition "  << theName << " BIAS=" << ite->first << " : " << ite->second->GetName() << " val " << val << " rnd " << rnd << " WEIGHT " << theWeight << G4endl;
+#endif
 	theWeight /= val;	
 	break;
       }
@@ -343,6 +358,9 @@ void GmParticleSource::BiasPosition()
       G4double val = (*ite).second->GetNumericValueFromIndex( thePosition.mag() );
       G4double rnd = CLHEP::RandFlat::shoot();
       if( rnd < val ) {
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(debugVerb) ) G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasPosition "  << theName << " BIAS=" << ite->first << " : " << ite->second->GetName() << " val " << val << " rnd " << rnd << " WEIGHT " << theWeight << G4endl;
+#endif
 	theWeight /= val;	
 	break;
       }
@@ -366,6 +384,9 @@ void GmParticleSource::BiasPosition()
       G4double val = (*ite).second->GetNumericValueFromIndex( thePosition.theta() );
       G4double rnd = CLHEP::RandFlat::shoot();
       if( rnd < val ) {
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(debugVerb) ) G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasPosition "  << theName << " BIAS=" << ite->first << " : " << ite->second->GetName() << " val " << val << " rnd " << rnd << " WEIGHT " << theWeight << G4endl;
+#endif
 	theWeight /= val;	
 	break;
       }
@@ -389,6 +410,9 @@ void GmParticleSource::BiasPosition()
       G4double val = (*ite).second->GetNumericValueFromIndex( thePosition.phi() );
       G4double rnd = CLHEP::RandFlat::shoot();
       if( rnd < val ) {
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(debugVerb) ) G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasPosition "  << theName << " BIAS=" << ite->first << " : " << ite->second->GetName() << " val " << val << " rnd " << rnd << " WEIGHT " << theWeight << G4endl;
+#endif
 	theWeight /= val;	
 	break;
       }
@@ -421,6 +445,9 @@ void GmParticleSource::BiasDirection()
 	G4cout << ii << " GmParticleSource::BiasDirection DirTheta= " << theDirection.theta() << " val= " << val << " rndm " << rnd << G4endl;
 #endif
       if( rnd < val ) {
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(debugVerb) ) G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasDirection "  << theName << " BIAS=" << ite->first << " : " << ite->second->GetName() << " val " << val << " rnd " << rnd << " WEIGHT " << theWeight << G4endl;
+#endif
 	theWeight /= val;	
 	break;
       }
@@ -446,6 +473,9 @@ void GmParticleSource::BiasDirection()
       if( GenerVerb(testVerb) ) G4cout << "GmParticleSource::BiasDirection DirPhi " << rnd << " < " << val << G4endl; 
 #endif
       if( rnd < val ) {
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(debugVerb) ) G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasDirection "  << theName << " BIAS=" << ite->first << " : " << ite->second->GetName() << " val " << val << " rnd " << rnd << " WEIGHT " << theWeight << G4endl;
+#endif
 	theWeight /= val;	
 	break;
       }
@@ -473,6 +503,9 @@ void GmParticleSource::BiasEnergy()
       G4double val = (*ite).second->GetNumericValueFromIndex( theEnergy );
       G4double rnd = CLHEP::RandFlat::shoot();
       if( rnd < val ) {
+#ifndef GAMOS_NO_VERBOSE
+	if( GenerVerb(debugVerb) ) G4cout << ii << " " << thePosition.z() << " GmParticleSource::BiasEnergy "  << theName << " BIAS=" << ite->first << " : " << ite->second->GetName() << " val " << val << " rnd " << rnd << " WEIGHT " << theWeight << G4endl;
+#endif
 	theWeight /= val;	
 	break;
       }

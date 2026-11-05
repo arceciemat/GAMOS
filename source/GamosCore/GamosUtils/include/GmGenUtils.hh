@@ -93,6 +93,7 @@ public:
   static std::string rtrim(const std::string &s);
 
   static G4String ReplaceAll(const G4String& input, const G4String& from, const G4String& to);
+  static G4String ReplaceChar(const G4String input, char char1, char char2 );
   
 };
 

@@ -70,6 +70,10 @@ std::map<G4double,G4double> DicomLine::FindValuesInVoxels( DicomVImage* image)
     G4double dist = -DBL_MAX;
     if( fabs(dir[ii]) > PRECISION ) dist = (-pos[ii] + phantomWall) / dir[ii];
     distMax = std::max(distMax,dist);
+#ifndef GAMOS_NO_VERBOSE
+    if( DicomVerb(debugVerb) ) G4cout << "@@@@ FindValuesInVoxels phantomWall " << ii << " =" << phantomWall << " =" << fMinV[ii] << "+ (0.5 + 0.5*"<< GmGenUtils::sign(dir[ii])<< ")* ("<<fMaxV[ii]<<"-"<<fMinV[ii]<<")" << G4endl;
+    if( DicomVerb(debugVerb) ) G4cout << "@@@@ FindValuesInVoxels distMax " << ii << " " << distMax << " dist " << dist << G4endl;
+#endif
   }  
 #ifndef GAMOS_NO_VERBOSE
   if( DicomVerb(debugVerb) ) G4cout << "@@@@ FindValuesInVoxels total distMax to one phantom border " << distMax << G4endl;
@@ -133,7 +137,7 @@ std::map<G4double,G4double> DicomLine::FindValuesInVoxels( DicomVImage* image)
       distMax = std::max(distMax,dist);
     }
 #ifndef GAMOS_NO_VERBOSE
-    if( DicomVerb(infoVerb) ) G4cout << "@@@@ FindValuesInVoxels FINAL Distance to out " << distMax << G4endl;
+    if( DicomVerb(infoVerb) ) G4cout << "@@@@ FindValuesInVoxels Final Distance to out " << distMax << G4endl;
 #endif
 
     for( size_t ii=0; ii < 3; ii++ ){

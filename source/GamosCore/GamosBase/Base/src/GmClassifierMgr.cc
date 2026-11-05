@@ -41,7 +41,7 @@ GmVClassifier* GmClassifierMgr::CreateClassifier( std::vector<G4String> params, 
 #ifdef ROOT5
   GmVClassifier* classifier = Reflex::PluginService::Create<GmVClassifier*>(params[1],params[0]);
 #else
-	GmVClassifier* classifier = GmClassifierFactory::get()->create(params[1], params[0]);
+  GmVClassifier* classifier = GmClassifierFactory::get()->create(params[1], params[0]);
 #endif
 #ifndef GAMOS_NO_VERBOSE
   if( BaseVerb(debugVerb) ) G4cout << " CreateClassifier NAME=" << params[0] << " CLASS=" << params[1] << " = " << classifier->GetName() << G4endl;

@@ -42,12 +42,24 @@ void SHActivationUA::InitialiseRun()
 
   theTimes = GmParameterMgr::GetInstance()->GetVNumericValue(theName+":Times",theTimes);
   if( theTimes.size() == 0 ){
-    theTimes.push_back(1.);
+    G4Exception("SHActivationUA:BeginOfRunAction",
+		"",
+		FatalErrorInArgument,
+		G4String(theName+": No time parameter is defined, please use "+theName+":Times <TIME_LIST>").c_str());
   }
   theRadDecayChainSet->SetTimes( theTimes );
 
   std::vector<G4String> periods;
   periods = GmParameterMgr::GetInstance()->GetVStringValue(theName+":Periods",periods);
+  if( periods.size() != 0 ) {
+        G4Exception("SHActivationUA:BeginOfRunAction",
+		    "",
+		    JustWarning,
+		    G4String(theName+":Periods is deprecated, please use "+theName+":BeamPeriods <PERIOD_LIST>").c_str());
+  } else {
+    periods = GmParameterMgr::GetInstance()->GetVStringValue(theName+":BeamPeriods",periods);
+  }
+  
   G4String fileName = GmParameterMgr::GetInstance()->GetStringValue(theName+":PeriodsFileName","");
 
   if( periods.size() != 0 && fileName != "" ) {
@@ -74,6 +86,7 @@ void SHActivationUA::InitialiseRun()
   G4double maxTime = 0.;
   for( size_t ii = 0; ii < theTimes.size(); ii++) {
     maxTime = std::max(maxTime, theTimes[ii]);
+    G4cout << ii << "SHRAD TIME " <<  theTimes[ii] << " MAX " << maxTime << G4endl; //GDEB
   }
   // if not periods, set the that all time production is ON
   if( thePeriods.size() == 0 ) {

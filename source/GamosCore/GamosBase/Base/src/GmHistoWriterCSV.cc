@@ -159,6 +159,7 @@ void GmHistoWriterCSV::SaveHisto2D(const G4String& hisType,  const TH2* his )
   for( G4int ii = 0; ii < nbinsx+2; ii++ ){
     for( G4int jj = 0; jj < nbinsy+2; jj++ ){
       theFile << "," << his->GetBinContent(ii,jj);
+      //   G4cout << ii << ":" << jj << " SaveHisto2D " << hisType << " " << his->GetName() << G4endl; //GDEB
       if( bHistoCSVErrors ) {
 	theFile << "," << his->GetBinError(ii,jj);
       }

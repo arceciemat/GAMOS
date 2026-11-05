@@ -1,0 +1,49 @@
+/tracking/verbose 0
+
+/gamos/setParam GmAnalysisMgr:FileNameSuffix _.microyz_1._1._1111_100000_2 
+/gamos/setParam GmGeometryFromText:FileName world.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEmDNAPhysics
+#/gamos/GmDNAPhysics/replacePhysics DNA_option2
+
+/gamos/generator GmGenerator
+
+/run/initialize 
+
+/gamos/physics/userLimits/setMinEKin UL1 * e- 11*eV
+#
+/process/em/fluo true
+/process/em/auger true
+/process/em/augerCascade true
+/process/em/pixe true
+/process/em/deexcitationIgnoreCut true
+
+/process/inactivate e-_G4DNAVibExcitation
+/process/inactivate e-_G4DNAAttachment
+
+# *** For Geant4 (condensed history) only ***
+#/run/setCut 1 nm
+#/cuts/setLowEdge 100 eV
+#/process/em/lowestElectronEnergy 100 eV
+#/microyz/det/setMaxStepSize 1 nm
+# ***
+
+/gamos/generator/addSingleParticleSource source e- 1.*keV
+
+/gamos/userAction GmCountProcessesUA
+/gamos/setParam GmCountTracksUA:EachNEvent 100
+/gamos/userAction GmCountTracksUA
+#
+/gamos/random/setSeeds 1111+2*2 1111+2*2
+
+/gamos/userAction GmStepDataTextFileUA 
+
+/P GmMicroyzSD:SphereRadius 1.*nm
+/gamos/SD/assocSD2LogVol GmMicroyzSD yzSD world
+
+#/gamos/physics/userLimits UL1 world * 1e9 1e9 1e9 11*eV
+
+/run/beamOn 100000
+
+#/gamos/geometry/printVolumeTree 222
+#/gamos/geometry/printTouchables *

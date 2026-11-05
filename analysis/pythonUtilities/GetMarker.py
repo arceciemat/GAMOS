@@ -4,15 +4,15 @@ def GetMarker( imar ) :
     if imars == 0 :
         lmark = 'o'
     elif imars == 2 :
-        lmark = '*'
-    elif imars == 1 :
-        lmark = 'x'
-    elif imars == 3 :
         lmark = '^'
-    elif imars == 4 :
+    elif imars == 1 :
+        lmark = '*'
+    elif imars == 3 :
         lmark = 's'
-    elif imars == 5 :
+    elif imars == 4 :
         lmark = 'd'
+    elif imars == 5 :
+        lmark = 'x'
     elif imars == 6 :
         lmark = 'v'
     elif imars == 7 :

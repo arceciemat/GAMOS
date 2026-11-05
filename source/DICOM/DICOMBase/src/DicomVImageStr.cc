@@ -92,7 +92,7 @@ G4bool DicomVImageStr::ReadDataFromTextFile( std::ifstream& fin, G4bool bReadHea
     fin >> theMinX >> theMaxX;
     fin >> theMinY >> theMaxY;
     fin >> theMinZ >> theMaxZ;
-    if( DicomVerb(debugVerb) ) G4cout << "DicomVImageStr " << GetName() << " " << GetModalityStr()
+    if( DicomVerb(-debugVerb) ) G4cout << "DicomVImageStr " << GetName() << " " << GetModalityStr()
 				      << " min/max X " << theMinX << " " << theMaxX 
 				      << " min/max X " << theMinY << " " << theMaxY 
 				      << " min/max X " << theMinZ << " " << theMaxZ << G4endl;
@@ -201,3 +201,4 @@ std::ostream& operator<<(std::ostream& os, const DicomVImageStr& img)
 
   return os;
 }
+

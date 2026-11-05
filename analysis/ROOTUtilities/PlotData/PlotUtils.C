@@ -23,7 +23,7 @@ EColor GetColor( int icol )
   int icol1 = icol/14;
   int icol2 = icol%14;
 
-  std::cout << " GETCOLOR " << icol << " " << icol1 << " " << icol2 << std::endl; //GDEB
+  //  std::cout << " GETCOLOR " << icol << " " << icol1 << " " << icol2 << std::endl; //GDEB
   switch (icol2)  {
     case 0:
       return EColor(kBlack+icol1);

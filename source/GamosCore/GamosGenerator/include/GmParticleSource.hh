@@ -7,7 +7,7 @@
 #include "G4ThreeVector.hh"
 #include "G4RotationMatrix.hh"
 class G4PrimaryVertex;
-class GmVGenerDist;
+#include "GmVGenerDist.hh"
 class GmVGenerDistEnergy;
 class GmVGenerDistTime;
 class GmVGenerDistPosition;
@@ -34,9 +34,11 @@ public:
   // Get and Set methods
   void SetDistributionTime( const G4String& distName, const std::vector<G4String>& wl );
   void SetDistributionEnergy( const G4String& distName, const std::vector<G4String>& wl );
-  void SetDistributionPosition( const G4String& distName, const std::vector<G4String>& wl );
-  void SetDistributionDirection( const G4String& distName, const std::vector<G4String>& wl );
-
+  GmVGenerDist* SetDistributionPosition( const G4String& distName, const std::vector<G4String>& wl );
+  GmVGenerDist* SetDistributionDirection( const G4String& distName, const std::vector<G4String>& wl );
+  void SetDistributionDirectionFromPosition( GmVGenerDistDirection* generDist ) {
+    theDirectionDistribution = generDist;
+  }
   void SetDistributionTime( GmVGenerDistTime* dist ) {
     theTimeDistribution = dist;
   }

@@ -152,7 +152,7 @@ DicomVImage DicomVImage::operator+( const DicomVImage& rhs )
 
 
 //-----------------------------------------------------------------------------
-void DicomVImage::CheckImageHeadersAreEqual( const DicomVImage* img2 )
+void DicomVImage::CheckImageHeadersAreEqual( const DicomVImage* img2, G4bool bMustBeEqual )
 {
   //----- Check that both images have the same dimensions
   if( GetNoVoxelsX() != img2->GetNoVoxelsX() ||
@@ -164,8 +164,11 @@ void DicomVImage::CheckImageHeadersAreEqual( const DicomVImage* img2 )
 	   << "  Y=  " << GetNoVoxelsY() << " <> " << img2->GetNoVoxelsY()
 	   << "  Z=  " << GetNoVoxelsZ() << " <> " << img2->GetNoVoxelsZ()
 	   << G4endl;
+    G4ExceptionSeverity excSev = FatalException;
+      if ( bMustBeEqual ) excSev = JustWarning;
     G4Exception("DicomVImage::CheckImageHeadersAreEqual",
-		"",FatalException,"");
+		"",excSev,
+		(GetName()+" and "+img2->GetName()).c_str());
   }
   //----- Check that both images have the same extensions  
   if( fabs(GetMinX() - img2->GetMinX()) > GetPrecision() || fabs(GetMaxX() - img2->GetMaxX()) > GetPrecision() ||
@@ -1618,3 +1621,43 @@ G4ThreeVector DicomVImage::GetPosition(int ix, int iy, int iz)
   
 }
 
+//-----------------------------------------------------------------------   
+G4bool DicomVImage::operator==(const DicomVImage& right)
+{
+  G4bool equ = 1;
+  if( theNoVoxelsX != right.GetNoVoxelsX() ||
+      theNoVoxelsY != right.GetNoVoxelsY() ||
+      theNoVoxelsZ != right.GetNoVoxelsZ() ||
+      fabs(theMinX - right.GetMinX()) > 1e-4 ||
+      fabs(theMinY - right.GetMinY()) > 1e-4 ||
+      fabs(theMinZ - right.GetMinZ()) > 1e-4 ||
+      fabs(theMaxX - right.GetMaxX()) > 1e-4 ||
+      fabs(theMaxY - right.GetMaxY()) > 1e-4 ||
+      fabs(theMaxZ - right.GetMaxZ()) > 1e-4 ){
+    equ = 0;
+  }
+
+  G4cout << " NX " << ( theNoVoxelsX - right.GetNoVoxelsX()) 
+    	 << " NY " << ( theNoVoxelsY - right.GetNoVoxelsY())  
+	 << " NZ " << ( theNoVoxelsZ - right.GetNoVoxelsZ()) 
+	 << " MinX " << ( theMinX - right.GetMinX()) 
+	 << " MinY " << (theMinY - right.GetMinY()) 
+	 << " MinZ " << (theMinZ - right.GetMinZ())  
+	 << " MaxX " << (theMaxX - right.GetMaxX()) 
+	 << " MaxY " << (theMaxY - right.GetMaxY()) 
+	 << " MaxZ " << (theMaxZ - right.GetMaxZ())
+	 << G4endl; //GDEB
+  
+  G4cout << " NX " << theNoVoxelsX << " ==? " << right.GetNoVoxelsX() 
+	 << " NY " << theNoVoxelsY << " ==? " << right.GetNoVoxelsY()  
+	 << " NZ " << theNoVoxelsZ << " ==? " << right.GetNoVoxelsZ() 
+	 << " MinX " << theMinX << " ==? " << right.GetMinX() 
+	 << " MinY " << theMinY << " ==? " << right.GetMinY() 
+	 << " MinZ " << theMinZ << " ==? " << right.GetMinZ()  
+	 << " MaxX " << theMaxX << " ==? " << right.GetMaxX() 
+	 << " MaxY " << theMaxY << " ==? " << right.GetMaxY() 
+	 << " MaxZ " << theMaxZ << " ==? " << right.GetMaxZ()
+	 << G4endl; //GDEB
+
+  return equ;
+}

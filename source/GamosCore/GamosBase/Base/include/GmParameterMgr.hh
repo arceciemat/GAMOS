@@ -16,6 +16,7 @@ Changes:     10/01: creation
 
 //enum paramType { PTint, PTdouble, PTstring, PTVint, PTVdouble, PTVstring, PTundef }; // no int because if first tima a parameter is used the "." is omitted, in case a second time is used, it will take an integer
 enum paramType { PTdouble, PTstring, PTVdouble, PTVstring, PTundef }; 
+typedef std::multimap<G4String,G4String> mmss;
 
 //------------------------------------------------------------------------
 class GmParameterMgr 
@@ -62,6 +63,16 @@ private:
 
   std::map<G4String,G4int> theParametersInScript;  
   std::set<G4String> theParametersInCode;  
+
+public:
+  mmss GetDICOMImageFileNames () {
+    return theDICOMImageFileNames;
+  }
+  
+protected:
+  mmss theDICOMImageFileNames;
+
+
 };
 
 #endif

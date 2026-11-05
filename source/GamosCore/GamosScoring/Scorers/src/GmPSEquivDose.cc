@@ -8,6 +8,7 @@
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmFilterMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmClassifierMgr.hh"
+#include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosData/Distributions/include/GmNumericDistributionUpper.hh"
 #include "GamosCore/GamosScoring/Management/include/GmPSPrinterMgr.hh"
 
@@ -30,7 +31,6 @@ GmPSEquivDose::GmPSEquivDose(G4String name)
 
   GmParameterMgr* paramMgr = GmParameterMgr::GetInstance();
   G4String fParticle = paramMgr->GetStringValue(name+":Particle","");
-  G4cout << " GmPSEquivDose fParticle " << fParticle << G4endl; //GDEB 
   if( fParticle == "" ) {
     G4Exception("GmPSEquivDose::GmPSEquivDose",
 		"",
@@ -54,6 +54,7 @@ GmPSEquivDose::GmPSEquivDose(G4String name)
   //--- Set distribution file name
   // /gamos/setParam EnergyDist:FileName Flux2Dose.gamma.ICRU57.lis
   G4String fDistFile = paramMgr->GetStringValue(name+":FileName","Flux2Dose."+fParticle+".ICRU57.lis");
+  fDistFile = GmGenUtils::FileInPath( fDistFile );
   paramMgr->AddParam("EquivDoseDist:FileName "+fDistFile,PTstring);
 
   //--- Create distribution
@@ -66,13 +67,22 @@ GmPSEquivDose::GmPSEquivDose(G4String name)
   
   //----- Add Classifier by Energy
   //  /gamos/classifier energyC GmClassifierByNumericData (FinalKineticEnergy+1e-3) 150 0. 1.5
-  std::vector<G4String> classifParams = paramMgr->GetVStringValue(name+":EnergyBins",classifParams);
-  if( classifParams.size() == 0 ) {
+  GmFileIn finflux2dose = GmFileIn::GetInstance(fDistFile, true);
+  std::vector<G4String> ebinsParams;
+  std::vector<G4String> wl;
+  for(;;) {
+    if( ! finflux2dose.GetWordsInLine(wl) ) break;
+    ebinsParams.push_back(wl[0]);
+  }
+  ebinsParams = paramMgr->GetVStringValue(name+":EnergyBins",ebinsParams);
+  if( ebinsParams.size() == 0 ) {
     G4Exception("GmPSEquivDose::GmPSEquivDose",
 		"",
 		FatalException,
 		("No EnergyBins defined, use /P "+name+":EnergyBins").c_str());
   }
+
+  std::vector<G4String> classifParams;
   classifParams.insert(classifParams.begin(),fDataName);
   classifParams.insert(classifParams.begin(),"GmClassifierByNumericData");
   classifParams.insert(classifParams.begin(),"energyC");

@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import matplotlib.mlab as mlab
 import re
+import numpy as np
 
 from checkPythonVersion import *
 from MyHistos import Histo1D
@@ -60,33 +61,37 @@ checkPythonVersion()
 bFit = False
 bSort = True
 bError = True
-fOutName = "plotNFiles.jpg"
+fdpi = 100
+minX = sys.float_info.min
+maxX = sys.float_info.max
+nStepX = 100
+fileOutName = "histNFiles"
 theFileNames = []
 YAxisNames = []
+bLogY = False
 
 ### Manage arguments
 if len(sys.argv) == 2 :
     fileName = sys.argv[1]
 else :
-    for ii in range(1,len(sys.argv)) :
+    ii = 1
+    while ii < len(sys.argv):
         if(verbose >= 3) :  print("LOOPING line ",ii)
-        if sys.argv[ii] == "-fOut" :
-            bParamTypeFound = True
-            fOutName = sys.argv[ii+1]
-            
-        elif sys.argv[ii] == "-f" :
+        if sys.argv[ii] == "-f" :
             bParamTypeFound = True
             # check it is last argument
             for ii2 in range(ii+1,len(sys.argv)) :
                 if sys.argv[ii2][0] == "-" :
-                    print("!!! ERROR -f MUST BE LAST ARGUMENT")
+                    print(ii,ii2,sys.argv[ii2],"!!! ERROR -f MUST BE LAST ARGUMENT")
                     sys.exit()
                 else :
                     theFileNames.append(sys.argv[ii2])
-                    ii = ii+1
+                    ii = ii+2
                     if(verbose >= 3) : print( ii,"theFileNames ",len(theFileNames))
-                    #-            CheckArgumentExists(len(theHisFileNames),ii)
             
+        elif sys.argv[ii] == "-fOut" :
+            fileOutName = sys.argv[ii+1]
+            bParamTypeFound = True
         elif sys.argv[ii] == "-fl" :
             bParamTypeFound = True
             print(ii,"fl",len(sys.argv))
@@ -95,21 +100,41 @@ else :
             for line in lines :
                 words = line.rstrip().split()
                 theFileNames.append(words[0])
-            ii = ii+1
-        elif sys.argv[ii] == "-bFit" :
-            bFit = bool(int(sys.argv[ii+1]))
-            ii = ii+1
-        elif sys.argv[ii] == "-bSort" :
-            bSort = bool(int(sys.argv[ii+1]))
-            ii = ii+1
+            ii = ii+2
+        elif sys.argv[ii] == "-minX" :
+            minX = float(sys.argv[ii+1])
+            bParamTypeFound = True
+        elif sys.argv[ii] == "-maxX" :
+            maxX = float(sys.argv[ii+1])
+            bParamTypeFound = True
+        elif sys.argv[ii] == "-nStepX" :
+            nStepX = float(sys.argv[ii+1])
+            bParamTypeFound = True
+        elif sys.argv[ii] == "-logY" :
+            bLogY = True
         elif sys.argv[ii] == "-bErr" :
             bError = bool(int(sys.argv[ii+1]))
-            ii = ii+1
-
+        elif sys.argv[ii] == "-dpi" :
+            fdpi  = float(sys.argv[ii+1])
+        elif sys.argv[ii] == "-bFit" :
+            bFit = bool(int(sys.argv[ii+1]))
+        elif sys.argv[ii] == "-bSort" :
+            bSort = bool(int(sys.argv[ii+1]))
+        else :
+            print("!! WARNING: ALL ARGUMENTS FROM ",sys.argv[ii]," WILL BE USED AS FILE NAMES !!")
+            for ii2 in range(ii,len(sys.argv)) :
+                if ii2 != ii and sys.argv[ii2][0] == "-" :
+                    print(ii,ii2,sys.argv[ii2],"!!! ERROR -f MUST BE LAST ARGUMENT")
+                    sys.exit()
+                else :
+                    theFileNames.append(sys.argv[ii2])
+            if(verbose >= 3) : print( ii,"theFileNames ",len(theFileNames))
+        ii += 2
+                    
 ### Read file
 ifn = 0
-yMin = sys.float_info.max
-yMax = sys.float_info.min
+minY = sys.float_info.max
+maxY = sys.float_info.min
 for fileName in theFileNames : 
     file = open(fileName)
     if verbose >= 3 : print("READING FILE",fileName)
@@ -169,8 +194,7 @@ for fileName in theFileNames :
             for sid in SortIdx :
                 # print("YPOSS",il,sid,len(YPos),len(YPos)) #GDEB
                 YPosS.append(YPos[sid])
-                if bError : 
-                    YPosErrS.append(YPosErr[sid])
+                YPosErrS.append(YPosErr[sid])
             YPos = YPosS
             YPosErr = YPosErrS
     
@@ -178,24 +202,31 @@ for fileName in theFileNames :
 
     #plt.xlim(float(his1.xmin),float(his1.xmax))
     plt.xlabel(XAxisName)
-    yMin = min(yMin,min(YPos))
-    yMax = max(yMax,max(YPos))
 
     if verbose >= 2 : print(fileName,"MAKE PLOT=",YAxisNames[ifn])
     lcolor = GetColor(ifn)
-    if bError == False :
-        plt.figure(figsize=(1000/100, 1000/100))        
-        plt.plot(XPos,YPos, color=lcolor,marker="s",markersize=1.)
-        print("XPOS",XPos)
-        print("YPOS",YPos)
+    if bLogY :
+        print("LOGY")
+        plt.yscale('log')
+    if minX == sys.float_info.min or maxX == sys.float_info.max or nStepX == sys.maxsize :
+        hist_values, bin_edges = np.histogram(XPos, bins=int(nStepX))
+        bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+        plt.errorbar(XPos,YPos, yerr=YPosErr, color=lcolor,fmt='o', markersize=4.)      
+        minX = bin_edges[0]
+        maxX = bin_edges[len(bin_edges)-1]
     else :
-        plt.errorbar(XPos,YPos, color=lcolor, yerr=YPosErr,fmt="-o",markersize=2.,linestyle='-')
+        hist_values, bin_edges = np.histogram(XPos, bins=int(nStepX), range=(minX, maxX))
+        bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+        plt.errorbar(XPos,YPos, yerr=YPosErr, color=lcolor,fmt='o', markersize=4.)  # errors if   YPosErr[il] are not 0
+        plt.xlim(minX, maxX)
+
     plt.grid()
-    #    print(il,"PLT.PLOT",XPos,YPos[il])#GDEB
+
+#    print(il,"PLT.PLOT X",XPos,"Y ",YPos)#GDEB
     #    plt.legend()
-    xtPos = min(XPos)+(max(XPos)-min(XPos))*0.5
+    xtPos = min(XPos)+(max(XPos)-min(XPos))*0.7
     if verbose >= 3 : print("MAXY ",max(YPos),"*",(0.7-ifn*0.1)) 
-    if verbose >= 3 : print(ifn,"TEXT POS",yMax)
+    if verbose >= 3 : print(ifn,"TEXT POS",maxY)
 
     #plt.draw()
     ### Fit to a line
@@ -209,12 +240,12 @@ for fileName in theFileNames :
         hYFit.append(poly0(XPos[0],const,slope))
         hYFit.append(poly0(XPos[NPoints-1],const,slope)) 
         plt.plot(hXFit, hYFit, linestyle='dotted',color=lcolor)
-        ytPos = yMin+(yMax-yMin)*(0.3-(ifn*0.2)) 
-        #print(ifn,"DYTPOS",ytPos,yMin,yMax-yMin,0.3-(ifn*0.2)) #GDEB
+        ytPos = minY+(maxY-minY)*(0.5-(ifn*0.2)) 
+        print(ifn,"DYTPOS",ytPos,minY,maxY-minY,0.3-(ifn*0.2)) #GDEB
         if verbose >= 3 : print(ytPos,YAxisNames[ifn],'SLOPE fit: {:.2g}'.format(slope))
         plt.text(xtPos,ytPos,'c={:.2g}'.format(const)+' s={:.2g}'.format(slope),color=lcolor)
         
-    fhis = open("plotNFiles.csv",'w')
+    fhis = open(fileOutName+".csv",'w')
     his = Histo1D
     his.name = YAxisNames[ifn]
     if len(XPos) <= 1 :
@@ -222,15 +253,15 @@ for fileName in theFileNames :
         sys.exit()
     step = (max(XPos)-min(XPos))/(len(XPos)-1)    
     his.nbin = len(XPos)
-    his.xmin = min(XPos)-step/2.
-    his.xmax = max(XPos)+step/2.
+    his.xmin = minX-step/2.
+    his.xmax = maxX+step/2.
     his.data = YPos
     if len(YPosErr) != 0 :
         his.dataErr = YPosErr
     else :
         his.dataErr = [0] * his.nbin
 
-    if verbose >= 3 : print(min(XPos),"HISmin/max", his.xmin ,step,max(XPos)-min(XPos)) #,"DATA",his.data)
+    if verbose >= 3 : print(min(XPos),"HISmin/max", his.xmin ,step,maxX-minX) #,"DATA",his.data)
     if verbose >= 3 : print(max(XPos),"ERR",his.dataErr)
     his.Write(his,fhis)
 
@@ -239,12 +270,12 @@ for fileName in theFileNames :
 
 ## print in figure axis names
 for ifn in range(len(YAxisNames)) :
-    ytPos = yMin+(yMax-yMin)*(0.3-(ifn*0.1))
+    ytPos = minY+(maxY-minY)*(0.5-(ifn*0.1))
     #    if verbose >= 3 : print(ifn,"PLOT",XPos,YPos)#GDEB
     #    if verbose >= 3 : print("YAXIS",ifn,len(YAxisName))    
     lcolor = GetColor(ifn)
-    ytPos = yMin+(yMax-yMin)*(1.-(ifn*0.1))
-    print(ifn,"SYTPOS",ytPos,yMin,yMax-yMin,1.-(ifn*0.1)) #GDEB
+    ytPos = minY+(maxY-minY)*(1.-(ifn*0.1))
+    print(ifn,"SYTPOS",ytPos,minY,maxY-minY,1.-(ifn*0.1)) #GDEB
     if verbose >= 3 : print(ifn,"TEXT POS",xtPos,ytPos,YAxisNames[ifn])
     if len(YPos) != 1 :
         plt.text(xtPos,ytPos,YAxisNames[ifn], color=lcolor)
@@ -252,6 +283,6 @@ for ifn in range(len(YAxisNames)) :
         plt.ylabel(YAxisNames[il], color=lcolor,rotation=90)
 plt.grid()
 
-if verbose >= 3 : print("SAVING FILE ",fOutName)
-plt.savefig(fOutName)
+if verbose >= 3 : print("SAVING FILE ",fileOutName+".jpg")
+plt.savefig(fileOutName+".jpg",dpi=fdpi)
     

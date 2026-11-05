@@ -321,7 +321,7 @@ void GmCompoundScorer::SetParameters( const std::vector<G4String>& params )
       
     for( unsigned int ii2 = 0; ii2 < subExpressions.size(); ii2++ ){
 #ifndef GAMOS_NO_VERBOSE
-      if( ScoringVerb(-infoVerb) ) G4cout << " GmCompoundScorer:SetParameters  AddSubExpression " << subExpressions[ii2] << " ii " << ii2 << G4endl;
+      if( ScoringVerb(infoVerb) ) G4cout << " GmCompoundScorer:SetParameters  AddSubExpression " << subExpressions[ii2] << " ii " << ii2 << G4endl;
 #endif
       AddSubExpression( subExpressions[ii2] );
     }

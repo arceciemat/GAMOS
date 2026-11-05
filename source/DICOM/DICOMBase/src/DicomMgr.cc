@@ -30,7 +30,8 @@ DicomMgr* DicomMgr::GetInstance()
 DicomMgr::DicomMgr()
 {
   theInPolygonNCheck = 4;
-  bRotateXY180 = true;
+  bReflectY = true;
+  bRotateXY180 = false;
   bImagePositionPatientIsPosVoxelCentre = true;
   
 #ifndef ROOT5
@@ -132,6 +133,15 @@ std::vector<DicomVImage*> DicomMgr::GetImages(DIModality mod, G4bool bMustExist 
 }
 
 //-----------------------------------------------------------------------------
+std::vector<DicomVImage*> DicomMgr::GetImagesVector()
+{
+  std::vector<DicomVImage*> vf;
+  for( mmmodi::const_iterator ite = theImages.begin(); ite != theImages.end(); ite++ ) {
+    vf.push_back( (*ite).second );
+  }
+  return vf;
+}
+//-----------------------------------------------------------------------------
 G4int DicomMgr::GetNofImages( DIModality mod ) const
 {
   std::pair<mmmodi::const_iterator,mmmodi::const_iterator> itep = theImages.equal_range(mod);
@@ -145,8 +155,9 @@ G4int DicomMgr::GetNofImages( DIModality mod ) const
 }
 
 //-----------------------------------------------------------------------------
-void DicomMgr::ReadLineDrawingOptios( G4String drawLinesFN )
+void DicomMgr::ReadLineDrawingOptions( G4String drawLinesFN )
 {
+  //  G4cout << "  DicomMgr::ReadLineDrawingOpti " << drawLinesFN  << G4endl; //GDEB
   if( drawLinesFN != "" ) { 
     if( DicomVerb(debugVerb) ) G4cout << "@@@@@@@ Reading STRUCTURES TO DRAW FILE: " << drawLinesFN << G4endl;
     GmFileIn fin = GmFileIn::GetInstance(drawLinesFN,true);
@@ -154,8 +165,9 @@ void DicomMgr::ReadLineDrawingOptios( G4String drawLinesFN )
     for(;;) {
       if( !fin.GetWordsInLine(wl) ) break;
       DicomLineDrawingOptions* ldo = new DicomLineDrawingOptions(wl);
-      theLineDrawingOptions[ldo->GetName()] = ldo;
+      theLineDrawingOptions.push_back(psldo(ldo->GetName(),ldo));
+      //      G4cout << " READ theLineDrawingOptions " << theLineDrawingOptions.size()<< G4endl; //GDEB 
     }
   }
-  
+
 }

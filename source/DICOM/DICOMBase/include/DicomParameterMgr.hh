@@ -6,6 +6,10 @@
 //------------------------------------------------------------------------
 class DicomParameterMgr : public GmParameterMgr
 {
+  /*public:
+  static DicomParameterMgr* theInstance = 0; 
+  static DicomParameterMgr* GetInstance();
+  */
   friend class GmParameterMgr;
 protected:
   DicomParameterMgr();
@@ -21,7 +25,7 @@ public:
   size_t GetNofImageFiles(G4String fileType = "ANY");
 
   void PrintHelpInputFiles();
-  
+
 };
 
 #endif

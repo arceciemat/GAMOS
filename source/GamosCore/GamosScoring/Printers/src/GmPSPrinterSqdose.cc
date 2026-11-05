@@ -24,7 +24,7 @@ GmPSPrinterSqdose::GmPSPrinterSqdose(G4String name) : GmVPSPrinter( name )
 //-----------------------------------------------------------------------
 void GmPSPrinterSqdose::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* scorer )
 {
-  G4cout << " GmPSPrinterSqdose::DumpAll " << G4endl; //GDEB
+  //  G4cout << " GmPSPrinterSqdose::DumpAll " << G4endl; //GDEB
   SetUnit(scorer);
   
   if( !scorer->ScoreErrors() ) {
@@ -39,7 +39,7 @@ void GmPSPrinterSqdose::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScore
 //-----------------------------------------------------------------------
 GmSqdoseHeader* GmPSPrinterSqdose::BuildSqdoseHeader()
 {
-  G4cout << " GmPSPrinterSqdose::WriteSqdoseHeader " << G4endl; //GDEB
+  //  G4cout << " GmPSPrinterSqdose::WriteSqdoseHeader " << G4endl; //GDEB
   GmSqdoseHeader* header = new GmSqdoseHeader;
 
   float nev = GmNumberOfEvent::GetNumberOfEvent();
@@ -193,7 +193,7 @@ GmSqdoseHeader* GmPSPrinterSqdose::BuildSqdoseHeader()
 //-----------------------------------------------------------------------
 void GmPSPrinterSqdose::WriteSqdose( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* scorer )
 {
-  G4cout << " GmPSPrinterSqdose::WriteSqdose " << G4endl; //GDEB
+  //  G4cout << " GmPSPrinterSqdose::WriteSqdose " << G4endl; //GDEB
   G4String fileName = "sqdose.out";
   G4String scorerName = "";
   if( scorer ) scorerName = scorer->GetName();

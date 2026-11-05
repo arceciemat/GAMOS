@@ -4,6 +4,8 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include <limits>
+#include <sys/stat.h>
+
 G4bool GmSqdose::bNo0Dose = false;
 
 //-----------------------------------------------------------------------
@@ -38,19 +40,6 @@ GmSqdose::~GmSqdose()
 {
   // delete theHeader;
 }
-
-//Size of bool: 1
-//Size of char: 1
-//Size of unsigned short int: 2
-//Size of short int: 2
-//Size of unsigned long int: 4
-//Size of long: 4
-//Size of int: 4
-//Size of unsigned long long: 8
-//Size of long long: 8
-//Size of unsigned int: 4
-//Size of float: 4
-//Size of double: 8
 
 //-----------------------------------------------------------------------
 void GmSqdose::Print( FILE* out )
@@ -152,6 +141,22 @@ void GmSqdose::Read( G4String fileName )
 		("File not found: "+ fileName).c_str());
   }
 
+  // Check if file size is 0
+  struct stat st;
+  if (stat(fileName, &st) != 0) {
+    G4Exception("GmSqdose::Read",
+		"Error",
+		FatalException,
+		("Cannot get file size: " + std::string(fileName)).c_str());
+  }
+  
+  if (st.st_size == 0) {
+    G4Exception("GmSqdose::Read",
+		"Error",
+		FatalException,
+		("File is empty: " + std::string(fileName)).c_str());
+  }
+    
   Read(fin);
 }
 
@@ -182,7 +187,7 @@ void GmSqdose::Read( FILE* fin )
 		"Problem reading type ");
   }
 #ifndef GAMOS_NO_VERBOSE
-  if( ReadDICOMVerb(-warningVerb) ) G4cout << " GmSqdose::Read type " << theType << G4endl;
+  if( ReadDICOMVerb(warningVerb) ) G4cout << " GmSqdose::Read type " << theType << G4endl;
 #endif
 
   size_t nv = 0;
@@ -197,6 +202,7 @@ void GmSqdose::Read( FILE* fin )
   }
   //  G4cout << " READ nv " << nv << G4endl; //GDEB  
 
+#ifndef GAMOS_NO_VERBOSE
   G4int nVoxX =  theHeader->GetNoVoxelsX();
   G4int nVoxY =  theHeader->GetNoVoxelsY();
   G4int nVoxZ =  theHeader->GetNoVoxelsZ();
@@ -208,6 +214,7 @@ void GmSqdose::Read( FILE* fin )
   G4double voxY = theHeader->GetVoxelHalfY()*2;
   G4double voxZ = theHeader->GetVoxelHalfZ()*2;
   //  G4cout << " VOXXYZ " << voxX << " " <<voxY << " " << voxZ << G4endl; //GDEB
+#endif
   if( theType == SqTALL || theType == SqTCROSS_PHANTOM  ) {
     for( size_t iv = 0; iv < nv; iv++ ){
       //      G4cout << " READ iv " << iv << G4endl; //GDEB
@@ -219,11 +226,14 @@ void GmSqdose::Read( FILE* fin )
 		    G4String("Reading voxel number "+GmGenUtils::itoa(iv)).c_str());
       }
       theDoses.push_back( ftmp );
-      G4int iz = G4int(iv/nVoxXY);
-      G4int ix = G4int(iv%nVoxX);
-      G4int iy = G4int(iv/nVoxX%nVoxY);
-      //      if( iy == nVoxY-1 && ftmp != 0 )
-      //G4cout << iv << " GmSqdose " << ix << ":" << iy << ":" << iz << " copyNo " << iv << " XYZ  " << minX+voxX*(ix+0.5) << " " <<minY+voxY*(iy+0.5) << " " <<minZ+voxZ*(iz+0.5) <<  " = " << ftmp << G4endl; //GDEB RATON.Water
+#ifndef GAMOS_NO_VERBOSE
+      if( ReadDICOMVerb(testVerb) ) {
+	G4int iz = G4int(iv/nVoxXY);
+	G4int ix = G4int(iv%nVoxX);
+	G4int iy = G4int(iv/nVoxX%nVoxY);
+	G4cout << iv << " GmSqdose " << ix << ":" << iy << ":" << iz << " copyNo " << iv << " XYZ  " << minX+voxX*(ix+0.5) << " " <<minY+voxY*(iy+0.5) << " " <<minZ+voxZ*(iz+0.5) <<  " = " << ftmp << G4endl; 
+      }
+#endif
 
       // G4cout << this << "  " << iv << " 1SQDOSE " << ftmp << " N " << theDoses.size() << G4endl; //GDEB 
       //      G4cout << " 1SQDOSE " << ftmp << " " << iv << G4endl; //GDEB
@@ -238,9 +248,15 @@ void GmSqdose::Read( FILE* fin )
 		    G4String("Reading voxel number "+GmGenUtils::itoa(iv)).c_str());
       }
       theDoseSqs.push_back( ftmp );
-      // G4cout << iv << " 1SQDOSESQ " << ftmp << G4endl; //GDEB
-      //      G4cout << " 2SQDOSE CROSS " << ftmp << " " << iv << G4endl; //GDEB
-      //      if( theDoseSqs.size()%1000 == 1 ) G4cout << iv << " READ dose2 " << theDoseSqs.size() << " = " << theDoseSqs[theDoseSqs.size()-1] << G4endl;//GDEB
+#ifndef GAMOS_NO_VERBOSE
+      if( ReadDICOMVerb(testVerb) ) {
+	G4int iz = G4int(iv/nVoxXY);
+	G4int ix = G4int(iv%nVoxX);
+	G4int iy = G4int(iv/nVoxX%nVoxY);
+	G4cout << " GmSqdoseSqs " << ix << ":" << iy << ":" << iz << " copyNo " << iv << " XYZ  " << minX+voxX*(ix+0.5) << " " <<minY+voxY*(iy+0.5) << " " <<minZ+voxZ*(iz+0.5) <<  " = " << ftmp << G4endl; //GDEB
+	//      if( theDoseSqs.size()%1000 == 1 ) G4cout << iv << " READ dose2 " << theDoseSqs.size() << " = " << theDoseSqs[theDoseSqs.size()-1] << G4endl;//GDEB
+      }
+#endif
     }
     G4cout << " GmSqdose Number of voxels read " << nv+nv+1 << G4endl;
   } else if( theType == SqTFILLED ){

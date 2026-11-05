@@ -790,7 +790,7 @@ G4double GmPDSProcessHelper::GetCrossSectionForGamma( const G4Step* aStep )
     if ( (*iteg).second->GetProcessName() == "GammaGeneralProc" ) {
       continue;
     } 
-    G4cout << "GmPDSProcessHelper::GetCrossSectionForGamma  CrossSection EM = " << (*iteg).second->GetProcessName() << G4endl; //GDEB
+    // G4cout << "GmPDSProcessHelper::GetCrossSectionForGamma  CrossSection EM = " << (*iteg).second->GetProcessName() << G4endl; //GDEB
     G4double XS = (*iteg).second->GetCrossSection( energy, cutsC );
     XStot += XS;
     //      G4cout << "GmPDSProcessHelper::GetCrossSectionForGamma  CrossSection EM = " << procEM->GetCrossSection( energy, lv->GetMaterialCutsCouple() ) 

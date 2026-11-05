@@ -138,7 +138,7 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
 
   //------ StLines and IsodLines
   G4String drawLinesFN = theParamMgr->GetStringValue("fDrawLines","");
-  theDicomMgr->ReadLineDrawingOptios( drawLinesFN );
+  theDicomMgr->ReadLineDrawingOptions( drawLinesFN );
   
   G4String theDrawerType = theParamMgr->GetStringValue("drawerType","ROOT");
   if( theDrawerType == "ROOT" ) {
@@ -284,7 +284,7 @@ void DCMDrawDICOM::DrawImages()
     RTFile = dynamic_cast<DicomReaderRTStruct*>(VRTFiles[0]);
     theStPolygonSet = RTFile->GetPolygonSet();
     DicomPolygonSet* polyset = dynamic_cast<DicomPolygonSet*>(theStPolygonSet);
-    G4cout << " CREATE POLYSET " << polyset << " " << theStPolygonSet << G4endl; //GDEB
+    //    G4cout << " CREATE POLYSET " << polyset << " " << theStPolygonSet << G4endl; //GDEB
     theVLineSets.push_back(theStPolygonSet);
     // GDEB
     /*    G4cout << " DCMDrawDICOM::DrawImages ( GOT POLYGON SET " << theStPolygonSet->GetName() << " Nlists " <<  theStPolygonSet->GetLineLists().size() << G4endl;
@@ -470,7 +470,7 @@ void DCMDrawDICOM::DrawImages()
 	  img1->SetData(ii,mateID);
 	  bFound = true;;
 	}
-	G4cout << " bDrawMateID1Fig theVLineSets " << theVLineSets.size() << G4endl; //GDEB
+	//	G4cout << " bDrawMateID1Fig theVLineSets " << theVLineSets.size() << G4endl; //GDEB
 	for( std::map<size_t,DicomVImage*>::const_iterator iteid = theMateIDImages.begin(); iteid != theMateIDImages.end(); iteid++ ) {
 	  DrawImage((*iteid).second,theVLineSets);
 	}	
@@ -503,7 +503,7 @@ void DCMDrawDICOM::DrawImages()
 	for( size_t ii = 0; ii < nVox; ii++) {
 	  //	  G4cout << imageStructID << " " << ii << " PREVSTDATA " << " : " << imageStructID->GetData(ii) << G4endl;
 	  std::set<G4int> ists = imageStructID->GetIDList(ii);
-	  if( ii%1000 == 1 ) G4cout << ii << " IDST1 " << nVox << " " << imageStructID->GetDataStr(ii) << G4endl; //GDEB
+	  //	  if( ii%1000 == 1 ) G4cout << ii << " IDST1 " << nVox << " " << imageStructID->GetDataStr(ii) << G4endl; //GDEB
 	  for( std::set<G4int>::const_iterator itest = ists.begin(); itest != ists.end(); itest++ ) {
 	    size_t ist1 = *itest;
 	    if( ist1 == 0 ) continue;
@@ -579,7 +579,7 @@ void DCMDrawDICOM::DrawImages()
 void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lineSets, G4String extraFileName)
 {
   std::vector<DicomVLineSet*> newLineSets;
-   G4cout << " DrawImage DrawXY " << bDrawXY << G4endl; //GDEB
+  //   G4cout << " DrawImage DrawXY " << bDrawXY << G4endl; //GDEB
   for( size_t ils = 0; ils < lineSets.size(); ils++ ) { // only polygons from RTStruct are included 
     DicomVLineSet* lineSet = lineSets[ils];
     // GDEB
@@ -592,10 +592,10 @@ void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lin
 	G4cout << jj << " POLYGON LINE " << line->GetName() << " Nlines "<< line->GetPoints().size() << G4endl;
       }
       } */
-    DicomPolygonSet* polyset = dynamic_cast<DicomPolygonSet*>(lineSets[ils]);
-    G4cout << ils << " DRAW POLYSET " << polyset << " " << lineSets[ils] << G4endl; //GDEB
+    //-    DicomPolygonSet* polyset = dynamic_cast<DicomPolygonSet*>(lineSets[ils]);
+    //    G4cout << ils << " DRAW POLYSET " << polyset << " " << lineSets[ils] << G4endl; //GDEB
     //    DicomVLineSet* VlineSet = new
-    DicomPolygonSet(dynamic_cast<DicomPolygonSet*>(lineSets[ils]), image, lineSets[ils]->GetOrientation());
+    //-    DicomPolygonSet(dynamic_cast<DicomPolygonSet*>(lineSets[ils]), image, lineSets[ils]->GetOrientation());
     newLineSets.push_back(lineSets[ils]);
     // GDEB
     /*    G4cout << " DCMDrawDICOM::DrawImage( DRAW POLYGON SET " << lineSets[ils]->GetName() << " Nlists " <<  lineSets[ils]->GetLineLists().size() << G4endl;
@@ -678,7 +678,8 @@ void DCMDrawDICOM::PrintHelp()
 	 << " -nPixelsZ VALUE   number of pixels used for each figure in the Z axis. Default is 1000. " << G4endl
 	 << " -imageFormat FORMAT   available format are jpg (default), png, eps, ps, pdf, svg, xpm, jpg and tiff " << G4endl
 	 << " -fDrawLines FILE_NAME   file where line format is defined (color, style, width, ...) " << G4endl
-  	 << " -rotateXY DEGREES   figures are rotated by VAL in XY plane (=around Z axis)" << G4endl
+  	 << " -reflectY 0/1   figures are reflected in Y (default, to follow RayStation)" << G4endl
+  	 << " -rotateXY180 0/1   figures are rotated 180 degrees around Z axis or not" << G4endl
 	 << " -printMax  0/1   prints the maximum value of any voxel in each image together with the X/Y/Z voxel id's and X/Y/Z position of the voxel center" << G4endl
 	 << " -printValueAtPoint POINT_X POINT_Y POINT_Z*: prints the value at the voxel in each image corresponding to the POINT together with the X/Y/Z voxel id's and X/Y/Z position of the voxel center" << G4endl
 	 << " -bDrawIsodLines 1/0   draw isodose lines or not (default = 0)" << G4endl  

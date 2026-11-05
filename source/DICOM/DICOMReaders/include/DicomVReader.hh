@@ -41,6 +41,7 @@ protected:
 
   virtual std::vector<G4double> Read1Data( DcmDataset * dset, DcmTagKey tagKey, G4int nData, G4bool bExists = true );
   virtual OFString Read1DataStr( DcmDataset * dset, DcmTagKey tagKey, G4bool bExists = true );
+  virtual OFString Read1DataStrFromSequence( DcmDataset * dset, DcmTagKey seqTagKey, DcmTagKey tagKey, G4bool bExists = true );
 
   DcmDataset * theDataset;
 

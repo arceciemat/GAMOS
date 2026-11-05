@@ -88,7 +88,6 @@ std::vector<G4double> DicomVReader::Read1Data( DcmDataset * dset, DcmTagKey tagK
   return dataV;
 }
 
-
 //-----------------------------------------------------------------------------
 OFString DicomVReader::Read1DataStr( DcmDataset * dset, DcmTagKey tagKey, G4bool bExists )
 {
@@ -117,6 +116,51 @@ OFString DicomVReader::Read1DataStr( DcmDataset * dset, DcmTagKey tagKey, G4bool
 
   return data.c_str();
 }
+
+//-----------------------------------------------------------------------------
+OFString DicomVReader::Read1DataStrFromSequence( DcmDataset * dset, DcmTagKey seqTagKey, DcmTagKey tagKey, G4bool bExists ) 
+{
+  OFString data = "";
+  // Get the sequence
+  DcmSequenceOfItems *seq = nullptr;
+  if (dset->findAndGetSequence(seqTagKey, seq).good()) {
+    // Iterate over items in the sequence
+    for (unsigned long ii = 0; ii < seq->card(); ii++) {
+        DcmItem *item = seq->getItem(ii);
+        if (item) {
+	  if( item->findAndGetOFString(tagKey, data).good() ) {
+	  } else {
+	     if(bExists) {
+	       if( DicomVerb(debugVerb) ) {
+		 G4cerr <<"ERROR  (" << std::showbase // show the 0x prefix
+			<< std::internal // fill between the prefix and the number
+			<< std::setfill('0') << std::hex << std::setw(4) << tagKey.getGroup() << "," << tagKey.getElement() << ") "<< std::dec << std::endl; 
+		 G4Exception("DicomHandler::Read1DataStrFromSequence",
+			     "",
+			     JustWarning,
+			     (" Have not read (" + std::to_string(tagKey.getGroup())+","+std::to_string(tagKey.getElement())+")"+" : ").c_str());
+	       }
+	     }   
+	  }
+        }
+    }
+  } else {
+    if(bExists) {
+      if( DicomVerb(debugVerb) ) {
+	G4cerr <<"ERROR  (" << std::showbase // show the 0x prefix
+	       << std::internal // fill between the prefix and the number
+	       << std::setfill('0') << std::hex << std::setw(4) << seqTagKey.getGroup() << "," << seqTagKey.getElement() << ") "<< std::dec << std::endl; 
+	G4Exception("DicomHandler::Read1DataStrFromSequence",
+		    "",
+		    JustWarning,
+		    (" Have not read sequence (" + std::to_string(seqTagKey.getGroup())+","+std::to_string(seqTagKey.getElement())+")"+" : ").c_str());
+      }
+    }   
+  }
+  
+  return data;
+}
+
 
 //-----------------------------------------------------------------------------
 G4String DicomVReader::GetModalityStr(DRModality mod)

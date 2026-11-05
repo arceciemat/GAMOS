@@ -163,9 +163,9 @@ void DCMPrintValueAtPoint::PrintInfoFromImage()
     if( DicomVerb(testVerb) ) G4cout << " nCVoxYMin " << nCVoxYMin << " " << (thePoint.y()-theExtension.y()-fMinY)/fWidthY << " " << thePoint.y() << " - " << theExtension.y() << " - " << fMinY << " )/ " << fWidthY << G4endl; //GDEB
 #endif
     G4int nCVoxZMin = int((thePoint.z()-theExtension.z()-fMinZ)/fWidthZ);
-    G4int nCVoxXMax = int((thePoint.x()+theExtension.x()-fMinX)/fWidthX);
-    G4int nCVoxYMax = int((thePoint.y()+theExtension.y()-fMinY)/fWidthY);
-    G4int nCVoxZMax = int((thePoint.z()+theExtension.z()-fMinZ)/fWidthZ);
+    G4int nCVoxXMax = int((thePoint.x()+theExtension.x()-fMinX)/fWidthX+fWidthX);
+    G4int nCVoxYMax = int((thePoint.y()+theExtension.y()-fMinY)/fWidthY+fWidthY);
+    G4int nCVoxZMax = int((thePoint.z()+theExtension.z()-fMinZ)/fWidthZ+fWidthZ);
 #ifndef GAMOS_NO_VERBOSE
     if( DicomVerb(testVerb) ) G4cout << " nCVoxZMin " << nCVoxZMin << " " << (thePoint.z()-theExtension.z()-fMinZ)/fWidthZ << " " << thePoint.z() << " - " << theExtension.z() << " - " << fMinZ << " )/ " << fWidthZ << G4endl; //GDEB
 #endif

@@ -28,7 +28,6 @@ public:
   virtual void SaveHisto2( const TH2F* his );
   virtual void SaveHistoProf1( const TProfile* his );
   virtual void SaveHistoProf2( const TProfile2D* his );
-private:
   void SaveHisto1D(const G4String& hisType, const TH1* his );
   void SaveHisto2D(const G4String& hisType, const TH2* his );
 #else
@@ -36,7 +35,6 @@ private:
   virtual void SaveHisto2( const GmHisto2* his );
   virtual void SaveHistoProf1( const GmHistoProfile1* his );
   virtual void SaveHistoProf2( const GmHistoProfile2* his );
- private:
   void SaveHisto1D(const G4String& hisType, const GmHisto1* his );
   void SaveHisto1D(const G4String& hisType, const GmHistoProfile1* his );
   void SaveHisto2D(const G4String& hisType, const GmHisto2* his );

@@ -87,7 +87,7 @@ void GmMovementMgr::ReadMovementFile( G4String fileName )
     GmMovementFromFile* mFF = new GmMovementFromFile( wl );
     for( G4int ii = 0; ii < nMovements; ii++ ){
        if(! fin.GetWordsInLine( wl ) ) { 
-	 G4Exception("GGmMovementMgr::ReadMovementFile",
+	 G4Exception("GmMovementMgr::ReadMovementFile",
 		  "Error in number of lines ",
 		  FatalErrorInArgument,
 		  G4String("Reading file " + fileName 

@@ -286,7 +286,7 @@ void DCMChangeStructure::BuildStructData()
       StructData stData;
       G4String stnam = wl[0];
       stnam.erase(std::remove(stnam.begin(), stnam.end(), '"'), stnam.end());
-      G4cout << " NO QUOTES " << stnam << "   " << wl[0] << G4endl; //GDEB
+      // G4cout << " NO QUOTES " << stnam << "   " << wl[0] << G4endl; //GDEB
       stData.stName = stnam;
       G4String matenam = wl[1];
       matenam.erase(std::remove(matenam.begin(), matenam.end(), '"'), matenam.end());
@@ -326,6 +326,7 @@ void DCMChangeStructure::BuildStructData()
       stData.density = theDensity;
       stData.bOnly = bStOnly;
       theStructData.push_back(stData);
+      if( DicomVerb(debugVerb) ) G4cout << theStructData.size() << " changeStructure: ADDED stData " << stData.stName << " " << stData.mateName << " " << stData.density << " " << stData.bOnly << " "  << G4endl; 
     }
   }
   
@@ -398,9 +399,9 @@ void DCMChangeStructure::BuildStructData()
   if( bChangeMaterials ) {
     for( itepv = theStNames.begin(); itepv != theStNames.end(); itepv++ ) {
       G4String StName = (*itepv).second;
-      G4cout << " FINDING StID in g4dcm " << StName << " ID " <<  (*itepv).first << G4endl; //GDEB
+      // G4cout << " FINDING StID in g4dcm " << StName << " ID " <<  (*itepv).first << G4endl; //GDEB
       for( size_t ii = 0; ii < theStructData.size(); ii++ ) {
-	G4cerr << " LOOPING theStructData " << ii << " stID " << theStructData[ii].stID << " stNameg4dcm " <<StName << " ? " << theStructData[ii].stName << G4endl; //GDEB
+	//	G4cerr << " LOOPING theStructData " << ii << " stID " << theStructData[ii].stID << " stNameg4dcm " <<StName << " ? " << theStructData[ii].stName << G4endl; //GDEB
 	if( StName == theStructData[ii].stName ) {
 	  theStructData[ii].stID = (*itepv).first;
 	  if( DicomVerb(infoVerb) ) G4cout << ii << " StructData found stID " <<  (*itepv).first << " : " << StName << G4endl;
@@ -426,7 +427,7 @@ void DCMChangeStructure::BuildStructData()
     std::vector<DicomVReaderImage*> vireaders = theReaderMgr->GetImageReaders(DRM_G4dcmCT); // there must be 1
     theG4dcmCTReader = static_cast<DicomReaderG4dcmCT*>(vireaders[0]);
     std::map<G4int,G4String> materialNames = theG4dcmCTReader->GetMaterialNames();
-    G4cout << theG4dcmCTReader << " N_MATERIALS = " << materialNames.size() << G4endl; //GDEB
+    //    G4cout << theG4dcmCTReader << " N_MATERIALS = " << materialNames.size() << G4endl; //GDEB
     std::map<G4int,G4String>::const_iterator ite;
     for( ite = materialNames.begin(); ite != materialNames.end(); ite++ ){
       //      G4cout << " LOOPING MATERIAL: " <<  (*ite).first << " = " <<  (*ite).second << G4endl; //GDEB
@@ -489,9 +490,9 @@ void DCMChangeStructure::ChangeImagesByStruct()
 {
   //--- LOOP TO VOXELS TO CHANGE MATERIAL OR DENSITY
   G4int nVoxels = theAnalyseImage->GetNoVoxels();
-  //  G4cout << " DCMChangeStructure::ChangeImagesByStruct " << nVoxels << G4endl; //GDEB
-  //  StructData stData = theStructData[0]; //GDEB
-  //    G4cout << " STID SEARCHED " << stData.stID << G4endl; //GDEB
+  G4cout << " DCMChangeStructure::ChangeImagesByStruct " << nVoxels << G4endl; //GDEB
+  StructData stDatagdeb = theStructData[0]; //GDEB
+  G4cout << " STID SEARCHED " << stDatagdeb.stID << G4endl; //GDEB
   for( G4int ii = 0; ii < nVoxels; ii++ ) {
     std::set<G4int> stIDList = theStructImage->GetIDList(ii);
     size_t nSTs = stIDList.size();
@@ -505,7 +506,7 @@ void DCMChangeStructure::ChangeImagesByStruct()
     */
     for( std::set<G4int>::const_iterator itest = stIDList.begin(); itest != stIDList.end(); itest++ ) {
       size_t stid1 = *itest;
-      //      if( stid != 0 )  G4cout << " PVSID1 " << stid1 << " = " << theStructureID << G4endl; //GDEB
+      //     if( stid1 != 0 )  G4cout << "changeStructure PVSID1 " << stid1 << G4endl; //GDEB
       //--- CHECK St ID AND CHANGE MATERIAL AND/OR DENSITY
       for( size_t iis = 0; iis < theStructData.size(); iis++ ) {
 	StructData stData = theStructData[iis];
@@ -527,18 +528,20 @@ void DCMChangeStructure::ChangeImagesByStruct()
 	}    
 	//	std::cout << ii << " " << id1 << " " << iis << " stid1 == stData.stID " << stid1 << " == " << stData.stID << std::endl; //GDEB
 	if( stid1 == stData.stID ) {  // VOXEL IN STRUCTURE: CHANGE IT!
-	  //	  std::cout << ii << " stid1 FOUND " << stid1 << " -> " << stData.mateID << " " <<  stData.bOnly << " " <<nSTs << " bImageG4dcmCT " << bImageG4dcmCT << std::endl; //GDEB
+	  if(  DicomVerb(testVerb) ) G4cout << ii << " stid1 FOUND " << stid1 << " -> " << stData.mateID << " " <<  stData.bOnly << " " <<nSTs << " bImageG4dcmCT " << bImageG4dcmCT << std::endl; 
 	  //	  if( posZ < -867 && posZ > -871 && posY < -100 && posY > -140 ) G4cout << " CHANGE StIDLIST " << stData.bOnly << " " << nSTs << " " << bImageG4dcmCT << " " << bChangeMaterials << G4endl; //GDEB 
 
 	  if( stData.bOnly == false || nSTs == 1 ) {
 	    if( bImageG4dcmCT ) {
 	      if( bChangeMaterials ) theAnalyseImage->SetData(ii,stData.mateID);
 	      if( bChangeDensities ) {
-		//	  if( posZ < -867 && posZ > -871 && posY < -100 && posY > -140 ) G4cout << " CHANGE theMateDensImage " << ii << " : " << stData.density << G4endl; //GDEB 
+		//	  if( posZ < -867 && posZ > -871 && posY < -100 && posY > -140 ) G4cout << " CHANGE theMateDensImage " << ii << " : " << stData.density << G4endl; //GDEB
+		if(  DicomVerb(testVerb) ) G4cout << " CHANGE theMateDensImage " << ii << " : " << stData.density << G4endl; 
 		theMateDensImage->SetData(ii,stData.density);
 	      }
 	    } else {
 	      theAnalyseImage->SetData(ii,stData.density);
+	      if(  DicomVerb(testVerb) ) G4cout << " CHANGE theAnalyseImage " << ii << " : " << stData.density << G4endl; 
 	    }		
 	    if( DicomVerb(debugVerb) ) G4cout << ii << " change mateID to " << stData.mateID << " dens " << stData.density << G4endl;	      
 	  }
@@ -553,7 +556,7 @@ void DCMChangeStructure::ChangeImagesByStruct()
 void DCMChangeStructure::ChangeImagesByLimits()
 {
   G4int nVoxels = theAnalyseImage->GetNoVoxels();
-  size_t imNVoxelX = theAnalyseImage->GetNoVoxelsX();
+    size_t imNVoxelX = theAnalyseImage->GetNoVoxelsX();
   size_t imNVoxelY = theAnalyseImage->GetNoVoxelsY();
   size_t imNVoxelXY = imNVoxelX*imNVoxelY;
   G4double imMinX = theAnalyseImage->GetMinX();
@@ -562,7 +565,7 @@ void DCMChangeStructure::ChangeImagesByLimits()
   G4double imVoxDimX = theAnalyseImage->GetVoxelDimX();
   G4double imVoxDimY = theAnalyseImage->GetVoxelDimY();
   G4double imVoxDimZ = theAnalyseImage->GetVoxelDimZ();
-  //  G4cout << " DCMChangeStructure::ChangeImagesByLimits " << nVoxels << G4endl; //GDEB
+  G4cout << " DCMChangeStructure::ChangeImagesByLimits " << nVoxels << G4endl; //GDEB
   G4int nVoxelChanged = 0;
   for( G4int ii = 0; ii < nVoxels; ii++ ) {
     G4int ix = ii%imNVoxelX;

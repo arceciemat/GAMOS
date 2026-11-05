@@ -12,6 +12,7 @@
 #include "DicomMgr.hh"
 #include "DicomVerbosity.hh"
 #include "DicomOperLog.hh"
+#include "DicomOperReflectY.hh"
 #include "DicomOperRotateXY180.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -48,27 +49,32 @@ DicomDrawerROOT::DicomDrawerROOT()
     theOperatorLog = 0;
     }*/
   theParamMgr = (DicomParameterMgr*)(DicomParameterMgr::GetInstance());
+  if( DicomMgr::GetInstance()->GetReflectY() ) {
+    bReflectY = true;
+  } else {
+    bReflectY = false;
+  }
   if( DicomMgr::GetInstance()->GetRotateXY180() ) {
     bRotateXY180 = true;
   } else {
     bRotateXY180 = false;
   }
 
-  theLineDrawingOptions = DicomMgr::GetInstance()->GetLineDrawingOptions();
-  if( theLineDrawingOptions.size() == 0 ) {
-    bLineDrawingOptions = false;
-  } else {
-    bLineDrawingOptions = true;
-  }
-
   theOutputFile = 0;
 
+  bDrawHisto1 = false;
 }
 
 //-----------------------------------------------------------------------------
 void DicomDrawerROOT::SetOutputFile( G4String foutName )
 {
   theOutputFile = new TFile(foutName.c_str(),"RECREATE");
+}
+
+//-----------------------------------------------------------------------------
+void DicomDrawerROOT::CloseOutputFile() 
+{
+  if( theOutputFile ) theOutputFile->Close();  
 }
 
 //-----------------------------------------------------------------------------
@@ -249,8 +255,23 @@ DicomPolygonSet* DicomDrawerROOT::VoxelsInUseClosest( DicomPolygonSet* polySet, 
 }
 
 //-----------------------------------------------------------------------------
-void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> lineSets, G4String extraFileName )
+void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> lineSets, G4String extraFileName, G4bool bNonZero )
 {
+  if( theReflectYImages.find(image) == theReflectYImages.end() ) {
+    if( bReflectY ) {
+      std::vector<DicomVOperator*> operators = DicomMgr::GetInstance()->GetOperators();
+      DicomOperReflectY* rotateOper = 0;
+      for( size_t ii = 0; ii < operators.size(); ii++ ) {
+	if( dynamic_cast<DicomOperReflectY*>(operators[ii]) != 0 ) {
+	  rotateOper = dynamic_cast<DicomOperReflectY*>(operators[ii]);
+	  break;
+	}
+      }
+      G4cout << image << " SIZE DicomDrawerROOT::DrawXY " << image->GetName() << " " << image->GetData()->size() << G4endl; //GDEB
+      rotateOper->Operate(image);
+      theReflectYImages.insert(image);
+    }
+  }
   if( theRotateXY180Images.find(image) == theRotateXY180Images.end() ) {
     if( bRotateXY180 ) {
       std::vector<DicomVOperator*> operators = DicomMgr::GetInstance()->GetOperators();
@@ -268,6 +289,8 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
   
   TCanvas* canvas = new TCanvas; 
   canvas->SetRightMargin(0.2);
+  gPad->SetLeftMargin(0.2);
+  gPad->SetBottomMargin(0.2);
   size_t imNVoxZ = image->GetNoVoxelsZ();
   size_t imNVoxX = image->GetNoVoxelsX();
   size_t imNVoxY = image->GetNoVoxelsY();
@@ -295,13 +318,28 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
     std::cout << "DicomDrawerROOT::DrawXY imgData  N " << imNVoxX << " " << imNVoxY << " " <<imNVoxZ << std::endl;
   }
 #endif
+  
   //  std::string hisName = DicomVImage::GetModalityStr( image->GetModality() ).substr(4,999)+"_XY";
+  std::string hisName1All = GmGenUtils::ReplaceChar(image->GetName()+"_XY"+extraFileName,'/',':');
+  if(hisName1All.find("_2D") != std::string::npos ) {
+    hisName1All.replace(hisName1All.find("_2D"), 3, "_1D.ALL");
+  }
+  TH1F* his1All = 0;
+  if ( bDrawHisto1 ) his1All = new TH1F(hisName1All.c_str(), hisName1All.c_str(), 100, 0., thePaletteMax );
   size_t copyNo = 0;
+  theImageFormat = DicomParameterMgr::GetInstance()->GetStringValue("imageFormat","jpg");
   for( size_t iz = 0; iz < imNVoxZ; iz++ ) {
     G4String zstr = GmGenUtils::ftoa(imMinZ+(iz+0.5)*imWidthZ);
-    theImageFormat = DicomParameterMgr::GetInstance()->GetStringValue("imageFormat","jpg");
-    std::string hisName = image->GetName()+"_XY"+extraFileName+"_"+zstr;
-    TH2F* his = new TH2F(hisName.c_str(), hisName.c_str(), imNVoxX, imMinX, imMaxX, imNVoxY, imMinY, imMaxY );
+    std::string hisName2 = GmGenUtils::ReplaceChar(image->GetName()+"_XY"+extraFileName+"_"+zstr,'/',':');
+    //    G4cout << " hisName2 " << hisName2 <<" = "<< image->GetName()<<"+_XY+"<<extraFileName<<"_+"<<zstr << G4endl; //GDEB
+    G4String hisName1 = hisName2;
+    if( hisName1.find("_2D") != std::string::npos ) {
+      hisName1.replace(hisName1.find("_2D"), 3, "_1D");
+    }
+    TH1F* his1 = 0; 
+    if ( bDrawHisto1 ) his1 = new TH1F(hisName1.c_str(), hisName1.c_str(), 100, 0., thePaletteMax );
+    TH2F* his2 = new TH2F(hisName2.c_str(), hisName2.c_str(), imNVoxX, imMinX, imMaxX, imNVoxY, imMinY, imMaxY );
+    //    G4cout << " CREATE his2 " << his2->GetName() << " " << hisName2 << G4endl; //GDEB
     gStyle->SetOptTitle(bFigureTitle);
     for( size_t iy = 1; iy <= imNVoxY; iy++ ) {
       for( size_t ix = 1; ix <= imNVoxX; ix++ ) {
@@ -313,18 +351,22 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
 	  data = GetValueSurrounding(ix-1,iy-1,iz, data, image, imgDatap);
 	}
 	if( data > thePaletteMin ) {
-	  his->SetBinContent(ix,iy,data);
+	  his2->SetBinContent(ix,iy,data);
 	} else {
-	  his->SetBinContent(ix,iy,thePaletteMin);
+	  his2->SetBinContent(ix,iy,thePaletteMin);
 	}
-	//	G4cout << *imgData << " HISTOXY " << ix-1 << " " << iy-1 << " " << his->GetXaxis()->GetBinCenter(ix) << " " <<his->GetYaxis()->GetBinCenter(iy) << " " << his->GetBinContent(ix,iy) << " " <<  GmGenUtils::ftoa(imMinZ+(iz+0.5)*imWidthZ) << G4endl; //GDEB
-#ifndef GAMOS_NO_VERBOSE
+	if ( bDrawHisto1 ) {
+	  if( !bNonZero || data != 0. ) his1->Fill(data);
+	  if (data != 0. ) his1All->Fill(data);
+	}
+	//	G4cout << *imgData << " HISTOXY " << ix-1 << " " << iy-1 << " " << his2->GetXaxis()->GetBinCenter(ix) << " " <<his2->GetYaxis()->GetBinCenter(iy) << " " << his2->GetBinContent(ix,iy) << " " <<  GmGenUtils::ftoa(imMinZ+(iz+0.5)*imWidthZ) << G4endl; //GDEB
+	/*#ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(testVerb) ) {
 	  if( data != 0 ) G4cout << " DrawerROOT XY " << ix-1 << " " << iy-1 << " " << iz << " : " << (ix-1)+(iy-1)*imNVoxX+iz*imNVoxX*imNVoxY << " = " << data << G4endl;
 	  //	  if( *imgData != 0 ) G4cout << (ix-1)+(iy-1)*imNVoxX + iz*imNVoxX*imNVoxY << " DrawerROOT XY " << ix-1 << " " << iy-1 << " " << iz << " = " << *imgData << " =? " << imgDatap->at( (ix-1)+(iy-1)*imNVoxX + iz*imNVoxX*imNVoxY) << G4endl;
-	  //	  if( *imgData != 0 ) G4cout << " DrawerROOT XY " << imMinX+(ix-1)*image->GetVoxelDimX() << " = " <<  his->GetXaxis()->GetXmin()+(ix-1)*his->GetXaxis()->GetBinWidth((ix-1)) << " " << his->GetXaxis()->GetBinCenter((ix-1)) << " " <<  his->GetXaxis()->GetXmin() << " " <<  his->GetXaxis()->GetXmax()<< " " << his->GetXaxis()->GetBinWidth((ix-1))<< " " << *imgData << " " << his->GetXaxis()->GetBinCenter(0)<< " " << his->GetXaxis()->GetBinCenter(1) << G4endl;
+	  //	  if( *imgData != 0 ) G4cout << " DrawerROOT XY " << imMinX+(ix-1)*image->GetVoxelDimX() << " = " <<  his2->GetXaxis()->GetXmin()+(ix-1)*his2->GetXaxis()->GetBinWidth((ix-1)) << " " << his2->GetXaxis()->GetBinCenter((ix-1)) << " " <<  his2->GetXaxis()->GetXmin() << " " <<  his2->GetXaxis()->GetXmax()<< " " << his2->GetXaxis()->GetBinWidth((ix-1))<< " " << *imgData << " " << his2->GetXaxis()->GetBinCenter(0)<< " " << his2->GetXaxis()->GetBinCenter(1) << G4endl;
 	}
-#endif
+	#endif*/
 	imgData++;
 	copyNo++;
       }
@@ -332,7 +374,6 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
     }
     //    std::cout << iz << " DRAWER imagData Z " << std::endl; //GDEB
     canvas->Draw();
-    gStyle->SetOptStat(0);
     /*  Int_t myPalette[5];
   myPalette[0] = 1;
   myPalette[1] = 4;
@@ -349,17 +390,17 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
    Double_t Length[11] = { 0.00, 0.1,0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.90, 1.00 };
    Int_t nb=50;
    TColor::CreateGradientColorTable(Number,Length,Green,Blue,Red,nb);
-   his->SetContour(nb);
-   his->SetLineWidth(1);
-   his->SetLineColor(kBlack);
+   his2->SetContour(nb);
+   his2->SetLineWidth(1);
+   his2->SetLineColor(kBlack);
    //   f2->Draw("surf1z");
    */
     //    G4cout << " thePaletteMin " << thePaletteMin << G4endl; //GDEB
     if( thePaletteMin != -DBL_MAX ) {
-      his->SetMinimum(thePaletteMin);
+      his2->SetMinimum(thePaletteMin);
       //    G4cout << " SETthePaletteMin " << thePaletteMin << G4endl; //GDEB
     }
-    if( thePaletteMax != DBL_MAX ) his->SetMaximum(thePaletteMax);
+    if( thePaletteMax != DBL_MAX ) his2->SetMaximum(thePaletteMax);
     /*  UInt_t Number = 3;
   //  double Red[Number] = {1,0.,0};
   //  double Red[Number] = {1,0.,0};
@@ -371,42 +412,58 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
   //  TColor::CreateGradientColorTable(Number,Length,Red,Green,Blue,nb);
   */
     
-    his->Draw("colz");
+    gStyle->SetOptStat(0);
+    his2->Draw("colz");
+    gPad->Update();
     if( theOutputFile ) {
       theOutputFile->cd();
-      his->Write();
-      //      G4cout << " WRITE HISTO " << hisName << G4endl; //GDEB
+      his2->Write();
     }
     
-    if( bRotateXY180 ) {
-      his->GetXaxis()->SetLabelOffset(9999);
-      his->GetXaxis()->SetTickLength(0);
-      TGaxis* newXaxis = new TGaxis(gPad->GetUxmax(), gPad->GetUymin(), gPad->GetUxmin(), gPad->GetUymin(),
-				    his->GetXaxis()->GetXmin(), his->GetXaxis()->GetXmax(),
-				    510,"-");
-      newXaxis->SetLabelOffset(0.01);
-      newXaxis->SetLabelSize(0.03);
-      newXaxis->Draw();
-      //      G4cout << " XAXIS " << gPad->GetUxmax() << " " << gPad->GetUymin() << " " << gPad->GetUxmin() << " " << gPad->GetUymin() << " " << his->GetXaxis()->GetXmin() << " " << his->GetXaxis()->GetXmax() << G4endl; //GDEB
-      
-      his->GetYaxis()->SetLabelOffset(9999);
-      his->GetYaxis()->SetTickLength(0);
+    if( bReflectY ) {
+      his2->GetXaxis()->SetLabelOffset(9999);
+      his2->GetYaxis()->SetLabelOffset(9999);
+      //      his2->GetYaxis()->SetTickLength(0);
       double xmin = gPad->GetUxmin();
      //      double xmin = gPad->GetUxmin()-(gPad->GetUxmax()-gPad->GetUxmin)/20.;
       TGaxis* newYaxis = new TGaxis(xmin, gPad->GetUymax(), xmin, gPad->GetUymin(),
-				    his->GetYaxis()->GetXmin(), his->GetYaxis()->GetXmax(),
+				    his2->GetYaxis()->GetXmin(), his2->GetYaxis()->GetXmax(),
 				    510,"+");
       newYaxis->SetLabelOffset(0.01);
       newYaxis->SetLabelSize(0.03);
       newYaxis->SetTextFont(20);
       newYaxis->Draw();
-      //      G4cout << " YAXIS " << gPad->GetUymax() << " " << gPad->GetUxmin() << " " << gPad->GetUymin() << " " << gPad->GetUxmin() << " " << his->GetYaxis()->GetXmin() << " " << his->GetYaxis()->GetXmax() << G4endl; //GDEB
-    } 
-
+      //      G4cout << " YAXIS " << gPad->GetUymax() << " " << gPad->GetUxmin() << " " << gPad->GetUymin() << " " << gPad->GetUxmin() << " " << his2->GetYaxis()->GetXmin() << " " << his2->GetYaxis()->GetXmax() << G4endl; //GDEB
+    }
+  
+    if( bRotateXY180 ) {
+      his2->GetXaxis()->SetLabelOffset(9999);
+      //      his2->GetXaxis()->SetTickLength(0);
+      TGaxis* newXaxis = new TGaxis(gPad->GetUxmax(), gPad->GetUymin(), gPad->GetUxmin(), gPad->GetUymin(),
+				    his2->GetXaxis()->GetXmin(), his2->GetXaxis()->GetXmax(),
+				    510,"-");
+      newXaxis->SetLabelOffset(0.01);
+      newXaxis->SetLabelSize(0.03);
+      newXaxis->Draw();
+      //      G4cout << " XAXIS " << gPad->GetUxmax() << " " << gPad->GetUymin() << " " << gPad->GetUxmin() << " " << gPad->GetUymin() << " " << his2->GetXaxis()->GetXmin() << " " << his2->GetXaxis()->GetXmax() << G4endl; //GDEB
+      
+      his2->GetYaxis()->SetLabelOffset(9999);
+      //      his2->GetYaxis()->SetTickLength(0);
+      double xmin = gPad->GetUxmin();
+     //      double xmin = gPad->GetUxmin()-(gPad->GetUxmax()-gPad->GetUxmin)/20.;
+      TGaxis* newYaxis = new TGaxis(xmin, gPad->GetUymax(), xmin, gPad->GetUymin(),
+				    his2->GetYaxis()->GetXmin(), his2->GetYaxis()->GetXmax(),
+				    510,"+");
+      newYaxis->SetLabelOffset(0.01);
+      newYaxis->SetLabelSize(0.03);
+      newYaxis->SetTextFont(20);
+      newYaxis->Draw();
+      //      G4cout << " YAXIS " << gPad->GetUymax() << " " << gPad->GetUxmin() << " " << gPad->GetUymin() << " " << gPad->GetUxmin() << " " << his2->GetYaxis()->GetXmin() << " " << his2->GetYaxis()->GetXmax() << G4endl; //GDEB
+    }
+  
     G4bool bVoxelsInUseClosest = DicomParameterMgr::GetInstance()->GetNumericValue("closestPolygon",1);
     //--- Draw lines
     for( size_t ils = 0; ils < lineSets.size(); ils++ ) {
-
       DicomVLineSet* lineSet = lineSets[ils];
       if( dynamic_cast<DicomPolygonSet*>(lineSet) != 0 ) {
 	if( bVoxelsInUseClosest ) {
@@ -416,6 +473,11 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
 	  lineSet = lineSets[ils];
 	}
       }
+      if( bReflectY && !lineSet->HasBeenReflectedY() ) {
+	G4ThreeVector imgCentre = image->GetCentre();
+	lineSet->ReflectY( imgCentre );
+	lineSet->SetHasBeenReflectedY( true );
+      } 
       if( bRotateXY180 && !lineSet->HasBeenRotatedXY180() ) {
 	G4ThreeVector imgCentre = image->GetCentre();
 	lineSet->RotateXY180( 180.*CLHEP::deg, imgCentre );
@@ -443,17 +505,40 @@ void DicomDrawerROOT::DrawXY( DicomVImage* image, std::vector<DicomVLineSet*> li
       DrawLinesXY( lineSet, imMinZ+iz*imWidthZ, imMinZ+(iz+1)*imWidthZ);
     }
     
-    theImageFormat = DicomParameterMgr::GetInstance()->GetStringValue("imageFormat","jpg");
-    std::string jpgName = "his"+hisName+"."+theImageFormat;
-    canvas->Print(jpgName.c_str());
+    std::string figName = "his"+G4String(his2->GetName())+"."+theImageFormat;
+    canvas->Print(figName.c_str());
+    delete his2;
+    
+    if ( bDrawHisto1 ) {
+      if( theOutputFile ) {
+	theOutputFile->cd();
+	his1->Write();
+      }
+      gStyle->SetOptStat(111111);
+      his1->Draw("");
+      figName = "his"+G4String(his1->GetName())+"."+theImageFormat;
+      canvas->Print(figName.c_str());
+      delete his1;
+    }
 
-    delete his;
   }
 
+  if ( bDrawHisto1 ) {
+    if( theOutputFile ) {
+      theOutputFile->cd();
+      his1All->Write();
+    }
+    //    G4cout << " WRITE HISTO his1All " << his1All->GetName() << G4endl; //GDEB
+    his1All->Draw("");
+    std::string figName = "his"+G4String(his1All->GetName())+"."+theImageFormat;
+    canvas->Print(figName.c_str());
+    delete his1All;
+  }
+  
 }
 
 //-----------------------------------------------------------------------------
-void DicomDrawerROOT::DrawXZ( DicomVImage* image, std::vector<DicomVLineSet*> lineSets, G4String extraFileName )
+void DicomDrawerROOT::DrawXZ( DicomVImage* image, std::vector<DicomVLineSet*> lineSets, G4String extraFileName, G4bool bNonZero )
 {
   if( theRotateXY180Images.find(image) == theRotateXY180Images.end() ) {
     if( bRotateXY180 ) {
@@ -491,22 +576,38 @@ void DicomDrawerROOT::DrawXZ( DicomVImage* image, std::vector<DicomVLineSet*> li
   }
   std::vector<G4double>* imgDatap = image->GetData();
   G4double* imgData = &(imgDatap->at(0));
-  G4double* imgData0 = &(imgDatap->at(0)); //GDEB
+  G4double* imgData0 = &(imgDatap->at(0)); 
   //  std::cout << " imagData 0 " << imNVoxXY*imNVoxZ << " " << imNVoxX << " " << imNVoxY << " " << imNVoxXY << " " << imNVoxZ << std::endl; //GDEB
-  //  std::string hisName = DicomVImage::GetModalityStr( image->GetModality() ).substr(4,999)+"_XZ";
-  //  std::string hisName = image->GetName()+"_XZ";
-
+  //  std::string hisName2 = DicomVImage::GetModalityStr( image->GetModality() ).substr(4,999)+"_XZ";
+  //  std::string hisName2 = image->GetName()+"_XZ";
+  std::string hisName1All = GmGenUtils::ReplaceChar(image->GetName()+"_XZ"+extraFileName,'/',':');
+  if(hisName1All.find("_2D") != std::string::npos ) {
+    hisName1All.replace(hisName1All.find("_2D"), 3, "_1D.ALL");
+  }
+  TH1F* his1All = 0;
+  if ( bDrawHisto1 ) his1All = new TH1F(hisName1All.c_str(), hisName1All.c_str(), 100, 0., thePaletteMax );
+  
+  theImageFormat = DicomParameterMgr::GetInstance()->GetStringValue("imageFormat","jpg");
   for( size_t iy = 0; iy < imNVoxY; iy++ ) {
     G4String ystr;
+
+    ystr = GmGenUtils::ftoa(imMinY+(iy+0.5)*imWidthY);
     if( bRotateXY180 ) {
       ystr = GmGenUtils::ftoa(imMaxY-(iy+0.5)*imWidthY);
     } else {
       ystr = GmGenUtils::ftoa(imMinY+(iy+0.5)*imWidthY);
     }
-    std::string hisName = image->GetName()+"_XZ"+extraFileName+"_"+ystr;
+    std::string hisName2 = GmGenUtils::ReplaceChar(image->GetName()+"_XZ"+extraFileName+"_"+ystr,'/',':');
+    TH2F* his2 = new TH2F(hisName2.c_str(), hisName2.c_str(), imNVoxX, imMinX, imMaxX, imNVoxZ, imMinZ, imMaxZ );
+    G4String hisName1 = hisName2;
+    if( hisName1.find("_2D") != std::string::npos ) {
+      hisName1.replace(hisName1.find("_2D"), 3, "_1D");
+    }
+    TH1F* his1 = 0; 
+    if ( bDrawHisto1 ) his1 = new TH1F(hisName1.c_str(), hisName1.c_str(), 100, 0., thePaletteMax );
     imgData = imgData0 + iy*imNVoxX;
-    TH2F* his = new TH2F(hisName.c_str(), hisName.c_str(), imNVoxX, imMinX, imMaxX, imNVoxZ, imMinZ, imMaxZ);
     gStyle->SetOptTitle(bFigureTitle);
+    
     for( size_t iz = 1; iz <= imNVoxZ; iz++ ) {
       for( size_t ix = 1; ix <= imNVoxX; ix++ ) {
 	//	size_t copyNo = (ix-1) + iy*imNVoxX + (iz-1)*imNVoxXY;
@@ -516,16 +617,20 @@ void DicomDrawerROOT::DrawXZ( DicomVImage* image, std::vector<DicomVLineSet*> li
 	  data = GetValueSurrounding(ix-1,iy,iz-1, data, image, imgDatap);
 	}
 	if( data > thePaletteMin ) {
-	  his->SetBinContent(ix,iz,data);
+	  his2->SetBinContent(ix,iz,data);
 	} else {
-	  his->SetBinContent(ix,iy,thePaletteMin);
+	  his2->SetBinContent(ix,iy,thePaletteMin);
 	}
-#ifndef GAMOS_NO_VERBOSE
+	if ( bDrawHisto1 ) {
+	  if( !bNonZero || data != 0. ) his1->Fill(data);
+	  if (data != 0. ) his1All->Fill(data);
+	}
+	/*#ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(testVerb) ) {
 	//	if( data != 0 )	G4cout << "XZDATA " << (ix-1)+(iy)*imNVoxX+(iz-1)*imNVoxX*imNVoxY << ": " << data << " " << ix-1 << " " << iy << " " << iz-1 << " : " << imMinX+(ix-1.5)*image->GetVoxelDimX() << "  " << imMinY+(iy-0.5)*image->GetVoxelDimY() << "  " << imMinZ+(iz+1.5)*image->GetVoxelDimZ() << G4endl; //GDEB
 	  if( data != 0 ) G4cout << " DrawerROOT XZ " << ix-1 << " " << iy << " " << iz-1 << " = " << data << G4endl;
 	}
-#endif
+	#endif */
 	imgData ++;
       }
       imgData += imNVoxXY - imNVoxX;
@@ -533,32 +638,33 @@ void DicomDrawerROOT::DrawXZ( DicomVImage* image, std::vector<DicomVLineSet*> li
     //  std::cout << iz << " imagData Z " << imgData-imgData0 << std::endl; //GDEB
 
     canvas->Draw();
+    if( thePaletteMin != -DBL_MAX ) his2->SetMinimum(thePaletteMin);
+    if( thePaletteMax != DBL_MAX ) his2->SetMaximum(thePaletteMax);
     gStyle->SetOptStat(0);
-    if( thePaletteMin != -DBL_MAX ) his->SetMinimum(thePaletteMin);
-    if( thePaletteMax != DBL_MAX ) his->SetMaximum(thePaletteMax);
-    his->Draw("colz");
+    his2->Draw("colz");
+    gPad->Update();
     if( bRotateXY180 ) {
-      his->GetXaxis()->SetLabelOffset(9999);
-      his->GetXaxis()->SetTickLength(0);
+      his2->GetXaxis()->SetLabelOffset(9999);
+      //      his2->GetXaxis()->SetTickLength(0);
       TGaxis* newXaxis = new TGaxis(gPad->GetUxmax(), gPad->GetUymin(), gPad->GetUxmin(), gPad->GetUymin(),
-				    his->GetXaxis()->GetXmin(), his->GetXaxis()->GetXmax(),
+				    his2->GetXaxis()->GetXmin(), his2->GetXaxis()->GetXmax(),
 				    510,"-");
       newXaxis->SetLabelOffset(0.01);
       newXaxis->SetLabelSize(0.03);
       newXaxis->Draw();
 
-      his->GetYaxis()->SetLabelOffset(9999);
-      his->GetYaxis()->SetTickLength(0);
+      his2->GetYaxis()->SetLabelOffset(9999);
+      //      his2->GetYaxis()->SetTickLength(0);
       double xmin = gPad->GetUxmin();
      //      double xmin = gPad->GetUxmin()-(gPad->GetUxmax()-gPad->GetUxmin)/20.;
       TGaxis* newYaxis = new TGaxis(xmin, gPad->GetUymin(), xmin, gPad->GetUymax(),
-				    his->GetYaxis()->GetXmin(), his->GetYaxis()->GetXmax(),
+				    his2->GetYaxis()->GetXmin(), his2->GetYaxis()->GetXmax(),
 				    510,"-");
       newYaxis->SetLabelOffset(0.01);      
       newYaxis->SetLabelSize(0.03);
       newYaxis->SetTextFont(20);
       newYaxis->Draw();
-      //      G4cout << " XAXIS " << gPad->GetUxmax() << " " << gPad->GetUymin() << " " << gPad->GetUxmin() << " " << gPad->GetUymin() << " " << his->GetXaxis()->GetXmin() << " " << his->GetXaxis()->GetXmax() << G4endl; //GDEB
+      //      G4cout << " XAXIS " << gPad->GetUxmax() << " " << gPad->GetUymin() << " " << gPad->GetUxmin() << " " << gPad->GetUymin() << " " << his2->GetXaxis()->GetXmin() << " " << his2->GetXaxis()->GetXmax() << G4endl; //GDEB
     } 
 
     //--- Draw lines
@@ -571,20 +677,59 @@ void DicomDrawerROOT::DrawXZ( DicomVImage* image, std::vector<DicomVLineSet*> li
       DrawLinesXZ( lineSets[ils], imMinY+iy*imWidthY, imMinY+(iy+1)*imWidthY);
     }
     
-    std::string jpgName = "his"+hisName+"."+theImageFormat;
-    canvas->Print(jpgName.c_str()); 
+    std::string figName = "his"+hisName2+"."+theImageFormat;
+    canvas->Print(figName.c_str()); 
     if( theOutputFile ) {
       theOutputFile->cd();
-      his->Write();
+      his2->Write();
+      //      G4cout << " WRITE HISTO his2XZ " << his2->GetName() << G4endl; //GDEB
     }
-    delete his;
+    delete his2;
+
+    if ( bDrawHisto1 ) {
+      if( theOutputFile ) {
+	theOutputFile->cd();
+	his1->Write();
+      }
+      gStyle->SetOptStat(111111);
+      his1->Draw("");
+      figName = "his"+G4String(his1->GetName())+"."+theImageFormat;
+      canvas->Print(figName.c_str());
+      delete his1;
+    }
+
   }
 
+  if ( bDrawHisto1 ) {
+    if( theOutputFile ) {
+      theOutputFile->cd();
+      his1All->Write();
+    }
+    //    G4cout << " WRITE HISTO his1All " << his1All->GetName() << G4endl; //GDEB
+    his1All->Draw("");
+    std::string figName = "his"+G4String(his1All->GetName())+"."+theImageFormat;
+    canvas->Print(figName.c_str());
+    delete his1All;
+  }  
 }
 
 //-----------------------------------------------------------------------------
-void DicomDrawerROOT::DrawYZ( DicomVImage* image, std::vector<DicomVLineSet*> lineSets, G4String extraFileName )
+void DicomDrawerROOT::DrawYZ( DicomVImage* image, std::vector<DicomVLineSet*> lineSets, G4String extraFileName, G4bool bNonZero )
 {
+  if( theReflectYImages.find(image) == theReflectYImages.end() ) {
+    if( bReflectY ) {
+      std::vector<DicomVOperator*> operators = DicomMgr::GetInstance()->GetOperators();
+      DicomOperReflectY* rotateOper = 0;
+      for( size_t ii = 0; ii < operators.size(); ii++ ) {
+	if( dynamic_cast<DicomOperReflectY*>(operators[ii]) != 0 ) {
+	  rotateOper = dynamic_cast<DicomOperReflectY*>(operators[ii]);
+	  break;
+	}
+      }
+      rotateOper->Operate(image);
+      theReflectYImages.insert(image);
+    }
+  }
   if( theRotateXY180Images.find(image) == theRotateXY180Images.end() ) {
     if( bRotateXY180 ) {
       std::vector<DicomVOperator*> operators = DicomMgr::GetInstance()->GetOperators();
@@ -624,17 +769,37 @@ void DicomDrawerROOT::DrawYZ( DicomVImage* image, std::vector<DicomVLineSet*> li
   G4double* imgData = &(imgDatap->at(0));
   G4double* imgData0 = &(imgDatap->at(0)); //GDEB
   //  std::cout << " imagData 0 " << imNVoxXY*imNVoxZ << " " << imNVoxX << " " << imNVoxY << " " << imNVoxXY << " " << imNVoxZ << std::endl; //GDEB
-  //  std::string hisName = DicomVImage::GetModalityStr( image->GetModality() ).substr(4,999)+"_YZ";
+  //  std::string hisName2 = DicomVImage::GetModalityStr( image->GetModality() ).substr(4,999)+"_YZ";
+  std::string hisName1All = GmGenUtils::ReplaceChar(image->GetName()+"_YZ"+extraFileName,'/',':');
+  if(hisName1All.find("_2D") != std::string::npos ) {
+    hisName1All.replace(hisName1All.find("_2D"), 3, "_1D.ALL");
+  }
+  TH1F* his1All = 0;
+  if ( bDrawHisto1 ) his1All = new TH1F(hisName1All.c_str(), hisName1All.c_str(), 100, 0., thePaletteMax );
+
+  theImageFormat = DicomParameterMgr::GetInstance()->GetStringValue("imageFormat","jpg");
   for( size_t ix = 0; ix < imNVoxX; ix++ ) {
     imgData = imgData0 + ix;
     G4String xstr; 
+    if( bReflectY ) {
+      xstr = GmGenUtils::ftoa(imMaxX-(ix+0.5)*imWidthX);
+    } else {
+      xstr = GmGenUtils::ftoa(imMinX+(ix+0.5)*imWidthX);
+    }      
     if( bRotateXY180 ) {
       xstr = GmGenUtils::ftoa(imMaxX-(ix+0.5)*imWidthX);
     } else {
       xstr = GmGenUtils::ftoa(imMinX+(ix+0.5)*imWidthX);
     }      
-    std::string hisName = image->GetName()+"_YZ"+extraFileName+"_"+xstr;
-    TH2F* his = new TH2F(hisName.c_str(), hisName.c_str(), imNVoxY, imMinY, imMaxY, imNVoxZ, imMinZ, imMaxZ );
+    std::string hisName2 = GmGenUtils::ReplaceChar(image->GetName()+"_YZ"+extraFileName+"_"+xstr,'/',':');
+    TH2F* his2 = new TH2F(hisName2.c_str(), hisName2.c_str(), imNVoxY, imMinY, imMaxY, imNVoxZ, imMinZ, imMaxZ );
+    G4String hisName1 = hisName2;
+    if( hisName1.find("_2D") != std::string::npos ) {
+      hisName1.replace(hisName1.find("_2D"), 3, "_1D");
+    }
+    TH1F* his1 = 0; 
+    if ( bDrawHisto1 ) his1 = new TH1F(hisName1.c_str(), hisName1.c_str(), 100, 0., thePaletteMax );
+    
     gStyle->SetOptTitle(bFigureTitle);
 
     for( size_t iz = 1; iz <= imNVoxZ; iz++ ) {
@@ -644,17 +809,20 @@ void DicomDrawerROOT::DrawYZ( DicomVImage* image, std::vector<DicomVLineSet*> li
 	  data = GetValueSurrounding(ix,iy-1,iz-1, data, image, imgDatap);
 	}
 	if( data > thePaletteMin ) {
-	  his->SetBinContent(iy,iz,data);
+	  his2->SetBinContent(iy,iz,data);
 	} else {
-	  his->SetBinContent(ix,iy,thePaletteMin);
+	  his2->SetBinContent(ix,iy,thePaletteMin);
 	}
-	//	size_t copyNo = ix + (iy-1)*imNVoxX + (iz-1)*imNVoxXY;
+	if ( bDrawHisto1 ) {
+	  if( !bNonZero || data != 0. ) his1->Fill(data);
+	  if (data != 0. ) his1All->Fill(data);
+	}	//	size_t copyNo = ix + (iy-1)*imNVoxX + (iz-1)*imNVoxXY;
 	//	if( copyNo != imgData-imgData0 ) G4cout << " !!ERROR  " << ix << " " << iy-1 << " " << iz-1 << " " << copyNo << " imagData " << imgData-imgData0 << std::endl; //GDEB
-#ifndef GAMOS_NO_VERBOSE
+	/*#ifndef GAMOS_NO_VERBOSE
 	if( DicomVerb(testVerb) ) {
 	  if( data != 0 ) G4cout << " DrawerROOT YZ " << ix << " " << iy-1 << " " << iz-1 << " = " << data << G4endl;
 	}
-#endif
+	#endif*/
 	imgData += imNVoxX;
       }
       //      imgData += imNVoxXY - ;
@@ -663,40 +831,70 @@ void DicomDrawerROOT::DrawYZ( DicomVImage* image, std::vector<DicomVLineSet*> li
     //  std::cout << iz << " imagData Z " << imgData-imgData0 << std::endl; //GDEB
 
     canvas->Draw();
+    if( thePaletteMin != -DBL_MAX ) his2->SetMinimum(thePaletteMin);
+    if( thePaletteMax != DBL_MAX ) his2->SetMaximum(thePaletteMax);
     gStyle->SetOptStat(0);
-    if( thePaletteMin != -DBL_MAX ) his->SetMinimum(thePaletteMin);
-    if( thePaletteMax != DBL_MAX ) his->SetMaximum(thePaletteMax);
-    his->Draw("colz");
+    his2->Draw("colz");
+    gPad->Update();
 
-    if( bRotateXY180 ) {
-      his->GetXaxis()->SetLabelOffset(9999);
-      his->GetXaxis()->SetTickLength(0);
+    if( bReflectY ) {
+      his2->GetXaxis()->SetLabelOffset(9999);
+      //      his2->GetXaxis()->SetTickLength(0);
       double ymin = gPad->GetUymin()*1.;
       TGaxis* newXaxis = new TGaxis(gPad->GetUxmax(), ymin, gPad->GetUxmin(), ymin,
-				    his->GetXaxis()->GetXmin(), his->GetXaxis()->GetXmax(),
+				    his2->GetXaxis()->GetXmin(), his2->GetXaxis()->GetXmax(),
 				    510,"-");
-      //      G4cout << "XZ XAXIS " << gPad->GetUxmax() << " " << gPad->GetUymin() << " " << gPad->GetUxmax() << " " << gPad->GetUymin() << " " << his->GetXaxis()->GetXmin() << " " << his->GetXaxis()->GetXmax() << G4endl; //GDEB
+      //      G4cout << "XZ XAXIS " << gPad->GetUxmax() << " " << gPad->GetUymin() << " " << gPad->GetUxmax() << " " << gPad->GetUymin() << " " << his2->GetXaxis()->GetXmin() << " " << his2->GetXaxis()->GetXmax() << G4endl; //GDEB
       newXaxis->SetLabelOffset(0.01);
       newXaxis->SetLabelSize(0.03);
       newXaxis->Draw();
- 
-      his->GetYaxis()->SetLabelOffset(9999);
-      his->GetYaxis()->SetTickLength(0);
+      his2->GetYaxis()->SetLabelOffset(9999);
+      //      his2->GetYaxis()->SetTickLength(0);
       double xmin = gPad->GetUxmin();
      //      double xmin = gPad->GetUxmin()-(gPad->GetUxmax()-gPad->GetUxmin)/20.;
       TGaxis* newYaxis = new TGaxis(xmin, gPad->GetUymin(), xmin, gPad->GetUymax(),
-				    his->GetYaxis()->GetXmin(), his->GetYaxis()->GetXmax(),
+				    his2->GetYaxis()->GetXmin(), his2->GetYaxis()->GetXmax(),
 				    510,"-");
       newYaxis->SetLabelOffset(+0.01);      
       newYaxis->SetLabelSize(0.03);
       newYaxis->SetTextFont(20);
       newYaxis->Draw();
 
-      //      G4cout << " YAXIS " << gPad->GetUymax() << " " << gPad->GetUxmin() << " " << gPad->GetUymin() << " " << gPad->GetUxmin() << " " << his->GetYaxis()->GetXmin() << " " << his->GetYaxis()->GetXmax() << G4endl; //GDEB
+      //      G4cout << " YAXIS " << gPad->GetUymax() << " " << gPad->GetUxmin() << " " << gPad->GetUymin() << " " << gPad->GetUxmin() << " " << his2->GetYaxis()->GetXmin() << " " << his2->GetYaxis()->GetXmax() << G4endl; //GDEB
+    } 
+    if( bRotateXY180 ) {
+      his2->GetXaxis()->SetLabelOffset(9999);
+      //      his2->GetXaxis()->SetTickLength(0);
+      double ymin = gPad->GetUymin()*1.;
+      TGaxis* newXaxis = new TGaxis(gPad->GetUxmax(), ymin, gPad->GetUxmin(), ymin,
+				    his2->GetXaxis()->GetXmin(), his2->GetXaxis()->GetXmax(),
+				    510,"-");
+      //      G4cout << "XZ XAXIS " << gPad->GetUxmax() << " " << gPad->GetUymin() << " " << gPad->GetUxmax() << " " << gPad->GetUymin() << " " << his2->GetXaxis()->GetXmin() << " " << his2->GetXaxis()->GetXmax() << G4endl; //GDEB
+      newXaxis->SetLabelOffset(0.01);
+      newXaxis->SetLabelSize(0.03);
+      newXaxis->Draw();
+      his2->GetYaxis()->SetLabelOffset(9999);
+      //      his2->GetYaxis()->SetTickLength(0);
+      double xmin = gPad->GetUxmin();
+     //      double xmin = gPad->GetUxmin()-(gPad->GetUxmax()-gPad->GetUxmin)/20.;
+      TGaxis* newYaxis = new TGaxis(xmin, gPad->GetUymin(), xmin, gPad->GetUymax(),
+				    his2->GetYaxis()->GetXmin(), his2->GetYaxis()->GetXmax(),
+				    510,"-");
+      newYaxis->SetLabelOffset(+0.01);      
+      newYaxis->SetLabelSize(0.03);
+      newYaxis->SetTextFont(20);
+      newYaxis->Draw();
+
+      //      G4cout << " YAXIS " << gPad->GetUymax() << " " << gPad->GetUxmin() << " " << gPad->GetUymin() << " " << gPad->GetUxmin() << " " << his2->GetYaxis()->GetXmin() << " " << his2->GetYaxis()->GetXmax() << G4endl; //GDEB
     } 
 
     //--- Draw lines
     for( size_t ils = 0; ils < lineSets.size(); ils++ ) {
+      if( bReflectY && !lineSets[ils]->HasBeenRotatedXY180() ) {
+	G4ThreeVector imgCentre = image->GetCentre();
+	lineSets[ils]->ReflectY( imgCentre );
+	lineSets[ils]->SetHasBeenRotatedXY180( true );
+      }
       if( bRotateXY180 && !lineSets[ils]->HasBeenRotatedXY180() ) {
 	G4ThreeVector imgCentre = image->GetCentre();
 	lineSets[ils]->RotateXY180( 180.*CLHEP::deg, imgCentre );
@@ -705,15 +903,40 @@ void DicomDrawerROOT::DrawYZ( DicomVImage* image, std::vector<DicomVLineSet*> li
       DrawLinesYZ( lineSets[ils], imMinX+ix*imWidthX, imMinX+(ix+1)*imWidthX);
     }
     
-    std::string jpgName = "his"+hisName+"."+theImageFormat;
-    canvas->Print(jpgName.c_str());
+    std::string figName = "his"+hisName2+"."+theImageFormat;
+    canvas->Print(figName.c_str());
     if( theOutputFile ) {
       theOutputFile->cd();
-      his->Write();
+      his2->Write();
+      //      G4cout << " WRITE HISTO his2YZ " << his2->GetName() << G4endl; //GDEB
     }
-    delete his;
-  }
+    delete his2;
+    if ( bDrawHisto1 ) {
+      if( theOutputFile ) {
+	theOutputFile->cd();
+	his1->Write();
+      }
+      gStyle->SetOptStat(111111);
+      his1->Draw("");
+      figName = "his"+G4String(his1->GetName())+"."+theImageFormat;
+      canvas->Print(figName.c_str());
+      delete his1;
+    }
 
+  }
+  
+  if ( bDrawHisto1 ) {
+    if( theOutputFile ) {
+      theOutputFile->cd();
+      his1All->Write();
+    }
+    //    G4cout << " WRITE HISTO his1All " << his1All->GetName() << G4endl; //GDEB
+    his1All->Draw("");
+    std::string figName = "his"+G4String(his1All->GetName())+"."+theImageFormat;
+    canvas->Print(figName.c_str());
+    delete his1All;
+  }
+  
 }
 
 //-----------------------------------------------------------------------------
@@ -738,6 +961,15 @@ void DicomDrawerROOT::DrawLinesYZ( DicomVLineSet* lineSet, G4double minX, G4doub
 //-----------------------------------------------------------------------------
 void DicomDrawerROOT::DrawLines( DicomVLineSet* lineSet, G4double minPos, G4double maxPos, size_t ix, size_t iy, DPOrientation orient)
 {
+  theLineDrawingOptions = DicomMgr::GetInstance()->GetLineDrawingOptions();
+  //  G4cout << "DICOMDrawerROOT theLineDrawingOptions " << theLineDrawingOptions.size()<< G4endl; //GDEB 
+  if( theLineDrawingOptions.size() == 0 ) {
+    bLineDrawingOptions = false;
+  } else {
+    bLineDrawingOptions = true;
+  }
+
+
   if( DicomVerb(debugVerb) ) {
     G4cout << " DicomDrawerROOT::DrawLines lineSet " << lineSet->GetName() << " " << DicomVLine::GetOrientationName(lineSet->GetOrientation()) << " =? " << DicomVLine::GetOrientationName(orient) << G4endl; 
   }  
@@ -779,14 +1011,17 @@ void DicomDrawerROOT::DrawLines( DicomVLineSet* lineSet, G4double minPos, G4doub
 //-----------------------------------------------------------------------------
 void DicomDrawerROOT::DrawLineColorAndStyle( TLine* line, G4String name, G4bool bDrawText )
 {
-  if( DicomVerb(debugVerb) ) G4cout << " DicomDrawerROOT::DrawLineColorAndStyle(  LINE " << name << " bDrawText " << bDrawText << G4endl; //GDEB
+  if( DicomVerb(debugVerb) ) G4cout << " DicomDrawerROOT::DrawLineColorAndStyle(  LINE " << name << " bDrawText " << bDrawText << G4endl;
   // set line colors
   // if( !bLineDrawingOptions = false ) return; // take default options
   DicomLineDrawingOptions* ldo; 
  
-  msldo::const_iterator ite;
+  vpsldo::const_iterator ite;
   for( ite = theLineDrawingOptions.begin(); ite != theLineDrawingOptions.end(); ite++ ) {
+    if( DicomVerb(testVerb) ) G4cout << " CHECK theLineDrawingOptions " <<  ite->first << " == " << name << G4endl; 
+  
     if( GmGenUtils::AreWordsEquivalent( ite->first, name ) ) {
+      if( DicomVerb(debugVerb) ) G4cout << " theLineDrawingOptions.begin FOUND " <<  ite->first << " == " << name << G4endl; 
       break;
     }
   }
@@ -794,7 +1029,7 @@ void DicomDrawerROOT::DrawLineColorAndStyle( TLine* line, G4String name, G4bool 
     ldo = (*ite).second;
     //  } else if( !bLineDrawingOptions ) {
     // ldo = new DicomLineDrawingOptions;// default options
-    // G4cout << " LINE NOT FOUND " << name << " NEW " << ldo->GetOption() << " " << ldo->GetTColor() << " " << ldo->GetWidth() << G4endl; //GDEB
+    //    G4cout << " LINE NOT FOUND " << name << " NEW " << ldo->GetOption() << " " << ldo->GetTColor() << " " << ldo->GetWidth() << G4endl; //GDEB
   } else {
     ldo = new DicomLineDrawingOptions;// default options
 // return;
@@ -807,6 +1042,7 @@ void DicomDrawerROOT::DrawLineColorAndStyle( TLine* line, G4String name, G4bool 
     line->SetLineStyle(ldo->GetStyle());
     line->SetLineWidth(ldo->GetWidth());
     line->Draw();
+    //    G4cout << " DRAW LINE " << name <<" "<< line->GetX1() << ", " << line->GetY1() << G4endl; //GDEB
   }
   //  G4cout << " DRAW LINE " << name <<" "<< line->GetX1() << ", " << line->GetY1() << G4endl; //GDEB
 

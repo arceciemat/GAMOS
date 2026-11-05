@@ -1,0 +1,2 @@
+:P DIM 10*m/2.
+:VOLU world BOX $DIM $DIM $DIM G4_WATER

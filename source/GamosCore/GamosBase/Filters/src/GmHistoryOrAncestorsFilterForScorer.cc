@@ -143,7 +143,7 @@ G4bool GmHistoryOrAncestorsFilterForScorer::AcceptStep(const G4Step* aStep)
       }
       gmTrkInfo2->SetIntValue("HistoryOrAncestors"+theFilterName,ancestorLevel,false);
       secos[ii]->SetUserInformation(gmTrkInfo2);
-      //      G4cout << " SetUserInformation " <<  secos[ii] << " : "<< gmTrkInfo2 << G4endl; //GDEB
+      G4cout << " SetUserInformation " << "HistoryOrAncestors"+theFilterName << " " << ancestorLevel << " to " << secos[ii] << "  "<< gmTrkInfo2 << G4endl; //GDEB
     } 
   }
     

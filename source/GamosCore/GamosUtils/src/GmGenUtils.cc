@@ -811,15 +811,15 @@ G4double GmGenUtils::InterpolateLinLin( G4double indexVal, std::map<G4double,G4d
 {
 
   std::map<G4double,G4double>::const_iterator iteDown, iteUp;
+  // Below range: return first value
+  if (indexVal <= dataMap.begin()->first)
+    return dataMap.begin()->second;
+  // Above range: return last value
+  if (indexVal >= dataMap.rbegin()->first)
+      return dataMap.rbegin()->second;
+  
   iteUp = dataMap.upper_bound(indexVal);
-  if( iteUp == dataMap.end() ) { 
-    return (*iteUp).second;
-  } else {
-    iteDown = iteUp;
-    if( iteUp != dataMap.begin() ) { 
-      iteDown--;
-    }
-  }
+  iteDown = std::prev(iteUp);
 
   G4double indexDown = (*iteDown).first;
   G4double indexUp = (*iteUp).first;
@@ -1071,4 +1071,17 @@ G4String GmGenUtils::ReplaceAll(const G4String& input,
   }
 
   return result;
+}
+
+//------------------------------------------------------------------------
+G4String GmGenUtils::ReplaceChar(const G4String input, char char1, char char2 )
+{
+  G4String output = input;
+for (char &c : output) {
+        if (c == char1) {
+            c = char2;
+        }
+    }
+    return output;
+
 }

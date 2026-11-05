@@ -20,11 +20,30 @@ histoFile = csvHistoReader(fileName)
 if verbose >= 3 : print("fInName=",fInName)
 pointX = float(sys.argv[2])
 histoName = ""
+bY = False
+print("NAR",len(sys.argv))
 if len(sys.argv) == 4 :
-    histoName = sys.argv[3]
+    pointY = float(sys.argv[3])
+    bY = True
+if len(sys.argv) >= 5 :
+    if sys.argv[3] == '-hn' :
+        histoName = sys.argv[4]
+if len(sys.argv) >= 6 :
+    pointY = float(sys.argv[3])
+    bY = True
+    if sys.argv[4] == '-hn' :
+        histoName = sys.argv[5]
     
 for his1 in histoFile.fHistos1D:
     if histoName == "" or his1.name.find(histoName) != -1 :
         #print("#### getValueAtPoint",pointX,his1.xmin,his1.xmax)
         data,dataErr = his1.GetLinearInterpolatedValue(pointX)
         print(his1.name," VALUE_AT",pointX,"=",data,"+-",dataErr)
+
+
+if bY :
+    for his2 in histoFile.fHistos2D:
+        if histoName == "" or his2.name.find(histoName) != -1 :
+            #print("#### getValueAtPoint",pointX,his1.xmin,his1.xmax)
+            data,dataErr = his2.GetLinearInterpolatedValue(pointX,pointY)
+            print(his2.name," VALUE_AT",pointX,pointY,"=",data,"+-",dataErr)

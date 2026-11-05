@@ -14,7 +14,7 @@ public:
 
   void AddInfo(DcmTagKey tagKey, G4String value);
   
-  G4String GetInfo(DcmTagKey tagKey, G4bool bMustExist = false) const;
+  G4String GetInfo(DcmTagKey tagKey, G4bool bMustExist = true) const;
   std::map<DcmTagKey,G4String> GetInfos() {
     return theInfos;
   }

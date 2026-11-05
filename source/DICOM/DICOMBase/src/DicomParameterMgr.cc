@@ -8,6 +8,7 @@
 #include "DicomOperLogN.hh"
 #include "DicomOperPrintMax.hh"
 #include "DicomOperPrintValueAtPoint.hh"
+#include "DicomOperReflectY.hh"
 #include "DicomOperRotateXY180.hh"
 
 #include "DicomVerbosity.hh"
@@ -16,10 +17,10 @@
 #include "GamosCore/GamosBase/Base/include/GmVVerbosity.hh"
 #include "GamosCore/GamosReadDICOM/include/GmReadPhantomStMgr.hh"
 
-//----------------------------------------------------------------------
-//DicomParameterMgr* DicomParameterMgr::theInstance = 0; //use the on from GmparameterMgr
-//----------------------------------------------------------------------
-/*DicomParameterMgr* DicomParameterMgr::GetInstance()
+/*//----------------------------------------------------------------------
+DicomParameterMgr* DicomParameterMgr::theInstance = 0; //use the on from GmparameterMgr
+//---------------------------------------------------------------------
+DicomParameterMgr* DicomParameterMgr::GetInstance()
 {
   if( !theInstance ) {
     theInstance = new DicomParameterMgr;
@@ -27,8 +28,8 @@
 
   return theInstance;
   
-  }
-*/
+  }*/
+
 //----------------------------------------------------------------------
 DicomParameterMgr::DicomParameterMgr()
 {
@@ -41,11 +42,13 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
 
   G4bool bResize = false;
   G4bool bExtendAir = false;
-  G4bool bRotateXY180 = false; 
- 
+  G4bool bReflectYSet = false;
+  G4bool bRotateXY180Set = false; 
+
   G4String argvstr = argv[iPar];
   G4String argvstr1 = argv[iPar+1];
   G4String argvName = argvstr.substr(1,999);
+  //??  theDICOMImageFileNames.emplace("dd","ds"); // STORE FILE NAMES IN ORDER
   if( argvstr == "-verb" || argvstr == "-verbose" ) {
     G4String verbstr = G4String(argvstr1);
     if(verbstr == "test" ) {
@@ -98,8 +101,9 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
 	     argvstr == "-fInterfile" ||
 	     argvstr == "-fTextLines" ) {
     //    if( IsParameterInScript(argvName) { 
+    //    theDICOMImageFileNames.emplace("dd","ds"); // STORE FILE NAMES IN ORDER
     std::vector<G4String> fileNames;
-    fileNames = GetVStringValue(argvName,fileNames);
+    fileNames = GetVStringValue(argvName,fileNames); // check if there are more than one of the same type, to pass it to PTVString argument
     G4String argList;
     for( size_t ii = 0; ii < fileNames.size(); ii++ ) {
       argList += fileNames[ii] + " ";
@@ -110,12 +114,19 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
     //    std::vector<G4String> files;
     //    GetVStringValue("fSqdose",files);
     //-    G4cout << " N SQdose " << files.size();
-    //-    PrintParametersUsage(99);
+    //    PrintParametersUsage(99); //GDEB
+    G4cout << " ADD FILENAMES " << addPstr << " " << PTVstring << "   " << argvstr << " " << argvstr1 << G4endl; //GDEB
+    theDICOMImageFileNames.emplace(argvstr.substr(1,9999),argvstr1); // STORE FILE NAMES IN ORDER
+  } else if( argvstr == "-fRTStruct" ||
+	     argvstr == "-fVOIStruct" ) {    
+    AddParam( argvName+ " " + argvstr1, PTstring );
+    G4cout << " ADD PARAM fRTStruct " <<argvName+ " zz " + argvstr1 <<  G4endl; //GDEB
+    theDICOMImageFileNames.emplace(argvstr.substr(1,9999),argvstr1); // STORE FILE NAMES IN ORDER
   } else if( argvstr == "-fOut" ||
-	     argvstr == "-fRTStruct" ||
-	     argvstr == "-fVOIStruct" ||
 	     argvstr == "-fDrawLines" ) {    
     AddParam( argvName+ " " + argvstr1, PTstring );
+    G4cout << " ADD PARAM fRTStruct " <<argvName+ " zz " + argvstr1 <<  G4endl; //GDEB
+    theDICOMImageFileNames.emplace(argvstr.substr(1,9999),argvstr1); // STORE FILE NAMES IN ORDER
   } else if( argvstr == "-multByNumber" ) {
     AddParam( argvName+ " " + argvstr1, PTdouble );
     new DicomOperMultByNumber(GmGenUtils::GetValue(argvstr1),1,"DicomOperMultByNumber");
@@ -128,10 +139,14 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
   } else if( argvstr == "-logN" ) {
     AddParam( argvName+ " " + argvstr1, PTdouble );
     new DicomOperLogN(GmGenUtils::GetValue(argvstr1),1,"DicomOperLogN");
-  } else if( argvstr == "-rotateXY" ) {
+  } else if( argvstr == "-reflectY" ) {
+    AddParam( argvName+ " " + argvstr1, PTdouble );
+    //    G4cout << " SetReflectY " << GmGenUtils::GetValue(argvstr1) << G4endl; //GDEB
+    bReflectYSet = true;
+  } else if( argvstr == "-rotateXY180" ) {
     AddParam( argvName+ " " + argvstr1, PTdouble );
     //    G4cout << " SetRotateXY180 " << GmGenUtils::GetValue(argvstr1) << G4endl; //GDEB
-    bRotateXY180 = true;
+    bRotateXY180Set = true;
   } else if( argvstr == "-printMax" ) {
     AddParam( argvName+ " " + argvstr1, PTdouble );
     if( argvstr1 == "1" ) {
@@ -144,7 +159,7 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
 		  FatalErrorInArgument,
 		  "You need to put three numbers after -printValueAtPoint");
 		  } */
-    AddParam( argvName+ " " + argvstr1 + " " + argv[iPar+2] + " " + argv[iPar+3], PTVdouble );    
+    AddParam( argvName+ " " + argvstr1 + " " + argv[iPar+2] + " " + argv[iPar+3], PTVdouble );
     G4ThreeVector pt( GmGenUtils::GetValue(argv[iPar+1]), GmGenUtils::GetValue(argv[iPar+2]), GmGenUtils::GetValue(argv[iPar+3]));
     new DicomOperPrintValueAtPoint( pt, 3, "DicomOperPrintValueAtPoint");
     iAddPar = 3;
@@ -176,10 +191,16 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
     //-if( DicomMgr::GetInstance()->FindOperator("DicomOperExtendAir") == 0 ) new DicomOperExtendAir(0,"DicomOperExtendAir");
   }
 
-  new DicomOperRotateXY180(180.,1,"DicomOperRotateXY180");
-  if( bRotateXY180 ) {
+  new DicomOperReflectY(1,"DicomOperReflectY");
+  if( bReflectYSet ) {
+    DicomMgr::GetInstance()->SetReflectY(GmGenUtils::GetValue(argvstr1));
+  }
+
+  if( bRotateXY180Set ) {
+    new DicomOperRotateXY180(180.,1,"DicomOperRotateXY180");
     DicomMgr::GetInstance()->SetRotateXY180(GmGenUtils::GetValue(argvstr1));
   }
+
 
   return iAddPar;
 }

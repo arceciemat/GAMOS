@@ -689,7 +689,7 @@ G4double GmPositionVolumePos::find_R(G4double a, G4double b, G4double c, G4doubl
  std::complex<G4double> b_2, b_3, a_2, CC, m, k, n, w1, w2;
  std::complex<G4double> the_i = std::complex<G4double>(0.,1.);
 
- G4double the_R;
+ G4double the_R = 0.;
  
  std::vector< std::complex<G4double> > ceros;
  

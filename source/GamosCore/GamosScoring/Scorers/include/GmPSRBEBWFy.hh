@@ -65,6 +65,6 @@ private:
   G4double theEnergyStep;
   G4double theEnergyStart;
   std::map<G4double,G4double> theLinealEnergy;
-  
+  G4bool b1StepInVoxel;
 };
 #endif

@@ -53,13 +53,15 @@ SHRadDecayChain::SHRadDecayChain( G4Ions* ion, SHRadDecayChainSet* set)
 {
   theIons.push_back( ion );
   theIonNames.push_back( ion->GetParticleName() );
+  //  G4cout << "N0 theInvLifeTimes " << theInvLifeTimes.size() << G4endl; //GDEB
   theInvLifeTimes.push_back( 1. / ion->GetPDGLifeTime() );
+  //  G4cout << this << " N1 theInvLifeTimes " << theInvLifeTimes.size() << G4endl; //GDEB
 
   theName = ion->GetParticleName();
   theBR = 1.;
   theBRs.push_back( 1. );
 #ifndef GAMOS_NO_VERBOSE
-  if( SHVerb(debugVerb) )  G4cout << " SHRadDecayChain::SHRadDecayChain  ion " << theName << " ION " << ion->GetParticleName() << " LIFETIME add " << ion->GetPDGLifeTime()/ CLHEP::second << " sec " << G4endl;
+  if( SHVerb(debugVerb) )  G4cout << " SHRadDecayChain::SHRadDecayChain  ion " << theName << " ION " << ion->GetParticleName() << " LIFETIME add " << ion->GetPDGLifeTime()/ CLHEP::second << " sec " << " theInvLifeTimes " << theInvLifeTimes[theInvLifeTimes.size()-1] << " " << theInvLifeTimes.size() << G4endl;
 #endif
 
 }
@@ -304,17 +306,19 @@ void SHRadDecayChain::PrintData( G4double endTime, std::ostream& out )
 
   G4double nAtomsPrev = GetNAtomsPrev( endTime );
   //--- Reset data per time
-  long double lambda = theInvLifeTimes[0];
+  //-!!  long double lambda = theInvLifeTimes[0];
+  G4double invLifeTime = theInvLifeTimes[theInvLifeTimes.size()-1]; // lifetime of last isotope in chain
+  long double lambda = invLifeTime;
   long double activity = nAtomsPrev * lambda *CLHEP::second; // activity is per second
   theActivities[endTime] = activity;
   //-  theNAtomsInTime[endTime] = nAtomsPrev;
   
-  //      G4cout << " activity " << activity << " NAtomsInTime " << NAtomsInTime << "  lambda " << lambda << " timeProduction " << timeProduction << " exp(-lambda*timeProduction) " << exp(-lambda*timeProduction) << G4endl;
+  //  G4cout << this << " activity " << activity << " nAtomsPrev " << nAtomsPrev << " *lambda " << lambda << " *second " << CLHEP::second << " N theInvLifeTimes " <<theInvLifeTimes.size() << " " <<  theInvLifeTimes[0] << " " << theInvLifeTimes[theInvLifeTimes.size()-1] << G4endl; //GDEB
   out << "%%% " << theSet->GetName()
       << std::setprecision(8) << "  TIME= " << endTime/CLHEP::second << " sec "
       << theName << " "
       << " ACTIVITY= " << activity << " decays/sec "
-      << " HALFLIFE= " << log(2.)/theInvLifeTimes[theInvLifeTimes.size()-1]/CLHEP::second << " sec "
+      << " HALFLIFE= " << log(2.)/invLifeTime/CLHEP::second << " sec "
       << " NATOMS_IN_JOB= " << GetNAtomsInJob() 
       << " NATOMS= " << nAtomsPrev
       << G4endl;

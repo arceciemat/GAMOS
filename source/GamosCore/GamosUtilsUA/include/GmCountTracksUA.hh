@@ -8,6 +8,10 @@
 class G4Run;
 class G4Event;
 class G4Track;
+#define CT_CPUTIME 1
+#ifdef  CT_CPUTIME
+#include "GmTimeStudyMgr.hh"
+#endif
 
 class GmCountTracksUA : public GmUserRunAction, 
 			public GmUserEventAction, 
@@ -25,6 +29,11 @@ private:
   G4int theNTracksThisEvent;
   G4int theEachNEvent;
   G4int theFirstEvent;
+
+#ifdef  CT_CPUTIME
+  GmTimeStudyUA* theTimeStudyUA;
+  G4bool bPrintTime;
+#endif
 
 };
 

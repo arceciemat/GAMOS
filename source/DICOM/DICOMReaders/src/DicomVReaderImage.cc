@@ -238,10 +238,9 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
     G4Exception("DicomVImageReader::ReadData",
 		"",
 		JustWarning,
-		"No DCM_NumberOfFrames tag found, setting it to number of PerFrameFunctionalGroupsSequence");
+		("No DCM_NumberOfFrames tag found, setting it to number of PerFrameFunctionalGroupsSequence: "+GmGenUtils::itoa(numberOfFrames)).c_str());
   }
 	
-  //  G4cout << " NUMBEROFFRAMES " << numberOfFrames << " " << numberOfFramesV.size() << G4endl; //GDEB
   /*
   Sint16 datai;
   theDataset->findAndGetSint16(DCM_NumberOfFrames,datai,0).good();
@@ -922,7 +921,7 @@ void DicomVReaderImage::CheckIsEquivalent(const DicomVReaderImage *rhs, G4bool b
 	     << "  Zmax= " << theMaxZ << " =? " << rhs->GetMaxZ()
 	     << G4endl;
       G4Exception("DicomVReaderImage::operator+","",
-		  FatalErrorInArgument,"");
+		  FatalErrorInArgument,"");      
     }
   }
   
@@ -991,7 +990,7 @@ DicomVImage* DicomVReaderImage::CreateImage(G4String name, DIModality modality, 
   }
   image->SetPrecision( image->GetPrecision()*min(min(GetVoxelDimX(),GetVoxelDimY()),GetVoxelDimZ()) );
   //  G4cout << " DicomVReaderImage::CreateImage PRECISION " << image->GetPrecision() << " " << GetVoxelDimX() << " " << GetVoxelDimY() << " " << GetVoxelDimZ() << G4endl; //GDEB
-  if( DicomVerb(debugVerb) ) G4cout << " DicomVReaderImage::CreateImage " << GetName() << " " << GetNoVoxelsX() << " " << GetNoVoxelsY() << " " << GetNoVoxelsZ() << G4endl; 
+  if( DicomVerb(debugVerb) ) G4cout << this << " DicomVReaderImage::CreateImage " << GetName() << " " << GetNoVoxelsX() << " " << GetNoVoxelsY() << " " << GetNoVoxelsZ() << " " << image->GetData()->size() << G4endl; 
   return image;
 }
 

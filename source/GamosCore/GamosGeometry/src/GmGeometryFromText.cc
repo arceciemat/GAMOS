@@ -83,7 +83,9 @@ G4VPhysicalVolume* GmGeometryFromText::Construct()
   // Construct the Geant4 parallel worlds
   //------------------------------------------------ 
   G4tgbParallelGeomMgr* parallelMgr = G4tgbParallelGeomMgr::GetInstance();
-  parallelMgr->SetWorldCreator( new GmParallelWorldCreator );
+  //  G4String parallelWorldName = "WORLDTEST";
+  //  parallelMgr->SetWorldCreator( new GmParallelWorldCreator(parallelWorldName) );
+  parallelMgr->SetWorldCreator( new GmParallelWorldCreator() );
   std::vector<G4VUserParallelWorld*> parallelWorlds = parallelMgr->CreateParalleWorlds();
   for( unsigned int ii = 0; ii < parallelWorlds.size(); ii++ ) {
     G4cout << " RegisterParallelWorld " << parallelWorlds[ii]->GetName() << G4endl;

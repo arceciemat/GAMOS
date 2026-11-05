@@ -29,6 +29,7 @@ public:
 
   DicomVImage operator=( const DicomVImage& rhs );
   DicomVImage operator!=( const DicomVImage& rhs );
+  G4bool operator==( const DicomVImage& rhs ); 
   void operator+=( const DicomVImage& rhs );
   DicomVImage operator+( const DicomVImage& rhs );
   DicomVImage operator*=( const G4double val );
@@ -161,7 +162,7 @@ public:
   virtual void DumpHeaderToTextFile(std::ostream& fout);
   virtual void DumpDataToTextFile(std::ostream& fout, G4bool bFloat = false);
   void DumpToSqdoseFile(FILE* fout, DicomVImage* errorImage = 0 );
-  void CheckImageHeadersAreEqual( const DicomVImage* img2 );
+  void CheckImageHeadersAreEqual( const DicomVImage* img2, G4bool bMustBeEqual = true );
 
   void DrawAssocLinesXY( G4bool bCloseFiles = 1 );
 

@@ -9,6 +9,9 @@ from scipy.stats import norm
 
 from checkPythonVersion import *
 from MyHistos import Histo1D
+import runpy
+
+import inspect
 
 #....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.
 def GetLeftRightErrors(data,sigmas) :
@@ -57,97 +60,131 @@ def GetLeftRightErrors(data,sigmas) :
 #histoData = pd.read_csv(sys.argv[1])
 checkPythonVersion()
 verbose = 0
+bLogY = False
 
 ### Manage arguments 
 fileName=""
+fileOutName = "hist1Column"
 icolumn = 0
+minX = sys.float_info.min
+maxX = sys.float_info.max
+nStepX = 100
+fdpi=100
+
 if len(sys.argv) == 2 :
     fileName = sys.argv[1]
 else :
-    for ii in range(1,len(sys.argv)) :
+    ii = 1
+    while ii < len(sys.argv):
         if sys.argv[ii] == "-f" :
             fileName = sys.argv[ii+1]
             bParamTypeFound = True
-            ii = ii+1
+            ii += 2
+        elif sys.argv[ii] == "-fOut" :
+            fileOutName = sys.argv[ii+1]
+            bParamTypeFound = True
+            ii += 2
         elif sys.argv[ii] == "-col" :
             icolumn = int(sys.argv[ii+1])
             bParamTypeFound = True
-            ii = ii+1
+            ii += 2
+        elif sys.argv[ii] == "-minX" :
+            minX = float(sys.argv[ii+1])
+            bParamTypeFound = True
+            ii += 2
+        elif sys.argv[ii] == "-maxX" :
+            maxX = float(sys.argv[ii+1])
+            bParamTypeFound = True
+            ii += 2
+        elif sys.argv[ii] == "-nStepX" :
+            nStepX = float(sys.argv[ii+1])
+            bParamTypeFound = True
+            ii += 2
+        elif sys.argv[ii] == "-logY" :
+            bLogY = bool(int(int(sys.argv[ii+1])))
+            bParamTypeFound = True
+            ii += 2
+        elif sys.argv[ii] == "-dpi" :
+            fdpi  = float(sys.argv[ii+1])
+            ii += 2
+        else :
+            print("!!! ERROR: PARAMETER NOT FOUND ",sys.argv[ii])
+            sys.exit()
+
+if nStepX == sys.maxsize :
+    nStepX = 100
+#sys.argv = ["getMeanRMS.py", fileName]
+#result = runpy.run_path("getMeanRMS.py", run_name="__main__")
 
 ### Read file
-file = open(fileName)
-
-lines = file.readlines()
-if lines[0][0:5] == ":DATA" : 
-    words = lines[0].rstrip().split()
+with open(fileName) as f:
+    firstLine = f.readline().strip()
+if firstLine.startswith(":DATA"):
+    words = firstLine.split()
     if len(words) < 2:
         print("!!! ERROR: first line must contain at least two words: ':DATA' <X_axis>, it is",lines[0])
         sys.exit()
-    XAxisName = words[1]
+    XAxisName = words[1] if len(words) > 1 else "data"
     line1st = 1
-else :
+else:
     XAxisName = "data"
     line1st = 0
     
-XPos = []
-XPosNP = np.array([])
-mean=0
-mean2=0
-nData=len(lines)
-for il in range(line1st,nData):
-    words = lines[il].rstrip().split()
-    if len(words) == 0 : continue
-    if il%10000 == 0:
-        print(il,icolumn,"Reading line",words)
-    print(il,icolumn,"Reading line",words[icolumn],words)        
-    val = float(words[icolumn])
-    XPos.append(val)
-    XPosNP = np.append(XPosNP,val)
-    mean += val
-    mean2 += val*val
-    # print(val,"mean1",mean,mean)#GDEB
-RMS = np.sqrt( (mean2*nData - mean*mean)/(nData-1))
-mean /= nData
-print("RMS",RMS,mean2*nData,"-",mean*mean,"/",nData-1)
-# Calculate the mean
-mean_value = sum(XPos) / len(XPos)
-# Calculate the sum of squared differences from the mean
-sum_squared_diff = sum((x - mean_value) ** 2 for x in XPos)
-# Calculate the mean of the squared differences
-mean_squared_diff = sum_squared_diff / len(XPos)
-# Calculate the square root of the mean of squared differences
-rms_value = mean_squared_diff ** 0.5
-print("RMS_VALUE",rms_value)    
+XPos = np.loadtxt(fileName, usecols=icolumn, comments=(':DATA','#'))
+nVals = XPos.size
+mean = XPos.mean()
+std = XPos.std(ddof=1) if nVals > 1 else 0.   # sample standard deviation
+sem = std / np.sqrt(nVals)                 # standard error of the mean
+rms = np.sqrt(np.mean(XPos**2))           # root mean square about zero
+print("MEAN=","{:.3f}".format(mean), "STD=", "{:.3f}".format(std), "RMS=", "{:.3f}".format(rms), "SEM=", "{:.3f}".format(sem), "N=", nVals)
 
-hist_values, bin_edges, _ = plt.hist(XPosNP, bins=50)
+if minX == sys.float_info.min or maxX == sys.float_info.max or nStepX == sys.maxsize :
+    hist_XPos, bin_edges, _ = plt.hist(XPos, bins=nStepX)
+    minX = bin_edges[0]
+    maxX = bin_edges[len(bin_edges)-1]
+else :
+    hist_XPos, bin_edges, _ = plt.hist(XPos, bins=int(nStepX), range=(minX,maxX))
+if bLogY : 
+    plt.yscale('log')
+
+his1 = Histo1D()
+his1.name = fileOutName
+print(inspect.signature(his1.FillFrom1List))
+#print("NSTEPX",nStepX)
+stepX = (maxX-minX)/nStepX
+minX -= stepX/2.
+maxX += stepX/2.
+his1.FillFrom1List(XPos,nVals,nStepX,minX,maxX)
+
 xmin = bin_edges[0]
-xmax = bin_edges[50]
-ymax = max(hist_values)
+xmax = bin_edges[nStepX]
+ymax = max(hist_XPos)
 #xmin,xmax = plt.xlim()
 xdiff=xmax-xmin
 #yy, xx, _ = plt.hist(hdata)
 #ymax = yy.max()
-npmean=XPosNP.mean()
-npsem=np.std(XPosNP)/nData
-print("NPmean",XPosNP.mean(),"+-",np.std(XPosNP)/nData,"rmsP=",np.sqrt(np.mean(XPosNP**2)),"rmsD=",RMS)
 
 plt.xlabel(XAxisName)
 plt.draw()
-print(bin_edges,"XLIM",xmin,xmax,xdiff,ymax)
-#print("N",len(bin_edges),nData)
-t2show = "N=  "+str(nData)
+#print(bin_edges,"XLIM",xmin,xmax,xdiff,ymax) #GDEB
+#print("N",len(bin_edges),nVals)
+t2show = "N=  "+str(nVals)
 plt.text(xmax-0.25*xdiff,ymax*0.98,t2show)
-t2show = "mean=  "+"{:.3g}".format(npmean)
+t2show = "mean=  "+"{:.3g}".format(mean)
 plt.text(xmax-0.25*xdiff,ymax*0.94,t2show)
-t2show = "SEM=   "+"{:.3g}".format(npsem)
+t2show = "SEM=   "+"{:.3g}".format(sem)
 plt.text(xmax-0.25*xdiff,ymax*0.9,t2show)
-t2show = "RMS   "+"{:.3g}".format(rms_value)
+t2show = "RMS   "+"{:.3g}".format(rms)
 plt.text(xmax-0.25*xdiff,ymax*0.86,t2show)
 
-plt.savefig("hist1Column.jpg")
+plt.savefig(fileOutName+".jpg",dpi=fdpi)
 
-#print("MEAN= ",mean,"RMS= ",RMS)
-print("MEAN= ",npmean,"RMS=",rms_value,"SEM= ",npsem)
+errorNeg,errorPos = GetLeftRightErrors(XPos,1.)
+if mean != 0. :
+    print("MEAN= ",mean,"REL+",'{:.4g}'.format(errorPos/mean),"REL-",'{:.4g}'.format(errorNeg/mean))
+else :
+    print("MEAN= ",mean,"+",'{:.4g}'.format(errorPos),"-",'{:.4g}'.format(errorNeg))
 
-errorNeg,errorPos = GetLeftRightErrors(XPosNP,1.)
-print("MEAN= ",npmean,"REL+",'{:.4g}'.format(errorPos/mean),"REL-",'{:.4g}'.format(errorNeg/mean))
+fhis = open(fileOutName+".csv",'w')
+his1.Write(fhis)
+

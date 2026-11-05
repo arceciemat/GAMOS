@@ -44,7 +44,7 @@ private:
   G4UIcmdWithADoubleAndUnit* EnergyCmd;
   G4UIcmdWithADoubleAndUnit* ActivityCmd;
   GmUIcmdWithAString* PositionAddVolumeCmd;
-  GmUIcmdWithAString* DistributionCmd;
+  GmUIcmdWithAString* BiasDistCmd;
   GmUIcmdWithAString* createIonCmd;
 
  };

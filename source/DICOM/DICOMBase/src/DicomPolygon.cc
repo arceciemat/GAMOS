@@ -33,10 +33,12 @@ DicomPolygon::DicomPolygon( std::vector<G4ThreeVector> points, std::vector<G4Thr
   : DicomVLine(name, ori)
 {
   if( points.size() != dirs.size() ) {
-    G4Exception("DicomPolygon::DicomPolygon",
-		"",
-		JustWarning,
-		("Building Line with different number of points = " + GmGenUtils::itoa(points.size())+ " than of directions = "+ GmGenUtils::itoa(dirs.size())).c_str());
+    if( DicomVerb(infoVerb) ) {
+      G4Exception("DicomPolygon::DicomPolygon",
+		  "",
+		  JustWarning,
+		  ("Building Line with different number of points = " + GmGenUtils::itoa(points.size())+ " than of directions = "+ GmGenUtils::itoa(dirs.size())).c_str());
+    }
   }
   SetPoints( points );
   SetDirections( dirs );
@@ -151,14 +153,16 @@ void DicomPolygon::FindVoxelsInXY( DicomVImageStr* imageStr, G4double extraZ )
     maxYc = std::max(maxYc,thePoints[ll].y());
   }
   if( minXc < imMinX || maxXc > imMaxX || minYc < imMinY || maxYc > imMaxY ){
-    G4cerr << " minXc= " << minXc << " < " << imMinX
-	   << " maxXc= " << maxXc << " > " << imMaxX
-	   << " minYc= " << minYc << " < " << imMinY
-	   << " maxYc= " << maxYc << " > " << imMaxY << G4endl;
-    G4Exception("DicomPolygon::FindVoxelsInXY",
-		"",
-		JustWarning,
-			  "Contour limits exceed Z slice extent");
+    if( DicomVerb(infoVerb) ) {
+      G4cerr << " minXc= " << minXc << " < " << imMinX
+	     << " maxXc= " << maxXc << " > " << imMaxX
+	     << " minYc= " << minYc << " < " << imMinY
+	     << " maxYc= " << maxYc << " > " << imMaxY << G4endl;
+      G4Exception("DicomPolygon::FindVoxelsInXY",
+		  "",
+		  JustWarning,
+		  "Contour limits exceed Z slice extent");
+    }
   }
   //--- Set contour min/max voxel IDs 
   int idMinX = std::max(0,int((minXc-imMinX)/imVoxelDimX));
@@ -172,7 +176,7 @@ void DicomPolygon::FindVoxelsInXY( DicomVImageStr* imageStr, G4double extraZ )
 	   << " maxXc " << maxXc << " > " << imMaxX
 	   << " minYc " << minYc << " < " << imMinY
 	   << " maxYc " << maxYc << " > " << imMaxY << G4endl;
-    G4cout << " VOXEL ID LIMITS OF CONTOUR : idMinX " << idMinX 
+    G4cout << " VOXEL ID LIMITS OUT OF CONTOUR : idMinX " << idMinX 
 	   << " idMaxX " << idMaxX 
 	   << " idMinY " << idMinY 
 	   << " idMaxY " << idMaxY << G4endl;
@@ -448,21 +452,27 @@ G4int DicomPolygon::GetPolygonZIndex( DicomVImage* image, G4double extraZ )
   G4double polyZ = thePoints[0].z()+extraZ;
   G4int iPolygonZ = ( polyZ - imMinZ ) / imVoxelDimZ;
   if( iPolygonZ < 0 ) {
-    G4cerr << "DicomPolygon has Z smaller than image "
-	   << " Polygon Z= " << thePoints[0].z()
-	   << " Image min Z= " << imMinZ << " diff " << thePoints[0].z()-imMinZ << G4endl;
+    if( DicomVerb(warningVerb) ) {
+      G4cerr << "DicomPolygon has Z smaller than image "
+	     << " Polygon Z= " << thePoints[0].z()
+	     << " Image min Z= " << imMinZ << " diff " << thePoints[0].z()-imMinZ << G4endl;
+    }
     //-- check if it is a  precision problem
     if( polyZ - imMinZ  > -image->GetPrecision() ) {
       iPolygonZ = 0;
-      G4Exception(" DicomPolygon::GetPolygonZIndex",
-		  "",
-		  JustWarning,
-		  "Polygon Z is smaller than image minimum Z, probably due to precision. It will be set to image minimim Z");
+      if( DicomVerb(warningVerb) ) {
+	G4Exception(" DicomPolygon::GetPolygonZIndex",
+		    "",
+		    JustWarning,
+		    "aaPolygon Z is smaller than image minimum Z, probably due to precision. It will be set to image minimim Z");
+      }
     } else {
-      G4Exception(" DicomPolygon::GetPolygonZIndex",
-		  "",
-		  JustWarning,
-		  "Polygon Z is smaller than image minimum Z, it will not be used");
+      if( DicomVerb(warningVerb) ) {
+	G4Exception(" DicomPolygon::GetPolygonZIndex",
+		    "",
+		    JustWarning,
+		    "bbPolygon Z is smaller than image minimum Z, it will not be used");
+      }
     }
   }
 

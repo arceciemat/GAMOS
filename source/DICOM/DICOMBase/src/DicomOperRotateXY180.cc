@@ -32,7 +32,7 @@ void DicomOperRotateXY180::Operate( DicomVImage* image )
   size_t nVoxZ = image->GetNoVoxelsZ();  
   size_t iN = 0;
   if( fabs(theAngle - 180.) < 1.e-6 ) {
-    //    std::cout << image->GetName() << " ROTATING  XY " <<theAngle << std::endl; //GDEB
+    std::cout << image->GetName() << " ROTATING  XY " <<theAngle << std::endl; //GDEB
     std::vector<G4double>* data = image->GetData();
     std::vector<G4double>* dataNew = new std::vector<G4double>;
     for( size_t iz = 0; iz < nVoxZ; iz++ ) {

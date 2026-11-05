@@ -32,13 +32,14 @@
 //-----------------------------------------------------------------------------
 DicomReaderVOIStruct::DicomReaderVOIStruct(G4String fName )
 {
+  bVOI = true;
   theModality = DRM_RTStruct;
   theFileName = fName;
   //-filename = GmGenUtils::FileInPath( filename );
   theFileIn = GmFileIn::GetInstance(fName);
   theFileIn.SetUseCommentHashtag(false);
   
-  if( DicomVerb(-infoVerb) ) G4cout << " DicomReaderVOIStruct " << fName << G4endl; 
+  if( DicomVerb(infoVerb) ) G4cout << " DicomReaderVOIStruct " << fName << G4endl; 
   /*  DcmFileFormat dfile;
       if( ! (dfile.loadFile(fName.c_str())).good() ) {
     G4Exception("DicomReaderVOIStruct::ReadFile",
@@ -58,7 +59,7 @@ DicomReaderVOIStruct::DicomReaderVOIStruct(G4String fName )
 //-----------------------------------------------------------------------------
 void DicomReaderVOIStruct::ReadData()
 {
-  //  DicomVerb.SetFilterLevel(testVerb); //GDEB  
+  //  DicomVerb.SetFilterLevel(-testVerb); //GDEB  
   
   G4bool bReadingData = false;
   OFString ROIName, ROINumber, ROIGenerationAlgorithm;
@@ -142,6 +143,11 @@ void DicomReaderVOIStruct::ReadData()
 	  int nROICsubs = GmGenUtils::GetInt(wl[1]); // Two contours with same Z are considered as 1 ROIs, in DICOM 2 ROIContours
 	  if( DicomVerb(debugVerb) ) G4cout << " VOI nROICsubs " << nROICsubs << G4endl;
 	  for( int ircs = 0; ircs < nROICsubs; ircs++ ) {
+	    if ( GmGenUtils::GetInt(wl[0]) == -1 ) {
+	      if(DicomVerb(debugVerb) ) G4cout << " SKIPPING ROI: nPoints = -1 " << G4endl;
+	      JumpLine(2);
+	      continue;
+	    }
 	    DicomROIContour* roiC = new DicomROIContour();
 	    roiC->SetGeomType("CLOSED_PLANAR");
 	    JumpLine(2); // 21 137.0 -137.0 false 0 false " Contour 1 " # number_of_vertices [sector_start_angle sector_stop_angle] is_line_contour operation is_bspline name VERTICES_DEFINITION_x_y_z_IN_MM:

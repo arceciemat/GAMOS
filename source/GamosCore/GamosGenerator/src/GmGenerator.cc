@@ -8,6 +8,8 @@
 #include "RTIonPlanScanSpotSource.hh"
 #include "GmFromTextFileSource.hh"
 #include "GmGenerVerbosity.hh"
+#include "GmVGenerDistPosition.hh"
+#include "GmVGenerDistDirection.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosData/Distributions/include/GmVNumericDistribution.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -193,8 +195,17 @@ void GmGenerator::SetDistribution( const G4String& distType, std::vector<G4Strin
   } else if( distType == "direction" ) {
     source->SetDistributionDirection( wl[1], extraParams );
   } else if( distType == "positionDirection" ) {
-    source->SetDistributionPosition( wl[1], extraParams );
-    source->SetDistributionDirection( wl[1], extraParams );
+    GmVGenerDist* posDist = source->SetDistributionPosition( wl[1], extraParams );
+    //    source->SetDistributionDirection( wl[1], extraParams );
+    GmVGenerDistDirection* dirDist = dynamic_cast<GmVGenerDistDirection*>(posDist);
+    if (dirDist) {
+        source->SetDistributionDirectionFromPosition(dirDist);
+    } else {
+      G4Exception("GmGenerator::SetDistribution",
+		"Wrong argument",
+		FatalErrorInArgument,
+		G4String("You must use a class of positionDirection, you are using " + wl[1]).c_str());
+    }
   }
 }
 

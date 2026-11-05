@@ -84,6 +84,16 @@ void DicomVLineSet::SetOrientation( DPOrientation ori, G4bool bChildren )
 }
 
 //-----------------------------------------------------------------------------
+void DicomVLineSet::ReflectY( G4ThreeVector rotPoint )
+{
+  std::vector<DicomVLineList*>::const_iterator itep;
+  for( itep = theLineLists.begin(); itep != theLineLists.end(); itep++ ) {
+    (*itep)->ReflectY( rotPoint );
+  }
+
+}
+
+//-----------------------------------------------------------------------------
 void DicomVLineSet::RotateXY180( G4double angle, G4ThreeVector rotPoint )
 {
   std::vector<DicomVLineList*>::const_iterator itep;

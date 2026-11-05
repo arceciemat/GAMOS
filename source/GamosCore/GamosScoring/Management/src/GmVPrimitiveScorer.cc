@@ -241,7 +241,7 @@ G4bool GmVPrimitiveScorer::FillScorer(G4Step* aStep, G4int index, G4double val, 
   if( bScoreErrors ) {
     theSumV_tmp[index] += val*wei; 
 #ifndef GAMOS_NO_VERBOSE
-    //    if( ScoringVerb(debugVerb) ) G4cout << this <<  GetName() << " chk theSumV_tmp " << index << " = " << theSumV_tmp[index] << G4endl;
+    if( ScoringVerb(debugVerb) ) G4cout << this <<  GetName() << " chk theSumV_tmp " << index << " = " << theSumV_tmp[index] << G4endl;
 #endif
   }
   

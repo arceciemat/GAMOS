@@ -24,9 +24,9 @@ public:
   
 private:
   
-  void fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset& dataset );
+  void fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset* dataset );
   OFCondition addElementToDataset(OFCondition &result,
-				  DcmItem &dataset,
+				  DcmItem *dataset,
 				  DcmElement *element,
 				  const OFString &vm,
 				  const OFString &type,
@@ -38,11 +38,18 @@ private:
        			   const OFCondition &searchCond,
 			   const char *moduleName);
   
+  OFCondition SetFromReference( DcmItem *dataset, const DcmTag &tag,
+			       const OFString &vm,
+			       const OFString &type,
+			       const char *moduleName,
+			       G4String elemType = "UniqId");
+  
   virtual void PrintHelp();
 
 private:
-  G4String theSqDoseFN = "";
-  G4String theRTDoseFN = "";
+  G4String theSqDoseInFN = "";
+  G4String theRTDoseOutFN = "";
+  G4String theRTDoseReferenceFN = "";
   G4String theExeName;
   DicomParameterMgr* theParamMgr;
   DicomReaderMgr* theReaderMgr;

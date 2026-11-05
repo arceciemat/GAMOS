@@ -1,10 +1,13 @@
 #include "DCM2DOperGammaIndex.hh"
 #include "DICOM/DICOMBase/include/DicomVImage.hh"
+#include "DICOM/DICOMBase/include/DicomVImageStr.hh"
 #include "DICOM/DICOMBase/include/DicomParameterMgr.hh"
 #include "DICOM/DICOMBase/include/DicomVerbosity.hh"
 #include "DICOM/DICOMBase/include/DicomPolygonSet.hh"
 #include "DICOM/DICOMBase/include/DicomDrawerROOT.hh" 
 #include "DICOM/DICOMBase/include/DicomMgr.hh" 
+#include "DICOM/DICOMReaders/include/DicomReaderMgr.hh"
+#include "DICOM/DICOMReaders/include/DicomReaderG4dcmCT.hh" 
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
@@ -41,7 +44,7 @@ DCM2DOperGammaIndex::DCM2DOperGammaIndex( G4int , G4String )
   bMaxAtPoint = false;
   theMaxAtPointFactor = 1.;
 
-  theDrawer = new DicomDrawerROOT();
+  //  theDrawer = new DicomDrawerROOT();
 
   bHisto1D = G4bool(theParamMgr->GetNumericValue("bHisto1D",1));
 
@@ -53,7 +56,7 @@ DCM2DOperGammaIndex::DCM2DOperGammaIndex( G4int , G4String )
 }
 
 //------------------------------------------------------------------------
-void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, DicomVImage* imageErr1, DicomVImage* imageErr2, double perCentLim, double minDistLim, double pval, DicomVImage* imageOut )
+void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, DicomVImage* imageErr1, DicomVImage* imageErr2, double perCentLim, double minDistLim, double pval, DicomVImage* imageOut, G4int StID, DicomVImageStr* theStIDImage )
 {
   G4bool bDistanceByVoxel = false;//  TODO
 
@@ -61,6 +64,13 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
   //  if( bInterpolateVoxels && *image1 == *image2 ) { // if images have same dimensions, no interpolation is needed
   //  bInterpolateVoxels = false; 
   // }
+  G4String theStructName = "";
+  if( theStIDImage ) {
+    std::vector<DicomVReader*> VRTFilesSt = DicomReaderMgr::GetInstance()->GetReaders(DRM_G4dcmCT, true);
+    DicomReaderG4dcmCT* ctReader = dynamic_cast<DicomReaderG4dcmCT*>( VRTFilesSt[0] );
+    std::map<G4int,G4String> structNames = ctReader->GetStructNames();
+    theStructName = "."+structNames[StID];
+  }
   
   //----- Extract image1 data
   G4int nVoxX1 = image1->GetNoVoxelsX();
@@ -85,18 +95,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
 
   //  std::vector<G4double>* iDataOut = new std::vector<G4double>(nVoxXY1*nVoxZ1);
   //  G4cout << " START iDataOut " << iDataOut << G4endl; //GDEB
-  TH1F* histoGI = 0;
-  GmHisto1* histoGIgm = 0;
-  double theHGILim;
-  TCanvas* canvas = 0;
-  if( bHisto1D ) {
-    //  TH2F* histoXSvsGI;
-    theHGILim = std::min(100.,double(MAXDISTVOXEL));
-    canvas = new TCanvas();
-    gStyle->SetOptStat(1111111);
-    canvas->Draw();
-  }
-    //  std::map<G4double,TH2F*> theHistosXSvsGI;
+  //  if( bHisto1D ) { //DONE IN GmDrawerROOT.cc
     
   /*  if( bImageEqual ) {
       DicomVImage* image2Eq;
@@ -138,7 +137,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
   if( imageErr2 != 0 ) iDataErr2 = *(imageErr2->GetData());
 
   if( DicomVerb(infoVerb) )
-    std::cout << "@@@ READ sqdose2 nVoxX/Y/Z " << nVoxX2 << " " << nVoxY2 << " " << nVoxZ2 << G4endl
+    std::cout << "@@@ READ IMAGE2 nVoxX/Y/Z " << nVoxX2 << " " << nVoxY2 << " " << nVoxZ2 << G4endl
 	      << " fMinX/Y/Z " << fMinX2 << " " << fMinY2 << " " << fMinZ2 << G4endl
 	      << " fMaxX/Y/Z " << fMaxX2 << " " << fMaxY2 << " " << fMaxZ2 << G4endl
 	      << " fVoxDimX/Y/Z " << fVoxDimX2 << " " << fVoxDimY2 << " " << fVoxDimZ2 << G4endl
@@ -156,8 +155,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
   G4double fMinX1X2 = std::max(fMinX1,fMinX2)-diffhfVoxDimX1X2/2.;
   G4double fMaxX1X2 = std::min(fMaxX1,fMaxX2)+diffhfVoxDimX1X2/2.;
   G4double fVoxDimX1X2 = (fMaxX1X2-fMinX1X2)/nVoxX1X2;
-  fMinX1X2 = std::max(fMinX1X2, GetMinAtVoxel(fMinX1, fMinX1X2, fVoxDimX1X2) );
-  fMaxX1X2 = std::min(fMaxX1X2, GetMaxAtVoxel(fMaxX1, fMaxX1X2, nVoxX1X2, fVoxDimX1X2) );
+  fMinX1X2 = std::max(fMinX1X2, GetMinAtVoxel(fMinX1, fMinX1X2, fVoxDimX1X2) ); fMaxX1X2 = std::min(fMaxX1X2, GetMaxAtVoxel(fMaxX1, fMaxX1X2, nVoxX1X2, fVoxDimX1X2) );
   nVoxX1X2 = GmGenUtils::GetBelowInt((fMaxX1X2-fMinX1X2)/fVoxDimX1X2); 
 
   G4double fVoxY1Y2 = (std::min(fMaxY1,fMaxY2)-std::max(fMinY1,fMinY2));
@@ -171,38 +169,9 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
   fMinY1Y2 = std::max(fMinY1Y2, GetMinAtVoxel(fMinY1, fMinY1Y2, fVoxDimY1Y2) );
   fMaxY1Y2 = std::min(fMaxY1Y2, GetMaxAtVoxel(fMaxY1, fMaxY1Y2, nVoxY1Y2, fVoxDimY1Y2) );
   nVoxY1Y2 = GmGenUtils::GetBelowInt((fMaxY1Y2-fMinY1Y2)/fVoxDimY1Y2); 
-  G4int ptExtN = G4int(theParamMgr->GetNumericValue("pointExtensionN",0));
-  G4ThreeVector pointExtension(ptExtN*image1->GetVoxelDimX(),ptExtN*image1->GetVoxelDimY(),ptExtN*image1->GetVoxelDimZ());
 
-  //----- Histogram with all Z planes
-  std::string limstrALL = "GammaIndex_XY_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_1D_ALL";
-  TH1F* histoGIALL = 0;
-  GmHisto1* histoGIALLgm = 0;
-  if( bHisto1D ) {
-    histoGIALL = new TH1F((limstrALL).c_str(),(limstrALL).c_str(),std::max(100,int(theHGILim*10)),0.,theHGILim);
-    theAnaMgr->CreateHisto1D((limstrALL).c_str(),std::max(100,int(theHGILim*10)),0.,theHGILim, 81219);
-    histoGIALLgm = theAnaMgr->GetHisto1D(81219);
-  }
+  float maxDosePC = GetMaxDoseForPC(image1,image2);
 
-  float maxDosePC = 0;
-  if( thePerCentType == GIPCT_ImageMax ) {
-    maxDosePC = image1->GetMaxValue();
-    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = maxDose1 " << maxDosePC << G4endl;
-  } else if( thePerCentType == GIPCT_AtPoint ){
-    maxDosePC = image1->GetValueAtPoint(thePointPerCent,pointExtension);
-    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = theMaxAtPoint1st " << maxDosePC << G4endl;
-    if( maxDosePC == 0. ) {
-      G4Exception("DCM2DOperGammaIndex",
-		  "",
-		  JustWarning,
-		  ("MAX DOSE IS 0., AT POINT ("+GmGenUtils::ftoa(thePointPerCent.x())+","+GmGenUtils::ftoa(thePointPerCent.x())+","+GmGenUtils::ftoa(thePointPerCent.x())+")    REPLACE IT WITH MAXIMUM DOSE").c_str());
-      maxDosePC = image1->GetMaxValue();
-    }
-  } else { // GIPCT_Max2Images
-    maxDosePC = std::max(image1->GetMaxValue(),image2->GetMaxValue());
-    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = max(maxDose1,maxDose2) " << maxDosePC << G4endl;
-  }
-    
   //----- Loop to each Z plane
   G4int gammaOverN = 0;
   for( G4int nvz1 = 0; nvz1 < nVoxZ1; nvz1++ ){
@@ -213,17 +182,8 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
     if( zMin < fMinZ2 || zMax > fMaxZ2 ) continue;
     
     G4String zstr = GmGenUtils::ftoa(zMin+fVoxDimZ1/2.);
-    std::string limstr = "GammaIndex_XY_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_1D_"+zstr;
+    std::string limstr = "GammaIndex_XY_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_1D"+theStructName+"_"+zstr;
 
-    if( bHisto1D ) {
-      histoGI = new TH1F((limstr).c_str(),(limstr).c_str(),std::max(100,int(theHGILim*10)),0.,theHGILim);
-      theAnaMgr->CreateHisto1D((limstr).c_str(),std::max(100,int(theHGILim*10)),0.,theHGILim,81211);
-			 histoGIgm = theAnaMgr->GetHisto1D(81211);
-    }
-    //    histoXSvsGI = new TH2F(limstr.c_str(),limstr.c_str(),nVoxX1, fMinX1, fMinX1+nVoxX1*widthX1, nVoxY1, fMinY1, fMinY1+nVoxY1*widthY1);
-    //    histoXSvsGI = new TH2F(limstr.c_str(),limstr.c_str(),nVoxX1X2, std::max(fMinX1,fMinX2), std::min(fMaxX1,fMaxX2), nVoxY1Y2,  std::max(fMinY1,fMinY2), std::min(fMaxY1,fMaxY2));
-    //    histoXSvsGI = new TH2F((limstr+"_2D").c_str(),(limstr+"_2D").c_str(),nVoxX1X2, fMinX1X2, fMaxX1X2, nVoxY1Y2, fMinY1Y2, fMaxY1Y2);
-    
     float doseErrAtNv1 = 0;
     float doseErrAtNv2 = 0;
     
@@ -234,17 +194,20 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
 	  } */
 	
     for( G4int nvxy1 = 0; nvxy1 < nVoxXY1; nvxy1++ ){
-      G4int nv1 = nvz1*nVoxXY1+nvxy1; 
+       G4int nv1 = nvz1*nVoxXY1+nvxy1; 
       G4double dataAtNv1 = iData1[nv1];
       //      G4double dataOutAtNv1 = iDataOut[nv1];
       G4int nvx1 = nv1%nVoxX1;
       G4double xMin = fMinX1 + nvx1*fVoxDimX1;     
       G4double xMax = xMin + fVoxDimX1;
+      //      G4cout << " XMIN " << xMin << " = " << fMinX1 << "+"<< nvx1<< "*" <<fVoxDimX1<< G4endl; //GDEB
+      //      G4cout << " XMAX " << xMax << " = " << fMaxX1 << "+"<< (nvx1+1) << "*" <<fVoxDimX1<< G4endl; //GDEB
       if( xMin < fMinX1 || xMax > fMaxX1 ) continue;
       if( xMin < fMinX2 || xMax > fMaxX2 ) continue;
       G4int nvy1 = (nv1/nVoxX1)%nVoxY1;
       G4double yMin = fMinY1 + nvy1*fVoxDimY1;
       G4double yMax = yMin + fVoxDimY1;
+      //   G4cout << nvxy1 << " " << nVoxXY1 <<" @@@ 0LOOPING VOXEL " << nv1 << " = " << nvx1 << " " << nvy1 << " " << nvz1 << " NVY1 " << (nv1/nVoxX1) << "=" << (nv1/nVoxX1)%nVoxY1 << " data " << dataAtNv1 << G4endl; //GDEB
       if( yMin < fMinY1 || yMax > fMaxY1 ) continue;
       if( yMin < fMinY2 || yMax > fMaxY2 ) continue;      
       //    if( nz1 == 2 ) break;//GDEB
@@ -258,7 +221,15 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
 	maxDosePC = dataAtNv1;
 	if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = dataVoxel1st " << maxDosePC << " " << nv1 << G4endl;
       }
-      
+
+      //      G4cout << " voxel stID in voxel " << StID << "   " <<dataAtNv1 << G4endl; //GDEB
+      if( dataAtNv1 == 0. ) {
+	if( DicomVerb(testVerb) ) G4cout << " CONTINUE, BECAUSE VOXEL DATA1 0:  " << nv1 << " : " << dataAtNv1 << G4endl; 
+	continue; // not if voxel is 0 (SHOULD BE AN OPTION)
+      }
+
+      //      G4cout << " CALCULATE GI  " << nv1 << " : " << dataAtNv1 << G4endl;  //GDEB
+
       double gammaClosest = 0; 
       double perCent;
       double minGamma; 
@@ -286,10 +257,30 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
 	// Get distance and dose 
 	//--- Get gamma from percent and distance
 	int nv2 = nCVox2X + nCVox2Y*nVoxX2 + nCVox2Z*nVoxXY2;
+
+	//--- CHECK THAT VOXEL IS IN STRUCTURE BEING CALCULATE (StID=-1 : ANY STRUCTURE)
+	//	G4cout << " GET IDLIST " << nv2 << G4endl; //GDEB
+	/*	if( nv2 >= theStIDImage->GetNoVoxels() ) {
+	  G4cout << " IMAGE STID " << *theStIDImage << G4endl; 
+	  G4cout << " IMAGE DATA2 " << *image2 << G4endl; 
+	  G4cout << " NV2 " << nv2 << " " << nvx2 << " " << nvy2 << " " << nvz2 << " " << nvxy2 << G4endl; 
+	  G4cout << " CHECK Z2 " << zMin << "<"<< fMinZ2 <<"||"<< zMax <<">"<< fMaxZ2 << "DIFF " << zMin - fMinZ2 <<"||"<< zMax - fMaxZ2 << G4endl;
+	  G4cout << " CHECK Z2 " << zMin << "<"<< fMinZ2 <<"||"<< zMax <<">"<< fMaxZ2 << "DIFF " << zMin - fMinZ2 <<"||"<< zMax - fMaxZ2 << G4endl;
+	  } //GDEB */
+	if( theStIDImage ) {
+	  std::set<G4int> idlist = theStIDImage->GetIDList(nv2);
+	  /*  for( std::set<G4int>::const_iterator iteidl = idlist.begin(); iteidl != idlist.end(); iteidl++ ) {
+	      G4cout << " ID " << *iteidl << G4endl; //GDEB
+	      }*/
+	  if( idlist.find(StID) == idlist.end()) {
+	    //	G4cout << " voxel stID not in voxel " << StID << G4endl; //GDEB
+	    continue; 
+	  }
+	}
+	
 	G4double dataAtNv2 = iData2[nv2];
 	if( dataAtNv1 == 0. || dataAtNv2 == 0. ) {
 	  if( DicomVerb(testVerb) ) G4cout << " CONTINUE VOXEL DATA 0:  " << nv1 << " : " << dataAtNv1 << " " << nv2 << " : " << dataAtNv2 << G4endl; 
-	  //-	  histoXSvsGI->Fill(voxelCentre1.x(), voxelCentre1.y(),log10(1.e-9));
 	  // iDataOut->at(nv1) = log10(1.e-9);
 	  continue; // not if voxel is 0 (SHOULD BE AN OPTION)
 	}
@@ -574,27 +565,15 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
       if( minGamma > theGammaOverCut ) {
 	gammaOverN ++;
       }
-      if( bHisto1D ) {
-	histoGI->Fill(minGamma);
-	histoGIALL->Fill(minGamma);
-	histoGIgm->Fill(minGamma);
-	histoGIALLgm->Fill(minGamma);
-      }
       iDataOut->at(nv1) = minGamma;
       //      if( minGamma != 0 ) G4cout << " FILL iDataOut " << nv1 << ": " << iDataOut->at(nv1) << "= " <<minGamma << G4endl; //GDEB
-      //      histoXSvsGI->Fill(voxelCentre1.x(), voxelCentre1.y(),minGamma);
       if( minGamma > 1. ) nGI++;
       nPOINTS++;
       if( DicomVerb(debugVerb) ) std::cout << "FINAL gamma " << voxelCentre1 << " = " << minGamma << std::endl;
       theGammaFinal.insert(std::multiset<double>::value_type(minGamma));
     }
 
-    //----- PLOT GI
-    //    pad1->cd();
-    if( bHisto1D ) {
-      histoGI->Draw("histo");
-    }
-    double gammaPVal = 0.;
+    /*    double gammaPVal = 0.;
     std::multiset<double>::const_iterator iteg;
     int jj = 0;
     G4int nGamma = theGammaFinal.size();
@@ -604,72 +583,16 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
 	gammaPVal = *iteg;
 	break;
       }
-    }
-    if( bHisto1D ) {
-      G4double mean = histoGI->GetMean();
-      mean = int(mean*100)/100.;
-      G4double rms = histoGI->GetRMS(); 
-      rms = int(rms*100)/100.;
-      if( DicomVerb(debugVerb) ) std::cout << perCentLim << "% / " << minDistLim << "mm : MEAN GAMMA INDEX " << histoGI->GetMean() << " +- " << histoGI->GetRMS() << " P" << pval*100 << "= " << gammaPVal <<  std::endl;
-      //      xInit = 375*canvas->GetWw()/500;
-      double xInit = nvz1*100*canvas->GetWw()/500;
-      //      xInit = 290*canvas->GetWw()/500;
-      double yInit= nvz1*100*canvas->GetWh()/500;
-      EColor color = kBlack;
-      //    pad1->cd(); 
-      DrawWordInPave( histoGI, "G" + GmGenUtils::ftoa(perCentLim)+"/"+GmGenUtils::ftoa(minDistLim)+ ": " + GmGenUtils::ftoa(mean) + "+-" + GmGenUtils::ftoa(rms) + " P" + GmGenUtils::itoa(pval*100) + "= " + GmGenUtils::ftoa(int(gammaPVal*100)/100.), xInit, yInit, color, 0.02 );
-      canvas->Print(("his"+G4String(histoGI->GetName())+".jpg").c_str());
-      G4cout << " PRINTER " << "his"+G4String(histoGI->GetName())+".jpg" << G4endl; //GDEB
-
-      gPad->SetLogy(1);
-      canvas->SetLogy(1);
-      histoGI->Draw("histo");
-      canvas->Print(("his"+G4String(histoGI->GetName())+".logY.jpg").c_str());
-      G4cout << " PRINTER " << "his"+G4String(histoGI->GetName())+".logY.jpg" << G4endl; //GDEB 
-
-    }
-   //    pad1->cd(); 
-    //    theHistosXSvsGI[zMin+fVoxDimZ1/2.] = histoXSvsGI;
-    /*    if( !bMaxAtPoint && !bMaxGammaValue ) {
-      gStyle->SetOptStat(0);
-      //      histoXSvsGI->Draw("colz");
-      //     canvas->Print(("his"+G4String(histoXSvsGI->GetName())+".jpg").c_str());
-      } */
+      }*/
   }
-  if( bHisto1D ) {
-    G4double mean = histoGIALL->GetMean();
-    mean = int(mean*100)/100.;
-    G4double rms = histoGIALL->GetRMS(); 
-    rms = int(rms*100)/100.;
-    if( DicomVerb(debugVerb) ) std::cout << perCentLim << "% / " << minDistLim << "mm : MEAN GAMMA INDEX " << histoGIALL->GetMean() << " +- " << histoGIALL->GetRMS() << std::endl;
-     //    pad1->cd(); 
-    gStyle->SetOptStat(1111111);
-    histoGIALL->SetMaximum(50000);
-    gPad->SetLogy(0);
-    histoGIALL->Draw("histo");
-    // double xInit = 200*theMaxGammaValue/2.*canvas->GetWw()/500;
-      //      xInit = 290*canvas->GetWw()/500;    
-    // double yInit= 25000.*canvas->GetWh()/500;
-    //    EColor color = kBlack;
-      //    pad1->cd(); 
-    //    DrawWordInPave( histoGI, "G" + GmGenUtils::ftoa(perCentLim)+"/"+GmGenUtils::ftoa(minDistLim)+ ": " + GmGenUtils::ftoa(mean) + "+-" + GmGenUtils::ftoa(rms) + " P" + GmGenUtils::itoa(pval*100) + "= " + GmGenUtils::ftoa(int(gammaPVal*100)/100.), xInit, yInit, color, 0.02 );
-    //    DrawWordInPave( histoGI, "HOLA AQUI ESTAaMOS", xInit, yInit, color, 0.02 );
 
-    canvas->Print(("his"+G4String(histoGIALL->GetName())+".jpg").c_str());
-    G4cout << " PRINTER " << "his"+G4String(histoGIALL->GetName())+".jpg" << G4endl; //GDEB 
-    gPad->SetLogy(1);
-    canvas->SetLogy(1);
-    histoGIALL->Draw("histo");
-    canvas->Print(("his"+G4String(histoGIALL->GetName())+".logY.jpg").c_str());
-    G4cout << " PRINTER " << "his"+G4String(histoGIALL->GetName())+".logY.jpg" << G4endl; //GDEB 
-}
 
   if( bGammaOverCutDone ) G4cout << "@@@@ N Gamma over " << theGammaOverCut << " = " << gammaOverN << " out of " << nVoxZ1*nVoxXY1 << G4endl;
   bGammaOverCutDone = true;
 }
 
 //------------------------------------------------------------------------
-void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, double perCentLim, double minDistLim, double pval, DicomVImage* imageOut )
+void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, double perCentLim, double minDistLim, double pval, DicomVImage* imageOut, G4int StID, DicomVImageStr* theStIDImage )
 {
   G4bool bDistanceByVoxel = false;//  TODO
 
@@ -697,12 +620,6 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
   std::vector<G4double> iData1 = *(image1->GetData());
   std::vector<G4double>* iDataOut = imageOut->GetData();
 
-  //  TH2F* histoXSvsGI;
-  TH1F* histoGI = 0;
-  double theHGILim = std::min(100.,double(MAXDISTVOXEL));
-  TCanvas* canvas = new TCanvas();
-  //  std::map<G4double,TH2F*> theHistosXSvsGI;
- 
   /*  if( bImageEqual ) {
     DicomVImage* image2Eq;
     if( !theResizeOperator ) theResizeOperator = new DicomOperResize(1,"GIOperResize");
@@ -778,20 +695,8 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
   fMinZ1Z2 = std::max(fMinZ1Z2, GetMinAtVoxel(fMinZ1, fMinZ1Z2, fVoxDimZ1Z2) );
   fMaxZ1Z2 = std::min(fMaxZ1Z2, GetMaxAtVoxel(fMaxZ1, fMaxZ1Z2, nVoxZ1Z2, fVoxDimZ1Z2) );
   nVoxZ1Z2 = GmGenUtils::GetBelowInt((fMaxZ1Z2-fMinZ1Z2)/fVoxDimZ1Z2); 
-  G4int ptExtN = G4int(theParamMgr->GetNumericValue("pointExtensionN",0));
-  G4ThreeVector pointExtension(ptExtN*image1->GetVoxelDimX(),ptExtN*image1->GetVoxelDimY(),ptExtN*image1->GetVoxelDimZ());
 
-  float maxDosePC = 0;
-  if( thePerCentType == GIPCT_ImageMax ) {
-    maxDosePC = image1->GetMaxValue();
-    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = maxDose1 " << maxDosePC << G4endl;
-  } else if( thePerCentType == GIPCT_AtPoint ){
-    maxDosePC = image1->GetValueAtPoint(thePointPerCent,pointExtension);
-    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = theMaxAtPoint1st " << maxDosePC << G4endl; 
-  } else { // None
-    maxDosePC = std::max(image1->GetMaxValue(),image2->GetMaxValue());
-    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = max(maxDose1,maxDose2) " << maxDosePC << G4endl;
-  }
+  float maxDosePC = GetMaxDoseForPC(image1,image2);
 
   //----- Loop to each Y plane
   G4int gammaOverN = 0;
@@ -804,20 +709,7 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
     
     G4String ystr = GmGenUtils::ftoa(yMin+fVoxDimY1/2.);
     std::string limstr = "GammaIndex_XZ_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_1D_"+ystr;
-    if( bHisto1D ) {
-      histoGI = new TH1F((limstr).c_str(),(limstr).c_str(),std::min(100.,theHGILim*10),0.,theHGILim);
-    }
   
-    //    histoXSvsGI = new TH2F(limstr.c_str(),limstr.c_str(),nVoxX1, fMinX1, fMinX1+nVoxX1*fVoxDimX1, nVoxY1, fMinY1, fMinY1+nVoxY1*fVoxDimY1);
-    //t    histoXSvsGI = new TH2F(limstr.c_str(),limstr.c_str(),nVoxX1X2, std::max(fMinX1,fMinX2), std::min(fMaxX1,fMaxX2), nVoxY1Y2,  std::max(fMinY1,fMinY2), std::min(fMaxY1,fMaxY2));
-    //    histoXSvsGI = new TH2F((limstr+"_2D").c_str(),(limstr+"_2D").c_str(),nVoxX1X2, fMinX1X2, fMaxX1X2, nVoxZ1Z2, fMinZ1Z2, fMaxZ1Z2);
-     if( DicomVerb(testVerb) ) {
-      G4cout << " HISTOXSvsGIO " << nVoxX1<< " " <<  fMinX1<< " " <<  fMinX1+nVoxX1*fVoxDimX1<< " " <<  nVoxZ1<< " " <<  fMinZ1<< " " <<  fMinZ1+nVoxZ1*fVoxDimZ1 << G4endl;
-      G4cout << " HISTOXSvsGIO " << (fMinX1+nVoxX1*fVoxDimX1-fMinX1)/nVoxX1 << " " <<  (fMinZ1+nVoxZ1*fVoxDimZ1-fMinZ1)/nVoxZ1 << G4endl; 
-      G4cout << " HISTOXSvsGIN " << nVoxX1X2<< " " << fMinX1X2 << " " << fMaxX1X2 << " " <<  nVoxZ1Z2<< " " <<   std::max(fMinZ1,fMinZ2)<< " " <<  std::min(fMaxZ1,fMaxZ2) << G4endl; 
-      G4cout << " HISTOXSvsGIN " << (fMaxX1X2-fMinX1X2)/nVoxX1X2 << " " <<  (fMaxZ1Z2-fMinZ1Z2)/nVoxZ1Z2 << G4endl; 
-    }
-    
     float doseErrAtNv1 = 0.;
     float doseErrAtNv2 = 0.;
     
@@ -883,7 +775,6 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
 	G4double dataAtNv2 = iData2[nv2];
 	if( dataAtNv1 == 0. || dataAtNv2 == 0. ) {
 	  if( DicomVerb(testVerb) ) G4cout << " CONTINUE VOXEL DATA 0:  " << nv1 << " : " << dataAtNv1 << " " << nv2 << " : " << dataAtNv2 << G4endl; 
-	  //-	  histoXSvsGI->Fill(voxelCentre1.x(), voxelCentre1.y(),log10(1.e-9));
 	  //	  iDataOut->at(nv1) = log10(1.e-9);
 	  continue; // not if voxel is 0 (SHOULD BE AN OPTION)
 	}
@@ -1136,25 +1027,15 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
       if( minGamma > theGammaOverCut ) {
 	gammaOverN ++;
       }
-      if( bHisto1D ) {
-	histoGI->Fill(minGamma);
-      }
       iDataOut->at(nv1) = minGamma;
       //      if( minGamma != 0 ) G4cout << " FILL iDataOut " << nv1 << ": " << iDataOut->at(nv1) << "= " <<minGamma << G4endl; //GDEB
-      //      histoXSvsGI->Fill(voxelCentre1.x(), voxelCentre1.z(),minGamma);
       if( minGamma > 1. ) nGI++;
       nPOINTS++;
       if( DicomVerb(debugVerb) ) std::cout << "FINAL gamma " << voxelCentre1 << " = " << minGamma << std::endl;
       theGammaFinal.insert(std::multiset<double>::value_type(minGamma));
     }
 
-    //----- PLOT GI
-    //    pad1->cd(); 
-    if( bHisto1D ) {
-      gStyle->SetOptStat(1111111);
-      histoGI->Draw("colz");
-    }
-    double gammaPVal = 0.;
+   /*    double gammaPVal = 0.;
     std::multiset<double>::const_iterator iteg;
     int jj = 0;
     G4int nGamma = theGammaFinal.size();
@@ -1164,160 +1045,16 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
 	gammaPVal = *iteg;
 	break;
       }
-    }
-    if( bHisto1D ) {
-      G4double mean = histoGI->GetMean();
-      mean = int(mean*100)/100.;
-      G4double rms = histoGI->GetRMS(); 
-      rms = int(rms*100)/100.;
-      if( DicomVerb(debugVerb) ) std::cout << perCentLim << "% / " << minDistLim << "mm : MEAN GAMMA INDEX " << histoGI->GetMean() << " +- " << histoGI->GetRMS() << " P" << pval*100 << "= " << gammaPVal <<  std::endl;
-      double xInit = 375*canvas->GetWw()/500;
-      //    double xInit = nvy1*100*canvas->GetWw()/500;
-      double yInit = 290*canvas->GetWw()/500;
-      //    double yInit= nvy1*100*canvas->GetWh()/500;
-      EColor color = kBlack;
-      //    pad1->cd(); 
-      DrawWordInPave( histoGI, "G" + GmGenUtils::ftoa(perCentLim)+"/"+GmGenUtils::ftoa(minDistLim)+ ": " + GmGenUtils::ftoa(mean) + "+-" + GmGenUtils::ftoa(rms) + " P" + GmGenUtils::itoa(pval*100) + "= " + GmGenUtils::ftoa(int(gammaPVal*100)/100.), xInit, yInit, color, 0.02 );
-      canvas->Print(("his"+G4String(histoGI->GetName())+".jpg").c_str());
-    }
-   //    pad1->cd(); 
-    /*    theHistosXSvsGI[yMin+fVoxDimY1/2.] = histoXSvsGI;
-	  if( !bMaxAtPoint && !bMaxGammaValue ) {
-	  gStyle->SetOptStat(0);
-	  histoXSvsGI->Draw("colz");
-	  canvas->Print(("his"+G4String(histoXSvsGI->GetName())+".jpg").c_str());
-	  } */
+      }*/
   }
-    
-  /*  //---- Print histos 2D after normalization at Isocentre
-  if( bMaxAtPoint || bMaxGammaValue ) {
-    if( bMaxAtPoint ) SetHistoAxisMaxAtPoint(theHistosXSvsGI, theMaxAtPoint, "XZ");
-    if( bMaxGammaValue ) SetHistoMaxValue(theHistosXSvsGI, theMaxGammaValue);
-    std::map<G4double,TH2F*>::const_iterator iteh;
-    for( iteh = theHistosXSvsGI.begin(); iteh != theHistosXSvsGI.end(); iteh++ ) {
-      //      pad1->cd();
-      TH2F* histo = (*iteh).second; 
-      gStyle->SetOptStat(0);
-      histo->Draw("colz");
-      canvas->Print(("his"+G4String(histo->GetName())+".jpg").c_str());
-    }
-  }*/
-
-  /*  //---- Print histos per Structure
-  if( bPerSt ) {
-    G4int nVoxelX_dcm = theDicomReaderCT->GetNoVoxelsX();
-    G4int nVoxelY_dcm = theDicomReaderCT->GetNoVoxelsY();
-    G4int nVoxelXY_dcm = nVoxelX_dcm*nVoxelY_dcm;
-    G4int nVoxelZ_dcm = theDicomReaderCT->GetNoVoxelsZ();
-    G4double fFVoxDimX_dcm = theDicomReaderCT->GetVoxelHalfX()*2;
-    G4double fFVoxDimY_dcm = theDicomReaderCT->GetVoxelHalfY()*2;
-    G4double fFVoxDimZ_dcm = theDicomReaderCT->GetVoxelHalfZ()*2;
-    G4double fMinX_dcm = theDicomReaderCT->GetMinX();
-    G4double fMinY_dcm = theDicomReaderCT->GetMinY();
-    G4double fMinZ_dcm = theDicomReaderCT->GetMinZ();
-    
-    if( theHistosXSvsGI.size() == 0 ) {
-      G4Exception(theExeName,
-		  "",
-		  FatalException,
-		  "No gamma index histogram at any Z plane");
-    }
-    std::map<G4double,TH2F*>::const_iterator iteh0 = theHistosXSvsGI.begin();
-    
-    TAxis* xAxis0 = (*iteh0).second->GetXaxis();
-    TAxis* yAxis0 = (*iteh0).second->GetYaxis();
-    //  G4int nVoxelX_Dose = nVoxX1X2;
-    //  G4int nVoxelY_Dose = nVoxY1Y2;
-    //  G4int nVoxelXY_Dose = nVoxelX_Dose*nVoxelY_Dose;
-    //  G4int nVoxelZ_Dose = theHistosXSvsGI.size();
-    //  G4int nVoxelXYZ_Dose = nVoxelXY_Dose*nVoxelZ_Dose;
-    G4double fFVoxDimX_Dose = xAxis0->GetBinWidth(1); //(fMaxX1X2-fMaxX1X2)/nVoxX1X2
-    G4double fFVoxDimY_Dose = yAxis0->GetBinWidth(1);
-    G4double fFVoxDimZ_Dose = fVoxDimZ1;
-    G4double fMinX_Dose = fMinX1X2;
-    G4double fMinY_Dose = fMinY1Y2;
-    G4double fMinZ_Dose = (*iteh0).first-fVoxDimZ1/2.;
-    
-    std::map<G4int,G4int> theGISmallPerSt;
-    std::map<G4int,G4int> theNVoxelsPerSt;
-    std::map<G4double,TH2F*>::const_iterator iteh;
-    G4int iz_Dose = 0;
-    GmReadPhantomStMgr* phantomStMgr = GmReadPhantomStMgr::GetInstance();
-    std::map<G4int,G4String> theStructs = phantomStMgr->GetStructs();
-
-    for( iteh = theHistosXSvsGI.begin(); iteh != theHistosXSvsGI.end(); iteh++, iz_Dose++) {
-      TH2F* histo2 = (*iteh).second;
-      TAxis* xAxis = histo2->GetXaxis();
-      TAxis* yAxis = histo2->GetYaxis();
-      if( DicomVerb(debugVerb) ) G4cout << " PERST HISTO " << histo2->GetName() << " " << (*iteh).first << G4endl;
-      for( int ix = 1; ix < xAxis->GetNbins(); ix++ ) {
-	for( int iy = 1; iy < yAxis->GetNbins(); iy++ ) {
-	  G4int ix_Dose = ix;
-	  G4int iy_Dose = iy;
-	  G4double X_Dose = fMinX_Dose+fFVoxDimX_Dose*(ix_Dose+0.5);
-	  G4double Y_Dose = fMinY_Dose+fFVoxDimY_Dose*(iy_Dose+0.5);
-	  G4double Z_Dose = fMinZ_Dose+fFVoxDimZ_Dose*(iz_Dose+0.5);
-	  G4int ix_dcm = GmGenUtils::GetBelowInt((X_Dose-fMinX_dcm)/fFVoxDimX_dcm-0.01);
-	  G4int iy_dcm = GmGenUtils::GetBelowInt((Y_Dose-fMinY_dcm)/fFVoxDimY_dcm-0.01);
-	  G4int iz_dcm = GmGenUtils::GetBelowInt((Z_Dose-fMinZ_dcm)/fFVoxDimZ_dcm-0.01);
-	  if( ix_dcm < 0 || ix_dcm >= G4int(nVoxelX_dcm) || 
-	      iy_dcm < 0 || iy_dcm >= G4int(nVoxelY_dcm) ||
-	      iz_dcm < 0 || iz_dcm >= G4int(nVoxelZ_dcm) ) {
-	    continue;
-	  }
-	  G4int iiSt = ix_dcm +iy_dcm*nVoxelX_dcm+iz_dcm*nVoxelXY_dcm;
-	  std::vector<G4int> ists = phantomStMgr->GetStIDList(iiSt);
-	  for( G4int jj = 0; jj < ists.size(); jj++ ) {
-	    if( histo2->GetBinContent(ix,iy) == 0. ) continue;
-	    G4int ist = G4int(ists[jj]);
-	    if( histo2->GetBinContent(ix,iy) <= 1. ) theGISmallPerSt[ist]++;
-	    theNVoxelsPerSt[ist]++;
-	    if( DicomVerb(testVerb) ) G4cout << jj << " FILL PERST " << ix_dcm << " " << iy_dcm << " " << iz_dcm << " " << X_Dose << " " << Y_Dose << " " << Z_Dose << " ::: " << ist << " : " << theStructs[ist] << " = " << theGISmallPerSt[ist] << " / " << theNVoxelsPerSt[ist] << " GI " <<  histo2->GetBinContent(ix,iy) << G4endl;
-	    // "ISO 54 GY (SBRT 4D)" 	    if( ist == 29 ) G4cout << theStructs[ist] << " " << jj << " FILL PERST " << ix_dcm << " " << iy_dcm << " " << iz_dcm << " " << X_Dose << " " << Y_Dose << " " << Z_Dose << " ::: " << ist << " : " << theStructs[ist] << " = " << theGISmallPerSt[ist] << " / " << theNVoxelsPerSt[ist] << " GI " <<  histo2->GetBinContent(ix,iy) << G4endl;
-	  }
-	}
-      }
-    }
-    
-    if( DicomVerb(testVerb) ) G4cout << " PERST HISTO ENDED " << G4endl;
-    std::map<G4int,G4int>::const_iterator iteb = theGISmallPerSt.begin();
-    std::map<G4int,G4int>::const_iterator iten = theNVoxelsPerSt.begin();
-    TH1F* histoSt = new TH1F("GI<1","GI<1",theGISmallPerSt.size(), 0, theGISmallPerSt.size());
-    G4int ii = 1;
-    for( ; iteb != theGISmallPerSt.end(); iteb++, ii++ ) {
-      G4int ist = (*iteb).first;
-      G4String binLabel = theStructs[ist];
-      if( binLabel == "" ) binLabel = "NO_STRUCT";
-      histoSt->GetXaxis()->SetBinLabel(ii,binLabel.c_str());
-      if( DicomVerb(debugVerb) ) G4cout << ii << " ist " << ist << " BINS LABEL " << binLabel << G4endl;
-    }
-    TCanvas* canvasSt = new TCanvas;
-    // canvas->SetCanvasSize(theNCanvasPixels,theNCanvasPixels);
-    canvasSt->SetCanvasSize(theNCanvasPixels,theNCanvasPixels);
-    canvasSt->Draw();
-    canvasSt->cd();
-    histoSt->SetMaximum(100.);
-    histoSt->Draw();
-    ii = 0;
-    for( iteb = theGISmallPerSt.begin() ; iteb != theGISmallPerSt.end(); iteb++, iten++, ii++ ) {
-      G4double GIBval = G4double((*iteb).second)/G4double((*iten).second)*100.;
-      TMarker* marker = new TMarker( ii+0.5, GIBval, 20);
-      G4int ist = (*iteb).first;
-      marker->SetMarkerSize(1.5);
-      if( DicomVerb(testVerb) ) G4cout << ii << " ist " << ist << " GISmallPerSt " << theStructs[ist] << " : " << GIBval << " = "<< (*iteb).second << " / " <<(*iten).second<< G4endl; 
-      marker->Draw();
-    }
-    std::string jpgstr = "hisDCMGetGammaIndex_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_PerStructure";
-    canvasSt->Print((jpgstr+".jpg").c_str());
-  }
-  */
+  
   if( bGammaOverCutDone ) G4cout << "@@@@ N Gamma over " << theGammaOverCut << " = " << gammaOverN << " out of " << nVoxZ1*nVoxXY1 << G4endl;
   bGammaOverCutDone = true;
 
 }
 
 //------------------------------------------------------------------------
-void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, double perCentLim, double minDistLim, double pval, DicomVImage* imageOut )
+void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, double perCentLim, double minDistLim, double pval, DicomVImage* imageOut, G4int StID, DicomVImageStr* theStIDImage )
 {
   G4bool bDistanceByVoxel = false;//  TODO
 
@@ -1345,12 +1082,6 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
   std::vector<G4double> iData1 = *(image1->GetData());
   std::vector<G4double>* iDataOut = imageOut->GetData();
 
-  TH1F* histoGI = 0; 
-  //  TH2F* histoXSvsGI;
-  double theHGILim = std::min(100.,double(MAXDISTVOXEL));
-  TCanvas* canvas = new TCanvas();
-  //  std::map<G4double,TH2F*> theHistosXSvsGI;
- 
   /*  if( bImageEqual ) {
     DicomVImage* image2Eq;
     if( !theResizeOperator ) theResizeOperator = new DicomOperResize(1,"GIOperResize");
@@ -1426,21 +1157,9 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
   fMinZ1Z2 = std::max(fMinZ1Z2, GetMinAtVoxel(fMinZ1, fMinZ1Z2, fVoxDimZ1Z2) );
   fMaxZ1Z2 = std::min(fMaxZ1Z2, GetMaxAtVoxel(fMaxZ1, fMaxZ1Z2, nVoxZ1Z2, fVoxDimZ1Z2) );
   nVoxZ1Z2 = GmGenUtils::GetBelowInt((fMaxZ1Z2-fMinZ1Z2)/fVoxDimZ1Z2); 
-  G4int ptExtN = G4int(theParamMgr->GetNumericValue("pointExtensionN",0));
-  G4ThreeVector pointExtension(ptExtN*image1->GetVoxelDimX(),ptExtN*image1->GetVoxelDimY(),ptExtN*image1->GetVoxelDimZ());
 
-  float maxDosePC = 0;
-  if( thePerCentType == GIPCT_ImageMax ) {
-    maxDosePC = image1->GetMaxValue();
-    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = maxDose1 " << maxDosePC << G4endl;
-  } else if( thePerCentType == GIPCT_AtPoint ){
-    maxDosePC = image1->GetValueAtPoint(thePointPerCent,pointExtension);
-    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = theMaxAtPoint1st " << maxDosePC << G4endl; 
-  } else { // None
-    maxDosePC = std::max(image1->GetMaxValue(),image2->GetMaxValue());
-    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = max(maxDose1,maxDose2) " << maxDosePC << G4endl;
-  }
-      
+  float maxDosePC = GetMaxDoseForPC(image1,image2);
+
   //----- Loop to each X plane
   G4int gammaOverN = 0;
   for( G4int nvx1 = 0; nvx1 < nVoxX1; nvx1++ ){
@@ -1452,13 +1171,6 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
     
     G4String xstr = GmGenUtils::ftoa(xMin+fVoxDimX1/2.);
     std::string limstr = "GammaIndex_YZ_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_1D_"+xstr;
-    
-    if( bHisto1D ) {
-      histoGI = new TH1F((limstr).c_str(),(limstr).c_str(),std::min(100.,theHGILim*10),0.,theHGILim);
-    }
-    //    histoXSvsGI = new TH2F(limstr.c_str(),limstr.c_str(),nVoxX1, fMinX1, fMinX1+nVoxX1*widthX1, nVoxY1, fMinY1, fMinY1+nVoxY1*widthY1);
-    //t    histoXSvsGI = new TH2F(limstr.c_str(),limstr.c_str(),nVoxX1X2, std::max(fMinX1,fMinX2), std::min(fMaxX1,fMaxX2), nVoxY1Y2,  std::max(fMinY1,fMinY2), std::min(fMaxY1,fMaxY2));
-    //    histoXSvsGI = new TH2F((limstr+"_2D").c_str(),(limstr+"_2D").c_str(),nVoxY1Y2, fMinY1Y2, fMaxY1Y2, nVoxZ1Z2, fMinZ1Z2, fMaxZ1Z2);
     
     float doseErrAtNv1 = 0.;
     float doseErrAtNv2 = 0.;
@@ -1526,7 +1238,6 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
 	G4double dataAtNv2 = iData2[nv2];
 	if( dataAtNv1 == 0. || dataAtNv2 == 0. ) {
 	  if( DicomVerb(testVerb) ) G4cout << " CONTINUE VOXEL DATA 0:  " << nv1 << " : " << dataAtNv1 << " " << nv2 << " : " << dataAtNv2 << G4endl; 
-	  //-	  histoXSvsGI->Fill(voxelCentre1.x(), voxelCentre1.y(),log10(1.e-9));
 	  //	  iDataOut->at(nv1) = log10(1.e-9);
 	  continue; // not if voxel is 0 (SHOULD BE AN OPTION)
 	}
@@ -1781,23 +1492,15 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
       if( minGamma > theGammaOverCut ) {
 	gammaOverN ++;
       }
-      if( bHisto1D ) {
-	histoGI->Fill(minGamma);
-      }
       iDataOut->at(nv1) = minGamma;
-      //      histoXSvsGI->Fill(voxelCentre1.y(), voxelCentre1.z(),minGamma);
       if( minGamma > 1. ) nGI++;
       nPOINTS++;
       if( DicomVerb(debugVerb) ) std::cout << "FINAL gamma " << voxelCentre1 << " = " << minGamma << std::endl;
       theGammaFinal.insert(std::multiset<double>::value_type(minGamma));
     }
 
-    //----- PLOT GI
+    /*    //----- PLOT GI
     //    pad1->cd(); 
-    if( bHisto1D ) {
-      gStyle->SetOptStat(1111111);
-      histoGI->Draw("colz");
-    }
     double gammaPVal = 0.;
     std::multiset<double>::const_iterator iteg;
     int jj = 0;
@@ -1808,153 +1511,8 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
 	gammaPVal = *iteg;
 	break;
       }
-    }
-    if( bHisto1D ) {
-      G4double mean = histoGI->GetMean();
-      mean = int(mean*100)/100.;
-      G4double rms = histoGI->GetRMS(); 
-      rms = int(rms*100)/100.;
-      if( DicomVerb(debugVerb) ) std::cout << perCentLim << "% / " << minDistLim << "mm : MEAN GAMMA INDEX " << histoGI->GetMean() << " +- " << histoGI->GetRMS() << " P" << pval*100 << "= " << gammaPVal <<  std::endl;
-      //      xInit = 375*canvas->GetWw()/500;
-      double xInit = nvx1*100*canvas->GetWw()/500;
-      //      xInit = 290*canvas->GetWw()/500;
-      double yInit= nvx1*100*canvas->GetWh()/500;
-      EColor color = kBlack;
-    //    pad1->cd(); 
-      DrawWordInPave( histoGI, "G" + GmGenUtils::ftoa(perCentLim)+"/"+GmGenUtils::ftoa(minDistLim)+ ": " + GmGenUtils::ftoa(mean) + "+-" + GmGenUtils::ftoa(rms) + " P" + GmGenUtils::itoa(pval*100) + "= " + GmGenUtils::ftoa(int(gammaPVal*100)/100.), xInit, yInit, color, 0.02 );
-      canvas->Print(("his"+G4String(histoGI->GetName())+".jpg").c_str());
-    }
-   //    pad1->cd(); 
-    /*    theHistosXSvsGI[xMin+fVoxDimX1/2.] = histoXSvsGI;
-    if( !bMaxAtPoint && !bMaxGammaValue ) {
-      gStyle->SetOptStat(0);
-      histoXSvsGI->Draw("colz");
-      canvas->Print(("his"+G4String(histoXSvsGI->GetName())+".jpg").c_str());
-      } */
+      }*/
   }
-    
-  /*  //---- Print histos 2D after normalization at Isocentre
-  if( bMaxAtPoint || bMaxGammaValue ) {
-    if( bMaxAtPoint ) SetHistoAxisMaxAtPoint(theHistosXSvsGI, theMaxAtPoint, "YZ");
-    if( bMaxGammaValue ) SetHistoMaxValue(theHistosXSvsGI, theMaxGammaValue);
-    std::map<G4double,TH2F*>::const_iterator iteh;
-    for( iteh = theHistosXSvsGI.begin(); iteh != theHistosXSvsGI.end(); iteh++ ) {
-      //      pad1->cd();
-      TH2F* histo = (*iteh).second;
-      gStyle->SetOptStat(0);
-      histo->Draw("colz");
-      canvas->Print(("his"+G4String(histo->GetName())+".jpg").c_str());
-    }
-  }
-  */
-  /*  //---- Print histos per Structure
-  if( bPerSt ) {
-    G4int nVoxelX_dcm = theDicomReaderCT->GetNoVoxelsX();
-    G4int nVoxelY_dcm = theDicomReaderCT->GetNoVoxelsY();
-    G4int nVoxelXY_dcm = nVoxelX_dcm*nVoxelY_dcm;
-    G4int nVoxelZ_dcm = theDicomReaderCT->GetNoVoxelsZ();
-    G4double fFVoxDimX_dcm = theDicomReaderCT->GetVoxelHalfX()*2;
-    G4double fFVoxDimY_dcm = theDicomReaderCT->GetVoxelHalfY()*2;
-    G4double fFVoxDimZ_dcm = theDicomReaderCT->GetVoxelHalfZ()*2;
-    G4double fMinX_dcm = theDicomReaderCT->GetMinX();
-    G4double fMinY_dcm = theDicomReaderCT->GetMinY();
-    G4double fMinZ_dcm = theDicomReaderCT->GetMinZ();
-    
-    if( theHistosXSvsGI.size() == 0 ) {
-      G4Exception(theExeName,
-		  "",
-		  FatalException,
-		  "No gamma index histogram at any Z plane");
-    }
-    std::map<G4double,TH2F*>::const_iterator iteh0 = theHistosXSvsGI.begin();
-    
-    TAxis* xAxis0 = (*iteh0).second->GetXaxis();
-    TAxis* yAxis0 = (*iteh0).second->GetYaxis();
-    //  G4int nVoxelX_Dose = nVoxX1X2;
-    //  G4int nVoxelY_Dose = nVoxY1Y2;
-    //  G4int nVoxelXY_Dose = nVoxelX_Dose*nVoxelY_Dose;
-    //  G4int nVoxelZ_Dose = theHistosXSvsGI.size();
-    //  G4int nVoxelXYZ_Dose = nVoxelXY_Dose*nVoxelZ_Dose;
-    G4double fFVoxDimX_Dose = xAxis0->GetBinWidth(1); //(fMaxX1X2-fMaxX1X2)/nVoxX1X2
-    G4double fFVoxDimY_Dose = yAxis0->GetBinWidth(1);
-    G4double fFVoxDimZ_Dose = fVoxDimZ1;
-    G4double fMinX_Dose = fMinX1X2;
-    G4double fMinY_Dose = fMinY1Y2;
-    G4double fMinZ_Dose = (*iteh0).first-fVoxDimZ1/2.;
-    
-    std::map<G4int,G4int> theGISmallPerSt;
-    std::map<G4int,G4int> theNVoxelsPerSt;
-    std::map<G4double,TH2F*>::const_iterator iteh;
-    G4int iz_Dose = 0;
-    GmReadPhantomStMgr* phantomStMgr = GmReadPhantomStMgr::GetInstance();
-    std::map<G4int,G4String> theStructs = phantomStMgr->GetStructs();
-
-    for( iteh = theHistosXSvsGI.begin(); iteh != theHistosXSvsGI.end(); iteh++, iz_Dose++) {
-      TH2F* histo2 = (*iteh).second;
-      TAxis* xAxis = histo2->GetXaxis();
-      TAxis* yAxis = histo2->GetYaxis();
-      if( DicomVerb(debugVerb) ) G4cout << " PERST HISTO " << histo2->GetName() << " " << (*iteh).first << G4endl;
-      for( int ix = 1; ix < xAxis->GetNbins(); ix++ ) {
-	for( int iy = 1; iy < yAxis->GetNbins(); iy++ ) {
-	  G4int ix_Dose = ix;
-	  G4int iy_Dose = iy;
-	  G4double X_Dose = fMinX_Dose+fFVoxDimX_Dose*(ix_Dose+0.5);
-	  G4double Y_Dose = fMinY_Dose+fFVoxDimY_Dose*(iy_Dose+0.5);
-	  G4double Z_Dose = fMinZ_Dose+fFVoxDimZ_Dose*(iz_Dose+0.5);
-	  G4int ix_dcm = GmGenUtils::GetBelowInt((X_Dose-fMinX_dcm)/fFVoxDimX_dcm-0.01);
-	  G4int iy_dcm = GmGenUtils::GetBelowInt((Y_Dose-fMinY_dcm)/fFVoxDimY_dcm-0.01);
-	  G4int iz_dcm = GmGenUtils::GetBelowInt((Z_Dose-fMinZ_dcm)/fFVoxDimZ_dcm-0.01);
-	  if( ix_dcm < 0 || ix_dcm >= G4int(nVoxelX_dcm) || 
-	      iy_dcm < 0 || iy_dcm >= G4int(nVoxelY_dcm) ||
-	      iz_dcm < 0 || iz_dcm >= G4int(nVoxelZ_dcm) ) {
-	    continue;
-	  }
-	  G4int iiSt = ix_dcm +iy_dcm*nVoxelX_dcm+iz_dcm*nVoxelXY_dcm;
-	  std::vector<G4int> ists = phantomStMgr->GetStIDList(iiSt);
-	  for( G4int jj = 0; jj < ists.size(); jj++ ) {
-	    if( histo2->GetBinContent(ix,iy) == 0. ) continue;
-	    G4int ist = G4int(ists[jj]);
-	    if( histo2->GetBinContent(ix,iy) <= 1. ) theGISmallPerSt[ist]++;
-	    theNVoxelsPerSt[ist]++;
-	    if( DicomVerb(testVerb) ) G4cout << jj << " FILL PERST " << ix_dcm << " " << iy_dcm << " " << iz_dcm << " " << X_Dose << " " << Y_Dose << " " << Z_Dose << " ::: " << ist << " : " << theStructs[ist] << " = " << theGISmallPerSt[ist] << " / " << theNVoxelsPerSt[ist] << " GI " <<  histo2->GetBinContent(ix,iy) << G4endl;
-	    // "ISO 54 GY (SBRT 4D)" 	    if( ist == 29 ) G4cout << theStructs[ist] << " " << jj << " FILL PERST " << ix_dcm << " " << iy_dcm << " " << iz_dcm << " " << X_Dose << " " << Y_Dose << " " << Z_Dose << " ::: " << ist << " : " << theStructs[ist] << " = " << theGISmallPerSt[ist] << " / " << theNVoxelsPerSt[ist] << " GI " <<  histo2->GetBinContent(ix,iy) << G4endl;
-	  }
-	}
-      }
-    }
-    
-    if( DicomVerb(testVerb) ) G4cout << " PERST HISTO ENDED " << G4endl;
-    std::map<G4int,G4int>::const_iterator iteb = theGISmallPerSt.begin();
-    std::map<G4int,G4int>::const_iterator iten = theNVoxelsPerSt.begin();
-    TH1F* histoSt = new TH1F("GI<1","GI<1",theGISmallPerSt.size(), 0, theGISmallPerSt.size());
-    G4int ii = 1;
-    for( ; iteb != theGISmallPerSt.end(); iteb++, ii++ ) {
-      G4int ist = (*iteb).first;
-      G4String binLabel = theStructs[ist];
-      if( binLabel == "" ) binLabel = "NO_STRUCT";
-      histoSt->GetXaxis()->SetBinLabel(ii,binLabel.c_str());
-      if( DicomVerb(debugVerb) ) G4cout << ii << " ist " << ist << " BINS LABEL " << binLabel << G4endl;
-    }
-    TCanvas* canvasSt = new TCanvas;
-    // canvas->SetCanvasSize(theNCanvasPixels,theNCanvasPixels);
-    canvasSt->SetCanvasSize(theNCanvasPixels,theNCanvasPixels);
-    canvasSt->Draw();
-    canvasSt->cd();
-    histoSt->SetMaximum(100.);
-    histoSt->Draw();
-    ii = 0;
-    for( iteb = theGISmallPerSt.begin() ; iteb != theGISmallPerSt.end(); iteb++, iten++, ii++ ) {
-      G4double GIBval = G4double((*iteb).second)/G4double((*iten).second)*100.;
-      TMarker* marker = new TMarker( ii+0.5, GIBval, 20);
-      G4int ist = (*iteb).first;
-      marker->SetMarkerSize(1.5);
-      if( DicomVerb(testVerb) ) G4cout << ii << " ist " << ist << " GISmallPerSt " << theStructs[ist] << " : " << GIBval << " = "<< (*iteb).second << " / " <<(*iten).second<< G4endl; 
-      marker->Draw();
-    }
-    std::string jpgstr = "hisDCMGetGammaIndex_"+GmGenUtils::ftoa(perCentLim)+"_"+GmGenUtils::ftoa(minDistLim)+"_PerStructure";
-    canvasSt->Print((jpgstr+".jpg").c_str());
-  }
-  */
   if( bGammaOverCutDone ) G4cout << "@@@@ N Gamma over " << theGammaOverCut << " = " << gammaOverN << " out of " << nVoxZ1*nVoxXY1 << G4endl;
   bGammaOverCutDone = true;
 
@@ -1984,4 +1542,34 @@ G4double DCM2DOperGammaIndex::GetMaxAtVoxel( G4double imageMax, G4double phantom
   }
 }
 
-  
+//-------------------------------------------------------------------
+G4double DCM2DOperGammaIndex::GetMaxDoseForPC( DicomVImage* image1, DicomVImage* image2 )
+{
+  G4double maxDosePC = 0.;
+  if( thePerCentType == GIPCT_Image1Max ) {
+    maxDosePC = image1->GetMaxValue();
+    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = maxDose1 " << maxDosePC << G4endl;
+  } else if( thePerCentType == GIPCT_AtPoint ){
+    G4int ptExtN = G4int(theParamMgr->GetNumericValue("pointExtensionN",0));
+    G4ThreeVector pointExtension(ptExtN*image1->GetVoxelDimX(),ptExtN*image1->GetVoxelDimY(),ptExtN*image1->GetVoxelDimZ());
+    maxDosePC = image1->GetValueAtPoint(thePointPerCent,pointExtension);
+    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = theMaxAtPoint1st " << maxDosePC << G4endl;
+    if( maxDosePC == 0. ) {
+      G4Exception("DCM2DOperGammaIndex",
+		  "",
+		  JustWarning,
+		  ("MAX DOSE IS 0., AT POINT ("+GmGenUtils::ftoa(thePointPerCent.x())+","+GmGenUtils::ftoa(thePointPerCent.x())+","+GmGenUtils::ftoa(thePointPerCent.x())+")    REPLACE IT WITH MAXIMUM DOSE").c_str());
+      maxDosePC = image1->GetMaxValue();
+    }
+  } else if( thePerCentType == GIPCT_Max2Images ) {
+    maxDosePC = std::max(image1->GetMaxValue(),image2->GetMaxValue());
+    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = max(maxDose1,maxDose2) " << maxDosePC << G4endl;
+  } else if( thePerCentType == GIPCT_MaxValue ) {
+    maxDosePC = thePCMaxValue;
+    if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = given MaxValue " << maxDosePC << G4endl;
+  }
+
+  if( DicomVerb(-debugVerb) ) G4cout << "GetMaxDoseForPC maxDosePC " << maxDosePC << G4endl;
+
+  return maxDosePC;
+}

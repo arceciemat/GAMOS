@@ -126,7 +126,7 @@ void GmScoringMessenger::SetNewValue(G4UIcommand * command,
 						   G4String newValues)    
 { 
   if (command == PrinterCmd ||
-      command == PrinterCmd) {
+      command == PrinterCmd2) {
     std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
     if( wl.size() < 2 ) G4Exception("GmScoringMessenger::SetNewVAlue",
 				    "Wrong argument",

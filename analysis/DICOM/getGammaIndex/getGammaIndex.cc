@@ -12,7 +12,7 @@ int main( int argc, char** argv )
   gid->CheckArguments();
 
   gid->ReadFilesAndGetImages();
-
+  
   return 0;
 
 }

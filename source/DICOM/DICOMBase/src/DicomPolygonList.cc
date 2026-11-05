@@ -407,15 +407,17 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr, pmmddpi polygon
       minYc = std::min(minYc,thePoints[ll].y());
       maxYc = std::max(maxYc,thePoints[ll].y());
     }
-    if( minXc < imMinX || maxXc > imMaxX || minYc < imMinY || maxYc > imMaxY ){
-      G4cerr << " minXc= " << minXc << " < " << imMinX
-	     << " maxXc= " << maxXc << " > " << imMaxX
-	     << " minYc= " << minYc << " < " << imMinY
-	     << " maxYc= " << maxYc << " > " << imMaxY << G4endl;
-      G4Exception("DicomPolygonList::FindVoxelsInXY",
-		  "",
-		  JustWarning,
-			  "Contour limits exceed Z slice extent");
+    if( DicomVerb(debugVerb) ) {
+      if( minXc < imMinX || maxXc > imMaxX || minYc < imMinY || maxYc > imMaxY ){
+	G4cerr << " minXc= " << minXc << " < " << imMinX
+	       << " maxXc= " << maxXc << " > " << imMaxX
+	       << " minYc= " << minYc << " < " << imMinY
+	       << " maxYc= " << maxYc << " > " << imMaxY << G4endl;
+	G4Exception("DicomPolygonList::FindVoxelsInXY",
+		    "",
+		    JustWarning,
+		    "Contour limits exceed Z slice extent");
+      }
     }
   }
   
@@ -424,13 +426,12 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr, pmmddpi polygon
   int idMaxX = std::min(int(imNoVoxelsX-1),int((maxXc-imMinX)/imVoxelDimX+1));
   int idMinY = std::max(0,int((minYc-imMinY)/imVoxelDimY));
   int idMaxY = std::min(int(imNoVoxelsY-1),int((maxYc-imMinY)/imVoxelDimY+1));
-  if( DicomVerb(debugVerb) )    
+  if( DicomVerb(debugVerb) )
     G4cout << " OK CONTOUR INSIDE X/Y OF Z SLICE "
 	   << " minXc " << minXc << " < " << imMinX
 	   << " maxXc " << maxXc << " > " << imMaxX
 	   << " minYc " << minYc << " < " << imMinY
 	   << " maxYc " << maxYc << " > " << imMaxY << G4endl;
-  if( DicomVerb(debugVerb) )
     G4cout << " VOXEL ID LIMITS OF CONTOUR : idMinX " << idMinX 
 	   << " idMaxX " << idMaxX 
 	   << " idMinY " << idMinY 
@@ -539,9 +540,9 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr, pmmddpi polygon
 	}
       } //ENDED the NLOOPS 
       if( loopResult > 0 )  {
- 	if( DicomVerb(debugVerb) ) G4cout << "@@@@@ CENTRE OK  for Polygon " << GetName() << " " << ix << " " << iy << " (" << imMinX + imVoxelDimX*(ix+0.5) << "," << imMinY + imVoxelDimY*(iy+0.5) << "," << planeZ << ")" << G4endl;
-	// extract previous ID value
 	G4String roiStr = imageStr->GetDataStr(ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY);
+ 	if( DicomVerb(debugVerb) ) G4cout << "@@@@@ CENTRE OK  for Polygon " << GetName() << " " << ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY << " ixyz " << ix << " " << iy << " (" << imMinX + imVoxelDimX*(ix+0.5) << "," << imMinY + imVoxelDimY*(iy+0.5) << "," << planeZ << ")" << G4endl;
+	// extract previous ID value
 	//	G4cout << " fStructure " << ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY << " roiStrOLD : " << roiStr << G4endl; //GDEB
 	//		roival = 2 + NMAXID*3 + NMAXID*NMAXID*15;
 	size_t theID = GetNumber();
@@ -554,7 +555,7 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr, pmmddpi polygon
 	} else {
 	  roiStr = theIDStr;
 	}
-	if( DicomVerb(debugVerb) ){
+	if( DicomVerb(debugVerb) ){	  
 	  G4cout << imageStr << " : " <<ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY << " FINAL Struct ID WITH PREVIOUS ID's IN VOXEL " << ix << " " << iy << " " << iPolygonZ << " : " << roiStr << " Z=" << planeZ << G4endl;
 	}
 	imageStr->SetDataStr(ix+iy*imNoVoxelsX+iPolygonZ*imNoVoxelsXY, roiStr);
@@ -612,11 +613,11 @@ G4int DicomPolygonList::GetPolygonZIndex( DicomVImage* image, G4double planeZ )
 	     << " Polygon Z= " << planeZ << " Image min Z= " << imMinZ << " diff " << planeZ-imMinZ << G4endl;
     }
   }
-  //-- check if it is a  precision problem
+  //-- check if it is a precision problem
   if( iPolygonZ < 0 ) {
-    if( polyZ - imMinZ  < -image->GetPrecision() ) {
+    if( - polyZ + imMinZ < -image->GetPrecision() ) {
       iPolygonZ = 0;
-      if( DicomVerb(debugVerb) ) {
+      if( DicomVerb(warningVerb) ) {
 	G4Exception(" DicomPolygon::GetPolygonZIndex",
 		    "",
 		    JustWarning,

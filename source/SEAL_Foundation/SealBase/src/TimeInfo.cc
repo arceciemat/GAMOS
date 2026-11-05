@@ -624,9 +624,6 @@ TimeInfo::realCycles (void)
     timebasestruct_t timebase;
     read_real_time (&timebase, TIMEBASE_SZ);
     return ((NanoTicks) timebase.tb_high << 32) + timebase.tb_low;
-#elif defined CPU_REAL_CYCLES_ASM			// (gcc)
-    unsigned low, high; NanoTicks time; __asm__ volatile (CPU_REAL_CYCLES_ASM);
-    return CPU_REAL_CYCLES_VALUE;
 #elif HAVE_MACH_MACH_TIME_H				// (darwin)
     return NanoTicks (mach_absolute_time () * s_hiResFactor);
 #elif defined _WIN32					// (windows)

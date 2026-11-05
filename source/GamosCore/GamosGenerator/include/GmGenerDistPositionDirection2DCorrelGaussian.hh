@@ -26,6 +26,7 @@ public:
   virtual G4ThreeVector GenerateDirection( GmParticleSource* source );
 
   virtual void SetParams( const std::vector<G4String>& params );
+  virtual void SetParamsEnergy( G4String energy );
 
   G4ThreeVector GetDirection() const {
     return theDirection;
@@ -56,6 +57,9 @@ private:
   G4ThreeVector thePerpDir;
   static bool bHistograms;
   bool bHistogramsHere;
+
+  G4String theConfFileNamePrefix;
+
 };
 
 #endif

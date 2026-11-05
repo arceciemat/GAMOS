@@ -33,7 +33,8 @@ DCMGetGammaIndex::DCMGetGammaIndex()
   theParamMgr = (DicomParameterMgr*)(DicomParameterMgr::GetInstance());
   theReaderMgr = DicomReaderMgr::GetInstance();
   theReaderMgr->SetMergeRTReaders( false );
-  theDicomMgr = DicomMgr::GetInstance();  Initialise();
+  theDicomMgr = DicomMgr::GetInstance();
+  Initialise();
   theStructImage = 0;
   theGammaOverCut = 1.;
 }
@@ -49,16 +50,17 @@ void DCMGetGammaIndex::Initialise()
   theNormType = GIDN_None;
   //  bMaxAtPoint = false;
   
-  bPerSt = false; // Print histos per Structure
-  bDiffPerSt = false; // Dose difference per Structure
+  theStListPerSt = std::vector<G4String>(); // Print histos per Structure
+  bDumpPerSt = false; // Dose difference per Structure in a different file (sqdose and G4dcm)
   bOnly1St = false; // Dose difference per Structure
   theOnly1StName = "";
+  bDrawPerSt = true;
   bGetGammaIndex = true; // Dose difference per Structure
 
   bUseMateID = false;
   bUseStructID = false;
 
-  thePerCentType = GIPCT_None;
+  thePerCentType = GIPCT_Image1Max;
 }
 
 //---------------------------------------------------------------------------
@@ -66,6 +68,7 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
 {
   std::vector<float> percents;
   std::vector<float> distances;
+  theOperGammaIndex = new DCM2DOperGammaIndex();
   
   //--------- PROCESS ARGUMENTS
   if( argc == 1 ) {
@@ -103,8 +106,11 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
       G4String argvstr = argv[ii];
       G4String argvstr1 = argv[ii+1];
       G4String argvName = argvstr.substr(1,999);
-      if( argvstr == "-bPerSt" ||
-	  argvstr == "-bDistanceByVoxel" ||
+      if( argvstr == "-perSt" ||
+	  argvstr == "-perStruct" ) {
+	  theParamMgr->AddParam( argvName + " " + argvstr1, PTstring );
+	ii++;
+      } else if( argvstr == "-bDistanceByVoxel" ||
 	  argvstr == "-nErrorSigmas" ||
 	  argvstr == "-bInterpolateVoxels" ||
 	  //	  argvstr == "-maxDistVoxel" ||
@@ -112,15 +118,16 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
 	  argvstr == "-maxGammaValue" || 
 	  argvstr == "-pointExtensionN" ||
 	  //	  argvstr == "-bGetGammaIndex" ||
-	  //	  argvstr == "-bDiffPerSt" ||
-	  //	  argvstr == "-fOutDiffPerSt" ||
+	  argvstr == "-bDumpPerSt" ||
+	  //	  argvstr == "-fOutDumpPerSt" ||
 	  argvstr == "-bUseMateID" ||
 	  argvstr == "-bUseStructID" ||
 	  argvstr == "-bHisto1D" ||	  
 	  argvstr == "-bDrawXY"  ||	  
 	  argvstr == "-bDrawXZ"  ||	  
 	  argvstr == "-bDrawYZ"  ||	  
-	  argvstr == "-bOnlyDiff" ) {  // gamma index=only diff (perCent), no distance
+	  argvstr == "-bOnlyDiff" ||  // gamma index=only diff (perCent), no distance
+	  argvstr == "-bDrawPerSt" ) {  // gamma index=only diff (perCent), no distance
 	theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
 	ii++;
       } else if( argvstr == "-only1St" ) {
@@ -168,8 +175,8 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
 	if( G4String(argvstr1) == "voxel" ) {
 	  thePerCentType = GIPCT_Voxel;
 	  ii++;
-	} else if( G4String(argvstr1) == "maxImage" ) {
-	  thePerCentType = GIPCT_ImageMax;
+	} else if( G4String(argvstr1) == "maxImage1" ) {
+	  thePerCentType = GIPCT_Image1Max;
 	  ii++;
 	} else if( G4String(argvstr1) == "max2Images" ) {
 	  thePerCentType = GIPCT_Max2Images;
@@ -187,11 +194,21 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
 	} else if( G4String(argvstr1) == "gammaOverCut" ) {
 	  theGammaOverCut = GmGenUtils::GetValue( argvstr1 );
 	  ii++;
+	} else if( G4String(argvstr1).substr(0,8) == "maxValue" ) { //maxValue=40
+	  thePerCentType = GIPCT_MaxValue;
+	  if( G4String(argvstr1).substr(8,1) != "=" ) {
+	    G4Exception("getGammaIndex",
+			"",
+			FatalErrorInArgument,
+			(G4String("WRONG ARGUMENT AFTER -perCentType, maxValue must be followed by '=VALUE', e.g. maxValue=60., WHILE IT IS ")+argvstr1).c_str());
+	  }
+	  theOperGammaIndex->SetPCMaxValue(GmGenUtils::GetValue(G4String(argvstr1).substr(9,99)));
+	  ii++;
 	} else {
 	  G4Exception("getGammaIndex",
 		      "",
 		      FatalErrorInArgument,
-		      (G4String("WRONG ARGUMENT AFTER -relativeValue, IT MAY BE 1voxel, imageMax, WHILE IT IS ")+argvstr1).c_str());
+		      (G4String("WRONG ARGUMENT AFTER -perCentType, IT MAY BE:  voxel maxImage1 max2Images atPoint, WHILE IT IS ")+argvstr1).c_str());
 	  
 	}
 	/*      } else if( argvstr == "-maxAtPoint" ) {
@@ -232,9 +249,18 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
   bOutputFile = G4bool(theParamMgr->GetNumericValue("bOutputFile",1));
   bDistanceByVoxel = G4bool(theParamMgr->GetNumericValue("bDistanceByVoxel",0));
   //  theMaxAtPointFactor = theParamMgr->GetNumericValue("maxAtPointFactor",1);
-  bPerSt = G4bool(theParamMgr->GetNumericValue("bPerSt",bPerSt));
+  G4String StListPerStstr = "";
+  StListPerStstr = theParamMgr->GetStringValue("perSt",StListPerStstr);
+  //  G4cout << " StListPerStstr " << StListPerStstr << G4endl;  //GDEB
+  StListPerStstr = theParamMgr->GetStringValue("perStruct",StListPerStstr);
+  // G4cout << " 2StListPerStstr " << StListPerStstr << G4endl; //GDEB
+  if( StListPerStstr != "" ) {
+    theStListPerSt = GmGenUtils::StringSplit(StListPerStstr,";");
+  }
+  // G4cout << " theStListPerSt " << StListPerStstr.size() << G4endl; //GDEB
+  bDrawPerSt = G4bool(theParamMgr->GetNumericValue("bDrawPerSt",bDrawPerSt));
   bGetGammaIndex = G4bool(theParamMgr->GetNumericValue("bGetGammaIndex",bGetGammaIndex));
-  //  bDiffPerSt = G4bool(theParamMgr->GetNumericValue("bDiffPerSt",bDiffPerSt));
+  bDumpPerSt = G4bool(theParamMgr->GetNumericValue("bDumpPerSt",bDumpPerSt));
   theOnly1StName = theParamMgr->GetStringValue("only1St","");
   G4int palette = G4int(theParamMgr->GetNumericValue("palette",55));
   gStyle->SetPalette(palette);
@@ -287,22 +313,6 @@ void DCMGetGammaIndex::CheckArguments()
 		"THERE MUST BE AT LEAST TWO IMAGE FILES");
   }
 
-  /*  if( bPerSt || bDiffPerSt ) {
-    std::vector<DicomVImage*> images = theDicomMgr->GetImages();
-    G4bool bIsOK = false;
-    for( size_t ii = 0; ii < images.size(); ii++ ) {
-      DIMModalityShort modS = images[ii]->GetModalityShort();
-      if( modS == DIMS_STRUCT ) {
-	bIsOK = true;
-	break;
-      }
-    }
-    if( !bIsOK ) G4Exception("getGammaIndex",
-			     "",
-			     FatalException,
-			     "No file of type Structure");
-			     }*/
-	
 }
 
 //---------------------------------------------------------------------------
@@ -316,24 +326,63 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
   //--- READ AND BUILD IMAGES
   theReaderMgr = DicomReaderMgr::GetInstance();
   //  theReaderMgr->ProcessData();
-  theReaderMgr->CreateReaders();
+  //-  theReaderMgr->CreateReaders();
+  theReaderMgr->CreateReaders_InReadingOrder();
   theReaderMgr->SetCTOnlyHU(true);
   theReaderMgr->CreateImages();
 
-  //--- Check that there is an structure file it output by structure is requested
-  if( bPerSt || bDiffPerSt ) {
-    if( theReaderMgr->GetNofReaders(DRM_RTStruct) >= 1 ) {
-      //      theStructImage = theDicomMgr->GetImages(DIM_RTStruct)[0];
-    } else if( theReaderMgr->GetNofImageReaders(DRM_G4dcmCT) >= 1
-	       && theDicomMgr->GetImages(DIM_G4dcmCT_StructID).size() >= 1 ) {
-      //      theStructImage = theDicomMgr->GetImages(DIM_G4dcmCT_StructID)[0];
-    } else {
-      G4cout << " NIMAGES " << " " << theReaderMgr->GetNofImageReaders(DRM_G4dcmCT) << " " << theDicomMgr->GetNofImages(DIM_RTStruct) << G4endl; //GDEB
+  //--- Check that there is an structure file if output by structure is requested
+  DicomVImageStr* theStIDImage = 0;
+  std::map<G4int,G4String> theStructNames;  
+  if( theStListPerSt.size() != 0 ) {
+    std::vector<DicomVImage*> stImages = theDicomMgr->GetImages(DIM_G4dcmCT_StructID);
+    if( stImages.size() == 1 ) {
+      theStIDImage = dynamic_cast<DicomVImageStr*>(stImages[0]);
+      //---- CHECK IT HAS SAME DIMENSIONS AS SECOND FILE
+      DicomVImage* secondImage = theDicomMgr->GetImagesVector()[1];
+      G4cerr << " theStIDImage " << stImages.size() << G4endl; //GDEB
+      G4cerr << " theStIDImage " << *theStIDImage << G4endl; //GDEB
+      G4cerr << " theStIDImage " << *secondImage << G4endl; //GDEB
+      if( ! (*theStIDImage == *secondImage) ) {
+	G4cerr << " G4dcmCT_StructID " << *theStIDImage
+	       << " Second image " << *secondImage << G4endl;
+	G4Exception("DCMGetGammaIndex::ReadFilesAndGetImages",
+		    "",
+		    FatalException,
+		    "G4dcmCT_StructID image does not have same dimensions as second file read");
+      }
+      
+      //--- GET STRUCT IMAGE (PRIORITY TO DIM_RTStruct)
+      std::vector<DicomVImage*> images = theDicomMgr->GetImages(DIM_RTStruct, false);
+      if( images.size() != 0 ) {
+	theStructImage = dynamic_cast<DicomVImageStr*>(images[0]);
+      }
+      //if( theReaderMgr->GetNofReaders(DRM_RTStruct) >= 1 ) {
+      // theStructImage = theDicomMgr->GetImages(DIM_RTStruct)[0];
+      // }
+      /* else if( theReaderMgr->GetNofImageReaders(DRM_G4dcmCT) >= 1
+	 && theDicomMgr->GetImages(DIM_G4dcmCT_StructID).size() >= 1 ) {
+	 //      theStructImage = theDicomMgr->GetImages(DIM_G4dcmCT_StructID)[0]; */
+      std::vector<DicomVReader*> VRTFilesSt = theReaderMgr->GetReaders(DRM_G4dcmCT, true);
+      DicomReaderG4dcmCT* ctReader = dynamic_cast<DicomReaderG4dcmCT*>( VRTFilesSt[0] );
+      std::map<G4int,G4String> theStructNamesTEMP = ctReader->GetStructNames();
+      for( auto itesn = theStructNamesTEMP.begin(); itesn != theStructNamesTEMP.end(); itesn++ ) {
+	for( auto itestl = theStListPerSt.begin(); itestl != theStListPerSt.end(); itestl++ ) {
+	  if( GmGenUtils::AreWordsEquivalent( *itestl, itesn->second )) {
+	    theStructNames[itesn->first] = itesn->second;
+	  }
+	}
+      }  
+    } else { 
+      //      G4cerr << " NIMAGES " << " " << theReaderMgr->GetNofImageReaders(DRM_G4dcmCT) << " " << theDicomMgr->GetNofImages(DIM_RTStruct) << G4endl;
+      G4cerr << " NIMAGES " << " " << theReaderMgr->GetNofImageReaders(DRM_G4dcmCT) << G4endl;
       G4Exception(theExeName,
 		  "",
 		  FatalException,
-		  "aNo RTStruct image, while output per structure has been requested");
+		  "No RTStruct image, while output per structure has been requested");
     }
+  } else {
+    theStructNames[-1] = "";
   }
 
   //----- Initialize ROOT Canvas for GammaIndex histograms
@@ -352,16 +401,15 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
   std::map<G4double,TH2F*> theHistosXSvsGI;
   */
 
-  DCM2DOperGammaIndex* operGammaIndex = new DCM2DOperGammaIndex();
-  //  operGammaIndex->IsMaxAtPoint(bMaxAtPoint);
-  //  operGammaIndex->SetMaxAtPoint(theMaxAtPoint);
-  //  operGammaIndex->SetMaxAtPointFactor(theMaxAtPointFactor);
-  //  operGammaIndex->SetMaxAtPointFactor(theMaxAtPointFactor);
-  operGammaIndex->SetPerCentType(thePerCentType);
-  operGammaIndex->SetPointPerCent(thePointPerCent);
-  operGammaIndex->SetOnlyDiff(theParamMgr->GetNumericValue("bOnlyDiff",0));
-  operGammaIndex->SetNErrorSigmas(theParamMgr->GetNumericValue("nErrorSigmas",0));   
-  operGammaIndex->SetGammaOverCut(theGammaOverCut);
+  //  theOperGammaIndex->IsMaxAtPoint(bMaxAtPoint);
+  //  theOperGammaIndex->SetMaxAtPoint(theMaxAtPoint);
+  //  theOperGammaIndex->SetMaxAtPointFactor(theMaxAtPointFactor);
+  //  theOperGammaIndex->SetMaxAtPointFactor(theMaxAtPointFactor);
+  theOperGammaIndex->SetPerCentType(thePerCentType);
+  theOperGammaIndex->SetPointPerCent(thePointPerCent);
+  theOperGammaIndex->SetOnlyDiff(theParamMgr->GetNumericValue("bOnlyDiff",0));
+  theOperGammaIndex->SetNErrorSigmas(theParamMgr->GetNumericValue("nErrorSigmas",0));   
+  theOperGammaIndex->SetGammaOverCut(theGammaOverCut);
 
   if( theParamMgr->GetNumericValue("nErrorSigmas",0)!= 0 ) {
     bErrors = true;
@@ -370,13 +418,13 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
   }
   /*
   //--- classify images by modality 
-  std::set<DIMModalityShort>::const_iterator item;
+  std::set<DIModalityShort>::const_iterator item;
   std::vector<std::pair<G4double,G4double> >::const_iterator itepdd;
   typedef std::multimap<DIModalityShort,DicomVImage*> mmsdi;
   mmsdi theImages2Compare;
   std::vector<DicomVImage*> images = theDicomMgr->GetImages();
   for( size_t ii = 0; ii < images.size(); ii++ ) {
-    DIMModalityShort modS = images[ii]->GetModalityShort();
+    DIModalityShort modS = images[ii]->GetModalityShort();
     if( theImages2Compare.find(modS) != theImages2Compare.end() ) theModalities.insert(modS); // at least a pair of images of the same modality
     theImages2Compare.insert(mmsdi::value_type(modS,images[ii]));
   }
@@ -387,17 +435,9 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 		"At least 2 files are needed of the same modality");
   }
 
-  //-------- bPerSt: at least one RTStruct or G4DCMSt image
-  if( bPerSt && theImages2Compare.find(DIMS_STRUCT) != theImages2Compare.end() ) {
-    G4Exception(theExeName,
-		"",
-		FatalException,
-		"bPerSt parameter is set to 1, but there is no STRUCTURE file (RTSTRUCT DICOM or G4DCM with structures");
-  }
-
   //----- Loops to file pairs and compare pairs
   for( item = theModalities.begin(); item != theModalities.end(); item++ ) {
-    DIMModalityShort modS = *item;   
+    DIModalityShort modS = *item;   
     std::pair<mmsdi::const_iterator,mmsdi::const_iterator> pitei = theImages2Compare.equal_range(modS);
     mmsdi::const_iterator itei1,itei2;
     for( itei1 = pitei.first; itei1 != pitei.second; ite1++ ) { 
@@ -442,6 +482,10 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 		FatalException,
 		"Only one RTStruct is allowed");
   } else if( VRTFiles.size() == 1 ) {
+    //------ StLines and IsodLines
+    G4String drawLinesFN = theParamMgr->GetStringValue("fDrawLines","");
+    theDicomMgr->ReadLineDrawingOptions( drawLinesFN );
+    
     DicomReaderRTStruct* RTFile = static_cast<DicomReaderRTStruct*>(VRTFiles[0]);
     DicomPolygonSet* theStPolygonSet = RTFile->GetPolygonSet();    
     theLineSets.push_back((DicomVLineSet*)theStPolygonSet);
@@ -458,8 +502,8 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
     theLineSets.push_back( lineReader->GetLineSet() );
   }
   
-  if( bDiffPerSt ) {
-    CalculateDiffPerSt();
+  if( bDumpPerSt ) {
+    CalculateDumpPerSt();
   }
   
   if( !bGetGammaIndex ) return;
@@ -504,6 +548,7 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
       DicomVImage* image2 = images[jj];
       // if images are modified (e.g. rescaled) make a copy of them
       DicomVImage* image1Mod = image1;
+      //G4cout << " 1 image1Mod " <<*image1Mod << G4endl; //GDEB
       DicomVImage* image2Mod = image2;
       //?      DicomVImage* imageErr1Mod = imageErr1;
       //? DicomVImage* imageErr2Mod = imageErr2;
@@ -516,6 +561,7 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	G4double maxVal2 = image2->GetMaxValue();
 	G4double maxVal12 = maxVal1/maxVal2;
 	*image1Mod = *image1;
+	//G4cout << " 2 image1Mod " << *image1Mod << G4endl; //GDEB
 	image2Mod = new DicomVImage(*image2);
 	DicomOperMultByNumber* multPer = new DicomOperMultByNumber(maxVal12);
 	multPer->SetAutomaticOperate(false);
@@ -527,6 +573,7 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	G4double maxVal2 = image2->GetValueAtPoint(maxValPt1.second,pointExtension);
 	G4double maxVal12 = maxValPt1.first/maxVal2;
 	image1Mod = new DicomVImage(*image1);
+	//G4cout << " 3 image1Mod " << *image1Mod << G4endl; //GDEB
 	image2Mod = new DicomVImage(*image2);
 	DicomOperMultByNumber* multPer = new DicomOperMultByNumber(maxVal12);
 	multPer->SetAutomaticOperate(false);
@@ -538,13 +585,14 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	G4double maxVal2 = image2->GetValueAtPoint(thePointNorm,pointExtension);
 	G4double maxVal12 = maxVal1/maxVal2;
 	image1Mod = new DicomVImage(*image1);
+	//G4cout << " 4 image1Mod " << *image1Mod << G4endl; //GDEB
 	image2Mod = new DicomVImage(*image2);
 	DicomOperMultByNumber* multPer = new DicomOperMultByNumber(maxVal12);
 	multPer->SetAutomaticOperate(false);
 	multPer->Operate(image2Mod);
 	if( DicomVerb(debugVerb) ){
 	  G4cout << thePointNorm << " image2 NORM_AT POINT " << maxVal12 << " = " << maxVal1 << " / " << maxVal2 << G4endl;
-	  G4cout << " NEWMAX " << image2->GetValueAtPoint(thePointNorm,pointExtension) << G4endl; //GDEB
+	  G4cout << " NEWMAX " << image2->GetValueAtPoint(thePointNorm,pointExtension) << G4endl; 
 	}
 	if( bErrors ) {
 	  imageErr1Mod = new DicomVImage(*imageErr1);
@@ -610,42 +658,68 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	if( bDrawXY ) {
 	  //	    GIResultData resData =
 	  //-	  DicomVImage* giImage = new DicomVImage(image1,"GammaIndex_XY_"+image1->GetModalityShortStr().substr(5,999),DIM_GammaIndex);
-	  DicomVImage* giImage = new DicomVImage(image1,giImageName,DIM_GammaIndex);
-	  //	  G4cout << " operGammaIndex->OperateXY " << G4endl << *image1Mod << G4endl << *image2Mod << " -> " << *giImage << G4endl; //GDEB
+	  //	  G4cout << " theOperGammaIndex->OperateXY " << G4endl << *image1Mod << G4endl << *image2Mod << " -> " << *giImage << G4endl; //GDEB
 	  //	    std::vector<G4double> iData2 = *(image2Mod->GetData());
 	  //	    std::vector<G4double> iData2Mod = *(image2->GetData());
-	  //-	  operGammaIndex->OperateXY( image1Mod, image2Mod, (*itepdd).first, (*itepdd).second, 1, giImage );
-	  operGammaIndex->OperateXY( image1Mod, image2Mod, imageErr1Mod, imageErr2Mod, (*itepdd).first, (*itepdd).second, 1, giImage );
-	  theDicomMgr->OperateAll(giImage);
-	  if( bMaxGammaValue ) SetImageMaxValue(giImage, theMaxGammaValue);
-	  G4String extraFileName = "_"+GmGenUtils::ftoa((*itepdd).first)+"_"+GmGenUtils::ftoa((*itepdd).second)+"_2D";  
-	  if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".XY.root");
-	  theDrawer->DrawXY(giImage,theLineSets, extraFileName);
-	  //	    operGammaIndex->OperateXY( image1Mod, image2Mod, (*itepdd).first, (*itepdd).second, 1., giImage);
-	  //?? just calling OperateXY, even if imageOut is not touched!!	    theDrawer->DrawXY(giImage,theLineSets);
-	  //  resData->Draw("GammaIndex_"+image1->GetModalityShort());
-	  //	    PrintResultData(resData);
+	  //-	  theOperGammaIndex->OperateXY( image1Mod, image2Mod, (*itepdd).first, (*itepdd).second, 1, giImage );
+	  // loop to structures
+	  for( auto itesn = theStructNames.begin(); itesn != theStructNames.end(); itesn++ ) { // if no theStListperSt theStructNames will contain a -1 and no structure will be considered
+	    DicomVImage* giImage = new DicomVImage(image1,giImageName,DIM_GammaIndex);
+	    //	    if(theStIDImage ) G4cout << " STID_IMAGE " << *theStIDImage << G4endl; //GDEB
+	    theOperGammaIndex->OperateXY( image1Mod, image2Mod, imageErr1Mod, imageErr2Mod, (*itepdd).first, (*itepdd).second, 1, giImage, itesn->first, theStIDImage );
+	    theDicomMgr->OperateAll(giImage);
+	    if( bMaxGammaValue ) SetImageMaxValue(giImage, theMaxGammaValue);
+	    G4String extraFileName = "_"+GmGenUtils::ftoa((*itepdd).first)+"_"+GmGenUtils::ftoa((*itepdd).second)+"_2D";
+	    if( itesn->second != "" ) {
+	      extraFileName += "."+ itesn->second;
+	    }
+	    theDrawer->SetDrawHisto1(true);
+	    if( bOutputFile ) {
+	      G4String rootFile = "getGammaIndex"+extraFileName+".XY.root";
+	      rootFile.replace(rootFile.find("_2D"),3,"");
+	      if( bOutputFile ) theDrawer->SetOutputFile(rootFile);
+	    }
+	    //G4cout << " DRAWXY " << "getGammaIndex"+extraFileName+".XY.root" << G4endl; //GDEB
+	    theDrawer->DrawXY(giImage,theLineSets, extraFileName, true);
+	    //G4cout << " CALL CloseOutputFile() " << G4endl; //GDEB
+	    theDrawer->CloseOutputFile();
+	    //	    theOperGammaIndex->OperateXY( image1Mod, image2Mod, (*itepdd).first, (*itepdd).second, 1., giImage);
+	    //?? just calling OperateXY, even if imageOut is not touched!!	    theDrawer->DrawXY(giImage,theLineSets);
+	    //  resData->Draw("GammaIndex_"+image1->GetModalityShort());
+	    //	    PrintResultData(resData);
+	  }
 	}
 
 	if( bDrawXZ ) {
 	  DicomVImage* giImage = new DicomVImage(image1,giImageName,DIM_GammaIndex);
-	  G4cout << " operGammaIndex->OperateXZ " << G4endl << *image1Mod << G4endl << *image2Mod << G4endl; //GDEB
-	  operGammaIndex->OperateXZ( image1Mod, image2Mod, (*itepdd).first, (*itepdd).second, 1., giImage);
-	  theDicomMgr->OperateAll(giImage);
-	  if( bMaxGammaValue ) SetImageMaxValue(giImage, theMaxGammaValue);  
-	  G4String extraFileName = "_"+GmGenUtils::ftoa((*itepdd).first)+"_"+GmGenUtils::ftoa((*itepdd).second)+"_2D"; 
-	  if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".XZ.root");
-	  theDrawer->DrawXZ(giImage,theLineSets,extraFileName);
+	  //	  G4cout << " theOperGammaIndex->OperateXZ " << G4endl << *image1Mod << G4endl << *image2Mod << G4endl; //GDEB
+	  for( auto itesn = theStructNames.begin(); itesn != theStructNames.end(); itesn++ ) { // if no theStListPerSt theStructNames will contain a -1 and no structure will be considered
+	    theOperGammaIndex->OperateXZ( image1Mod, image2Mod, (*itepdd).first, (*itepdd).second, 1., giImage, itesn->first, theStIDImage);
+	    theDicomMgr->OperateAll(giImage);
+	    if( bMaxGammaValue ) SetImageMaxValue(giImage, theMaxGammaValue);  
+	    G4String extraFileName = "_"+GmGenUtils::ftoa((*itepdd).first)+"_"+GmGenUtils::ftoa((*itepdd).second)+"_2D"; 
+	    if( itesn->second != "" ) {
+	      extraFileName += "."+ itesn->second;
+	    }
+	    if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".XZ.root");
+	    theDrawer->DrawXZ(giImage,theLineSets,extraFileName, true);
+	  }
 	}
+	  
 	if( bDrawYZ ) {
 	  DicomVImage* giImage = new DicomVImage(image1,giImageName,DIM_GammaIndex);
-	  G4cout << " operGammaIndex->OperateYZ " << G4endl << *image1Mod << G4endl << *image2Mod << G4endl; //GDEB
-	  operGammaIndex->OperateYZ( image1Mod, image2Mod, (*itepdd).first, (*itepdd).second, 1., giImage);
-	  theDicomMgr->OperateAll(giImage);
-	  if( bMaxGammaValue ) SetImageMaxValue(giImage, theMaxGammaValue);  
-	  G4String extraFileName = "_"+GmGenUtils::ftoa((*itepdd).first)+"_"+GmGenUtils::ftoa((*itepdd).second)+"_2D";
-	  if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".YZ.root");
-	  theDrawer->DrawYZ(giImage,theLineSets,extraFileName);
+	  //	  G4cout << " theOperGammaIndex->OperateYZ " << G4endl << *image1Mod << G4endl << *image2Mod << G4endl; //GDEB
+	  for( auto itesn = theStructNames.begin(); itesn != theStructNames.end(); itesn++ ) { // if no theStListPerSt theStructNames will contain a -1 and no structure will be considered
+	    theOperGammaIndex->OperateYZ( image1Mod, image2Mod, (*itepdd).first, (*itepdd).second, 1., giImage, itesn->first, theStIDImage);
+	    theDicomMgr->OperateAll(giImage);
+	    if( bMaxGammaValue ) SetImageMaxValue(giImage, theMaxGammaValue);  
+	    G4String extraFileName = "_"+GmGenUtils::ftoa((*itepdd).first)+"_"+GmGenUtils::ftoa((*itepdd).second)+"_2D";
+	    if( itesn->second != "" ) {
+	      extraFileName += "."+ itesn->second;
+	    }
+	    if( bOutputFile ) theDrawer->SetOutputFile("getGammaIndex"+extraFileName+".YZ.root");
+	    theDrawer->DrawYZ(giImage,theLineSets,extraFileName, true);
+	  }
 	}
       }
     }
@@ -657,15 +731,34 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 
 
 //-------------------------------------------------------------------
-void DCMGetGammaIndex::CalculateDiffPerSt()
+void DCMGetGammaIndex::CalculateDumpPerSt()
 {
-  std::ofstream fout(theParamMgr->GetStringValue("fOutDiffPerSt","diffPerSt.out"));
-  //--- make pairs of sqdose - sqdose_err if bDiffPerSt
+  /*  mmmodi images = theDicomMgr->GetImages();
+  G4bool bIsOK = false;
+  for( mmmodi::const_iterator itei = images.begin(); itei != images.end(); itei++ ) {
+    G4cout << " bDumpPerSt " << itei->second->GetName() << " " << itei->second->GetModalityStr() << " " << itei->second->GetModalityShortStr() << G4endl; //GDEB
+    DIModalityShort modS = itei->second->GetModalityShort();
+    if( modS == DIMS_Struct ) {
+      bIsOK = true;
+      break;
+    }
+    }*/
+  if( theLineSets.size() == 0 ) {
+    G4Exception("getGammaIndex",
+		"", 
+		FatalException,
+		"No file of type RTSTRUCT");
+  }
+  std::ofstream fout(theParamMgr->GetStringValue("fOutDumpPerSt","diffPerSt.out"));
+  //--- make pairs of sqdose - sqdose_err 
   typedef std::pair<DicomVImage*,DicomVImage*> pii;
   std::vector<pii> imageWithErrors;
-  std::vector<DicomVReaderImage*> VRTFiles = theReaderMgr->GetImageReaders(DRM_Sqdose, false);
-  for( size_t ii = 0; ii < VRTFiles.size(); ii++ ) {
-    DicomVReaderImage* reader = VRTFiles[ii];
+  //  std::vector<DicomVReaderImage*> VRTFiles = theReaderMgr->GetImageReaders(DRM_Sqdose, false);
+  //  for( size_t ii = 0; ii < VRTFiles.size(); ii++ ) {
+  //DicomVReaderImage* reader = VRTFiles[ii];
+  mmmdri VImageFiles = theReaderMgr->GetImageReaders();
+  for( mmmdri::const_iterator itemm = VImageFiles.begin(); itemm != VImageFiles.end(); itemm++ ) {
+    DicomVReaderImage* reader = itemm->second;
     if( reader->GetModality() == DRM_Sqdose ) {
       DicomReaderSqdose* readerSqdose = static_cast<DicomReaderSqdose*>(reader);
       imageWithErrors.push_back(pii(readerSqdose->GetDoseImage(), readerSqdose->GetDoseErrImage()) );
@@ -676,32 +769,34 @@ void DCMGetGammaIndex::CalculateDiffPerSt()
       //      DicomReaderG4dcmDose* readerSqdose = static_cast<DicomReaderG4dcmDose*>(reader);
       imageWithErrors.push_back(pii(reader->GetImage(), (DicomVImage*)(0)));
     }
+    G4cout << " CalculateDumpPerSt imageWithErrors " << imageWithErrors.size() << " " << reader->GetImage()->GetName() << G4endl; //GDEB
   }
-  //--- Loop to these pairs
+
   DicomOperIntersectStruct* operInters = new DicomOperIntersectStruct;
   //  DicomDrawerROOT* theDrawerRoot = new DicomDrawerROOT;
   theDicomMgr->SetRotateXY180(true);
-   
-  for( size_t ii = 0; ii < imageWithErrors.size()-1; ii++ ) {
+
+  //--- LOOP to these pairs of images 
+  //  for( size_t ii = 0; ii < imageWithErrors.size()-1; ii++ ) {
+  for( size_t ii = 0; ii < 1; ii++ ) {
     pii imgWErr1 = imageWithErrors[ii];
-    for( size_t jj = 1; jj < imageWithErrors.size(); jj++ ) {
+    //    for( size_t jj = 1; jj < imageWithErrors.size(); jj++ ) {
+    /*t    for( size_t jj = 1; jj < 2; jj++ ) {
       if( ii == jj ) continue;
       pii imgWErr2 = imageWithErrors[jj];
-      //--- check images are equal
+      //--- check images dimensions are equal
       imgWErr1.first->CheckImageHeadersAreEqual( imgWErr2.first);
       //--- build OperIntersStruct with any of the images
       for( size_t ips = 0; ips < theLineSets.size(); ips++ ) {
 	DicomVLineSet* lineSet = theLineSets[ips];
+	G4cout << ips << " LOOP polySet " << lineSet->GetName() << G4endl; //GDEB
 	if( lineSet->GetName().substr(0,9) != "RTStruct_" ) continue;
 	DicomPolygonSet* polySet = dynamic_cast<DicomPolygonSet*>(lineSet);
 	std::vector<DicomVLineList*> polyLists = polySet->GetLineLists();
-	for( size_t ipl = 0; ipl < polyLists.size(); ipl++ ) {
+	for( size_t ipl = 0; ipl < polyLists.size(); ipl++ ) {   // LOOP TO st's
 	  DicomPolygonList* polyList = dynamic_cast<DicomPolygonList*>(polyLists[ipl]);
-	  if( polyList->GetName().find("GTV") == std::string::npos ) continue;
-	  DicomVImage* structImage = new DicomVImage( imgWErr1.first, "StructVolume_"+polyList->GetName(), DIM_OTHER );
-	  G4cout << polyList << " POLYLIST " << polyList->GetName() << " " << polyList->GetLines().size() << G4endl; //GDEB
-	  if( polyList->GetLines().size() == 0 ) continue;
-	  operInters->Operate( structImage, polyList );
+	  G4cout << ipl << " LOOP polyList " << polyList->GetName() << " " << polyList->GetLines().size() << G4endl; //GDEB
+	  if( polyList->GetName().find("TV") == std::string::npos ) continue;
 	  double diffSt = 0.;
 	  double dose1St = 0.;
 	  double dose2St = 0.;
@@ -709,6 +804,7 @@ void DCMGetGammaIndex::CalculateDiffPerSt()
 	  double dose1ErrSt = 0.;
 	  double dose2ErrSt = 0.;
 	  double volSt = 0.;
+	  DicomVImage* structImage = new DicomVImage( imgWErr1.first, "StructVolume_"+polyList->GetName(), DIM_OTHER );
 	  std::vector<G4double> dataSt = *(structImage->GetData());
 	  std::vector<G4double> data1 = *(imgWErr1.first->GetData());
 	  std::vector<G4double> data2 = *(imgWErr2.first->GetData());
@@ -721,7 +817,7 @@ void DCMGetGammaIndex::CalculateDiffPerSt()
 	    diffSt += fabs(data1[iv] - data2[iv] ) * dataSt[iv];
 	    dose1St += data1[iv] * dataSt[iv];
 	    dose2St += data2[iv] * dataSt[iv];
-	    if(  dataSt[iv] != 0 ) G4cout << polyList->GetName() << " " << iv << " diff " <<  fabs(data1[iv] - data2[iv] ) * dataSt[iv] << " " <<  data1[iv] * dataSt[iv] << " " <<  data2[iv] * dataSt[iv] << " vol " << dataSt[iv] << G4endl; //GDEB
+	    //if(  dataSt[iv] != 0 ) G4cout << polyList->GetName() << " " << iv << " diff " <<  fabs(data1[iv] - data2[iv] ) * dataSt[iv] << " " <<  data1[iv] * dataSt[iv] << " " <<  data2[iv] * dataSt[iv] << " vol " << dataSt[iv] << G4endl; //GDEB
 	    if( dataErr1 ) {
 	      diffErrSt += std::pow(dataErr1->at(iv),2) * dataSt[iv];
 	      dose1ErrSt += std::pow(dataErr1->at(iv),2) * dataSt[iv];
@@ -731,19 +827,47 @@ void DCMGetGammaIndex::CalculateDiffPerSt()
 	      dose2ErrSt += std::pow(dataErr2->at(iv),2) * dataSt[iv];
 	    }
 	  }
+	  delete structImage;
 	  // print difference of this structure
 	  diffErrSt = std::sqrt(diffErrSt);
 	  std::cout << "DIFF= " << std::setw(15) << polyList->GetName() << " " << diffSt << " +- " << diffErrSt << " VOL= " << volSt << " DOSE1= " << dose1St << " +- " << dose1ErrSt << " DOSE2= " << dose2St << " +- " << dose2ErrSt << std::endl; 
 	  //	  fout << std::setw(15) << polyList->GetName() << " " << diffSt << " +- " << diffErrSt << " VOL= " << volSt << " DOSE1= " << dose1St << " +- " << dose1ErrSt << " DOSE2= " << dose2St << " +- " << dose2ErrSt << std::endl; 
 	  fout << std::setw(15) << polyList->GetName() << " " << diffSt/volSt << " +- " << diffErrSt/volSt << " DOSE1= " << dose1St/volSt << " +- " << dose1ErrSt/volSt << " DOSE2= " << dose2St/volSt << " +- " << dose2ErrSt/volSt << " VOL= " << volSt << std::endl; 
 	  //	  theDrawerRoot->DrawXY( structImage, theLineSets );
-	  FILE* foutSq = fopen(("sqdose.DiffPerSt."+polyList->GetName()).c_str(),"wb");
-	  structImage->DumpToSqdoseFile(foutSq);
-	  std::ofstream foutDcm(("g4dcm.DiffPerSt."+polyList->GetName()).c_str());
-	  structImage->DumpHeaderToTextFile(foutDcm);
-	  structImage->DumpDataToTextFile(foutDcm);	  
-	  delete structImage;
 	}
+      }
+      } */
+    for( size_t ips = 0; ips < theLineSets.size(); ips++ ) {
+      DicomVLineSet* lineSet = theLineSets[ips];
+      //G4cout << ips << " LOOP polySet " << lineSet->GetName() << G4endl; //GDEB
+      if( lineSet->GetName().substr(0,9) != "RTStruct_" ) continue;
+      DicomPolygonSet* polySet = dynamic_cast<DicomPolygonSet*>(lineSet);
+      std::vector<DicomVLineList*> polyLists = polySet->GetLineLists();
+      for( size_t ipl = 0; ipl < polyLists.size(); ipl++ ) {   // LOOP TO st's
+	DicomPolygonList* polyList = dynamic_cast<DicomPolygonList*>(polyLists[ipl]);
+	//G4cout << ipl << " LOOP polyList " << polyList->GetName() << " " << polyList->GetLines().size() << G4endl; //GDEB
+	if( polyList->GetName().find("TV") == std::string::npos ) continue;
+	if( polyList->GetLines().size() == 0 ) continue;
+	DicomVImage* structImage = new DicomVImage( imgWErr1.first, "StructVolume_"+polyList->GetName(), DIM_OTHER );
+	//
+	operInters->Operate( structImage, polyList );
+	//	  theDrawerRoot->DrawXY( structImage, theLineSets );
+	FILE* foutSq = fopen(("sqdose.DumpPerSt."+polyList->GetName()).c_str(),"wb");
+	//G4cout << " OPENING foutSq " << "sqdose.DumpPerSt."+polyList->GetName() << G4endl; //GDEB
+	structImage->DumpToSqdoseFile(foutSq);
+	std::ofstream foutDcm(("g4dcm.DumpPerSt."+polyList->GetName()).c_str());
+	//G4cout << " OPENING foutDcm " <<foutSq << "g4dcm.DumpPerSt."+polyList->GetName() << G4endl; //GDEB
+	structImage->DumpHeaderToTextFile(foutDcm);
+	structImage->DumpDataToTextFile(foutDcm);	  
+	delete structImage;
+	DicomDrawerROOT*  theDrawer = new DicomDrawerROOT();
+	G4cout << " DCMGetGammaIndex theDrawer " << theDrawer<< G4endl;//GDEB
+	//-theDrawer->SetFigureTitle(G4bool(theParamMgr->GetNumericValue("bFigureTitle",1)));
+	theDrawer->DrawXY(structImage,theLineSets,".DumpPerSt."+polyList->GetName());
+	//G4cout << " DCMGetGammaIndex drawnXY " << G4endl;//GDEB
+	theDrawer->DrawXZ(structImage,theLineSets,".DumpPerSt."+polyList->GetName());
+	theDrawer->DrawYZ(structImage,theLineSets,".DumpPerSt."+polyList->GetName());
+	delete structImage;
       }
     }
   }
@@ -795,6 +919,9 @@ void DCMGetGammaIndex::PrintHelp()
 	<< " -nPixelsY VALUE   number of pixels used for each figure in the Y axis. Default is 1000. " << G4endl
 	<< " -nPixelsZ VALUE   number of pixels used for each figure in the Z axis. Default is 1000. " << G4endl
 	<< " -imageFormat FORMAT   available format are jpg (default), png, eps, ps, pdf, svg, xpm and tiff " << G4endl
+	<< " -perSt VALUE1;VALUE2;...;VALUEn  provide a gamma index map for each structure in the list (it needs a G4dcmCT_StID file) (default = '')" << G4endl
+	<< " -bDrawPerSt 0/1   draw an image for each structure, if StListPerSt (default = 0)" << G4endl
+	<< " -bDumpPerSt 0/1   dump an sqdose file and G4dcmd RTDose for each dose image and each structure (default = 0)" << G4endl
 	<< " -bOutputFile    write the 2D histograms in an output file getGammaIndex_PC_DIST_2D.root" << G4endl
 	<< " -verb          verbosity: sets the verbosity" << G4endl
 	<< " -help          prints the list of arguments " << G4endl;

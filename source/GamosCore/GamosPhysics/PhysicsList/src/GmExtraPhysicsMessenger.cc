@@ -79,6 +79,8 @@
 #include "G4CoulombScattering.hh"
 #include "G4eCoulombScatteringModel.hh"
 
+#include "G4RunManager.hh"
+
 #include <set>
 
 // ----------------------------------------------------------------------------
@@ -353,6 +355,8 @@ void GmExtraPhysicsMessenger::ReplaceModelSet(G4String newValue)
       Replace1Model(newParticleName,"annihil",newModelName);
     }
   }
+  G4RunManager::GetRunManager()->PhysicsHasBeenModified();
+  G4RunManager::GetRunManager()->InitializePhysics();
 }
 
 // ----------------------------------------------------------------------------
@@ -370,8 +374,30 @@ void GmExtraPhysicsMessenger::ReplaceModel(G4String newValue)
   G4String newParticleName = wl[0];
   G4String newProcessName = wl[1];
   G4String newModelName = wl[2];
-  Replace1Model(newParticleName,newProcessName,newModelName);
 
+  G4ParticleDefinition* particle = G4Proton::Proton(); // your particle
+  G4ProcessManager* pm = particle->GetProcessManager();
+  G4ProcessVector* pv = pm->GetProcessList();
+  
+  for (size_t ii = 0; ii < pv->size(); ++ii) {
+    G4VProcess* proc = (*pv)[ii];
+    G4VMultipleScattering* msc = dynamic_cast<G4VMultipleScattering*>(proc);
+    
+    if (msc) {
+      // Add your new model
+      G4UrbanMscModel* newModel = new G4UrbanMscModel();
+      newModel->SetLowEnergyLimit(0.1*CLHEP::MeV);
+      newModel->SetHighEnergyLimit(100*CLHEP::MeV);
+      
+      msc->SetEmModel(newModel, 0);  // ← correct method
+
+      G4cout << "MSC model swapped to Urban" << G4endl;
+      break;
+    }
+  }
+  
+  //   Replace1Model(newParticleName,newProcessName,newModelName);
+  
 }
 
 // ----------------------------------------------------------------------------

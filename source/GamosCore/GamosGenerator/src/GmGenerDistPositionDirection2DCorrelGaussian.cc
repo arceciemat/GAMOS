@@ -8,10 +8,11 @@
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 #include "GamosCore/GamosGeometry/include/GmTouchable.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include "GamosCore/GamosUtils/include/GmPlane.hh"
+#include "GamosCore/GamosUtils/include/GmFileIn.hh"
 
 #include "G4ThreeVector.hh"
 #include "CLHEP/Random/RandGauss.h"
+#include "G4Point3D.hh"
 
 #ifdef HISTOGRAMS
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
@@ -39,6 +40,9 @@ GmGenerDistPositionDirection2DCorrelGaussian::GmGenerDistPositionDirection2DCorr
   }
 #endif
 
+  theConfFileNamePrefix = GmParameterMgr::GetInstance()->GetStringValue("GmGenerDistPositionDirection2DCorrelGaussian:ConfFileNamePrefix","conf1E");
+
+  //  G4cout << " CREATE GmGenerDistPositionDirection2DCorrelGaussian " << this << G4endl; //GDEB
 }
 
 //---------------------------------------------------------------------
@@ -52,21 +56,38 @@ G4ThreeVector GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition( Gm
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition Centre=" << theCentre << G4endl;
 #endif
-  G4double randX = CLHEP::RandGauss::shoot(0.,1.);
+ G4double randX = CLHEP::RandGauss::shoot(0.,1.);
   G4double randXp = CLHEP::RandGauss::shoot(0.,1.); 
-  //  randX = 2.;
-  //  randXp = 1.;
   G4double posX = theTriangularMatrixX[0][0]*randX+theTriangularMatrixX[0][1]*randXp;
   G4double dirX = theTriangularMatrixX[1][0]*randX+theTriangularMatrixX[1][1]*randXp;
   G4double randY = CLHEP::RandGauss::shoot(0.,1.);
   G4double randYp = CLHEP::RandGauss::shoot(0.,1.);
-  G4double posY = theTriangularMatrixY[0][0]*randY+theTriangularMatrixY[0][1]*randYp;
+/*  randX = 0.5;
+  randXp = 0.5;
+  randY = 0.5;
+  randYp = 0.5;
+*/
+  if( theAxisDir.z() < -990.9 ) {
+    theAxisDir = G4ThreeVector(0., 0., -1.);
+    thePerpDir = G4ThreeVector(0., -1, 0.);
+    theCentre  = G4ThreeVector(0., 0, 508);
+    }
+
+G4double posY = theTriangularMatrixY[0][0]*randY+theTriangularMatrixY[0][1]*randYp;
   G4double dirY = theTriangularMatrixY[1][0]*randY+theTriangularMatrixY[1][1]*randYp;
-  dirY *= -1;
-  //  G4cout << this << " POSITION " << thePosition << "  DIRECTION " << theDirection << G4endl; //GDEB
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(debugVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition pos=" << posX << " " << posY << "   " <<theXYPhase/CLHEP::deg  << " TM= " << theTriangularMatrixX[0][0] << G4endl;
-  if( GenerVerb(debugVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition dir=" << dirX << " " << dirY << " TM= " << theTriangularMatrixX[1][1] << G4endl;
+  if( GenerVerb(debugVerb) ) {
+    G4cout << "  GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition orig pos= " << posX << " " << posY << G4endl; 
+    G4cout << "  GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition orig dir= " << dirX << " " << dirY << G4endl;
+  }
+#endif	
+  //  dirY *= -1;
+  //  G4cout << this << " POSITION " << thePosition << "  DIRECTION " << theDirection << G4endl; //GDEB
+  //  G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition posX=" << posX << " TM= " << theTriangularMatrixX[0][0] << "  " << theTriangularMatrixX[0][1] << G4endl; //GDEB
+  //  G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition posY=" << posY << " TM= " << theTriangularMatrixY[0][1] << "  " << theTriangularMatrixY[0][1] << G4endl; //GDEB
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition orig pos=" << posX << " " << posY << "   " <<theXYPhase/CLHEP::deg  << " TM= " << theTriangularMatrixX[0][0] << " " << +theTriangularMatrixY[0][1] << G4endl;
+  if( GenerVerb(debugVerb) ) G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition dir=" << dirX << " " << dirY << " TM= " << theTriangularMatrixX[1][0] << " " << theTriangularMatrixY[1][1] << G4endl;
 #endif
   if( theXYPhase != 0. ) {
     G4double posXR = posX*cos(theXYPhase)+posY*sin(theXYPhase);
@@ -81,26 +102,105 @@ G4ThreeVector GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition( Gm
     dirX = dirXR;
     dirY = dirYR;
   }
-  thePosition = G4ThreeVector(posX,posY,0.);
-  thePosition *= theRotation;
+
+//  G4cout << " DOT " << theAxisDir.dot(G4ThreeVector(0.,0.,1)) << theAxisDir << G4endl; //GDEB
+
+  if( theAxisDir.dot(G4ThreeVector(0.,0.,1)) < 1.-0.001 ) {	 //0,0,1 is the starting Z axis = no rotation needed
+    thePosition = G4ThreeVector(posX,posY,0.);
+    theDirection = G4ThreeVector(dirX,dirY,1);
+    
+    // Choose a stable temporary up vector to avoid collinear cross products
+    //-  G4ThreeVector tempUp = (std::abs(theAxisDir.y()) > 0.999) ? G4ThreeVector(1.0, 0.0, 0.0) : G4ThreeVector(0.0, 1.0, 0.0);
+    
+    thePerpDir = (std::abs(theAxisDir.z()) > 0.999)
+      ? G4ThreeVector(1.0, 0.0, 0.0)
+      : G4ThreeVector(0.0, 0.0, 1.0);
+    
+    // Gram-Schmidt: dirNewX is "thePerpDir" with its theAxisDir-component removed
+    G4ThreeVector dirNewX = (thePerpDir - thePerpDir.dot(theAxisDir) * theAxisDir).unit();
+    G4ThreeVector dirNewY = theAxisDir.cross(dirNewX);   // right-handed: dirNewX x dirNewY = theAxisDir
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition before centre pos=" << thePosition << G4endl;
+    if( GenerVerb(debugVerb) )  G4cout << "DIRNEW " << dirNewX << " " << dirNewY << " theAxisDir " << theAxisDir << " thePerpDir " <<thePerpDir<< " thePerpDir " << thePerpDir << G4endl;
 #endif
-  thePosition += theCentre;
+    // 3. Rotation matrix + full transform
+    G4RotationMatrix rotMatrix(dirNewX, dirNewY, theAxisDir);
+    G4Transform3D transform(rotMatrix, theCentre);
+    
+    /*  G4ThreeVector tempUp = (std::abs(theAxisDir.z()) > 0.999) ? G4ThreeVector(1.0, 0.0, 0.0) : G4ThreeVector(0.0, 0.0, 1.0);
+	
+	G4ThreeVector newY = theAxisDir.cross(tempUp).unit();
+	G4ThreeVector newX = newY.cross(theAxisDir).unit();
+	
+  G4ThreeVector dirNewX = thePerpDir; //tempUp.cross(theAxisDir).unit();
+  G4ThreeVector dirNewY = theAxisDir.cross(dirNewX);
+  #ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) )  G4cout << "DIRNEW " << dirNewX << " " << dirNewY << " theAxisDir " << theAxisDir << " thePerpDir " <<thePerpDir<< " tempUp " << tempUp << " tempUp.cross " << tempUp.cross(theAxisDir).unit() << G4endl;
+#endif  	 
+// 2. Construct using components so they map as COLUMNS (Axes)
+// Each column represents where the original X, Y, and Z axes point in the new frame
+CLHEP::HepRep3x3 m(
+    dirNewX.x(), dirNewY.x(), theAxisDir.x(),  // Row 1
+    dirNewX.y(), dirNewY.y(), theAxisDir.y(),  // Row 2
+    dirNewX.z(), dirNewY.z(), theAxisDir.z()   // Row 3
+);
+G4RotationMatrix rotMatrix(m);
+
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition final pos=" << thePosition << " -center " << thePosition-theCentre << G4endl;
+  if( GenerVerb(debugVerb) )  G4cout << " NEW ROTMA " << rotMatrix << G4endl; 
+#endif
+  // 4. Construct the full 3D Transformation (Rotation + Translation)
+  G4Transform3D transform(rotMatrix, theCentre);
+*/
+    // 5. Transform the direction (Rotation matrix multiplication only)
+    G4ThreeVector movedDirection = rotMatrix * theDirection; 
+    
+    // 6. Transform the position (Full affine transformation)
+    G4ThreeVector movedPosition = transform * G4Point3D(thePosition);
+#ifndef GAMOS_NO_VERBOSE
+    if( GenerVerb(debugVerb) ) {
+      G4cout << " new dir= " << movedDirection << G4endl; 
+      G4cout << " new pos= " << movedPosition << G4endl; 
+    }
+#endif
+    thePosition = movedPosition;
+    theDirection = movedDirection;
+  } else {
+    thePosition = G4ThreeVector(posX,posY,0.) + theCentre;
+    theDirection = G4ThreeVector(dirX,dirY,1);
+#ifndef GAMOS_NO_VERBOSE
+    if( GenerVerb(debugVerb) ) G4cout << "GmGenerDistPositionDirection2DCorrel	Gaussian::GeneratePosition  theAxisDir = 0,0,1, NO ROTATION " << theAxisDir << " FINAL pos=" << thePosition << " FINAL dir= " << theDirection << G4endl;
 #endif
 
-  //---- Rotate around theAxisDir
-  G4ThreeVector newDir = theAxisDir; 
-  G4double theta = asin(sqrt(dirX*dirX+dirY*dirY));
-  newDir.rotate( theta, thePerpDir );
-  G4double phi = atan2(dirY,dirX);
-  newDir.rotate( phi , theAxisDir );    
-  partSource->SetDirection(newDir);
+  }    
+
+/*
+  G4ThreeVector dirNewX = thePerpDir.cross(theAxisDir).unit();
+  G4ThreeVector dirNewY = theAxisDir.cross(dirNewX);
+  G4cout << "DIRNEW " << dirNewX << " " << dirNewY << " theAxisDir " << theAxisDir << " thePerpDir " <<thePerpDir<<  G4endl;
+  
+  // Position: global -> new frame (assuming frame origin coincides with global origin)
+  G4ThreeVector positionNew(dirNewX.dot(thePosition), dirNewY.dot(thePosition), theAxisDir.dot(thePosition));
+  G4cout << " NEW pos= " << positionNew << G4endl;  
+  // Direction: global -> new frame
+  G4ThreeVector directionNew(dirNewX.dot(theDirection), dirNewY.dot(theDirection), theAxisDir.dot(theDirection));
+  G4cout << " NEW dir= " << directionNew << " oldtheDirection " << theDirection << G4endl;
+
+  thePosition = positionNew;
+  theDirection = directionNew;
+  */
+  
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition before centre pos=" << thePosition << G4endl; 
+#endif
+//  thePosition += theCentre;
+  
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition final pos=" << thePosition << " center " << theCentre << G4endl;
+#endif
+  
+  //?? newDir.rotate( phi , theAxisDir );    
+  partSource->SetDirection(theDirection);
   //  G4cout << this << "DIR=" << dirX << " " << dirY << "theAxisDir="<< theAxisDir << " " << theta << "=" << newDir.theta() << " " << phi << "=" << newDir.phi() << " GmGenerDistPositionDirection2DCorrelGaussian partSource direction " << partSource->GetDirection() << G4endl; //GDEB
-  theDirection = newDir;
-  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::GeneratePosition final dir=" << dirX << " " << dirY << " " << theDirection << G4endl;
 
 #ifdef HISTOGRAMS
   //  G4cout << this <<" " << bHistogramsHere <<" FILL GmGenerDistPositionDirection2DCorrelGaussian::bHistograms = " << GmGenerDistPositionDirection2DCorrelGaussian::bHistograms << G4endl; //GDEB
@@ -133,6 +233,16 @@ G4ThreeVector GmGenerDistPositionDirection2DCorrelGaussian::GenerateDirection( G
 //---------------------------------------------------------------------
 void GmGenerDistPositionDirection2DCorrelGaussian::SetParams( const std::vector<G4String>& params )
 {
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) ) {
+    G4cout << this << " GmGenerDistPositionDirection2DCorrelGaussian::SetParams ";
+    for( size_t ii = 0 ; ii < params.size(); ii++ ) {
+      G4cout << ii << " PARAM=" << params[ii] << G4endl;
+
+    }
+  }
+#endif
+
   if( params.size() != 7 && params.size() != 10 && params.size() != 13 ) {
     G4Exception(" GmGenerDistPositionDirection2DCorrelGaussian::SetParams",
 		"Wrong argument",
@@ -170,6 +280,11 @@ void GmGenerDistPositionDirection2DCorrelGaussian::SetParams( const std::vector<
     //normalize direction cosines
     G4ThreeVector dir(GmGenUtils::GetValue( params[10] ), GmGenUtils::GetValue( params[11] ), GmGenUtils::GetValue( params[12] ) );
     SetRotation( dir );
+    SetDirection(dir);
+  } else {
+    theDirection = G4ThreeVector(0.,0.,1.);
+    SetRotation( theDirection );
+    SetDirection( theDirection );
   }
   
 #ifndef GAMOS_NO_VERBOSE
@@ -196,16 +311,16 @@ void GmGenerDistPositionDirection2DCorrelGaussian::SetParams( const std::vector<
   theMatrixY[1][1] = theSigmaYp*theSigmaYp;
 
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::SetParams theMatrixX: "
-				     <<  theMatrixX[0][0] << " " << theMatrixX[0][1] << " | " <<  theMatrixX[1][0] << " " << theMatrixX[1][1] << " " 
-				     <<  theMatrixY[0][0] << " " << theMatrixY[0][1] << " | " <<  theMatrixY[1][0] << " " << theMatrixY[1][1] << G4endl;
+  if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::SetParams theMatrixX: " 
+				     <<  theMatrixX[0][0] << " " << theMatrixX[0][1] << " | " <<  theMatrixX[1][0] << " " << theMatrixX[1][1] << G4endl
+				    << "theMatrixY "<< theMatrixY[0][0] << " " << theMatrixY[0][1] << " | " <<  theMatrixY[1][0] << " " << theMatrixY[1][1] << G4endl;
 #endif
   theTriangularMatrixX = DecomposeMatrixCholensky( theMatrixX, 2 );
   theTriangularMatrixY = DecomposeMatrixCholensky( theMatrixY, 2 );
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::SetParams theTriangularMatrixX: "
-				     <<  theTriangularMatrixX[0][0] << " " << theTriangularMatrixX[0][1] << " | " <<  theTriangularMatrixX[1][0] << " " << theTriangularMatrixX[1][1] << " " 
-				     <<  theTriangularMatrixY[0][0] << " " << theTriangularMatrixY[0][1] << " | " <<  theTriangularMatrixY[1][0] << " " << theTriangularMatrixY[1][1] << G4endl;
+				    <<  theTriangularMatrixX[0][0] << " " << theTriangularMatrixX[0][1] << " | " <<  theTriangularMatrixX[1][0] << " " << theTriangularMatrixX[1][1] << G4endl
+				    << "theTriangularMatrixY: " << theTriangularMatrixY[0][0] << " " << theTriangularMatrixY[0][1] << " | " <<  theTriangularMatrixY[1][0] << " " << theTriangularMatrixY[1][1] << G4endl;
 #endif
   
 #ifdef HISTOGRAMS
@@ -344,6 +459,63 @@ G4double** GmGenerDistPositionDirection2DCorrelGaussian::DecomposeMatrixCholensk
   return lowerMat;
 }
  
+//---------------------------------------------------------------------
+void GmGenerDistPositionDirection2DCorrelGaussian::SetParamsEnergy( G4String energy )
+{
+  // try all options conf1E90 conf1E090 conf1E90.0 conf1E090.0
+  G4bool bFileOK = true;
+  G4String energyFinal = energy;
+  if(FILE *file = fopen((theConfFileNamePrefix+energy).c_str(), "r")) {
+    fclose(file);
+    bFileOK = true;
+  } else {
+    G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+energy << " trying with " << theConfFileNamePrefix+"0"+energy << G4endl; //GDEB
+    bFileOK = false;    
+  }
+  if (!bFileOK ) {
+    if (FILE *file = fopen((theConfFileNamePrefix+"0"+energy).c_str(), "r")) {
+      fclose(file);
+      bFileOK = true;
+      energyFinal = "0"+energy;
+    } else {
+      G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+"0"+energy << " trying with " << theConfFileNamePrefix+energy+".0" << G4endl; //GDEB
+      bFileOK = false;
+    }
+  }
+  if (!bFileOK ) {
+    if (FILE *file = fopen((theConfFileNamePrefix+energy+".0").c_str(), "r")) {
+      fclose(file);
+      bFileOK = true;
+      energyFinal = energy+".0";
+    } else {
+      G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+"0"+energy << " trying with " << theConfFileNamePrefix+"0"+energy+".0" << G4endl; //GDEB
+      bFileOK = false;
+    }
+  }
+  if (!bFileOK ) {
+    energyFinal = "0"+energy+".0";
+  } 
+  GmFileIn fin = GmFileIn::GetInstance(theConfFileNamePrefix+energyFinal,true);
+  //  G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::SetParamsEnergy " << theConfFileNamePrefix+energy << G4endl; //GDEB
+  
+  std::vector<G4String> params;
+  fin.GetWordsInLine(params);
+  fin.Close();
+  //  G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::SetParamsEnergy NPARAM " << params.size() << G4endl; //GDEB
+
+  SetParams(params);
+
+#ifndef GAMOS_NO_VERBOSE
+  if( GenerVerb(debugVerb) ) {
+    G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::SetParamsEnergy E= " << energy << " " << theConfFileNamePrefix+energyFinal << G4endl; 
+    G4cout << " GmGenerDistPositionDirection2DCorrelGaussian::SetParamsEnergy " << G4endl;
+    for(size_t ii = 0; ii < params.size(); ii++ ) {
+      G4cout << params[ii] << " ";
+    }
+    G4cout << G4endl;
+  }
+#endif
+}
 
 //---------------------------------------------------------------------
 void GmGenerDistPositionDirection2DCorrelGaussian::SetDirection( G4ThreeVector dir )

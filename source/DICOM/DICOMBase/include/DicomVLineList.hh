@@ -38,6 +38,7 @@ public:
   std::vector<DicomVLine*> GetLines() const {
     return theLines;
   }
+  void ReflectY( G4ThreeVector rotPoint );
   void RotateXY180( G4double angle, G4ThreeVector rotPoint );
   void SetLineSet( DicomVLineSet* ls );
 
