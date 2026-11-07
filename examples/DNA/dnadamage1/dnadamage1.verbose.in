@@ -1,0 +1,38 @@
+/tracking/verbose 1
+
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .dnadamage
+/gamos/geometry DNADamDetectorConstruction
+/gamos/physicsList DNADamPhysicsList
+/gamos/generator GmGenerator
+
+#/process/em/AddDNARegion World DNA_Opt0
+#
+/P DNADamTimeStepAction:FileOutName DNADamTimeStepAction.out
+/gamos/userTimeStepAction DNADamTimeStepAction
+/run/initialize 
+#
+#/control/execute vis.mac
+#
+/gamos/generator/addSingleParticleSource source proton 100*keV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. 1.
+/gamos/generator/positionDist source GmGenerDistPositionSquare 10*nm 0. 0. -20*nm
+/gamos/userAction DNADamRunAction
+/gamos/userAction DNADamSteppingAction
+/gamos/userAction DNADamStackingAction
+
+/gamos/userAction GmCountProcessesUA
+/P GmCountTracksUA:EachNEvent 1
+/gamos/userAction GmCountTracksUA
+#
+/gamos/random/setSeeds 1111 1111
+
+#/P GmStepDataTextFileUA:DataList EventID TrackID ParentTrackID StepNumber ParticleType FinalProcess InitialPosX InitialPosY InitialPosZ AccumulatedEnergyDeposited KineticEnergyChange DNAInitialVolumeType InitialPVCopyNumber EventID
+/P GmStepDataTextFileUA:DataList InitialPosX/1e-6 InitialPosY/1e-6 InitialPosZ/1e-6 AccumulatedEnergyDeposited/eV KineticEnergyChange/eV DNAInitialVolumeType InitialPVCopyNumber EventID TrackID ParentTrackID StepNumber Particle FinalProcess
+/gamos/userAction GmStepDataTextFileUA 
+
+/P  GmStepDataCoutUA:DataList EventID TrackID StepNumber Particle InitialPosX InitialPosY InitialPosZ InitialDirX InitialDirY InitialDirZ InitialLogicalVolume InitialPVCopyNumber FinalLogicalVolume FinalPVCopyNumber
+/gamos/userAction GmStepDataCoutUA
+/run/beamOn 1
+
+#/gamos/geometry/printVolumeTree 222
+#/gamos/geometry/printTouchables *

@@ -1,0 +1,50 @@
+/tracking/verbose 0
+
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .dnadamage
+/gamos/setParam GmGeometryFromText:FileName microtrack.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEmDNAPhysicsNotChem
+#-/gamos/GmDNAPhysics/replacePhysics DNA_option2
+
+/gamos/generator GmGenerator
+
+/run/initialize 
+#
+#/control/execute vis.mac
+#
+/P MicroTrack:SiteRadius 49*um
+/gamos/generator/addSingleParticleSource source proton 20.*MeV
+#/gamos/generator/positionDist source GmGenerDistPositionPoint 0. 0. -50.99*micrometer
+/gamos/generator/positionDist source GmGenerDistPositionPoint 0. 0. -3.01*micrometer
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. 1.
+
+#/gamos/userAction GmCountProcessesUA
+#/gamos/setParam GmCountTracksUA:EachNEvent 10
+#/gamos/userAction GmCountTracksUA
+#
+/run/printProgress 1
+
+/gamos/random/setSeeds 1111 1111
+/gamos/random/restoreSeeds 1111 1111
+
+#t /gamos/SD/assocSD2LogVol MUTTrackerSD mutSD SDbox
+
+##################################################
+### PRODUCTION CUT DEFINITIONS (for condensed) ###
+##################################################
+/run/setCutForAGivenParticle gamma   0.01 um
+/run/setCutForAGivenParticle e-      0.01 um
+/run/setCutForAGivenParticle e+      0.01 um
+/run/setCutForAGivenParticle proton  0.01 um
+
+#/gamos/physics/userLimits UL1 world * 1e9 1e9 1e9 11*eV
+/gamos/analysis/addFileFormat ROOT
+/gamos/analysis/addFileFormat csv
+
+/gamos/filter energyF GmKineticEnergyFilter 0. 20-0.1 
+/gamos/userAction GmKillAtSteppingActionUA GmPrimaryFilter energyF
+
+/run/beamOn 5
+
+/gamos/geometry/printVolumeTree 444
+/gamos/geometry/printTouchables *

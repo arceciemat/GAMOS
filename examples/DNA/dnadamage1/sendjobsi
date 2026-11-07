@@ -1,0 +1,56 @@
+#!/bin/bash
+#sh sendjobsi alphaInSi 1111 1000
+
+inputfile=$1
+SEED=$2
+NEV=$3
+NJOBS=$4
+nj=$5
+FORCE=0
+if [ "X"$6 != "X" ]; then
+    FORCE=$6
+fi
+
+NRUNNING=0
+iDone=0
+while
+    test $iDone -eq 0
+do
+    NRUNNING=`ps -u arce |grep gamos | wc -l`
+    echo $FORCE NRUNNING $NRUNNING
+    if [ $FORCE == 1 ]; then
+	NRUNNING=0
+	echo NRUNNING $NRUNNING
+    fi    
+    if test $NRUNNING -ge 16
+    then
+	echo WAITING... `date`
+	sleep 300
+    else
+	SUFFIX=$1"."$2"."$3"."$nj
+	echo " SUFFIX = " $SUFFIX " 1=" ${SEED} "2=" ${NEV}	
+	new_inputfile=${SUFFIX}
+	log_inputfile=zz"_"$SUFFIX
+	echo  INPUT $inputfile".in" $new_inputfile".inn" $log_inputfile
+	
+	#echo " The new input file = " $new_inputfile".inn"
+	
+	### substitute in the input file the variables from the command line  
+  awk -v SEED=$SEED -v NEV=$NEV -v nj=$nj -v SUFFIX=$SUFFIX '{
+    if($1=="/run/beamOn") {printf("%s %s \n",$1, NEV) }      
+    else if ($1=="/gamos/random/setSeeds") {printf("%s %s %s\n",$1, SEED+nj, SEED+nj) }
+    else if($2=="GmAnalysisMgr:FileNameSuffix") {printf("%s %s %s\n",$1, $2, SUFFIX) } 
+    else { print $0 }
+  }' $inputfile".in" > $new_inputfile".inn"
+
+	ls -l $inputfile".in" $new_inputfile".inn"
+
+	echo gamos $new_inputfile".inn"
+	gamos $new_inputfile".inn" > $log_inputfile &
+
+	sleep 1
+
+	iDone=1
+    fi
+done
+

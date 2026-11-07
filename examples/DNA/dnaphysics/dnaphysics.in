@@ -1,0 +1,28 @@
+/tracking/verbose 1
+
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .dnaphys
+/gamos/setParam GmGeometryFromText:FileName dnaphysics.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList DNAPPhysicsList
+/gamos/generator GmGenerator
+
+/process/em/fluo true
+/process/em/auger true
+/process/em/augerCascade true
+/process/em/deexcitationIgnoreCut true 
+#
+/process/em/AddDNARegion World DNA_Opt0
+#
+/run/initialize 
+#
+#/control/execute vis.mac
+#
+/gamos/generator/addSingleParticleSource source proton 100*keV
+
+/gamos/userAction GmCountProcessesUA
+#
+
+/P GmStepDataHistosUA:DataList EventID TrackID ParentTrackID StepNumber ParticleType FinalProcess FinalPosX FinalPosY FinalPosZ AccumulatedEnergyDeposited*eV AccumulatedLength AccumulatedEnergyLost*eV InitialKineticEnergy cos(AngleChange) 
+/gamos/userAction GmStepDataHistosUA
+  
+/run/beamOn 10

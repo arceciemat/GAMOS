@@ -1,0 +1,64 @@
+##### WRITE PHYSICS AND CHEMISTRY INTERACTIONS
+gamos dnadamage1.in
+
+ ### WRITE PHYSICS INTERACTIONS
+GmStepDataTextFileUA.1111_ALL
+/P GmStepDataTextFileUA:DataList InitialPosX/1e-6 InitialPosY/1e-6 InitialPosZ/1e-6 AccumulatedEnergyDeposited/eV KineticEnergyChange/eV DNAInitialVolumeType InitialPVCopyNumber EventID TrackID ParentTrackID StepNumber Particle FinalProcess
+(DNAInitialVolumeType : see include/DNAVolumeType.hh )
+
+ ### WRITE CHEMISTRY INTERACTIONS
+ DNADamTimeStepAction.1111_ALL
+  DNADamTimeStepAction.cc: Each time there is a reaction of a molecule with the DNA:
+  DNAElement->GetPosition().getX()/nm 
+  DNAElement->GetPosition().getY()/nm 
+  DNAElement->GetPosition().getZ()/nm 
+  GetMolecule(radical)->GetName()
+  G4int(phyEventId)
+
+##### sum files from different jobs
+mkdir out
+cp PhysicalInteractio*  out/
+cp DamagingChemicalReactions* out/
+cd out
+bash makeoutlist.sh
+python3 ../sumFiles.py ../PhysicalInteractions_ALL  ../DamagingChemicalReactions_ALL  file.lis
+cd ..
+
+##### ANALYSIS PHYSICS AND CHEMISTRY INTERACTIONS
+  python3 analyseDNA.py PhysicalInteractions_ALL  DamagingChemicalReactions_ALL 
+ ### ANALYSIS PHYSICS INTERACTIONS
+   # get strand:
+     = 0 = isLeftStrand = DNAVolumeType.deoxyribose1.value == flagVolume or \
+            DNAVolumeType.phosphate1.value == flagVolume or \
+            DNAVolumeType.deoxyribose1_water.value == flagVolume or \
+            DNAVolumeType.phosphate1_water.value == flagVolume
+     = 1 = isRightStrand = DNAVolumeType.deoxyribose2.value == flagVolume or \
+            DNAVolumeType.phosphate2.value == flagVolume or \
+            DNAVolumeType.deoxyribose2_water.value == flagVolume or \
+            DNAVolumeType.phosphate2_water.value == flagVolume
+   # Avoid histone :     if flagVolume == DNAVolumeType.histone : continue
+   # Determine the name :
+    isDeoxyribose = flagVolume == DNAVolumeType.deoxyribose*
+    isPhosphate =  flagVolume == DNAVolumeType.phosphate*
+   # physTable[EventIDp,strand,copyN] accumulate EnergyDeposit
+   #  if physTable[EventIDp,strand,copyN] >= 17.5 :
+     CopyNumTable[copyN] = strand  ## only first occcurrence of copyN
+     resultPhysTable[EventIDp,strand].append(copyN)  # list of copyN's of each [EventIDp,strand] with Edep > 17.5
+
+ ### ANALYSIS CHEMISTRY INTERACTIONS
+ # Look is there is any Molecule close to chemical reaction
+  for mole in theMolecules :
+    MIN_DIST= 1e-5
+    if(mole.pos-elemPos).magnitude()/(mole.pos+elemPos).magnitude() <= MIN_DIST :
+      if(mole.name == "deoxyribose1") :
+        strand = 0
+      elif(mole.name == "deoxyribose2") :
+        strand = 1
+    if random.randrange(0,1) <= 0.42 : # //42% of reaction makes damage
+    resultChemTable[EventIDc,strand]   # list of copyN's of each [EventIDc,strand] with associated molecule reaction
+
+ ### WRITE SDDFormat.txt WITH LEAST OF STRAND REACTIONS
+
+##### BUILD DSBs AND SSBs OF DIFFERENT COMPLEXITIES
+python3 classifySB.py SDDFormat.txt 5 | & tee zzc5
+

@@ -1,0 +1,243 @@
+
+INITIALISE
+----------
+### GEOMETRY
+1. DNADamDetectorConstruction::DNADamDetectorConstruction()
+  1.0. Create world +-200*nm**3
+  1.1. new DNADamParser
+    1.1.1. create G4MoleculeGun (fpGun) : ## will be passed to G4DNAChemistryManager
+  1.2 DNADamParser->ParseFile("VoxelStraight.fab2g4dna");
+    1.2.1. Read number of nucleosomes, linkers and base pairs
+    1.2.2. Read molecule radii
+    1.2.3. Read linkers and nucleosomes element placements
+    1.2.4. Fille fpGun with all molecules (just names and positions)
+  1.3. fpGun = fpDNADamParser->ReleaseMoleculeGun();
+  1.4. this->RegisterParallelWorld(new DNADamParallelWorld("ChemistryWorld"));
+2. DNADamDetectorConstruction::Construct
+  2.1. fpDNADamParser->CreateLogicVolume(); ## creates molecule G4Volumes (most using G4SubtractionSolid because molecules overlap)
+  2.2. fGeometryMap = fpDNADamParser->ReleaseGeoData();
+3. DNADamParallelWorld::Construct()
+  3.1. DNADamParallelWorld::SetupChemistryGeometry()
+   # simple world +-200*nm**3 of G4_WATER
+4. DNADamStackingAction::NewStage()
+     - Assigns DNADamParallelWorld to G4ITTransportationManager 
+## GEOM SUMMARY:
+   - DNADamDetectorConstruction invokes DNADamParser
+   - DNADamParser creates molecule G4Volumes
+     chemistry of molecule volumes (indeed just name and positions) will be managed by a G4MoleculeGun created at DNADamParser with all molecules, and assigned to G4DNAChemistryManager in DNADamRunAction::DNADamRunAction()
+   - DNADamParallelWorld creates a 200*nm**3 of G4_WATER world, which is assigned to G4ITTransportationManager by DNADamStackingAction::NewStage()
+
+### PHYSICS & CHEMISTRY 
+1. DNADamPhysicsList invokes   G4EmDNAChemistry_option2
+ 1.1. G4EmDNAChemistry_option2::ConstructMolecule() # G4H2O, G4Adenine, G4DamagedThymine, ...
+ 1.2. G4EmDNAChemistry_option2::ConstructDissociationChannels() 
+    //Define the decay channels for Excitation, Ionisation, Dissociative Attachment, Electron-hole recombination
+    For each decay channel: set excitation energy, probability, displacement
+    G4MolecularConfiguration* H3Op = G4MoleculeTable::Instance()->GetConfiguration("H3Op"); ...
+ 1.3. G4EmDNAChemistry_option2::ConstructReactionTable()
+    // e_aq + e_aq + 2H2O -> H2 + 2OH-   
+    // e_aq + *OH -> OH-
+    // e_aq + H* + H2O -> H2 + OH-
+    // e_aq + H3O+ -> H* + H2O
+    // e_aq + H2O2 -> OH- + *OH
+    // *OH + *OH -> H2O2
+    // *OH + *H -> H2O
+    // *H + *H -> H2
+    // H3O+ + OH- -> 2H2O
+    // 2-Deoxyribose + OH -> damagedDeoxyribose
+    // adenine + OH -> damagedAdenine
+    // Deoxyribose + Hydrated e-  -> damagedDeoxyribose
+    // adenine + Hydrated e- -> damagedAdenine
+    // Deoxyribose + Radical H -> damagedDeoxyribose
+    // adenine + Radical H -> damagedAdenine
+    // histone + all molecules -> modification(or "damage")
+ 1.4. G4EmDNAChemistry_option2::ConstructProcesses()
+   FindProcess("e-_G4DNAVibExcitation", "e-");
+   FindProcess("e-_G4DNAElectronSolvation", "e-");
+   // Define processes for molecules
+     if(pMoleculeDef != G4H2O::Definition())
+       new G4DNABrownianTransportation();
+     else
+       new G4DNAMolecularDissociation("H2O_DNAMolecularDecay");
+       new G4DNAWaterDissociationDisplacer);
+   G4DNAChemistryManager::Instance()->Initialize();
+ 1.5. G4EmDNAChemistry_option2::ConstructTimeStepModel()
+   new G4DNASmoluchowskiReactionModel();
+   new G4DNAMolecularStepByStepModel();
+
+## CHEMISTRY
+1.  G4DNAChemistryManager::Initialize(); (from G4EmDNAChemistry_option2)
+  1.1 G4Scheduler::Instance();
+    1.1.1. fpModelHandler = new G4ITModelHandler();
+    1.1.2. fpTrackingManager = new G4ITTrackingManager();
+    1.1.3. fpMessenger = new G4SchedulerMessenger(this);
+      fVerboseCmd = new G4UIcmdWithAnInteger("/scheduler/verbose", this);
+      fVerboseCmd->SetGuidance(" 0 : Silent (default)");
+      fVerboseCmd->SetGuidance(" 1 : Display reactions");
+      fVerboseCmd->SetGuidance(" 2 ");
+      fReactionSet = G4ITReactionSet::Instance();
+  1.2. fpUserChemistryList->ConstructDissociationChannels();
+  1.3. fpUserChemistryList->ConstructReactionTable(G4DNAMolecularReactionTable::GetReactionTable());
+2. DNADamRunAction::DNADamRunAction()
+  if(G4DNAChemistryManager::IsActivated())
+  4.1. G4Scheduler::Instance()->SetUserAction(new DNADamTimeStepAction());
+  4.2. G4Scheduler::Instance()->SetEndTime(2.5*CLHEP::nanosecond);
+  4.3. G4Scheduler::Instance()->SetVerbose(1);
+  4.3. DNADamITTrackingInteractivity* itInteractivity = new DNADamITTrackingInteractivity();
+      G4Scheduler::Instance()->SetInteractivity(itInteractivity);
+  4.4. const DNADamDetectorConstruction* fpDetector = dynamic_cast<const DNADamDetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+      G4DNAChemistryManager::Instance()->SetGun(fpDetector->GetGun());
+
+## PROCESS FLOW
+DNADamStackingAction
+   if(stackManager->GetNTotalTrack() == 0) # no more physics tracks 
+   G4ITTransportationManager::GetTransportationManager()->SetWorldForTracking(
+     G4ITTransportationManager::GetTransportationManager()->GetParallelWorld("ChemistryWorld"));  ## changes world in G4ITTransportationManager ??
+    G4DNAChemistryManager::Instance()->Run(); // starts chemistry
+
+1. G4DNAChemistryManager::Run()
+ 1.1. G4Scheduler::Instance()->Process();
+   1.1.1. fpModelProcessor->Initialize(); (G4ITModelProcessor)
+          fpStepProcessor->Initialize(); (G4ITStepProcessor)
+          if (fpGun) fpGun->DefineTracks();
+          if (fpTrackingInteractivity) fpTrackingInteractivity->Initialize();
+   1.1.2. fpUserTimeStepAction->StartProcessing(); # does nothing
+   1.1.3. SynchronizeTracks();
+     1.1.3.1. DoProcess();
+       1.1.3.1.1. if(fpUserTimeStepAction) fpUserTimeStepAction->NewStage(); # does nothing in DNADam
+       1.1.3.1.2. while (fGlobalTime < fStopTime
+       		G4Scheduler::Stepping();
+         1.1.3.1.2.1. fILTimeStep = fpStepProcessor->ComputeInteractionLength(fPreviousTimeStep);
+         ) #finished stepping loop
+       1.1.3.1.3. fReactionSet->CleanAllReaction()
+       1.1.3.1.4. fpStepProcessor->PrepareLeadingTracks();
+       1.1.3.1.5. if (fpUserTimeStepAction) fpUserTimeStepAction->UserPreTimeStepAction();
+       1.1.3.1.6. fpStepProcessor->DoIt(fTimeStep);
+       1.1.3.1.7. fpModelProcessor->ComputeTrackReaction(
+       1.1.3.1.7.1. fReactionInfo = pReactionProcess->FindReaction(fReactionSet,
+       1.1.3.1.7.2. G4int nbSecondaries = pChanges->GetNumberOfSecondaries();
+       1.1.3.1.7.3. fpUserTimeStepAction->UserReactionAction(*pTrackA
+	             G4cout << " DNADamTimeStepAction write fileOut " <<  DNAElement->GetPosition()/nm << "," << GetMolecule(radical)->GetName() << "," << phyEventId << G4endl; //GDEB
+       1.1.3.1.7.4.  G4cout << "At time : " << std::setw(7) << G4BestUnit(fGlobalTime, "Time")
+                       << " Reaction : " << GetIT(pTrackA)->GetName() << " ("
+                       << pTrackA->GetTrackID() << ") + " << GetIT(pTrackB)->GetName()
+       1.1.3.1.7.5. for (int i = 0; i < nbSecondaries; ++i)
+                      GetIT(secondary)->SetParentID(pTrackA->GetTrackID(),
+                                                   pTrackB->GetTrackID());
+       1.1.3.1.7.6. fpTrackContainer->MergeSecondariesWithMainList();
+		       
+       1.1.3.1.8. if (fpUserTimeStepAction) fpUserTimeStepAction->UserPostTimeStepAction();
+         1.1.3.1.8.1.  G4cout << " DNADamTimeStepAction write fileOut " <<  DNAElement->GetPosition()/nm << "," << GetMolecule(radical)->GetName() << "," << phyEventId << G4endl; //GDEB
+     1.1.3.3. PrintWhyDoYouStop();
+   1.1.4. if (fpUserTimeStepAction) fpUserTimeStepAction->EndProcessing();
+          if (fpTrackingInteractivity) fpTrackingInteractivity->Finalize();	  
+ 1.2. G4VMoleculeCounter::Instance()->ResetCounter();
+ 
+
+##############################
+CRASH AT THIRD EVENT
+#0  std::operator<< <char, std::char_traits<char>, std::allocator<char> > (__os=..., __str=...)
+    at /tmp/spack/spack-stage/spack-stage-DgiFi7/gcc-8.2.0/spack-build/x86_64-pc-linux-gnu/libstdc++-v3/include/bits/basic_string.h:6314
+#1  0x00002aaab3559480 in G4DNAMolecularMaterial::PrintNotAMolecularMaterial (this=0x2572b770, 
+    methodName=0x2aaab35967b0 "G4DNAMolecularMaterial::GetDensityTableFor", lookForMaterial=0x0)
+    at src/G4DNAMolecularMaterial.cc:498
+#2  0x00002aaab3558edd in G4DNAMolecularMaterial::GetDensityTableFor (this=0x2572b770, lookForMaterial=0x0)
+    at src/G4DNAMolecularMaterial.cc:407
+#3  0x00002aaab0f275dc in G4DNAElectronHoleRecombination::FindReactant (this=0x256dc340, track=...)
+    at src/G4DNAElectronHoleRecombination.cc:222
+#4  0x00002aaab0f27f21 in G4DNAElectronHoleRecombination::GetMeanLifeTime (this=0x256dc340, track=...)
+    at src/G4DNAElectronHoleRecombination.cc:343
+#5  0x00002aaab508a3ed in G4VITRestDiscreteProcess::AtRestGetPhysicalInteractionLength (this=0x256dc340, 
+    track=..., condition=0x26f60af8) at src/G4VITRestDiscreteProcess.cc:117
+#6  0x00002aaab50498c8 in G4VProcess::AtRestGPIL (this=0x256dc340, track=..., condition=0x26f60af8)
+    at /mnt/lustre/home/u4810/gamos/external/geant4/geant4.11.00.p03.gamos/source/processes/management/include/G4VProcess.hh:475
+#7  0x00002aaab5046ea7 in G4ITStepProcessor::GetAtRestIL (this=0x26f60a40) at src/G4ITStepProcessor.cc:570
+
+#8  0x00002aaab5047d7d in G4ITStepProcessor::DoDefinePhysicalStepLength (this=0x26f60a40)
+    at src/G4ITStepProcessor.cc:982
+#9  0x00002aaab50472a7 in G4ITStepProcessor::DefinePhysicalStepLength (this=0x26f60a40, track=0x2e070fe0)
+    at src/G4ITStepProcessor.cc:705
+#10 0x00002aaab50470ac in G4ITStepProcessor::ComputeInteractionLength (this=0x26f60a40, 
+    previousTimeStep=1.7976931348623157e+308) at src/G4ITStepProcessor.cc:629
+#11 0x00002aaab50818ab in G4Scheduler::Stepping (this=0xda7720) at src/G4Scheduler.cc:757
+#12 0x00002aaab5081282 in G4Scheduler::DoProcess (this=0xda7720) at src/G4Scheduler.cc:637
+#13 0x00002aaab5080ebe in G4Scheduler::SynchronizeTracks (this=0xda7720) at src/G4Scheduler.cc:557
+#14 0x00002aaab5080982 in G4Scheduler::Process (this=0xda7720) at src/G4Scheduler.cc:445
+#15 0x00002aaab353ec76 in G4DNAChemistryManager::Run (this=0xd8dc10) at src/G4DNAChemistryManager.cc:336
+#16 0x00002aaac4577e44 in DNADamStackingAction::NewStage() ()
+   from /mnt/lustre/home/e5804/gamos/GAMOS.6.3/lib/Linux-g++/libdnadamage1.so
+#17 0x00002aaaae502082 in GmUserStackingActionList::NewStage() ()
+   from /mnt/lustre/home/e5804/gamos/GAMOS.6.3/lib/Linux-g++/libGamosCore_GamosUserActionMgr.so
+#18 0x00002aaabd949e06 in G4StackManager::PopNextTrack(G4VTrajectory**) ()
+   from /mnt/lustre/home/e5804/gamos/external/geant4/geant4.11.00.p03.gamos/lib/Linux-g++/libG4event.so
+#19 0x00002aaabd90ca18 in G4EventManager::DoProcessing(G4Event*) ()
+   from /mnt/lustre/home/e5804/gamos/external/geant4/geant4.11.00.p03.gamos/lib/Linux-g++/libG4event.so
+#20 0x00002aaab9809a85 in G4RunManager::ProcessOneEvent(int) ()
+   from /mnt/lustre/home/e5804/gamos/external/geant4/geant4.11.00.p03.gamos/lib/Linux-g++/libG4run.so
+#21 0x00002aaab9808043 in G4RunManager::DoEventLoop(int, char const*, int) ()
+   from /mnt/lustre/home/e5804/gamos/external/geant4/geant4.11.00.p03.gamos/lib/Linux-g++/libG4run.so
+#22 0x00002aaab9807dee in G4RunManager::BeamOn(int, char const*, int) ()
+   from /mnt/lustre/home/e5804/gamos/external/geant4/geant4.11.00.p03.gamos/lib/Linux-g++/libG4run.so
+
+1.1.3.1.2.1. fILTimeStep = fpStepProcessor->ComputeInteractionLength(fPreviousTimeStep);
+ 1. G4TrackManyList* mainList = fpTrackContainer->GetMainList();
+    G4TrackManyList::iterator it = mainList ->begin();
+    G4TrackManyList::iterator end = mainList ->end();
+    for (; it != end; ) {
+      G4Track * track = *it;
+      DefinePhysicalStepLength(track);
+
+void G4ITStepProcessor::DefinePhysicalStepLength(G4Track* track)
+{
+  1. SetTrack(track);  # track->GetStep() = 0x0 track
+     1.1. fpTrack = track;
+     1.2. fpITrack = GetIT(fpTrack); (static method)
+       1.2.1. return (dynamic_cast<G4IT*>(track->GetUserInformation()));
+  2. DoDefinePhysicalStepLength();
+    2.1. InitDefineStep(
+        2.1.1. fpTrack->SetStep(fpStep); # fpTrack->GetStep()->GetPreStepPoint()  0x290e6a60
+                                  # fpTrack->GetMaterial() 0x0
+        2.1.2. SetupMembers();           # fpTrack->GetMaterial() 0x0
+        2.1.3. SetInitialStep();
+	   // Initial set up for attribues of 'Step'  # fpTrack->GetMaterial() 0x0
+	    2.1.3.1. fpStep->InitializeStep( fpTrack );
+	      2.1.3.1.1. auto lvol = fpTrack->GetTouchable()->GetVolume()->GetLogicalVolume();
+              2.1.3.1.2. fpPreStepPoint->SetMaterial(lvol->GetMaterial()); # fpTrack->GetMaterial() 0xdafc20 !!! 
+	     
+}  # track->GetStep() = 0x290e6a00
+
+
+WHO CREATES TRACKS FOR G4ITStepProcessor?
+
+ERROR: Track is create with position outside world !!
+1.1.3.1.2.1. fILTimeStep = fpStepProcessor->ComputeInteractionLength(fPreviousTimeStep);
+ 1. G4TrackManyList* mainList = fpTrackContainer->GetMainList();
+
+1. G4DNABornIonisationModel1::SampleSecondaries (or any other process)
+ 1.1. G4DNAChemistryManager::CreateWaterMolecule
+  1.1.1. G4DNAChemistryManager::PushTrack
+   1.1.1.1. G4ITTrackHolder::Push
+
+
+*********************************************************************************************************
+* G4Track Information:   Particle = proton,   Track ID = 1,   Parent ID = 0
+*********************************************************************************************************
+
+Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
+    0 -1.87e-06 -8.68e-06   -2e-05      12.2        0        0         0 VoxelStraight initStep
+    1 -1.87e-06 -8.68e-06 -1.59e-05      12.2        0 4.13e-06  4.13e-06 phosphate2_water CoupledTransportation
+    2 -1.87e-06 -8.68e-06 -1.56e-05      12.2        0 2.24e-07  4.36e-06  phosphate2 CoupledTransportation
+    3 -1.87e-06 -8.68e-06 -1.54e-05      12.2        0 2.58e-07  4.61e-06 phosphate2_water CoupledTransportation
+    4 -1.87e-06 -8.68e-06 -1.54e-05      12.2        0 2.43e-09  4.62e-06 VoxelStraight CoupledTransportation
+    5 -1.87e-06 -8.68e-06 -1.53e-05      12.2        0 1.02e-07  4.72e-06 deoxyribose2 CoupledTransportation
+    6 -1.87e-06 -8.68e-06 -1.52e-05      12.2        0    1e-07  4.82e-06 deoxyribose2 CoupledTransportation
+    7 -1.87e-06 -8.68e-06 -1.51e-05      12.2 1.34e-05 5.17e-08  4.87e-06 deoxyribose2 proton_G4DNAIonisation
+    8 -1.87e-06 -8.68e-06 -1.49e-05      12.2        0 2.08e-07  5.08e-06 deoxyribose2_water CoupledTransportation
+    9 -1.87e-06 -8.68e-06 -1.49e-05      12.2        0 3.33e-08  5.11e-06 VoxelStraight CoupledTransportation
+   10 -1.87e-06 -8.68e-06 -1.48e-05      12.2        0 1.02e-07  5.21e-06 base_cytosine_water CoupledTransportation
+   11 -1.87e-06 -8.68e-06 -1.46e-05      12.2        0    2e-07  5.41e-06 base_cytosine CoupledTransportation
+   12 -1.87e-06 -8.68e-06 -1.26e-05      12.2        0    2e-06  7.41e-06 base_guanine_water CoupledTransportation
+   13 -1.87e-06 -8.68e-06 7.41e-06      12.2        0    2e-05  2.74e-05 VoxelStraight CoupledTransportation
+   14 -1.87e-06 -8.68e-06 0.000207      12.2 1.61e-05 9.88e-07  2.84e-05 base_guanine_water proton_G4DNAIonisation
+   15 -1.87e-06 -8.68e-06  0.00221      12.2        0 2.67e-07  2.87e-05  OutOfWorld proton_G4DNAIonisation
+!! STEP 14 is 9.88e-07, but it changes 7.41e-06 ->  0.000207 (=2e-4)!!

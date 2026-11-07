@@ -1,0 +1,254 @@
+# python classifySB.py SDDFormat.txt
+import sys
+import csv
+import collections
+import random
+from collections import OrderedDict
+
+verbose = 1
+nEventsToMerge = 10
+theMaxCopyNoSeparationForDSB = 10
+
+#python loop to a list of floats at the same time that some elements are retired from list
+
+### Merge copyNos of each SBs item (eventID,strand) if they are in the same interval of eventID's (intervals defined by nEventsToMerge)
+def MergeEvents(SBs,nEventsToMerge) :
+
+    SBsMerged = {}
+    if verbose >= 2 : print("START MergeEvents",len(SBs),nEventsToMerge)
+    maxEv = list(SBs.keys())[-1][0]
+    maxEv = int(maxEv/nEventsToMerge)+1
+    for ie in range(0,maxEv) :
+        iem = ie*nEventsToMerge
+        for strand in range(2) : 
+            if not (iem,strand) in SBsMerged.keys() :
+                SBsMerged[iem,strand] = []
+            for iel in range(iem,iem+nEventsToMerge) :
+                if (iel,strand) in SBs.keys() :
+                    if verbose >= 3 : print(ie,strand,"Merged iel ",iel,len(SBs[iel,strand]))  
+                    for copyN in SBs[iel,strand] :
+                        if not copyN in SBsMerged[iem,strand] :
+                            SBsMerged[iem,strand].append(copyN) 
+
+    for key,val in SBsMerged.items() :
+        SBsMerged[key] = sorted(SBsMerged[key])
+
+    return SBsMerged
+                        
+################    main  #############
+
+if len(sys.argv) < 2 or  len(sys.argv) > 5  :
+    if verbose >= 3 : print("!!! FATAL ERROR: MUST HAVE ONE(TWO) ARGUMENTS <SDDFile> (<nEventsToMerge>) (<Separation>) (<verbose>)")
+    sys.exit()
+
+SBs = {} ## map of eventID,strand : list of copyNo
+
+fIn = open(sys.argv[1])
+if  len(sys.argv) >= 3 :
+    nEventsToMerge = int(sys.argv[2])
+if  len(sys.argv) >= 4 :
+    theMaxCopyNoSeparationForDSB = float(sys.argv[3])
+if  len(sys.argv) >= 5 :
+    verbose = int(sys.argv[4])
+
+### Read SDDFormat file and build SBs map
+lines = fIn.readlines()
+bData = False
+iCurrentBlock = 0 # 0: header  1: physical interactions, 2: damaging chemical reactions
+for il in range(len(lines)) :
+    line = lines[il]
+    if line == "***EndOfHeader***;\n" :
+        bData = True
+        continue
+    if verbose >= 4 : print(bData,"LINE ",line)
+    if not bData : continue
+    if line[0] == '2' :
+        iCurrentBlock += 1
+    if iCurrentBlock != 2 :
+        continue # only damaging chemical reactions make SB
+    ww = line.rstrip().split(";")
+    if len(ww) == 0 or ww[0] == '':
+        continue
+    eventID = int(ww[0].split(",")[1])
+    strand = int(ww[0].split(",")[2])
+    copyNo = int(ww[2].split(",")[3])
+    if strand != 0 and strand != 1 :
+        if verbose >= 3 : print(il,"!!FATAL ERROR strand IS NOT 0/1",strand)
+        sys.exit()
+#    if verbose >= 3 : print("STRAND",strand,len(SBs[strand]))
+    if not (eventID,strand) in SBs.keys() :
+        SBs[eventID,strand] = []
+    if copyNo not in SBs[eventID,strand] :
+        SBs[eventID,strand].append(copyNo)
+ #       if verbose >= 3 : print(len(SBs[strand]),"SBs",SBs[strand])
+
+# sort SBs copyNo in each eventID,strand
+if verbose >= 3 : print("SBs",SBs)
+for key,val in SBs.items() :
+    SBs[key] = sorted(SBs[key])
+
+if verbose >= 3 : print("SBs Sorted",SBs)
+
+SBs = MergeEvents(SBs,nEventsToMerge) # Merge copyNos of each SBs item (eventID,strand) if they are in the same interval of eventID's (intervals defined by nEventsToMerge)
+if verbose >= 3 : print("SBs Merged",SBs)
+
+#### Build list of DSBs
+DSBs = {}
+## Build list of events
+eventList = []
+for key,val in SBs.items() :
+    if not key[0] in eventList :
+        eventList.append(key[0])
+
+## Loop SBs by event
+#### Build list of DSBs
+for ev in eventList :
+    CopyNos0 = SBs[ev,0]
+    CopyNos1 = SBs[ev,1]
+    for evs0 in CopyNos0 :
+        for evs1 in CopyNos1 :
+            if abs(evs0-evs1) <= theMaxCopyNoSeparationForDSB :
+                if not ev in DSBs :
+                    DSBs[ev] = []
+                DSBs[ev].append((evs0,evs1))
+                if verbose >= 3: print("DSB found in event",ev,"copy:",evs0,evs1)
+            if evs1 - evs0 > theMaxCopyNoSeparationForDSB :
+                break # too far; as they are sorted, break
+if verbose >= 2 : print("DSBs",DSBs)
+
+#### Build list of SSBs
+SSBs = {}
+for ev in eventList :
+    for strand in range(2) :
+        CopyNos0 = SBs[ev,strand]
+        bNoDSBInEvent = False
+        if not ev in DSBs :
+            bNoDSBInEvent = True
+        if not bNoDSBInEvent :
+            EvD = DSBs[ev]
+        for copyN in CopyNos0 :
+            if bNoDSBInEvent :
+                bFoundInDSB = False
+            else :
+            ### Check if copyNo already in DSBs
+                bFoundInDSB = False
+                for copyNUsedD in EvD :
+                    if verbose >= 3 : print("CHECK copy ",ev,strand,copyN,copyNUsedD[strand]) 
+                    if copyN == copyNUsedD[strand] :
+                        bFoundInDSB = True
+                        break
+                if verbose >= 3 : print("CHECKED copy ",copyN,"=",bFoundInDSB,ev,strand,copyN,copyNUsedD[strand]) 
+            if not bFoundInDSB :
+                if not (ev,strand) in SSBs :
+                    SSBs[ev,strand] = [] 
+                SSBs[ev,strand].append(copyN)
+                if verbose >= 3 : print("ADDED SSBs",ev,strand,SSBs[ev,strand]) 
+        
+if verbose >= 2 : print("SSBs",SSBs)    
+    
+#### Join SBs with same end
+### Join DSBs with same end
+DSBComplexs = {}
+for ev in eventList :
+    if not ev in DSBs :
+        continue
+    dsb = DSBs[ev]
+    if verbose >= 3 : print(ev,"dsb ev",dsb) 
+    ii = 0
+    while ii < len(dsb) :
+        DSBComplexs[ev,ii] = []
+        DSBComplexs[ev,ii].append(dsb[ii]) # list of pairs
+        if verbose >= 3 : print(ev,ii,"appended",dsb[ii]) 
+        #       if verbose >= 3 : print("1LOOP ii",ii,len(dsb)) 
+        jj = 0
+        while jj < len(dsb) :        
+            if jj <= ii :
+                jj += 1
+                continue 
+            if verbose >= 3 : print(ev,ii,"LOOP jj",jj) 
+            bFound = False 
+            if verbose >= 4 : print("check dsb",DSBComplexs[ev,ii],"vs",dsb[jj]) 
+            for dsb1v in DSBComplexs[ev,ii] :
+                if verbose >= 3 : print("dsb1v",dsb1v) 
+                if dsb1v[0] == dsb[jj][0] or dsb1v[1] == dsb[jj][1] :
+                    DSBComplexs[ev,ii].append(dsb[jj]) # list of pairs
+                    if verbose >= 3 : print(ii,jj,"FOUND dsbc ",dsb1v[0],dsb1v[1],"=",dsb[jj][0],dsb[jj][1]) 
+                    dsb.pop(jj)
+                    bFound = True
+                    if verbose >= 3 : print("LOOP jj pop",jj,ii,len(dsb),(DSBComplexs[ev,ii]) )
+                    break
+            if not bFound : 
+                jj += 1
+        ii += 1
+if verbose >= 2 : print("DSBComplexs",DSBComplexs)
+
+### Join SSBs with same end
+SSBComplexs = {}
+for ev in eventList :
+    for strand in range(2) :
+        if not (ev,strand) in SSBs :
+            continue
+        UsedCopyNo = []
+        ssb = SSBs[ev,strand]
+        if verbose >= 3 : print(ev,strand,"SSB ev,strand",ssb) 
+        ii = 0
+        while ii < len(ssb) :
+            if ssb[ii] in UsedCopyNo :
+                ii = ii+1
+                continue
+            SSBComplexs[ev,strand,ii] = []
+            SSBComplexs[ev,strand,ii].append(ssb[ii]) # list of SSB
+            if verbose >= 3 : print(ev,strand,ii,"appended",ssb[ii]) 
+            if verbose >= 3 : print("SSB 1LOOP ii",ii,":",len(ssb)) 
+            jj = 0
+            while jj < len(ssb) :
+                if jj <= ii :
+                    jj += 1
+                    continue 
+                if verbose >= 3 : print("SSB LOOP jj",jj)
+                bFound = False
+                if verbose >= 3 : print("start dsb1",SSBComplexs[ev,strand,ii][-1],"vs",ssb[jj]) 
+                if ssb[jj]-SSBComplexs[ev,strand,ii][-1] <= 10 :
+                    if verbose >= 3 : print(ii,jj,"FOUND ssbc ",ssb[jj],"-",SSBComplexs[ev,strand,ii][-1],"<= 10") 
+                    SSBComplexs[ev,strand,ii].append(ssb[jj])
+                    UsedCopyNo.append(ssb[jj])
+                    # ssb.pop(jj)
+                    bFound = True
+                    if verbose >= 3 : print("LOOP jj pop",jj,ii,len(ssb),(SSBComplexs[ev,strand,ii]) ) 
+                else :
+                    break
+                jj += 1
+            ii += 1
+if verbose >= 2 : print("SSBComplexs",SSBComplexs)
+
+### If Verbose >= 3 : Print table of complex DSBs and SSBs
+nDSBComp = {}
+for key,val in DSBComplexs.items() :
+    if len(val) in nDSBComp :
+         nDSBComp[len(val)] += 1
+    else :
+         nDSBComp[len(val)] = 1
+    if verbose >= 3 : print("Table DSBComplexs",val,len(val), nDSBComp[len(val)]) 
+
+nDSBComp = OrderedDict(sorted(nDSBComp.items(), key=lambda t: t[0])) # sorted(nSSBComp.items())
+#nDSBComp = sorted(nDSBComp)
+if verbose >= 1 : print("@@ NUMBER OF DSBs ")
+if verbose >= 1 : print("@@ Complex nDSBs ")
+for tdk, tdv in nDSBComp.items() :
+    if verbose >= 1 : print('@@  {:3d}'.format(tdk),'  {:4d}'.format(tdv))
+
+nSSBComp = {}
+for key,val in SSBComplexs.items() :
+    if len(val) in nSSBComp :
+         nSSBComp[len(val)] += 1
+    else :
+         nSSBComp[len(val)] = 1
+    if verbose >= 3 : print("Table SSBComplexs",key[1],val,len(val), nSSBComp[len(val)]) 
+
+if verbose >= 2 : print(" nSSBComp",nSSBComp)
+nSSBComp = OrderedDict(sorted(nSSBComp.items(), key=lambda t: t[0])) # sorted(nSSBComp.items())
+if verbose >= 2 : print(" sorted nSSBComp",nSSBComp) #GDEB
+if verbose >= 1 : print("@@ NUMBER OF SSBs ")
+if verbose >= 1 : print("@@ Complex nSSBs ")
+for tdk, tdv in nSSBComp.items() :
+    if verbose >= 1 : print('@@  {:3d}'.format(tdk),'  {:4d}'.format(tdv))

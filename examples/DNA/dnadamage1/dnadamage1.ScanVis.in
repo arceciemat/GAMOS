@@ -1,0 +1,31 @@
+#/tracking/verbose 1
+
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .dnadamage
+/gamos/geometry DNADamDetectorConstruction
+/gamos/physicsList GmDummyPhysics # DNADamPhysicsList
+/gamos/setParam GmGeneratorScanVis:DrawBorderNames 1
+/gamos/setParam GmGeneratorScanVis:MarkerStyle 1
+/gamos/setParam GmGeneratorScanVis:MarkerSize 0.25
+/gamos/setParam GmGeneratorScanVis:NPixels 1000
+
+/gamos/setParam GmGeneratorScanVis:ScanWorldMinX -90e-6
+/gamos/setParam GmGeneratorScanVis:ScanWorldMaxX  90e-6
+/gamos/setParam GmGeneratorScanVis:ScanWorldMinY -90e-6
+/gamos/setParam GmGeneratorScanVis:ScanWorldMaxY  90e-6
+/gamos/setParam GmGeneratorScanVis:ScanWorldMinZ -90e-6
+/gamos/setParam GmGeneratorScanVis:ScanWorldMaxZ  90e-6
+/gamos/setParam GmGeneratorScanVis:ScanParams XY 50. 1e-6 20.*deg 150*deg 310*deg
+#/gamos/setParam GmGeneratorScanVis:ScanParams XZ 50. 0.1 20.*deg 150*deg 310*deg
+#/gamos/setParam GmGeneratorScanVis:ScanParams YZ 50. 0.1 20.*deg 150*deg 310*deg
+/gamos/generator GmGeneratorScanVis
+
+/run/initialize 
+
+#/tracking/verbose 1
+/gamos/userAction GmCountTracksUA
+
+/run/beamOn 10
+
+#/gamos/geometry/printVolumeTree 222
+
+

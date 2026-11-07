@@ -1,0 +1,53 @@
+/tracking/verbose 0
+
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .dnadamage
+
+/P GmDNAGeometry:FileName smallWorld.geom
+/P GmDNAGeometry:FileNameParallel chemistryWorld.geom
+/P GmDNAGeometry:fba2g4dnaFileName VoxelStraight.fab2g4dna
+/gamos/geometry GmDNAGeometry
+
+#/P GmEmDNAPhysics:registerPhysics DNA_option2
+/P GmEmDNAPhysics:registerChemistry DNA_option2
+/gamos/physicsList GmEmDNAPhysics
+#/gamos/GmEmDNAPhysics/replacePhysics DNA_option4
+
+/gamos/generator GmGenerator
+
+#/process/em/AddDNARegion World DNA_Opt0
+#
+/gamos/setParam GmDNATimeStepAction:G4SchedulerVerbose 0
+/P GmDNATimeStepAction:DamagedProducts Damaged_Deoxyribose Damaged_Adenine Damaged_Guanine Damaged_Cytosine Damaged_Thymine
+/P GmDNATimeStepAction:FileOutName DamagingChemicalReactions.out # default
+/gamos/userTimeStepAction GmDNATimeStepAction
+#/geometry/texInput/verbose 999
+
+/run/initialize 
+
+#
+#/control/execute vis.mac
+#
+/gamos/generator/addSingleParticleSource source proton 100*keV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. 1.
+/gamos/generator/positionDist source GmGenerDistPositionSquare 10*nm 0. 0. -20*nm
+
+/P GmDNASteppingAction:FileOutName PhysicalInteractions.out  # default
+/gamos/userAction GmDNASteppingAction
+/gamos/userAction GmDNAStackingAction
+
+/gamos/userAction GmCountProcessesUA
+/P GmCountTracksUA:EachNEvent 1
+/gamos/userAction GmCountTracksUA
+#
+/gamos/random/setSeeds 1111 1111
+
+#/P GmStepDataTextFileUA:DataList EventID TrackID ParentTrackID StepNumber ParticleType FinalProcess InitialPosX InitialPosY InitialPosZ AccumulatedEnergyDeposited KineticEnergyChange DNAInitialVolumeType InitialPVCopyNumber 
+#/P GmStepDataTextFileUA:DataList InitialPosX/1e-6 InitialPosY/1e-6 InitialPosZ/1e-6 AccumulatedEnergyDeposited/eV KineticEnergyChange/eV DNAInitialVolumeType InitialPVCopyNumber EventID TrackID ParentTrackID StepNumber Particle FinalProcess
+#/gamos/userAction GmStepDataTextFileUA 
+
+/run/beamOn 200
+
+#/gamos/geometry/printVolumeTree 222
+#/gamos/geometry/printTouchables *
+/gamos/base/printParametersUsage 99
+
