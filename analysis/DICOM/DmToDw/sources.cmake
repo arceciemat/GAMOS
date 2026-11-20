@@ -1,19 +1,28 @@
-# - GAMOS_analysis_DICOM_resizeImage module build definition
+# - DmToDw module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_DICOM_resizeImage
+gamos_add_module(DmToDw
   PUBLIC_HEADERS
     DCMDmToDw.hh
   SOURCES
     DCMDmToDw.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_DICOM_resizeImage
+
+gamos_module_link_libraries(DmToDw
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
     DICOMBase
     DICOMReaders
-    DICOM2G4
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
+)
+
+# Program DmToDw
+gamos_add_executable(DmToDw
+  SOURCES
+    DmToDw.cc
+  LINK_LIBRARIES
+    DmToDw
+    DICOMBase
+    DICOMReaders
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
 )

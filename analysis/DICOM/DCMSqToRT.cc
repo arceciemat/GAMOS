@@ -196,7 +196,7 @@ void DCMSqToRT::ConvertImages()
 
   OFCondition status = fileformat.saveFile(OFFilename(theRTDoseFN),EXS_LittleEndianExplicit);
   if (status.bad()) {
-    std::cerr << "Error: cannot save DICOM file (" << status.text() << ")" << std::endl;
+    G4cerr << "Error: cannot save DICOM file (" << status.text() << ")" << std::endl;
   }
 }
 
@@ -317,7 +317,7 @@ void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset& dataset )
   // --- ImagePlaneModule (C) ---
   OFString value;
   value.append("2"); value.append("3");
-  //  std::cout << " STRING OK " << (DcmDecimalString::checkStringValue(value, "2")).good() << std::endl; //GDEB
+  //  G4cout << " STRING OK " << (DcmDecimalString::checkStringValue(value, "2")).good() << std::endl; //GDEB
   double PixelWidth = widthX;
   double PixelHeight = widthY;
   char buffer[32];

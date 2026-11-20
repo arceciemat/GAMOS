@@ -1,19 +1,25 @@
-# - GAMOS_analysis_DICOM_GamosToDICOM module build definition
+# - GamosToDICOM module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_DICOM_GamosToDICOM
+gamos_add_module(GamosToDICOM
   PUBLIC_HEADERS
     DCMGamosToDICOM.hh
-    DCMSqToRT.hh.old
   SOURCES
     DCMGamosToDICOM.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_DICOM_GamosToDICOM
+
+gamos_module_link_libraries(GamosToDICOM
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
     DICOMBase
     DICOMReaders
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosBase_Base
+    GamosCore_GamosUtils
+    ${GAMOS_DCMTK_LIBRARIES}
+)
+
+# Program GamosToDICOM
+gamos_add_executable(GamosToDICOM
+  SOURCES
+    GamosToDICOM.cc
+  LINK_LIBRARIES
+    GamosToDICOM
 )

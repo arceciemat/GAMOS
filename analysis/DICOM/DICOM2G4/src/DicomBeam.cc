@@ -18,7 +18,7 @@ void DicomBeam::SetControlPointMetersets()
   for( size_t ii = 0; ii < theControlPoints.size(); ii++ ){
     G4double cumulativeMS = theControlPoints[ii]->GetParam("CumulativeMetersetWeight");
     theControlPoints[ii]->SetParam("MetersetWeight", (cumulativeMS - prevCumulativeMS ));
-    //    std::cout << " DicomBeam::SetControlPointMetersets(" << ii << " = " << cumulativeMS - prevCumulativeMS  << " " << cumulativeMS << " - " << prevCumulativeMS << std::endl; //GDEB
+    //    G4cout << " DicomBeam::SetControlPointMetersets(" << ii << " = " << cumulativeMS - prevCumulativeMS  << " " << cumulativeMS << " - " << prevCumulativeMS << std::endl; //GDEB
     prevCumulativeMS = cumulativeMS;
   }
 }

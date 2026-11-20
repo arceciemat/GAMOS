@@ -17,7 +17,7 @@ Changes:     11/07: creation
 #include "globals.hh"
 
 enum AOTreatment{ AOTPrint1, AOTPrintTogether, AOTSum, AOTMean, AOTStudenttTest };
-enum AOProcessing{ AOPPrefix, AOPSuffix, AOPWordNumber, AOPNumberOfLines, AOPTreatment, AOPMessage, AOPNEvents};
+enum AOProcessing{ AOPPrefix, AOPSuffix, AOPWordNumber, AOPNumberOfLines, AOPTreatment, AOPMessage, AOPNEvents, AOPNone};
 enum AOttestType { AOttestFractionNEvents, AOttestFraction, AOttestValue};
 
 class GmAOData;

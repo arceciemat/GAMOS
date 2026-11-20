@@ -195,7 +195,7 @@ void DCMGamosToDICOM::ConvertImages()
     if( DicomVerb(infoVerb) ) G4cout << theDensityToHU.size() << " MIN/MAX DENSITIES " << minDens << " < " << maxDens << G4endl; 
     if( DicomVerb(debugVerb) ) {
       for( map<G4double,G4int>::iterator ited = theDensityToHU.begin(); ited != theDensityToHU.end(); ited++ ){
-	G4cout << " DENSITY " << ited->first << " = " << ited->second << G4endl; //GDEB
+	G4cout << " DENSITY " << ited->first << " = " << ited->second << G4endl;
       }
     }
 #endif
@@ -219,8 +219,8 @@ void DCMGamosToDICOM::ConvertImages()
       }
       map<G4double,G4int>::iterator ite2 = theDensityToHU.lower_bound(dens);
       ite1 = ite2; ite1--;
-      //      std::cout <<theDensityToHU.size() <<  " iteHU " << dens << " : " << std::distance(theDensityToHU.begin(),ite1) <<  " : " << std::distance(theDensityToHU.begin(),ite2) << G4endl; //GDEB
-      //      std::cout << " HU: " << ite1->first << " " << ite1->second << " : " << ite2->first << " " << ite2->second << G4endl; //GDEB
+      //      G4cout <<theDensityToHU.size() <<  " iteHU " << dens << " : " << std::distance(theDensityToHU.begin(),ite1) <<  " : " << std::distance(theDensityToHU.begin(),ite2) << G4endl; //GDEB
+      //      G4cout << " HU: " << ite1->first << " " << ite1->second << " : " << ite2->first << " " << ite2->second << G4endl; //GDEB
       G4double HU = ite1->second+(dens - ite1->first)*(ite2->second - ite1->second)/(ite2->first - ite1->first);
       //   G4cout << ii << " HU " << HU << " dens " << dens << G4endl; //GDEB
       //      G4cout << ii << " HU " << HU << " dens " << dens << " = " <<ite1->second << "+"<<(dens - ite1->first)<<"*"<< (ite2->second - ite1->second)<<"/"<<(ite2->first - ite1->first) << G4endl; //GDEB
@@ -279,7 +279,7 @@ void DCMGamosToDICOM::ConvertImages()
     DcmFileFormat fileformat( dataset );
     OFCondition status = fileformat.saveFile(OFFilename(theOutputFN),EXS_LittleEndianExplicit);
     if (status.bad()) {
-      std::cerr << "Error: cannot save DICOM file (" << status.text() << ")" << std::endl;
+      G4cerr << "Error: cannot save DICOM file (" << status.text() << ")" << std::endl;
     }
   } else {
     float minZ = theInputImage->GetMinZ();
@@ -295,7 +295,7 @@ void DCMGamosToDICOM::ConvertImages()
       DcmFileFormat fileformat( dataset );
       OFCondition status = fileformat.saveFile(OFFilename(outputFN),EXS_LittleEndianExplicit);
       if (status.bad()) {
-	std::cerr << "Error: cannot save DICOM file (" << status.text() << ")" << std::endl;
+	G4cerr << "Error: cannot save DICOM file (" << status.text() << ")" << std::endl;
       }      
     }
   }
@@ -408,7 +408,7 @@ void DCMGamosToDICOM::fillImageToCT( DicomVImage* image, DcmDataset* dataset, DI
   // --- ImagePlaneModule (C) ---
   OFString value;
   value.append("2"); value.append("3");
-  //  std::cout << " STRING OK " << (DcmDecimalString::checkStringValue(value, "2")).good() << std::endl; //GDEB
+  //  G4cout << " STRING OK " << (DcmDecimalString::checkStringValue(value, "2")).good() << std::endl; //GDEB
   double PixelWidth = widthX;
   double PixelHeight = widthY;
   char buffer[32];
@@ -438,7 +438,7 @@ void DCMGamosToDICOM::fillImageToCT( DicomVImage* image, DcmDataset* dataset, DI
     G4double sliceLocation = minZ + (iFirstSlice+0.5)*widthZ;
     DcmDecimalString SliceLocation(DCM_SliceLocation); SliceLocation.putString(GmGenUtils::ftoa(sliceLocation));
     addElementToDataset(result, dataset, new DcmDecimalString(SliceLocation), "1", "3", "ImagePlaneModule");
-    G4cout << " SLICE_LOCATION " << sliceLocation << G4endl; //GDEB
+    //G4cout << " SLICE_LOCATION " << sliceLocation << G4endl; //GDEB
   }
   
   // --- ImagePixelModule (C) ---
@@ -520,7 +520,7 @@ void DCMGamosToDICOM::fillImageToCT( DicomVImage* image, DcmDataset* dataset, DI
     }
     pd[ii] = Uint32(voxData[iiInvZ]*factor+1);
 #ifndef GAMOS_NO_VERBOSE
-    if( DicomVerb(infoVerb) && ii%100000 == 0 ) G4cout << ii << "=" << ix<<":"<<iy<<":"<<iz << " PIXEL_DATA " << pd[ii] << " = " << voxData[iiInvZ] *factor << " <- " << *voxData << " factor " << factor << G4endl; //GDEB
+    if( DicomVerb(infoVerb) && ii%100000 == 0 ) G4cout << ii << "=" << ix<<":"<<iy<<":"<<iz << " PIXEL_DATA " << pd[ii] << " = " << voxData[iiInvZ] *factor << " <- " << *voxData << " factor " << factor << G4endl;
     //    if(  doses[iiInvZ] != 0 ) G4cout << ii << " -> " << iiInvZ << " DOSE " << pd[ii] << " = " <<doses[iiInvZ]*factor << " <- " <<  doses[iiInvZ] << G4endl; //GDEB
 #endif
   }

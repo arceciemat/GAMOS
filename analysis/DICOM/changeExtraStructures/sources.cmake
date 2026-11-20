@@ -1,19 +1,26 @@
-# - GAMOS_analysis_DICOM_changeStructure module build definition
+# - changeExtraStructures module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_DICOM_changeStructure
+gamos_add_module(changeExtraStructures
   PUBLIC_HEADERS
-    DCMChangeExtraStructuresHU.hh
+    DCMChangeExtraStructures.hh
   SOURCES
-    DCMChangeExtraStructuresHU.cc
+    DCMChangeExtraStructures.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_DICOM_changeStructure
+
+gamos_module_link_libraries(changeExtraStructures
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
     DICOMBase
     DICOMReaders
-    DICOM2G4
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosUtils
+)
+
+# Program changeExtraStructures
+gamos_add_executable(changeExtraStructures
+  SOURCES
+    changeExtraStructures.cc
+  LINK_LIBRARIES
+    changeExtraStructures
+    DICOMBase
+    DICOMReaders
+    GamosCore_GamosUtils
 )

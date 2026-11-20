@@ -22,7 +22,8 @@ typedef std::multimap<GmAODataSearch*,GmAOData*> mmdsd;
 //-----------------------------------------------------------------------
 int main(int argc,char** argv) 
 {
-  G4cout << "VERBOSE " << verbose << G4endl;
+  verbose = 1;
+  //  G4cout << "VERBOSE " << verbose << G4endl; //GDEB
   //  new GmParameterMessenger;
   if(argc != 2 ) {
     G4Exception("analyseOutput",

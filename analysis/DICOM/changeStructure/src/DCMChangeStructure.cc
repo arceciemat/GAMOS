@@ -490,9 +490,9 @@ void DCMChangeStructure::ChangeImagesByStruct()
 {
   //--- LOOP TO VOXELS TO CHANGE MATERIAL OR DENSITY
   G4int nVoxels = theAnalyseImage->GetNoVoxels();
-  G4cout << " DCMChangeStructure::ChangeImagesByStruct " << nVoxels << G4endl; //GDEB
-  StructData stDatagdeb = theStructData[0]; //GDEB
-  G4cout << " STID SEARCHED " << stDatagdeb.stID << G4endl; //GDEB
+  //G4cout << " DCMChangeStructure::ChangeImagesByStruct " << nVoxels << G4endl; //GDEB
+  //StructData stDatagdeb = theStructData[0]; //GDEB
+  //G4cout << " STID SEARCHED " << stDatagdeb.stID << G4endl; //GDEB
   for( G4int ii = 0; ii < nVoxels; ii++ ) {
     std::set<G4int> stIDList = theStructImage->GetIDList(ii);
     size_t nSTs = stIDList.size();
@@ -526,7 +526,7 @@ void DCMChangeStructure::ChangeImagesByStruct()
 		      FatalException,
 		      "Not material nor material density to be changed for one StructData");
 	}    
-	//	std::cout << ii << " " << id1 << " " << iis << " stid1 == stData.stID " << stid1 << " == " << stData.stID << std::endl; //GDEB
+	//	G4cout << ii << " " << id1 << " " << iis << " stid1 == stData.stID " << stid1 << " == " << stData.stID << std::endl; //GDEB
 	if( stid1 == stData.stID ) {  // VOXEL IN STRUCTURE: CHANGE IT!
 	  if(  DicomVerb(testVerb) ) G4cout << ii << " stid1 FOUND " << stid1 << " -> " << stData.mateID << " " <<  stData.bOnly << " " <<nSTs << " bImageG4dcmCT " << bImageG4dcmCT << std::endl; 
 	  //	  if( posZ < -867 && posZ > -871 && posY < -100 && posY > -140 ) G4cout << " CHANGE StIDLIST " << stData.bOnly << " " << nSTs << " " << bImageG4dcmCT << " " << bChangeMaterials << G4endl; //GDEB 
@@ -565,7 +565,7 @@ void DCMChangeStructure::ChangeImagesByLimits()
   G4double imVoxDimX = theAnalyseImage->GetVoxelDimX();
   G4double imVoxDimY = theAnalyseImage->GetVoxelDimY();
   G4double imVoxDimZ = theAnalyseImage->GetVoxelDimZ();
-  G4cout << " DCMChangeStructure::ChangeImagesByLimits " << nVoxels << G4endl; //GDEB
+  //G4cout << " DCMChangeStructure::ChangeImagesByLimits " << nVoxels << G4endl; //GDEB
   G4int nVoxelChanged = 0;
   for( G4int ii = 0; ii < nVoxels; ii++ ) {
     G4int ix = ii%imNVoxelX;

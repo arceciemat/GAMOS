@@ -1,12 +1,13 @@
-#------------------------------------------------------------------------------
-# Module : analysis
-# Package: analysis
-#
-#------------------------------------------------------------------------------
-#                                                 
-add_subdirectory(analyseOutput)
-add_subdirectory(RTPhaseSpace)
-add_subdirectory(RTDose)
+# - analysis
+
+add_subdirectory(AnalyseOutput)
 add_subdirectory(NuclMed)
+add_subdirectory(RTDose)
+add_subdirectory(RTPhaseSpace)
+if(GAMOS_USE_DCMTK)
+  add_subdirectory(DICOM)
+endif()
 add_subdirectory(Shielding)
-add_subdirectory(DICOM)
+if(GAMOS_USE_ROOT)
+  add_subdirectory(ROOTUtilities)
+endif()

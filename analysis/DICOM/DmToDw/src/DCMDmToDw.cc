@@ -71,7 +71,7 @@ void DCMDmToDw::ProcessArguments(int argc,char** argv)
 void DCMDmToDw::CheckArguments()
 {
   std::vector<G4String> sqds = theParamMgr->GetVStringValue("fSqdose",std::vector<G4String>());
-  G4cout << "SQDS " << sqds.size() << G4endl; //GDEB
+  //G4cout << "SQDS " << sqds.size() << G4endl; //GDEB
   if( sqds.size() == 0 ) {
     PrintHelp();
     G4Exception(theExeName,
@@ -153,7 +153,7 @@ void DCMDmToDw::ReadFilesAndGetImages()
      if( theSPRs.find(mate) == theSPRs.end() ) {
        theSPRs[mate] = std::map<G4double,G4double>();
      }
-     G4cout << " ADD SPR " << mate << " " << wl[2]<< " " << wl[4] << G4endl; //GDEB
+     //G4cout << " ADD SPR " << mate << " " << wl[2]<< " " << wl[4] << G4endl; //GDEB
      theSPRs[mate][GmGenUtils::GetValue(wl[2])] = GmGenUtils::GetValue(wl[4]);
   }
 	

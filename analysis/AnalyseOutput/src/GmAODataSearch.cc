@@ -11,12 +11,17 @@ GmAODataSearch::GmAODataSearch( const std::vector<G4String>& wl )
 {
   theNEvents = -1;
 
-  AOProcessing aop;
+  AOProcessing aop = AOPNone;
   for( unsigned int ii = 0; ii < wl.size(); ii++ ){
     if( wl[ii].substr(0,1) == ":" ) {
       aop = BuildProcessing( wl[ii] );
     } else {
-      if( aop == AOPPrefix ){
+      if( aop == AOPNone ){
+	G4Exception("GmAODataSearch::GmAODataSearch",
+		    "Error in argument",
+		    FatalErrorInArgument,
+		    G4String("word " + wl[ii] + " found before any processing type (:PRE / :SUF / :W / :L / :T / :M / :NEV)").c_str());
+      } else if( aop == AOPPrefix ){
 	thePrefixes[GmGenUtils::GetInt(wl[ii])-1] = (wl[ii+1]);
 	ii++;
       } else if( aop == AOPSuffix ){
@@ -43,7 +48,7 @@ GmAODataSearch::GmAODataSearch( const std::vector<G4String>& wl )
 //---------------------------------------------------------------------
 AOProcessing GmAODataSearch::BuildProcessing(const G4String& str ) const
 {
-  AOProcessing aop;
+  AOProcessing aop = AOPNone;
   if( str == ":PRE" || str == ":PREFIX" ){
     aop = AOPPrefix;
   }else if( str == ":SUF" || str == ":SUFFIX" ){
@@ -70,7 +75,7 @@ AOProcessing GmAODataSearch::BuildProcessing(const G4String& str ) const
 //---------------------------------------------------------------------
 AOTreatment GmAODataSearch::BuildTreatment(const G4String& str )
 {
-  AOTreatment aot;
+  AOTreatment aot = AOTPrint1;  // overwritten below or fatal exception
   if( str == "P" || str == "PRINT" ) {
     aot = AOTPrint1;
   } else if( str == "PT" || str == "PRINT_TOGETHER" ){

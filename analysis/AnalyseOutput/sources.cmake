@@ -1,19 +1,25 @@
-# - GAMOS_analysis_AnalyseOutput module build definition
+# - analyseOutput module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_AnalyseOutput
+gamos_add_module(analyseOutput
   PUBLIC_HEADERS
     GmAOData.hh
-    GmAOParam.hh
     GmAODataSearch.hh
+    GmAOParam.hh
   SOURCES
     GmAOData.cc
     GmAODataSearch.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_AnalyseOutput
+
+gamos_module_link_libraries(analyseOutput
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosUtils
+)
+
+# Program analyseOutput
+gamos_add_executable(analyseOutput
+  SOURCES
+    analyseOutput.cc
+  LINK_LIBRARIES
+    analyseOutput
+    GamosCore_GamosUtils
 )
