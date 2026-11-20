@@ -50,7 +50,7 @@ int main(int argc,char *argv[])
     }
   }
 
-  G4cout << " OPENING SQDOSE FILE " << theSqdoseFN << G4endl; //GDEB
+  //G4cout << " OPENING SQDOSE FILE " << theSqdoseFN << G4endl; //GDEB
   GmSqdose sqDose;
   sqDose = GmSqdose();
   sqDose.Read(theSqdoseFN);

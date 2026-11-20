@@ -6,7 +6,11 @@
 #include <map>
 std::map<std::string,double> theExemption;
 #include "../GetWordsInLine.C"
+#ifndef GAMOS_NO_ROOT
 #include "../PlotData/PlotUtils.C"
+#else
+#include "ROOTUtilities/PlotData/PlotDataSVG.cc"
+#endif
 
 //-------------------------------------------------------------------------
 void readExemption(std::string fileName)
@@ -25,6 +29,7 @@ void readExemption(std::string fileName)
   
 }    
 
+#ifndef GAMOS_NO_ROOT
 //-------------------------------------------------------------------------
 void DrawExemptionLine( TH1F* his, std::string isotName, EColor color, double& xInitExemp )
 {
@@ -60,5 +65,32 @@ void DrawExemptionLine( TH1F* his, std::string isotName, EColor color, double& x
   }
    
 }
+
+#else
+//-------------------------------------------------------------------------
+//--- SVG version: dashed horizontal line at the exemption value, with the isotope name
+void DrawExemptionLine( CDHisto* his, std::string isotName, EColor color, double& xInitExemp )
+{
+  //--- clean isotope name
+  size_t ic = isotName.find("[");
+  if( ic != std::string::npos ) {
+    isotName = isotName.substr(0,ic);
+  }
+  std::map<std::string,double>::const_iterator iteExem = theExemption.find(isotName);
+  if( iteExem != theExemption.end() ){
+    double exemption = (*iteExem).second;
+    std::string col = ColorToSVG(color);
+    his->DrawLine( his->GetXmin(), exemption, his->GetXmax(), exemption, col, 1., GmSVGCanvas::RootLineStyleToDash(2) );
+    if( his->IsInsideY(exemption) ) {
+      double size = 0.02;
+      double ty = GetTextYExtent( his, size );
+      theCanvas->Text( PointsToPixX(his,xInitExemp), his->ToPixY(exemption), isotName, ty, col, "start" );
+      xInitExemp += GetTextXExtent( his, isotName, size ) + 5;
+    }
+  } else {
+    if( verbose >= 0 ) std::cerr << " DrawExemptionLine: isotope not found in exemption file: " << isotName << std::endl;
+  }
+}
+#endif
 
  #endif

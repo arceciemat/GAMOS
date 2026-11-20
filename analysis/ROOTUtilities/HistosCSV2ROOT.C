@@ -10,7 +10,7 @@
 
 void HistosCSV2ROOT( std::string fileName ) 
 {
-  std::cout << "HistoCSV2ROOT " << fileName << std::endl; //GDEB
+  //std::cout << "HistoCSV2ROOT " << fileName << std::endl; //GDEB
   std::ifstream fin(fileName.c_str());
   if( !fin.is_open() ) {
     std::cerr << " HistoCSV2ROOT FILE NOT FOUND !!! " << fileName << std::endl;
@@ -36,7 +36,7 @@ void HistosCSV2ROOT( std::string fileName )
     if( wl[0] == "2D" ) {
       iReading = 2;
       int iw = 0;
-      std::cout << " new TH2F( " << wl[1].c_str()<< " " << wl[1].c_str()<< " " << GetValue(wl[2])<< " " << GetValue(wl[3])<< " " << GetValue(wl[4])<< " " << GetValue(wl[5])<< " " << GetValue(wl[6])<< " " << GetValue(wl[7]) << std::endl; //GDEB
+      //std::cout << " new TH2F( " << wl[1].c_str()<< " " << wl[1].c_str()<< " " << GetValue(wl[2])<< " " << GetValue(wl[3])<< " " << GetValue(wl[4])<< " " << GetValue(wl[5])<< " " << GetValue(wl[6])<< " " << GetValue(wl[7]) << std::endl; //GDEB
       his2 = new TH2F(wl[1].c_str(),wl[1].c_str(),GetValue(wl[2]),GetValue(wl[3]),GetValue(wl[4]),GetValue(wl[5]),GetValue(wl[6]),GetValue(wl[7]));
       theHistos2.push_back(his2);
       theMinX = GetValue(wl[3]);
@@ -44,10 +44,10 @@ void HistosCSV2ROOT( std::string fileName )
       theMinY = GetValue(wl[6]);
       theStepY = (GetValue(wl[7])-theMinY)/GetValue(wl[5]);
       thePrecision = 1.e-3*std::min(theStepX,theStepY);
-      std::cout << iw << " READ H " << wl[iw] << std::endl; //GDEB
+      //std::cout << iw << " READ H " << wl[iw] << std::endl; //GDEB
       iw += 8;
       double nEntries = GetValue(wl[iw]);
-      std::cout << iw << " READ nent " << wl[iw] << std::endl; //GDEB
+      //std::cout << iw << " READ nent " << wl[iw] << std::endl; //GDEB
       iw += 2;
       double meanX = GetValue(wl[iw]);
       double meanErrX = -DBL_MAX;
@@ -62,7 +62,7 @@ void HistosCSV2ROOT( std::string fileName )
 	meanErrY = GetValue(wl[iw]);
 	iw += 2;
       }
-      std::cout << iw << " READ meanErrY " << wl[iw] << std::endl; //GDEB
+      //std::cout << iw << " READ meanErrY " << wl[iw] << std::endl; //GDEB
       iw += 2;
       double rmsX = GetValue(wl[iw]);
       iw += 2;
@@ -80,7 +80,7 @@ void HistosCSV2ROOT( std::string fileName )
 	iw += 2;
       }	
       iw += 2;
-      std::cout << iw << " READ rmsErrY " << wl[iw] << std::endl; //GDEB
+      //std::cout << iw << " READ rmsErrY " << wl[iw] << std::endl; //GDEB
       double uflowX = GetValue(wl[iw]);
       iw += 2;
       double oflowX = GetValue(wl[iw]);

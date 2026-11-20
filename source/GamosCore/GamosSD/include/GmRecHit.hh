@@ -2,7 +2,6 @@
 #define GmRecHit_HH
 
 #include "globals.hh"
-#include "GamosCore/GamosSD/include/GmEDepo.hh"
 #include "G4ThreeVector.hh"
 #include <vector>
 #include <map>

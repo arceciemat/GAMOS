@@ -1,21 +1,26 @@
-# - GAMOS_analysis_DICOM_getGammaIndex module build definition
+# - getGammaIndex module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_DICOM_getGammaIndex
+gamos_add_module(getGammaIndex
   PUBLIC_HEADERS
     DCM2DOperGammaIndex.hh
     DCMGetGammaIndex.hh
   SOURCES
-    DCMGetGammaIndex.cc
     DCM2DOperGammaIndex.cc
+    DCMGetGammaIndex.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_DICOM_getGammaIndex
+
+gamos_module_link_libraries(getGammaIndex
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
     DICOMBase
-    DICOM2G4
     DICOMReaders
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosBase_Base
+    GamosCore_GamosUtils
+)
+
+# Program getGammaIndex
+gamos_add_executable(getGammaIndex
+  SOURCES
+    getGammaIndex.cc
+  LINK_LIBRARIES
+    getGammaIndex
 )

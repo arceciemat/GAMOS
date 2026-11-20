@@ -101,27 +101,6 @@ GmExtraPhysicsMessenger::GmExtraPhysicsMessenger()
   theAddPhysicsCmd->SetGuidance("Add new physics: decay, radioactiveDecay, opticalphoton, cerenkov, gamma-nuclear, electron-nuclear, positron-nuclear, xray-refraction, CoulombScattering");
   theAddPhysicsCmd->AvailableForStates(G4State_Idle);
 
-  // remove processes by type
-  theRemoveProcessesByTypeCmd = new GmUIcmdWithAString("/gamos/physics/removeProcessesByType",this);  
-  theRemoveProcessesByTypeCmd->SetGuidance("Remove processes of given types: NotDefined, Transportation, Electromagnetic, Optical, Hadronic, Photolepton_hadron, Decay, General, Parameterisation, UserDefined");
-  theRemoveProcessesByTypeCmd->AvailableForStates(G4State_Idle);
-  
-  // delete processes by name
-  theRemoveProcessesCmd = new GmUIcmdWithAString("/gamos/physics/removeProcesses",this);  
-  theRemoveProcessesCmd->SetGuidance("Remove processes of given name");
-  theRemoveProcessesCmd->AvailableForStates(G4State_Idle);
-  theRemoveProcessesByNameCmd = new GmUIcmdWithAString("/gamos/physics/removeProcessesByName",this);  
-  theRemoveProcessesByNameCmd->SetGuidance("Remove processes of given name");
-  theRemoveProcessesByNameCmd->AvailableForStates(G4State_Idle);
-  
-  // delete processes by particle and name
-  theRemoveProcessesByParticleCmd = new GmUIcmdWithAString("/gamos/physics/removeProcessesByParticle",this);  
-  theRemoveProcessesByParticleCmd->SetGuidance("Remove processes of given name for given particles: PARTICLE_1 PROCESS_1 PARTICLE_2 PROCESS_2 ...");
-  theRemoveProcessesByParticleCmd->AvailableForStates(G4State_Idle);
-  theRemoveProcessesByParticleAndNameCmd = new GmUIcmdWithAString("/gamos/physics/removeProcessesByParticleAndName",this);  
-  theRemoveProcessesByParticleAndNameCmd->SetGuidance("Remove processes of given name for given particles: PARTICLE_1 PROCESS_1 PARTICLE_2 PROCESS_2 ...");
-  theRemoveProcessesByParticleAndNameCmd->AvailableForStates(G4State_Idle);
-
   // replace models of all processes to standard / low-energy / penelope
   theReplaceModelSetCmd = new GmUIcmdWithAString("/gamos/physics/replacePhysics",this);  
   theReplaceModelSetCmd->SetGuidance("Replace process model: gamma-standard gamma-lowener gamma-penelope electron-standard electron-lowener electron-penelope");
@@ -141,11 +120,6 @@ GmExtraPhysicsMessenger::~GmExtraPhysicsMessenger()
   delete theApplyCutsCmd;
   delete theParallelPhysCmd;
   delete theAddPhysicsCmd;
-  delete theRemoveProcessesCmd;
-  delete theRemoveProcessesByNameCmd;
-  delete theRemoveProcessesByTypeCmd;
-  delete theRemoveProcessesByParticleCmd;
-  delete theRemoveProcessesByParticleAndNameCmd;
   delete theReplaceModelSetCmd;
   delete theReplaceModelCmd;
 }
@@ -163,21 +137,6 @@ void GmExtraPhysicsMessenger::SetNewValue(G4UIcommand* command,G4String newValue
     
   } else if (command == theAddPhysicsCmd){
     AddPhysics( newValue );
-
-  } else if (command == theRemoveProcessesCmd){
-    RemoveProcessesByName(newValue);
-
-  } else if (command == theRemoveProcessesByNameCmd){
-    RemoveProcessesByName(newValue);
-
-  } else if (command == theRemoveProcessesByTypeCmd){
-    RemoveProcessesByType(newValue);
-
-  } else if (command == theRemoveProcessesByParticleCmd){
-    RemoveProcessesByParticleAndName(newValue);
-
-  } else if (command == theRemoveProcessesByParticleAndNameCmd){
-    RemoveProcessesByParticleAndName(newValue);
 
   } else if (command == theReplaceModelSetCmd){
     ReplaceModelSet(newValue);
@@ -281,45 +240,6 @@ void GmExtraPhysicsMessenger::AddPhysics(G4String newValue)
   
 }
 
-// ----------------------------------------------------------------------------
-void GmExtraPhysicsMessenger::RemoveProcessesByType(G4String )
-{
-  std::ostringstream message;
-  message << "!!!ERROR:  /gamos/physics/removeProcessesByType is deprecated " << G4endl
-	  << "Use instead  /process/inactivate name (particle) " << G4endl
-	  << "  name:     process name or type name" << G4endl
-	  << "  particle: particle name (all: for all particles)" << G4endl;
-  G4Exception("GmExtraPhysicsMessenger::RemoveProcessesByType", "",
-	      FatalException, message);
-    
-}
-
-// ----------------------------------------------------------------------------
-void GmExtraPhysicsMessenger::RemoveProcessesByName(G4String )
-{
-  std::ostringstream message;
-  message << "!!!ERROR:  /gamos/physics/removeProcessesByName is deprecated " << G4endl
-	  << "Use instead  /process/inactivate name (particle) " << G4endl
-	  << "  name:     process name or type name" << G4endl
-	  << "  particle: particle name (all: for all particles)" << G4endl;
-  G4Exception("GmExtraPhysicsMessenger::RemoveProcessesByType", "",
-	      FatalException, message);
-
-}
-
-
-// ----------------------------------------------------------------------------
-void GmExtraPhysicsMessenger::RemoveProcessesByParticleAndName(G4String )
-{
-  std::ostringstream message;
-  message << "!!!ERROR:  /gamos/physics/removeProcessesByName is deprecated " << G4endl
-	  << "Use instead  /process/inactivate name (particle) " << G4endl
-	  << "  name:     process name or type name" << G4endl
-	  << "  particle: particle name (all: for all particles)" << G4endl;
-  G4Exception("GmExtraPhysicsMessenger::RemoveProcessesByType", "",
-	      FatalException, message);
-
-}
 
 // ----------------------------------------------------------------------------
 void GmExtraPhysicsMessenger::ReplaceModelSet(G4String newValue)

@@ -98,7 +98,7 @@ void GmPSPrinterHistosSpectrum::DumpAll( G4THitsMap<G4double>* , GmVPrimitiveSco
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(infoVerb) ) {
     G4cout <<" GmPSPrinterHistosSpectrum::DumpAll() " << G4endl;
-    G4cout << G4endl << " MultiFunctionalDet: " << scorer->GetMultiFunctionalDetector()->GetName() << G4endl; //GDEB
+    G4cout << G4endl << " MultiFunctionalDet: " << scorer->GetMultiFunctionalDetector()->GetName() << G4endl;
     G4cout << " PrimitiveScorer: " << scorer->GetName() << G4endl;
     G4cout << " Number of entries= " << scorerVal.size() << G4endl;
   }
@@ -125,7 +125,7 @@ void GmPSPrinterHistosSpectrum::DumpAll( G4THitsMap<G4double>* , GmVPrimitiveSco
       if( scorer->ScoreErrors() ) {
 	G4double error = scorer->GetErrorSpectrum( index, ibin );
 	//   if( aveX != 0. ) error /= (aveX/theUnit); // relative error
-	G4cout << theUnitRatio << " VAL " << sumX << " " << aveX << " +- " << error << G4endl; //GDEB
+	//G4cout << theUnitRatio << " VAL " << sumX << " " << aveX << " +- " << error << G4endl; //GDEB
 	his->SetBinError( ibin, error*nev );
       }
     }

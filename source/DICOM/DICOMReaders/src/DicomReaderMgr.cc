@@ -56,7 +56,7 @@ DicomReaderMgr::DicomReaderMgr()
 void DicomReaderMgr::AddReader( DicomVReader* reader, DRModality mod )
 {
   theReaders.insert(mmmdr::value_type(mod,reader));
-  G4cout << theReaders.size() << " DicomReaderMgr::AddReader NEW " << DicomVReader::GetModalityStr(mod) << " " << reader->GetFileName() << G4endl; //GDEB    
+  //G4cout << theReaders.size() << " DicomReaderMgr::AddReader NEW " << DicomVReader::GetModalityStr(mod) << " " << reader->GetFileName() << G4endl; //GDEB    
   /*  for(mmmdr::const_iterator ite1 = theReaders.begin(); ite1 != theReaders.end(); ite1++ )  {
     G4cout << this << "  " << theReaders.size() << " DicomReaderMgr::AddedReaders " << DicomVReader::GetModalityStr(ite1->first) << " " << ite1->second << G4endl; //GDEB    
     }*/
@@ -151,7 +151,7 @@ void DicomReaderMgr::CreateReaders()
   }
   files.clear();
   files = theParamMgr->GetVStringValue("fRTStruct",files);
-  G4cout << "N READER fRTStruct " << files.size() << G4endl; //GDEB
+  //G4cout << "N READER fRTStruct " << files.size() << G4endl; //GDEB
   for( size_t ii = 0; ii < files.size(); ii++ ) {
     //    G4cout << " DICOMREADERMGR  new DicomReaderRTStruct " << ii << " : " << files[ii] << G4endl; //GDEB
     new DicomReaderRTStruct(files[ii]);
@@ -176,7 +176,7 @@ void DicomReaderMgr::CreateReaders()
 #ifndef GAMOS_NO_VERBOSE
   if( DicomVerb(infoVerb) ) {
     std::vector<DicomVReaderImage*>  imageReaders = GetImageReaders(DRM_CT,false);
-    G4cout << " DicomReaderMgr N READERS " << imageReaders.size() << G4endl; //GDEB
+    G4cout << " DicomReaderMgr N READERS " << imageReaders.size() << G4endl;
   }
 #endif
 }
@@ -191,7 +191,7 @@ void DicomReaderMgr::CreateReaders_InReadingOrder()
   mmss files = theParamMgr->GetDICOMImageFileNames();
   for( auto item = files.begin(); item != files.end(); item++ ){
     G4String type = item->first;
-    G4cout << " FILE TYPE " << type << G4endl; //GDEB
+    //G4cout << " FILE TYPE " << type << G4endl; //GDEB
     if( type == "fCT" ){ 
       new DicomReaderCT(item->second);
     } else if( type == "fNM" ) {
@@ -207,7 +207,7 @@ void DicomReaderMgr::CreateReaders_InReadingOrder()
     } else if(type == "fG4dcmDose"){
       new DicomReaderG4dcmDose(item->second);
     } else if(type == "fRTStruct"){
-      G4cout << "N READER fRTStruct " << files.size() << G4endl; //GDEB
+      //G4cout << "N READER fRTStruct " << files.size() << G4endl; //GDEB
       new DicomReaderRTStruct(item->second);
     } else if(type == "fVOIStruct"){
       new DicomReaderVOIStruct(item->second);
@@ -221,7 +221,7 @@ void DicomReaderMgr::CreateReaders_InReadingOrder()
 #ifndef GAMOS_NO_VERBOSE
   if( DicomVerb(infoVerb) ) {
     std::vector<DicomVReaderImage*>  imageReaders = GetImageReaders(DRM_CT,false);
-    G4cout << " DicomReaderMgr N READERS " << imageReaders.size() << G4endl; //GDEB
+    G4cout << " DicomReaderMgr N READERS " << imageReaders.size() << G4endl;
   }
 #endif
 }
@@ -385,7 +385,7 @@ void DicomReaderMgr::CreateImagesCT( DicomReaderCT* imgMergedReaderCT )
 	    G4cout << ipl << " Mgr: " << lineLists.size() << " DicomReaderMgr ineList" << lineLists[ipl]->GetName() << " N " << lineLists[ipl]->GetLines().size() << G4endl; //GDEB
 	    }*/
     
-    G4bool bVoxelsInUseClosest = DicomParameterMgr::GetInstance()->GetNumericValue("DicomReaderMgr:closestPolygon",1);
+    G4bool bVoxelsInUseClosest = DicomParameterMgr::GetInstance()->GetNumericValue("DicomReaderMgr:ClosestPolygon",1);
     if( bVoxelsInUseClosest ) {
       DicomPolygonSet* polygonSetNew = new DicomPolygonSet(polygonSet, imageDicomStructures, polygonSet->GetOrientation() );
       structRead->FindVoxelsInXY( imageDicomStructures, polygonSetNew );
@@ -588,7 +588,7 @@ std::vector<DicomVReader*> DicomReaderMgr::GetReaders(G4String name, G4bool bMus
 //-----------------------------------------------------------------------------
 std::vector<DicomVReaderImage*> DicomReaderMgr::GetImageReaders(DRModality mod, G4bool bMustExist ) const
 {
-  if( DicomVerb(-infoVerb) ) { //GDEB
+  if( DicomVerb(infoVerb) ) {
     G4cout << " DicomReaderMgr::GetImageReaders Modality: " << DicomVReader::GetModalityStr(mod) << " bMustExist "<< bMustExist << G4endl;
   }
   std::vector<DicomVReaderImage*> vfr;
@@ -600,18 +600,18 @@ std::vector<DicomVReaderImage*> DicomReaderMgr::GetImageReaders(DRModality mod, 
     G4cout << this << DicomVReader::GetModalityStr(mod) << "GetImageReaders N READERS " << std::distance(itep.first,itep.second) << G4endl; 
   for( ite = itep.first; ite != itep.second; ite++ ) {
     vfr.push_back( (*ite).second );
-    if( DicomVerb(-infoVerb) ) { // GDEB
+    if( DicomVerb(infoVerb) ) { // GDEB
       G4cout << (*ite).second  << " GetImageReaders READER Modality: " << DicomVReader::GetModalityStr((*ite).first) << " N= " <<  vfr.size() << G4endl;
     }
     }*/
   for(mmmdri::const_iterator itei = theImageReaders.begin(); itei != theImageReaders.end(); itei++ )  {
     if( itei->first == mod ) {
       vfr.push_back( itei->second );
-      if( DicomVerb(-infoVerb) ) { // GDEB
+      if( DicomVerb(infoVerb) ) { // GDEB
 	G4cout << (*itei).second  << " GetImageReaders READER Modality: " << DicomVReader::GetModalityStr((*itei).first) << " N= " <<  vfr.size() << G4endl;
       }
     }
-    G4cout << " CHECKED theImageReaders " << itei->first << "=="<< mod << G4endl; //GDEB 
+    //G4cout << " CHECKED theImageReaders " << itei->first << "=="<< mod << G4endl; //GDEB 
   }
   if( vfr.size() == 0 ) {
     //    G4ExceptionSeverity excSev = FatalException;

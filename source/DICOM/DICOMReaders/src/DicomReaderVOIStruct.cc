@@ -66,7 +66,7 @@ void DicomReaderVOIStruct::ReadData()
   int nROIs;
   G4double minX, maxX, minY , maxY, minZ, maxZ, widthX, widthY, widthZ;
   G4int nVoxX, nVoxY, nVoxZ;
-  G4cout << "  DicomReaderVOIStruct::ReadData START " << theFileName << G4endl; //GDEB 
+  //G4cout << "  DicomReaderVOIStruct::ReadData START " << theFileName << G4endl; //GDEB 
   JumpLine(3); //  # number_of_columns_x
   nVoxX = GmGenUtils::GetInt(wl[0]);
   JumpLine(1); //  # number_of_columns_x
@@ -126,7 +126,7 @@ void DicomReaderVOIStruct::ReadData()
 		      ("Error Reading ROI number "+GmGenUtils::itoa(ir)+" It seems to be empty. Aborting data reading").c_str());
 	  return;
 	} else {
-	  G4cout << " OK  Reading ROI number "+GmGenUtils::itoa(ir) << G4endl; //GDEB
+	  //G4cout << " OK  Reading ROI number "+GmGenUtils::itoa(ir) << G4endl; //GDEB
 	}
 	CheckLine(3,"voi_index",false);
 	ROINumber = wl[0];

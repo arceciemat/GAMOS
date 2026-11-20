@@ -1,6 +1,22 @@
-# - GAMOS_analysis_RTDose_3ddoseToSqdose module build definition
+# - 3ddoseToSqdose module build definition
 
-include(UseGamosAtGeant4)
+gamos_add_module(3ddoseToSqdose
+  SOURCES
+    dummy.cc
+)
 
-geant4_add_module(GAMOS_analysis_RTDose_3ddoseToSqdose
-  PUBLIC_HEADERS
+gamos_module_link_libraries(3ddoseToSqdose
+  PUBLIC
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
+)
+
+# Program 3ddoseToSqdose
+gamos_add_executable(3ddoseToSqdose
+  SOURCES
+    3ddoseToSqdose.cc
+  LINK_LIBRARIES
+    3ddoseToSqdose
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
+)

@@ -4,7 +4,6 @@
 #include "GmHistoProfile1.hh"
 #include "GmHistoProfile2.hh"
 
-G4bool GmHistoWriterCSV::bHistoCSVErrors = TRUE;
 
 //----------------------------------------------------------------------
 GmHistoWriterCSV::GmHistoWriterCSV(const G4String& filename)
@@ -79,21 +78,13 @@ void GmHistoWriterCSV::SaveHisto1D(const G4String& hisType, const TH1* his )
   theFile << '"' << hisType << '"' << "," << '"' << his->GetName() << '"' << "," << nbins << "," << his->GetXaxis()->GetXmin() << "," << his->GetXaxis()->GetXmax();
   for( G4int ii = 0; ii < nbins+2; ii++ ){
     theFile << "," << his->GetBinContent(ii);
-    if( bHistoCSVErrors ) {
-      theFile << "," << his->GetBinError(ii);
-    }
+    theFile << "," << his->GetBinError(ii);
   }
   theFile << "," << his->GetEntries() << "," << his->GetMean();
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetMeanError();  
-  }
+  theFile << "," << his->GetMeanError();  
   
   theFile << "," << his->GetRMS();  
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetRMSError() << G4endl;  
-  } else {
-    theFile << G4endl;  
-  }    
+  theFile << "," << his->GetRMSError() << G4endl;  
 }
 
 #else
@@ -104,21 +95,13 @@ void GmHistoWriterCSV::SaveHisto1D(const G4String& hisType, const GmHisto1* his 
   theFile << '"' << hisType << '"' << "," << '"' << his->GetName() << '"' << "," << nbins << "," << his->GetLowerEdge() << "," << his->GetUpperEdge();
   for( G4int ii = 0; ii < nbins+2; ii++ ){ // first is underflow,underflow_err, last is overflow,overflow_err
     theFile << "," << his->GetBinContent(ii);
-    if( bHistoCSVErrors ) {
-      theFile << "," << his->GetBinError(ii);
-    }
+    theFile << "," << his->GetBinError(ii);
   }
   theFile << "," << his->GetEntries() << "," << his->GetMean();
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetMeanError();
-  }
+  theFile << "," << his->GetMeanError();
   
   theFile << "," << his->GetRMS();  
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetRMSError() << G4endl;  
-  } else {
-    theFile << G4endl;  
-  }
+  theFile << "," << his->GetRMSError() << G4endl;  
 
 }
 
@@ -130,21 +113,13 @@ void GmHistoWriterCSV::SaveHisto1D(const G4String& hisType, const GmHistoProfile
   theFile << '"' << hisType << '"' << "," << '"' << his->GetName() << '"' << "," << nbins << "," << his->GetLowerEdge() << "," << his->GetUpperEdge();
   for( G4int ii = 0; ii < nbins+2; ii++ ){
     theFile << "," << his->GetBinContent(ii);
-    if( bHistoCSVErrors ) {
-      theFile << "," << his->GetBinError(ii);
-    }
+    theFile << "," << his->GetBinError(ii);
   }
   theFile << "," << his->GetEntries() << "," << his->GetMean();
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetMeanError();
-  }
+  theFile << "," << his->GetMeanError();
   
   theFile << "," << his->GetRMS();  
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetRMSError() << G4endl;  
-  } else {
-    theFile << G4endl;  
-  }
+  theFile << "," << his->GetRMSError() << G4endl;  
 
 }
 #endif
@@ -160,33 +135,21 @@ void GmHistoWriterCSV::SaveHisto2D(const G4String& hisType,  const TH2* his )
     for( G4int jj = 0; jj < nbinsy+2; jj++ ){
       theFile << "," << his->GetBinContent(ii,jj);
       //   G4cout << ii << ":" << jj << " SaveHisto2D " << hisType << " " << his->GetName() << G4endl; //GDEB
-      if( bHistoCSVErrors ) {
-	theFile << "," << his->GetBinError(ii,jj);
-      }
+      theFile << "," << his->GetBinError(ii,jj);
     }
   }
 
   theFile << "," << his->GetEntries() << "," << his->GetMean(1);
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetMeanError(1);
-  }
+  theFile << "," << his->GetMeanError(1);
   
   theFile << "," << his->GetRMS(1);  
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetRMSError(1);  
-  } 
+  theFile << "," << his->GetRMSError(1);  
 
   theFile << "," << his->GetMean(2);
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetMeanError(2);
-  }
+  theFile << "," << his->GetMeanError(2);
   
   theFile << "," << his->GetRMS(2);  
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetRMSError(2) << G4endl;  
-  } else {
-    theFile << G4endl; 
-  }
+  theFile << "," << his->GetRMSError(2) << G4endl;  
   
 }
 #else
@@ -199,33 +162,21 @@ void GmHistoWriterCSV::SaveHisto2D(const G4String& hisType, const GmHisto2* his 
   for( G4int ii = 0; ii < nbinsx+2; ii++ ){
     for( G4int jj = 0; jj < nbinsy+2; jj++ ){
       theFile << "," << his->GetBinContent(ii,jj);
-      if( bHistoCSVErrors ) {
-	theFile << "," << his->GetBinError(ii,jj);
-      }
+      theFile << "," << his->GetBinError(ii,jj);
     }
   }
 
   theFile << "," << his->GetEntries() << "," << his->GetMean(1);
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetMeanError(1);
-  }
+  theFile << "," << his->GetMeanError(1);
   
   theFile << "," << his->GetRMS(1);
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetRMSError(1); 
-  } 
+  theFile << "," << his->GetRMSError(1); 
 
   theFile << "," << his->GetMean(2);
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetMeanError(2);  
-  }
+  theFile << "," << his->GetMeanError(2);  
   
   theFile << "," << his->GetRMS(2);  
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetRMSError(2) << G4endl;  
-  } else {
-    theFile << G4endl;  
-  }
+  theFile << "," << his->GetRMSError(2) << G4endl;  
 
 }
 
@@ -238,33 +189,21 @@ void GmHistoWriterCSV::SaveHisto2D(const G4String& hisType, const GmHistoProfile
   for( G4int ii = 0; ii < nbinsx+2; ii++ ){
     for( G4int jj = 0; jj < nbinsy+2; jj++ ){
       theFile << "," << his->GetBinContent(ii,jj);
-      if( bHistoCSVErrors ) {
-	theFile << "," << his->GetBinError(ii,jj);
-      }
+      theFile << "," << his->GetBinError(ii,jj);
     }
   }
 
   theFile << "," << his->GetEntries() << "," << his->GetMean(1);
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetMeanError(1);
-  }
+  theFile << "," << his->GetMeanError(1);
   
   theFile << "," << his->GetRMS(1);
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetRMSError(1); 
-  } 
+  theFile << "," << his->GetRMSError(1); 
 
   theFile << "," << his->GetMean(2);
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetMeanError(2);  
-  }
+  theFile << "," << his->GetMeanError(2);  
   
   theFile << "," << his->GetRMS(2);  
-  if( bHistoCSVErrors ) {
-    theFile << "," << his->GetRMSError(2) << G4endl;  
-  } else {
-    theFile << G4endl;  
-  }
+  theFile << "," << his->GetRMSError(2) << G4endl;  
 
 }
 #endif

@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "G4Event.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
@@ -7,15 +8,12 @@
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
-#include "G4Neutron.hh"
-#include "G4Proton.hh"
 #include "G4RunManager.hh"
 #include "G4Run.hh"
 #include <vector>
 
 #include "RTGeneratorPhaseSpace_EGS.hh"
 #include "RTExtraInfoMgr.hh"
-#include "GamosCore/GamosGenerator/include/GmGenerVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosScoring/Management/include/GmScoringMgr.hh"
@@ -29,6 +27,20 @@
 #include "RTVerbosity.hh"
 #include "RTPhaseSpaceHistos.hh"
 #include "EGSPhspParticle.hh"
+#include "G4AutoLock.hh"
+
+//--- One file position shared by all threads (multithreading), so that each particle is read once as in sequential mode;
+//    skipping of the first particles (at the start of each run) and recycling of the file are also global
+namespace {
+  G4Mutex theEGSMutex = G4MUTEX_INITIALIZER;
+  G4bool bEGSSharedInit = false;
+  FILE* theEGSSharedFile = nullptr;
+  long theEGSSharedFilePointer = 0;
+  G4int theEGSSharedNRecycled = 0;
+  G4int theEGSSkipRunID = -1;
+  G4bool bEGSExhausted = false;
+  G4double theEGSNParticlesRead = 0.;
+}
 
 //------------------------------------------------------------------------
 RTGeneratorPhaseSpace_EGS::RTGeneratorPhaseSpace_EGS() 
@@ -147,7 +159,9 @@ void RTGeneratorPhaseSpace_EGS::Init()
 		("FILE NOT FOUND: " + theFileName).c_str());
   }
   char mode[6];
-  fread(mode,5*sizeof(char),1,thePhspfile);
+  //--- header items are read with fread( ptr, size, 1, f ): each must return 1
+  size_t nHeaderRead = 0;
+  nHeaderRead += fread(mode,5*sizeof(char),1,thePhspfile);
   mode[5]='\0';
   
   int mode_n;
@@ -158,7 +172,7 @@ void RTGeneratorPhaseSpace_EGS::Init()
 
 #ifndef GAMOS_NO_VERBOSE
   if( RTVerb(infoVerb) )
-    std::cout << " MODE = " << mode[4] << " => " << mode_n << std::endl;
+    G4cout << " MODE = " << mode[4] << " => " << mode_n << std::endl;
 #endif
 
   //--- Read header  
@@ -166,18 +180,24 @@ void RTGeneratorPhaseSpace_EGS::Init()
   G4int nPhotons;
   float maximumKineticEnergy, minimumKineticEnergy;
   float nIncident;
-  fread(&nParticles,sizeof(int),1,thePhspfile);
-  fread(&nPhotons,sizeof(int),1,thePhspfile);
-  std::cout << " N_PARTICLES " << nParticles
+  nHeaderRead += fread(&nParticles,sizeof(int),1,thePhspfile);
+  nHeaderRead += fread(&nPhotons,sizeof(int),1,thePhspfile);
+  G4cout << " N_PARTICLES " << nParticles
 	    << " N_PHOTON S " << nPhotons
 	    << std::endl;
-  fread(&maximumKineticEnergy,sizeof(float),1,thePhspfile);
-  fread(&minimumKineticEnergy,sizeof(float),1,thePhspfile);
-  fread(&nIncident,sizeof(float),1,thePhspfile);
-  std::cout << " MAX_KINE " << maximumKineticEnergy 
+  nHeaderRead += fread(&maximumKineticEnergy,sizeof(float),1,thePhspfile);
+  nHeaderRead += fread(&minimumKineticEnergy,sizeof(float),1,thePhspfile);
+  nHeaderRead += fread(&nIncident,sizeof(float),1,thePhspfile);
+  G4cout << " MAX_KINE " << maximumKineticEnergy 
 	    << " MIN_KINE " << minimumKineticEnergy 
 	    << " N_INCIDENT " << nIncident 
 	    << std::endl;
+  if( nHeaderRead != 6 ) {
+    G4Exception("RTGeneratorPhaseSpace_EGS:",
+		"",
+		FatalErrorInArgument,
+		("ERROR READING HEADER OF FILE: " + theFileName).c_str());
+  }
 
   //---- Initialize with header info
   theNEventsInFile = nParticles;
@@ -247,7 +267,11 @@ RTGeneratorPhaseSpace_EGS::~RTGeneratorPhaseSpace_EGS()
 //------------------------------------------------------------------------
 void RTGeneratorPhaseSpace_EGS::GeneratePrimaries(G4Event* evt)
 {
-  if( bMaxNReuseAutomatic && evt->GetEventID() == 0 ) {
+  //--- Multithreading: first event of each run in this thread (in sequential: event 0)
+  static G4ThreadLocal G4int autoReuseRunID = -1;
+  G4int currentRunID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  if( bMaxNReuseAutomatic && currentRunID != autoReuseRunID ) {
+    autoReuseRunID = currentRunID;
     //set MaxNReuse, MaxNRecycle automatically for each run
     theMaxNReuse = G4int( (G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed()-1) / theNEventsInFile ) + 1;
     theMaxNRecycle = 1; 
@@ -260,60 +284,75 @@ void RTGeneratorPhaseSpace_EGS::GeneratePrimaries(G4Event* evt)
     }*/
 
 
-  //skip first particles
-  if( evt->GetEventID() == 0 ) {
-    for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
-      int fileEnd = theEGSParticle->RefreshParticle(thePhspfile,ii+1);
-      if(fileEnd){
-	G4Exception("RTGeneratorPhaseSpace_EGS::GeneratePrimaries",
-		    "",
-		    FatalException,
-		    ("Skipping more particles thatn those existing in file : " + GmGenUtils::itoa(ii)).c_str());
-	return;
-      }
-    }
-  }
-
   //---- Reuse the same particle theMaxNReuse times  !! do not reuse charged particles
   if( theNReused == 0 || !theParticleDef || theParticleDef->GetPDGCharge() != 0 ) { // first time theNReused = 0, after theMaxNReuse times 
-    //    G4bool bFilter = (theBase.size() == 0);
-    //    do {
-    int fileEnd = theEGSParticle->RefreshParticle(thePhspfile,theNParticlesRead+1);
-    //    std::cout << irecord << " PARTICLE " << particle->theLatch 
-    //	      << " " << particle->theEnergy << " " << particle->thePosX << " " << particle->thePosY << " " << particle->theDirU << " " << particle->theDirV << " " << particle->theWeight << std::endl;
-    if(!fileEnd){
-      /*  float xcorr = (particle->thePosX - theXmin)/theDeltaX;
-	  float ycorr = (particle->thePosY - theYmin)/theDeltaY;
-	  if(particle->theCharge == 0){
-	  count_photons++;
-	  }*/
-      theNParticlesRead ++;
-    } else {
-    
-    //t    theExtraInfoMgr->FillExtraInfo( p_iaea_read );
-    //      if( theBase.size() != 0 ) bFilter = theBase[0]->AcceptStep((G4Step*)0);
-      if( theNRecycled < theMaxNRecycle ) {
-	fclose(thePhspfile);
-	thePhspfile = fopen(theFileName.c_str(), "rb");	
-#ifndef GAMOS_NO_VERBOSE
-	if( RTVerb(infoVerb) ) G4cout << "RTGeneratorPhaseSpace_EGS::GeneratePrimaries  RECYCLING phase space file " << theNRecycled << G4endl;
-#endif
-	theNRecycled++; 
-	  //skip first particles
-	for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
-	  theEGSParticle->RefreshParticle(thePhspfile,ii+1);
-	}
-      } else{
-	fclose(thePhspfile);
-	G4RunManager::GetRunManager()->AbortRun();
-	G4Exception("RTGeneratorPhaseSpace_EGS::GeneratePrimaries",
-		    "Too many events demanded",
-		    JustWarning,
-		    G4String("FAILED reading event  " + GmGenUtils::itoa(evt->GetEventID())).c_str() );
-	return;
+    G4bool bExhausted = false;
+    {
+      G4AutoLock l(&theEGSMutex);
+      if( !bEGSSharedInit ) { // first generator instance that reads (in MT a worker): its file becomes the shared one
+	theEGSSharedFile = thePhspfile;
+	theEGSParticle->Rewind();
+	theEGSSharedFilePointer = theEGSParticle->GetFilePointer();
+	theEGSSharedNRecycled = theNRecycled;
+	bEGSSharedInit = true;
       }
+      theEGSParticle->SetFilePointer( theEGSSharedFilePointer );
+      //skip first particles at the start of each run
+      const G4Run* run = G4RunManager::GetRunManager()->GetCurrentRun();
+      G4int runID = run ? run->GetRunID() : 0;
+      if( !bEGSExhausted && runID != theEGSSkipRunID ) {
+	theEGSSkipRunID = runID;
+	for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
+	  int fileEnd = theEGSParticle->RefreshParticle(theEGSSharedFile,ii+1);
+	  if(fileEnd){
+	    G4Exception("RTGeneratorPhaseSpace_EGS::GeneratePrimaries",
+			"",
+			FatalException,
+			("Skipping more particles than those existing in file : " + GmGenUtils::itoa(ii)).c_str());
+	    return;
+	  }
+	}
+      }
+      if( bEGSExhausted ) {
+	bExhausted = true;
+      } else {
+	int fileEnd = theEGSParticle->RefreshParticle(theEGSSharedFile,G4long(theEGSNParticlesRead)+1);
+	if( fileEnd ) {
+	  if( theEGSSharedNRecycled < theMaxNRecycle ) {
+#ifndef GAMOS_NO_VERBOSE
+	    if( RTVerb(infoVerb) ) G4cout << "RTGeneratorPhaseSpace_EGS::GeneratePrimaries  RECYCLING phase space file " << theEGSSharedNRecycled << G4endl;
+#endif
+	    theEGSSharedNRecycled++; 
+	    theEGSParticle->Rewind();
+	    //skip first particles
+	    for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
+	      theEGSParticle->RefreshParticle(theEGSSharedFile,ii+1);
+	    }
+	    //--- read the first particle of the new pass (previously the data of the last record were used again)
+	    fileEnd = theEGSParticle->RefreshParticle(theEGSSharedFile,G4long(theEGSNParticlesRead)+1);
+	  }
+	  if( fileEnd ) {
+	    fclose(theEGSSharedFile);
+	    theEGSSharedFile = nullptr;
+	    bEGSExhausted = true;
+	    bExhausted = true;
+	  }
+	}
+	if( !bExhausted ) theEGSNParticlesRead++;
+      }
+      theEGSSharedFilePointer = theEGSParticle->GetFilePointer();
+      theNRecycled = theEGSSharedNRecycled;
     }
-    //    }while( !bFilter );
+    if( bExhausted ) {
+      thePhspfile = nullptr;
+      G4RunManager::GetRunManager()->AbortRun();
+      G4Exception("RTGeneratorPhaseSpace_EGS::GeneratePrimaries",
+		  "Too many events demanded",
+		  JustWarning,
+		  G4String("FAILED reading event  " + GmGenUtils::itoa(evt->GetEventID())).c_str() );
+      return;
+    }
+    theNParticlesRead ++;
   }
   
   if( bHistos ) theHistos->FillHistos( theEGSParticle, 0 );

@@ -24,7 +24,7 @@ protected:
   G4String theHistoName;
   G4String theHistoFileName;
   G4int theHistoNumber;
-  static std::set<G4int> theHistoNumbers;
+  static G4ThreadLocal std::set<G4int> theHistoNumbers;
 
   GmAnalysisMgr* theAnaMgr;
 

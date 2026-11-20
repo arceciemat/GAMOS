@@ -328,8 +328,8 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
 	  Float64 pixelSpacingCol = 0.0;
 	  if (pixelMeasuresItem->findAndGetFloat64(DCM_PixelSpacing, pixelSpacingRow, 0).good() &&
 	      pixelMeasuresItem->findAndGetFloat64(DCM_PixelSpacing, pixelSpacingCol, 1).good()) {
-	    std::cout << "Pixel Spacing (Row): " << pixelSpacingRow << std::endl;
-	    std::cout << "Pixel Spacing (Column): " << pixelSpacingCol << std::endl;
+	    G4cout << "Pixel Spacing (Row): " << pixelSpacingRow << std::endl;
+	    G4cout << "Pixel Spacing (Column): " << pixelSpacingCol << std::endl;
 	    dPixelSpacing.push_back(pixelSpacingRow);
 	    dPixelSpacing.push_back(pixelSpacingCol);
 	  } else  {
@@ -400,7 +400,7 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
 	// 	G4cout << ii << " theMinZ " << theMinZ << " " << dImagePositionPatientMulti[ii][0] << " " << dImagePositionPatientMulti[ii][1] << " " << dImagePositionPatientMulti[ii][2] << G4endl; //GDEB
       }
       theMinZ -= dSliceThickness[0]*0.5;
-      theMaxZ -= dSliceThickness[0]*0.5;
+      theMaxZ += dSliceThickness[0]*0.5; // upper edge of last slice (was -=, which lost one slice thickness)
     }
   } else {
   // image position are coordinates of the upper left hand corner of the image;
@@ -419,10 +419,11 @@ void DicomVReaderImage::ReadHeaderAndPixels(G4bool bReadPixelData)
       // get minimum and maximum Z 
       theMinZ = DBL_MAX;
       theMaxZ = -DBL_MAX;
-      for( size_t ii = 0; ii << dImagePositionPatientMulti.size(); ii++ ) {
+      for( size_t ii = 0; ii < dImagePositionPatientMulti.size(); ii++ ) { // was 'ii <<', so loop was never executed
 	theMinZ = std::min(theMinZ,dImagePositionPatientMulti[ii][2]);
 	theMaxZ = std::max(theMaxZ,dImagePositionPatientMulti[ii][2]);
       }
+      theMaxZ += dSliceThickness[0]; // upper edge of last slice
     }
   }
     
@@ -508,10 +509,11 @@ void DicomVReaderImage::ReadPixelData()
   dpix->getOriginalRepresentationKey(xferSyntax, rep);
   // Access original data representation and get result within pixel sequence
   result = dpix->getEncapsulatedRepresentation(xferSyntax, rep, dseq);
-  //  std::cout << dseq << " result getEncapsulatedRepresentation " << std::endl; //GDEB
+  //  G4cout << dseq << " result getEncapsulatedRepresentation " << std::endl; //GDEB
   size_t theNoVoxelsXY = theNoVoxelsX*theNoVoxelsY;
   size_t theNoVoxels = theNoVoxelsXY*theNoVoxelsZ;
-  //  std::cout << " theNoVoxelsZ; " << theNoVoxelsZ << theNoVoxelsXY << "*"<< theNoVoxelsZ << G4endl; //GDEB
+  size_t noVoxelsZHeader = theNoVoxelsZ; // number of slices deduced from header (NumberOfFrames, or NumberOfSlices if not found)
+  //  G4cout << " theNoVoxelsZ; " << theNoVoxelsZ << theNoVoxelsXY << "*"<< theNoVoxelsZ << G4endl; //GDEB
   if ( result == EC_Normal ) // COMPRESSED DATA
     {
     G4Exception("DicomVReaderImage::ReadPixelData()",
@@ -590,12 +592,12 @@ void DicomVReaderImage::ReadPixelData()
       theNoVoxelsZ = pixLength/theNoVoxelsXY;
       theNoVoxels = theNoVoxelsXY*theNoVoxelsZ;
       theVoxelData = new std::vector<double>(theNoVoxelsX*theNoVoxelsY*theNoVoxelsZ);
-      if( theNoVoxels != pixLength ) {
+      if( theNoVoxelsXY*noVoxelsZHeader != pixLength ) {
 	G4Exception("ReadPixelData",
 		    "getUint16Array pixData, ",
 		    JustWarning,
 		    ("PixelData length="+GmGenUtils::itoa(pixLength)+" is not equal to NoVoxels= "+GmGenUtils::itoa(theNoVoxels)).c_str());
-	std::cerr << " NoVoxelZ changed to " << theNoVoxelsZ << std::endl;
+	G4cerr << " NoVoxelZ changed to " << theNoVoxelsZ << std::endl;
       }
       
       Uint8* pixData = NULL;
@@ -639,12 +641,12 @@ void DicomVReaderImage::ReadPixelData()
       theNoVoxelsZ = pixLength/theNoVoxelsXY/2;
       theNoVoxels = theNoVoxelsXY*theNoVoxelsZ;
       theVoxelData = new std::vector<double>(theNoVoxelsX*theNoVoxelsY*theNoVoxelsZ);
-      if( theNoVoxels != pixLength/2 ) {
+      if( theNoVoxelsXY*noVoxelsZHeader != pixLength/2 ) {
 	G4Exception("ReadPixelData",
 		    "getUint16Array pixData, ",
 		    JustWarning,
 		    ("PixelData length="+GmGenUtils::itoa(pixLength)+" is not equal to NoVoxels*2= "+GmGenUtils::itoa(theNoVoxels)).c_str());
-	std::cerr << " NoVoxelZ changed to " << theNoVoxelsZ << " " << theNoVoxelsX << " " << theNoVoxelsY << std::endl;
+	G4cerr << " NoVoxelZ changed to " << theNoVoxelsZ << " " << theNoVoxelsX << " " << theNoVoxelsY << std::endl;
       }
       
       Uint16* pixData = NULL;
@@ -704,12 +706,12 @@ void DicomVReaderImage::ReadPixelData()
       theNoVoxelsZ = pixLength/theNoVoxelsXY/4;
       theNoVoxels = theNoVoxelsXY*theNoVoxelsZ;
       theVoxelData = new std::vector<double>(theNoVoxelsX*theNoVoxelsY*theNoVoxelsZ);
-      if( theNoVoxels != pixLength/4 ) {
+      if( theNoVoxelsXY*noVoxelsZHeader != pixLength/4 ) {
 	G4Exception("ReadPixelData",
 		    "getUint16Array pixData, ",
 		    JustWarning,
 		    ("PixelData length="+GmGenUtils::itoa(pixLength)+" is not equal to NoVoxels*4= "+GmGenUtils::itoa(theNoVoxels)).c_str());
-	std::cerr << " NoVoxelZ changed to " << theNoVoxelsZ << std::endl;
+	G4cerr << " NoVoxelZ changed to " << theNoVoxelsZ << std::endl;
       }
       
       Uint32* pixData = NULL;
@@ -762,6 +764,12 @@ void DicomVReaderImage::ReadPixelData()
 	}
       }
     }
+  }
+
+  //----- If number of slices in pixel data is different than the one deduced from header (e.g. PET file with one slice and NumberOfSlices of the whole series), Z limits must be recalculated
+  if( theNoVoxelsZ != noVoxelsZHeader ) {
+    theMaxZ = theMinZ + theNoVoxelsZ*theVoxelDimZ;
+    if( DicomVerb(infoVerb) ) G4cout << GetName() << " DicomVReaderImage::ReadPixelData number of slices changed from " << noVoxelsZHeader << " to " << theNoVoxelsZ << " , Z limits are " << theMinZ << " " << theMaxZ << G4endl;
   }
 
   G4cout << GetName() << "  DicomVReaderImage::ReadPixelData READ  " << theVoxelData->size() << G4endl;

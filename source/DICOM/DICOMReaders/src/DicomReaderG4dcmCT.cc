@@ -6,7 +6,7 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include <fstream>
 
-#include "DicomReaderMgr.hh" //GDEB
+#include "DicomReaderMgr.hh"
 //-----------------------------------------------------------------------------
 DicomReaderG4dcmCT::DicomReaderG4dcmCT(G4String fName, G4String name) : DicomVReaderImage(DRM_G4dcmCT)
 {
@@ -71,7 +71,7 @@ void DicomReaderG4dcmCT::ReadHeaderAndPixels( G4bool bReadPixelData )
   theMateDensImage = new DicomVImage(theMateIDImage,"G4dcmCT_MateDens",DIM_G4dcmCT_MateDens);
   G4bool bEOF = theMateDensImage->ReadDataFromTextFile( *fin, false );
   if( DicomVerb(testVerb) ) G4cout << " DicomReaderG4dcmCT::ReadHeaderAndPixels theMateDensImage NDATA " << theMateDensImage->GetNoVoxels() << G4endl; 
-  if( DicomVerb(-testVerb) ) G4cout << " DicomReaderG4dcmCT::ReadHeaderAndPixels bEOF " << bEOF << G4endl; 
+  if( DicomVerb(testVerb) ) G4cout << " DicomReaderG4dcmCT::ReadHeaderAndPixels bEOF " << bEOF << G4endl; 
 
   // }
   //-- read structure names
@@ -84,7 +84,7 @@ void DicomReaderG4dcmCT::ReadHeaderAndPixels( G4bool bReadPixelData )
     if( bEOFSt ) {
       G4Exception("DicomReaderG4dcmCT::ReadHeaderAndPixels",
 		  "",
-		  JustWarning, //GDEB
+		  JustWarning,
 		  //		  FatalException,
 		  "File structures read but they do not end with list of structures");
     } //-return;
@@ -116,7 +116,7 @@ void DicomReaderG4dcmCT::ReadHeaderAndPixels( G4bool bReadPixelData )
     }
     }
     for( std::map<int,double>::iterator ite = stMinY.begin(); ite !=  stMinY.end(); ite++ ) {
-    std::cout << " MINY " << ite->first << " = " << ite->second << std::endl; //GDEB
+    G4cout << " MINY " << ite->first << " = " << ite->second << std::endl; //GDEB
     }*/
     
     G4int ist;

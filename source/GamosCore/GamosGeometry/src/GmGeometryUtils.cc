@@ -27,7 +27,7 @@
 
 #include <iomanip>
 
-GmGeometryUtils* GmGeometryUtils::theInstance = 0;
+G4ThreadLocal GmGeometryUtils* GmGeometryUtils::theInstance = 0;
 
 //-----------------------------------------------------------------------
 GmGeometryUtils* GmGeometryUtils::GetInstance()
@@ -725,7 +725,6 @@ std::vector<GmTouchable*> GmGeometryUtils::GetTouchables( const G4String& name, 
       for( G4int ii2 = 0; ii2 < nAnces-1; ii2++ ) {
 	G4VPhysicalVolume* pv = vpv[ii2];
 	ancestorName = "/" + pv->GetName();
-	char chartmp[10];
 	G4int copyNoAncestor;
 	if( !pv->IsReplicated() ) {
 	  copyNoAncestor = pv->GetCopyNo();
@@ -733,8 +732,7 @@ std::vector<GmTouchable*> GmGeometryUtils::GetTouchables( const G4String& name, 
 	  copyNoAncestor = vvi[kk][ii2];
 	}
 	copyNoAncestor = vvi[kk][ii2];
-	gcvt( copyNoAncestor, 10, chartmp );
-	ancestorName += G4String(":") + G4String(chartmp);
+	ancestorName += G4String(":") + std::to_string(copyNoAncestor);
 	longName =  ancestorName + longName;
       }
 
@@ -1028,7 +1026,7 @@ vpsi GmGeometryUtils::ExtractAncestorsRequested( const G4String& name )
   if( GeomVerb(debugVerb) ) {
     G4cout << " GmGeometryUtils::ExtractAncestorsRequested from " << name << " : " << std::endl;
     for( size_t ii = 0; ii < ancestorsRequested.size(); ii++ ) {
-      std::cout << "    ances: " << ancestorsRequested[ii].first << " copyNo " << ancestorsRequested[ii].second << std::endl;
+      G4cout << "    ances: " << ancestorsRequested[ii].first << " copyNo " << ancestorsRequested[ii].second << std::endl;
     }
   }
 #endif
@@ -1344,7 +1342,7 @@ std::vector<G4Material*> GmGeometryUtils::GetMaterialsUsed()
 //--------------------------------------------------------------------
 G4double GmGeometryUtils::GetCubicVolume( G4VPhysicalVolume* pv )
 {
-  G4double volume;
+  G4double volume = 0.;  // NOTE: bPreCalculatedPhantomCubicVolumes branch below is not implemented
   if( !bPreCalculatedPhantomCubicVolumes) {
     if( pv->IsParameterised() ) {
       std::map<G4VPhysicalVolume*, std::map<G4int, G4double>* >::const_iterator ite = thePreCalculatedParameterisedCubicVolumes.find(pv);

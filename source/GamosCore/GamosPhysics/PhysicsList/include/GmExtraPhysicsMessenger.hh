@@ -32,9 +32,6 @@ public:
 
 private:
   void AddPhysics(G4String newValue);
-  void RemoveProcessesByType(G4String newValue);
-  void RemoveProcessesByName(G4String newValue);
-  void RemoveProcessesByParticleAndName(G4String newValue);
   void ReplaceModelSet(G4String newValue);  
   void ReplaceModel(G4String newValue);
   void AddDeexcitation();
@@ -49,11 +46,6 @@ private:
   G4UIcmdWithABool* theApplyCutsCmd;
   G4UIcmdWithoutParameter* theParallelPhysCmd;
   GmUIcmdWithAString* theAddPhysicsCmd;
-  GmUIcmdWithAString* theRemoveProcessesCmd;
-  GmUIcmdWithAString* theRemoveProcessesByNameCmd;
-  GmUIcmdWithAString* theRemoveProcessesByTypeCmd;
-  GmUIcmdWithAString* theRemoveProcessesByParticleCmd;
-  GmUIcmdWithAString* theRemoveProcessesByParticleAndNameCmd;
   GmUIcmdWithAString* theReplaceModelSetCmd;
   GmUIcmdWithAString* theReplaceModelCmd;
 

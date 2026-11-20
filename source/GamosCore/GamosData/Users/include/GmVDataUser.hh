@@ -24,6 +24,11 @@ public:
   }
 
   G4String GetDataTypeAsString() const;
+
+  // Multithreading (run data users): true in a worker thread
+  static G4bool IsMTWorker();
+  // Multithreading: adds the accumulated data of this worker instance to the master instance (same data list)
+  void MergeRunDataToMaster( GmVDataUser* master );
   
 protected:
   GmVData* Build1Data( const G4String& dataName );

@@ -1,3 +1,4 @@
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #include "GmVDataUserBinFile.hh"
 #include "GamosCore/GamosData/Management/include/GmDataVerbosity.hh"
 
@@ -38,6 +39,8 @@ void GmVDataUserBinFile::WriteHeaderBin()
       bWriteHeaderNCalls != 0 || 
       bWriteHeaderData != 0 || 
       bWriteHeaderCheck != 0) {
+    //--- Multithreading: thread files with a binary header cannot be merged by concatenation
+    GmMTMergeMgr::SetThreadFileMergeMode( theFileNameOut, GmMTMergeMgr::TFMNoMerge );
     WriteHeaderInfo();
   }
 

@@ -1,35 +1,45 @@
-# - GAMOS_analysis_RTDose_compareDoses module build definition
+# - compareDoses module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_RTDose_compareDoses
+gamos_add_module(compareDoses
   PUBLIC_HEADERS
-    FileData.hh
-    ReadDoses.icc
-    ROOTDoseData.hh
-    TextFileData.hh
-    ROOTFileData.hh
-    TextDoserData.hh
-    ROOTDoserData.hh
-    DoserData.hh
-    TextDoseData.hh
-    DoseSet.hh
     DoseData.hh
+    DoseSet.hh
+    DoserData.hh
+    FileData.hh
+    PlotDataSVG.icc
+    ROOTDoseData.hh
+    ROOTDoserData.hh
+    ROOTFileData.hh
+    ReadDoses.icc
+    TextDoseData.hh
+    TextDoserData.hh
+    TextFileData.hh
   SOURCES
-    TextDoseData.cc
-    DoseSet.cc
-    ROOTDoserData.cc
-    DoserData.cc
-    ROOTFileData.cc
-    TextDoserData.cc
-    FileData.cc
-    TextFileData.cc
     DoseData.cc
+    DoseSet.cc
+    DoserData.cc
+    FileData.cc
     ROOTDoseData.cc
+    ROOTDoserData.cc
+    ROOTFileData.cc
+    TextDoseData.cc
+    TextDoserData.cc
+    TextFileData.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_RTDose_compareDoses
+
+gamos_module_link_libraries(compareDoses
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosUtils
+)
+
+# Program compareDoses
+gamos_add_executable(compareDoses
+  SOURCES
+    compareDoses.cc
+  LINK_LIBRARIES
+    compareDoses
+    GamosCore_GamosBase_Base
+    GamosCore_GamosRunManager
+    GamosCore_GamosUtils
+    compareScores
 )

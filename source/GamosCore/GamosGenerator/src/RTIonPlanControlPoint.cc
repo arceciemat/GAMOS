@@ -31,7 +31,7 @@ RTIonPlanControlPoint::RTIonPlanControlPoint( const G4String& fileName, RTIonPla
     //------------------------------- parameter number
     if( wl[0]== ":P" )  {
       CheckIfNewParameter( wl, 0 );
-      theParams[ wl[1] ] = G4tgrUtils::GetDouble( wl[2] );
+      theParams[ wl[1] ] = GmGenUtils::GetDoubleTgr( wl[2] );
       //      G4cout << this << " CPReadParams " << wl[1] << " = " << wl[2] << G4endl; //GDEB
    //------------------------------- parameter string
     } else if( wl[0] == ":PS" ) {
@@ -144,7 +144,7 @@ RTBeamStateData RTIonPlanControlPoint::GetBeamStateData(RTBeamStateData bsData)
 }
 
 //-------------------------------------------------------------
-void RTIonPlanControlPoint::PlotBeamStates(G4double minmaxX, G4double minmaxY, G4double maxMeterset)
+void RTIonPlanControlPoint::PlotBeamStates([[maybe_unused]] G4double minmaxX, [[maybe_unused]] G4double minmaxY, [[maybe_unused]] G4double maxMeterset)
 {
 #ifndef GAMOS_NO_ROOT
   G4String histoName = "RTIonPlanBeamState_" + GmGenUtils::itoa(theBeam->GetIndex()) + "_" + GmGenUtils::itoa(theIndex);

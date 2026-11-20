@@ -1,173 +1,224 @@
 # - GamosCore_GamosScoring_Scorers module build definition
 
-include(UseGamosAtGeant4)
-include(UseROOT)
-
-geant4_add_module(GamosCore_GamosScoring_Scorers
+gamos_add_module(GamosCore_GamosScoring_Scorers
   PUBLIC_HEADERS
-    GmPSCylindricalRPhiDoseDeposit.hh
-    GmPSLET_dEdx_unrestrD.hh
-    GmPSLET_LETESpect.hh
-    GmPSEnergyDeposit_VPrimaryGamma1stInter.hh
-    GmPSWithDirection.hh
-    GmPSRBEPhenom_Carabe.hh
-    GmG4PSTermination.hh
-    GmVScoringSurfaceSolid.hh
-    GmPSConstant.hh
-    GmPSdEdxElectronicELoss.hh
-    GmPSLET_EDepD.hh
-    GmPSElectronicdEdx.hh
-    GmG4PSDoseDepositVector.hh
-    GmPSLET_dEdx_unrestrT.hh
-    GmG4PSCellCharge.hh
-    GmPSdx_LET_dEdx.hh
-    GmG4PSNofCollision.hh
-    GmPSdx_LET_dEdx_unrestr.hh
-    GmG4PSNofSecondary.hh
-    GmG4PSMinKinEAtGeneration.hh
-    GmScoringSurfaceSphere.hh
-    GmPSSphericalDoseDeposit.hh
-    GmG4PSEnergyLoss.hh
-    GmG4PSDoseDeposit_old.hh
-    GmG4PSNofStep.hh
-    GmG4PSPassageCellFlux.hh
-    GmPSElectronicELoss.hh
-    GmG4PSTrackCounter.hh
-    GmG4PSPassageCellCurrent.hh
-    GmPSSurfaceFlux.hh
-    GmPSEquivDose.hh
-    GmG4PSDoseDeposit_NoSkipEqualMate.hh
     GmComputeDEDX.hh
-    GmG4PSPassageTrackLength.hh
-    GmPSDose_LET_EDep.hh
-    GmPSLET_ESpectD.hh
-    GmScoringSurfaceOrb.hh
-    GmPSLET_dEdxD.hh
-    GmPSLET_dEdx_unrestr.hh
-    GmPSCylindricalRZDoseDeposit.hh
-    GmPSLET_EDep.hh
-    GmScoringSurfaceTubs.hh
-    GmPSDose_LET_dEdx.hh
-    GmPSLET_dEdx.hh
-    GmPSLET_ESpect.hh
-    GmPSCylindricalZPhiDoseDeposit.hh
-    GmG4PSDoseDeposit.hh
-    GmVPSRBEPhenom.hh
-    GmHistosAtCavityUA.hh
-    GmG4PSDoseDeposit_SkipEqualMateSimple.hh
-    GmPSDose_LET_dEdx_unrestr.hh
-    GmPSLET_ESpectT.hh
-    GmPSEnergyDeposit_PrimaryGammaAnyInter.hh
-    GmPSEnergyDeposit_PrimaryGamma1stInter.hh
-    GmG4PSEnergyDeposit.hh
-    GmPSVolumeFlux.hh
-    GmPSDEDX.hh
-    GmPSLET_EDepT.hh
-    GmScoringSurfaceBox.hh
-    GmPSData.hh
-    kk
-    GmG4PSPopulation.hh
-    GmPSEnergyDeposit_PrimaryGamma1stInterAttenuation.hh
-    GmPSLET_dEdxT.hh
+    GmComputeRBEPhenom.hh
+    GmG4PSCellCharge.hh
     GmG4PSCellFlux.hh
     GmG4PSData.hh
+    GmG4PSDoseDeposit.hh
+    GmG4PSDoseDepositVector.hh
+    GmG4PSDoseDeposit_NoSkipEqualMate.hh
+    GmG4PSDoseDeposit_SkipEqualMateSimple.hh
+    GmG4PSDoseDeposit_old.hh
+    GmG4PSEnergyDeposit.hh
+    GmG4PSEnergyLoss.hh
+    GmG4PSEnergyLost.hh
     GmG4PSKerma.hh
+    GmG4PSMinKinEAtGeneration.hh
+    GmG4PSNofCollision.hh
+    GmG4PSNofSecondary.hh
+    GmG4PSNofStep.hh
+    GmG4PSPassageCellCurrent.hh
+    GmG4PSPassageCellFlux.hh
+    GmG4PSPassageTrackLength.hh
+    GmG4PSPopulation.hh
+    GmG4PSTermination.hh
+    GmG4PSTrackCounter.hh
     GmG4PSTrackLength.hh
+    GmHistosAtCavityUA.hh
+    GmPSConstant.hh
+    GmPSCylindricalRPhiDoseDeposit.hh
+    GmPSCylindricalRZDoseDeposit.hh
+    GmPSCylindricalZPhiDoseDeposit.hh
+    GmPSDEDX.hh
+    GmPSData.hh
+    GmPSDose_LET.hh
+    GmPSDose_LETBydEdx.hh
+    GmPSDose_LETBydEdx_Unrestricted.hh
+    GmPSDose_LET_EDep.hh
+    GmPSDose_LET_dEdx.hh
+    GmPSDose_LET_dEdx_unrestr.hh
+    GmPSDummyRBEScorer.hh
+    GmPSEdep_LET.hh
+    GmPSEdep_LETBydEdx.hh
+    GmPSElectronicELoss.hh
+    GmPSElectronicELost.hh
+    GmPSElectronicdEdx.hh
+    GmPSEnergyDeposit_PrimaryGamma1stInter.hh
+    GmPSEnergyDeposit_PrimaryGamma1stInterAttenuation.hh
+    GmPSEnergyDeposit_PrimaryGammaAnyInter.hh
+    GmPSEnergyDeposit_VPrimaryGamma1stInter.hh
+    GmPSEquivDose.hh
+    GmPSKineticEnergyVoxelSpectrum.hh
+    GmPSLET.hh
+    GmPSLETByESpect.hh
+    GmPSLETByESpectD.hh
+    GmPSLETByESpectPhi.hh
+    GmPSLETByESpectT.hh
+    GmPSLETBydEdx.hh
+    GmPSLETBydEdxD.hh
+    GmPSLETBydEdxD_Unrestricted.hh
+    GmPSLETBydEdxPhi.hh
+    GmPSLETBydEdxT.hh
+    GmPSLETEDepD.hh
+    GmPSLETEDepPhi.hh
+    GmPSLETEDepT.hh
+    GmPSLET_EDep.hh
+    GmPSLET_EDepD.hh
+    GmPSLET_EDepT.hh
+    GmPSLET_ESpect.hh
+    GmPSLET_ESpectD.hh
+    GmPSLET_ESpectT.hh
+    GmPSLET_LETByESpect.hh
+    GmPSLET_LETESpect.hh
+    GmPSLET_dEdx.hh
+    GmPSLET_dEdxD.hh
+    GmPSLET_dEdxT.hh
+    GmPSLET_dEdx_unrestr.hh
+    GmPSLET_dEdx_unrestrD.hh
+    GmPSLET_dEdx_unrestrT.hh
+    GmPSRBEBWFy.hh
+    GmPSRBEPhenom_Carabe.hh
+    GmPSRBEPhenom_Chen.hh
+    GmPSRBEPhenom_McNamara.hh
+    GmPSRBEPhenom_Peeler.hh
+    GmPSRBEPhenom_Rorvik.hh
+    GmPSRBEPhenom_Tilly.hh
+    GmPSRBEPhenom_Wedenberg.hh
+    GmPSRBEPhenom_Wilkens.hh
+    GmPSSphericalDoseDeposit.hh
+    GmPSSurfaceFlux.hh
+    GmPSVolumeFlux.hh
+    GmPSWithDirection.hh
+    GmPSdEdxElectronicELoss.hh
+    GmPSdx_LETBydEdx.hh
+    GmPSdx_LETBydEdx_Unrestricted.hh
+    GmPSdx_LET_dEdx.hh
+    GmPSdx_LET_dEdx_unrestr.hh
+    GmScoringSurfaceBox.hh
+    GmScoringSurfaceOrb.hh
+    GmScoringSurfaceSphere.hh
+    GmScoringSurfaceTubs.hh
+    GmVPSRBEPhenom.hh
+    GmVScoringSurfaceSolid.hh
   SOURCES
-    GmPSLET_EDep.cc
-    GmPSLET_dEdxD.cc
-    GmPSEnergyDeposit_PrimaryGamma1stInter.cc
-    GmPSLET_EDepT.cc
-    GmHistosAtCavityUA.cc
-    GmPSLET_dEdxT.cc
-    GmG4PSPassageTrackLength.cc
-    GmPSLET_ESpectT.cc
-    GmG4PSTermination.cc
-    GmPSLET_ESpect.cc
-    GmPSLET_LETESpect.cc
-    GmPSCylindricalZPhiDoseDeposit.cc
-    GmPSSurfaceFlux.cc
-    GmG4PSPopulation.cc
-    GmG4PSDoseDeposit_SkipEqualMateSimple.cc
-    GmPSLET_EDepD.cc
-    GmPSData.cc
-    GmPSEnergyDeposit_PrimaryGamma1stInterAttenuation.cc
-    GmPSCylindricalRPhiDoseDeposit.cc
-    GmG4PSDoseDeposit_old.cc
+    GmComputeDEDX.cc
+    GmComputeRBEPhenom.cc
+    GmG4PSCellCharge.cc
+    GmG4PSCellFlux.cc
+    GmG4PSData.cc
     GmG4PSDoseDeposit.cc
-    GmPSdx_LET_dEdx.cc
+    GmG4PSDoseDepositVector.cc
+    GmG4PSDoseDeposit_NoSkipEqualMate.cc
+    GmG4PSDoseDeposit_SkipEqualMateSimple.cc
+    GmG4PSDoseDeposit_old.cc
+    GmG4PSEnergyDeposit.cc
+    GmG4PSEnergyLoss.cc
+    GmG4PSEnergyLost.cc
+    GmG4PSKerma.cc
+    GmG4PSMinKinEAtGeneration.cc
+    GmG4PSNofCollision.cc
+    GmG4PSNofSecondary.cc
     GmG4PSNofStep.cc
     GmG4PSPassageCellCurrent.cc
-    GmPSDEDX.cc
-    GmPSdEdxElectronicELoss.cc
-    GmPSdx_LET_dEdx_unrestr.cc
-    GmPSDose_LET_dEdx_unrestr.cc
-    GmPSWithDirection.cc
-    GmScoringSurfaceSphere.cc
-    GmPSEnergyDeposit_PrimaryGammaAnyInter.cc
-    GmG4PSNofSecondary.cc
-    GmComputeDEDX.cc
-    GmPSElectronicELoss.cc
-    GmG4PSTrackLength.cc
-    GmPSEquivDose.cc
-    GmPSEnergyDeposit_VPrimaryGamma1stInter.cc
-    plugin.cc
-    GmPSRBEPhenom_Carabe.cc
-    GmG4PSTrackCounter.cc
-    GmScoringSurfaceBox.cc
-    GmG4PSDoseDeposit_NoSkipEqualMate.cc
-    plugin.cc.old
-    GmComputeDEDX.doc
-    GmScoringSurfaceTubs.cc
-    GmG4PSDoseDepositVector.cc
-    plugin.cc.new
-    GmPSElectronicdEdx.cc
-    ff
-    GmG4PSCellFlux.cc
-    GmPSConstant.cc
-    GmG4PSCellCharge.cc
-    GmVPSRBEPhenom.cc
-    GmPSCylindricalRZDoseDeposit.cc
-    GmG4PSEnergyDeposit.cc
-    GmPSVolumeFlux.cc
-    GmPSDose_LET_EDep.cc
-    kk
-    GmPSLET_ESpectD.cc
-    GmG4PSEnergyLoss.cc
     GmG4PSPassageCellFlux.cc
-    GmPSSphericalDoseDeposit.cc
-    GmPSLET_dEdx_unrestrD.cc
-    GmPSLET_dEdx.cc
+    GmG4PSPassageTrackLength.cc
+    GmG4PSPopulation.cc
+    GmG4PSTermination.cc
+    GmG4PSTrackCounter.cc
+    GmG4PSTrackLength.cc
+    GmHistosAtCavityUA.cc
+    GmPSConstant.cc
+    GmPSCylindricalRPhiDoseDeposit.cc
+    GmPSCylindricalRZDoseDeposit.cc
+    GmPSCylindricalZPhiDoseDeposit.cc
+    GmPSDEDX.cc
+    GmPSData.cc
+    GmPSDose_LET.cc
+    GmPSDose_LETBydEdx.cc
+    GmPSDose_LETBydEdx_Unrestricted.cc
+    GmPSDose_LET_EDep.cc
     GmPSDose_LET_dEdx.cc
-    GmScoringSurfaceOrb.cc
-    GmG4PSData.cc
+    GmPSDose_LET_dEdx_unrestr.cc
+    GmPSDummyRBEScorer.cc
+    GmPSEdep_LET.cc
+    GmPSEdep_LETBydEdx.cc
+    GmPSElectronicELoss.cc
+    GmPSElectronicELost.cc
+    GmPSElectronicdEdx.cc
+    GmPSEnergyDeposit_PrimaryGamma1stInter.cc
+    GmPSEnergyDeposit_PrimaryGamma1stInterAttenuation.cc
+    GmPSEnergyDeposit_PrimaryGammaAnyInter.cc
+    GmPSEnergyDeposit_VPrimaryGamma1stInter.cc
+    GmPSEquivDose.cc
+    GmPSKineticEnergyVoxelSpectrum.cc
+    GmPSLET.cc
+    GmPSLETByESpect.cc
+    GmPSLETByESpectD.cc
+    GmPSLETByESpectPhi.cc
+    GmPSLETByESpectT.cc
+    GmPSLETBydEdx.cc
+    GmPSLETBydEdxD.cc
+    GmPSLETBydEdxD_Unrestricted.cc
+    GmPSLETBydEdxPhi.cc
+    GmPSLETBydEdxT.cc
+    GmPSLETEDepD.cc
+    GmPSLETEDepPhi.cc
+    GmPSLETEDepT.cc
+    GmPSLET_EDep.cc
+    GmPSLET_EDepD.cc
+    GmPSLET_EDepT.cc
+    GmPSLET_ESpect.cc
+    GmPSLET_ESpectD.cc
+    GmPSLET_ESpectT.cc
+    GmPSLET_LETByESpect.cc
+    GmPSLET_LETESpect.cc
+    GmPSLET_dEdx.cc
+    GmPSLET_dEdxD.cc
+    GmPSLET_dEdxT.cc
     GmPSLET_dEdx_unrestr.cc
+    GmPSLET_dEdx_unrestrD.cc
     GmPSLET_dEdx_unrestrT.cc
-    GmG4PSNofCollision.cc
+    GmPSRBEBWFy.cc
+    GmPSRBEPhenom_Carabe.cc
+    GmPSRBEPhenom_Chen.cc
+    GmPSRBEPhenom_McNamara.cc
+    GmPSRBEPhenom_Peeler.cc
+    GmPSRBEPhenom_Rorvik.cc
+    GmPSRBEPhenom_Tilly.cc
+    GmPSRBEPhenom_Wedenberg.cc
+    GmPSRBEPhenom_Wilkens.cc
+    GmPSSphericalDoseDeposit.cc
+    GmPSSurfaceFlux.cc
+    GmPSVolumeFlux.cc
+    GmPSWithDirection.cc
+    GmPSdEdxElectronicELoss.cc
+    GmPSdx_LETBydEdx.cc
+    GmPSdx_LETBydEdx_Unrestricted.cc
+    GmPSdx_LET_dEdx.cc
+    GmPSdx_LET_dEdx_unrestr.cc
+    GmScoringSurfaceBox.cc
+    GmScoringSurfaceOrb.cc
+    GmScoringSurfaceSphere.cc
+    GmScoringSurfaceTubs.cc
+    GmVPSRBEPhenom.cc
     GmVScoringSurfaceSolid.cc
-    GmG4PSMinKinEAtGeneration.cc
-    GmG4PSKerma.cc
+    plugin.cc
 )
-# - Add path to generated header
-geant4_module_include_directories(GamosCore_GamosScoring_Scorers
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
- PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
 
-geant4_module_link_libraries(GamosCore_GamosScoring_Scorers
+gamos_module_link_libraries(GamosCore_GamosScoring_Scorers
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
-    GamosCore_GamosUtils
     GamosCore_GamosBase_Base
-    GamosCore_GamosGeometry
-    GamosCore_GamosReadDICOM
-    GamosCore_GamosGenerator
+    GamosCore_GamosData_Distributions
     GamosCore_GamosData_Management
     GamosCore_GamosData_Users
+    GamosCore_GamosGeometry
+    GamosCore_GamosReadDICOM
     GamosCore_GamosScoring_Management
-    GamosCore_GamosData_Distributions
+    GamosCore_GamosUserActionMgr
+    GamosCore_GamosUtils
+    lcg_PluginManager
+    lcg_SealBase
 )

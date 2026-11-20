@@ -53,6 +53,7 @@ bDumpMultiples = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("CC:EvtCl
   theCoincidenceTime = GmParameterMgr::GetInstance()->GetNumericValue("CC:EvtClass:CoincidenceTime",DBL_MAX);
   theComptonRecHitsDistScat  = GmParameterMgr::GetInstance()->GetNumericValue("CC:EvtClass:ComptonRecHitDistScat",0.*CLHEP::mm);
   theComptonRecHitsDistAbs  = GmParameterMgr::GetInstance()->GetNumericValue("CC:EvtClass:ComptonRecHitDistAbs",0.*CLHEP::mm);
+  theComptonRecHitsDist = 0.; // it was not initialised: a garbage value > 0 could merge all rec hits in one set
 
 
   G4String the1stHitStr = GmParameterMgr::GetInstance()->GetStringValue("CC:EvtClass:1stHitAlgorithm","Det1stHitByEnergy");
@@ -296,11 +297,15 @@ void CCEventClassifierUA::GetFullComptonRecHits( const gamosRecHitList& rhitList
 
    //----- Add all the hits within a certain distance - only implemeted by a user parameter
  
-   if(type=="/Scatterer/") {
+   // distance of the detector of the seed rec hit (before, 'type' was the SD type of the last rec hit of a previous event)
+   G4String seedType = seedRecHit->GetSDType();
+   if(seedType=="/Scatterer/") {
    theComptonRecHitsDist = theComptonRecHitsDistScat;
    }
-   else if (type=="/Absorber/") {
+   else if (seedType=="/Absorber/") {
    theComptonRecHitsDist = theComptonRecHitsDistAbs;
+   } else {
+   theComptonRecHitsDist = 0.;
    }
 
    if( theComptonRecHitsDist > 0. ){

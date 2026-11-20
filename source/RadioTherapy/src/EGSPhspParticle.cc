@@ -22,10 +22,14 @@
 
 #include "EGSPhspParticle.hh"
 #include "G4PhysicalConstants.hh"
+#include "G4ios.hh"
 
-EGSPhspParticle::EGSPhspParticle(FILE* , std::string ) 
+EGSPhspParticle::EGSPhspParticle(FILE* , std::string mode ) 
 {
-  theFilePointer = 5*sizeof(char)+2*sizeof(int)+3*sizeof(float)+3;
+  //--- header and records have the same length: 7 4-byte words (MODE0) or 8 (MODE2, ZLAST added)
+  theRecordLength = ( mode.size() > 4 && mode[4] == '2' ) ? 32 : 28;
+  theFilePointer = theRecordLength; // = 5*sizeof(char)+2*sizeof(int)+3*sizeof(float)+3 for MODE0
+  theCharge = 0;
   //  theFilePointer = 5*sizeof(char)+2*sizeof(int)+3*sizeof(float);
 }
 
@@ -44,12 +48,12 @@ int EGSPhspParticle::RefreshParticle(FILE* file, long number)
 
   /*  fread(&theLatch,sizeof(unsigned int),1,file);
   fread(&theKineticEnergy,sizeof(float),1,file);
-  std::cout << " EGSPhspParticle READ theLatch " << theLatch << " theKineticEnergy " << theKineticEnergy << std::endl; //GDEB
+  G4cout << " EGSPhspParticle READ theLatch " << theLatch << " theKineticEnergy " << theKineticEnergy << std::endl; //GDEB
   */  
   theParticleNumber = number;
   (void) fseek(file,theFilePointer,SEEK_SET);
   a1 = fread(&theLatch,sizeof(unsigned int),1,file);
-  //    std::cout << " EGSPhspParticle READ theLatch " << theLatch << std::endl; //GDEB
+  //    G4cout << " EGSPhspParticle READ theLatch " << theLatch << std::endl; //GDEB
   a1 &= fread(&theKineticEnergy,sizeof(float),1,file);
   a1 &= fread(&thePosX,sizeof(float),1,file);
   thePosX *= 10.;
@@ -61,6 +65,28 @@ int EGSPhspParticle::RefreshParticle(FILE* file, long number)
   
   if(a1){
     reset_phsp = false;
+    //--- next record (theFilePointer was never advanced: the first record was always read)
+    theFilePointer += theRecordLength;
+    // obtain npass from theLatch
+    
+    if ((theLatch & 0x80000000) != 0){
+      // printf("Multiple crosser\n");
+      theNPass=1;
+      theLatch &= 0x7FFFFFFF;
+    } else
+      theNPass=0;
+    
+    // obtain q from theLatch
+    if((theLatch & 0x40000000) != 0){
+      theCharge = -1;
+      theLatch &= 0xBFFFFFFF;
+    } else if ((theLatch & 0x20000000) != 0){
+      theCharge = +1;
+      theLatch &= 0xDFFFFFFF;
+    } else {
+      theCharge = 0;
+    }
+    //--- charge of this record must be known before subtracting the electron mass (it was taken from the previous record)
     theKineticEnergy = fabs(theKineticEnergy);
     if( theCharge != 0 ) {
       theKineticEnergy -= CLHEP::electron_mass_c2;
@@ -81,46 +107,27 @@ int EGSPhspParticle::RefreshParticle(FILE* file, long number)
     }
     if(theDirW < 0.0f)
       theDirW *= -1.0f;
-    // obtain npass from theLatch
-    
-    if ((theLatch & 0x80000000) != 0){
-      // printf("Multiple crosser\n");
-      theNPass=1;
-      theLatch &= 0x7FFFFFFF;
-    } else
-      theNPass=0;
-    
-    // obtain q from theLatch
-    if((theLatch & 0x40000000) != 0){
-      theCharge = -1;
-      theLatch &= 0xBFFFFFFF;
-    } else if ((theLatch & 0x20000000) != 0){
-      theCharge = +1;
-      theLatch &= 0xDFFFFFFF;
-    } else {
-      theCharge = 0;
-    }
     //long step = sizeof(unsigned int) + 6*sizeof(float);
     //    theFilePointer += step;
     
     int MAX_PRINT = 10;
-    //-    if( theKineticEnergy > 0.510 && theKineticEnergy < 0.512 ) std::cout << " ENERGYPEAK " << theKineticEnergy << std::endl; //GDEB
+    //-    if( theKineticEnergy > 0.510 && theKineticEnergy < 0.512 ) G4cout << " ENERGYPEAK " << theKineticEnergy << std::endl; //GDEB
     if(theParticleNumber <= MAX_PRINT){
-      std::cout << "# " <<theParticleNumber;
-      std::cout << " Q " << theCharge;
-      std::cout << " E " << theKineticEnergy;
-      std::cout << " x " << thePosX;
-      std::cout << " y " << thePosY << std::endl;
-      std::cout << " u " << theDirU;
-      std::cout << " v " << theDirV;
-      std::cout << " w " << theDirW;
-      std::cout << " W " << theWeight;
-      std::cout << " latch " << theLatch;
-      std::cout << " NPass " << theNPass <<  std::endl;
+      G4cout << "# " <<theParticleNumber;
+      G4cout << " Q " << theCharge;
+      G4cout << " E " << theKineticEnergy;
+      G4cout << " x " << thePosX;
+      G4cout << " y " << thePosY << std::endl;
+      G4cout << " u " << theDirU;
+      G4cout << " v " << theDirV;
+      G4cout << " w " << theDirW;
+      G4cout << " W " << theWeight;
+      G4cout << " latch " << theLatch;
+      G4cout << " NPass " << theNPass <<  std::endl;
     }
   }else{
-    //    std::cerr << "!!! EGSPhspParticle::RefreshParticle: unsuccesful fread at record " << theFilePointer/step << std::endl;
-    std::cerr << "End of file" << std::endl;
+    //    G4cerr << "!!! EGSPhspParticle::RefreshParticle: unsuccesful fread at record " << theFilePointer/step << std::endl;
+    G4cerr << "End of file" << std::endl;
     
     //     if(fseek(file,(long)0,SEEK_SET) != 0){
     //       printf("In phsp_rw: phsp_read_particle() file could not be reset\n");
@@ -159,7 +166,7 @@ void EGSPhspParticle::write_EGSPhspParticle(FILE* outphspfile)
   */
   
   fwrite(&theLatch,sizeof(unsigned int),1,outphspfile);
-  //  std::cout << " EGSPhspParticle WRITE theLatch " << theLatch << std::endl; //GDEB
+  //  G4cout << " EGSPhspParticle WRITE theLatch " << theLatch << std::endl; //GDEB
   fwrite(&theKineticEnergy,sizeof(float),1,outphspfile);
   fwrite(&thePosX,sizeof(float),1,outphspfile);
   fwrite(&thePosY,sizeof(float),1,outphspfile);

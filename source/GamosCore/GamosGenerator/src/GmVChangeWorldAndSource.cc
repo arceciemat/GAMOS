@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "GmVChangeWorldAndSource.hh"
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
@@ -22,6 +23,13 @@
 //------------------------------------------------------------------
 GmVChangeWorldAndSource::GmVChangeWorldAndSource() : GmUserEventAction(), GmUserStackingAction()
 {
+  //--- Multithreading: the (shared) geometry is changed between events and sources are sequenced by event number
+  if( G4Threading::IsMultithreadedApplication() ) {
+    G4Exception("GmVChangeWorldAndSource::GmVChangeWorldAndSource",
+		"",
+		FatalException,
+		"This generator changes the geometry between events and cannot be used in multithreading mode: run with G4RUN_MANAGER_TYPE=Serial");
+  }
   bInitialised = FALSE;
   thePrimaryParticleName  = GmParameterMgr::GetInstance()->GetStringValue("GmVChangeWorldAndSource:PrimaryParticleName","");
   if( thePrimaryParticleName == "" ) {
@@ -37,11 +45,11 @@ GmVChangeWorldAndSource::GmVChangeWorldAndSource() : GmUserEventAction(), GmUser
 		FatalErrorInArgument,
 		"No primary particle name is defined, use command: /gamos/setParam GmVChangeWorldAndSource:SecondaryParticleName PARTICLE_NAME");
   }
-  theNEventsPerRun = GmParameterMgr::GetInstance()->GetNumericValue("GmVChangeWorldAndSource:nEventsPerRun",100);
-  theMinE = GmParameterMgr::GetInstance()->GetNumericValue("GmVChangeWorldAndSource:minE",1.E-12*CLHEP::MeV);
-  theMaxE = GmParameterMgr::GetInstance()->GetNumericValue("GmVChangeWorldAndSource:maxE",1.E+2*CLHEP::MeV);
-  theNstepsE = (unsigned int)(GmParameterMgr::GetInstance()->GetNumericValue("GmVChangeWorldAndSource:nStepsE",15));
-  bLogE = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("GmVChangeWorldAndSource:logE",1));
+  theNEventsPerRun = GmParameterMgr::GetInstance()->GetNumericValue("GmVChangeWorldAndSource:NEventsPerRun",100);
+  theMinE = GmParameterMgr::GetInstance()->GetNumericValue("GmVChangeWorldAndSource:MinE",1.E-12*CLHEP::MeV);
+  theMaxE = GmParameterMgr::GetInstance()->GetNumericValue("GmVChangeWorldAndSource:MaxE",1.E+2*CLHEP::MeV);
+  theNstepsE = (unsigned int)(GmParameterMgr::GetInstance()->GetNumericValue("GmVChangeWorldAndSource:NStepsE",15));
+  bLogE = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("GmVChangeWorldAndSource:LogE",1));
   theCurrentWorld = -1;
   theCurrentSource = -1;
   bTooManyEvents = FALSE;

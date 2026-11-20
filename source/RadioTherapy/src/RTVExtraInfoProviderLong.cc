@@ -4,7 +4,7 @@
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
-std::vector<bs32*> RTVExtraInfoProviderLong::theWords;
+G4ThreadLocal std::vector<bs32*> RTVExtraInfoProviderLong::theWords;
 
 //----------------------------------------------------------------
 RTVExtraInfoProviderLong::RTVExtraInfoProviderLong()

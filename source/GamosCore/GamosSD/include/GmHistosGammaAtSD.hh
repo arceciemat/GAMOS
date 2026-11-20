@@ -28,6 +28,7 @@ public:
  
 private:
  G4bool IsInterestingStep(const G4Step* aStep);
+  void MergeToMaster();
   void FillHistos();  
  
 private:

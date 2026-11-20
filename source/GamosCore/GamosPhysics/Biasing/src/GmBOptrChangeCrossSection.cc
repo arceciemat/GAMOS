@@ -35,7 +35,7 @@ void GmBOptrChangeCrossSection::StartRun()
 
   mmpp::const_iterator ite = theParticleProcesses.begin();
   fParticleToBias = (*ite).first;
-  //  std::cout << " GmBOptrChangeCrossSection ::StartRun( " << theParticleProcesses.size() << " fParticleToBias " << fParticleToBias << G4endl; //GDEB
+  //  G4cout << " GmBOptrChangeCrossSection ::StartRun( " << theParticleProcesses.size() << " fParticleToBias " << fParticleToBias << G4endl; //GDEB
 
   // --------------
   // -- Setup stage:

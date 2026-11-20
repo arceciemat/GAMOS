@@ -140,20 +140,23 @@ void GmVRecHitBuilder::CheckRecHitsMinEnergy(std::vector<GmRecHit*>& recHits)
 void GmVRecHitBuilder::CheckEnergyEfficiency(std::vector<GmRecHit*>& recHits)
 {
   if( theEfficiencyDistribution ) {
+    std::vector<GmRecHit*> recHitsKept;
     std::vector<GmRecHit*>::const_iterator iter;
     for( iter = recHits.begin(); iter != recHits.end(); iter++ ) {
       G4double effic = theEfficiencyDistribution->GetNumericValueFromIndex( (*iter)->GetEnergy() );
       if( effic < 1. ) {
 	G4double rand = CLHEP::RandFlat::shoot();
-	if( rand < effic ) {
+	if( rand > effic ) { // the rec hit is kept with probability = efficiency
 #ifndef GAMOS_NO_VERBOSE
 	  if( SDVerb(debugVerb) ) G4cout << " GmVRecHitBuilder::CheckEnergyEfficiency hit deleted " << *(*iter) << G4endl;
 #endif
 	  theHitsEventMgr->DeleteHits( *iter );
+	  continue;
 	}
       }
-      
+      recHitsKept.push_back( *iter );
     }
+    recHits = recHitsKept; // the deleted rec hits must not be stored
   }
 
 }

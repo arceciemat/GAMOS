@@ -1,13 +1,2 @@
-#------------------------------------------------------------------------------
-# Module : PET
-# Package: NuclMed_PET
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include(Geant4MacroLibraryTargets)
-if(GEANT4_BUILD_GRANULAR_LIBS)
-    GEANT4_GRANULAR_LIBRARY_TARGET(COMPONENTS sources.cmake)
-else()
-   GEANT4_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
-endif()
+# - NuclMed_PET module build (source/NuclMed/PET)
+include(sources.cmake)

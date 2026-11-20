@@ -1,17 +1,23 @@
-# - GAMOS_analysis_RTDose_analyseSqdose module build definition
+# - analyseSqdose module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_RTDose_analyseSqdose
+gamos_add_module(analyseSqdose
   PUBLIC_HEADERS
     Merge3ddoseUA.hh
   SOURCES
     dummy.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_RTDose_analyseSqdose
-  PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
+
+# Program analyseSqdose
+gamos_add_executable(analyseSqdose
+  SOURCES
+    analyseSqdose.cc
+  LINK_LIBRARIES
+    analyseSqdose
+    GamosCore_GamosBase_Base
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosRunManager
+    GamosCore_GamosScoring_Management
+    GamosCore_GamosScoring_Scorers
+    GamosCore_GamosUtils
     RadioTherapy
-    ${SEAL_LIBRARIES} 
 )

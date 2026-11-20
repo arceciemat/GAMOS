@@ -42,11 +42,11 @@ std::vector<GVSTouchableInfo*> GmPositionG4Materials::AddTouchableInfos( const s
 
   if( tinfos.size() == 0 ) {
     for( unsigned int ii = 0; ii < params.size(); ii++ ){
-      std::cerr << " Material searched for: " << params[ii] << std::endl;
+      G4cerr << " Material searched for: " << params[ii] << std::endl;
     }
     std::set<G4String>::const_iterator ites;
     for( ites = mateList.begin(); ites != mateList.end(); ites++ ) {
-      std::cerr << " Material in geometry: " << *ites << std::endl;
+      G4cerr << " Material in geometry: " << *ites << std::endl;
     }
     G4Exception("GmGenerDistPositionInG4Materials::AddTouchableInfos",
 		"Wrong argument",

@@ -1,3 +1,4 @@
+#ifndef GAMOS_NO_ROOT // ROOT files can only be read if GAMOS is built with ROOT
 #include "ROOTFileData.hh"
 #include "ROOTScorerData.hh"
 #include "ROOTScoreData.hh"
@@ -30,7 +31,7 @@ ROOTFileData::ROOTFileData(G4String fileName, G4bool bInvX)
     if( histo->GetDimension() == 1 ){
       if( dynamic_cast<TH1F*>(histo) ) {
 	histo1 = (TH1F*) file->Get( HistoKey->GetName() );	
-	//	std::cout << " comparing " << histo->GetName() << std::endl; //GDEB
+	//	G4cout << " comparing " << histo->GetName() << std::endl; //GDEB
 
 	if( ScoreData::verbosity >= 1 ) G4cout << "@@@ New ScorerData DOSER    " <<  HistoKey->GetName() << G4endl; 
 	if( doserData && bInvX ) doserData->InvertX();
@@ -81,3 +82,4 @@ G4String ROOTFileData::ExtractName( std::vector<G4String> wl)
 }
 
 
+#endif

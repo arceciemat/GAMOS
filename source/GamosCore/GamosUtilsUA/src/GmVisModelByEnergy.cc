@@ -17,7 +17,7 @@ GmVisModelByEnergy::GmVisModelByEnergy(const G4String& name,
   // Create context object if none is provided. Model will
   // then use default G4VisTrajContext configuration
   if (0 == fpContext) fpContext = new G4VisTrajContext();
-  G4cout << " GmVisModelByEnergy::GmVisModelByEnergy( " << G4endl; //GDEB
+  //G4cout << " GmVisModelByEnergy::GmVisModelByEnergy( " << G4endl; //GDEB
   //E10eV,E100eV,E1keV,E10keV,EBig}
   fMap[E10eV] = G4Colour(1.,0.,0.,1.);  // red
   fMap[E100eV] = G4Colour(0.9,0.6,0.,1.); // orange 
@@ -30,15 +30,15 @@ GmVisModelByEnergy::GmVisModelByEnergy(const G4String& name,
 
 // Draw method
 void GmVisModelByEnergy::Draw(const G4VTrajectory& traj, 
-		    const G4bool& visible) const
+		    const G4bool& /*visible*/) const
 {
-  G4cout << " GmVisModelByEnergy::Draw( " << G4endl; //GDEB
+  //G4cout << " GmVisModelByEnergy::Draw( " << G4endl; //GDEB
   G4Colour colour;
 
   //--- classify energies
   const G4Trajectory* g4traj = dynamic_cast<const G4Trajectory*>(&traj);
   G4double energy = g4traj->GetInitialKineticEnergy();
-  G4cout << " PARTICLE " << g4traj->GetParticleName() << " E= " << energy << G4endl; //GDEB
+  //G4cout << " PARTICLE " << g4traj->GetParticleName() << " E= " << energy << G4endl; //GDEB
   if( energy < 10*CLHEP::eV ) {
     fMap.GetColour(E10eV, colour);
   } else if( energy < 100*CLHEP::eV ) {
@@ -71,7 +71,7 @@ void GmVisModelByEnergy::Draw(const G4VTrajectory& traj,
 // Print configuration
 void GmVisModelByEnergy::Print(std::ostream& ) const
 {
-  G4cout << " GmVisModelByEnergy::Print( " << G4endl; //GDEB
+  //G4cout << " GmVisModelByEnergy::Print( " << G4endl; //GDEB
 }
 
 

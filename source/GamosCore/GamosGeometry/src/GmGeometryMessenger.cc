@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "G4MaterialPropertiesTable.hh"
 #include "GmGeometryMessenger.hh"
 
@@ -66,7 +67,7 @@ GmGeometryMessenger::GmGeometryMessenger()
   thePrintMaterialsCmd->SetGuidance("Print materials");
   thePrintMaterialsCmd->AvailableForStates(G4State_Idle);
 
-  theSetWorldMaxCmd = new G4UIcmdWithADouble("/gamos/geometry/SetWorldMaximumExtent",this);
+  theSetWorldMaxCmd = new G4UIcmdWithADouble("/gamos/geometry/setWorldMaximumExtent",this);
   theSetWorldMaxCmd->SetGuidance("Set the world maximum extent (it will change the precision of the Geant4 navigation");
   theSetWorldMaxCmd->AvailableForStates(G4State_PreInit);
 
@@ -132,6 +133,9 @@ GmGeometryMessenger::~GmGeometryMessenger()
 
 void GmGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValues)
 { 
+  //--- Multithreading: field managers are thread local (commands replayed in each worker); the rest acts on shared geometry/materials: only master
+  if( !G4Threading::IsMasterThread() && 
+      command != theMagFieldCmd && command != theElecFieldCmd && command != theEMFieldCmd && command != theMagFieldLocalCmd ) return;
   if( command == theMagFieldCmd ) {
     GmGenUtils::CheckNWords(newValues,3,"Command: "+ command->GetCommandPath() + "/" + command->GetCommandName() + " " + newValues + "  needs 3 arguments: FIELD_X FIELD_Y FIELD_Z"); 
     SetMagField(newValues);
@@ -324,8 +328,8 @@ void GmGeometryMessenger::SetRefractionIndex(const G4String& newValues)
   
   for( unsigned int ii = 0; ii < mates.size(); ii++ ){
     G4Material* mate = mates[ii];
-    G4MaterialPropertiesTable* aMaterialPropertiesTable;
-    if(!mate->GetMaterialPropertiesTable() ) {
+    G4MaterialPropertiesTable* aMaterialPropertiesTable = mate->GetMaterialPropertiesTable();
+    if( !aMaterialPropertiesTable ) {
       aMaterialPropertiesTable = new G4MaterialPropertiesTable();
       mate->SetMaterialPropertiesTable( aMaterialPropertiesTable );
     }

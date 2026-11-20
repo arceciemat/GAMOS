@@ -4,7 +4,7 @@
 #include "RTVerbosity.hh"
 
 //----------------------------------------------------------------------
-RTExtraInfoMgr* RTExtraInfoMgr::theInstance = 0;
+G4ThreadLocal RTExtraInfoMgr* RTExtraInfoMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 RTExtraInfoMgr* RTExtraInfoMgr::GetInstance()

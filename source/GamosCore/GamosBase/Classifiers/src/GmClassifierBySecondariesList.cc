@@ -46,8 +46,7 @@ int64_t GmClassifierBySecondariesList::GetIndexFromStep(const G4Step* )
 
   std::map<const G4String,int64_t>::const_iterator ite = theIndexMap.find(name);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1;
-    theIndexMap[name] = index;
+    index = AssignNewIndex( this, &GmClassifierBySecondariesList::theIndexMap, name, 1, false ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

@@ -12,14 +12,14 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 
-#include "TH1F.h"
-#include "TH2F.h"
+#ifndef GAMOS_NO_ROOT
 #include "TProfile.h"
 #include "TCanvas.h"
 #include "TStyle.h"
+#include "ROOTUtilities/PlotData/PlotUtils.C"
+#endif
 #include "ROOTUtilities/GetValue.C"
 #include "ROOTUtilities/GenUtils.C"
-#include "ROOTUtilities/PlotData/PlotUtils.C"
 
 
 //------------------------------------------------------------------------
@@ -110,7 +110,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
       if( imageErr1 ) iDataErr1 = imageErr1->GetData();
   */  
   if( DicomVerb(infoVerb) )
-    std::cout << "@@@ READ image nVoxX/Y/Z " << nVoxX1 << " " << nVoxY1 << " " << nVoxZ1 << G4endl
+    G4cout << "@@@ READ image nVoxX/Y/Z " << nVoxX1 << " " << nVoxY1 << " " << nVoxZ1 << G4endl
 	      << " fMinX/Y/Z " << fMinX1 << " " << fMinY1 << " " << fMinZ1 << G4endl
 	      << " fMaxX/Y/Z " << fMaxX1 << " " << fMaxY1 << " " << fMaxZ1 << G4endl
 	      << " fVoxDimX/Y/Z " << fVoxDimX1 << " " << fVoxDimY1 << " " << fVoxDimZ1 << G4endl
@@ -137,7 +137,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
   if( imageErr2 != 0 ) iDataErr2 = *(imageErr2->GetData());
 
   if( DicomVerb(infoVerb) )
-    std::cout << "@@@ READ IMAGE2 nVoxX/Y/Z " << nVoxX2 << " " << nVoxY2 << " " << nVoxZ2 << G4endl
+    G4cout << "@@@ READ IMAGE2 nVoxX/Y/Z " << nVoxX2 << " " << nVoxY2 << " " << nVoxZ2 << G4endl
 	      << " fMinX/Y/Z " << fMinX2 << " " << fMinY2 << " " << fMinZ2 << G4endl
 	      << " fMaxX/Y/Z " << fMaxX2 << " " << fMaxY2 << " " << fMaxZ2 << G4endl
 	      << " fVoxDimX/Y/Z " << fVoxDimX2 << " " << fVoxDimY2 << " " << fVoxDimZ2 << G4endl
@@ -569,7 +569,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
       //      if( minGamma != 0 ) G4cout << " FILL iDataOut " << nv1 << ": " << iDataOut->at(nv1) << "= " <<minGamma << G4endl; //GDEB
       if( minGamma > 1. ) nGI++;
       nPOINTS++;
-      if( DicomVerb(debugVerb) ) std::cout << "FINAL gamma " << voxelCentre1 << " = " << minGamma << std::endl;
+      if( DicomVerb(debugVerb) ) G4cout << "FINAL gamma " << voxelCentre1 << " = " << minGamma << std::endl;
       theGammaFinal.insert(std::multiset<double>::value_type(minGamma));
     }
 
@@ -578,7 +578,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
     int jj = 0;
     G4int nGamma = theGammaFinal.size();
     for( iteg = theGammaFinal.begin(); iteg != theGammaFinal.end(); iteg++, jj++ ) {	
-      if( DicomVerb(testVerb) ) std::cout << jj << " PVAL " << G4double(jj)/nGamma << " = " << *iteg << std::endl; 
+      if( DicomVerb(testVerb) ) G4cout << jj << " PVAL " << G4double(jj)/nGamma << " = " << *iteg << std::endl; 
       if( G4double(jj)/nGamma > 0.95 ) {
 	gammaPVal = *iteg;
 	break;
@@ -592,7 +592,7 @@ void DCM2DOperGammaIndex::OperateXY( DicomVImage* image1, DicomVImage* image2, D
 }
 
 //------------------------------------------------------------------------
-void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, double perCentLim, double minDistLim, double pval, DicomVImage* imageOut, G4int StID, DicomVImageStr* theStIDImage )
+void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, double perCentLim, double minDistLim, double pval, DicomVImage* imageOut, G4int /*StID*/, DicomVImageStr* /*theStIDImage*/ ) // structure selection only implemented in OperateXY
 {
   G4bool bDistanceByVoxel = false;//  TODO
 
@@ -633,7 +633,7 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
   if( imageErr1 ) iDataErr1 = imageErr1->GetData();
   */  
   if( DicomVerb(infoVerb) )
-    std::cout << "@@@ READ image nVoxX/Y/Z " << nVoxX1 << " " << nVoxY1 << " " << nVoxZ1 << G4endl
+    G4cout << "@@@ READ image nVoxX/Y/Z " << nVoxX1 << " " << nVoxY1 << " " << nVoxZ1 << G4endl
 	      << " fMinX/Y/Z " << fMinX1 << " " << fMinY1 << " " << fMinZ1 << G4endl
 	      << " fMaxX/Y/Z " << fMaxX1 << " " << fMaxY1 << " " << fMaxZ1 << G4endl
 	      << " fVoxDimX/Y/Z " << fVoxDimX1 << " " << fVoxDimY1 << " " << fVoxDimZ1 << G4endl
@@ -661,7 +661,7 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
   if( imageErr2 ) iDataErr2 = imageErr2->GetData();
   */
   if( DicomVerb(infoVerb) )
-    std::cout << "@@@ READ sqdose2 nVoxX/Y/Z " << nVoxX2 << " " << nVoxY2 << " " << nVoxZ2 << G4endl
+    G4cout << "@@@ READ sqdose2 nVoxX/Y/Z " << nVoxX2 << " " << nVoxY2 << " " << nVoxZ2 << G4endl
 	      << " fMinX/Y/Z " << fMinX2 << " " << fMinY2 << " " << fMinZ2 << G4endl
 	      << " fMaxX/Y/Z " << fMaxX2 << " " << fMaxY2 << " " << fMaxZ2 << G4endl
 	      << " fVoxDimX/Y/Z " << fVoxDimX2 << " " << fVoxDimY2 << " " << fVoxDimZ2 << G4endl
@@ -1031,7 +1031,7 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
       //      if( minGamma != 0 ) G4cout << " FILL iDataOut " << nv1 << ": " << iDataOut->at(nv1) << "= " <<minGamma << G4endl; //GDEB
       if( minGamma > 1. ) nGI++;
       nPOINTS++;
-      if( DicomVerb(debugVerb) ) std::cout << "FINAL gamma " << voxelCentre1 << " = " << minGamma << std::endl;
+      if( DicomVerb(debugVerb) ) G4cout << "FINAL gamma " << voxelCentre1 << " = " << minGamma << std::endl;
       theGammaFinal.insert(std::multiset<double>::value_type(minGamma));
     }
 
@@ -1040,7 +1040,7 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
     int jj = 0;
     G4int nGamma = theGammaFinal.size();
     for( iteg = theGammaFinal.begin(); iteg != theGammaFinal.end(); iteg++, jj++ ) {	
-      if( DicomVerb(debugVerb) ) std::cout << jj << " PVAL " << G4double(jj)/nGamma << " = " << *iteg << std::endl; 
+      if( DicomVerb(debugVerb) ) G4cout << jj << " PVAL " << G4double(jj)/nGamma << " = " << *iteg << std::endl; 
       if( G4double(jj)/nGamma > 0.95 ) {
 	gammaPVal = *iteg;
 	break;
@@ -1054,7 +1054,7 @@ void DCM2DOperGammaIndex::OperateXZ( DicomVImage* image1, DicomVImage* image2, d
 }
 
 //------------------------------------------------------------------------
-void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, double perCentLim, double minDistLim, double pval, DicomVImage* imageOut, G4int StID, DicomVImageStr* theStIDImage )
+void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, double perCentLim, double minDistLim, double pval, DicomVImage* imageOut, G4int /*StID*/, DicomVImageStr* /*theStIDImage*/ ) // structure selection only implemented in OperateXY
 {
   G4bool bDistanceByVoxel = false;//  TODO
 
@@ -1095,7 +1095,7 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
   if( imageErr1 ) iDataErr1 = imageErr1->GetData();
   */  
   if( DicomVerb(infoVerb) )
-    std::cout << "@@@ READ image nVoxX/Y/Z " << nVoxX1 << " " << nVoxY1 << " " << nVoxZ1 << G4endl
+    G4cout << "@@@ READ image nVoxX/Y/Z " << nVoxX1 << " " << nVoxY1 << " " << nVoxZ1 << G4endl
 	      << " fMinX/Y/Z " << fMinX1 << " " << fMinY1 << " " << fMinZ1 << G4endl
 	      << " fMaxX/Y/Z " << fMaxX1 << " " << fMaxY1 << " " << fMaxZ1 << G4endl
 	      << " fVoxDimX/Y/Z " << fVoxDimX1 << " " << fVoxDimY1 << " " << fVoxDimZ1 << G4endl
@@ -1123,7 +1123,7 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
   if( imageErr2 ) iDataErr2 = imageErr2->GetData();
   */
   if( DicomVerb(infoVerb) )
-    std::cout << "@@@ READ sqdose2 nVoxX/Y/Z " << nVoxX2 << " " << nVoxY2 << " " << nVoxZ2 << G4endl
+    G4cout << "@@@ READ sqdose2 nVoxX/Y/Z " << nVoxX2 << " " << nVoxY2 << " " << nVoxZ2 << G4endl
 	      << " fMinX/Y/Z " << fMinX2 << " " << fMinY2 << " " << fMinZ2 << G4endl
 	      << " fMaxX/Y/Z " << fMaxX2 << " " << fMaxY2 << " " << fMaxZ2 << G4endl
 	      << " fVoxDimX/Y/Z " << fVoxDimX2 << " " << fVoxDimY2 << " " << fVoxDimZ2 << G4endl
@@ -1495,7 +1495,7 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
       iDataOut->at(nv1) = minGamma;
       if( minGamma > 1. ) nGI++;
       nPOINTS++;
-      if( DicomVerb(debugVerb) ) std::cout << "FINAL gamma " << voxelCentre1 << " = " << minGamma << std::endl;
+      if( DicomVerb(debugVerb) ) G4cout << "FINAL gamma " << voxelCentre1 << " = " << minGamma << std::endl;
       theGammaFinal.insert(std::multiset<double>::value_type(minGamma));
     }
 
@@ -1506,7 +1506,7 @@ void DCM2DOperGammaIndex::OperateYZ( DicomVImage* image1, DicomVImage* image2, d
     int jj = 0;
     G4int nGamma = theGammaFinal.size();
     for( iteg = theGammaFinal.begin(); iteg != theGammaFinal.end(); iteg++, jj++ ) {	
-      if( DicomVerb(debugVerb) ) std::cout << jj << " PVAL " << G4double(jj)/nGamma << " = " << *iteg << std::endl; 
+      if( DicomVerb(debugVerb) ) G4cout << jj << " PVAL " << G4double(jj)/nGamma << " = " << *iteg << std::endl; 
       if( G4double(jj)/nGamma > 0.95 ) {
 	gammaPVal = *iteg;
 	break;
@@ -1569,7 +1569,7 @@ G4double DCM2DOperGammaIndex::GetMaxDoseForPC( DicomVImage* image1, DicomVImage*
     if( DicomVerb(debugVerb) ) G4cout << thePerCentType << " maxDosePC = given MaxValue " << maxDosePC << G4endl;
   }
 
-  if( DicomVerb(-debugVerb) ) G4cout << "GetMaxDoseForPC maxDosePC " << maxDosePC << G4endl;
+  if( DicomVerb(debugVerb) ) G4cout << "GetMaxDoseForPC maxDosePC " << maxDosePC << G4endl;
 
   return maxDosePC;
 }

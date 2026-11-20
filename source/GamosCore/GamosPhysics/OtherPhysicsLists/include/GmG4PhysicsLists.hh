@@ -57,15 +57,6 @@ public:
   G4FTF_BIC() {}
 };
 
-#ifndef WIN32
-#include "G4GenericPhysicsList.hh"
-class G4G4GenericPhysicsList : public  G4GenericPhysicsList 
-{
-public:
-  G4G4GenericPhysicsList() {}
-};
-#endif
-
 #include "LBE.hh"
 class G4LBE : public  LBE 
 {
@@ -157,6 +148,24 @@ class G4QGSP_BIC_AllHP : public  QGSP_BIC_AllHP
 public:
   G4QGSP_BIC_AllHP() {}
 };
+
+// physics lists added in Geant4 11.4
+#include "G4Version.hh"
+#if G4VERSION_NUMBER >= 1140
+#include "QBBC_ABLA.hh"
+class G4QBBC_ABLA : public  QBBC_ABLA
+{
+public:
+  G4QBBC_ABLA() {}
+};
+
+#include "QGSP_BIC_HPT.hh"
+class G4QGSP_BIC_HPT : public  QGSP_BIC_HPT
+{
+public:
+  G4QGSP_BIC_HPT() {}
+};
+#endif
 
 
 #endif

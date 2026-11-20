@@ -2,6 +2,8 @@
 #include "G4Track.hh"
 #include "G4Run.hh"
 #include "G4Step.hh"
+#include "G4Threading.hh"
+#include "G4AutoLock.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
@@ -10,6 +12,8 @@
 //-----------------------------------------------------------------
 GmCountTracksAndStepsUA::GmCountTracksAndStepsUA()
 {
+  //--- Multithreading: worker counts are added to the master instance, which prints them
+  SetRunOnMaster(true);
 }
 
 
@@ -46,6 +50,10 @@ void GmCountTracksAndStepsUA::UserSteppingAction(const G4Step* aStep )
 //-----------------------------------------------------------------
 void GmCountTracksAndStepsUA::EndOfRunAction(const G4Run* )
 {
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    MergeToMaster();
+    return;
+  }
   std::map<G4int,G4int>::const_iterator itei;
 
   G4String Name = "%%% COUNT_TRACKS_AND_STEPS: ";
@@ -88,4 +96,16 @@ void GmCountTracksAndStepsUA::EndOfRunAction(const G4Run* )
   }
   G4cout << "%%% COUNT_STEPS: ALL = " << nstepTOTAL << G4endl;
 
+}
+
+//-----------------------------------------------------------------
+void GmCountTracksAndStepsUA::MergeToMaster()
+{
+  GmCountTracksAndStepsUA* master = dynamic_cast<GmCountTracksAndStepsUA*>(GmUserAction::GetMasterUserAction(GetName()));
+  if( !master ) return;
+  G4AutoLock l(&GmUserAction::GetMergeMutex());
+  for( auto ite = theNSteps.begin(); ite != theNSteps.end(); ite++ ) master->theNSteps[ite->first] += ite->second;
+  for( auto ite = theNTracks.begin(); ite != theNTracks.end(); ite++ ) master->theNTracks[ite->first] += ite->second;
+  theNSteps.clear();
+  theNTracks.clear();
 }

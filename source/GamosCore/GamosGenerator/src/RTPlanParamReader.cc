@@ -20,7 +20,7 @@ void RTPlanParamReader::ReadParams( GmFileIn& fin)
     //------------------------------- parameter number
     if( wl[0]== ":P" )  {
       CheckIfNewParameter( wl, 0 );
-      theParams[ wl[1] ] = G4tgrUtils::GetDouble( wl[2] );
+      theParams[ wl[1] ] = GmGenUtils::GetDoubleTgr( wl[2] );
       //      G4cout << this << " ReadParams " << wl[1] << " = " << wl[2] << G4endl; //GDEB
   //------------------------------- parameter string
     } else if( wl[0] == ":PS" ) {

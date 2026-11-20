@@ -1,3 +1,4 @@
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #define _USE_MATH_DEFINES
 #include "PETProjDataMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
@@ -8,13 +9,20 @@
 #include <cmath>
 
 //----------------------------------------------------------------------
-PETProjDataMgr* PETProjDataMgr::theInstance = 0;
+G4ThreadLocal PETProjDataMgr* PETProjDataMgr::theInstance = 0;
+PETProjDataMgr* PETProjDataMgr::theMasterInstance = 0;
 
 //----------------------------------------------------------------------
 PETProjDataMgr* PETProjDataMgr::GetInstance()
 {
   if( !theInstance ) {
-    theInstance = new PETProjDataMgr;
+    //--- Multithreading: in the master, the instance that receives the merged data of the workers
+    if( G4Threading::IsMultithreadedApplication() && G4Threading::IsMasterThread() ) {
+      if( !theMasterInstance ) theMasterInstance = new PETProjDataMgr;
+      theInstance = theMasterInstance;
+    } else {
+      theInstance = new PETProjDataMgr;
+    }
   }
 
   return theInstance;
@@ -262,6 +270,11 @@ PETOutput PETProjDataMgr::ReadEvent( G4bool& bEof )
 //-----------------------------------------------------------------------
 void PETProjDataMgr::WriteInterfile()
 {
+  //--- Multithreading: the sinograms of the worker threads are merged into the master one, which is written by the master at end of run
+  if( GmMTMergeMgr::IsWorkerThread() ) {
+    GmMTMergeMgr::RegisterMerger("PETProjDataMgr", [](){ PETProjDataMgr::GetInstance()->MergeToMaster(); } );
+    return;
+  }
   
   char name_hv[512];
   char name_v[512];
@@ -410,4 +423,24 @@ void PETProjDataMgr::WriteInterfile()
  G4cout << "PETProjDataMgr::WriteInterfile: Sino3D Coinci: " << theN_CoinciVal << G4endl;  
 #endif
  
+}
+
+//-----------------------------------------------------------------------
+void PETProjDataMgr::MergeToMaster()
+{
+  //--- called in the worker thread, under GmMTMergeMgr mutex
+  if( !theMasterInstance ) theMasterInstance = new PETProjDataMgr; // master has not created it yet
+  PETProjDataMgr* master = theMasterInstance;
+  for( G4int i = 0; i < theN_bin; i++ ){
+    for( G4int j = 0; j < theN_ang; j++ ){
+      for( G4int k = 0; k < theTOTaxial_pl; k++ ){
+	master->theSino3D[i][j][k] += theSino3D[i][j][k];
+	theSino3D[i][j][k] = 0;
+      }
+    }
+  }
+  master->theN_CoinciTot += theN_CoinciTot;
+  master->theN_CoinciVal += theN_CoinciVal;
+  theN_CoinciTot = 0;
+  theN_CoinciVal = 0;
 }

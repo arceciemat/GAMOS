@@ -83,7 +83,7 @@ void GmVPSRBEPhenom::BuildAlphaBetaStructMap(G4String alphaBetaXFN)
     for( auto ite = theStructs.begin(); ite != theStructs.end(); ite++ ) {
       G4int stid = ite->first;
       G4String stn = ite->second;
-      G4cout << stid << " BuildAlphaBetaStructMap CHECKING stName " << stName << " stn " << stn << G4endl; //GDEB
+      //G4cout << stid << " BuildAlphaBetaStructMap CHECKING stName " << stName << " stn " << stn << G4endl; //GDEB
       if( GmGenUtils::AreWordsEquivalent( stName, stn ) ) {
 	theAlphaBetaStructIDMap[stid] = ab;
 #ifndef GAMOS_NO_VERBOSE
@@ -146,8 +146,8 @@ G4double GmVPSRBEPhenom::GetRBE(G4double dose, G4double LET, G4int idx ) // For 
   G4double rbe = 1./(2*dose)*(sqrt(sqr(alphaBetaX)+4*dose*alphaBetaX*rbeMax+4*sqr(dose*rbeMin))-alphaBetaX);
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(testVerb) ) {
-    G4cout << " RBE= " <<  1./(2*dose)*(sqrt(sqr(alphaBetaX)+4*dose*alphaBetaX*rbeMax+4*sqr(dose*rbeMin))-alphaBetaX) << " " << " 1./"<<dose<<"*(sqrt(" << sqr(alphaBetaX) << "+4*"<<2*dose<<"*"<<alphaBetaX<<"*"<<rbeMax<<"+4*"<< sqr(dose*rbeMin)<<")-"<<alphaBetaX<<")" << G4endl; //GDEB
-    G4cout << " RBE2= " << " 1./"<<2*dose<<"* "<<(sqrt(sqr(alphaBetaX)+4*dose*alphaBetaX*rbeMax+4*sqr(dose*rbeMin))-alphaBetaX) << "    sqrt.."<<sqrt(sqr(alphaBetaX)+4*dose*alphaBetaX*rbeMax+4*sqr(dose*rbeMin))<< "*(sqrt("<<sqr(alphaBetaX)<<" +"<<4*dose*alphaBetaX*rbeMax<<"+"<<4*sqr(dose*rbeMin)<<")-alphaBetaX"<< G4endl; //GDEB
+    G4cout << " RBE= " <<  1./(2*dose)*(sqrt(sqr(alphaBetaX)+4*dose*alphaBetaX*rbeMax+4*sqr(dose*rbeMin))-alphaBetaX) << " " << " 1./"<<dose<<"*(sqrt(" << sqr(alphaBetaX) << "+4*"<<2*dose<<"*"<<alphaBetaX<<"*"<<rbeMax<<"+4*"<< sqr(dose*rbeMin)<<")-"<<alphaBetaX<<")" << G4endl;
+    G4cout << " RBE2= " << " 1./"<<2*dose<<"* "<<(sqrt(sqr(alphaBetaX)+4*dose*alphaBetaX*rbeMax+4*sqr(dose*rbeMin))-alphaBetaX) << "    sqrt.."<<sqrt(sqr(alphaBetaX)+4*dose*alphaBetaX*rbeMax+4*sqr(dose*rbeMin))<< "*(sqrt("<<sqr(alphaBetaX)<<" +"<<4*dose*alphaBetaX*rbeMax<<"+"<<4*sqr(dose*rbeMin)<<")-alphaBetaX"<< G4endl;
   }
   if( ScoringVerb(debugVerb) ) G4cout << " GmVPSRBEPhenom::GetRBE(dose,LET) "
 				      << " dose " << dose << " LET " << LET 
@@ -172,7 +172,7 @@ G4double GmVPSRBEPhenom::GetAlphaBetaX( G4int copyNo )
       if( iteab  != theAlphaBetaStructIDMap.end() ) {
 	ab = iteab->second;
 	nAB += 1;
-	G4cout << " GmVPSRBEPhenom::GetAlphaBetaX ab= " << ab << " nAB " << nAB << G4endl; //GDEB
+	//G4cout << " GmVPSRBEPhenom::GetAlphaBetaX ab= " << ab << " nAB " << nAB << G4endl; //GDEB
       }
     }
     if( ab == 0. ) {

@@ -418,11 +418,11 @@ TH1F* getHisto1( int fileNumber, const char* hnam )
     std::string hisname = HistoKey->GetName()+std::string(";1");
     TObject *obj = HistoKey->ReadObj();
     if( dynamic_cast<TH1F*>(obj) ) {
-      std::cout << " getHisto1 COMPARE " << std::string(hnam) << " == " << hisname  << std::endl; //GDEB
+      //std::cout << " getHisto1 COMPARE " << std::string(hnam) << " == " << hisname  << std::endl; //GDEB
       if( std::string(hnam) == hisname ||
 	 std::string(hnam)+";1" == hisname ) {
 	his = dynamic_cast<TH1F*>(obj);
-	std::cout << " getHisto1 HISTO FOUND " << his << " " << his->GetName() << std::endl; //GDEB
+	//std::cout << " getHisto1 HISTO FOUND " << his << " " << his->GetName() << std::endl; //GDEB
       }
     }
   }

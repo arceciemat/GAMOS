@@ -1,101 +1,97 @@
 # - GamosCore_GamosUtilsUA module build definition
 
-include(UseGamosAtGeant4)
-include(UseROOT)
-
-geant4_add_module(GamosCore_GamosUtilsUA
+gamos_add_module(GamosCore_GamosUtilsUA
   PUBLIC_HEADERS
-    GmKillAtSteppingActionUA.hh
-    GmSaveHistosAtRTCPUA.hh
     GmChangeWeightUA.hh
-    GmRandomKillByParticleUA.hh
-    GmCountTracksAndStepsUA.hh
-    GmRandomByTimeUA.hh
+    GmCopyWeightToRDSecondaryUA.hh
     GmCopyWeightToSecondaryUA.hh
+    GmCountProcessesUA.hh
+    GmCountTracksAndStepsUA.hh
+    GmCountTracksUA.hh
+    GmDumpGeometryUA.hh
+    GmGamosVerboseByEventUA.hh
+    GmGenerHistosUA.hh
+    GmKillAllUA.hh
+    GmKillAtStackingActionRandomUA.hh
+    GmKillAtStackingActionUA.hh
+    GmKillAtSteppingActionRandomUA.hh
+    GmKillAtSteppingActionUA.hh
+    GmKillAtSteppkingActionRandomUA.hh
+    GmKillAtTrackingActionRandomUA.hh
     GmKillAtTrackingActionUA.hh
+    GmKillTooManyStepsUA.hh
+    GmMaterialBudgetUA.hh
+    GmPrintEMParamsUA.hh
+    GmPrintXSUA.hh
+    GmRandomByTimeUA.hh
+    GmRandomKillByParticleUA.hh
+    GmSSData.hh
+    GmSaveHistosAfterNEvents.hh
+    GmSaveHistosAtRTCPUA.hh
+    GmSaveStepUA.hh
+    GmShowerShapeUA.hh
+    GmStepRandomWeightUA.hh
+    GmStopRunAfterTimeUA.hh
+    GmTimeStudyEventUA.hh
     GmTimeStudyMgr.hh
     GmTimeStudyUA.hh
-    GmMaterialBudgetUA.hh
-    GmCountTracksUA.hh
-    GmGamosVerboseByEventUA.hh
-    GmShowerShapeUA.hh
-    GmSSData.hh
-    GmKillAtStackingActionUA.hh
-    GmGenerHistosUA.hh
-    GmSaveHistosAfterNEvents.hh
-    GmKillAtTrackingActionRandomUA.hh
-    GmVisStoreTrajUA.hh
-    GmCountProcessesUA.hh
-    GmTimeStudyEventUA.hh
-    GmDumpGeometryUA.hh
-    GmVisModelByEnergy.hh
-    GmKillAtSteppingActionRandomUA.hh
-    GmKillAllUA.hh
-    GmPrintEMParamsUA.hh
-    GmKillAtStackingActionRandomUA.hh
-    GmKillTooManyStepsUA.hh
-    GmPrintXSUA.hh
-    GmKillAtSteppkingActionRandomUA.hh
-    GmUtilsUAVerbosity.hh
-    GmSaveStepUA.hh
-    GmVisModelUA.hh
-    GmCopyWeightToRDSecondaryUA.hh
+    GmTrackRandomWeightUA.hh
     GmTrackingVerboseUA.hh
-    GmStopRunAfterTimeUA.hh
+    GmUtilsUAVerbosity.hh
+    GmVisModelByEnergy.hh
+    GmVisModelUA.hh
+    GmVisStoreTrajUA.hh
+    KillNegativeLengthUA.hh
   SOURCES
-    GmTimeStudyUA.cc
+    GmChangeWeightUA.cc
+    GmCopyWeightToRDSecondaryUA.cc
+    GmCopyWeightToSecondaryUA.cc
+    GmCountProcessesUA.cc
+    GmCountTracksAndStepsUA.cc
+    GmCountTracksUA.cc
+    GmDumpGeometryUA.cc
+    GmGamosVerboseByEventUA.cc
+    GmGenerHistosUA.cc
+    GmKillAllUA.cc
+    GmKillAtStackingActionRandomUA.cc
+    GmKillAtStackingActionUA.cc
+    GmKillAtSteppingActionRandomUA.cc
     GmKillAtSteppingActionUA.cc
     GmKillAtTrackingActionRandomUA.cc
-    GmMaterialBudgetUA.cc
-    GmCopyWeightToRDSecondaryUA.cc
-    GmPrintEMParamsUA.cc
-    GmCopyWeightToSecondaryUA.cc
-    GmStopRunAfterTimeUA.cc
-    GmChangeWeightUA.cc
-    GmSaveHistosAfterNEvents.cc
-    GmRandomKillByParticleUA.cc
-    GmKillAtSteppingActionRandomUA.cc
-    GmVisModelByEnergy.cc
-    GmUtilsUAVerbosity.cc
-    GmKillAtStackingActionRandomUA.cc
-    plugin.cc
-    GmSSData.cc
-    GmGamosVerboseByEventUA.cc
-    GmDumpGeometryUA.cc
-    GmPrintXSUA.cc
-    GmVisStoreTrajUA.cc
     GmKillAtTrackingActionUA.cc
-    GmTrackingVerboseUA.cc
-    GmVisModelUA.cc
-    GmShowerShapeUA.cc
-    GmKillAtStackingActionUA.cc
-    GmRandomByTimeUA.cc
-    GmSaveHistosAtRTCPUA.cc
-    GmCountTracksAndStepsUA.cc
-    GmTimeStudyMgr.cc
-    GmCountProcessesUA.cc
-    kk
-    GmTimeStudyEventUA.cc
-    GmCountTracksUA.cc
-    GmKillAllUA.cc
-    GmGenerHistosUA.cc
     GmKillTooManyStepsUA.cc
+    GmMaterialBudgetUA.cc
+    GmPrintEMParamsUA.cc
+    GmPrintXSUA.cc
+    GmRandomByTimeUA.cc
+    GmRandomKillByParticleUA.cc
+    GmSSData.cc
+    GmSaveHistosAfterNEvents.cc
+    GmSaveHistosAtRTCPUA.cc
+    GmShowerShapeUA.cc
+    GmStepRandomWeightUA.cc
+    GmStopRunAfterTimeUA.cc
+    GmTimeStudyEventUA.cc
+    GmTimeStudyMgr.cc
+    GmTimeStudyUA.cc
+    GmTrackRandomWeightUA.cc
+    GmTrackingVerboseUA.cc
+    GmUtilsUAVerbosity.cc
+    GmVisModelByEnergy.cc
+    GmVisModelUA.cc
+    GmVisStoreTrajUA.cc
+    KillNegativeLengthUA.cc
+    plugin.cc
 )
-# - Add path to generated header
-geant4_module_include_directories(GamosCore_GamosUtilsUA
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
- PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
 
-geant4_module_link_libraries(GamosCore_GamosUtilsUA
+gamos_module_link_libraries(GamosCore_GamosUtilsUA
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
-    GamosCore_GamosBase_Base
-    GamosCore_GamosUserActionMgr
-    GamosCore_GamosGeometry
     GamosCore_GamosAnalysis
+    GamosCore_GamosBase_Base
+    GamosCore_GamosGenerator
+    GamosCore_GamosGeometry
+    GamosCore_GamosUserActionMgr
+    GamosCore_GamosUtils
+    lcg_PluginManager
+    lcg_SealBase
 )

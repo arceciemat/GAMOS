@@ -55,7 +55,7 @@ public:
   GmVPrimitiveScorer* GetScorer( G4String, G4bool bMustExists ) const;
 
 private:
-  static GmScoringMgr* theInstance;
+  static G4ThreadLocal GmScoringMgr* theInstance;
 
   GmScoringRun* theScoringRun;
   std::map<G4String,G4MultiFunctionalDetector*> theMFDs;

@@ -12,7 +12,7 @@
 #include "GmPSPrinterSpectrumFactory.hh"
 #endif
 
-GmPSPrinterMgr* GmPSPrinterMgr::theInstance = 0;
+G4ThreadLocal GmPSPrinterMgr* GmPSPrinterMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 GmPSPrinterMgr::GmPSPrinterMgr()

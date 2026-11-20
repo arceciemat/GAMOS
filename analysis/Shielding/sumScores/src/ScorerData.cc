@@ -1,7 +1,6 @@
 #include "ScorerData.hh"
 #include "ScoreData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include <set>
 
 //-----------------------------------------------------------------
 ScorerData::ScorerData()
@@ -28,7 +27,7 @@ void ScorerData::SetNEvents(G4double evts)
 }
 
 //-----------------------------------------------------------------
-ScorerData ScorerData::operator+=( const ScorerData& sd2 )
+ScorerData& ScorerData::operator+=( const ScorerData& sd2 )
 {
   if( ScoreData::verbosity >= 2 ) G4cout << "  ScorerData::operator+=: ADDING SCORER " << sd2.GetName() << "  N= " << sd2.GetNScores() << "  TO  " << theName << "  N= " << theNScores << G4endl;
 
@@ -55,7 +54,7 @@ ScorerData ScorerData::operator+=( const ScorerData& sd2 )
     bool bFound1 = false;
     ScoreData* id1 = 0;
     for( int ii1 = 0; ii1 < theNScores+1; ii1++ ){
-      if( ii1 >= theScoreData.size() ) break;
+      if( ii1 >= G4int(theScoreData.size()) ) break;
       id1 = theScoreData[ii1];
       if( *id1 == *id2 ) {
 	bFound1 = true;

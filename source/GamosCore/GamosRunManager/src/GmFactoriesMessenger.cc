@@ -4,6 +4,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
 #include "G4UImanager.hh"
+#include "G4Threading.hh"
 #include "GamosCore/GamosBase/Base/include/GmUIcmdWithAString.hh"
 
 GmFactoriesMessenger::GmFactoriesMessenger(GmRunManager* myua): 
@@ -65,6 +66,10 @@ GmFactoriesMessenger::~GmFactoriesMessenger()
 void GmFactoriesMessenger::SetNewValue(G4UIcommand * command,
 						   G4String newValues)    
 { 
+  //--- Multithreading: geometry, physics list and verbosities are shared by all threads; set them only on the master
+  if( !G4Threading::IsMasterThread() &&
+      (command == geometryFCmd || command == physicsListFCmd || command == verbosityFCmd) ) return;
+
   if (command == geometryFCmd) {
     myAction->SelectGeometry(newValues);
   }else if (command == physicsListFCmd) {

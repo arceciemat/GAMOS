@@ -69,7 +69,7 @@ void GmSaveHistosAtRTCPUA::EndOfEventAction( const G4Event* event )
   if( bSaveEvent ) {
     name += "EVT"+GmGenUtils::itoa(event->GetEventID());
   }
-  G4cout << "GmSaveHistosAtRTCPUA::EndOfEventAction SAVED OK " << name << G4endl; //GDEB
+  //G4cout << "GmSaveHistosAtRTCPUA::EndOfEventAction SAVED OK " << name << G4endl; //GDEB
 
   /*  std::vector<G4String> vparam{theOriginalSuffix+name};
   theParamMgr->AddParamOfDefinedType("GmAnalysisMgr:FileNameSuffix",vparam, PTstring);

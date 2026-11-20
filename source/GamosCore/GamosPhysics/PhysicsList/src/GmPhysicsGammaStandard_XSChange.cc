@@ -40,7 +40,7 @@
 #include "GmGammaConversion_XSChange.hh"
 #include "GmPhotoElectricEffect_XSChange.hh"
 #include "GmRayleighScattering_XSChange.hh"
-#include "G4RayleighScattering.hh" //GDEB
+#include "G4RayleighScattering.hh"
 
 GmPhysicsGammaStandard_XSChange::GmPhysicsGammaStandard_XSChange(const G4String& name, G4int type): GmVPhysicsGamma(name,type)
 { }

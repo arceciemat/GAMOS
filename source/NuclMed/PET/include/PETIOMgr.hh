@@ -38,7 +38,7 @@ class PETIOMgr : public GmIObinMgr
   void PrintEvent(const G4String& text, const PETOutput& po, G4bool bCart );
 
 private:
-  static PETIOMgr* theInstance;
+  static G4ThreadLocal PETIOMgr* theInstance;
   G4bool bDumpCout;
   G4bool bCartesian;
 };

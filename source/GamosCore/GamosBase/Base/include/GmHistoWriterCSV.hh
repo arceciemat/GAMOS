@@ -12,6 +12,8 @@ class GmHistoProfile1;
 class GmHistoProfile2;
 #endif
 
+// Writes histograms in the GAMOS .csv format (read by GmHistoReaderCSV and histBrowser.py),
+// always with the bin errors
 class GmHistoWriterCSV : public GmHistoWriter
 {
 public:
@@ -19,9 +21,6 @@ public:
   GmHistoWriterCSV(const G4String& filename);
   ~GmHistoWriterCSV();
 
-  static void SetHistoCSVErrors( G4bool bError )  {
-    bHistoCSVErrors = bError;
-  }
 
 #ifndef GAMOS_NO_ROOT
   virtual void SaveHisto1( const TH1F* his );
@@ -44,7 +43,6 @@ public:
   private:
   std::ofstream theFile;
 
-  static G4bool bHistoCSVErrors;
 
 };
 

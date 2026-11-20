@@ -3,6 +3,7 @@
 
 #include "G4Track.hh"
 #include "G4RunManager.hh"
+#include "G4Threading.hh"
 #include <iostream>
 #include "GamosCore/GamosUserActionMgr/include/GmUAVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
@@ -79,7 +80,8 @@ void GmUserStackingActionList::AddAction( GmUserStackingAction* ua )
   if( UAVerb(infoVerb) ) G4cout << " GmUserStackingActionList::AddAction " << " N " << theStackingActions.size() << G4endl;
 #endif
   //--- first user action, register it to G4StackingManager
-  if( theStackingActions.size() == 1) G4RunManager::GetRunManager()->SetUserAction( this );
+  //--- Multithreading: G4MTRunManager only accepts run actions, the other actions are set in the worker run managers
+  if( theStackingActions.size() == 1 && (!G4Threading::IsMultithreadedApplication() || !G4Threading::IsMasterThread()) ) G4RunManager::GetRunManager()->SetUserAction( this );
   ua->SetStackManager( stackManager );
   if( theStackingActions.size() >1) {
     G4Exception("GmUserStackingActionList::AddAction ", 

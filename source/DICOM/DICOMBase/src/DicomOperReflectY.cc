@@ -26,7 +26,7 @@ void DicomOperReflectY::Operate( DicomVImage* image )
   size_t nVoxXY = nVoxX*nVoxY;
   size_t nVoxZ = image->GetNoVoxelsZ();  
   size_t iN = 0;
-  std::cout << image->GetName() << " REFLECTING Y " << std::endl; //GDEB
+  //G4cout << image->GetName() << " REFLECTING Y " << std::endl; //GDEB
   std::vector<G4double>* data = image->GetData();
   std::vector<G4double>* dataNew = new std::vector<G4double>;
   for( size_t iz = 0; iz < nVoxZ; iz++ ) {
@@ -35,7 +35,7 @@ void DicomOperReflectY::Operate( DicomVImage* image )
 	iN = ix+iy*nVoxX+iz*nVoxXY;
 	//    G4cout << data << "SIZEnew " << ix << " " << iy << " " << iz << " " << iN << " " << data->size() << G4endl; //GDEB
 	dataNew->push_back(data->at(iN));
-	//    if( iN > 000 && iN < 1010 &&  data->at(iN) != 0) std::cout << iN << " -> " << dataNew->size()-1 << " DATA " << data->at(iN) << " -> " <<  dataNew->at(dataNew->size()-1) << std::endl; //GDEB
+	//    if( iN > 000 && iN < 1010 &&  data->at(iN) != 0) G4cout << iN << " -> " << dataNew->size()-1 << " DATA " << data->at(iN) << " -> " <<  dataNew->at(dataNew->size()-1) << std::endl; //GDEB
       }
     }
   }

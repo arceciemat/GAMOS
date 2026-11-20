@@ -56,6 +56,12 @@ int64_t GmClassifierByAncestors::GetIndexFromStep(const G4Step* aStep)
       if( ii != 0 ) name+= "/";
     }
     theIndexNames[index] = name;
+    //--- Multithreading: the master classifier prints the results, it needs the names of all indices
+    if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+      G4AutoLock l(&GetIndexMutex());
+      GmClassifierByAncestors* master = dynamic_cast<GmClassifierByAncestors*>(GetMasterClassifier(theName));
+      if( master ) master->theIndexNames[index] = name;
+    }
 #ifndef GAMOS_NO_VERBOSE
     if( ClassifierVerb(debugVerb) ) G4cout << th->GetHistoryDepth() << " GmClassifierByAncestors theIndexNames = " << name << G4endl;
 #endif
@@ -105,6 +111,12 @@ int64_t GmClassifierByAncestors::GetIndexFromTrack(const G4Track* aTrack)
       if( ii != 0 ) name+= "/";
     }
     theIndexNames[index] = name;
+    //--- Multithreading: the master classifier prints the results, it needs the names of all indices
+    if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+      G4AutoLock l(&GetIndexMutex());
+      GmClassifierByAncestors* master = dynamic_cast<GmClassifierByAncestors*>(GetMasterClassifier(theName));
+      if( master ) master->theIndexNames[index] = name;
+    }
 #ifndef GAMOS_NO_VERBOSE
     if( ClassifierVerb(debugVerb) ) G4cout << th->GetHistoryDepth() << " GmClassifierByAncestors theIndexNames = " << name << G4endl;
 #endif

@@ -75,6 +75,7 @@ void histogram::plot_histogram(char filename[80]){
 #ifndef WIN32
   FILE* gnuplotfile;
   gnuplotfile = popen("gnuplot -persist","w");
+  if( !gnuplotfile ) { std::cerr << "!! WARNING: cannot run gnuplot, histogram not plotted" << std::endl; return; }
 
   if(type == 1){
   fprintf(gnuplotfile,"set title 'Weight Histogram'\n");
@@ -89,7 +90,7 @@ void histogram::plot_histogram(char filename[80]){
 
   fprintf(gnuplotfile,"plot '%s' using 1:2 with steps \n",filename);
   fflush(gnuplotfile);
-  fclose(gnuplotfile);
+  pclose(gnuplotfile);
 #endif
 }
 

@@ -20,7 +20,7 @@
 #endif
 
 //------------------------------------------------------------------------
-GmHitsEventMgr* GmHitsEventMgr::theInstance = 0;
+G4ThreadLocal GmHitsEventMgr* GmHitsEventMgr::theInstance = 0;
 
 //------------------------------------------------------------------------
 GmHitsEventMgr* GmHitsEventMgr::GetInstance()

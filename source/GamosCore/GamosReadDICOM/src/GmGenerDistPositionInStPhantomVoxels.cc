@@ -36,9 +36,9 @@ void GmGenerDistPositionInStPhantomVoxels::BuildVoxelPositions()
   //---- Add the G4PhantomParameterisation
   G4PhantomParameterisation* thePhantomParam = 0;
   G4AffineTransform theTransformation;
-  G4int theNoVoxelsX;
-  G4int theNoVoxelsY;
-  G4int theNoVoxelsZ;
+  G4int theNoVoxelsX = 0;
+  G4int theNoVoxelsY = 0;
+  G4int theNoVoxelsZ = 0;
   std::vector<G4VPhysicalVolume*>::const_iterator ite;
   G4PhysicalVolumeStore* pvstore = G4PhysicalVolumeStore::GetInstance();
   for( ite = pvstore->begin(); ite != pvstore->end(); ite++ ) {

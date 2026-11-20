@@ -1,7 +1,7 @@
 #include "GmGaussianDistribution.hh"
 #include "GamosCore/GamosData/Distributions/include/GmDistributionVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
-#include "GamosCore/GamosBase/Base/include/GmHistoReaderCSV.hh"
+#include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 
 #include "GamosCore/GamosData/Management/include/GmVData.hh"
 #include "GamosCore/GamosData/Management/include/GmDataMgr.hh"
@@ -10,7 +10,6 @@
 
 #ifndef GAMOS_NO_ROOT
 #include "TFile.h"
-#include "TH1F.h"
 #include "TAxis.h"
 #endif
 //---------------------------------------------------------------------

@@ -17,10 +17,10 @@
 
 #ifdef WIN32 
 #if defined GmGenerator_ALLOC_EXPORT 
- G4double GmGenerDistTimeDecay::theCurrentActivity = 0.;
+ G4ThreadLocal G4double GmGenerDistTimeDecay::theCurrentActivity = 0.;
 #endif
 #else 
-G4double GmGenerDistTimeDecay::theCurrentActivity = 0.;
+G4ThreadLocal G4double GmGenerDistTimeDecay::theCurrentActivity = 0.;
 #endif
 
 //----------------------------------------------------------------------

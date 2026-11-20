@@ -14,6 +14,8 @@ public:
 
   virtual G4double GenerateEnergy( const GmParticleSource* source );
 
+  virtual void SetParams( const std::vector<G4String>&  ){}
+  
 private:
   void ReadFile( const G4String filename );
 

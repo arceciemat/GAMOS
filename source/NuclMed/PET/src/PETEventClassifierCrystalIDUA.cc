@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "PETEventClassifierCrystalIDUA.hh"
 #include "NuclMed/Base/include/DetV1stHitAlgorithm.hh"
 #include "NuclMed/Base/include/DetCountScatteringUA.hh"
@@ -14,8 +15,6 @@
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosSD/include/GmHitsEventMgr.hh"
 #include "GamosCore/GamosUtils/include/GmCone.hh"
-#include "GamosCore/GamosAnalysis/include/GmTrajStep.hh"
-#include "GamosCore/GamosAnalysis/include/GmCheckOriginalGamma.hh"
 #include "GamosCore/GamosUserActionMgr/include/GmUserActionMgr.hh"
 #include "GamosCore/GamosUserActionMgr/include/GmUserEventActionList.hh"
 
@@ -36,6 +35,7 @@ using namespace CLHEP;
 //----------------------------------------------------------------------
 PETEventClassifierCrystalIDUA::PETEventClassifierCrystalIDUA()
 {
+  SetRunOnMaster(true); // multithreading: master prints merged results
   bDumpLM = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("PET:EvtClass:DumpEventListMode",0));
   if( bDumpLM ) PETIOMgrCrystalID::GetInstance()->OpenFileOut();
 
@@ -235,7 +235,7 @@ int64_t PETEventClassifierCrystalIDUA::ClassifyPET( gamosRecHitList& rhitList, c
     if( PETVerb(debugVerb) ) G4cout << " PETEventClassifierCrystalIDUA::ClassifyPET  creating line " << the511RecHits[0].GetPosition() << " " << the511RecHits[1].GetPosition() << G4endl;
 #endif
     theEventClass += 1;
-    G4double linedist;
+    G4double linedist = 0.;  // stays 0 if both hits are at the same position
     if( the511RecHits[1].GetPosition() != the511RecHits[0].GetPosition() ) {
       thePetLine = GmLine( the511RecHits[0].GetPosition(), the511RecHits[1].GetPosition()-the511RecHits[0].GetPosition() );
       G4ThreeVector eventVtx = GetEventVertex( evt );
@@ -263,7 +263,7 @@ int64_t PETEventClassifierCrystalIDUA::ClassifyPET( gamosRecHitList& rhitList, c
 	  //     << " VTX Y " << G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0)->GetPosition().y() << G4endl;
   }
 
-    G4cout << " bDumpLM "  << bDumpLM <<" theEventClass "<< theEventClass  << G4endl; //GDEB
+    //G4cout << " bDumpLM "  << bDumpLM <<" theEventClass "<< theEventClass  << G4endl; //GDEB
   
   if( bDumpLM && theEventClass != 0 ) {
     G4PrimaryVertex* pvtx = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0);
@@ -273,9 +273,9 @@ int64_t PETEventClassifierCrystalIDUA::ClassifyPET( gamosRecHitList& rhitList, c
 					    pvtx->GetT0(),
 					    the511RecHits[0],
 					    the511RecHits[1]);
-  G4cout << " PETIOMgr::GetInstance()->WriteEvent( " << G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0)->GetPosition()
-	 << " E " << Evtx << " POS1 " <<  the511RecHits[0].GetPosition()
-	 << " POS2 " << the511RecHits[1].GetPosition()  << G4endl; //GDEB
+  //G4cout << " PETIOMgr::GetInstance()->WriteEvent( " << G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetPrimaryVertex(0)->GetPosition()
+	 //<< " E " << Evtx << " POS1 " <<  the511RecHits[0].GetPosition()
+	 //<< " POS2 " << the511RecHits[1].GetPosition()  << G4endl; //GDEB
   }
   
 
@@ -752,6 +752,13 @@ G4bool PETEventClassifierCrystalIDUA::CheckRecHitOriginalGammaScattered( GmRecHi
 //----------------------------------------------------------------------
 void PETEventClassifierCrystalIDUA::EndOfRunAction(const G4Run* aRun )
 {
+  //--- Multithreading: workers close their list mode files and give their projection data to the master;
+  //    the master prints the classification table (from merged histograms) and writes the merged projection data
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    if( bDumpLM && !G4Threading::IsMultithreadedApplication() ) PETIOMgrCrystalID::GetInstance()->CloseFileOut();
+    if( bDumpPD ) PETProjDataMgr::GetInstance()->WriteInterfile();
+    return;
+  }
   G4int nevt = aRun->GetNumberOfEvent();
   if (nevt == 0) {
     G4cout << "Nevt = 0 !!!" << G4endl;
@@ -760,7 +767,7 @@ void PETEventClassifierCrystalIDUA::EndOfRunAction(const G4Run* aRun )
 
   PrintPETClassificationTable( nevt );
 
-  if( bDumpLM ) PETIOMgrCrystalID::GetInstance()->CloseFileOut();
+  if( bDumpLM && !G4Threading::IsMultithreadedApplication() ) PETIOMgrCrystalID::GetInstance()->CloseFileOut();
 
   if( bDumpPD ) PETProjDataMgr::GetInstance()->WriteInterfile();
 

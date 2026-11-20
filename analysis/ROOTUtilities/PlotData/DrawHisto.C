@@ -152,7 +152,7 @@ TH1F* DrawEmptyHistogram( std::string histoName, double HXMin, double HXMax, dou
   TPad* pad2 = new TPad("pad","pad",Definitions::padLeftMargin,0.0,1.-Definitions::padRightMargin,1.);
   pad2->SetLeftMargin(Definitions::padLeftMargin); 
   pad2->SetLeftMargin(Definitions::padRightMargin);
-  std::cout << " SetPadLeftMargin " << Definitions::padLeftMargin << std::endl; //GDEB
+  //std::cout << " SetPadLeftMargin " << Definitions::padLeftMargin << std::endl; //GDEB
   pad2->Draw();
   pad2->cd(); 
   TH1F* his = new TH1F( histoName.c_str(), histoName.c_str(),100,HXMin,HXMax);

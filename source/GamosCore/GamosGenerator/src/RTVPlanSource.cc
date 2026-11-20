@@ -26,6 +26,7 @@
 #include "GamosCore/GamosBase/Base/include/GmGetParticleMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmPhysicsLinearVector.hh"
 #include "GamosCore/GamosBase/Base/include/GmHistoReaderCSV.hh"
+#include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 #include "GamosCore/GamosGeometry/include/GmVModule.hh"
@@ -857,7 +858,7 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
   G4double limitingDeviceAngle = bsdata.LimitingDeviceAngle; //??*CLHEP::deg;
   if( theAcceleratorPV && limitingDeviceAngle != 0. ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(-debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator limitingDeviceAngle " << limitingDeviceAngle/CLHEP::deg << G4endl;
+    if( GenerVerb(debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator limitingDeviceAngle " << limitingDeviceAngle/CLHEP::deg << G4endl;
 #endif
     G4ThreeVector accelAxis(0.,0.,1.);
     G4RotationMatrix* accelRM = theAcceleratorPV->GetRotation();
@@ -1252,7 +1253,7 @@ void RTVPlanSource::MoveBeam(const RTBeamStateData& bsdata)
 //------------------------------------------------------------------------
 void RTVPlanSource::PredictInitialDisplacement(const RTBeamStateData& bsdata )
 {
-  std::vector<G4double> finalPosPar = GmParameterMgr::GetInstance()->GetVNumericValue("RTVPlanSource::PredictInitialDisplacement FinalPosition", std::vector<G4double>());
+  std::vector<G4double> finalPosPar = GmParameterMgr::GetInstance()->GetVNumericValue("RTVPlanSource:PredictInitialDisplacementFinalPosition", std::vector<G4double>());
   if( finalPosPar.size() != 3 ) return;
   
   G4ThreeVector finalPosition( finalPosPar[0] ,finalPosPar[1] ,finalPosPar[2] );

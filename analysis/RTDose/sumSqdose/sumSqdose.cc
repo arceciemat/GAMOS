@@ -24,7 +24,6 @@
 // ********************************************************************
 //
 #include "G4UImanager.hh"
-#include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
 
 #include "G4GeometryManager.hh"
@@ -104,8 +103,8 @@ int main(int argc,char** argv)
   GmFileIn finlis = GmFileIn::GetInstance(theFileListName,1);
   G4double nevents = 0.;
 
-  GmSqdose* dose;
-  GmSqdose* dose2;
+  GmSqdose* dose = 0;
+  GmSqdose* dose2 = 0;
   G4int ii;
   for( ii = 0;; ii++){
     if( ! finlis.GetWordsInLine(wl) ) break;      

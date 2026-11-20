@@ -1,7 +1,7 @@
 #ifndef GmTouchableFilterTouchableChildren_h
 #define GmTouchableFilterTouchableChildren_h 1
 
-class G4VTouchable;
+#include "G4VTouchable.hh"
 #include "GmVTouchableFilterVolume.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 #include <vector>

@@ -14,9 +14,9 @@ GmDataFinalGammaEquivalentDose::GmDataFinalGammaEquivalentDose()
   theExcludedTypes.insert(DTSeco);
   theExcludedTypes.insert(DTEvent);
 
-  theFlux2Dose = ReadEnergyBinsForGammas();
-
   SetEquivDoseType("GmDataFinalGammaEquivalentDose");
+
+  theFlux2Dose = ReadEnergyBinsForGammas();
 }
 
 //----------------------------------------------------------------

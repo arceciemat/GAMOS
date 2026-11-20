@@ -62,11 +62,11 @@ void GmInterfileHeader::Read( std::ifstream* fin )
   for( int ii = 0; ii < 100 ;ii++ ) {
     fin->getline( ltemp, NMAXLIN );
     if( fin->eof() ) break;
-    G4cout << "GmInterfileHeader::Read ltemp " << ltemp << G4endl; //GDEB
+    //G4cout << "GmInterfileHeader::Read ltemp " << ltemp << G4endl; //GDEB
     std::string stemp(ltemp);
 
 #ifndef GAMOS_NO_VERBOSE
-    if( ReadDICOMVerb(-infoVerb) )G4cout << ii << " GmInterfileHeader::Read " << stemp << G4endl;
+    if( ReadDICOMVerb(infoVerb) )G4cout << ii << " GmInterfileHeader::Read " << stemp << G4endl;
 #endif  
     if( stemp.find("matrix axis label [") != std::string::npos ) {
       idSVal = getIdSVal(stemp);
@@ -96,7 +96,7 @@ void GmInterfileHeader::Read( std::ifstream* fin )
       }
       double aa = idDVal.second;
       theVoxelDimX = aa;
-      G4cout << aa << " scaling " <<  idDVal.first << " " <<  idDVal.second << " XYZ "<< theVoxelDimX << " " << theVoxelDimY << " " << theVoxelDimZ << G4endl;//GDEB
+      //G4cout << aa << " scaling " <<  idDVal.first << " " <<  idDVal.second << " XYZ "<< theVoxelDimX << " " << theVoxelDimY << " " << theVoxelDimZ << G4endl;//GDEB
     } else if( stemp.find("offset [") != std::string::npos ) {
       idDVal = getIdDVal(stemp);
       if( idDVal.first == 1 ) {
@@ -156,7 +156,7 @@ void GmInterfileHeader::Read( std::ifstream* fin )
 		"!!!! No 'name of data file' tag found");
   }
   
-  Print(std::cout);
+  Print(G4cout);
 
 }
 

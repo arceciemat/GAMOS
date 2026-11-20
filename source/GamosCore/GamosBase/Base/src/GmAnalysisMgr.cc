@@ -7,6 +7,12 @@
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmNumberOfEvent.hh"
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
+#include "G4Threading.hh"
+#ifndef GAMOS_NO_ROOT
+#include "TROOT.h"
+#endif
+#include <mutex>
 
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Random/RandFlat.h"
@@ -15,12 +21,12 @@
 #ifdef WIN32
  #if defined GmBaseBase_ALLOC_EXPORT 
   std::set<G4String> GmAnalysisMgr::theFileFormats;
-  std::map<G4String, GmAnalysisMgr*> GmAnalysisMgr::theInstances;
 #endif
 #else
  std::set<G4String> GmAnalysisMgr::theFileFormats;
- std::map<G4String, GmAnalysisMgr*> GmAnalysisMgr::theInstances;
 #endif
+G4ThreadLocal std::map<G4String, GmAnalysisMgr*>* GmAnalysisMgr::theInstancesTL = 0;
+std::map<G4String, GmAnalysisMgr*> GmAnalysisMgr::theMasterInstances;
 
 std::map<G4String,G4double> GmAnalysisMgr::theHisto1NBins;
 std::map<G4String,G4double> GmAnalysisMgr::theHisto1Min;
@@ -42,6 +48,14 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
 #endif
   theFileName = fileName;
   bDefaultNormalize = true;  
+
+#ifndef GAMOS_NO_ROOT
+  //--- Multithreading: ROOT histograms are created in several threads
+  static std::once_flag rootMTflag;
+  std::call_once( rootMTflag, [](){
+      if( G4Threading::IsMultithreadedApplication() ) ROOT::EnableThreadSafety();
+      TH1::AddDirectory(kFALSE); } );
+#endif
   
   G4String prefix = GmParameterMgr::GetInstance()->GetStringValue("GmAnalysisMgr:FileNamePrefix","");
   theFileName = prefix + theFileName;
@@ -76,8 +90,16 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
 //------------------------------------------------------------------------------
 GmAnalysisMgr* GmAnalysisMgr::GetInstance( const G4String& fileName )
 {
-  if (theInstances.find(fileName) == theInstances.end() ) theInstances[fileName] = new GmAnalysisMgr( fileName );
-  return theInstances[fileName];
+  std::map<G4String,GmAnalysisMgr*>& instances = *GetInstancesTL();
+  if (instances.find(fileName) == instances.end() ) {
+    instances[fileName] = new GmAnalysisMgr( fileName );
+    if( G4Threading::IsMasterThread() ) {
+      theMasterInstances[fileName] = instances[fileName];
+    } else {
+      GmMTMergeMgr::RegisterMerger("GmAnalysisMgr", [](){ GmAnalysisMgr::MergeToMaster(); } ); // only first registration is kept
+    }
+  }
+  return instances[fileName];
 }
 
 //----------------------------------------------------------------------
@@ -160,6 +182,16 @@ void GmAnalysisMgr::SetFileFormat( G4String ff )
 //----------------------------------------------------------------------
 void GmAnalysisMgr::AddFileFormat( G4String ff ) 
 {
+#ifdef GAMOS_NO_ROOT
+  if( ff == "root" || ff == "ROOT" ) {
+    G4Exception("GmAnalysisMgr::AddFileFormat",
+		"",
+		JustWarning,
+		G4String("Histo type is not supported, as GAMOS is compiled with GAMOS_NO_ROOT: " + ff).c_str());
+    return;
+  }
+#endif
+  
   for( unsigned int ii = 0; ii < ff.length(); ii++ ){
     ff[ii] = tolower(ff[ii]);
   } 
@@ -941,11 +973,91 @@ void GmAnalysisMgr::DeleteInstances()
 {
   std::map<G4String,GmAnalysisMgr*>::iterator ite;
 
-  for( ite = theInstances.begin(); ite != theInstances.end(); ite++ ){
-    delete (*ite).second;
+  std::map<G4String,GmAnalysisMgr*>& instances = *GetInstancesTL();
+  if( G4Threading::IsMasterThread() ) {
+    //--- master instances include those created when merging histograms booked only in worker threads
+    for( ite = theMasterInstances.begin(); ite != theMasterInstances.end(); ite++ ){
+      delete (*ite).second; // saves the histograms
+    }
+    theMasterInstances.clear();
+  } else {
+    for( ite = instances.begin(); ite != instances.end(); ite++ ){
+      delete (*ite).second;
+    }
   }
-  theInstances.clear();
+  instances.clear();
 
+}
+
+//----------------------------------------------------------------------------
+// Multithreading: merge histograms of worker thread into master (called by GmMTMergeMgr, under mutex)
+namespace {
+  template<class HIS>
+  HIS* CloneHisto( HIS* his ) {
+#ifndef GAMOS_NO_ROOT
+    HIS* hisc = (HIS*)(his->Clone());
+    hisc->SetDirectory(0);
+    return hisc;
+#else
+    return new HIS(*his);
+#endif
+  }
+
+  template<class HIS>
+  void MergeHistoMaps( std::map<int,HIS*>& workerHis, std::map<int,HIS*>& masterHis ) {
+    for( auto itew = workerHis.begin(); itew != workerHis.end(); itew++ ) {
+      HIS* hisW = itew->second;
+      if( !hisW ) continue;
+      std::string hisName = hisW->GetName();
+      HIS* hisM = 0;
+      //--- look first in the same histogram number
+      auto item = masterHis.find(itew->first);
+      if( item != masterHis.end() && item->second && std::string(item->second->GetName()) == hisName ) {
+	hisM = item->second;
+      } else {
+	for( item = masterHis.begin(); item != masterHis.end(); item++ ) {
+	  if( item->second && std::string(item->second->GetName()) == hisName ) {
+	    hisM = item->second;
+	    break;
+	  }
+	}
+      }
+      if( hisM ) {
+	hisM->Add(hisW);
+      } else {
+	int ih = itew->first;
+	while( masterHis.find(ih) != masterHis.end() ) ih++;
+	masterHis[ih] = CloneHisto(hisW);
+      }
+      hisW->Reset();
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+void GmAnalysisMgr::MergeToMaster()
+{
+  std::map<G4String,GmAnalysisMgr*>& instances = *GetInstancesTL();
+  for( auto ite = instances.begin(); ite != instances.end(); ite++ ){
+    GmAnalysisMgr* masterMgr = 0;
+    auto item = theMasterInstances.find( ite->first );
+    if( item == theMasterInstances.end() ) {
+      masterMgr = new GmAnalysisMgr( ite->first );
+      theMasterInstances[ite->first] = masterMgr; // it will be saved and deleted by DeleteInstances() in the master
+    } else {
+      masterMgr = item->second;
+    }
+    ite->second->MergeToMaster( masterMgr );
+  }
+}
+
+//----------------------------------------------------------------------------
+void GmAnalysisMgr::MergeToMaster( GmAnalysisMgr* masterMgr )
+{
+  MergeHistoMaps( theHistos1, masterMgr->theHistos1 );
+  MergeHistoMaps( theHistos2, masterMgr->theHistos2 );
+  MergeHistoMaps( theHistosProf1, masterMgr->theHistosProf1 );
+  MergeHistoMaps( theHistosProf2, masterMgr->theHistosProf2 );
 }
 
 //----------------------------------------------------------------------------
@@ -1176,7 +1288,7 @@ void GmAnalysisMgr::NormalizeToNEvents( GmHisto1* his )
 {
   G4double NEvents = GmNumberOfEvent::GetNumberOfEvent();
   G4double nent = his->GetEntries();
-  for( G4int ii = 0; ii < his->GetNbinsX()+1; ii++ ){
+  for( G4int ii = 0; ii < his->GetNbinsX()+2; ii++ ){ // underflow, bins and overflow
     double error = his->GetBinError(ii);
     his->SetBinContent(ii, his->GetBinContent(ii) / NEvents );
     his->SetBinError(ii, error / NEvents );
@@ -1191,10 +1303,11 @@ void GmAnalysisMgr::NormalizeToNEvents( GmHisto2* his )
 {
   G4double NEvents = GmNumberOfEvent::GetNumberOfEvent();
   G4double nent = his->GetEntries();
-  for( G4int ix = 0; ix < his->GetNbinsX()+1; ix++ ){
-    for( G4int iy = 0; iy < his->GetNbinsY()+1; iy++ ){
+  for( G4int ix = 0; ix < his->GetNbinsX()+2; ix++ ){ // underflow, bins and overflow
+    for( G4int iy = 0; iy < his->GetNbinsY()+2; iy++ ){
+      double error = his->GetBinError(ix,iy); // get error before changing content (if no Sumw2, error is sqrt(content))
       his->SetBinContent(ix, iy, his->GetBinContent(ix,iy) / NEvents );
-      his->SetBinError(ix, iy, his->GetBinError(ix,iy) / NEvents );
+      his->SetBinError(ix, iy, error / NEvents );
     }
   }
   his->SetEntries(nent);
@@ -1209,6 +1322,6 @@ std::set<G4String> GmAnalysisMgr::GetFileFormats() {
 //----------------------------------------------------------------------------
 std::map<G4String, GmAnalysisMgr*> GmAnalysisMgr::GetAllInstances()
 {
-  return theInstances;
+  return *GetInstancesTL();
 }
 

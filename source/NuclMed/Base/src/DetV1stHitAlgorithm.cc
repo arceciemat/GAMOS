@@ -26,7 +26,7 @@ GmRecHit* DetV1stHitAlgorithm::GetRecHitByX( mmdrh& recHitMap, G4bool startByLas
   if( startByLast ) {
     mmdrh::reverse_iterator mdrite = recHitMap.rbegin();
     
-    for( G4int ii = 0; ii < theSelectionOrder; ii++ ){
+    for( G4int ii = 0; ii < theSelectionOrder-1; ii++ ){ // SelectionOrder = 1 selects the first one
       if( ii >= G4int(recHitMap.size())-1 ) break;
       mdrite++;
     }
@@ -38,7 +38,7 @@ GmRecHit* DetV1stHitAlgorithm::GetRecHitByX( mmdrh& recHitMap, G4bool startByLas
   } else {
     mmdrh::iterator mdrite = recHitMap.begin();
     
-    for( G4int ii = 0; ii < theSelectionOrder; ii++ ){
+    for( G4int ii = 0; ii < theSelectionOrder-1; ii++ ){ // SelectionOrder = 1 selects the first one
       if( ii >= G4int(recHitMap.size())-1 ) break;
       mdrite++;
     }

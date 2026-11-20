@@ -269,7 +269,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
     processFinalState->Clear(); 
       
 #ifndef GAMOS_NO_VERBOSE
-    if( BiasingVerb(testVerb) ) G4cout << nCalls << " NSECO 1: " <<  fParticleChange.GetNumberOfSecondaries() << G4endl;  //GDEB
+    if( BiasingVerb(testVerb) ) G4cout << nCalls << " NSECO 1: " <<  fParticleChange.GetNumberOfSecondaries() << G4endl;
 #endif
     nCalls++;
   }

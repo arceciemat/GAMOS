@@ -32,6 +32,7 @@ class GmCountTracksAndStepsUA : public GmUserRunAction,
   virtual void UserSteppingAction(const G4Step* aStep);
 
  private:
+  void MergeToMaster();
   std::map< G4int,G4int> theNSteps;
   std::map< G4int,G4int> theNTracks;
 

@@ -9,7 +9,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
 //----------------------------------------------------------------------
-GmIsotopeMgr* GmIsotopeMgr::theInstance = 0;
+G4ThreadLocal GmIsotopeMgr* GmIsotopeMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 GmIsotopeMgr* GmIsotopeMgr::GetInstance()

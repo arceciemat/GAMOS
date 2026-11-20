@@ -14,7 +14,7 @@ DicomVReader::DicomVReader(DRModality mod)
 {
   theReaderMgr = DicomReaderMgr::GetInstance();
   theReaderMgr->AddReader( this, mod );
-  if( DicomVerb(-infoVerb) ) {
+  if( DicomVerb(infoVerb) ) {
     G4cout << " DicomVReader AddReader mod " << this->GetName() << " " << DicomVReader::GetModalityStr(mod) << G4endl;
   }
   theModality = mod;
@@ -26,7 +26,7 @@ DicomVReader::DicomVReader(DcmDataset* dset, DRModality mod)
   
   theReaderMgr = DicomReaderMgr::GetInstance();
   theReaderMgr->AddReader( this, mod );
-  if( DicomVerb(-infoVerb) ) {
+  if( DicomVerb(infoVerb) ) {
     G4cout << "DicomVReader AddReader dset mod " << this->GetName() << " " << DicomVReader::GetModalityStr(mod) << G4endl;
   }
   theDataset = dset;

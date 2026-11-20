@@ -497,6 +497,7 @@ void GmPDSProcessHelper::FillScores( const G4Track& aTrack, G4bool bGeantino,G4i
   //  G4cout << "IN DETECTOR " << ener << " " << aTracknc->GetTrackLength() << " " << wei << G4endl;
 
   std::set<G4double>::const_iterator itee = theEnergies.upper_bound(ener);
+  if( itee == theEnergies.end() ) itee--; // energy above last bin: store it in last bin (else theFluxes[enerID] is written out of bounds)
 
   std::set<G4double>::difference_type diffs = std::distance(theEnergies.begin(), itee);
   size_t enerID = G4int(diffs);
@@ -572,6 +573,7 @@ Flux2Dose GmPDSProcessHelper::GetFlux2Dose( G4double ener )
 {
   // it should be an extrapolation of order 4th
   std::map<G4double,Flux2Dose>::const_iterator itee = theFlux2Dose.upper_bound(ener);
+  if( itee == theFlux2Dose.end() ) itee--; // energy above last value: use last one (else end() is dereferenced and Hstar is garbage)
 #ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) G4cout << " GmPDSProcessHelper::GetFlux2DoseID ener " << ener << " flux2dose Hstar " << (*itee).second.Hstar << G4endl;

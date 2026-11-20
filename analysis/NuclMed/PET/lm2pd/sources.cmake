@@ -1,16 +1,16 @@
-# - GAMOS_analysis_NuclMed_PET_lm2pd module build definition
+# - lm2pd module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_NuclMed_PET_lm2pd
+gamos_add_module(lm2pd
   PUBLIC_HEADERS
     lm2pd.hh
   SOURCES
     dummy.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_NuclMed_PET_lm2pd
-  PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
+
+# Program lm2pd
+gamos_add_executable(lm2pd
+  SOURCES
+    lm2pd.cc
+  LINK_LIBRARIES
+    lm2pd
 )

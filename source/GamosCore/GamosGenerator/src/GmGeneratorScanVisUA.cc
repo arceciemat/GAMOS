@@ -5,7 +5,6 @@
 #include "G4PrimaryParticle.hh"
 #include "G4RunManager.hh"
 #include "G4Box.hh"
-#include "G4Geantino.hh"
 #include "G4VPhysicalVolume.hh"
 
 #ifndef GAMOS_NO_ROOT
@@ -39,7 +38,7 @@ GmGeneratorScanVisUA::~GmGeneratorScanVisUA()
 }
 
 //------------------------------------------------------------------------
-void GmGeneratorScanVisUA::UserSteppingAction(const G4Step* aStep)
+void GmGeneratorScanVisUA::UserSteppingAction([[maybe_unused]] const G4Step* aStep)
 {
 #ifndef GAMOS_NO_ROOT
   if( aStep->GetPostStepPoint()->GetPhysicalVolume() ) {

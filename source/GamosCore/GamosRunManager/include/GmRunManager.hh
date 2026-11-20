@@ -17,6 +17,12 @@ public:
   void Initialise();
   virtual void CreateG4RunManager();
 
+  // Multithreading: called by GmActionInitialization::Build() in each worker thread
+  void BuildForWorker();
+  // Creates the GAMOS messengers; on worker threads only those whose commands
+  // must be replayed per thread (user actions, generator, SD, scoring, analysis...)
+  void CreateMessengers( G4bool bMaster );
+
   void SelectGeometry( const G4String& );
   void SelectPhysicsList( const G4String& );
   void SelectGenerator( const G4String& );
@@ -25,6 +31,9 @@ public:
   void SelectVerbosity( const G4String& );
   void SetRandomSeeds( G4int index, G4int nTries );
   void RestoreRandomSeeds( G4int index, G4int nTries );
+  // MT: the G4MTRunManager/G4TaskRunManager seeds the workers with the engine it had when created;
+  // after CLHEP::HepRandom::setTheEngine it must be told about the new engine
+  static void UpdateMTMasterRandomEngine();
 
   G4RunManager* GetG4RunManager() const {
     return theG4RunManager;

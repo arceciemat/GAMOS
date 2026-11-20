@@ -31,7 +31,7 @@ public:
 private:
   void AddFilter( GmVFilter* filter );
 
-  static GmFilterMgr* theInstance;
+  static G4ThreadLocal GmFilterMgr* theInstance;
 
   std::map<G4String,GmVFilter*> theFilters;
 

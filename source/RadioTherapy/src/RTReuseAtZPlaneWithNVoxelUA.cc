@@ -1,3 +1,5 @@
+#include "G4Threading.hh"
+#include "G4AutoLock.hh"
 #include "RTReuseAtZPlaneWithNVoxelUA.hh"
 #include "RTReuseAtZPlaneMessenger.hh"
 #include "RTReuseAtZPlaneTrackInfo.hh"
@@ -11,6 +13,10 @@
 //---------------------------------------------------------------------
 RTReuseAtZPlaneWithNVoxelUA::RTReuseAtZPlaneWithNVoxelUA()
 {
+  //--- Multithreading: worker sums are added to the master instance, which prints the ratio
+  SetRunOnMaster(true);
+  theRatioSum = 0.; // were not initialised
+  theRatioSum2 = 0.;
   new RTReuseAtZPlaneMessenger();
 
 }
@@ -94,6 +100,17 @@ void RTReuseAtZPlaneWithNVoxelUA::UserSteppingAction(const G4Step* aStep)
 //---------------------------------------------------------------------
 void RTReuseAtZPlaneWithNVoxelUA::EndOfRunAction(const G4Run* )
 {
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    RTReuseAtZPlaneWithNVoxelUA* master = dynamic_cast<RTReuseAtZPlaneWithNVoxelUA*>(GmUserAction::GetMasterUserAction(GetName()));
+    if( master ) {
+      G4AutoLock l(&GmUserAction::GetMergeMutex());
+      master->theRatioSum += theRatioSum;
+      master->theRatioSum2 += theRatioSum2;
+      master->theNEvents.insert( theNEvents.begin(), theNEvents.end() ); // event IDs are global in MT
+      theRatioSum = 0.; theRatioSum2 = 0.; theNEvents.clear();
+    }
+    return;
+  }
   G4int nev = theNEvents.size();
   G4double ratio = theRatioSum / nev;
   G4double ratioErr = sqrt((theRatioSum2-theRatioSum*theRatioSum/nev)/(nev*nev));

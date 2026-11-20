@@ -141,7 +141,7 @@ ComputeMaterial(G4VPhysicalVolume* physVol, const G4int iz,
     G4int copyID = ix + fnX*iy + fnX*fnY*iz;
 
     unsigned int matIndex = GetMaterialIndex(copyID);
-    static G4Material* mate = 0;
+    static G4ThreadLocal G4Material* mate = 0; // thread local: called by the navigator of each thread
     mate = fMaterials[matIndex];
 
     if(false && physVol && G4VVisManager::GetConcreteInstance()) {

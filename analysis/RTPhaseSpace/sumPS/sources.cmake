@@ -1,34 +1,38 @@
-# - GAMOS_analysis_RTPhaseSpace_sumPS module build definition
+# - sumPS module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_RTPhaseSpace_sumPS
+gamos_add_module(sumPS
   PUBLIC_HEADERS
-    utilities.h
+    FILE2MEMORY.h
     egsclass.h
+    general.h
     histogram.h
-    iaea_record.hh
-    matrix.h
-    iaea_utilities.hh
     iaea_config.hh
     iaea_header.hh
-    general.h
-    FILE2MEMORY.h
+    iaea_record.hh
+    iaea_utilities.hh
+    matrix.h
+    utilities.h
   SOURCES
-    histogram.cc
-    iaea_utilities.cc
-    iaea_header.cc
-    general.cc
-    utilities.cc
-    egsclass.cc
     FILE2MEMORY.cc
+    egsclass.cc
+    general.cc
+    histogram.cc
+    iaea_header.cc
     iaea_record.cc
+    iaea_utilities.cc
     matrix.cc
+    utilities.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_RTPhaseSpace_sumPS
+
+gamos_module_link_libraries(sumPS
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
     GamosCore_GamosBase_Base
-    ${SEAL_LIBRARIES} 
+)
+
+# Program sumPS
+gamos_add_executable(sumPS
+  SOURCES
+    sumPS.cc
+  LINK_LIBRARIES
+    sumPS
 )

@@ -2,7 +2,7 @@
 #define GmVTouchableFilterVolume_h 1
 
 #include "globals.hh"
-class G4VTouchable;
+#include "G4VTouchable.hh"
 
 ////////////////////////////////////////////////////////////////////////////////
 // class description:

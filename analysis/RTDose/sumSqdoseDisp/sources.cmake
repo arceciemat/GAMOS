@@ -1,17 +1,26 @@
-# - GAMOS_analysis_RTDose_sumSqdoseDisp module build definition
+# - sumSqdoseDisp module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_RTDose_sumSqdoseDisp
+gamos_add_module(sumSqdoseDisp
   PUBLIC_HEADERS
     Merge3ddoseUA.hh
   SOURCES
     dummy.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_RTDose_sumSqdoseDisp
+
+gamos_module_link_libraries(sumSqdoseDisp
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    RadioTherapy
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUserActionMgr
+    GamosCore_GamosUtils
+)
+
+# Program sumSqdoseDisp
+gamos_add_executable(sumSqdoseDisp
+  SOURCES
+    sumSqdoseDisp.cc
+  LINK_LIBRARIES
+    sumSqdoseDisp
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUserActionMgr
+    GamosCore_GamosUtils
 )

@@ -24,7 +24,7 @@ typedef std::pair<G4double,G4double> pdd;
 typedef std::map<G4double,pdd> mdpdd;
 
 //----------------------------------------------------------------------
-RTPlanMgr* RTPlanMgr::theInstance = 0;
+G4ThreadLocal RTPlanMgr* RTPlanMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 RTPlanMgr* RTPlanMgr::GetInstance()
@@ -737,7 +737,7 @@ void RTPlanMgr::DumpHistosAndScorers( G4int iType )
   theParamMgr->AddParam("GmAnalysisMgr:FileNameSuffix "+suffixNew,PTstring);
 
   const G4Run* aRun = G4RunManager::GetRunManager()->GetCurrentRun();
-  //  std::cout << " RTPlanMgr::DumpHistosAndScorers " << GmNumberOfEvent::GetNumberOfEvent() << std::endl;//GDEB
+  //  G4cout << " RTPlanMgr::DumpHistosAndScorers " << GmNumberOfEvent::GetNumberOfEvent() << std::endl;//GDEB
   GmScoringRun* scrun = (GmScoringRun*)aRun;
   scrun->DumpAllScorers();
   

@@ -1,4 +1,3 @@
-#include "G4UImanager.hh"
 
 #include "DCMGetGammaIndex.hh"
 

@@ -1,10 +1,8 @@
 #ifndef DCM2DOperGammaIndex__HH
 #define DCM2DOperGammaIndex__HH
 
-#include "DICOM/DICOMBase/include/DicomVOperator.hh"
 #include "G4ThreeVector.hh"
-#include <map>
-#include <vector>
+#include <climits>
 class TH2F;
 class DicomVImage;
 class DicomVImageStr;

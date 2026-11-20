@@ -6,7 +6,6 @@
 #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh"
 #include "GamosCore/GamosBase/Classifiers/include/GmCompoundClassifier.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include "GamosCore/GamosUtils/include/GmNumberOfEvent.hh"
 
 #include "G4PhantomParameterisation.hh"
 #include "G4UnitsTable.hh"
@@ -113,8 +112,8 @@ void GmPSPrinterHistos::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScore
 #endif
     hisX->SetBinContent( ii, 0. );
   }
-  GmHisto1* hisY;
-  GmHisto2* hisXY;
+  GmHisto1* hisY = nullptr;
+  GmHisto2* hisXY = nullptr;
   if( b2D ) {
     theAnaMgr->CreateHisto1D( theNameY,theNBinsY,theMinY,theMaxY,theHistoNumber+2);
     theAnaMgr->CreateHisto2D( theNameX+".vs."+theNameY,theNBinsX,theMinX,theMaxX,theNBinsY,theMinY,theMaxY,theHistoNumber+3);

@@ -77,7 +77,7 @@ void GmVGenerDistPosition2D::SetRotation( G4ThreeVector dir )
   } else {
     angx = -asin(dir.y());
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(debugVerb) ) G4cout << " GmVGenerDistPosition2D angx " << angx/CLHEP::deg << " " << dir.y() << G4endl; //GDEB
+    if( GenerVerb(debugVerb) ) G4cout << " GmVGenerDistPosition2D angx " << angx/CLHEP::deg << " " << dir.y() << G4endl;
 #endif
     // there are always two solutions angx, angy and PI-angx, PI+angy, choose first                             
     angy = asin( dir.x()/sqrt(1-dir.y()*dir.y()) );

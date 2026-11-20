@@ -102,6 +102,7 @@ void GmRunMessenger::SetNewValue(G4UIcommand * command, G4String newValues)
 		  FatalErrorInArgument,
 		  G4String("Engine= " + newValues + " Available engines: DualRand HepJamesRandom MTwistEngineRanecuEngine RanluxEngine Ranlux64Engine RanshiEngine").c_str());
     }
+    GmRunManager::UpdateMTMasterRandomEngine();
     
   }
     

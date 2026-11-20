@@ -1,4 +1,5 @@
 #include "MCNPVTallierData.hh"
+#include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "MCNPTallyData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 

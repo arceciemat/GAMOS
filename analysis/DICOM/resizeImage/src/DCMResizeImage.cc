@@ -167,7 +167,7 @@ void DCMResizeImage::ReadFilesAndGetImages()
     std::vector<G4String> wl; 
     //----- Open file
     GmFileIn fin = GmFileIn::GetInstance(dens2MateFN, true);
-    if( DicomVerb(-warningVerb) ) G4cout << "@@@@@@@ Reading FILE: " << dens2MateFN << G4endl;
+    if( DicomVerb(warningVerb) ) G4cout << "@@@@@@@ Reading FILE: " << dens2MateFN << G4endl;
     for( int ii2 = 0;; ii2++) {      
       if( ! fin.GetWordsInLine(wl) ) break;
       //      G4cout << " dicom.mdat " << wl[0] << G4endl; //GDEB

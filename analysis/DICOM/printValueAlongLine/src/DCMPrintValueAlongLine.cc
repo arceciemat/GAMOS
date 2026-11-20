@@ -1,8 +1,16 @@
 #include "DCMPrintValueAlongLine.hh"
+#ifndef GAMOS_NO_ROOT
 #include "TStyle.h"
 #include "TCanvas.h"
-#include "TH1F.h"
 #include "TFile.h"
+#include "TMarker.h"
+#include "TLine.h"
+#else
+// Without ROOT the figure is drawn as SVG (converted to imageFormat if a converter is found)
+#include "GamosCore/GamosUtils/include/GmSVGCanvas.hh"
+#include "GamosCore/GamosUtils/include/GmSVGPad.hh"
+#include "GamosCore/GamosUtils/include/GmSVGFrame.hh"
+#endif
 
 #include "DICOM/DICOMBase/include/DicomVImage.hh"
 #include "DICOM/DICOMBase/include/DicomMgr.hh"
@@ -16,9 +24,11 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
+#ifndef GAMOS_NO_ROOT
 #include "ROOTUtilities/PlotData/Definitions.C"
 #include "ROOTUtilities/PlotData/PlotUtils.C"
 #include "ROOTUtilities/GenUtils.C"
+#endif
 
 using namespace std;
 //---------------------------------------------------------------------------
@@ -39,6 +49,7 @@ void DCMPrintValueAlongLine::Initialise()
   theLineListFN = "";
 
   theAlongLineInput = 0;
+  bLinePos0 = false;
 
 }
 
@@ -59,13 +70,14 @@ void DCMPrintValueAlongLine::ProcessArguments(int argc,char** argv)
       DicomException(G4String("ONLY ONE ARGUMENT: ") + argv[1]);
     }
   } else {
-    if(argc%2 != 1) { 
-      G4Exception(theExeName.c_str(),
-		  "Error",
-		  FatalErrorInArgument,
-		  "WRONG NUMBER OF ARGUMENTS: THEY MUST BE -XX1 VAL_XX1 -XX2 VAL_XX2 ... ");
-    }
+    //--- (-doseAlongLine has 6 values and -zeroOfAlongLine 3, so the number of arguments can be odd or even)
     for( G4int ii = 1; ii < argc; ii++ ){
+      if( ii+1 >= argc ) {
+	G4Exception(theExeName.c_str(),
+		    "Error",
+		    FatalErrorInArgument,
+		    (G4String("WRONG NUMBER OF ARGUMENTS: NO VALUE AFTER ") + argv[ii] + " , THEY MUST BE -XX1 VAL_XX1 -XX2 VAL_XX2 ... ").c_str());
+      }
       G4String argvstr = argv[ii];
       G4String argvstr1 = argv[ii+1];
       G4String argvName = argvstr.substr(1,999);
@@ -79,15 +91,16 @@ void DCMPrintValueAlongLine::ProcessArguments(int argc,char** argv)
 	theLinePos = G4ThreeVector(GmGenUtils::GetValue(argv[ii+1]),GmGenUtils::GetValue(argv[ii+2]),GmGenUtils::GetValue(argv[ii+3]));
 	theLineDir = G4ThreeVector(GmGenUtils::GetValue(argv[ii+4]),GmGenUtils::GetValue(argv[ii+5]),GmGenUtils::GetValue(argv[ii+6]));
 	theAlongLineInput = 1;
-	ii += 5;
+	ii += 6;
       } else if( argvstr == "-zeroOfAlongLine" ) {
-	if( argc < ii+3 ) {
+	if( argc < ii+4 ) {
 	  G4Exception(theExeName,
 		      "Error",
 		      FatalErrorInArgument,
 		      ("WRONG NUMBER OF ARGUMENTS, THERE MUST BE AT LEAST 3 AFTER -zeroOfAlongLine, while there are "+GmGenUtils::itoa(argc-ii-1)).c_str());
 	}
 	theLinePos0 = G4ThreeVector(GmGenUtils::GetValue(argv[ii+1]),GmGenUtils::GetValue(argv[ii+2]),GmGenUtils::GetValue(argv[ii+3]));
+	bLinePos0 = true;
 	ii += 3;
         
       } else if( argvstr == "-bHistos" ) {
@@ -158,7 +171,8 @@ void DCMPrintValueAlongLine::ReadFilesAndGetImages()
     theLineSet->AddLineList(lineList1);
     DicomLine* line1 = new DicomLine(theLinePos,theLineDir,"valueInLine",DPOrientNone);
     //    G4cout << "1 BUILD DicomLine " << theLinePos << " " << theLineDir << " valueInLine " << G4endl; //GDEB
-    line1->SetPos0( theLinePos0 );
+    //--- if -zeroOfAlongLine is not given, distances are relative to the line point (as in -fLineList)
+    line1->SetPos0( bLinePos0 ? theLinePos0 : theLinePos );
     lineList1->AddLine(line1);
   }
 
@@ -249,8 +263,13 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	for( size_t ii=0; ii < 3; ii++ ){
 	  lineName += GmGenUtils::ftoa(pos[ii])+"_";
 	  } */
-	TH1F* histo;
-	TCanvas* canvas;
+#ifndef GAMOS_NO_ROOT
+	TH1F* histo = 0;
+	TCanvas* canvas = 0;
+#else
+	GmSVGCanvas* canvas = 0;
+	GmSVGFrame* frame = 0;
+#endif
 	std::map<G4double,G4double>::const_iterator iteiv;
 	if( bHistos ) {
 	//--- Get minimum and maximum XY for histogram
@@ -279,14 +298,27 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	    }
 	    distToOut = min(dist,distToOut);
 	  }
-	  distBefore0 = (pos+dir*distToOut-pos0).mag();
+	  //--- histogram limits: signed distance to pos0 along the line (as calculated in DicomLine::FindValues) of the line point and the point where the line exits the image
+	  distBefore0 = (pos+dir*distToOut-pos0).dot(dir.unit());
+	  distToOut = distBefore0 - (pos-pos0).dot(dir.unit());
 	  if( DicomVerb(infoVerb) ) G4cout << "@@@@ DCMPrintValueAlongLine HISTO " << distBefore0 << " == " << pos << " + " << dir << " * " << distToOut << " - " << pos0 << " " << (pos+dir*distToOut-pos0) << distBefore0+distToOut << G4endl;
 	  	  if( DicomVerb(infoVerb) ) G4cout << "@@@@ DCMPrintValueAlongLine HISTO " << distBefore0-distToOut << " TO " << distBefore0 << G4endl;
+#ifndef GAMOS_NO_ROOT
 	  histo = new TH1F(lineName.c_str(), lineName.c_str(), 10000, distBefore0-distToOut,distBefore0);
 	  canvas = new TCanvas;
 	  canvas->Draw();
 	  histo->SetMaximum(yMax*1.1);
 	  histo->Draw();
+#else
+	  //--- same layout as a default ROOT canvas (700x500) with an empty histogram from 0 to 1.1*maximum
+	  canvas = new GmSVGCanvas(700,500);
+	  canvas->cd();
+	  G4double hYMax = (yMax > 0.) ? yMax*1.1 : 1.;
+	  frame = new GmSVGFrame( lineName, canvas->GetCurrentPad(), distBefore0-distToOut, distBefore0, 0., hYMax,
+				  false, false, 0.1, 0.1, 0.1, 0.1 );
+	  frame->DrawAxes( "", "", 0.035, 0.035, 0.035, 0.035, 1., 1. );
+	  canvas->Text( 0.5*canvas->GetWw(), 0.06*canvas->GetWh(), lineName, 0.035*canvas->GetWh(), "#000000", "middle" );
+#endif
 	}
 
 	//----- Write to file intersections-values
@@ -295,7 +327,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	if( DicomVerb(infoVerb) ) G4cout << " ALONG LINE CREATING FILE " << lineName+".val" << std::endl; 
 	fout << ":DATA " << lineName << G4endl;
 	if( DicomVerb(infoVerb) ) G4cout << "@@@@ DCMPrintValueAlongLine n intersections " << intersValues.size() << G4endl;
-	G4double xvalold, yvalold;
+	G4double xvalold = 0., yvalold = 0.;
 	for( iteiv = intersValues.begin(); iteiv != intersValues.end(); iteiv++ ) {
 	  G4double distHis =(*iteiv).first;
 	  G4double value =(*iteiv).second;
@@ -303,6 +335,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	  if( bHistos ) {
 	    //	    G4cout << " DISTHIS " << distHis << " " << value << " BIN " << int((distHis-histo->GetXaxis()->GetXmin())/histo->GetBinWidth(2)) << " " << distHis << " - " << histo->GetXaxis()->GetXmin() << " / " << histo->GetBinWidth(2) << G4endl; //GDEB
 	    //	    histo->Draw();
+#ifndef GAMOS_NO_ROOT
 	    TMarker* mark = new TMarker(distHis, value,21);
 	    mark->SetMarkerSize(0.03);
 	    if( iteiv != intersValues.begin() && value != 0. ) {
@@ -311,11 +344,21 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	      lineDraw->Draw();  
 	    }
 	    mark->Draw();
+#else
+	    if( iteiv != intersValues.begin() && value != 0. ) {
+	      frame->DrawLine( xvalold, yvalold, distHis, value, "#000000", 1. );
+	    }
+	    if( frame->IsInsideX(distHis) && frame->IsInsideY(value) ) {
+	      canvas->Marker( frame->ToPixX(distHis), frame->ToPixY(value), 21, "#000000", 0.25 ); // ROOT size 0.03 is drawn as a dot
+	    }
+#endif
 	    if( distHis != 0. ) {
 	      xvalold = distHis;
 	      yvalold = value;      
 	    }
+#ifndef GAMOS_NO_ROOT
 	    mark->Draw();
+#endif
 	    //	    histo->Fill( distHis, value ); // fill value at center of bin (accumulated dist + 0.5*voxel_dist)
 	  }
 	}
@@ -324,11 +367,19 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	//--- Draw Histos
 	if( bHistos ) {
 	  //	  canvas->Print((lineName+"."+theImageFormat).c_str());
+#ifndef GAMOS_NO_ROOT
 	  canvas->Print((lineName+".jpg").c_str());
 	  TFile* foutR = new TFile(("his"+lineName+".root").c_str(),"RECREATE");
 	  foutR->cd();
 	  histo->Write();
 	  foutR->Close();
+#else
+	  //--- the values are in the .val file (the ROOT histogram file is not written)
+	  canvas->Print( lineName+".svg", theParamMgr->GetStringValue("imageFormat","jpg"),
+			 theParamMgr->GetStringValue("SVGConverter","auto") );
+	  delete frame;
+	  delete canvas;
+#endif
 
 	  /* histo->Draw();
 	     TH1F* histo2 = new TH1F(lineName.c_str(), lineName.c_str(), 10000, distBefore0-distToOut,distBefore0);
@@ -370,7 +421,7 @@ void DCMPrintValueAlongLine::PrintHelp()
 {
   ((DicomParameterMgr*)(DicomParameterMgr::GetInstance()))->PrintHelpInputFiles();
   G4cout << " -doseAlongLine POSX POSY POSZ DIRX DIRY DIRZ   calculate values along this line " << G4endl
-	 << " -zeroOfAlongLine POS0X POS0Y POS0Z   Define the '0' of a line so that distances are given relative to it " << G4endl
+	 << " -zeroOfAlongLine POS0X POS0Y POS0Z   Define the '0' of a line so that distances are given relative to it (default is POSX POSY POSZ) " << G4endl
 	 << " -fLineList     write a file list of lines " << G4endl
     //	 << " -bHistos    " << G4endl
 	 << " -lineStep VALUE    calculate line values at intervals (if not provided calculate it at voxel intersections " << G4endl;

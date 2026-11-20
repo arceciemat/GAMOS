@@ -6,8 +6,8 @@
 #include "G4SteppingManager.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
-GmTimeStudyMgr* GmTimeStudyMgr::theInstance = 0;
-G4SteppingVerbose* GmTimeStudyMgr::theG4Verbose = 0;
+G4ThreadLocal GmTimeStudyMgr* GmTimeStudyMgr::theInstance = 0;
+G4ThreadLocal G4SteppingVerbose* GmTimeStudyMgr::theG4Verbose = 0;
 int GmTimeStudyMgr::theG4VerboseLevel = 0;
 
 //----------------------------------------------------------------------

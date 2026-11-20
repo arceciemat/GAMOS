@@ -514,7 +514,7 @@ G4ThreeVector GmPositionVolumePos::GeneratePosInSolid( const G4VSolid* solid )
   //check if
   if( int(theParamMgr->GetNumericValue("PositionInVolumes:NotDaughters",0)) == 1 ) {
     theNavigator->LocateGlobalPointAndUpdateTouchable( G4ThreeVector(x,y,z), theTouchable, false );
-    std::cout << " CHECK VOL " << G4ThreeVector(x,y,z) << " TOUCH " <<  theTouchable->GetVolume(0)->GetName() << " SOLID " << solid->GetName() << std::endl;
+    G4cout << " CHECK VOL " << G4ThreeVector(x,y,z) << " TOUCH " <<  theTouchable->GetVolume(0)->GetName() << " SOLID " << solid->GetName() << std::endl;
     if( theTouchable->GetVolume(0)->GetName() != solid->GetName() ) return GeneratePosInSolid( solid );
   }
   

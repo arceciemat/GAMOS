@@ -9,7 +9,7 @@
 #include "G4IonTable.hh"
 #include "G4NistManager.hh"
 
-GmGeneratorMgr*  GmGeneratorMgr::theInstance;
+G4ThreadLocal GmGeneratorMgr* GmGeneratorMgr::theInstance = 0;
 
 
 //----------------------------------------------------------------------

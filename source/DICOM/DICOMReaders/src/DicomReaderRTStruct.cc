@@ -104,7 +104,7 @@ void DicomReaderRTStruct::ReadData()
 	  DRTContourImageSequence::Item &image_contour_item = image_sequence_seq_ref.getCurrentItem();
 	  OFString refSOPInstUID;
 	  image_contour_item.getReferencedSOPInstanceUID(refSOPInstUID);
-	  std::cout <<"ReferencedSOPInstanceUID= " << refSOPInstUID << std::endl;
+	  G4cout <<"ReferencedSOPInstanceUID= " << refSOPInstUID << std::endl;
 	  image_sequence_seq_ref.gotoNextItem().good();
 	} // end if image_sequence_seq_ref
 	series_seq_ref.gotoNextItem();
@@ -177,7 +177,7 @@ void DicomReaderRTStruct::ReadData()
 		  "Contour sequence does not have any ReferencedROINumber tag, it will be assigned to the last ROI");
       roi = (*(theROIs.rbegin())).second;
     }
-    //    std::cout << refROINumberStr << " ROI ASSIGNED " << roi->GetNumber() << " " << roi->GetName() << std::endl; //GDEB
+    //    G4cout << refROINumberStr << " ROI ASSIGNED " << roi->GetNumber() << " " << roi->GetName() << std::endl; //GDEB
 
     //--- Loop to contours lists (sequences)
     DRTContourSequence contour_seq = item.getContourSequence();
@@ -279,7 +279,7 @@ void DicomReaderRTStruct::ReadData()
 
 
   //  for( size_t jj = 0; jj < theROIs.size(); jj++ ){    
-    //    std::cout <<this << " " << jj << " " << theROIs[jj] << " LOOP ROIS "<< theROIs[jj]->GetNumber() << " " << theROIs[jj]->GetName() << " CONT " << theROIs[jj]->GetContours().size() << G4endl; //GDEB
+    //    G4cout <<this << " " << jj << " " << theROIs[jj] << " LOOP ROIS "<< theROIs[jj]->GetNumber() << " " << theROIs[jj]->GetName() << " CONT " << theROIs[jj]->GetContours().size() << G4endl; //GDEB
   //  }
 
   /*  for( iter = theROIs.begin(); iter != theROIs.end(); iter++ ) {
@@ -306,7 +306,7 @@ void DicomReaderRTStruct::BuildPolygonSet()
   thePolygonSet = new DicomPolygonSet("RTStruct_"+theFileName,DPOrientXY);
   
   //  for( size_t jj = 0; jj < theROIs.size(); jj++ ){    
-  //    std::cout << this << " " << jj << " " << theROIs[jj] << " 2LOOP ROIS "<< theROIs[jj]->GetNumber() << " " << theROIs[jj]->GetName() << " CONT " << theROIs[jj]->GetContours().size() << G4endl; //GDEB
+  //    G4cout << this << " " << jj << " " << theROIs[jj] << " 2LOOP ROIS "<< theROIs[jj]->GetNumber() << " " << theROIs[jj]->GetName() << " CONT " << theROIs[jj]->GetContours().size() << G4endl; //GDEB
   //  }
     
   std::map<G4int,DicomROI*>::const_iterator iter; 
@@ -318,7 +318,7 @@ void DicomReaderRTStruct::BuildPolygonSet()
     if( DicomVerb(debugVerb) ) G4cout << thePolygonSet->GetName() << " DicomReaderRTStruct::BuildPolygonSet AddLineList " << roi->GetName() << " " << roiID << " NLists " << thePolygonSet->GetLineLists().size() << G4endl;
 
     //    roi->GetContours();
-    //    std::cout << jj << " " << roi << " BuildStructureIDs checking ROI "<< roiID << " " << roi->GetName() << " CONT " << roi->GetContours().size() << G4endl; //GDEB
+    //    G4cout << jj << " " << roi << " BuildStructureIDs checking ROI "<< roiID << " " << roi->GetName() << " CONT " << roi->GetContours().size() << G4endl; //GDEB
 
     std::vector<DicomROIContour*> contours = roi->GetContours();
     for( size_t kk = 0; kk < contours.size(); kk++ ){
@@ -361,7 +361,7 @@ void DicomReaderRTStruct::FindVoxelsInXY( DicomVImageStr* imageStruct, DicomPoly
   for( size_t ii = 0; ii < imageStruct->GetNoVoxels(); ii++ ) {
     imageStruct->SetDataStr(ii, "0");
   }
-  G4cout << " DicomReaderRTStruct::FindVoxelsInXY BEF " << imageStruct->GetDataStr(0) << G4endl; //GDEB
+  //G4cout << " DicomReaderRTStruct::FindVoxelsInXY BEF " << imageStruct->GetDataStr(0) << G4endl; //GDEB
   polygonSet->FindVoxelsInXY( imageStruct );
-  G4cout << " DicomReaderRTStruct::FindVoxelsInXY AFT " << imageStruct->GetDataStr(0) << G4endl; //GDEB
+  //G4cout << " DicomReaderRTStruct::FindVoxelsInXY AFT " << imageStruct->GetDataStr(0) << G4endl; //GDEB
 }

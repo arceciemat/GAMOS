@@ -19,8 +19,7 @@ public:
 public:
 
   void AddScoreData(ScoreData*);
-  ScorerData operator=( const ScorerData& sd2 );
-  ScorerData operator+=( const ScorerData& sd2 );
+  ScorerData& operator+=( const ScorerData& sd2 );
   ScorerData & operator*=( G4double wei );
   bool operator!=( const ScorerData& sd2 );
 

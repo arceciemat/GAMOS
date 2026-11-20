@@ -184,7 +184,7 @@ void DCMGetImageValue::GetClosestValue()
     }
     //    G4cout << ii << " val " << val << " dif " << fabs(theValue-val) <<" " << minDiff  << G4endl; //GDEB
     if( fabs(theValue-val) < minDiff ) {
-      G4cout << " CLOSEST " << val << " at " << theAnalyseImage->GetPosition(ii) << G4endl; //GDEB
+      //G4cout << " CLOSEST " << val << " at " << theAnalyseImage->GetPosition(ii) << G4endl; //GDEB
       minDiff = fabs(theValue-val);
       theClosestValue = val;
       theClosestPos = theAnalyseImage->GetPosition(ii);

@@ -1,9 +1,5 @@
-#------------------------------------------------------------------------------
-# Module : Detector
-# Package: Detector
-#
-#------------------------------------------------------------------------------
-# 
+# - source/NuclMed
+
 add_subdirectory(Base)
 add_subdirectory(PET)
 add_subdirectory(SPECT)

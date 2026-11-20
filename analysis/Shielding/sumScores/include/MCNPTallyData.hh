@@ -2,7 +2,6 @@
 #define MCNPTallyData_hh
 
 #include "ScoreData.hh"
-#include "ScorerData.hh"
 #include <fstream>
 
 class MCNPTallyData : public ScoreData

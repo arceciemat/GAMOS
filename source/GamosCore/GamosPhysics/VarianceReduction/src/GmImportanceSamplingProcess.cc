@@ -13,7 +13,7 @@
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 #include "GmInheritTrackInfoUA.hh"
 
-GmInheritTrackInfoUA* GmImportanceSamplingProcess::theInheritTrackInfoUA = 0;
+G4ThreadLocal GmInheritTrackInfoUA* GmImportanceSamplingProcess::theInheritTrackInfoUA = 0;
 
 //------------------------------------------------------------------
 GmImportanceSamplingProcess::GmImportanceSamplingProcess(const G4String& name , GmVDistribution* distrib ): G4VDiscreteProcess( name ), theDistribution(distrib)

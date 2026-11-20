@@ -34,8 +34,7 @@ int64_t GmClassifierByPhysicalVolumeReplicated::GetIndexFromStep(const G4Step* a
   G4String pvname = pv->GetName() + ":" + GmGenUtils::ftoa(pv->GetCopyNo());
   std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(pvname);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[pvname] = index;
+    index = AssignNewIndex( this, &GmClassifierByPhysicalVolumeReplicated::theIndexMap, pvname ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }
@@ -56,8 +55,7 @@ int64_t GmClassifierByPhysicalVolumeReplicated::GetIndexFromTrack(const G4Track*
   G4String pvname = pv->GetName() + ":" + GmGenUtils::ftoa(pv->GetCopyNo());
   std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(pvname);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[pvname] = index;
+    index = AssignNewIndex( this, &GmClassifierByPhysicalVolumeReplicated::theIndexMap, pvname ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

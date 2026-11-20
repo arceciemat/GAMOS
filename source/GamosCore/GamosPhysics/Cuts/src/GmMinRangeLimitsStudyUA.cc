@@ -294,7 +294,7 @@ void GmMinRangeLimitsStudyUA::SetTrackInfoAccepted()
 #ifndef GAMOS_NO_VERBOSE
       if( PhysicsVerb(infoVerb) ) G4cout << " GmMinRangeLimitsStudyUA: ACCEPTED: " << nTrkI;
 #endif
-      if( PhysicsVerb(-infoVerb) ) trkI->Print();
+      if( PhysicsVerb(infoVerb) ) trkI->Print();
     }
     
     trkStepInfo = (GmCSTrackStepInfo*)trkStepInfo->GetParent();

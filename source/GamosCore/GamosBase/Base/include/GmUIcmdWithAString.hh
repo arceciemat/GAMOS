@@ -18,7 +18,7 @@ class GmUIcmdWithAString : public G4UIcmdWithAString
     //  Constructor. The command string with full path directory
     // and the pointer to the messenger must be given.
 
-  virtual G4int DoIt(G4String parameterList);
+  virtual G4int DoIt(const G4String& parameterList) override;
 
 };
 

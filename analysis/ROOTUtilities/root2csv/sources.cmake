@@ -1,17 +1,20 @@
-# - GAMOS_analysis_ROOTUtilities_ghadd module build definition
+# - root2csv module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_ROOTUtilities_ghadd
-  PUBLIC_HEADERS
-    TFileMerger.hh
+gamos_add_module(root2csv
   SOURCES
-    TFileMerger.cc
-    dummy.cc
+    touch.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_ROOTUtilities_ghadd
+
+gamos_module_link_libraries(root2csv
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosBase_Base
+)
+
+# Program root2csv
+gamos_add_executable(root2csv
+  SOURCES
+    root2csv.cc
+  LINK_LIBRARIES
+    root2csv
+    GamosCore_GamosBase_Base
 )

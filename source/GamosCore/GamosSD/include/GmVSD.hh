@@ -56,8 +56,8 @@ protected:
   GmHit* theCurrentHit;
   static SDSegmType theSDSegmType;
 
-  static G4bool bFirstSDBegin;
-  static G4bool bFirstSDEnd;
+  static G4ThreadLocal G4bool bFirstSDBegin;
+  static G4ThreadLocal G4bool bFirstSDEnd;
 
   G4int theEventID;
 

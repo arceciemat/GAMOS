@@ -1,11 +1,17 @@
 //#define PAPER
-#include <fstream>
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosRunManager/include/GmRunManager.hh"
+#ifndef GAMOS_NO_ROOT 
 #include "ROOTUtilities/PlotData/DrawHisto.C"
 #include "ROOTUtilities/PlotData/PlotUtils.C"
 #include "ROOTUtilities/PlotData/CompareStats.C"
+typedef TH1F CDHisto;
+typedef TPad CDPad;
+#else
+// Without ROOT: same drawing functions, written as SVG (optionally converted to png/jpg/pdf)
+#include "PlotDataSVG.icc"
+#endif
 #include "getGammaIndex1CD.C"
 #include "DoseSet.hh"
 #include "DoserData.hh"
@@ -144,6 +150,11 @@ int main(int argc,char** argv)
   }
 
   if( theDrawingDataFileName != "" ) ReadDrawingData( theDrawingDataFileName );
+#ifdef GAMOS_NO_ROOT
+  //--- Figures are written as SVG; optionally converted with an external program
+  theSVGConverter = GetDrawingDataString("SVGConverter", theSVGConverter);
+  theSVGFormat = GetDrawingDataString("SVGFormat", theSVGFormat);
+#endif
 
   if( theCompareFileName == "" ) {
     G4Exception("compareDoses",
@@ -207,7 +218,7 @@ void ReadCompareFile( G4String fileName )
 #endif
        case 6:
 	iColor = GmGenUtils::GetInteger(wl[5]);
-	//	std::cout << wl[1] << " READ COLOR " << iColor << " " << wl[5] << std::endl; //GDEB
+	//	G4cout << wl[1] << " READ COLOR " << iColor << " " << wl[5] << std::endl; //GDEB
 #ifndef WIN32
 	[[fallthrough]];
 #endif
@@ -257,7 +268,6 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
   Definitions::markerTextDispY = GetDrawingData("markerTextDispY",0.5);
   Definitions::markerTextSize = GetDrawingData("markerTextSize",0.5);
   Definitions::lineJoinMarker = GetDrawingData("lineJoinMarker",4);
-  Definitions::yAxisTitle = theDrawingData["yAxisTitle"];
   Definitions::xAxisTitleOffset = GetDrawingData("xAxisTitleOffset",0.7);
   Definitions::yAxisTitleOffset = GetDrawingData("yAxisTitleOffset",1.);
   Definitions::xAxisTitleSize = GetDrawingData("xAxisTitleSize",0.05);
@@ -356,7 +366,7 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
   G4double xInit = 30*theCanvas->GetWw()/500;
   G4double yInit = 378*theCanvas->GetWh()/500;
   G4String hisFileName = doseSet->GetHisFileName();
-  TH1F* his = 0;
+  CDHisto* his = 0;
 
   //----- Data SETS THE HISTO LIMITS, NOT MC = 
   //  Definitions::x/yDataMin/Max. from doser min/max
@@ -389,7 +399,7 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
   for( itecs = plotDosers.begin(); itecs != plotDosers.end(); itecs++, ipd++ ) {
     mdpdd* data1 = (*itecs).second;
     G4String doserName = (*itecs).first;
-    if( verbose >= 2 ) std::cout << "@@@ DRAWING DOSER : " << doserName << " N= " << data1->size() << std::endl; 
+    if( verbose >= 2 ) G4cout << "@@@ DRAWING DOSER : " << doserName << " N= " << data1->size() << std::endl; 
     G4bool bIsFirst = false;
     if(itecs == plotDosers.begin()) {
       bIsFirst = true;
@@ -404,10 +414,10 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
       //-      theCanvas->Draw();
       theCanvas->cd();
       //---- FOR 2 DOSER'S PRINT BOTH AND BELOW DIVISION
-      TPad* pad1 = 0;
+      CDPad* pad1 = 0;
       if( plotDosers.size() == 2 && doseSet->PlotDivided() ) {
 	//       TPad* pad1 = new TPad("","",0.,0.,1.,0.25);
-	pad1 = new TPad("","",Definitions::padLeftMargin,0.25,1.-Definitions::padRightMargin,1.);
+	pad1 = new CDPad("","",Definitions::padLeftMargin,0.25,1.-Definitions::padRightMargin,1.);
 	pad1->Draw();
 	pad1->cd();
 	Definitions::yAxisTitleOffset = GetDrawingData("yAxisTitleOffset",1.3);
@@ -415,7 +425,7 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
 	Definitions::yAxisTitleSize = GetDrawingData("yAxisTitleSize",0.05);
       } else {
 	//       TPad* pad1 = new TPad("","",0.,0.,1.,0.25);
-	pad1 = new TPad("","",Definitions::padLeftMargin,0.,1.-Definitions::padRightMargin,1.);
+	pad1 = new CDPad("","",Definitions::padLeftMargin,0.,1.-Definitions::padRightMargin,1.);
 	pad1->Draw();
 	pad1->cd();
 	Definitions::yAxisTitleOffset = GetDrawingData("yAxisTitleOffset",1.3);
@@ -485,7 +495,7 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
   if( bStatComp ) {
     G4double theStatTextSize = GetDrawingData("statTextSize",0.03);
     vpsmdpdd::const_iterator itecs2; // loop to dosers in file
-    EColor color;
+    EColor color = kBlack;
     ipd = 0;
     for( itecs = plotDosers.begin(); itecs != plotDosers.end(); itecs += 2, ipd += 2) {
       itecs2 = itecs; 
@@ -523,7 +533,7 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
 	    ip2 = setName.find(".",ip1+1);  
 	    fieldStr = setName.substr(ip1+1,ip2-ip1-1);
 	  }
-	  double field = atof(fieldStr);
+	  double field = atof(fieldStr.c_str());
 	  if( field == 0 ) {
 	    G4Exception("PlotDosers",
 			"",
@@ -553,7 +563,7 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
 	for( itepml = thePCMDLimits.begin(); itepml != thePCMDLimits.end(); itepml++ ) {
 	  double perCentLim = (*itepml).first;
 	  double minDistLim = (*itepml).second;
-	  TH1F* histoGI = getGammaIndex1CD( data1, data2, perCentLim, minDistLim );
+	  GmHisto1* histoGI = getGammaIndex1CD( data1, data2, perCentLim, minDistLim );
 	  // get gamma that correspond to 95%
 	  G4int nGamma = theGammaFinal.size();
 	  std::multiset<double>::const_iterator iteg;
@@ -561,7 +571,7 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
 	  G4double gammaPVal = 0.;
 	  G4double jj = 0;
 	  for( iteg = theGammaFinal.begin(); iteg != theGammaFinal.end(); iteg++, jj++ ) {	
-	    //	std::cout << jj << " PVAL " << jj/nGamma << " = " << *iteg << std::endl; //GDEB
+	    //	G4cout << jj << " PVAL " << jj/nGamma << " = " << *iteg << std::endl; //GDEB
 	    if( jj/nGamma > 0.95 ) {
 	      gammaPVal = *iteg;
 	      break;
@@ -571,7 +581,7 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
 	  mean = int(mean*100)/100.;
 	  G4double rms = histoGI->GetRMS(); 
 	  rms = int(rms*100)/100.;
-	  std::cout << (*itecs).first << " " << perCentLim << "% / " << minDistLim << "mm : MEAN GAMMA INDEX " << histoGI->GetMean() << " +- " << histoGI->GetRMS() << " P" << pval*100 << "= " << gammaPVal <<  std::endl;
+	  G4cout << (*itecs).first << " " << perCentLim << "% / " << minDistLim << "mm : MEAN GAMMA INDEX " << histoGI->GetMean() << " +- " << histoGI->GetRMS() << " P" << pval*100 << "= " << gammaPVal <<  std::endl;
 	  //      xInit = 375*theCanvas->GetWw()/500;
 	  if( plotDosers.size() == 2 ) {
 	    xInit = 220*theCanvas->GetWw()/500;
@@ -604,7 +614,7 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
 	WidenHistoLimits(0.05*nPlots, xWHLType, yWHLType );
 	Definitions::yDataMin = GetDrawingData("divYMin",0.95);
 	Definitions::yDataMax = GetDrawingData("divYMax",1.05);
-	TPad* pad2 = new TPad("pad2","pad2",Definitions::padLeftMargin,0.05,1.-Definitions::padRightMargin,0.25);
+	CDPad* pad2 = new CDPad("pad2","pad2",Definitions::padLeftMargin,0.05,1.-Definitions::padRightMargin,0.25);
 	theCanvas->cd();
 	pad2->Draw("sames");
 	pad2->cd();
@@ -623,9 +633,13 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
 	DrawGlobalTitle(his, hisFileName);
 	//      DrawXTitle(his,GetDrawingDataString("xAxisTitle"));
 	//      DrawYTitle(his,Definitions::yAxisTitle);
+#ifndef GAMOS_NO_ROOT
 	TAxis* xAxis = his->GetXaxis();
 	TLine* line = new TLine( xAxis->GetXmin(), 1., xAxis->GetXmax(), 1.); // HORIZ. LINE AT 1
 	line->Draw();
+#else
+	DrawLine( his, Definitions::xDataMin, 1., Definitions::xDataMax, 1. ); // HORIZ. LINE AT 1
+#endif
       }
       if( plotDosers.size() != 2 ) {
 	G4String extraText = GetDrawingDataMulti("extraText", ipd/2);
@@ -653,10 +667,10 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
       }
     }
     hisFileName[icc]='_';
-    std::cout << "HISTOGRAM FILE NAME : DELETED " << icc << " " << hisFileName << std::endl;
+    G4cout << "HISTOGRAM FILE NAME : DELETED " << icc << " " << hisFileName << std::endl;
   }
   //    PrintFig(hisFileName);
-  //  std::cout << " BREAK " << std::endl;
+  //  G4cout << " BREAK " << std::endl;
   //  return;
   //#ifndef PAPER
   //  PrintFig(hisFileName);
@@ -759,11 +773,11 @@ void ReadDrawingData( G4String fileName )
   for( G4int ii = 0;; ii++) {
     if( ! fin.GetWordsInLine(wl) ) break;
     if( wl.size() != 3 ) {
-      std::cerr << " READING LINE N WORDS " << wl.size() << G4endl;
+      G4cerr << " READING LINE N WORDS " << wl.size() << G4endl;
       for( size_t jj = 0; jj < wl.size(); jj++ ) {
-	std::cerr << wl[jj] << " ";
+	G4cerr << wl[jj] << " ";
       }
-      std::cerr << std::endl;
+      G4cerr << std::endl;
       G4Exception("ReadDrawingData",
 		  "",
 		  FatalException,
@@ -786,14 +800,14 @@ void ReadDrawingData( G4String fileName )
 
   if( DoseData::verbosity >= 1 ) { 
     std::map<G4String,G4String>::const_iterator ite;
-    std::cout << " ReadDrawingData READ " << theDrawingData.size() << " MULTI " << theDrawingDataMulti.size() << std::endl;
+    G4cout << " ReadDrawingData READ " << theDrawingData.size() << " MULTI " << theDrawingDataMulti.size() << std::endl;
     for( ite = theDrawingData.begin(); ite != theDrawingData.end(); ite++ ) {
-      std::cout << " theDrawingData  " << (*ite).first << " = " << (*ite).second << G4endl; 
+      G4cout << " theDrawingData  " << (*ite).first << " = " << (*ite).second << G4endl; 
     }
     msvs::const_iterator items;
     for( items = theDrawingDataMulti.begin(); items != theDrawingDataMulti.end(); items++ ) {
       for( size_t jj = 0; jj < (*items).second.size(); jj++ ) {
-	std::cout << " theDrawingDataMulti  " << (*items).first << " : " << jj << " = " << ((*items).second)[jj]  << G4endl; 
+	G4cout << " theDrawingDataMulti  " << (*items).first << " : " << jj << " = " << ((*items).second)[jj]  << G4endl; 
       }
     }
   }
@@ -848,5 +862,10 @@ void PrintHelp()
 	 << " -verb       verbosity: sets the ShieldingVerbosity" << G4endl
 	 << " -indexValType  Type of treatment of dose index (get upper limit, lower limit or average " << G4endl
 	 << " -help       prints the set of arguments " << G4endl;
+#ifdef GAMOS_NO_ROOT
+  G4cout << " Without ROOT the figures are written as SVG files. In the drawing data file you can set: " << G4endl
+	 << "   :P SVGFormat     png    (png/jpg/pdf: converted from SVG if a converter is found; svg: no conversion) " << G4endl
+	 << "   :P SVGConverter  auto   (auto: look for rsvg-convert, inkscape, magick, convert in PATH; none; or program name/path) " << G4endl;
+#endif
 }
 

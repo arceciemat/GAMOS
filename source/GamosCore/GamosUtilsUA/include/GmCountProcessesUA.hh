@@ -50,6 +50,8 @@ class GmCountProcessesUA : public GmUserRunAction,
   void DumpProcessCount( std::ostream& out = G4cout);
   void DumpCreatorProcessCount( std::ostream& out = G4cout);
   void DumpParticleCount( std::ostream& out = G4cout);
+  //--- Multithreading: add counts of this worker to the master instance
+  void MergeToMaster();
 
  private:
   mss theProcessList; // list of processes 

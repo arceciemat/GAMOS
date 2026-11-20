@@ -64,7 +64,7 @@ void GmVPSPrinter::SetUnit(GmVPrimitiveScorer* scorer )
   theUnitRatio = theUnit/theNewUnit;
   theUnitRatio2 = theUnitRatio*theUnitRatio;
 #ifndef GAMOS_NO_VERBOSE
-  if( ScoringVerb(-debugVerb) ) 
+  if( ScoringVerb(debugVerb) ) 
     G4cout << " GmVPSPrinter::SetUnit " << thePrinterName << " " << theUnit << " New " << theNewUnit << " Ratio " << theUnitRatio << G4endl;
 #endif
 }

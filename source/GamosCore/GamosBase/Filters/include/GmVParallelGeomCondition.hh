@@ -6,7 +6,7 @@
 #include <map>
 class G4ParticleDefinition;
 class G4ParallelWorldScoringProcess;
-class G4VTouchable;
+#include "G4VTouchable.hh"
 class G4Track;
 class G4Step;
 class G4StepPoint;

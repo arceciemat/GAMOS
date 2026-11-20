@@ -47,7 +47,7 @@ void compareAll(const char* filename1, const char* filename2, bool bnorm = 0, bo
       compare2His(histo1->GetName(),histo1->GetName(),"N entries",histo1->GetName(), bnorm);
     } else {
       compare2HisProf(histo1->GetName(),histo1->GetName(),"N entries",histo1->GetName(), bnorm);
-      std::cout << "NO 1D " << histo1->GetName() << std::endl; //GDEB 
+      //std::cout << "NO 1D " << histo1->GetName() << std::endl; //GDEB 
     }
   }
   

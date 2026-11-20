@@ -64,9 +64,6 @@ public:
   void WriteHisto1D( const TH1F* histo );
 
 private:
-  DicomPolygonSet* VoxelsInUseClosest( DicomPolygonSet* polySet, DicomVImage* image );
-  virtual G4double GetValueSurrounding(size_t ix, size_t iy, size_t iz, G4double value, DicomVImage* image, std::vector<G4double>* imgDatap );
-
   virtual G4bool GetFigureTitle() const {
     return bFigureTitle;
   }

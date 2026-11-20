@@ -20,8 +20,8 @@
 
 //--------------------------------------------------------------------
 SDSegmType GmVSD::theSDSegmType = SDvirtSegm; 
-G4bool GmVSD::bFirstSDBegin = TRUE;
-G4bool GmVSD::bFirstSDEnd = TRUE;
+G4ThreadLocal G4bool GmVSD::bFirstSDBegin = TRUE;
+G4ThreadLocal G4bool GmVSD::bFirstSDEnd = TRUE;
 
 //--------------------------------------------------------------------
 GmVSD::GmVSD(G4String my_det_name) : G4VSensitiveDetector(my_det_name)

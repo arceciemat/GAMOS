@@ -19,6 +19,8 @@ public:
   GmGeneratorFromBinFile();
   ~GmGeneratorFromBinFile();
   void GeneratePrimaries(G4Event* evt);
+  // Multithreading: the file is read by the first instance (shared by all threads), under a mutex
+  void GeneratePrimariesFromFile(G4Event* evt);
 
 private:
   G4bool CheckDataName( G4int ii, G4String dataName );

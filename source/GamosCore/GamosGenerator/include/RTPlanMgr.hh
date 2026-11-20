@@ -73,7 +73,7 @@ private:
   void Initialize();
   
 private:
-  static RTPlanMgr* theInstance;
+  static G4ThreadLocal RTPlanMgr* theInstance;
   RTVPlanSource* theRTSource;
 
   GmParameterMgr* theParamMgr;

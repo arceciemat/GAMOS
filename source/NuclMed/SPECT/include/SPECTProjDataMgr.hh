@@ -46,9 +46,12 @@ class SPECTProjDataMgr : public GmIObinMgr
   //void ReadFile();
   //PETOutput ReadEvent( G4bool& bEof );
   void WriteInterfile();
+  //--- Multithreading: add the sinogram of this worker thread to the master one and reset it (called by GmMTMergeMgr)
+  void MergeToMaster();
 
 private:
-  static SPECTProjDataMgr* theInstance;
+  static G4ThreadLocal SPECTProjDataMgr* theInstance;
+  static SPECTProjDataMgr* theMasterInstance; // multithreading: instance holding the merged sinogram
   
   G4double theDistAxial,theD_FOV, theOffsetX;
   G4int theN_planes,theN_bin,theN_ang,theMRD, theOutFormat, theTOTaxial_pl;

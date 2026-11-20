@@ -12,7 +12,7 @@
 #include "GamosCore/GamosBase/Base/include/GmClassifierFactory.hh"
 #endif
 
-GmClassifierMgr* GmClassifierMgr::theInstance = 0;
+G4ThreadLocal GmClassifierMgr* GmClassifierMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 GmClassifierMgr::GmClassifierMgr()
@@ -68,6 +68,7 @@ void GmClassifierMgr::AddClassifier( GmVClassifier* classifier )
   std::map<G4String,GmVClassifier*>::const_iterator ite = theClassifiers.find( classifier->GetName() );
   if( ite == theClassifiers.end() ) {
     theClassifiers[classifier->GetName()] = classifier;
+    GmVClassifier::RegisterMasterClassifier( classifier ); // multithreading
 #ifndef GAMOS_NO_VERBOSE
     if( BaseVerb(debugVerb) ) G4cout << " GmClassifierMgr::AddClassifier " << classifier->GetName() << G4endl;
 #endif

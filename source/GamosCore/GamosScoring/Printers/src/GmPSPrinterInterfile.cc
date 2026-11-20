@@ -105,14 +105,14 @@ GmInterfileHeader* GmPSPrinterInterfile::BuildInterfileHeader()
     //  phCentre *= phRotMat; // print in the coordinates of the phantom without rotation
     //  thePhantomMinusCorner += phCentre;
     minV = G4ThreeVector( phGeom->GetMinX(), phGeom->GetMinY(), phGeom->GetMinZ());
-    G4cout << " phGeom minV " << minV << G4endl; //GDEB
+    //G4cout << " phGeom minV " << minV << G4endl; //GDEB
   } else {
     minV = thePhantomParams[0]->GetTranslation(0); // local translation of first voxel in voxelContainer
-    G4cout << " NO phGeom minV " << minV << G4endl; //GDEB
+    //G4cout << " NO phGeom minV " << minV << G4endl; //GDEB
   }
   header->SetMinX(minV.x());
   header->SetMinY(minV.y());
-  G4cout << header << " SET MinZ " << minV.z() << G4endl; //GDEB
+  //G4cout << header << " SET MinZ " << minV.z() << G4endl; //GDEB
   header->SetMinZ(minV.z());
 
   return header;
@@ -157,7 +157,7 @@ void GmPSPrinterInterfile::WriteInterfile( G4THitsMap<G4double>* RunMap, GmVPrim
     } else {
       data = 0.;
     }
-    G4cerr << " SCORE Interfife " << (*ite).first << " : " << data << " = " << (*(ite->second))*theUnitRatio << G4endl; //GDEB
+    //G4cerr << " SCORE Interfife " << (*ite).first << " : " << data << " = " << (*(ite->second))*theUnitRatio << G4endl; //GDEB
    
     dataV.push_back( data );
     /*    G4int nx = ii % nVoxelsX;
@@ -169,9 +169,9 @@ void GmPSPrinterInterfile::WriteInterfile( G4THitsMap<G4double>* RunMap, GmVPrim
   GmInterfile interfile;
   interfile.SetHeader( header );
 
-  G4cout << " interfile.SetData " << G4endl; //GDEB
+  //G4cout << " interfile.SetData " << G4endl; //GDEB
   for( G4int ii = 0; ii < 10; ii++ ) {
-    G4cout << " interfile.SetData " << ii << " : " << dataV[ii] << G4endl; //GDEB
+    //G4cout << " interfile.SetData " << ii << " : " << dataV[ii] << G4endl; //GDEB
   }
   interfile.SetData( dataV );
 

@@ -426,7 +426,7 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr, pmmddpi polygon
   int idMaxX = std::min(int(imNoVoxelsX-1),int((maxXc-imMinX)/imVoxelDimX+1));
   int idMinY = std::max(0,int((minYc-imMinY)/imVoxelDimY));
   int idMaxY = std::min(int(imNoVoxelsY-1),int((maxYc-imMinY)/imVoxelDimY+1));
-  if( DicomVerb(debugVerb) )
+  if( DicomVerb(debugVerb) ) {
     G4cout << " OK CONTOUR INSIDE X/Y OF Z SLICE "
 	   << " minXc " << minXc << " < " << imMinX
 	   << " maxXc " << maxXc << " > " << imMaxX
@@ -436,6 +436,7 @@ void DicomPolygonList::FindVoxelsInXY( DicomVImageStr* imageStr, pmmddpi polygon
 	   << " idMaxX " << idMaxX 
 	   << " idMinY " << idMinY 
 	   << " idMaxY " << idMaxY << G4endl;
+  }
   //for each voxel: build 4 lines from the corner towards the center and check how many contour segments it crosses, and the minimum distance to a segment
   //  G4bool bPrint = false; //GDEB
   //  if( DicomVerb(debugVerb) ) G4cout << " LOOPING POLYGON " << theName << " from " << theLineList->GetName() << G4endl; 

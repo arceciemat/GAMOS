@@ -1,10 +1,8 @@
 #include "SPECTIOMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
-#include <iomanip>
-#include <iostream>
 
 //----------------------------------------------------------------------
-SPECTIOMgr* SPECTIOMgr::theInstance = 0;
+G4ThreadLocal SPECTIOMgr* SPECTIOMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 SPECTIOMgr* SPECTIOMgr::GetInstance()
@@ -99,8 +97,8 @@ SPECTOutput SPECTIOMgr::ReadEvent( G4bool& bEof )
   }
 
   SPECTOutput po;
-  fread (&po, sizeof(struct SPECTOutput),1,theFileIn);
-  if ( feof( theFileIn ) ) {
+  size_t nread = fread (&po, sizeof(struct SPECTOutput),1,theFileIn);
+  if ( nread != 1 || feof( theFileIn ) ) {
     bEof = TRUE;
   } else {
     bEof = FALSE;

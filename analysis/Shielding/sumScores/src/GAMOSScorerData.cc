@@ -1,7 +1,6 @@
 #include "GAMOSScorerData.hh"
 #include "ScoreData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include <set>
 
 //----------------------------------------------------------------------
 GAMOSScorerData::GAMOSScorerData() : ScorerData()
@@ -29,7 +28,7 @@ void GAMOSScorerData::Print( std::ofstream& fout )
     }
   }
 
-  totalScoreData->Print(fout);
+  if( totalScoreData ) totalScoreData->Print(fout); // no SUM_ALL line in input file
 
 }
 

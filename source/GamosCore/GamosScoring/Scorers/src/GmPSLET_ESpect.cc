@@ -51,7 +51,7 @@ void GmPSLET_ESpect::BuildMaterialStoppingPowerNames( G4String nameSPFN )
       G4Exception("GmPSLET_ESpect::BuildMaterialStoppingPowerNames",
 		  "",
 		  FatalErrorInArgument,
-	1	  ("Lines in file " + nameSPFN + " must contain only two words: GEANT4_MATERIAL_NAME STOPPINGPOWER_FILE_NAME , while it contains " + GmGenUtils::itoa(wl.size())).c_str());
+		  ("Lines in file " + nameSPFN + " must contain only two words: GEANT4_MATERIAL_NAME STOPPINGPOWER_FILE_NAME , while it contains " + GmGenUtils::itoa(wl.size())).c_str());
     }
     theNameSPFiles[wl[1]] = wl[0];    
   }
@@ -73,7 +73,7 @@ void GmPSLET_ESpect::InitialiseE2LET()
     std::map<G4String,G4String>::const_iterator item = theNameSPFiles.find(mateName);
     G4String mateSPFileName;
     if( item == theNameSPFiles.end() ) {
-      G4cerr << " N CONVERSION NAMES " << theNameSPFiles.size() << G4endl;  //GDEB
+      //G4cerr << " N CONVERSION NAMES " << theNameSPFiles.size() << G4endl;  //GDEB
       for( item = theNameSPFiles.begin(); item != theNameSPFiles.end(); item++ ){
 	G4cerr << " CONV " << (*item).first << " -> " << (*item).second << G4endl;
       }
@@ -140,7 +140,7 @@ G4double GmPSLET_ESpect::GetLETFromEnergy(G4Step* aStep)
 
   G4Material*  mate = stepPoint->GetMaterial();
   G4String mateName = mate->GetName();
-  G4double density = mate->GetDensity()/(CLHEP::g/CLHEP::cm3);
+  //  G4double density = mate->GetDensity()/(CLHEP::g/CLHEP::cm3);
   G4double let = 0.;
   /*t  GmNumericDistributionLogLog* dist = theDistributions[mateName];
 

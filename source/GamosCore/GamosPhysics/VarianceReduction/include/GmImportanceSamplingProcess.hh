@@ -46,7 +46,7 @@ private:
 
   std::vector<GmVFilter*> theFilters;
 
-  static GmInheritTrackInfoUA* theInheritTrackInfoUA;
+  static G4ThreadLocal GmInheritTrackInfoUA* theInheritTrackInfoUA;
 
 };
 #endif

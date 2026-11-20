@@ -14,7 +14,7 @@ class DicomReaderRTDose;
 class DicomVImage;
 class DicomMgr;
 class DicomParameterMgr;
-class DicomReaderG4dcmCT; //GDEB
+class DicomReaderG4dcmCT;
 
 typedef std::multimap<DRModality,DicomVReader*> mmmdr;
 typedef std::vector<DicomVReaderImage*> vdri;

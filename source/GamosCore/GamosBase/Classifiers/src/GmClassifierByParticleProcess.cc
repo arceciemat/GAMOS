@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "GmClassifierByParticleProcess.hh"
 #include "GamosCore/GamosBase/Classifiers/include/GmClassifierVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -33,10 +34,11 @@ int64_t GmClassifierByParticleProcess::GetIndexFromStep(const G4Step* aStep)
 {
   int64_t index;
   const G4VProcess* proc = aStep->GetPostStepPoint()->GetProcessDefinedStep();
+  //--- Multithreading: processes are thread local, use the master process as key (same in all threads)
+  if( proc && G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() && proc->GetMasterProcess() ) proc = proc->GetMasterProcess();
   std::map<const G4VProcess*,int64_t>::const_iterator ite = theIndexMap.find(proc);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[proc] = index;
+    index = AssignNewIndex( this, &GmClassifierByParticleProcess::theIndexMap, proc ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }
@@ -64,11 +66,12 @@ int64_t GmClassifierByParticleProcess::GetIndexFromTrack(const G4Track* aTrack)
   if( !aStep ) return 0;
 
   const G4VProcess* proc = aStep->GetPostStepPoint()->GetProcessDefinedStep();
+  //--- Multithreading: processes are thread local, use the master process as key (same in all threads)
+  if( proc && G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() && proc->GetMasterProcess() ) proc = proc->GetMasterProcess();
 
   std::map<const G4VProcess*,int64_t>::const_iterator ite = theIndexMap.find(proc);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[proc] = index;
+    index = AssignNewIndex( this, &GmClassifierByParticleProcess::theIndexMap, proc ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

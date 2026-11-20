@@ -48,7 +48,7 @@ GmEnergySplitter::GmEnergySplitter()
    theElossExt = new G4EnergyLossForExtrapolator(0);
    thePhantomParam = 0;
    theNIterations = G4int(GmParameterMgr::GetInstance()->GetNumericValue("GmEnergySplitter:NIterations",2));
-   G4cout << "GmEnergySplitter::GmEnergySplitter" << G4endl; //GDEB
+   //G4cout << "GmEnergySplitter::GmEnergySplitter" << G4endl; //GDEB
 		
 }
 

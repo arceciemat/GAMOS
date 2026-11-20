@@ -178,7 +178,7 @@ void DCMExtendImageAir::ReadFilesAndGetImages()
     //----- G4StructID SET NEW VOXELS TO 0 OR REDO WITH RTSTRUCT
     DicomVImageStr* imageStr = 0;
     std::vector<DicomVReader*> RTStructReaders = theReaderMgr->GetReaders(DRM_RTStruct, false);
-    G4cout << " N eReaders(DRM_RTStruct " << RTStructReaders.size() << G4endl; //GDEB
+    //G4cout << " N eReaders(DRM_RTStruct " << RTStructReaders.size() << G4endl; //GDEB
     if( RTStructReaders.size() == 0 ) {
       //--- G4StructID SET NEW VOXELS TO 0 OR REDO WITH RTSTRUCT
       imageStr = readerCT->GetStructIDImage();

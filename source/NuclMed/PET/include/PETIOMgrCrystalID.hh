@@ -46,7 +46,7 @@ private:
   char binary_char(unsigned int num, int iset );
   unsigned int GetTouchableID( G4TouchableHistory* touch);
 
-  static PETIOMgrCrystalID* theInstance;
+  static G4ThreadLocal PETIOMgrCrystalID* theInstance;
   G4bool bDumpCout;
   G4bool bCartesian;
   G4Navigator* theNavigator;

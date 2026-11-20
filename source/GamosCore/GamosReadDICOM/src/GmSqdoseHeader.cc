@@ -74,7 +74,7 @@ void GmSqdoseHeader::Read( FILE* fin )
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( ReadDICOMVerb(-warningVerb) ) G4cout << " GmSqdoseHeader::Read NEvent " << std::setprecision(4) << (theNoEvent) << G4endl; 
+  if( ReadDICOMVerb(warningVerb) ) G4cout << " GmSqdoseHeader::Read NEvent " << std::setprecision(4) << (theNoEvent) << G4endl; 
 #endif
   
   if( GmGenUtils::freadLittleEndian8(&theNoVoxelsX, sizeof(size_t),  1, fin) != 1) {
@@ -96,7 +96,7 @@ void GmSqdoseHeader::Read( FILE* fin )
 		"Problem reading number of voxels Z");
   }
 #ifndef GAMOS_NO_VERBOSE
-  if( ReadDICOMVerb(-warningVerb) ) G4cout << " GmSqdoseHeader::Read NVoxels " << theNoVoxelsX << " " << theNoVoxelsY << " " << theNoVoxelsZ << G4endl;
+  if( ReadDICOMVerb(warningVerb) ) G4cout << " GmSqdoseHeader::Read NVoxels " << theNoVoxelsX << " " << theNoVoxelsY << " " << theNoVoxelsZ << G4endl;
 #endif
   
   float vlim;
@@ -132,7 +132,7 @@ void GmSqdoseHeader::Read( FILE* fin )
   }
 
 #ifndef GAMOS_NO_VERBOSE
-  if( ReadDICOMVerb(-warningVerb) ) {
+  if( ReadDICOMVerb(warningVerb) ) {
     G4cout << " GmSqdoseHeader::Read VoxelDims " <<theVoxelLimitsX[1]-theVoxelLimitsX[0] << " " << theVoxelLimitsY[1]-theVoxelLimitsY[0] << " " << theVoxelLimitsZ[1]-theVoxelLimitsZ[0] << G4endl;
     G4cout << " GmSqdoseHeader::Read Limits X: " <<theVoxelLimitsX[0] << " " << theVoxelLimitsX[theVoxelLimitsX.size()-1] << " Y: " << theVoxelLimitsY[0] << " " << theVoxelLimitsY[theVoxelLimitsY.size()-1] << " Z: " << theVoxelLimitsZ[0] << "  " << theVoxelLimitsZ[theVoxelLimitsZ.size()-1] << G4endl;
   }
@@ -351,7 +351,7 @@ void GmSqdoseHeader::ChangeVoxelLimits( G4int ixmin, G4int ixmax, G4int iymin, G
   std::vector<float> newVoxelLimitsY(theVoxelLimitsY);
   std::vector<float> newVoxelLimitsZ(theVoxelLimitsZ);
   for( size_t ii = 0; ii < newVoxelLimitsX.size(); ii++ ) {
-    G4cout << " newVoxelLimitsX " << newVoxelLimitsX[ii] << G4endl; //GDEB
+    //G4cout << " newVoxelLimitsX " << newVoxelLimitsX[ii] << G4endl; //GDEB
   }  
   
   theVoxelLimitsX.clear();
@@ -359,7 +359,7 @@ void GmSqdoseHeader::ChangeVoxelLimits( G4int ixmin, G4int ixmax, G4int iymin, G
   theVoxelLimitsZ.clear();
   for( G4int ix = ixmin; ix < ixmax+1; ix++ ) {
     theVoxelLimitsX.push_back(newVoxelLimitsX[ix]);
-    G4cout << ix << " theVoxelLimitsX " << theVoxelLimitsX[theVoxelLimitsX.size()-1] << G4endl; //GDEB
+    //G4cout << ix << " theVoxelLimitsX " << theVoxelLimitsX[theVoxelLimitsX.size()-1] << G4endl; //GDEB
   }
   for( G4int iy = iymin; iy < iymax+1; iy++ ) {
     theVoxelLimitsY.push_back(newVoxelLimitsY[iy]);

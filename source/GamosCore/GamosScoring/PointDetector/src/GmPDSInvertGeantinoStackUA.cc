@@ -11,7 +11,7 @@
 #include "G4Track.hh"
 
 
-GmPDSInvertGeantinoStackUA* GmPDSInvertGeantinoStackUA::theInstance = 0;
+G4ThreadLocal GmPDSInvertGeantinoStackUA* GmPDSInvertGeantinoStackUA::theInstance = 0;
 
 //---------------------------------------------------------------------------
 GmPDSInvertGeantinoStackUA* GmPDSInvertGeantinoStackUA::GetInstance()

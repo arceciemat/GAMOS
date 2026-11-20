@@ -82,9 +82,9 @@ void GmBOptrForceCollision::StartRun()
   ConvertParticleProcessToPointers();
 
   mmpp::const_iterator ite = theParticleProcesses.begin();
-  std::cout << "  GmBOptrForceCollision::StartRun( " << theParticleProcesses.size() << G4endl; //GDEB
+  //G4cout << "  GmBOptrForceCollision::StartRun( " << theParticleProcesses.size() << G4endl; //GDEB
   fParticleToBias = (*ite).first;
-  std::cout << "  GmBOptrForceCollision::StartRun( fParticleToBias " << fParticleToBias << G4endl; //GDEB
+  //G4cout << "  GmBOptrForceCollision::StartRun( fParticleToBias " << fParticleToBias << G4endl; //GDEB
 
 }
 

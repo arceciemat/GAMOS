@@ -35,6 +35,10 @@ private:
   int CloseIAEAFiles();
   int CloseIAEAHeaderFiles(G4int nevents);
   int CloseIAEARecordFiles();
+  // file name (without extension) for a Z stop; in MT workers with .thN if bThread
+  G4String GetPSFileName( G4double zstop, G4bool bThread ) const;
+  // MT: worker appends its files to the merged ones (one thread at a time); master writes the merged header
+  void MergeThreadFiles();
   int CompressIAEAFile( char* fiaeaphsp );
   void StoreTrackRecord( const G4Step* aStep, G4double zstop);
   

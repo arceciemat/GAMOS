@@ -52,7 +52,7 @@ class GmMovementMgr
   }
 
 private:
-  static GmMovementMgr* theInstance;
+  static G4ThreadLocal GmMovementMgr* theInstance;
 
   std::vector<GmVMovement*> theMovements;
 

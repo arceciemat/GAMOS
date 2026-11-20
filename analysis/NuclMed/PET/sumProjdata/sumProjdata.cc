@@ -25,7 +25,6 @@
 --------------------------------------------------------*/
 
 #include "G4UImanager.hh"
-#include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
 
 #include "sumProjdata.hh"
@@ -90,7 +89,7 @@ for (int i = 1; i < argc; i++) {
   
   G4int ii;
   char theFilename[255];
-  SINO_TYPE * sino_tmp;
+  SINO_TYPE * sino_tmp = 0;
   unsigned long int posNEW, j;
   
   for( ii = 0;; ii++){
@@ -123,7 +122,12 @@ for (int i = 1; i < argc; i++) {
       
       sino_tmp = (SINO_TYPE*) malloc (sizeTOT);
       sino_total = (SINO_TYPE*) malloc (sizeTOT);
-      fread(sino_total,1,sizeTOT, InitFile);
+      if( fread(sino_total,1,sizeTOT, InitFile) != size_t(sizeTOT) ) {
+	G4Exception("sumProjData",
+		    "Read error",
+		    FatalException,
+		    (G4String("ERROR READING FILE ")+theFilename).c_str());
+      }
       
       fclose(InitFile);
       // -- End Init file (posTOT stored)
@@ -131,7 +135,7 @@ for (int i = 1; i < argc; i++) {
       
       oType==1 ? sprintf(theFilename,"%s.s",wl[0].c_str()) : sprintf(theFilename,"%s.v",wl[0].c_str());
       
-      posNEW=read_data(theFilename, sino_tmp);
+      posNEW=read_data(theFilename, sino_tmp, posTOT);
       if (posNEW==posTOT){
 	for(j=0;j<posTOT;j++){
 	  sino_total[j]=sino_total[j]+sino_tmp[j];	
@@ -173,7 +177,8 @@ for (int i = 1; i < argc; i++) {
 
 
 // ---------------------------------------------------------------
-unsigned long int read_data(const char* theName, SINO_TYPE* theSino){
+// Reads the file only if it fits in theSino (maxElements); returns its number of elements
+unsigned long int read_data(const char* theName, SINO_TYPE* theSino, unsigned long int maxElements){
     
   FILE *theINfile;
   size_t newfileSize;
@@ -191,7 +196,12 @@ unsigned long int read_data(const char* theName, SINO_TYPE* theSino){
     rewind(theINfile);
     
     
-    fread(theSino,1,newfileSize, theINfile);
+    if( newfileSize/sizeof(SINO_TYPE) == maxElements ) { // otherwise caller reports different size
+      if( fread(theSino,1,newfileSize, theINfile) != newfileSize ) {
+	cout << "Error reading file:" << theName << "\n";
+	exit (-1);
+      }
+    }
     fclose(theINfile);
     
     return ( newfileSize/sizeof(SINO_TYPE) );

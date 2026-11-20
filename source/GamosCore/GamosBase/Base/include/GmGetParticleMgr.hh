@@ -31,7 +31,7 @@ public:
   G4String GetG4ProcessName(const G4String& particleName, G4String processName );
 
 private:
-  static GmGetParticleMgr* theInstance;
+  static G4ThreadLocal GmGetParticleMgr* theInstance;
 };
 
 #endif

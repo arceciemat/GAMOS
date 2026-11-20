@@ -1,10 +1,8 @@
 #include "PETIOMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
-#include <iomanip>
-#include <iostream>
 
 //----------------------------------------------------------------------
-PETIOMgr* PETIOMgr::theInstance = 0;
+G4ThreadLocal PETIOMgr* PETIOMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 PETIOMgr* PETIOMgr::GetInstance()
@@ -113,8 +111,8 @@ PETOutput PETIOMgr::ReadEvent( G4bool& bEof )
   }
 
   PETOutput po;
-  fread (&po, sizeof(struct PETOutput),1,theFileIn);
-  if ( feof( theFileIn ) ) {
+  size_t nread = fread (&po, sizeof(struct PETOutput),1,theFileIn);
+  if ( nread != 1 || feof( theFileIn ) ) {
     bEof = TRUE;
   } else {
     bEof = FALSE;

@@ -143,7 +143,7 @@ CompStatData CompareStatsChi2( mdpdd* data1, mdpdd* data2, mdpdd& dataDiv)
 		    << " between X= " << (*itec2b).first << " - " << (*itec2).first 
 		    << " valX= " << (*itec2b).second.first << " - " << (*itec2).second.first 
 		    << " errX " << (*itec2b).second.second << " - " << (*itec2).second.second     
-		    << std::endl; //GDEB
+		    << std::endl;
 	}
 	if( newVal != 0.  && (*itec1).second.first != 0. ) {
 	  newErr = (*itec1).second.first/newVal * sqrt( sqr(newErr/newVal) + sqr((*itec1).second.second/(*itec1).second.first));

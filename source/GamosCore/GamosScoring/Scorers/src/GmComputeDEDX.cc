@@ -3,9 +3,6 @@
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 
 #include "G4EmCalculator.hh"
-#include "G4Electron.hh"
-#include "G4Positron.hh"
-#include "G4Gamma.hh"
 #include "G4VEnergyLossProcess.hh"
 #include "G4ProcessManager.hh"
 
@@ -50,7 +47,7 @@ G4double GmComputeDEDX::GetDEDX(G4Step* aStep, G4bool bRestricted)
     }
     if( ioniProcess ) {
       G4PhysicsTable* theDEDXunRestrictedTable = ioniProcess->DEDXunRestrictedTable();
-      G4cout << ioniProcess->GetProcessName() << " GmComputeDEDX theDEDXunRestrictedTable " << theDEDXunRestrictedTable << " " << ioniProcess->DEDXTable() << G4endl; //GDEB
+      //G4cout << ioniProcess->GetProcessName() << " GmComputeDEDX theDEDXunRestrictedTable " << theDEDXunRestrictedTable << " " << ioniProcess->DEDXTable() << G4endl; //GDEB
       dEdx = ioniProcess->fFactor*(*theDEDXunRestrictedTable)[ioniProcess->basedCoupleIndex]->Value(kinEAver, ioniProcess->idxDEDX);
       if(kinEAver < ioniProcess->minKinEnergy) {
 	dEdx *= std::sqrt(kinEAver/ioniProcess->minKinEnergy);
@@ -72,7 +69,6 @@ G4double GmComputeDEDX::GetElectronicDEDX(G4Step* aStep, G4bool bRestricted)
   G4double kinEAver = (preStepPoint->GetKineticEnergy()+aStep->GetPostStepPoint()->GetKineticEnergy())/2.;
   G4ParticleDefinition* part =  aStep->GetTrack()->GetDefinition();
   G4Material* mate = preStepPoint->GetMaterial();
-  G4Region* region = preStepPoint->GetPhysicalVolume()->GetLogicalVolume()->GetRegion();
   G4ProductionCuts* prodCuts = preStepPoint->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetProductionCuts();
  //  G4Region* region = preStepPoint->GetPhysicalVolume()->GetLogicalVolume()->GetRegion();
   G4double cut = prodCuts->GetProductionCut("e-");

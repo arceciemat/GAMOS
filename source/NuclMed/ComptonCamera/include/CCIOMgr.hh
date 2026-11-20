@@ -41,7 +41,7 @@ void WriteEvent( const G4ThreeVector& pos1, const G4double& energy1, const G4Thr
 private:
 
 GmIOMgr* theCCIOMgr;
-static CCIOMgr* theInstance;
+static G4ThreadLocal CCIOMgr* theInstance;
 G4bool bBinFile; 
 G4bool bDumpCout;
 G4bool bCartesian;

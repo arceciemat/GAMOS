@@ -61,8 +61,8 @@ G4bool GmAncestorsFilter::AcceptStep(const G4Step* aStep)
   if( !gmTrkInfo ) return FALSE;
 
   //--- Check if passed previous track at AcceptTrack
-  G4int trkID = aTrack->GetTrackID();
-  /*  if( bPassed.find( aTrack->GetParentID()) != bPassed.end()) {
+  /*  G4int trkID = aTrack->GetTrackID();
+  if( bPassed.find( aTrack->GetParentID()) != bPassed.end()) {
 #ifndef GAMOS_NO_VERBOSE
     if( FilterVerb(debugVerb) ) G4cout << " GmAncestorsFilter::AcceptStep return 1, because ancestor was accepted at AcceptTrack " << G4endl;
 #endif

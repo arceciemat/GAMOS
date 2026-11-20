@@ -1,11 +1,13 @@
 #include "DCMGetOrganInfo.hh"
 
+#ifndef GAMOS_NO_ROOT
 #include "TStyle.h"
 #include "TCanvas.h"
-#include "TH1F.h"
 #include "TLine.h"
+#endif
 
 #include "DICOM/DICOMBase/include/DicomVImage.hh"
+#include "DICOM/DICOMBase/include/DicomVImageStr.hh"
 #include "DICOM/DICOMBase/include/DicomMgr.hh"
 #include "DICOM/DICOMBase/include/DicomParameterMgr.hh"
 #include "DICOM/DICOMBase/include/DicomPolygonSet.hh"
@@ -19,15 +21,26 @@
 #include "DICOM/DICOMBase/include/Dicom2DOperAddError.hh"
 #include "DICOM/DICOMBase/include/DicomNDOperArithm.hh"
 #include "DICOM/DICOMBase/include/DicomDrawerROOT.hh"
+#include "DICOM/DICOMBase/include/DicomDrawerSVG.hh"
 
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 
 #include "CLHEP/Random/RandGauss.h"
+#ifndef GAMOS_NO_ROOT
 #include "ROOTUtilities/PlotData/Definitions.C"
 #include "ROOTUtilities/PlotData/PlotUtils.C"
 #include "ROOTUtilities/GenUtils.C"
+#else
+// Without ROOT: figures are drawn as SVG (converted to imageFormat, default jpg, if a converter is found)
+// and histograms are written as text
+#include "ROOTUtilities/PlotData/PlotDataSVG.cc"
+#include "GamosCore/GamosUtils/include/GmSVGPad.hh"
+#include "GamosCore/GamosUtils/include/GmSVGFrame.hh"
+#endif
+#include "GamosCore/GamosUtils/include/GmSVGCanvas.hh" // also with ROOT: GmSVGCanvas::SetPalette
+#include "GamosCore/GamosBase/Base/include/GmHistoWriterCSV.hh"
 
 using namespace std;
 
@@ -109,7 +122,7 @@ void DCMGetOrganInfo::ProcessArguments(int argc,char** argv)
     
     for( G4int ii = 1; ii < argc; ii++ ){
       G4String argvstr = argv[ii];
-      //      std::cout << ii << "ARGV " << argv[ii] << std::endl; //GDEB
+      //      G4cout << ii << "ARGV " << argv[ii] << std::endl; //GDEB
       G4String argvstr1 = argv[ii+1];
       G4String argvName = argvstr.substr(1,999);
       if( argvstr == "-bDepoEnergy" ||
@@ -198,7 +211,10 @@ void DCMGetOrganInfo::ProcessArguments(int argc,char** argv)
     }
   }
   G4int palette = G4int(theParamMgr->GetNumericValue("palette",55));
+#ifndef GAMOS_NO_ROOT
   gStyle->SetPalette(palette);
+#endif
+  GmSVGCanvas::SetPalette(palette); // SVG drawer: same palettes as ROOT (1, 51-113)
   bDrawImageDoseInSt = G4bool(theParamMgr->GetNumericValue("bDrawImageDoseInSt",0));
   theHistosLogN = theParamMgr->GetNumericValue("histosLogN",0.);
   if( theHistosLogN != 0. ) bHistosLogN = true;
@@ -293,7 +309,7 @@ void DCMGetOrganInfo::ReadFilesAndGetImages()
   //--- IF fSt EXISTS USE IT FOR STRUCTURES
   if( !bPerMate ) {
     std::vector<DicomVReader*> VRTFiles = theReaderMgr->GetReaders(DRM_RTStruct, false);
-    G4cout << " N VRTFiles "  << VRTFiles.size() << G4endl; //GDEB
+    //G4cout << " N VRTFiles "  << VRTFiles.size() << G4endl; //GDEB
     if( VRTFiles.size() == 1 ) { 
       DicomReaderRTStruct* RTFile = dynamic_cast<DicomReaderRTStruct*>(VRTFiles[0]);
       if (RTFile->IsVOI() ) {
@@ -430,8 +446,8 @@ void DCMGetOrganInfo::GetInfoFromImage()
   G4double fMinX_anal = theAnalyseImage->GetMinX();
   G4double fMinY_anal = theAnalyseImage->GetMinY();
   G4double fMinZ_anal = theAnalyseImage->GetMinZ();
-  theAnalyseImage->PrintHeader(); //GDEB
-  theStructIDImage->PrintHeader(); //GDEB
+  theAnalyseImage->PrintHeader();
+  theStructIDImage->PrintHeader();
   
   //----- CHECK IF ANALYSE IMAGE AND STRUCTURE IMAGE HAVE SAME VOXELS
   bDiffDim = 0;
@@ -479,10 +495,16 @@ void DCMGetOrganInfo::GetInfoFromImage()
   
   //--- DEFINE DOSE & DOSE-VOLUME HISTOGRAM LIMITS
   std::vector<G4double>* theDoses = theAnalyseImage->GetData();
+#ifndef GAMOS_NO_ROOT
   TFile* histosFile = 0;
+#endif
+  GmHistoWriterCSV* histosCSV = 0;
   if( bHistos ) {
+#ifndef GAMOS_NO_ROOT
     G4String hfn = theParamMgr->GetStringValue("fOut","")+".root";
     histosFile = new TFile(hfn.c_str(),"RECREATE");
+#endif
+    histosCSV = new GmHistoWriterCSV(theExeName+".csv"); // getOrganInfo.csv
     //    G4cout << " N theDoses " << theDoses->size() << " " << theAnalyseImage->GetModality() << G4endl; //GDEB
     //--- If not set, use limits from theAnalyseImage
     G4double doseMin = DBL_MAX;
@@ -508,7 +530,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
 	  }
 	}
       }
-      //      std::cout << " " << doseMin << " " << doseMax << " bUserHistoDoseMin " << bUserHistoDoseMin << " : " << theHistoDoseMin << " " << bLog << G4endl; //GDEB
+      //      G4cout << " " << doseMin << " " << doseMax << " bUserHistoDoseMin " << bUserHistoDoseMin << " : " << theHistoDoseMin << " " << bLog << G4endl; //GDEB
       if( !bUserHistoDoseMax ) {
 	if( bLog ) {
 	  theHistoDoseMax = GmGenUtils::GetAboveInt(log10(doseMax))+1;
@@ -548,6 +570,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
     if( theDoses->at(ii) != 0) G4cout << ii << " THEDOSES " << theDoses->at(ii) << G4endl; //GDEB
   }*/
   G4int nDoseNon0 = 0;
+  G4int nDoseOutsideCT = 0;
   G4String magnitude = "Dose";
   if( bDepoEnergy ) magnitude = "EDepo";
   G4double* doseP = &(theDoses->at(0));
@@ -592,6 +615,12 @@ void DCMGetOrganInfo::GetInfoFromImage()
       //      G4cout << " ANAL" << X_anal << " " << Y_anal << " " << Z_anal << " ST " << X_st << " " << Y_st << " " << Z_st << G4endl; //GDEB
       //??      dose = theDoses->at(iiSt);
     }
+    //--- density image (G4dcmCT) may have different voxels than the analyse image and the structure image
+    G4int iiDens = GetMateDensIndex( theAnalyseImage, ii );
+    if( iiDens < 0 ) { // no material outside the G4dcmCT image
+      if( dose != 0. ) nDoseOutsideCT++;
+      continue;
+    }
     //    G4cout << theStructIDImage << "USE theStructIDImage N " << theStructIDImage->GetData()->size() << G4endl; //GDEB
     if( bPerMate ) {
       ists.insert( theStructIDImage->GetData(iiSt) ); //using MateID from G4dcmCT
@@ -604,7 +633,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
     }
     for( std::set<G4int>::const_iterator itest = ists.begin(); itest != ists.end(); itest++ ) {
       size_t ist = *itest;
-      if( ist == 99995 ) { //GDEB
+      /*      if( ist == 99995 ) {
 	G4int ix_anal = ii%nVoxelX_anal;
 	G4int iy_anal = (ii/nVoxelX_anal)%nVoxelY_anal;
 	G4int iz_anal = ii/nVoxelXY_anal;
@@ -621,7 +650,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
 	       << " iist " << ix_st << " : " <<iy_st<<" :" << iz_st <<G4endl;
 	G4cout << ist << " " << ii << "=" << iiSt << " Xanal " << X_anal << " : " <<Y_anal<<" :" << Z_anal 
 	       << " Xst " << X_st << " : " <<Y_st<<" :" << Z_st << " DOSE "  << dose << " +- " << doseErr <<G4endl;
-     }
+	       }*/
           
       if( G4int(ist) == thePrintStID ) {
 	G4cout << ist << " : " << theClassifNames[ist] << " " << ii << " VALUE: " << dose << " +- " << doseErr << G4endl;  
@@ -631,7 +660,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
 	theNVoxels0PerSt[ist]++;
       }
       // not needed, because it is also not used in theMassesPerSt      dens *= theROIs[ist]->GetVolume(ii);
-      double dens = theAnalyseMateDensImage->GetData(iiSt);
+      double dens = theAnalyseMateDensImage->GetData(iiDens);
       if( bDosimQ ) {
 	//	if( ii%100000 == 0 ) G4cout << ist << " : 0 " << " theVoxelDoseErrPerSt " << ii << " " << dose*theNofEvents << " +- " <<doseErr*theNofEvents << " dose " << dose << G4endl; //GDEB
 	theVoxelDoseErrPerSt[ist][0].insert( mmdd::value_type(dose*theNofEvents, doseErr*theNofEvents) );
@@ -666,6 +695,13 @@ void DCMGetOrganInfo::GetInfoFromImage()
 	//	if( ist == 132 ) G4cout << 1./CLHEP::joule << " / " << theVoxelVolume_anal*1e-6 << " MASS ST " << dens/CLHEP::joule/(theVoxelVolume_anal*1e-6) << " -> " << theMassesPerSt[ist] << " mass " << dens << G4endl; 
       }
     }
+  }
+
+  if( nDoseOutsideCT != 0 ) {
+    G4Exception(theExeName,
+		"",
+		JustWarning,
+		(GmGenUtils::itoa(nDoseOutsideCT)+" voxels with dose != 0 are outside the G4dcmCT image (no material density): they are not used").c_str());
   }
 
   //----- DIVIDE E_DEPOSITED BY MASS OR CONVERT E_DEPOSITED TO MeV
@@ -942,8 +978,8 @@ void DCMGetOrganInfo::GetInfoFromImage()
  	//	fout << "DOSIMETRY: " << std::setw(maxNameWidth+1) << "\"" << theClassifNames[id] << "\"";
 	G4double dosimv = dosimve.first;
 	G4double dosime = dosimve.second;
-	std::cout << "DOSIMETRY: " << std::setw(maxNameWidth+2) << "\""+theClassifNames[id]+"\"";
-	std::cout << " : " << dosimq << " = " << dosimv << " +- " << dosime << std::endl;
+	G4cout << "DOSIMETRY: " << std::setw(maxNameWidth+2) << "\""+theClassifNames[id]+"\"";
+	G4cout << " : " << dosimq << " = " << dosimv << " +- " << dosime << std::endl;
 	fout << "DOSIMETRY: " << std::setw(maxNameWidth+2) << "\""+theClassifNames[id]+"\"";
 	fout << " : " << dosimq << " = " << dosimv << " +- " << dosime << std::endl;
       }
@@ -960,7 +996,12 @@ void DCMGetOrganInfo::GetInfoFromImage()
     } else {
       hpair = FillDoseHistos(theAnalyseImageRandom, thePerCentImage);
     }
+    SaveHistosCSV( hpair, histosCSV );
+#ifndef GAMOS_NO_ROOT
     WriteHistosToFile( hpair, histosFile );
+#else
+    WriteHistosToFile( hpair );
+#endif
 
     if( DicomVerb(debugVerb) ){
       G4cout << " NRANDOM " << nRandom << " " << theAnalyseErrorImage << G4endl;
@@ -973,24 +1014,24 @@ void DCMGetOrganInfo::GetInfoFromImage()
       Dicom2DOperAddError* operAddErr = new Dicom2DOperAddError(-1,"Dicom2DOperAddError",theNErrorSigmas);
       
       //--- create TProfile copying TH1F
-      std::map<size_t,TH1F*>::const_iterator iteh;
+      std::map<size_t,GmHisto1*>::const_iterator iteh;
       mhp::const_iterator itehp;
       mhp doseHistosProf;
       //      G4cout << " NRANDOM hpairN " <<  hpair.first.size() << G4endl; //GDEB
       for( iteh = hpair.first.begin(); iteh != hpair.first.end(); iteh++ ) {
-	TH1F* his = iteh->second;
-	TAxis* axis = his->GetXaxis();
+	GmHisto1* his = iteh->second;
+	G4int nBins = his->GetNbinsX();
 	std::string hisName = std::string(his->GetName())+"ERROR";
-	TProfile* hisProf = new TProfile(hisName.c_str(), hisName.c_str(),axis->GetNbins(), axis->GetXmin(), axis->GetXmax());
+	GmHistoProfile1* hisProf = new GmHistoProfile1(hisName.c_str(), hisName.c_str(), nBins, his->GetBinLowEdge(1), his->GetBinLowEdge(nBins)+his->GetBinWidth(nBins));
 	doseHistosProf[iteh->first] = hisProf;
       }
       //      G4cout << " doseHistosProf N " << doseHistosProf.size() << G4endl; //GDEB
       mhp doseVolumeHistosProf;
       for( iteh = hpair.second.begin(); iteh != hpair.second.end(); iteh++ ) {
-	TH1F* his = iteh->second;
-	TAxis* axis = his->GetXaxis();
+	GmHisto1* his = iteh->second;
+	G4int nBins = his->GetNbinsX();
 	std::string hisName = std::string(his->GetName())+"ERROR";
-	TProfile* hisProf = new TProfile(hisName.c_str(), hisName.c_str(),axis->GetNbins(), axis->GetXmin(), axis->GetXmax());
+	GmHistoProfile1* hisProf = new GmHistoProfile1(hisName.c_str(), hisName.c_str(), nBins, his->GetBinLowEdge(1), his->GetBinLowEdge(nBins)+his->GetBinWidth(nBins));
 	doseVolumeHistosProf[iteh->first] = hisProf;
       }
      
@@ -1002,29 +1043,40 @@ void DCMGetOrganInfo::GetInfoFromImage()
 	
 	//--- Fill profile histos with this random fluctuation
 	for( iteh = hpair.second.begin(); iteh != hpair.second.end(); iteh++ ) {
-	  TH1F* his = iteh->second;    
-	  TAxis* axis = his->GetXaxis();
+	  GmHisto1* his = iteh->second;    
   	  itehp = doseVolumeHistosProf.find(iteh->first);
-	  TProfile* hisProf = itehp->second;
-	  for( int ih = 1; ih <= axis->GetNbins(); ih++ ) {
-	    hisProf->Fill(axis->GetBinCenter(ih),his->GetBinContent(ih));
+	  GmHistoProfile1* hisProf = itehp->second;
+	  for( int ih = 1; ih <= his->GetNbinsX(); ih++ ) {
+	    hisProf->Fill(his->GetBinCenter(ih),his->GetBinContent(ih));
 	    /*	    if( std::string(his->GetName()).find("TV") != std::string::npos ) {
-&	      std::cout << ii << " " << ih << " NRANDOM hisProf " << hisProf->GetBinContent(ih) << " FROM " << his->GetBinContent(ih) << G4endl; //GDEB
+&	      G4cout << ii << " " << ih << " NRANDOM hisProf " << hisProf->GetBinContent(ih) << " FROM " << his->GetBinContent(ih) << G4endl; //GDEB
 }*/
 	  }
 	}
 	delete imageNew;
       }
       pmhpmhp hpairp(doseHistosProf, doseVolumeHistosProf);
+      SaveHistosCSV( hpairp, histosCSV );
+#ifndef GAMOS_NO_ROOT
       WriteHistosToFile( hpairp, histosFile );
+#else
+      WriteHistosToFile( hpairp );
+#endif
     } 
+#ifndef GAMOS_NO_ROOT
     histosFile->Close();
+#endif
+    delete histosCSV; // closes the .csv file
     
   }
 
   if( bDrawImageDoseInSt ) {
     DicomVImage* imageDoseInSt = FillImageDoseInSt( theDosesPerSt );
+#ifndef GAMOS_NO_ROOT
     DicomDrawerROOT* theDrawer = new DicomDrawerROOT();
+#else
+    DicomDrawerSVG* theDrawer = new DicomDrawerSVG(); // SVG figures (converted to imageFormat if possible)
+#endif
     std::vector<DicomVLineSet*> theLineSets;
     G4String extraFileName = "";  
     theDrawer->DrawXY(imageDoseInSt,theLineSets,extraFileName);
@@ -1035,7 +1087,47 @@ void DCMGetOrganInfo::GetInfoFromImage()
   }
 
 //---------------------------------------------------------------------------
-std::pair< std::map<size_t,TH1F*>,std::map<size_t,TH1F*> > DCMGetOrganInfo::FillDoseHistos( DicomVImage* analyseImage, DicomVImage* voxelPerCentImage )
+G4int DCMGetOrganInfo::GetMateDensIndex( DicomVImage* analyseImage, size_t ii ) const
+{
+  DicomVImage* densImage = theAnalyseMateDensImage;
+  size_t nVoxelX_anal = analyseImage->GetNoVoxelsX();
+  size_t nVoxelY_anal = analyseImage->GetNoVoxelsY();
+  size_t nVoxelX_dens = densImage->GetNoVoxelsX();
+  size_t nVoxelY_dens = densImage->GetNoVoxelsY();
+  size_t nVoxelZ_dens = densImage->GetNoVoxelsZ();
+  G4double prec = analyseImage->GetPrecision();
+  //--- same voxels: same index
+  if( nVoxelX_anal == nVoxelX_dens
+      && nVoxelY_anal == nVoxelY_dens
+      && analyseImage->GetNoVoxelsZ() == nVoxelZ_dens
+      && fabs(analyseImage->GetVoxelDimX()-densImage->GetVoxelDimX()) <= prec
+      && fabs(analyseImage->GetVoxelDimY()-densImage->GetVoxelDimY()) <= prec
+      && fabs(analyseImage->GetVoxelDimZ()-densImage->GetVoxelDimZ()) <= prec
+      && fabs(analyseImage->GetMinX()-densImage->GetMinX()) <= prec
+      && fabs(analyseImage->GetMinY()-densImage->GetMinY()) <= prec
+      && fabs(analyseImage->GetMinZ()-densImage->GetMinZ()) <= prec ) {
+    return G4int(ii);
+  }
+  //--- different voxels: density voxel that contains the centre of the analyse voxel
+  size_t ix_anal = ii%nVoxelX_anal;
+  size_t iy_anal = (ii/nVoxelX_anal)%nVoxelY_anal;
+  size_t iz_anal = ii/(nVoxelX_anal*nVoxelY_anal);
+  G4double X_anal = analyseImage->GetMinX()+analyseImage->GetVoxelDimX()*(ix_anal+0.5);
+  G4double Y_anal = analyseImage->GetMinY()+analyseImage->GetVoxelDimY()*(iy_anal+0.5);
+  G4double Z_anal = analyseImage->GetMinZ()+analyseImage->GetVoxelDimZ()*(iz_anal+0.5);
+  G4int ix_dens = G4int(std::floor((X_anal-densImage->GetMinX())/densImage->GetVoxelDimX()));
+  G4int iy_dens = G4int(std::floor((Y_anal-densImage->GetMinY())/densImage->GetVoxelDimY()));
+  G4int iz_dens = G4int(std::floor((Z_anal-densImage->GetMinZ())/densImage->GetVoxelDimZ()));
+  if( ix_dens < 0 || ix_dens >= G4int(nVoxelX_dens)
+      || iy_dens < 0 || iy_dens >= G4int(nVoxelY_dens)
+      || iz_dens < 0 || iz_dens >= G4int(nVoxelZ_dens) ) {
+    return -1;
+  }
+  return ix_dens + iy_dens*G4int(nVoxelX_dens) + iz_dens*G4int(nVoxelX_dens*nVoxelY_dens);
+}
+
+//---------------------------------------------------------------------------
+std::pair< std::map<size_t,GmHisto1*>,std::map<size_t,GmHisto1*> > DCMGetOrganInfo::FillDoseHistos( DicomVImage* analyseImage, DicomVImage* voxelPerCentImage )
 {
   mh doseHistos;
   mh doseVolumeHistos;
@@ -1098,7 +1190,9 @@ std::pair< std::map<size_t,TH1F*>,std::map<size_t,TH1F*> > DCMGetOrganInfo::Fill
     } else {
       ists = theStructIDImage->GetIDList( iiSt );
     }
-    double dens = theAnalyseMateDensImage->GetData(iiSt);
+    G4int iiDens = GetMateDensIndex( analyseImage, ii );
+    if( iiDens < 0 ) continue; // no material outside the G4dcmCT image
+    double dens = theAnalyseMateDensImage->GetData(iiDens);
 
     for( std::set<G4int>::const_iterator itest = ists.begin(); itest != ists.end(); itest++ ) {
       size_t ist = *itest;
@@ -1143,9 +1237,9 @@ std::pair< std::map<size_t,TH1F*>,std::map<size_t,TH1F*> > DCMGetOrganInfo::Fill
       if( bLog ) {
 	if( log10dose != 0 ) log10dose = log10(log10dose);
       }
-      TH1F* hisD = theAnaMgr->GetHisto1D(90000+ist*1000+1);
+      GmHisto1* hisD = theAnaMgr->GetHisto1D(90000+ist*1000+1);
       hisD->Fill(log10dose);
-      TH1F* hisDV = theAnaMgr->GetHisto1D(90000+ist*1000+2);
+      GmHisto1* hisDV = theAnaMgr->GetHisto1D(90000+ist*1000+2);
       for( G4int ih = 1; ih < hisDV->GetNbinsX(); ih++ ){
 	//       	if( log10dose != 0 && ih != 0) G4cout << theClassifNames[ist] << " "<< ih << " FILLDV " <<  hisDV->GetBinLowEdge(ih)<<  "  < " << log10dose << G4endl; //GDEB
 	if( hisDV->GetBinLowEdge(ih) < log10dose ) {
@@ -1160,9 +1254,15 @@ std::pair< std::map<size_t,TH1F*>,std::map<size_t,TH1F*> > DCMGetOrganInfo::Fill
   
   //--- NORMALIZE Dose-Volume HISTOS TO 100
   G4double doseTVmax = -DBL_MAX;
-  std::map<size_t,TH1F*>::const_iterator ite;
+  std::map<size_t,GmHisto1*>::const_iterator ite;
   for( ite = doseVolumeHistos.begin(); ite != doseVolumeHistos.end(); ite++ ) {
-    TH1F* hisDV = (*ite).second;
+    GmHisto1* hisDV = (*ite).second;
+    //--- no voxel with dose above the histogram minimum (e.g. a structure with no dose): all bins are 0,
+    //    they are not normalized (it would be 0/0 = nan)
+    if( hisDV->GetBinContent(1) == 0. ) {
+      if( DicomVerb(infoVerb) ) G4cout << " Dose-Volume histogram " << hisDV->GetName() << " is empty: it is not normalized " << G4endl;
+      continue;
+    }
     for( G4int ih = hisDV->GetNbinsX()-1; ih > 0; ih-- ){
       //  if ( ih == 10 )  G4cout << " NORM hisDV " << hisDV->GetBinContent(ih) << " -> " << hisDV->GetBinContent(ih) * 100./ hisDV->GetBinContent(1) << G4endl;  //GDEB
       hisDV->SetBinContent(ih, hisDV->GetBinContent(ih) * 100./ hisDV->GetBinContent(1) );
@@ -1185,6 +1285,29 @@ std::pair< std::map<size_t,TH1F*>,std::map<size_t,TH1F*> > DCMGetOrganInfo::Fill
 }
 
 
+//-----------------------------------------------------------------------------
+void DCMGetOrganInfo::SaveHistosCSV( pmhmh hpair, GmHistoWriterCSV* histosCSV )
+{
+  for( mh::const_iterator ite = hpair.first.begin(); ite != hpair.first.end(); ite++ ) {
+    histosCSV->SaveHisto1( ite->second );
+  }
+  for( mh::const_iterator ite = hpair.second.begin(); ite != hpair.second.end(); ite++ ) {
+    histosCSV->SaveHisto1( ite->second );
+  }
+}
+
+//-----------------------------------------------------------------------------
+void DCMGetOrganInfo::SaveHistosCSV( pmhpmhp hpair, GmHistoWriterCSV* histosCSV )
+{
+  for( mhp::const_iterator ite = hpair.first.begin(); ite != hpair.first.end(); ite++ ) {
+    histosCSV->SaveHistoProf1( ite->second );
+  }
+  for( mhp::const_iterator ite = hpair.second.begin(); ite != hpair.second.end(); ite++ ) {
+    histosCSV->SaveHistoProf1( ite->second );
+  }
+}
+
+#ifndef GAMOS_NO_ROOT
 //-----------------------------------------------------------------------------
 void DCMGetOrganInfo::WriteHistosToFile( pmhmh hpair, TFile* histosFile )
 {
@@ -1290,7 +1413,7 @@ void DCMGetOrganInfo::WriteHistosToFile( pmhmh hpair, TFile* histosFile )
     histosFile->cd();
     his->Write();
     if( DicomVerb(infoVerb) ){
-      std::cout << " DRAW DOSE-VOLUME " << his->GetName() << " " << his->GetXaxis()->GetNbins() << " " <<  his->GetXaxis()->GetXmin() << " " << his->GetXaxis()->GetXmax() << G4endl;
+      G4cout << " DRAW DOSE-VOLUME " << his->GetName() << " " << his->GetXaxis()->GetNbins() << " " <<  his->GetXaxis()->GetXmin() << " " << his->GetXaxis()->GetXmax() << G4endl;
     }
     G4String organName;
     organName = theClassifNames[ist];
@@ -1475,6 +1598,10 @@ void DCMGetOrganInfo::WriteHistosToFile( pmhpmhp hpair, TFile* histosFile )
 
 }
 
+#else
+#include "DCMGetOrganInfoSVG.icc"
+#endif
+
 //---------------------------------------------------------------------------
 DicomVImage* DCMGetOrganInfo::FillImageDoseInSt( std::map<size_t, long double> dosesPerSt )
 {
@@ -1557,7 +1684,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
 {
   // minimum dose received by at least D% of the volume of a structure. voxel dose is ordered, so = dose of 100-D% voxel
   
-  if( DicomVerb(-infoVerb) ) std::cout << dosimq << " " << id << " START GetDosimDPercentage " << " Nrandom " << voxelDoseErrors11.size() << " NVox " << voxelDoseErrors11[0].size() << std::endl;
+  if( DicomVerb(infoVerb) ) G4cout << dosimq << " " << id << " START GetDosimDPercentage " << " Nrandom " << voxelDoseErrors11.size() << " NVox " << voxelDoseErrors11[0].size() << std::endl;
       
   //  D95=  minimum dose received by >= 95% of each planning target volume
   std::pair<G4double,G4double> dosimQE;
@@ -1568,12 +1695,12 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
 		FatalException,
 		("Value is negative or bigger than 100 = "+ dosimq).c_str());
   }
-  //  std::cout << id << " GetDosimDPercentage Nerr11 " << voxelDoseErrors11.size() << std::endl; //GDEB
+  //  G4cout << id << " GetDosimDPercentage Nerr11 " << voxelDoseErrors11.size() << std::endl; //GDEB
   mmdd voxelDoseErrors1t = ((*voxelDoseErrors11.begin())).second;
   G4int nVoxelD = voxelDoseErrors1t.size();
   G4int NVox = G4int(nVoxelD*(dosimVal))-1; // must include the D% highest voxels, so start from rbegin()
-  if( DicomVerb(-debugVerb) ){
-    std::cout << id << " GetDosimDPercentage dosimVal " << dosimVal << " NVox " << NVox << " nVoxel_TOT  " << nVoxelD << std::endl; 
+  if( DicomVerb(debugVerb) ){
+    G4cout << id << " GetDosimDPercentage dosimVal " << dosimVal << " NVox " << NVox << " nVoxel_TOT  " << nVoxelD << std::endl; 
   }
   if( NVox < 0 ) {
     G4Exception("DCMGetOrganInfo::GetDosimDPercentage",
@@ -1587,19 +1714,19 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
     /*    if( id == 73 ) {
       G4int iib = 0;
       for( mmdd::reverse_iterator ite1b = voxelDoseErrors1.rbegin(); ite1b != voxelDoseErrors1.rend(); iib++, ite1b++ ) {
-	std::cout << id << " " << iib << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1b) << " dosimQ " << (*ite1b).first << " +- " <<(*ite1b).second << std::endl;
+	G4cout << id << " " << iib << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1b) << " dosimQ " << (*ite1b).first << " +- " <<(*ite1b).second << std::endl;
 	if( iib > NVox ) break;
       }
       }*/
     mmdd::reverse_iterator ite1 = voxelDoseErrors1.rbegin();
-    G4cout << NVox << " BEFORE ADVANCE " << (*ite1).first << " +- " << (*ite1).second << G4endl; //GDEB
+    //G4cout << NVox << " BEFORE ADVANCE " << (*ite1).first << " +- " << (*ite1).second << G4endl; //GDEB
     //  mmdd::iterator ite1 = voxelDoseErrors1.begin();
     std::advance( ite1, NVox);
-    G4cout << NVox << " AFTER ADVANCE " << (*ite1).first << " +- " << (*ite1).second << G4endl; //GDEB
+    //G4cout << NVox << " AFTER ADVANCE " << (*ite1).first << " +- " << (*ite1).second << G4endl; //GDEB
     //    G4cout << " GetDosimDPercentage advance " << NVox << " : " << (*ite1).first << "N VOXELS " << voxelDoseErrors1.size() <<  G4endl; //GDEB
     dosimQE = std::pair<G4double,G4double>((*ite1).first,(*ite1).second);
-    if( DicomVerb(-debugVerb) ){
-      std::cout << id << " NVox= " << NVox << " nvoxelD " << nVoxelD << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << std::endl;
+    if( DicomVerb(debugVerb) ){
+      G4cout << id << " NVox= " << NVox << " nvoxelD " << nVoxelD << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << std::endl;
     }
   } else {
     G4double val = 0.;
@@ -1612,7 +1739,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
     int ii11 = 0;
     for( ; ite11 != voxelDoseErrors11.end(); ite11++, ii11++ ) {
       mmdd voxelDoseErrors1 = ite11->second;
-      if( DicomVerb(-debugVerb) ) std::cout << id << " " << ite11->first << " GetDosimDPercentage N1 " << nVoxelD << " NVox= " << NVox << std::endl;
+      if( DicomVerb(debugVerb) ) G4cout << id << " " << ite11->first << " GetDosimDPercentage N1 " << nVoxelD << " NVox= " << NVox << std::endl;
       mmdd::reverse_iterator ite1 = voxelDoseErrors1.rbegin();
       //  mmdd::iterator ite1 = voxelDoseErrors1.begin();
       std::advance( ite1, NVox);
@@ -1624,8 +1751,8 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
 	  G4cout << ii11 << " " << ii << " VOXELDOSE " << ite->first << " " << ite->second << G4endl; //GDEB
 	  }*/
 
-	if( DicomVerb(-debugVerb) ){
-	  std::cout << ii11 << " " << id << " " << NVox << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << " -> " << val << " " << valSq << std::endl;
+	if( DicomVerb(debugVerb) ){
+	  G4cout << ii11 << " " << id << " " << NVox << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << " -> " << val << " " << valSq << std::endl;
 	}
 	//	  G4cout << id << ":" << std::distance(voxelDoseErrors11.begin(),ite11) << " GetDosimDPercentage dose " << (*ite1).first << G4endl;
       } else {
@@ -1636,8 +1763,8 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
 	} else if( std::distance( voxelDoseErrors11.begin(), ite11) == 2 ) {
 	  valN = (*ite1).first; // DOSE-DOSE_ERROR
 	}
-	if( DicomVerb(-debugVerb) ){
-	  std::cout << id << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << " -> " << valP << std::endl;
+	if( DicomVerb(debugVerb) ){
+	  G4cout << id << " GetDosimDPercentage " << std::distance( voxelDoseErrors1.rbegin(), ite1) << " dosimQ " << (*ite1).first << " +- " <<(*ite1).second << " -> " << valP << std::endl;
 	}
       }
     }
@@ -1648,8 +1775,8 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDPercentage(std::map<size_
     } else {
       valErr = fabs(valP-valN)/2;
     }
-    if( DicomVerb(-debugVerb) ){
-      std::cout << id << " GetDosimDPercentage dosimQE " << val << " +- " << valErr << std::endl;
+    if( DicomVerb(debugVerb) ){
+      G4cout << id << " GetDosimDPercentage dosimQE " << val << " +- " << valErr << std::endl;
     }
     
     dosimQE = std::pair<G4double,G4double>(val,valErr);
@@ -1689,7 +1816,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmincc(std::map<size_t,mmd
     /*    if( id == 73 ) {
       G4int iib = 0;
       for( mmdd::iterator ite1b = voxelDoseErrors1.begin(); ite1b != voxelDoseErrors1.end(); iib++, ite1b++ ) {
-	std::cout << id << " " << iib << " GetDosimDmincc " << std::distance( voxelDoseErrors1.begin(), ite1b) << " dosimQ " << (*ite1b).first << " +- " <<(*ite1b).second << std::endl;
+	G4cout << id << " " << iib << " GetDosimDmincc " << std::distance( voxelDoseErrors1.begin(), ite1b) << " dosimQ " << (*ite1b).first << " +- " <<(*ite1b).second << std::endl;
 	if( iib > NVox ) break;
       }
       }*/
@@ -1705,7 +1832,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmincc(std::map<size_t,mmd
     G4double val = 0.;
     G4double valSq = 0.;
     if( DicomVerb(infoVerb) ){
-      std::cout << id << " GetDosimDmincc " << dosimVal << " N " << voxelDoseErrors11.size() << std::endl;
+      G4cout << id << " GetDosimDmincc " << dosimVal << " N " << voxelDoseErrors11.size() << std::endl;
     }
     std::map<size_t,mmdd>::iterator ite11 = voxelDoseErrors11.begin();
     ite11++; // first is without modifications
@@ -1759,7 +1886,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmaxcc(std::map<size_t,mmd
     /*    if( id == 73 ) {
       G4int iib = 0;
       for( mmdd::reverse_iterator ite1b = voxelDoseErrors1.rbegin(); ite1b != voxelDoseErrors1.rend(); iib++, ite1b++ ) {
-	std::cout << id << " " << iib << " GetDosimDmaxcc " << std::distance( voxelDoseErrors1.rbegin(), ite1b) << " dosimQ " << (*ite1b).first << " +- " <<(*ite1b).second << std::endl;
+	G4cout << id << " " << iib << " GetDosimDmaxcc " << std::distance( voxelDoseErrors1.rbegin(), ite1b) << " dosimQ " << (*ite1b).first << " +- " <<(*ite1b).second << std::endl;
 	if( iib > NVox ) break;
       }
       }*/
@@ -1779,7 +1906,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmaxcc(std::map<size_t,mmd
     G4double val = 0.;
     G4double valSq = 0.;
     if( DicomVerb(infoVerb) ){
-      std::cout << id << " GetDosimDmaxcc" << dosimVal << " N " << voxelDoseErrors11.size() << std::endl;
+      G4cout << id << " GetDosimDmaxcc" << dosimVal << " N " << voxelDoseErrors11.size() << std::endl;
     }
     std::map<size_t,mmdd>::iterator ite11 = voxelDoseErrors11.begin();
     ite11++; // first is without modifications
@@ -1823,7 +1950,7 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimDmean(std::map<size_t,mmdd
     G4double val = 0.;
     G4double valSq = 0.;
     if( DicomVerb(infoVerb) ){
-      std::cout << id << " GetDosimDmean N " << voxelDoseErrors11.size() << std::endl;
+      G4cout << id << " GetDosimDmean N " << voxelDoseErrors11.size() << std::endl;
     }
     std::map<size_t,mmdd>::iterator ite11 = voxelDoseErrors11.begin();
     ite11++; // first is without modifications
@@ -1933,12 +2060,12 @@ std::pair<G4double,G4double> DCMGetOrganInfo::GetDosimVolume(std::map<size_t,mmd
     G4double val = 0.;
     G4double valSq = 0.;
     if( DicomVerb(infoVerb) ){
-      std::cout << id << " GetDosimDmaxcc" << dosimVal << " N " << voxelDoseErrors11.size() << std::endl; 
+      G4cout << id << " GetDosimDmaxcc" << dosimVal << " N " << voxelDoseErrors11.size() << std::endl; 
     }
     std::map<size_t,mmdd>::iterator ite11 = voxelDoseErrors11.begin();
     ite11++; // first is without modifications
     G4int nErr = voxelDoseErrors11.size() - 1;
-    int ii11 = 0; //GDEB
+    int ii11 = 0;
     for( ; ite11 != voxelDoseErrors11.end(); ite11++, ii11++ ) {
       mmdd voxelDoseErrors1 = ite11->second;
       /*      int ii = 0;
@@ -2001,7 +2128,7 @@ void DCMGetOrganInfo::PrintHelp()
 	 << " -paletteMin VALUE   set minimum of palette" << G4endl
 	 << " -paletteMax VALUE   set maximum of palette" << G4endl
 	 << " -bDrawImageDoseInSt   Draw an image where each voxel has the value of the dose in the structure it belongs to (average if it belongs to several structures. Default is 0" << G4endl
-	 << " -bHistos     Fill Dose Histograms and Dose-Volume Histograms and save them in a .root file" << G4endl
+	 << " -bHistos     Fill Dose Histograms and Dose-Volume Histograms and save them in the GAMOS .csv file getOrganInfo.csv (and in the file FOUT.root if GAMOS is built with ROOT)" << G4endl
 	 << " -histosLogN VALUE   Values of imageDoseInSet are converted by logarithm base N" << G4endl
 	 << " -nRandomizeError VALUE   Calculate statistical fluctuations of dosimetric quantities changing each dose value by the value sampling a Gaussian with sigma equal to the dose error value (for sqdose); try VALUE times and get the average " << G4endl
 	 << " -nErrorSigmas VALUE      Use VALUE*dose_error_value for the nRandomizeError calculations" << G4endl
@@ -2011,6 +2138,13 @@ void DCMGetOrganInfo::PrintHelp()
 	 << " -verb        sets the verbosity: test/debug/info/warning/error/silent" << G4endl
 	 << " -h           prints the set of arguments " << G4endl
 	 << " -help        prints the set of arguments " << G4endl;
+#ifdef GAMOS_NO_ROOT
+  G4cout << " Without ROOT the figures are drawn as SVG files and the histograms are written in the GAMOS .csv file getOrganInfo.csv (as with ROOT): " << G4endl
+	 << " -imageFormat FORMAT   svg (no conversion), png, jpg (default), gif, bmp, tiff (built-in renderer), pdf, ps, eps, webp (converted from SVG if a converter is found) " << G4endl
+	 << " -jpgQuality N   quality (1-100, default 90) of jpg files written by the built-in renderer " << G4endl
+	 << " Environment variable GM_FIGURE_NTHREADS: number of threads writing png/jpg/gif/bmp/tiff figures in background (default: number of cores - 1, at most 16; 0: no threads) " << G4endl
+	 << " -SVGConverter  auto   (auto/builtin: built-in renderer for png/jpg/gif/bmp/tiff, for the other formats look for rsvg-convert, inkscape, magick, convert in PATH; none; or program name/path) " << G4endl;
+#endif
 }
  
 /*t	  argvstr == "-bVolumeMass" ||

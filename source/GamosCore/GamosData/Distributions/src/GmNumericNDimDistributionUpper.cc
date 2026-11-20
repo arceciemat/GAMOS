@@ -22,7 +22,7 @@ G4double GmNumericNDimDistributionUpper::InterpolateValue( const std::vector<std
     indexVal.push_back( ind1[ii] );
 #ifndef GAMOS_NO_VERBOSE
     if( DistVerb(debugVerb) ) {
-      G4cout << "NDim Upper indexVal " << indexVal[ii] << G4endl; //GDEB
+      G4cout << "NDim Upper indexVal " << indexVal[ii] << G4endl;
     }
 #endif
   }

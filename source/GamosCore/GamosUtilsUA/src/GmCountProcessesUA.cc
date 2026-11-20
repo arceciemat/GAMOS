@@ -1,3 +1,5 @@
+#include "G4AutoLock.hh"
+#include "G4Threading.hh"
 #include "GmCountProcessesUA.hh"
 #include "GmUtilsUAVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
@@ -17,7 +19,9 @@
 
 //-----------------------------------------------------------------
 GmCountProcessesUA::GmCountProcessesUA()
-{ 
+{
+  //--- Multithreading: worker counts are added to the master instance, which prints them
+  SetRunOnMaster(true); 
 }
 
 
@@ -29,6 +33,8 @@ GmCountProcessesUA::~GmCountProcessesUA()
 //-----------------------------------------------------------------
 void GmCountProcessesUA::BeginOfRunAction(const G4Run* )
 {
+  //--- Multithreading: also with a classifier the counts are merged into the master, as the classifier indices are
+  //    assigned by the master classifier (GmVClassifier::AssignNewIndex) or do not depend on the thread
   int ii, siz;
   G4ParticleTable* partTable = G4ParticleTable::GetParticleTable();
   siz = partTable->size();
@@ -184,6 +190,10 @@ void GmCountProcessesUA::UserSteppingAction(const G4Step* aStep )
 //-----------------------------------------------------------------
 void GmCountProcessesUA::EndOfRunAction(const G4Run* )
 {
+  if( IsRunOnMaster() && G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    MergeToMaster();
+    return;
+  }
   G4cout << "@@@@ " << theName << G4endl;
   DumpParticleCount();
   DumpProcessCount();
@@ -271,4 +281,36 @@ void GmCountProcessesUA::DumpParticleCount( std::ostream& out)
     }
   }
 
+}
+
+//-----------------------------------------------------------------
+namespace {
+  void AddCounts( mlmpssi& master, mlmpssi& worker ) {
+    for( auto ite = worker.begin(); ite != worker.end(); ite++ ) {
+      if( master.find(ite->first) == master.end() ) master[ite->first] = new mpssi;
+      mpssi* mm = master[ite->first];
+      for( auto ite2 = ite->second->begin(); ite2 != ite->second->end(); ite2++ ) {
+	(*mm)[ite2->first] += ite2->second;
+      }
+      ite->second->clear();
+    }
+  }
+}
+
+//-----------------------------------------------------------------
+void GmCountProcessesUA::MergeToMaster()
+{
+  GmCountProcessesUA* master = dynamic_cast<GmCountProcessesUA*>(GmUserAction::GetMasterUserAction(GetName()));
+  if( !master ) return;
+  G4AutoLock l(&GmUserAction::GetMergeMutex());
+  AddCounts( master->theProcessCount, theProcessCount );
+  AddCounts( master->theCreatorProcessCount, theCreatorProcessCount );
+  for( auto ite = theParticleCount.begin(); ite != theParticleCount.end(); ite++ ) {
+    if( master->theParticleCount.find(ite->first) == master->theParticleCount.end() ) master->theParticleCount[ite->first] = new msi;
+    msi* mm = master->theParticleCount[ite->first];
+    for( auto ite2 = ite->second->begin(); ite2 != ite->second->end(); ite2++ ) {
+      (*mm)[ite2->first] += ite2->second;
+    }
+    ite->second->clear();
+  }
 }

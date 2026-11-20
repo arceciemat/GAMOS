@@ -6,7 +6,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
 //----------------------------------------------------------------------
-GmCutsStudyMgr* GmCutsStudyMgr::theInstance = 0;
+G4ThreadLocal GmCutsStudyMgr* GmCutsStudyMgr::theInstance = 0;
 
 //-----------------------------------------------------------------------
 GmCutsStudyMgr::GmCutsStudyMgr()

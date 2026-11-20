@@ -55,6 +55,8 @@ public:
   
 protected:
   virtual void BookHistos();
+  // add the y, z of one event with its weight to all the sums used for the means and their errors
+  void AddEntry( G4double y, G4double z, G4double wei );
 
 protected:
   G4bool bTextFile;
@@ -73,6 +75,10 @@ protected:
   G4double theSumZ4;
   G4double theSumWei;
   G4double theSumWei2;
+  // sums for the errors (delta method for the ratios of sums yF=Sum(w*y)/Sum(w), yD=Sum(w*y^2)/Sum(w*y))
+  G4double theSumW2Y, theSumW2Y2, theSumW2Y3, theSumW2Y4;
+  G4double theSumW2Z, theSumW2Z2, theSumW2Z3, theSumW2Z4;
+  G4double theNEntries;
   std::vector<GmMicroyzHit*> theHits;
 
 };

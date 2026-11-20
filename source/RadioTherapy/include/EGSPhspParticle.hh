@@ -26,6 +26,10 @@ public:
 
   int CheckIntegrity(int i);
   int RefreshParticle(FILE* file, long number);
+  // position of the next record in the file (first record after the header, whose length is one record)
+  void Rewind() { theFilePointer = theRecordLength; }
+  long GetFilePointer() const { return theFilePointer; }
+  void SetFilePointer( long fp ) { theFilePointer = fp; }
 
   void SetLatch( unsigned int lat ) {
     theLatch = lat;
@@ -64,6 +68,7 @@ public:
   int theNPass;
   // char muse;
   long theFilePointer;
+  long theRecordLength; // 28 bytes (MODE0) or 32 bytes (MODE2, with ZLAST)
   //  int eof;
   //  vector<long> theLongs;
   //  vector<float> theFloats;

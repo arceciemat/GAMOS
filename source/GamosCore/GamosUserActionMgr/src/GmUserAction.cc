@@ -1,3 +1,4 @@
+#include <map>
 #include "GmUserAction.hh"
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
 #include "GamosCore/GamosBase/Base/include/GmVClassifier.hh"
@@ -10,6 +11,7 @@
 GmUserAction::GmUserAction()
 {
   isEnabled = TRUE;
+  bRunOnMaster = FALSE;
   theClassifier = 0;
 
   bApplyFiltersToStepping = TRUE;
@@ -70,4 +72,34 @@ void GmUserAction::SetFilterOrClassifier(const G4String& objectName)
   bCheckAllFiltersAtPostTracking = G4bool(paramMgr->GetNumericValue(theName+":CheckAllFiltersAtPostTracking", bApplyFiltersToPostTracking));
   bCheckAllFiltersAtStacking = G4bool(paramMgr->GetNumericValue(theName+":CheckAllFiltersAtStacking", bApplyFiltersToStacking));
 
+}
+
+//-----------------------------------------------------------------------
+namespace {
+  std::map<G4String,GmUserAction*>& MasterUserActions() {
+    static std::map<G4String,GmUserAction*> theMasterUAs;
+    return theMasterUAs;
+  }
+  G4Mutex uaMergeMutex = G4MUTEX_INITIALIZER;
+}
+
+//-----------------------------------------------------------------------
+void GmUserAction::RegisterMasterUserAction( GmUserAction* ua )
+{
+  if( !G4Threading::IsMasterThread() ) return;
+  MasterUserActions()[ua->GetName()] = ua;
+}
+
+//-----------------------------------------------------------------------
+GmUserAction* GmUserAction::GetMasterUserAction( const G4String& name )
+{
+  std::map<G4String,GmUserAction*>::const_iterator ite = MasterUserActions().find(name);
+  if( ite == MasterUserActions().end() ) return 0;
+  return ite->second;
+}
+
+//-----------------------------------------------------------------------
+G4Mutex& GmUserAction::GetMergeMutex()
+{
+  return uaMergeMutex;
 }

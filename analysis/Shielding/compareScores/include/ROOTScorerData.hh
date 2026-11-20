@@ -1,3 +1,4 @@
+#ifndef GAMOS_NO_ROOT // ROOT files can only be read if GAMOS is built with ROOT
 #ifndef ROOTScorerData__HH
 #define ROOTScorerData__HH
 #include "ScorerData.hh"
@@ -19,4 +20,5 @@ public:
   
 };
 
+#endif
 #endif

@@ -30,7 +30,7 @@ GmCompoundScorer::GmCompoundScorer(G4String name)
 
 
 //--------------------------------------------------------------------
-G4bool GmCompoundScorer::ProcessHits(G4Step* aStep,G4TouchableHistory*)
+G4bool GmCompoundScorer::ProcessHits(G4Step* /*aStep*/,G4TouchableHistory*)
 {
   if( !bInitialized ) {
     //--- set unit

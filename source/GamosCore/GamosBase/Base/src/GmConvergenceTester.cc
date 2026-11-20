@@ -713,3 +713,34 @@ G4double GmConvergenceTester::slope_fitting_function ( std::vector< G4double > x
 
    return y;
 }
+
+
+//------------------------------------------------------------------
+void GmConvergenceTester::Merge( GmConvergenceTester* other )
+{
+  G4double lastTime = cpu_time.size() != 0 ? cpu_time.back() : 0.;
+  for( G4int ii = 0; ii < other->n; ii++ ) {
+    std::map<G4int,G4double>::const_iterator ite = other->nonzero_histories.find(ii);
+    G4double x = (ite == other->nonzero_histories.end()) ? 0. : ite->second;
+    if( x != 0.0 ) {
+      nonzero_histories.insert( std::pair< G4int , G4double > ( n , x ) );
+      if ( x > largest_scores.back() ) {
+	std::vector< G4double >::iterator it;
+	for ( it = largest_scores.begin() ; it != largest_scores.end() ; it++ ) {
+	  if ( x > *it ) {
+	    largest_scores.insert( it , x );
+	    break;
+	  }
+	}
+	if ( largest_scores.size() > 201 ) largest_scores.pop_back();
+      }
+      sum += x;
+    }
+    if( ii < G4int(other->cpu_time.size()) ) cpu_time.push_back( lastTime + other->cpu_time[ii] );
+    n++;
+  }
+  other->nonzero_histories.clear();
+  other->cpu_time.clear();
+  other->sum = 0.;
+  other->n = 0;
+}

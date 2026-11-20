@@ -20,7 +20,10 @@ typedef std::multimap<G4String,G4String> mmss;
 
 //------------------------------------------------------------------------
 class GmParameterMgr 
-{ 
+{
+ private:
+  void RecordUsage( const G4String& parstr );
+ 
  protected:
   GmParameterMgr(){ };
 

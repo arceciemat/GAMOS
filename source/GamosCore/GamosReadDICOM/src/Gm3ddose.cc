@@ -70,7 +70,7 @@ Gm3ddose::Gm3ddose(const GmSqdose& sqd)
 //-----------------------------------------------------------------------
 void Gm3ddose::Read( GmFileIn& fin )
 {
-  G4cout << " Gm3ddose::Read " << G4endl; //GDEB
+  //G4cout << " Gm3ddose::Read " << G4endl; //GDEB
   if( theHeader != 0 ){
     G4Exception("Gm3ddose::Read",
 		"Wrong argument",

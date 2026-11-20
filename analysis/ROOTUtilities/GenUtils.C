@@ -1,7 +1,13 @@
 #ifndef GenUtils_C
 #define GenUtils_C
+#ifndef GAMOS_NO_ROOT
 #include "TColor.h"
+#endif
 #include <iostream>
+#include <string>
+#include <vector>
+#include <cstdlib>
+#include <cmath>
 
 #include <sstream>
 

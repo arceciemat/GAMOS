@@ -293,7 +293,7 @@ void GmModuleJaws::BuildObjects()
       
       posCP *= posCircleZ/G4tgrUtils::GetDouble(theWords["Z_ISOCENTRE"]);
 #ifndef GAMOS_NO_VERBOSE
-      if( GeomVerb(debugVerb) ) G4cout << " posCP rescaled " << posCP << " *= " << posCircleZ << " / " << G4tgrUtils::GetDouble(theWords["Z_ISOCENTRE"]) << G4endl; //GDEB
+      if( GeomVerb(debugVerb) ) G4cout << " posCP rescaled " << posCP << " *= " << posCircleZ << " / " << G4tgrUtils::GetDouble(theWords["Z_ISOCENTRE"]) << G4endl;
 #endif
       
       fout << ":ROTM RM180Z_JAWS 0. 0. 180. ";
@@ -380,8 +380,8 @@ void GmModuleJaws::BuildObjects()
 
     G4double angleI = (180.*CLHEP::deg-angleN)/2.; // angle of isosceles triangle formed by rotation origin, border point at Y=0,Z=RADIUS if no rotation and border point after rotating N
     G4double lenI = 2*RADIUS*sin(angleN/2.);
-    G4double borderT;
-    G4double borderZ;
+    G4double borderT = 0.;
+    G4double borderZ = 0.;
     if( theWords["JAWSTIPTYPE"] == "STRAIGHT" ) {
       //	   << RADIUS*sin(angleN) - YHDIM*cos(angleN) << " " 
       borderT = lenI*sin(angleI);

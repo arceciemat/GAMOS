@@ -4,6 +4,8 @@
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmFilterMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmClassifierMgr.hh"
+#include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 
 #include "G4UImanager.hh"
 #include "G4UItcsh.hh"
@@ -77,6 +79,9 @@ int main(int argc,char** argv)
   //  G4cout << "Run Manager deleting. " << G4endl;
   delete runManager;
 
+  //--- Multithreading: merge the files written by each worker thread (NAME.thN.EXT -> NAME.EXT)
+  GmMTMergeMgr::MergeThreadFiles( G4bool(GmParameterMgr::GetInstance()->GetNumericValue("GmMTMergeMgr:KeepThreadFiles",0)) );
+
   GmAnalysisMgr::DeleteInstances();
 
   G4GeometryManager::GetInstance()->OpenGeometry(); // to avoid warnings
@@ -84,6 +89,6 @@ int main(int argc,char** argv)
   GmFilterMgr::GetInstance()->DeleteFilters();
   GmClassifierMgr::GetInstance()->DeleteClassifiers();
 
-  exit(1);
+  exit(0);
   return 0;
 }

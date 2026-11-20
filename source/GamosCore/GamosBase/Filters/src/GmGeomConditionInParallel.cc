@@ -19,7 +19,7 @@ GmGeomConditionInParallel::GmGeomConditionInParallel()
 		"Check that you have not defined the filter before '/run/initialize'");
   }
 
-  G4cout << " NUMBER parallelWorldProcesses " << parallelWorldProcesses.size() << G4endl; //GDEB
+  //G4cout << " NUMBER parallelWorldProcesses " << parallelWorldProcesses.size() << G4endl; //GDEB
   theParallelWorldProcess = (G4ParallelWorldScoringProcess*)(parallelWorldProcesses[0]);
 
 }

@@ -1,19 +1,28 @@
-# - GAMOS_analysis_DICOM_softenImage module build definition
+# - softenImage module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_DICOM_softenImage
+gamos_add_module(softenImage
   PUBLIC_HEADERS
     DCMSoftenImage.hh
   SOURCES
     DCMSoftenImage.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_DICOM_softenImage
+
+gamos_module_link_libraries(softenImage
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
     DICOMBase
     DICOMReaders
-    DICOM2G4
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
+)
+
+# Program softenImage
+gamos_add_executable(softenImage
+  SOURCES
+    softenImage.cc
+  LINK_LIBRARIES
+    softenImage
+    DICOMBase
+    DICOMReaders
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
 )

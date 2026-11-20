@@ -112,7 +112,7 @@ void GmMicroyzVolUA::EndOfEventAction(const G4Event* evt)
 
 #ifndef GAMOS_NO_VERBOSE
       if( DNAVerb(testVerb) ) G4cout << ii << " GmMicroVolUA near hist " << epsilon << G4endl; 
-      //  if( DNAVerb(-debugVerb) ) G4cout << " GmMicroVolUA near hist " << localPos/nm << " " << randCenterPos/nm << G4endl;  //GDEB
+      //  if( DNAVerb(debugVerb) ) G4cout << " GmMicroVolUA near hist " << localPos/nm << " " << randCenterPos/nm << G4endl;  //GDEB
 #endif
   }
 
@@ -153,14 +153,7 @@ void GmMicroyzVolUA::EndOfEventAction(const G4Event* evt)
       theAnaMgr->GetHisto1(theHistoNumber+8)->Fill(log10(z*z),wei);
   }
 
-  theSumY += y*wei;
-  theSumY2 += y*wei*y*wei;
-  theSumY4 += pow(y*wei,4);
-  theSumZ += z*wei;
-  theSumZ2 += z*wei*z*wei;
-  theSumZ4 += pow(z*wei,4);
-  theSumWei += wei;
-  theSumWei2 += wei*wei;
+  AddEntry( y, z, wei );
 
   //clear theHits
   GmVMicroyzUA::EndOfEventAction( evt );

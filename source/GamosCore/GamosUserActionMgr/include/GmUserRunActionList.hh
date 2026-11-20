@@ -34,6 +34,7 @@ class GmUserRunActionList : public G4UserRunAction
  public:
   void AddAction( GmUserRunAction* ua );
   void RemoveAction( GmUserRunAction* ua );
+  G4bool IsToBeRunInThisThread( GmUserRunAction* ua );
 
   GmUserRunAction* FindAction( const G4String& name) const;
   G4int CountActions( const G4String& name ) const;

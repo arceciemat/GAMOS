@@ -1,3 +1,6 @@
+#include "G4Threading.hh"
+#include "G4AutoLock.hh"
+#include "GamosCore/GamosUserActionMgr/include/GmUserAction.hh"
 #include "GmVDataUser.hh"
 #include "GamosCore/GamosData/Management/include/GmVData2DHisto.hh"
 #include "GamosCore/GamosData/Management/include/GmVDataProf1DHisto.hh"
@@ -200,3 +203,21 @@ GmVData* GmVDataUser::Build1Data( const G4String& dataName )
 
   return data;
 } 
+
+//----------------------------------------------------------------
+G4bool GmVDataUser::IsMTWorker()
+{
+  return G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread();
+}
+
+//----------------------------------------------------------------
+void GmVDataUser::MergeRunDataToMaster( GmVDataUser* master )
+{
+  if( !master ) return;
+  G4AutoLock l(&GmUserAction::GetMergeMutex());
+  for( size_t ii = 0; ii < theData.size() && ii < master->theData.size(); ii++ ) {
+    if( theData[ii]->IsInitial() ) continue; // e.g. RunID: taken from the master run
+    master->theData[ii]->AddDataAccumulated( theData[ii]->GetDataAccumulated() );
+    theData[ii]->Initialise();
+  }
+}

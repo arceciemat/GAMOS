@@ -70,8 +70,7 @@ int64_t GmClassifierByStringData::GetIndexFromValue(const G4String val )
   int64_t index;
   std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(val);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[val] = index;
+    index = AssignNewIndex( this, &GmClassifierByStringData::theIndexMap, val ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

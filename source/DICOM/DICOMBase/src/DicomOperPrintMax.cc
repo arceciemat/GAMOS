@@ -38,7 +38,7 @@ void DicomOperPrintMax::Operate( DicomVImage* image )
   size_t ix = iMax%imNVoxX;
   size_t iy = (iMax/imNVoxX)%imNVoxY;
   size_t iz = int(iMax/imNVoxXY);
-  std::cout << "@@@ DicomOperPrintMax " << image->GetName() << " MAXIMUM= " << theMax
+  G4cout << "@@@ DicomOperPrintMax " << image->GetName() << " MAXIMUM= " << theMax
 	    << " AT ID " << iMax << " = " << ix << " : " << iy << " : " << iz
 	    << " POS " << imMinX+(ix+0.5)*imVoxDimX << " " << imMinY+(iy+0.5)*imVoxDimY << " " << imMinZ+(iz+0.5)*imVoxDimZ 
 	    << G4endl;

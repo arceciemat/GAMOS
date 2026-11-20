@@ -1,16 +1,15 @@
 #ifndef GETORGANINFO_hh
 #define GETORGANINFO_hh
 
-#include "DICOM/DICOMBase/include/DicomVImage.hh"
+#include "G4ThreeVector.hh"
 #include "G4ExceptionSeverity.hh"
 class DicomMgr;
 class DicomReaderMgr;
 class DicomParameterMgr;
 class DicomLineSet;
+class DicomVImage;
 #include "globals.hh"
 #include <vector>
-#include <map>
-#include <set>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 class DCMPrintValueAlongLine
@@ -49,6 +48,7 @@ private:
   G4ThreeVector theLinePos;
   G4ThreeVector theLineDir;
   G4ThreeVector theLinePos0;
+  G4bool bLinePos0; // -zeroOfAlongLine given (if not, the '0' is the line point)
   DicomLineSet* theLineSet;
   /*  DIModality theAnalyseModality;  // Modality of image to be analysed
 

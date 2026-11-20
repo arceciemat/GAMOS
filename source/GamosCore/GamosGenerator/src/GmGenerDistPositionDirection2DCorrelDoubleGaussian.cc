@@ -31,8 +31,8 @@ GmGenerDistPositionDirection2DCorrelDoubleGaussian::GmGenerDistPositionDirection
     bHistogramsHere = false;
   }
   if( GmParameterMgr::GetInstance()->GetNumericValue("GmGenerDistPositionDirection2DCorrelDoubleGaussian:Histograms",1) == 0 ) {
-    bHistogramsHere = false; //GDEB
-    bHistograms = false; //GDEB
+    bHistogramsHere = false; 
+    bHistograms = false; 
   }
   //  G4cout << this << " CREATE bHistogramsHere " << bHistogramsHere << " " << GmGenerDistPositionDirection2DCorrelDoubleGaussian::bHistograms << G4endl; //GDEB
 #endif

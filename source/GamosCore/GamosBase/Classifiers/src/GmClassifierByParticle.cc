@@ -40,8 +40,7 @@ int64_t GmClassifierByParticle::GetIndexFromTrack(const G4Track* aTrack)
   G4ParticleDefinition* part = aTrack->GetDefinition();
   std::map<G4ParticleDefinition*,int64_t>::const_iterator ite = theIndexMap.find(part);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[part] = index;
+    index = AssignNewIndex( this, &GmClassifierByParticle::theIndexMap, part ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

@@ -43,8 +43,7 @@ int64_t GmClassifierBySecondariesListExclude::GetIndexFromStep(const G4Step* )
 
   std::map<const G4String,int64_t>::const_iterator ite = theIndexMap.find(name);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1;
-    theIndexMap[name] = index;
+    index = AssignNewIndex( this, &GmClassifierBySecondariesListExclude::theIndexMap, name, 1, false ); // multithreading: same index in all threads
 #ifndef GAMOS_NO_VERBOSE
     if( ClassifierVerb(debugVerb) ) G4cout << " GmClassifierBySecondariesListExclude::GetIndexFromStep add IndexMap " << name << " = " << index << G4endl;
 #endif

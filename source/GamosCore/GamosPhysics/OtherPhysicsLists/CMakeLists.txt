@@ -1,13 +1,2 @@
-#------------------------------------------------------------------------------
-# Module : OtherPhysicsLists
-# Package: GamosCore_GamosPhysics_OtherPhysicsLists
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include(Geant4MacroLibraryTargets)
-if(GEANT4_BUILD_GRANULAR_LIBS)
-    GEANT4_GRANULAR_LIBRARY_TARGET(COMPONENTS sources.cmake)
-else()
-   GEANT4_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
-endif()
+# - GamosCore_GamosPhysics_OtherPhysicsLists module build (source/GamosCore/GamosPhysics/OtherPhysicsLists)
+include(sources.cmake)

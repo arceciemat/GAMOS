@@ -99,7 +99,7 @@ private:
 
   
 private:
-  static GmGeometryUtils* theInstance;
+  static G4ThreadLocal GmGeometryUtils* theInstance;
 
   int                 nchar;
   //-  G4String            name;

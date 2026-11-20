@@ -1,7 +1,6 @@
 #include "TextScorerData.hh"
 #include "ScoreData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include <set>
 
 //----------------------------------------------------------------------
 TextScorerData::TextScorerData() : ScorerData()

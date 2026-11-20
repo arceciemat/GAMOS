@@ -1,3 +1,5 @@
+#include "G4PhysicalConstants.hh"
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4Event.hh"
@@ -27,6 +29,7 @@ RTPhaseSpace_EGSUA::RTPhaseSpace_EGSUA()
   
   G4String foutName = paramMgr->GetStringValue("RTPhaseSpace_EGSUA:TextFileName","");
   fileOut = 0;
+  foutName = GmMTMergeMgr::GetThreadFileName(foutName); // Multithreading: one file per thread
   if( foutName != "" ) fileOut = new std::ofstream(foutName);
 
   theFileName = paramMgr->GetStringValue("RTPhaseSpace_EGSUA:FileName","test");
@@ -58,7 +61,7 @@ RTPhaseSpace_EGSUA::RTPhaseSpace_EGSUA()
   theMaxNTracksInZ = G4int(paramMgr->GetNumericValue("RTPhaseSpace_EGSUA:MaxNTracksInFile", -1 ));
 
   bNotStoreBackwards = G4bool(paramMgr->GetNumericValue("RTPhaseSpace_EGSUA:NotStoreBackwards", 1 ));
-  G4cout << " bNotStoreBackwards " << bNotStoreBackwards << G4endl; //GDEB
+  //G4cout << " bNotStoreBackwards " << bNotStoreBackwards << G4endl; //GDEB
 
   bNotStoreTwice = G4bool(paramMgr->GetNumericValue("RTPhaseSpace_EGSUA:NotStoreTwice", TRUE ));
 
@@ -101,6 +104,8 @@ G4bool RTPhaseSpace_EGSUA::CreateHeader(G4double zstop)
   char fphsp[81]={'\0'};;
   G4String fname = theFileName;
   if( theZStops.size() != 1 || bZStopInFileName ) fname += "_" + GmGenUtils::ftoa(zstop);
+  fname = GmMTMergeMgr::GetThreadFileName(fname); // Multithreading: one file per thread
+  GmMTMergeMgr::SetThreadFileMergeMode( fname, GmMTMergeMgr::TFMEGSPhsp ); // merged at end of job (counters summed)
   strcpy(fphsp,fname.c_str());
   FILE* phspFile = fopen(fphsp, "wb");
   thePhspFiles[zstop] = phspFile;
@@ -111,7 +116,7 @@ G4bool RTPhaseSpace_EGSUA::CreateHeader(G4double zstop)
 
   fwrite(&nParticles,sizeof(int),1,thePhspfile);
   fwrite(&nPhotons,sizeof(int),1,thePhspfile);
-  std::cout << " N_PARTICLES " << nParticles
+  G4cout << " N_PARTICLES " << nParticles
 	    << " N_PHOTON S " << nPhotons
 	    << std::endl;
   fwrite(&maximumKineticEnergy,sizeof(float),1,thePhspfile);
@@ -138,7 +143,7 @@ void RTPhaseSpace_EGSUA::UserSteppingAction(const G4Step* aStep)
   //--- Check if it crosses Z plane
 #ifndef BEAMZPOS
   if ( bNotStoreBackwards && aStep->GetTrack()->GetMomentumDirection().z() > 0. ) {
-    G4cout << "WRONGDIR " << G4endl; //GDEB
+    //G4cout << "WRONGDIR " << G4endl; //GDEB
     return; }
 #else
   if ( bNotStoreBackwards && aStep->GetTrack()->GetMomentumDirection().z() < 0. ) {
@@ -271,7 +276,7 @@ void RTPhaseSpace_EGSUA::StoreTrackRecord( const G4Step* aStep, G4double zstop)
   }
   unsigned int latch = std::stoul(slat, nullptr, 32);
   egsPart->SetLatch(latch);
-  std::cout << " LATCH " << latch << " : " << slat << G4endl; //GDEB
+  G4cout << " LATCH " << latch << " : " << slat << G4endl; //GDEB
   */
   
   std::stringstream ss;
@@ -285,11 +290,16 @@ void RTPhaseSpace_EGSUA::StoreTrackRecord( const G4Step* aStep, G4double zstop)
   unsigned int latch;
   ss >> latch;
   egsPart->SetLatch(latch);
-  //  std::cout << " LATCH " << latch << G4endl; //GDEB
+  //  G4cout << " LATCH " << latch << G4endl; //GDEB
   
 
   egsPart->SetCharge(charge);
-  egsPart->SetKineticEnergy(KineticEnergyMeV);
+  //--- EGS format: total energy for charged particles (the reader subtracts the electron mass); kinetic was written
+  if( charge != 0 ) {
+    egsPart->SetKineticEnergy(KineticEnergyMeV + CLHEP::electron_mass_c2/CLHEP::MeV);
+  } else {
+    egsPart->SetKineticEnergy(KineticEnergyMeV);
+  }
   
 #ifndef GAMOS_NO_VERBOSE
   if( RTVerb(debugVerb) ) G4cout << "RTPhaseSpace_EGSUA::StoreTrackRecord particle " << pdgCode << " E= " << KineticEnergyMeV << G4endl;
@@ -299,7 +309,8 @@ void RTPhaseSpace_EGSUA::StoreTrackRecord( const G4Step* aStep, G4double zstop)
   posY = preR.y()+(R.y()-preR.y())*(zstop-preR.z())/(R.z()-preR.z());
   posZ = zstop/CLHEP::cm;
 
-  egsPart->SetPosition(posX,posY,posZ);
+  //--- EGS format: positions in cm (they were written in mm; the reader multiplies by 10)
+  egsPart->SetPosition(posX/CLHEP::cm,posY/CLHEP::cm,posZ);
   
 #ifndef GAMOS_NO_VERBOSE
   if( RTVerb(debugVerb) ) G4cout << "RTPhaseSpace_EGSUA::StoreTrackRecord position " << posX/CLHEP::cm << " " << posY/CLHEP::cm << " " << zstop/CLHEP::cm << G4endl;
@@ -391,6 +402,8 @@ void RTPhaseSpace_EGSUA::EndOfEventAction(const G4Event* evt)
 //---------------------------------------------------------------------
 void  RTPhaseSpace_EGSUA::EndOfRunAction(const G4Run*)
 {
+  //--- the text file is never closed: flush it (its last buffer was lost; in MT the thread files are merged at the end of the job)
+  if( fileOut ) fileOut->flush();
 #ifndef GAMOS_NO_VERBOSE
     if( RTVerb(debugVerb) ) G4cout << " RTPhaseSpace_EGSUA::EndOfRunAction " << GmNumberOfEvent::GetNumberOfEvent() <<G4endl; 
 #endif
@@ -425,13 +438,17 @@ int RTPhaseSpace_EGSUA::CloseFiles()
     fwrite(&nParticles,sizeof(int),1,phspFile);
     fwrite(&nPhotons,sizeof(int),1,phspFile);
     nIncident = (GmNumberOfEvent::GetNumberOfEvent()); //?? at the EndOfEvent the number of events in run is not updated
-    G4cout << " WRITE nParticles " << nParticles << " nPhotons " << nPhotons << " nIncident " << nIncident << G4endl; //GDEB
+    //G4cout << " WRITE nParticles " << nParticles << " nPhotons " << nPhotons << " nIncident " << nIncident << G4endl; //GDEB
     maximumKineticEnergy = theMaxKinE[zstop];
     minimumKineticEnergy = theMinKinE[zstop];
-    G4cout << " WRITE maximumKineticEnergy " << maximumKineticEnergy << " minimumKineticEnergy " << minimumKineticEnergy << G4endl; //GDEB
+    //G4cout << " WRITE maximumKineticEnergy " << maximumKineticEnergy << " minimumKineticEnergy " << minimumKineticEnergy << G4endl; //GDEB
     fwrite(&maximumKineticEnergy,sizeof(float),1,phspFile);
     fwrite(&minimumKineticEnergy,sizeof(float),1,phspFile);
     fwrite(&nIncident,sizeof(float),1,phspFile);
+    //--- write the header now, and go back to the end of the file: the records of a next run were written over the
+    //    first records (in multithreading the files are merged at the end of the job, before the FILEs are closed)
+    fflush(phspFile);
+    fseek(phspFile,0,SEEK_END);
     
 #ifndef GAMOS_NO_VERBOSE
     if( RTVerb(infoVerb) ) G4cout << "RTPhaseSpace_EGSUA::CloseFiles() Number of Events: " << nIncident << G4endl;

@@ -60,7 +60,7 @@ void RTIonPlanScanSpotSource::ReadPlanData()
   GmFileIn fin = GmFileIn::GetInstance(thePlanFileName,1);
   ReadParams(fin);
 
-  G4cout << "RTPlanScanSpotSource::ReadPlanData() N PARAM " << theParams.size() << G4endl; //GDEB
+  //G4cout << "RTPlanScanSpotSource::ReadPlanData() N PARAM " << theParams.size() << G4endl; //GDEB
   int ii = 1;
   for(;;ii++) { //  Check if various FractionGroup's exists (very rare)
     G4String fgstr = "FractionGroup_"+GmGenUtils::itoa(ii);

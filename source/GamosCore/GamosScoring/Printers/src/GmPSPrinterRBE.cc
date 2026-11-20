@@ -273,11 +273,11 @@ void GmPSPrinterRBE::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer* 
   }
 #ifndef GAMOS_NO_VERBOSE
   if( ScoringVerb(debugVerb) ) {
-    G4cout << this << " " << doseScorerRunMap << " " <<scorers.size() <<  " DOSE RUNMAP N= " << doseScorerRunMap->entries() << G4endl; //GDEB
+    G4cout << this << " " << doseScorerRunMap << " " <<scorers.size() <<  " DOSE RUNMAP N= " << doseScorerRunMap->entries() << G4endl;
     for( auto iter = doseScorerRunMap->begin(); iter != doseScorerRunMap->end(); iter++ ) {
       G4cout << thePrinterName << " " << &(iter->second) << " DOSE RUNMAP " << iter->first << " : " << *(iter->second) << G4endl;
     }
-    G4cout << LETScorerRunMap << " " <<scorers.size() <<  " LET RUNMAP N= " << LETScorerRunMap->entries() << G4endl; //GDEB
+    G4cout << LETScorerRunMap << " " <<scorers.size() <<  " LET RUNMAP N= " << LETScorerRunMap->entries() << G4endl;
     for( auto iter = LETScorerRunMap->begin(); iter != LETScorerRunMap->end(); iter++ ) {
       G4cout << thePrinterName << " LET RUNMAP " << iter->first << " : " << *(iter->second) << G4endl;
     }

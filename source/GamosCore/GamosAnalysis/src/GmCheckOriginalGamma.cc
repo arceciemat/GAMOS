@@ -3,9 +3,9 @@
 #include "G4Track.hh"
 #include "G4VProcess.hh"
 
-std::set<G4int> GmCheckOriginalGamma::theOrigGammas;
-std::map<G4int,G4int> GmCheckOriginalGamma::theTrackAndParentIDs;
-std::map<G4int,G4bool> GmCheckOriginalGamma::isFromRadiactiveDecay;
+G4ThreadLocal std::set<G4int> GmCheckOriginalGamma::theOrigGammas;
+G4ThreadLocal std::map<G4int,G4int> GmCheckOriginalGamma::theTrackAndParentIDs;
+G4ThreadLocal std::map<G4int,G4bool> GmCheckOriginalGamma::isFromRadiactiveDecay;
 G4int GmCheckOriginalGamma::bCheckParentID = true;
 
 GmCheckOriginalGamma::GmCheckOriginalGamma()

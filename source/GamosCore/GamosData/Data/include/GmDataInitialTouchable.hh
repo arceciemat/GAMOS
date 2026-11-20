@@ -2,7 +2,7 @@
 #define GmDataInitialTouchable_hh
 
 #include "GamosCore/GamosData/Management/include/GmVDataString.hh"
-class G4VTouchable;
+#include "G4VTouchable.hh"
 
 class GmDataInitialTouchable : public GmVDataString
 {

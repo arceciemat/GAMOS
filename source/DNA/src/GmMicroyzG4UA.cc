@@ -29,9 +29,9 @@ void GmMicroyzG4UA::BookHistos()
 {
   if(bHistos) {
     GmVMicroyzUA::BookHistos();
-    G4cout << "  GmVMicroyzUA::BookHistos() " << G4endl; //GDEB   
+    //G4cout << "  GmVMicroyzUA::BookHistos() " << G4endl; //GDEB   
     theNHistosV = theAnaMgr->GetHistos1D().size();
-    G4cout << "1  GmVMicroyzUA::BookHistos() " << theNHistosV << G4endl; //GDEB   
+    //G4cout << "1  GmVMicroyzUA::BookHistos() " << theNHistosV << G4endl; //GDEB   
     G4double Eincident = 10*keV;
     theAnaMgr->CreateHisto1D("N_hits",140,80*Eincident/(1*keV),150*Eincident/(1*keV),theHistoNumber+theNHistosV+1);
     theAnaMgr->CreateHisto1D("N_scored_hits",100,0.,100,theHistoNumber+theNHistosV+2);
@@ -84,6 +84,7 @@ void GmMicroyzG4UA::EndOfEventAction(const G4Event* evt)
 #endif
   
   // get selected random hit position
+  if( theHits.size() == 0 ) return; // (theHits[0] was accessed in an event without hits)
   G4ThreeVector hitPos =  theHits[randHit]->GetPos();
 #ifndef GAMOS_NO_VERBOSE
   if( DNAVerb(debugVerb) ) G4cout << "======> random hit position /nm =" << hitPos/nm << G4endl; 
@@ -141,7 +142,7 @@ void GmMicroyzG4UA::EndOfEventAction(const G4Event* evt)
 
 #ifndef GAMOS_NO_VERBOSE
       if( DNAVerb(testVerb) ) G4cout << ii << " GmMicroG4UA near hist " << epsilon << " n=" << nbEdep << G4endl; 
-      //  if( DNAVerb(-debugVerb) ) G4cout << " GmMicroG4UA near hist " << localPos/nm << " " << randCenterPos/nm << G4endl;  //GDEB
+      //  if( DNAVerb(debugVerb) ) G4cout << " GmMicroG4UA near hist " << localPos/nm << " " << randCenterPos/nm << G4endl;  //GDEB
 #endif
     }
        
@@ -187,14 +188,7 @@ void GmMicroyzG4UA::EndOfEventAction(const G4Event* evt)
     if( theAnaMgr->GetHisto1(theHistoNumber+8,false) )
       theAnaMgr->GetHisto1(theHistoNumber+8)->Fill(log10(z*z),wei);
   }
-  theSumY += y*wei;
-  theSumY2 += y*y*wei;
-  theSumY4 += pow(y,4)*wei;
-  theSumZ += z*wei;
-  theSumZ2 += z*z*wei;
-  theSumZ4 += pow(z,4)*wei;
-  theSumWei += wei;
-  theSumWei2 += wei*wei;
+  AddEntry( y, z, wei );
 
   //clear theHits
   GmVMicroyzUA::EndOfEventAction( evt );

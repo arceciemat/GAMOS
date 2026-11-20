@@ -36,7 +36,7 @@ GmPSRBEBWFy::GmPSRBEBWFy(G4String name)
   // Assume energy steps start at 0.
   theEnergyStart = GmParameterMgr::GetInstance()->GetNumericValue(GetName()+":EnergyStart",0.);
   b1StepInVoxel = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(GetName()+":1StepInVoxel",0));
-  G4cout << " b1StepInVoxel " <<b1StepInVoxel << G4endl; //GDEB 
+  //G4cout << " b1StepInVoxel " <<b1StepInVoxel << G4endl; //GDEB 
   ReadBWFLinealEnergy();
 }
 

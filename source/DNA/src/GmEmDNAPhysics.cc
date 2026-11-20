@@ -44,7 +44,7 @@ GmEmDNAPhysics::GmEmDNAPhysics()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void GmEmDNAPhysics::BuildDNAChemistry()
 {     
-  G4String chemName = GmParameterMgr::GetInstance()->GetStringValue("GmEmDNAPhysics:registerChemistry","DNA_option2");
+  G4String chemName = GmParameterMgr::GetInstance()->GetStringValue("GmEmDNAPhysics:RegisterChemistry","DNA_option2");
   // Replace standard processes for gammas
   if (chemName == "DNA") { 
     RegisterPhysics( new G4EmDNAChemistry() );
@@ -64,7 +64,7 @@ void GmEmDNAPhysics::BuildDNAChemistry()
 		("Physics can only be DNA, DNA_option1, DNA_option2, DNA_option3, it is "+chemName).c_str());
   }
   
-  G4cout << " BUILT G4EmDNAChemistry " << G4endl; //GDEB
+  //G4cout << " BUILT G4EmDNAChemistry " << G4endl; //GDEB
 
 }
 

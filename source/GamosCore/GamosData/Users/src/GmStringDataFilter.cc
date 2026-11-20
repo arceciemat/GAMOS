@@ -117,7 +117,7 @@ void GmStringDataFilter::SetParameters( std::vector<G4String>& params)
   if( DataVerb(infoVerb) ) G4cout << " GmStringDataFilter::SetParameters " << params[0] << G4endl;
 #endif
   data->SetName( params[0] );
-  G4cout << "GmStringDataFilter::SetParameters set DATA " << data->GetName() << G4endl; //GDEB
+  //G4cout << "GmStringDataFilter::SetParameters set DATA " << data->GetName() << G4endl; //GDEB
   if( static_cast<GmVDataString*>(data) == 0 ) {
       //  if( theData[0]->GetCType() != "char" ) {
     G4Exception("GmStringDataFilter::SetParameters",
@@ -126,7 +126,7 @@ void GmStringDataFilter::SetParameters( std::vector<G4String>& params)
 		G4String("Data is " + params[0] + " Maybe you want to use GmStringDataFilter?").c_str());
   } else {
     theDataS.push_back( static_cast<GmVDataString*>(data) );
-    G4cout << "GmStringDataFilter::SetParameters set DATA N " << theDataS.size() << G4endl; //GDEB
+    //G4cout << "GmStringDataFilter::SetParameters set DATA N " << theDataS.size() << G4endl; //GDEB
   }
   
   if( params.size() == 1 ){

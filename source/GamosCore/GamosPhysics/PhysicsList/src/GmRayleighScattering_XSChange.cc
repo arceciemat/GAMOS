@@ -16,11 +16,11 @@ GmRayleighScattering_XSChange::~GmRayleighScattering_XSChange()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void GmRayleighScattering_XSChange::InitialiseProcess(const G4ParticleDefinition* part)
+void GmRayleighScattering_XSChange::InitialiseProcess(const G4ParticleDefinition* /*part*/)
 {
   //  G4RayleighScattering::InitialiseProcess(part);
   //  SetEmModel(new GmLivermoreRayleighModel_XSChangeNEW, 0); //GDEB
-  SetEmModel(new GmLivermoreRayleighModel_XSChange, 0); //GDEB
+  SetEmModel(new GmLivermoreRayleighModel_XSChange, 0);
   AddEmModel(0, EmModel());
 }
 

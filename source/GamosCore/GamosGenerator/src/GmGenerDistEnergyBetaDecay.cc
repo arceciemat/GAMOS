@@ -80,6 +80,7 @@ void GmGenerDistEnergyBetaDecay::ReadFile( const G4String fname )
 
     std::vector<G4String> wl;
     G4bool readingData = false;
+    G4int nVal = 0; // values are given every keV, starting at 0 keV, ten per line
     for( ;; ){
       if(! fin.GetWordsInLine( wl ) ) break;
       if( readingData == true ) {
@@ -90,11 +91,12 @@ void GmGenerDistEnergyBetaDecay::ReadFile( const G4String fname )
 	for(unsigned int ii = 0; ii < wl[0].length(); ii++ ) {
 	  if( wl[0][ii] == ';' ) {
 	    G4String val = wl[0].substr(i1,ii-i1);
-	    enerProb[(ii+1)*CLHEP::keV] = GmGenUtils::GetValue( val );
+	    enerProb[nVal*CLHEP::keV] = GmGenUtils::GetValue( val );
 	    i1 = ii+1;
 #ifndef GAMOS_NO_VERBOSE
-	    if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistEnergyBetaDecay  ener " << (ii+1)*CLHEP::keV << " prob " << val <<  G4endl;
+	    if( GenerVerb(infoVerb) ) G4cout << " GmGenerDistEnergyBetaDecay  ener " << nVal*CLHEP::keV << " prob " << val <<  G4endl;
 #endif
+	    nVal++;
 	  }
     }
       }

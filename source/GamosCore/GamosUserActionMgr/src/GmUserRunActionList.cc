@@ -3,6 +3,8 @@
 
 #include "G4Run.hh"
 #include "G4RunManager.hh"
+#include "G4Threading.hh"
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #include <iostream>
 
 #include "GamosCore/GamosUserActionMgr/include/GmUAVerbosity.hh"
@@ -26,7 +28,7 @@ void GmUserRunActionList::BeginOfRunAction(const G4Run* aRun)
 #ifndef GAMOS_NO_VERBOSE
     if( UAVerb(infoVerb) ) G4cout << " Begin of RUN action executing " << *aite << " " << (*aite)->GetName() << G4endl;
 #endif
-    if( (*aite)->IsEnabled() ) (*aite)->BeginOfRunAction(aRun);
+    if( (*aite)->IsEnabled() && IsToBeRunInThisThread(*aite) ) (*aite)->BeginOfRunAction(aRun);
   }
 }
 
@@ -38,7 +40,15 @@ void GmUserRunActionList::EndOfRunAction(const G4Run* aRun)
 #ifndef GAMOS_NO_VERBOSE
     if( UAVerb(infoVerb) ) G4cout << " End of RUN action executing " << *aite << " " << (*aite)->GetName() << G4endl;
 #endif
-    if( (*aite)->IsEnabled() ) (*aite)->EndOfRunAction(aRun);
+    if( (*aite)->IsEnabled() && IsToBeRunInThisThread(*aite) ) (*aite)->EndOfRunAction(aRun);
+  }
+
+  //--- Multithreading: merge the results of this worker into the master objects (histograms, ...)
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    GmMTMergeMgr::MergeAllToMaster();
+  } else if( GmMTMergeMgr::IsMTMaster() ) {
+    //--- Multithreading: actions on the merged results (write files, ...)
+    GmMTMergeMgr::RunMasterEndOfRunActions();
   }
 
 }
@@ -53,7 +63,7 @@ G4Run* GmUserRunActionList::GenerateRun()
 #ifndef GAMOS_NO_VERBOSE
     if( UAVerb(infoVerb) ) G4cout << " GenerateRun executing " << *aite << " " << (*aite)->GetName() << G4endl;
 #endif
-    if( (*aite)->IsEnabled() ) {
+    if( (*aite)->IsEnabled() && IsToBeRunInThisThread(*aite) ) {
       G4Run* newRun = (*aite)->GenerateRun();
       if( newRun != 0 ) {
 	if( run != 0 ){
@@ -172,4 +182,12 @@ void GmUserRunActionList::DumpActions( std::ostream& out, G4int enabled)
     }
  }
 
+}
+
+//-----------------------------------------------------------------------
+G4bool GmUserRunActionList::IsToBeRunInThisThread( GmUserRunAction* ua )
+{
+  //--- Sequential and worker threads: all actions. Master thread: only those that merge/print the results of all threads
+  if( !G4Threading::IsMultithreadedApplication() || !G4Threading::IsMasterThread() ) return true;
+  return ua->IsRunOnMaster();
 }

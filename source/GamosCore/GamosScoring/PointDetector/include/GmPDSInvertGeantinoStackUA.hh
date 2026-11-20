@@ -16,7 +16,7 @@ public:
   void ChangeGeantinoWeight( G4double weinew, G4int parentID, G4int detID );
 
 private:
-  static GmPDSInvertGeantinoStackUA* theInstance;
+  static G4ThreadLocal GmPDSInvertGeantinoStackUA* theInstance;
 
 };
 

@@ -30,7 +30,7 @@ public:
 private:
   void AddDistribution( GmVDistribution* filter );
 
-  static GmDistributionMgr* theInstance;
+  static G4ThreadLocal GmDistributionMgr* theInstance;
 
   std::map<G4String,GmVDistribution*> theDistributions;
 

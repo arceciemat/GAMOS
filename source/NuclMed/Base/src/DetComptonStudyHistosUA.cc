@@ -25,7 +25,6 @@
 #include "DetComptClassificationVariableFactory.hh"
 #endif
 
-#include <iomanip>
 
 //----------------------------------------------------------------------
 DetComptonStudyHistosUA::DetComptonStudyHistosUA()
@@ -192,7 +191,7 @@ void DetComptonStudyHistosUA::FillDist511RecHits( DetRecHitSetList& rh511 )
   DetRecHitSetList::iterator iterhs;
   std::set<GmRecHit*>::iterator iterh;
   mmits::iterator itemit;
-  GmRecHit* rhitClosest;
+  GmRecHit* rhitClosest = nullptr;
   mmiterh rhitInterac;
   std::vector<std::pair<GmTrajStep*,GmRecHit*> > rhitInteracOrdered;
 
@@ -415,7 +414,7 @@ void DetComptonStudyHistosUA::AnalyseRecHitInteractionAssociation( mmiterh recHi
 G4int DetComptonStudyHistosUA::GetTrackID( GmRecHit* rhit )
 {
   G4int eventID = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
-  G4int rhitTrkID;
+  G4int rhitTrkID = -1;  // no hit found
   std::vector<GmHit*>::iterator iteh;
   std::set<G4int>::iterator itesi; 
   std::vector<GmHit*> hits = rhit->GetHits();

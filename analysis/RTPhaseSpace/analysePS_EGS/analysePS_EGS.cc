@@ -1,5 +1,4 @@
 #include "globals.hh"
-#include <fstream>
 #include "RadioTherapy/include/iaea_header.hh"
 #include "RadioTherapy/include/iaea_record.hh"
 //#include "RadioTherapy/include/iaeaUtilities.hh"
@@ -76,7 +75,8 @@ int main(int argc,char** argv)
   }
 
   char mode[6];
-  fread(mode,5*sizeof(char),1,phspfile);
+  size_t nHeaderRead = 0; // each header fread must return 1
+  nHeaderRead += fread(mode,5*sizeof(char),1,phspfile);
   mode[5]='\0';
   
   int mode_n;
@@ -85,25 +85,31 @@ int main(int argc,char** argv)
   else
     mode_n = 2;
 
-  std::cout << " MODE = " << mode[4] << " => " << mode_n << std::endl;
+  G4cout << " MODE = " << mode[4] << " => " << mode_n << std::endl;
 
   //  int matrixInd1, matrixInd2;  //these are the matrix indexes
   iaea_header_type *p_iaea_header;
   p_iaea_header = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
   
-  fread(&(p_iaea_header->nParticles),sizeof(int),1,phspfile);
-  fread(&(p_iaea_header->particle_number[0]),sizeof(int),1,phspfile);
-  std::cout << " N_PARTICLES " << p_iaea_header->nParticles
+  nHeaderRead += fread(&(p_iaea_header->nParticles),sizeof(int),1,phspfile);
+  nHeaderRead += fread(&(p_iaea_header->particle_number[0]),sizeof(int),1,phspfile);
+  G4cout << " N_PARTICLES " << p_iaea_header->nParticles
 	    << " N_PHOTONS " << p_iaea_header->particle_number[0]
 	    << std::endl;
-  fread(&(p_iaea_header->maximumKineticEnergy[0]),sizeof(float),1,phspfile);
-  fread(&(p_iaea_header->minimumKineticEnergy[0]),sizeof(float),1,phspfile);
+  nHeaderRead += fread(&(p_iaea_header->maximumKineticEnergy[0]),sizeof(float),1,phspfile);
+  nHeaderRead += fread(&(p_iaea_header->minimumKineticEnergy[0]),sizeof(float),1,phspfile);
   float p_incident;
-  fread(&p_incident,sizeof(float),1,phspfile);
-  std::cout << " MAX_KINE " << p_iaea_header->maximumKineticEnergy[0] 
+  nHeaderRead += fread(&p_incident,sizeof(float),1,phspfile);
+  G4cout << " MAX_KINE " << p_iaea_header->maximumKineticEnergy[0] 
 	    << " MIN_KINE " << p_iaea_header->minimumKineticEnergy[0] 
 	    << " P_INCIDENT " << p_incident 
 	    << std::endl;
+  if( nHeaderRead != 6 ) {
+    G4Exception("analysePS_EGS",
+		"Error",
+		FatalErrorInArgument,
+		"ERROR READING HEADER OF PHASE SPACE FILE");
+  }
   /*  fread(&n_of_particles,sizeof(int),1,phspfile);
   fread(&n_of_photons,sizeof(int),1,phspfile);
   fread(&energy_max,sizeof(float),1,phspfile);
@@ -137,12 +143,12 @@ int main(int argc,char** argv)
   EGSPhspParticle* particle = new EGSPhspParticle(phspfile,mode);
   int nParticles = p_iaea_header->nParticles;
   if( nPartLoop == 1 ) nPartLoop = nParticles;
-  std::cout << " NPARTICLES TO BE READ " << nPartLoop << std::endl;
+  G4cout << " NPARTICLES TO BE READ " << nPartLoop << std::endl;
 
   for(long irecord=0; irecord<nPartLoop; irecord++){
-    if( irecord%1000000 == 0 ) std::cout << "Reading PHSP track " << irecord << std::endl;
+    if( irecord%1000000 == 0 ) G4cout << "Reading PHSP track " << irecord << std::endl;
     int iError = particle->RefreshParticle(phspfile,irecord+1);
-    //    std::cout << irecord << " PARTICLE " << particle->theLatch 
+    //    G4cout << irecord << " PARTICLE " << particle->theLatch 
     //	      << " " << particle->theEnergy << " " << particle->thePosX << " " << particle->thePosY << " " << particle->theDirU << " " << particle->theDirV << " " << particle->theWeight << std::endl;
     if(!iError){
       /*  float xcorr = (particle->thePosX - theXmin)/theDeltaX;

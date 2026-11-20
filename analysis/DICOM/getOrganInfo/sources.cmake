@@ -1,18 +1,24 @@
-# - GAMOS_analysis_DICOM_getOrganInfo module build definition
+# - getOrganInfo module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_DICOM_getOrganInfo
+gamos_add_module(getOrganInfo
   PUBLIC_HEADERS
     DCMGetOrganInfo.hh
   SOURCES
     DCMGetOrganInfo.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_DICOM_getOrganInfo
+
+gamos_module_link_libraries(getOrganInfo
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
     DICOMBase
     DICOMReaders
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosBase_Base
+    GamosCore_GamosUtils
+)
+
+# Program getOrganInfo
+gamos_add_executable(getOrganInfo
+  SOURCES
+    getOrganInfo.cc
+  LINK_LIBRARIES
+    getOrganInfo
 )

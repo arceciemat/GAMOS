@@ -125,7 +125,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 	  
 	} else {
 #ifndef GAMOS_NO_VERBOSE
-	  if( BiasingVerb(testVerb) ) G4cout << nCalls << " " << ii << " GmBOptnEWAnnihilation REJECTED RR WEI " << gammaRRSurvivesWeight << "  " <<nrand << " < " << fNSplitInv << G4endl; //GDEB
+	  if( BiasingVerb(testVerb) ) G4cout << nCalls << " " << ii << " GmBOptnEWAnnihilation REJECTED RR WEI " << gammaRRSurvivesWeight << "  " <<nrand << " < " << fNSplitInv << G4endl;
 #endif
 	  delete gammaTrack;
 	}
@@ -141,7 +141,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
   }
   
 #ifndef GAMOS_NO_VERBOSE
-  if( BiasingVerb(testVerb) ) G4cout << "GmBOptnEWAnnihilation  NSECOS_FINAL " << fParticleChange.GetNumberOfSecondaries() << " = " << nSecos << G4endl; //GDEB
+  if( BiasingVerb(testVerb) ) G4cout << "GmBOptnEWAnnihilation  NSECOS_FINAL " << fParticleChange.GetNumberOfSecondaries() << " = " << nSecos << G4endl;
 #endif
   
   // -- we are done:

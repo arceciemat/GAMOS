@@ -1,3 +1,4 @@
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #include "GmIOMgr.hh"
 #include "GmBaseVerbosity.hh"
 #include "GmParameterMgr.hh"
@@ -118,6 +119,9 @@ void GmIOMgr::SetFileNameOut( const G4String& fname )
 #endif
 
   }
+
+  //--- Multithreading: each worker thread writes its own file (name.thN.ext)
+  theFileNameOut = GmMTMergeMgr::GetThreadFileName( theFileNameOut );
 
 }
 

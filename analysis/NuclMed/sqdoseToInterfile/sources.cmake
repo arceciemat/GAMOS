@@ -1,15 +1,20 @@
-# - GAMOS_analysis_NuclMed_sqdoseToInterfile module build definition
+# - sqdoseToInterfile module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_NuclMed_sqdoseToInterfile
-  PUBLIC_HEADERS
+gamos_add_module(sqdoseToInterfile
   SOURCES
     dummy.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_NuclMed_sqdoseToInterfile
+
+gamos_module_link_libraries(sqdoseToInterfile
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosReadDICOM
+)
+
+# Program sqdoseToInterfile
+gamos_add_executable(sqdoseToInterfile
+  SOURCES
+    sqdoseToInterfile.cc
+  LINK_LIBRARIES
+    sqdoseToInterfile
+    GamosCore_GamosReadDICOM
 )

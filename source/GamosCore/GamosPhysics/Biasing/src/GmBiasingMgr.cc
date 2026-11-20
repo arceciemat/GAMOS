@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "GmBiasingMgr.hh"
 
 #include "GmGenericBiasingPhysics.hh"
@@ -22,7 +23,7 @@
 #endif
 
 //----------------------------------------------------------------------
-GmBiasingMgr* GmBiasingMgr::theInstance = 0;
+G4ThreadLocal GmBiasingMgr* GmBiasingMgr::theInstance = 0;
 
 //-----------------------------------------------------------------------
 GmBiasingMgr::GmBiasingMgr()
@@ -85,8 +86,8 @@ void GmBiasingMgr::CreateOperator(std::vector<G4String> params )
 
    theOperators[operName] = theBOper;
 
-  //prepare physics
-  if( !theBiasingPhysics ) {
+  //prepare physics (Multithreading: the physics constructor is registered in the shared physics list only by the master; operators are thread local)
+  if( !theBiasingPhysics && G4Threading::IsMasterThread() ) {
     theBiasingPhysics = new GmGenericBiasingPhysics();
     G4VUserPhysicsList* physicsList = const_cast<G4VUserPhysicsList*>(G4RunManager::GetRunManager()->GetUserPhysicsList());
     if( !physicsList ) {
@@ -190,7 +191,7 @@ void GmBiasingMgr::AddProcesses2Oper(std::vector<G4String> params)
       }
     }
     if( processToBiasNames.size() != 0 ) {
-      theBiasingPhysics->PhysicsBias( particleName, processToBiasNames );
+      if( theBiasingPhysics ) theBiasingPhysics->PhysicsBias( particleName, processToBiasNames );
     }
     
   }
@@ -240,10 +241,10 @@ void GmBiasingMgr::AddParticles2Oper(std::vector<G4String> params )
     for( size_t ii = 0; ii < params.size()-1; ii++ ){
       if( GmGenUtils::AreWordsEquivalent( params[ii], particleName ) ) {
 	if( bOperNonPhys ) {
-	  theBiasingPhysics->Bias( particleName ); // both, Bias / NonBias
+	  if( theBiasingPhysics ) theBiasingPhysics->Bias( particleName ); // both, Bias / NonBias
 	} else {
 	  //	  theBiasingPhysics->NonPhysicsBias( particleName );
-	  theBiasingPhysics->PhysicsBias( particleName );
+	  if( theBiasingPhysics ) theBiasingPhysics->PhysicsBias( particleName );
 	}
 	biasOperator->AddParticle( params[ii] );
 	break;
@@ -287,7 +288,7 @@ void GmBiasingMgr::AddParticleProcesses2Oper(std::vector<G4String> params )
     processToBiasNames.push_back(params[ii]);
     biasOperator->AddParticleProcess( params[0], params[ii] );
   }
-  theBiasingPhysics->PhysicsBias( params[0], processToBiasNames );
+  if( theBiasingPhysics ) theBiasingPhysics->PhysicsBias( params[0], processToBiasNames );
   
   /*
   
@@ -315,7 +316,7 @@ void GmBiasingMgr::AddParticleProcesses2Oper(std::vector<G4String> params )
 	}
       }   
       if( processToBiasNames.size() != 0 ) {
-	theBiasingPhysics->PhysicsBias( particleName, processToBiasNames );
+	if( theBiasingPhysics ) theBiasingPhysics->PhysicsBias( particleName, processToBiasNames );
       }
 
     }
@@ -327,5 +328,5 @@ void GmBiasingMgr::AddParticleProcesses2Oper(std::vector<G4String> params )
 //-----------------------------------------------------------------------
 void GmBiasingMgr::AddSplittingProcess( std::vector<G4String> params)
 {
-  theBiasingPhysics->AddSplittingProcess(params);
+  if( theBiasingPhysics ) theBiasingPhysics->AddSplittingProcess(params);
 }

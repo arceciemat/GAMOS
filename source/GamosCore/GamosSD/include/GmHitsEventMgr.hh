@@ -80,7 +80,7 @@ public:
   }
 
 private:
-  static GmHitsEventMgr* theInstance;
+  static G4ThreadLocal GmHitsEventMgr* theInstance;
 
   gamosSDHitMap theHitLists;
   gamosSDHitMap theHitsCompatibleInTime;

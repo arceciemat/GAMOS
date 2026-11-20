@@ -1,121 +1,111 @@
 # - RadioTherapy module build definition
 
-include(UseGamosAtGeant4)
-include(UseROOT)
-
-geant4_add_module(RadioTherapy
+gamos_add_module(RadioTherapy
   PUBLIC_HEADERS
-    RTExtraInfoProviderCrossings.hh
-    RTPhaseSpaceHistos.hh
     EGSPhspParticle.hh
-    RTZRLimitsUA.hh
-    RTExtraInfoProviderInteractions.hh
-    RTVerbosity.hh
-    RTVExtraInfoProviderLong.hh
-    RTPSPDoseHistos.hh
-    RTReuseAtZPlaneMessenger.hh
-    RTGeneratorPSPenelope.hh
-    RTMinRangeLimitsStudyUA.hh
-    RTProdCutsStudyUA.hh
-    iaea_record.hh
-    RTCutsStudyFilter.hh
-    RTReuseAtZPlaneWithNVoxelUA.hh
-    RTGeneratorPhaseSpaceRTPlan.hh
-    RTReuseAtZPlaneTrackInfo.hh
-    RTExtraInfoProviderZLastNoMaterial.hh
-    make_zlib.h
-    RTGeneratorPhaseSpace_EGS.hh
-    RTReuseAtZPlaneUA.hh
-    RTExtraInfoProviderZLast.hh
-    iaea_utilities.hh
     RTClassifierByEILong.hh
-    RTVZRLimitsUA.hh
-    iaea_config.hh
-    RTExtraInfoTrackInfo.hh
-    RTExtraInfoProviderOrigin.hh
-    RTPhaseSpaceMessenger.hh
-    RTGeneratorPhaseSpace.hh
-    RTPhaseSpaceGenerator.hh
-    RTExtraInfoProviderZOrigin.hh
-    RTVExtraInfoProvider.hh
-    RTPhaseSpace_EGSUA.hh
-    RTReuseAtZPlaneProcess.hh
-    RTVExtraInfoProviderFloat.hh
-    RTPSPDoseHistosVector.hh
-    iaea_header.hh
-    RTVClassifierByExtraInfo.hh
-    RTZRLimitsAutoUA.hh
-    RTPhaseSpaceUA.hh
-    RTFilterByEILong.hh
-    RTVExtraInfoProviderLongByRegion.hh
+    RTCutsStudyFilter.hh
     RTExtraInfoMgr.hh
+    RTExtraInfoProviderCrossings.hh
+    RTExtraInfoProviderInteractions.hh
+    RTExtraInfoProviderOrigin.hh
+    RTExtraInfoProviderZLast.hh
+    RTExtraInfoProviderZLastNoMaterial.hh
+    RTExtraInfoProviderZOrigin.hh
+    RTExtraInfoTrackInfo.hh
+    RTFilterByEILong.hh
+    RTGeneratorPSPenelope.hh
+    RTGeneratorPhaseSpace.hh
+    RTIAEASharedReader.hh
+    RTGeneratorPhaseSpaceRTPlan.hh
+    RTGeneratorPhaseSpace_EGS.hh
+    RTMinRangeLimitsStudyUA.hh
+    RTPSPDoseHistos.hh
+    RTPSPDoseHistosVector.hh
+    RTPhaseSpaceGenerator.hh
+    RTPhaseSpaceHistos.hh
+    RTPhaseSpaceMessenger.hh
+    RTPhaseSpaceUA.hh
+    RTPhaseSpace_EGSUA.hh
     RTPhaseSpace_extUA.hh
-  SOURCES
-    RTPSPDoseHistos.cc
-    RTReuseAtZPlaneMessenger.cc
-    RTExtraInfoProviderZOrigin.cc
-    RTReuseAtZPlaneProcess.cc
-    RTClassifierByEILong.cc
-    RTPhaseSpaceUA.cc
-    RTZRLimitsAutoUA.cc
-    iaea_utilities.cc
-    RTFilterByEILong.cc
-    RTGeneratorPhaseSpace_EGS.cc
-    RTExtraInfoProviderZLastNoMaterial.cc
-    RTReuseAtZPlaneWithNVoxelUA.cc
-    EGSPhspParticle.cc
-    RTPhaseSpace_EGSUA.cc
-    RTPhaseSpace_extUA.cc
-    RTPhaseSpaceHistos.cc
+    RTProdCutsStudyUA.hh
+    RTReuseAtZPlaneMessenger.hh
+    RTReuseAtZPlaneProcess.hh
+    RTReuseAtZPlaneTrackInfo.hh
+    RTReuseAtZPlaneUA.hh
+    RTReuseAtZPlaneWithNVoxelUA.hh
+    RTVClassifierByExtraInfo.hh
+    RTVExtraInfoProvider.hh
+    RTVExtraInfoProviderFloat.hh
+    RTVExtraInfoProviderLong.hh
+    RTVExtraInfoProviderLongByRegion.hh
+    RTVZRLimitsUA.hh
+    RTVerbosity.hh
+    RTZRLimitsAutoUA.hh
+    RTZRLimitsUA.hh
+    iaea_config.hh
+    iaea_header.hh
+    iaea_record.hh
+    iaea_utilities.hh
+    make_zlib.h
+  PRIVATE_HEADERS
     zlib.h
-    RTExtraInfoProviderCrossings.cc
-    RTVerbosity.cc
-    iaea_header.cc
-    plugin.cc
-    RTReuseAtZPlaneTrackInfo.cc
-    RTPSPDoseHistos.cc.old
-    RTExtraInfoProviderInteractions.cc
-    RTVExtraInfoProviderFloat.cc
-    RTProdCutsStudyUA.cc
-    RTPSPDoseHistosVector.cc
-    RTGeneratorPSPenelope.cc
-    RTVExtraInfoProviderLong.cc
-    RTVExtraInfoProviderLongByRegion.cc
-    RTGeneratorPhaseSpaceRTPlan.cc
-    RTMinRangeLimitsStudyUA.cc
-    RTReuseAtZPlaneUA.cc
-    RTExtraInfoProviderOrigin.cc
-    RTVExtraInfoProvider.cc
+  SOURCES
+    EGSPhspParticle.cc
+    RTClassifierByEILong.cc
     RTCutsStudyFilter.cc
     RTExtraInfoMgr.cc
+    RTExtraInfoProviderCrossings.cc
+    RTExtraInfoProviderInteractions.cc
+    RTExtraInfoProviderOrigin.cc
     RTExtraInfoProviderZLast.cc
-    RTZRLimitsUA.cc
-    RTGeneratorPhaseSpace.cc
-    iaea_record.cc
-    RTVZRLimitsUA.cc
+    RTExtraInfoProviderZLastNoMaterial.cc
+    RTExtraInfoProviderZOrigin.cc
     RTExtraInfoTrackInfo.cc
+    RTFilterByEILong.cc
+    RTGeneratorPSPenelope.cc
+    RTGeneratorPhaseSpace.cc
+    RTIAEASharedReader.cc
+    RTGeneratorPhaseSpaceRTPlan.cc
+    RTGeneratorPhaseSpace_EGS.cc
+    RTMinRangeLimitsStudyUA.cc
+    RTPSPDoseHistos.cc
+    RTPSPDoseHistosVector.cc
+    RTPhaseSpaceHistos.cc
+    RTPhaseSpaceUA.cc
+    RTPhaseSpace_EGSUA.cc
+    RTPhaseSpace_extUA.cc
+    RTProdCutsStudyUA.cc
+    RTReuseAtZPlaneMessenger.cc
+    RTReuseAtZPlaneProcess.cc
+    RTReuseAtZPlaneTrackInfo.cc
+    RTReuseAtZPlaneUA.cc
+    RTReuseAtZPlaneWithNVoxelUA.cc
     RTVClassifierByExtraInfo.cc
+    RTVExtraInfoProvider.cc
+    RTVExtraInfoProviderFloat.cc
+    RTVExtraInfoProviderLong.cc
+    RTVExtraInfoProviderLongByRegion.cc
+    RTVZRLimitsUA.cc
+    RTVerbosity.cc
+    RTZRLimitsAutoUA.cc
+    RTZRLimitsUA.cc
+    iaea_header.cc
+    iaea_record.cc
+    iaea_utilities.cc
+    plugin.cc
 )
-# - Add path to generated header
-geant4_module_include_directories(RadioTherapy
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
- PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
 
-geant4_module_link_libraries(RadioTherapy
+gamos_module_link_libraries(RadioTherapy
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
     GamosCore_GamosBase_Base
-    GamosCore_GamosSD
     GamosCore_GamosGenerator
+    GamosCore_GamosGeometry
+    GamosCore_GamosPhysics_Cuts
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosScoring_Management
     GamosCore_GamosUserActionMgr
     GamosCore_GamosUtils
-    GamosCore_GamosReadDICOM
-    GamosCore_GamosUtilsUA
-    GamosCore_GamosScoring_Management
-    GamosCore_GamosPhysics_Cuts
+    lcg_PluginManager
+    lcg_SealBase
 )

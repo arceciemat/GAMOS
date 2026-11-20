@@ -11,7 +11,7 @@
 
 #include <fstream>
 
-G4int GmPDSScore::theNumberOfScores = 0;
+G4ThreadLocal G4int GmPDSScore::theNumberOfScores = 0;
 
 //-----------------------------------------------------------------------
 G4bool GmPDSScore::bHstar = TRUE;
@@ -222,3 +222,22 @@ void GmPDSScore::PrintResults( std::ostream& out, GmPDSDetector* det )
 }
 
 
+
+//------------------------------------------------------------------
+void GmPDSScore::Add( const GmPDSScore* sc )
+{
+  for( size_t ii = 0; ii < theFluxes.size() && ii < sc->theFluxes.size(); ii++ ) {
+    theFluxes[ii] += sc->theFluxes[ii];
+    theFluxes2[ii] += sc->theFluxes2[ii];
+    theFluxes3[ii] += sc->theFluxes3[ii];
+    theFluxes4[ii] += sc->theFluxes4[ii];
+    theFluxCounts[ii] += sc->theFluxCounts[ii];
+  }
+  theHstar += sc->theHstar;
+  theHp0 += sc->theHp0;
+  theHp15 += sc->theHp15;
+  theHp30 += sc->theHp30;
+  theHp45 += sc->theHp45;
+  theHp60 += sc->theHp60;
+  theHp75 += sc->theHp75;
+}

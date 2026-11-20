@@ -5,7 +5,6 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
-#include <set>
 
 //-----------------------------------------------------------------------------
 GAMOSFileData::GAMOSFileData()

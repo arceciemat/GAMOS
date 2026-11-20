@@ -142,6 +142,8 @@ public:
       int get_record_contents(iaea_record_type *p_iaea_record);
       void initialize_counters();
       void update_counters(iaea_record_type *p_iaea_record);
+      // add the counters and statistics of another header with the same record contents (MT merging)
+      void add_counters(const iaea_header_type *header2);
   void copy(iaea_header_type *header2);
 private:
       int read_block(char *lineread,char *blockname);

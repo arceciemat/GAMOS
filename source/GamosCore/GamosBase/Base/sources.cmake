@@ -1,103 +1,95 @@
 # - GamosCore_GamosBase_Base module build definition
 
-include(UseGamosAtGeant4)
-include(UseROOT)
-
-geant4_add_module(GamosCore_GamosBase_Base
+gamos_add_module(GamosCore_GamosBase_Base
   PUBLIC_HEADERS
-    GmFilterMgr.hh
-    GmParameter.hh
-    GmParameterList.icc
-    GmDistributionMgr.hh
     GmAnalysisMessenger.hh
-    GmIOtextMgr.hh
-    GmHistoWriterGraphics.hh
-    GmParameterListNumeric.hh
-    GmUIcmdWithAString.hh
-    GmHistoWriter.hh
-    GmParameterMgr.hh
-    GmFilterFactory.hh
-    GmTrackInfo.hh
-    GmHisto2.hh
-    GmParameterListNumeric.icc
-    GmVVerbosity.hh
-    GmBaseVerbosity.hh
-    GmChangeEnergies.hh
-    GmHistoWriterTXT.hh
-    GmHistoProfile2.hh
-    GmClassifierMgr.hh
-    GmIOMgr.hh
     GmAnalysisMgr.hh
     GmBaseMessenger.hh
-    GmParameterListVNumeric.icc
-    GmVisManager.hh
-    GmHisto1.hh
-    GmVClassifier.hh
-    GmVerbosityFactory.hh
-    GmConvergenceTester.hh
-    GmParameterMessenger.hh
-    GmDistributionFactory.hh
-    GmVFilter.hh
-    GmHistoWriterCSV.hh
-    GmVDistribution.hh
-    GmParameterList.hh
-    GmParameterListVNumeric.hh
-    GmHistoWriterROOT.hh
-    GmGetParticleMgr.hh
-    GmHistoProfile1.hh
-    GmHistoReaderCSV.hh
-    GmIObinMgr.hh
+    GmBaseVerbosity.hh
+    GmChangeEnergies.hh
     GmClassifierFactory.hh
+    GmClassifierMgr.hh
+    GmConvergenceTester.hh
+    GmDistributionFactory.hh
+    GmDistributionMgr.hh
+    GmFilterFactory.hh
+    GmFilterMgr.hh
+    GmGetParticleMgr.hh
+    GmHisto1.hh
+    GmHisto2.hh
+    GmHistoProfile1.hh
+    GmHistoProfile2.hh
+    GmHistoReaderCSV.hh
+    GmHistoWriter.hh
+    GmHistoWriterCSV.hh
+    GmHistoWriterGraphics.hh
+    GmHistoWriterROOT.hh
+    GmHistoWriterTXT.hh
+    GmIOMgr.hh
+    GmIObinMgr.hh
+    GmIOtextMgr.hh
+    GmParameter.hh
+    GmParameterList.hh
+    GmParameterList.icc
+    GmParameterListNumeric.hh
+    GmParameterListNumeric.icc
+    GmParameterListVNumeric.hh
+    GmParameterListVNumeric.icc
+    GmParameterMessenger.hh
+    GmParameterMgr.hh
+    GmPhysicsLinearVector.hh
+    GmTrackInfo.hh
+    GmUIcmdWithAString.hh
+    GmUIcmdWithAnInteger.hh
+    GmVClassifier.hh
+    GmVDistribution.hh
+    GmVFilter.hh
+    GmVVerbosity.hh
+    GmVerbosityFactory.hh
+    GmVisManager.hh
   SOURCES
-    GmBaseMessenger.cc
-    GmUIcmdWithAString.cc
-    GmHistoProfile1.cc
     GmAnalysisMessenger.cc
-    GmBaseVerbosity.cc
-    GmIOtextMgr.cc
-    GmClassifierMgr.cc
-    GmVClassifier.cc
     GmAnalysisMgr.cc
-    GmIObinMgr.cc
-    GmFilterFactory.cc
-    GmHistoWriterGraphics.cc
-    GmVDistribution.cc
-    GmTrackInfo.cc
-    GmGetParticleMgr.cc
-    plugin.cc
-    GmParameterMessenger.cc
+    GmBaseMessenger.cc
+    GmBaseVerbosity.cc
+    GmChangeEnergies.cc
+    GmClassifierFactory.cc
+    GmClassifierMgr.cc
+    GmConvergenceTester.cc
     GmDistributionFactory.cc
-    GmHisto2.cc
-    GmHisto1.cc
+    GmDistributionMgr.cc
+    GmFilterFactory.cc
     GmFilterMgr.cc
-    GmVFilter.cc
+    GmGetParticleMgr.cc
+    GmHisto1.cc
+    GmHisto2.cc
+    GmHistoProfile1.cc
+    GmHistoProfile2.cc
     GmHistoReaderCSV.cc
     GmHistoWriterCSV.cc
-    GmConvergenceTester.cc
-    GmParameterMgr.cc-
-    GmParameterMgr.cc
-    GmHistoProfile2.cc
-    GmIOMgr.cc
-    GmChangeEnergies.cc
-    GmVerbosityFactory.cc
-    GmHistoWriterTXT.cc
-    GmVVerbosity.cc
-    GmDistributionMgr.cc
-    GmClassifierFactory.cc
+    GmHistoWriterGraphics.cc
     GmHistoWriterROOT.cc
+    GmHistoWriterTXT.cc
+    GmIOMgr.cc
+    GmIObinMgr.cc
+    GmIOtextMgr.cc
+    GmParameterMessenger.cc
+    GmParameterMgr.cc
+    GmPhysicsLinearVector.cc
+    GmTrackInfo.cc
+    GmUIcmdWithAString.cc
+    GmUIcmdWithAnInteger.cc
+    GmVClassifier.cc
+    GmVDistribution.cc
+    GmVFilter.cc
+    GmVVerbosity.cc
+    GmVerbosityFactory.cc
+    plugin.cc
 )
-# - Add path to generated header
-geant4_module_include_directories(GamosCore_GamosBase_Base
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
- PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
 
-geant4_module_link_libraries(GamosCore_GamosBase_Base
+gamos_module_link_libraries(GamosCore_GamosBase_Base
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
     GamosCore_GamosUtils
+    lcg_PluginManager
+    lcg_SealBase
 )

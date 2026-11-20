@@ -1,122 +1,114 @@
 # - GamosCore_GamosPhysics_PhysicsList module build definition
 
-include(UseGamosAtGeant4)
-include(UseROOT)
-
-geant4_add_module(GamosCore_GamosPhysics_PhysicsList
+gamos_add_module(GamosCore_GamosPhysics_PhysicsList
   PUBLIC_HEADERS
-    GmExtraPhysicsMessenger.hh
-    GmPhysicsCerenkov.hh
-    GmPhysicsElectronLowEner.hh
-    GmEMPhysics.hh
-    GmVPhysicsElectron.hh
-    GmKleinNishinaCompton_XSChange.hh
-    GmGammaConversion_XSChange.hh
-    GmPhysicsElectronStandard.hh
-    GmPhysicsPositronStandard.hh
-    GmPhysicsGammaStandard.hh
-    GmPhysicsOpticalPhoton.hh
-    GmRayleighScattering_XSChange.hh
-    GmPhysicsGammaStandard_XSChange.hh
-    GmPhysicsGammaNuclear.hh
-    GmPhysicsXrayRefraction.hh
-    GmPEEffectFluoModel_XSChange.hh
-    GmVPhysicsGamma.hh
-    GmBetheHeitlerModel_XSChange.hh
-    GmPhysicsParallel.hh
-    GmPhysicsDecay.hh
-    GmPhysicsPositronNuclear.hh
-    GmLivermoreRayleighModel_XSChange.hh
-    GmEMExtendedPhysics.hh
-    HadrontherapyPhysicsMessenger.hh
     GmAcollinearEplusAnnihilation.hh
-    HadrontherapyStepMax.hh
+    GmBetheHeitlerModel_XSChange.hh
+    GmComptonScattering_XSChange.hh
+    GmEMExtendedPhysics.hh
+    GmEMPhysics.hh
+    GmEMPhysicsMessenger.hh
+    GmEMStandardPhysics.hh
+    GmEMStandardPhysicsMessenger.hh
+    GmExtraPhysicsMessenger.hh
+    GmGammaConversion_XSChange.hh
+    GmKleinNishinaCompton_XSChange.hh
+    GmLivermoreRayleighModel_XSChange.hh
     GmLivermoreRayleighModel_XSChangeNEW.hh
+    GmPEEffectFluoModel_XSChange.hh
+    GmPhotoElectricEffect_XSChange.hh
+    GmPhysicsCerenkov.hh
+    GmPhysicsCoulombScattering.hh
+    GmPhysicsDecay.hh
+    GmPhysicsElectronLowEner.hh
     GmPhysicsElectronNuclear.hh
     GmPhysicsElectronPenelope.hh
-    GmPhotoElectricEffect_XSChange.hh
-    GmEMPhysicsMessenger.hh
-    GmPhysicsMuonStandard.hh
-    GmPhysicsVerbosity.hh
-    GmXrayRefraction.hh
-    GmRadiotherapyPhysics.hh
+    GmPhysicsElectronStandard.hh
     GmPhysicsFactory.hh
     GmPhysicsGammaLowEner.hh
-    GmPhysicsRadioactiveDecay.hh
-    GmComptonScattering_XSChange.hh
-    HadrontherapyStepMaxMessenger.hh
-    HadrontherapyPhysics.hh
-    GmPhysicsPositronPenelope.hh
-    GmPhysicsMultipleScattering.hh
-    GmEMStandardPhysicsMessenger.hh
-    GmPhysicsCoulombScattering.hh
-    GmXSChange_DistributionUser.hh
+    GmPhysicsGammaNuclear.hh
     GmPhysicsGammaPenelope.hh
-    GmEMStandardPhysics.hh
+    GmPhysicsGammaStandard.hh
+    GmPhysicsGammaStandard_XSChange.hh
+    GmPhysicsMultipleScattering.hh
+    GmPhysicsMuonStandard.hh
+    GmPhysicsOpticalPhoton.hh
+    GmPhysicsParallel.hh
+    GmPhysicsPositronNuclear.hh
+    GmPhysicsPositronPenelope.hh
+    GmPhysicsPositronStandard.hh
+    GmPhysicsRadioactiveDecay.hh
+    GmPhysicsSingleCoulombScattering.hh
+    GmPhysicsVerbosity.hh
+    GmPhysicsXrayRefraction.hh
+    GmRadiotherapyPhysics.hh
+    GmRayleighScattering_XSChange.hh
+    GmVPhysicsElectron.hh
+    GmVPhysicsGamma.hh
+    GmXSChange_DistributionUser.hh
+    GmXrayRefraction.hh
+    HadrontherapyPhysics.hh
+    HadrontherapyPhysicsMessenger.hh
+    HadrontherapyStepMax.hh
+    HadrontherapyStepMaxMessenger.hh
   SOURCES
-    GmPhysicsElectronPenelope.cc
-    GmPhysicsGammaPenelope.cc
-    GmGammaConversion_XSChange.cc
-    GmVPhysicsElectron.cc
-    GmEMPhysics.cc
-    GmPhysicsDecay.cc
-    GmPhysicsXrayRefraction.cc
-    HadrontherapyPhysics.cc
     GmAcollinearEplusAnnihilation.cc
-    HadrontherapyPhysicsMessenger.cc
-    GmPhysicsParallel.cc
-    GmPhysicsOpticalPhoton.cc
-    GmPhysicsCerenkov.cc
-    GmPhysicsGammaLowEner.cc
-    GmLivermoreRayleighModel_XSChange.cc
-    GmPhysicsPositronNuclear.cc
-    GmEMStandardPhysics.cc
-    GmRadiotherapyPhysics.cc
-    plugin.cc
-    GmPhysicsFactory.cc
-    GmPhysicsElectronStandard.cc
-    GmPhysicsPositronPenelope.cc
-    GmPhysicsCoulombScattering.cc
-    GmVPhysicsGamma.cc
-    GmComptonScattering_XSChange.cc
-    GmPhysicsRadioactiveDecay.cc
-    GmEMPhysicsMessenger.cc
-    GmPhysicsGammaStandard.cc
-    GmPhotoElectricEffect_XSChange.cc
-    GmPhysicsMultipleScattering.cc
-    GmPhysicsElectronNuclear.cc
-    GmPhysicsGammaNuclear.cc
-    HadrontherapyStepMaxMessenger.cc
-    GmKleinNishinaCompton_XSChange.cc
-    GmLivermoreRayleighModel_XSChangeNEW.cc
-    GmRayleighScattering_XSChange.cc
-    GmEMExtendedPhysics.cc
-    GmXrayRefraction.cc
     GmBetheHeitlerModel_XSChange.cc
-    GmExtraPhysicsMessenger.cc
+    GmComptonScattering_XSChange.cc
+    GmEMExtendedPhysics.cc
+    GmEMPhysics.cc
+    GmEMPhysicsMessenger.cc
+    GmEMStandardPhysics.cc
     GmEMStandardPhysicsMessenger.cc
-    GmPhysicsPositronStandard.cc
-    GmPhysicsVerbosity.cc
-    GmPhysicsElectronLowEner.cc
-    GmXSChange_DistributionUser.cc
-    GmPhysicsMuonStandard.cc
+    GmExtraPhysicsMessenger.cc
+    GmGammaConversion_XSChange.cc
+    GmKleinNishinaCompton_XSChange.cc
+    GmLivermoreRayleighModel_XSChange.cc
+    GmLivermoreRayleighModel_XSChangeNEW.cc
     GmPEEffectFluoModel_XSChange.cc
+    GmPhotoElectricEffect_XSChange.cc
+    GmPhysicsCerenkov.cc
+    GmPhysicsCoulombScattering.cc
+    GmPhysicsDecay.cc
+    GmPhysicsElectronLowEner.cc
+    GmPhysicsElectronNuclear.cc
+    GmPhysicsElectronPenelope.cc
+    GmPhysicsElectronStandard.cc
+    GmPhysicsFactory.cc
+    GmPhysicsGammaLowEner.cc
+    GmPhysicsGammaNuclear.cc
+    GmPhysicsGammaPenelope.cc
+    GmPhysicsGammaStandard.cc
     GmPhysicsGammaStandard_XSChange.cc
+    GmPhysicsMultipleScattering.cc
+    GmPhysicsMuonStandard.cc
+    GmPhysicsOpticalPhoton.cc
+    GmPhysicsParallel.cc
+    GmPhysicsPositronNuclear.cc
+    GmPhysicsPositronPenelope.cc
+    GmPhysicsPositronStandard.cc
+    GmPhysicsRadioactiveDecay.cc
+    GmPhysicsSingleCoulombScattering.cc
+    GmPhysicsVerbosity.cc
+    GmPhysicsXrayRefraction.cc
+    GmRadiotherapyPhysics.cc
+    GmRayleighScattering_XSChange.cc
+    GmVPhysicsElectron.cc
+    GmVPhysicsGamma.cc
+    GmXSChange_DistributionUser.cc
+    GmXrayRefraction.cc
+    HadrontherapyPhysics.cc
+    HadrontherapyPhysicsMessenger.cc
     HadrontherapyStepMax.cc
+    HadrontherapyStepMaxMessenger.cc
+    plugin.cc
 )
-# - Add path to generated header
-geant4_module_include_directories(GamosCore_GamosPhysics_PhysicsList
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
- PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
 
-geant4_module_link_libraries(GamosCore_GamosPhysics_PhysicsList
+gamos_module_link_libraries(GamosCore_GamosPhysics_PhysicsList
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
-    GamosCore_GamosUtils
     GamosCore_GamosBase_Base
+    GamosCore_GamosData_Distributions
+    GamosCore_GamosUtils
+    lcg_PluginManager
+    lcg_SealBase
 )

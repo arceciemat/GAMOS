@@ -1,19 +1,28 @@
-# - GAMOS_analysis_DICOM_resizeImage module build definition
+# - extendImageAir module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_DICOM_resizeImage
+gamos_add_module(extendImageAir
   PUBLIC_HEADERS
     DCMExtendImageAir.hh
   SOURCES
     DCMExtendImageAir.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_DICOM_resizeImage
+
+gamos_module_link_libraries(extendImageAir
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
     DICOMBase
     DICOMReaders
-    DICOM2G4
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
+)
+
+# Program extendImageAir
+gamos_add_executable(extendImageAir
+  SOURCES
+    extendImageAir.cc
+  LINK_LIBRARIES
+    extendImageAir
+    DICOMBase
+    DICOMReaders
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
 )

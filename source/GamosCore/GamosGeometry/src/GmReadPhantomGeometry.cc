@@ -381,7 +381,7 @@ void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
 
 #ifndef GAMOS_NO_VERBOSE
 	if( GeomVerb(testVerb) ) {
-	  if( copyNo%1000000 == 1 ) G4cout << "ReadVoxelDensities mate IDs: " << copyNo << G4endl; //GDEB
+	  if( copyNo%1000000 == 1 ) G4cout << "ReadVoxelDensities mate IDs: " << copyNo << G4endl;
 	}
 #endif
 	//--- store the minimum and maximum density for each material 
@@ -414,7 +414,7 @@ void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
     for( G4int copyNo = 0; copyNo < nVoxels; copyNo++ ) {
 #ifndef GAMOS_NO_VERBOSE
       if( GeomVerb(testVerb) ) {
-	if( copyNo%1000000 == 1 ) G4cout << "ReadVoxelDensities mate Densities: " << copyNo << G4endl; //GDEB
+	if( copyNo%1000000 == 1 ) G4cout << "ReadVoxelDensities mate Densities: " << copyNo << G4endl;
       }
 #endif
       //--- Get material from original list of materials in file

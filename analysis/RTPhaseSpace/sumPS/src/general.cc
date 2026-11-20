@@ -12,6 +12,15 @@
 using namespace std;
 #include "FILE2MEMORY.h"
 
+//--- run a shell command; warn if it fails (system() result must not be ignored)
+static void runSystem( const std::string& command )
+{
+  int status = system( command.c_str() );
+  if( status != 0 ) {
+    std::cerr << "!! WARNING: command failed (status " << status << "): " << command << std::endl;
+  }
+}
+
 
 double get_num(string texto,int n){
 /// return the numer n on the line text
@@ -158,9 +167,9 @@ string num2string(int i){
        string aux2=".";
        char caux[80]="";
        if (i>999){
-	   gcvt(i,10,caux);
+	   aux = gcvt(i,10,caux);
 	} else {
-         gcvt(i,3,caux);
+         aux = gcvt(i,3,caux);
 	}
        aux=caux;
        //cout << "123.21345 " << fmod(123.21345,1) << endl;
@@ -180,7 +189,7 @@ string num2string(int i){
 string num2string(double d){
        string aux;
        char caux[80]="";
-       gcvt(d,3,caux);
+       aux = gcvt(d,3,caux);
        aux=caux;
        if ( fmod(d,1) > 0){
             int longitud=aux.length();
@@ -264,12 +273,12 @@ string get_pwd(){
 	//cout << "RAND = " << num << endl;
 	string line_out="pwd > tmp.";
 	line_out+=num2string(num);
-	system(line_out.c_str());
+	runSystem(line_out.c_str());
 	line_out="tmp."+num2string(num);
 	FILE2MEMORY PWD(line_out);
 	line_out="rm "+line_out;
 	//cout << " LAST = " << line_out << endl;
-	system(line_out.c_str());	
+	runSystem(line_out.c_str());	
 
 	return 	PWD.get_line(0);
 	
@@ -460,7 +469,7 @@ int cssh(string username,
 		cout << " End Print" << endl << " Size[0] " << data.line[0].size() << endl;
 		cout <<  " Size[1] " << data.line[1].size() << endl;
 	}
-	system("rm -f  get_ssh_remote_string_vector_system.tmp");	
+	runSystem("rm -f  get_ssh_remote_string_vector_system.tmp");	
 	cout << "EXE_READY" << endl;
 	output=data.line;
 	return exec_value;
@@ -486,7 +495,7 @@ int cssh(string username,
 		cout << " End Print" << endl << " Size[0] " << data.line[0].size() << endl;
 		cout <<  " Size[1] " << data.line[1].size() << endl;
 	}
-	system(" rm -f  get_ssh_remote_string_vector_system.tmp");	
+	runSystem(" rm -f  get_ssh_remote_string_vector_system.tmp");	
 	cout << "EXE_READY" << endl;
 	if (data.line.size()>0){
 		output=data.line[0];
@@ -508,7 +517,7 @@ string cssh(string username, string servername, string exe_command ){
 	exec_data = "ssh "+username+"@"+servername+" '"+exe_command+"' > get_ssh_remote_string_vector_system.tmp";
 	cout << exec_data << endl;
 	//	exec_value=system(exec_data.c_str());
-	system(exec_data.c_str());
+	runSystem(exec_data.c_str());
 	
 	FILE2MEMORY data((char*)"get_ssh_remote_string_vector_system.tmp");
 	data.clear_empty_at_the_biginning();
@@ -518,7 +527,7 @@ string cssh(string username, string servername, string exe_command ){
 		cout << " End Print" << endl << " Size[0] " << data.line[0].size() << endl;
 		cout <<  " Size[1] " << data.line[1].size() << endl;
 	}
-	system(" rm -f  get_ssh_remote_string_vector_system.tmp");	
+	runSystem(" rm -f  get_ssh_remote_string_vector_system.tmp");	
 	cout << "EXE_READY" << endl;
 	//output=data.line[0];
 	//return exec_value;
@@ -630,7 +639,7 @@ string get_remote_env(string username,
 	env_data=cssh(username,servername,temp_file);
 	cssh(username,servername,"rm -f "+temp_file);
 	temp_file="rm -f "+temp_file;
-	system(temp_file.c_str());
+	runSystem(temp_file.c_str());
 	//cout << "Path = " << remote_path << endl;
         //remote_path+=get_string(runs_data[j].exe_command," ",2)+"";
 	return env_data;

@@ -1,3 +1,4 @@
+#ifndef GAMOS_NO_ROOT 
 #ifndef ROOTFileData__HH
 #define ROOTFileData__HH
 #include <vector>
@@ -5,7 +6,6 @@
 #include "globals.hh"
 
 #include "FileData.hh"
-#include "DoserData.hh"
 
 class ROOTFileData : public FileData
 {
@@ -24,4 +24,5 @@ private:
 
 };
 
+#endif
 #endif

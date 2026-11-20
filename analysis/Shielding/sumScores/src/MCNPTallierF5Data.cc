@@ -1,12 +1,10 @@
 #include "MCNPTallierF5Data.hh"
+#include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "MCNPTallyData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "G4tgrUtils.hh"
 #include "G4UImanager.hh"
-#include "GamosCore/GamosData/Distributions/include/GmNumericDistributionLogLog.hh"
-#include "GamosCore/GamosData/Distributions/include/GmNumericDistributionLinLog.hh"
 #define private public
-#include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
 //------------------------------------------------------------------------
 MCNPTallierF5Data::MCNPTallierF5Data( std::vector<G4String>& wl, GmFileIn& fin, G4bool bMod )

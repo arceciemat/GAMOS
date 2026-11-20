@@ -6,12 +6,10 @@
 #include "G4TransportationManager.hh"
 #include "G4Navigator.hh"
 #include "G4TouchableHistory.hh"
-#include <iomanip>
-#include <iostream>
 #include <bitset>
 
 //----------------------------------------------------------------------
-PETIOMgrCrystalID* PETIOMgrCrystalID::theInstance = 0;
+G4ThreadLocal PETIOMgrCrystalID* PETIOMgrCrystalID::theInstance = 0;
 
 //----------------------------------------------------------------------
 PETIOMgrCrystalID* PETIOMgrCrystalID::GetInstance()
@@ -128,7 +126,7 @@ char PETIOMgrCrystalID::binary_char(unsigned int num, int iset )
 {
   unsigned int n28 = std::pow(2,8);
   /*  if( num >= n28*n28 ) { 
-    std::cerr << " PETIOMgrCrystalID::binary_char( " <<  num << " " << iset << " " << n28 << std::endl; 
+    G4cerr << " PETIOMgrCrystalID::binary_char( " <<  num << " " << iset << " " << n28 << std::endl; 
     G4Exception("PETIOMgrCrystalID::binary_char",
 		"",
 		JustWarning,
@@ -195,8 +193,8 @@ PETOutput PETIOMgrCrystalID::ReadEvent( G4bool& bEof )
   }
 
   PETOutput po;
-  fread (&po, sizeof(struct PETOutput),1,theFileIn);
-  if ( feof( theFileIn ) ) {
+  size_t nread = fread (&po, sizeof(struct PETOutput),1,theFileIn);
+  if ( nread != 1 || feof( theFileIn ) ) {
     bEof = TRUE;
   } else {
     bEof = FALSE;

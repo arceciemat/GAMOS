@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------
 Det1stHitByXPos::Det1stHitByXPos()
 {
-  theName = "XYPos";
+  theName = "XPos";
   InitVariables();
 }
 

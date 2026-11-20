@@ -28,12 +28,12 @@ void DicomOperIntersectStruct::Operate( DicomVImage* )
 //-----------------------------------------------------------------------------
 void DicomOperIntersectStruct::Operate( DicomVImage* image, DicomPolygonList* polyList )
 {
-  G4cout << " DicomOperIntersect::Operate " << image->GetName() << " with " << polyList->GetName() << " NLINES " << polyList->GetLines().size() << G4endl; //GDEB
+  //G4cout << " DicomOperIntersect::Operate " << image->GetName() << " with " << polyList->GetName() << " NLINES " << polyList->GetLines().size() << G4endl; //GDEB
   G4RotationMatrix rotMat0;
   
   std::vector<DicomVLine*> lines = polyList->GetLines();
   for( size_t ii = 0; ii < lines.size(); ii++ ) {
-    G4cout << " DicomOperIntersect poly id " << ii << " " << G4endl; //GDEB
+    //G4cout << " DicomOperIntersect poly id " << ii << " " << G4endl; //GDEB
     DicomPolygon* poly = static_cast<DicomPolygon*>(lines[ii]);
 
     //----- Extract image data
@@ -53,7 +53,7 @@ void DicomOperIntersectStruct::Operate( DicomVImage* image, DicomPolygonList* po
 
     //--- Get INTERSECTION OF POLYGONE AND IMAGE Z PLANE BY BUILDING A G4ExtrudedSolid AND LETTING GEANT4 FIND IF THERE IS AN INTERSECTION WITH EACH VOXEL
     G4ExtrudedSolid* extrSolid = poly->BuildExtrudedSolid(imVoxelDimZ);
-    G4cout << " DicomOperIntersect extr " << extrSolid->GetName() << " " << extrSolid->GetNofVertices() << " " << extrSolid->GetNofZSections() << G4endl; //GDEB
+    //G4cout << " DicomOperIntersect extr " << extrSolid->GetName() << " " << extrSolid->GetNofVertices() << " " << extrSolid->GetNofZSections() << G4endl; //GDEB
 
     //--- Get contour Zplane ID and check it is in limits
     G4int iPolygonZ = poly->GetPolygonZIndex(image, imVoxelDimZ*0.25);

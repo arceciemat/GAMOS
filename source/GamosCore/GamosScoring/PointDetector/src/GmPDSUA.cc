@@ -1,3 +1,7 @@
+#include "G4Run.hh"
+#include "G4RunManager.hh"
+#include "G4AutoLock.hh"
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #include "GmPDSUA.hh"
 #include "GmPDSNeutronProcess.hh"
 #include "GmPDSGammaProcess.hh"
@@ -320,40 +324,105 @@ void GmPDSUA::EndOfEventAction(const G4Event*)
 //------------------------------------------------------------------
 void GmPDSUA::EndOfRunAction( const G4Run* )
 {
+  if( GmMTMergeMgr::IsWorkerThread() ) {
+    MergeScoresForMaster();
+    return;
+  }
+#ifdef PDS_OP
+  PrintAllResults( bScoreNeutrons ? theNeutronHelper : 0, bScoreGammas ? theGammaHelper : 0, bScoreOpticalPhotons ? theOpticalPhotonHelper : 0 );
+#else
+  PrintAllResults( bScoreNeutrons ? theNeutronHelper : 0, bScoreGammas ? theGammaHelper : 0, 0 );
+#endif
+}
 
-  if( bScoreNeutrons) {
+//------------------------------------------------------------------
+void GmPDSUA::PrintAllResults( GmPDSProcessHelper* helperN, GmPDSProcessHelper* helperG, GmPDSProcessHelper* helperOP )
+{
+  if( helperN ) {
     G4String resultsNeutronFile = GetPDSStringParameter("ResultsFileName","neutron","");
     if( resultsNeutronFile == "" ) {
-      theNeutronHelper->PrintResults();
+      helperN->PrintResults();
     }else {
       std::ofstream fout(resultsNeutronFile);
-      theNeutronHelper->PrintResults(fout);
+      helperN->PrintResults(fout);
       fout.close();      
     }
   }
 
-  if( bScoreGammas) {
+  if( helperG ) {
     G4String resultsGammaFile = GetPDSStringParameter("ResultsFileName","gamma","");
     if( resultsGammaFile == "" ) {
-      theGammaHelper->PrintResults();
+      helperG->PrintResults();
     }else {
       std::ofstream fout(resultsGammaFile);
-      theGammaHelper->PrintResults(fout);
+      helperG->PrintResults(fout);
       fout.close();      
     }
   }
 
-#ifdef PDS_OP
-  if( bScoreOpticalPhotons) {
+  if( helperOP ) {
     G4String resultsOpticalPhotonFile = GetPDSStringParameter("ResultsFileName","opticalphoton","");
     if( resultsOpticalPhotonFile == "" ) {
-      theOpticalPhotonHelper->PrintResults();
+      helperOP->PrintResults();
     }else {
       std::ofstream fout(resultsOpticalPhotonFile);
-      theOpticalPhotonHelper->PrintResults(fout);
+      helperOP->PrintResults(fout);
       fout.close();      
     }
   }
-#endif
+}
 
+//------------------------------------------------------------------
+namespace {
+  G4Mutex pdsMergeMutex = G4MUTEX_INITIALIZER;
+  struct PDSMergeData {
+    G4int runID = -1;
+    GmPDSUA* ua = 0;
+    GmPDSProcessHelper* helper[3] = {0,0,0};
+    std::map<G4String,GmPDSScore*>* scores[3] = {0,0,0};
+  };
+  std::map<G4String,PDSMergeData>& PDSMerge() {
+    static std::map<G4String,PDSMergeData> theData;
+    return theData;
+  }
+  void AddScores( std::map<G4String,GmPDSScore*>* to, std::map<G4String,GmPDSScore*>* from ) {
+    if( !to || !from ) return;
+    for( auto ite = from->begin(); ite != from->end(); ite++ ) {
+      auto itet = to->find(ite->first);
+      if( itet != to->end() ) itet->second->Add( ite->second );
+    }
+  }
+}
+
+//------------------------------------------------------------------
+void GmPDSUA::MergeScoresForMaster()
+{
+  // The scores of the first worker that finishes the run receive the scores of the others;
+  // the master prints them, with the helper of that worker (worker threads are idle then)
+  G4AutoLock l(&pdsMergeMutex);
+  G4int runID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  PDSMergeData& md = PDSMerge()[GetName()];
+  GmPDSProcessHelper* helpers[3] = { bScoreNeutrons ? theNeutronHelper : 0, bScoreGammas ? theGammaHelper : 0, 0 };
+  std::map<G4String,GmPDSScore*>* scores[3] = { bScoreNeutrons ? theScoresN : 0, bScoreGammas ? theScoresG : 0, 0 };
+#ifdef PDS_OP
+  helpers[2] = bScoreOpticalPhotons ? theOpticalPhotonHelper : 0;
+  scores[2] = bScoreOpticalPhotons ? theScoresN : 0;
+#endif
+  if( md.runID != runID ) {
+    md.runID = runID;
+    md.ua = this;
+    for( int ii = 0; ii < 3; ii++ ) {
+      md.helper[ii] = helpers[ii];
+      md.scores[ii] = scores[ii];
+    }
+    G4String uaName = GetName();
+    GmMTMergeMgr::RegisterMasterEndOfRunAction("GmPDSUA_"+uaName, [uaName](){
+	PDSMergeData& mdm = PDSMerge()[uaName];
+	if( mdm.ua ) mdm.ua->PrintAllResults( mdm.helper[0], mdm.helper[1], mdm.helper[2] );
+      } );
+  } else {
+    for( int ii = 0; ii < 3; ii++ ) {
+      AddScores( md.scores[ii], scores[ii] );
+    }
+  }
 }

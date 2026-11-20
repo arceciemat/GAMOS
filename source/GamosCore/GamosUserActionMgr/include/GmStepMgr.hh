@@ -41,7 +41,7 @@ public:
   void ClearObjects();
 
 private:
-  static GmStepMgr* theInstance;
+  static G4ThreadLocal GmStepMgr* theInstance;
 
 protected:
   std::multimap<G4int,G4Step*> theNewSteps; // store track ID for easier ancestor list building

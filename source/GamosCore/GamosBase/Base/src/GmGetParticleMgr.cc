@@ -14,7 +14,7 @@
 #include "G4ProcessManager.hh"
 #include "G4IonTable.hh"
 
-GmGetParticleMgr* GmGetParticleMgr::theInstance = 0;
+G4ThreadLocal GmGetParticleMgr* GmGetParticleMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 GmGetParticleMgr::GmGetParticleMgr()

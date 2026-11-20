@@ -1,22 +1,32 @@
 #ifndef GETORGANINFO_hh
 #define GETORGANINFO_hh
 
-#include "DICOM/DICOMBase/include/DicomVImageStr.hh"
+#include "DICOM/DICOMBase/include/DicomVImage.hh" // DIModality
 #include "G4ExceptionSeverity.hh"
 class DicomMgr;
 class DicomReaderMgr;
 class DicomParameterMgr;
+class DicomVImageStr;
 class GmAnalysisMgr;
-#include "TH1F.h"
-#include "TProfile.h"
-#include "TFile.h"
+// GmHisto1 / GmHistoProfile1 are TH1F / TProfile if GAMOS is built with ROOT,
+// and the GAMOS own histogram classes if not (GAMOS_NO_ROOT)
+#ifdef GAMOS_NO_ROOT
+class GmHisto1;
+class GmHistoProfile1;
+#else // same typedef's as in GmAnalysisMgr.hh
+class TH1F;
+class TProfile;
+class TFile;
+typedef TH1F GmHisto1;
+typedef TProfile GmHistoProfile1;
+#endif
+class GmHistoWriterCSV; // histograms are always written in a GAMOS .csv file (can be read with histBrowser.py)
 #include "globals.hh"
 #include <vector>
 #include <map>
-#include <set>
-typedef std::map<size_t,TH1F*> mh;
+typedef std::map<size_t,GmHisto1*> mh;
 typedef std::pair<mh,mh> pmhmh;
-typedef std::map<size_t,TProfile*> mhp;
+typedef std::map<size_t,GmHistoProfile1*> mhp;
 typedef std::pair<mhp,mhp> pmhpmhp;
 typedef std::multimap<G4double,G4double> mmdd;
 class GmReadPhantomStMgr;
@@ -50,8 +60,19 @@ public:
   
 private:
   pmhmh FillDoseHistos( DicomVImage* analyseImage, DicomVImage* perCentImage );
+  //--- index in theAnalyseMateDensImage of the centre of voxel ii of analyseImage (-1 if outside), as they may have different voxels
+  G4int GetMateDensIndex( DicomVImage* analyseImage, size_t ii ) const;
+  //--- save histograms in the GAMOS .csv file
+  void SaveHistosCSV( pmhmh hpair, GmHistoWriterCSV* histosCSV );
+  void SaveHistosCSV( pmhpmhp hpair, GmHistoWriterCSV* histosCSV );
+  //--- draw histograms (with ROOT they are also written in the .root file)
+#ifndef GAMOS_NO_ROOT
   void WriteHistosToFile( pmhmh hpair, TFile* histosFile );
   void WriteHistosToFile( pmhpmhp hpair, TFile* histosFile );
+#else
+  void WriteHistosToFile( pmhmh hpair );
+  void WriteHistosToFile( pmhpmhp hpair );
+#endif
   void DicomException(G4String msg, G4ExceptionSeverity sever = FatalException);
   DicomVImage* FillImageDoseInSt( std::map<size_t, long double> theDosesPerSt );
   DicomVImage* BuildAnalyseErrorImage( DicomVImage* image, G4double relErr );

@@ -45,7 +45,7 @@ void DicomOperExtendAir::Operate( DicomVImage* image, G4int newNoVoxelsX, G4doub
   }
 
   G4double PRECISION = std::min(1e-4,2*image->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
-  G4cout << " DicomOperExtendAir::Operate PRECISION " << PRECISION << " " << image->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
+  //G4cout << " DicomOperExtendAir::Operate PRECISION " << PRECISION << " " << image->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
 
   //----- Extract the old image data
   size_t imNVoxX = image->GetNoVoxelsX();
@@ -64,7 +64,7 @@ void DicomOperExtendAir::Operate( DicomVImage* image, G4int newNoVoxelsX, G4doub
   G4double imVoxDimZ = image->GetVoxelDimZ();
 
 #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(-warningVerb) ) {
+  if( DicomVerb(warningVerb) ) {
     G4cout << "IMAGE SIZE " << G4endl
 	   << " X: " << imNVoxX << " " << imMinX << " " << imMaxX << G4endl
 	   << " Y: " << imNVoxY << " " << imMinY << " " << imMaxY << G4endl
@@ -129,7 +129,7 @@ void DicomOperExtendAir::Operate( DicomVImage* image, G4int newNoVoxelsX, G4doub
 		(" New maxX "+GmGenUtils::ftoa(newMaxX)+" is smaller than old one: "+GmGenUtils::ftoa(imMaxX)+" DIFF= "+GmGenUtils::ftoa(fabs(newMaxX-imMaxX))).c_str());
   }
   #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(-infoVerb) ) G4cout << " DicomOperExtendAir::Operate minX " << changeMinX << "=" << imMinX<<" - "<<newMinX <<" ; "<< nBinMinX <<"="<< changeMinX <<" / "<< imVoxDimX << G4endl
+  if( DicomVerb(infoVerb) ) G4cout << " DicomOperExtendAir::Operate minX " << changeMinX << "=" << imMinX<<" - "<<newMinX <<" ; "<< nBinMinX <<"="<< changeMinX <<" / "<< imVoxDimX << G4endl
 				    << " DicomOperExtendAir::Operate maxX " << changeMaxX << "=" << -imMaxX << " + " << newMaxX <<" ; "<< nBinMaxX<<"="<< changeMaxX << " / " << imVoxDimX << G4endl;
 #endif
 
@@ -164,7 +164,7 @@ void DicomOperExtendAir::Operate( DicomVImage* image, G4int newNoVoxelsX, G4doub
 		(" New maxY "+GmGenUtils::ftoa(newMaxY)+" is smaller than old one: "+GmGenUtils::ftoa(imMaxY)+" DIFF= "+GmGenUtils::ftoa(fabs(newMaxY-imMaxY))).c_str());
   }
   #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(-infoVerb) ) G4cout << " DicomOperExtendAir::Operate minY " << changeMinY << "=" << imMinY<<" - "<<newMinY <<" ; "<< nBinMinY <<"="<< changeMinY <<" / "<< imVoxDimY << G4endl
+  if( DicomVerb(infoVerb) ) G4cout << " DicomOperExtendAir::Operate minY " << changeMinY << "=" << imMinY<<" - "<<newMinY <<" ; "<< nBinMinY <<"="<< changeMinY <<" / "<< imVoxDimY << G4endl
 				    << " DicomOperExtendAir::Operate maxY " << changeMaxY << "=" << -imMaxY << " + " << newMaxY <<" ; "<< nBinMaxY<<"="<< changeMaxY << " / " << imVoxDimY << G4endl;
 #endif
 
@@ -199,7 +199,7 @@ void DicomOperExtendAir::Operate( DicomVImage* image, G4int newNoVoxelsX, G4doub
 		(" New maxZ "+GmGenUtils::ftoa(newMaxZ)+" is smaller than old one: "+GmGenUtils::ftoa(imMaxZ)+" DIFF= "+GmGenUtils::ftoa(fabs(newMaxZ-imMaxZ))).c_str());
   }
   #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(-infoVerb) ) G4cout << " DicomOperExtendAir::Operate minZ " << changeMinZ << "=" << imMinZ<<" - "<<newMinZ <<" ; "<< nBinMinZ <<"="<< changeMinZ <<" / "<< imVoxDimZ << G4endl
+  if( DicomVerb(infoVerb) ) G4cout << " DicomOperExtendAir::Operate minZ " << changeMinZ << "=" << imMinZ<<" - "<<newMinZ <<" ; "<< nBinMinZ <<"="<< changeMinZ <<" / "<< imVoxDimZ << G4endl
 				    << " DicomOperExtendAir::Operate maxZ " << changeMaxZ << "=" << -imMaxZ << " + " << newMaxZ <<" ; "<< nBinMaxZ<<"="<< changeMaxZ << " / " << imVoxDimZ << G4endl;
 #endif
 
@@ -212,7 +212,7 @@ void DicomOperExtendAir::Operate( DicomVImage* image, G4int newNoVoxelsX, G4doub
   G4int iNewMinZ = 0 - nBinMinZ;
   G4int iNewMaxZ = imNVoxZ + nBinMaxZ;
   #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(-infoVerb) ) G4cout << " DicomOperExtendAir::Operate iMinMaxX= " << iNewMinX << " " << iNewMinY 
+  if( DicomVerb(infoVerb) ) G4cout << " DicomOperExtendAir::Operate iMinMaxX= " << iNewMinX << " " << iNewMinY 
 				    << " Y= " << iNewMinY << " " << iNewMaxY
 				    << " Z= " << iNewMinZ << " " << iNewMaxZ << G4endl;
 #endif
@@ -259,7 +259,7 @@ void DicomOperExtendAir::Operate( DicomVImage* image, G4int newNoVoxelsX, G4doub
 void DicomOperExtendAir::OperateStr( DicomVImageStr* imageStr, G4int newNoVoxelsX, G4double newMinX, G4double newMaxX, G4int newNoVoxelsY, G4double newMinY, G4double newMaxY, G4int newNoVoxelsZ, G4double newMinZ, G4double newMaxZ)
 { 
   G4double PRECISION = std::min(1e-4,2*imageStr->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
-  G4cout << " DicomOperExtendAir::OperateStr PRECISION " << PRECISION << " " << imageStr->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
+  //G4cout << " DicomOperExtendAir::OperateStr PRECISION " << PRECISION << " " << imageStr->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
 
   //----- Extract the old image data
   size_t imNVoxX = imageStr->GetNoVoxelsX();
@@ -278,7 +278,7 @@ void DicomOperExtendAir::OperateStr( DicomVImageStr* imageStr, G4int newNoVoxels
   G4double imVoxDimZ = imageStr->GetVoxelDimZ();
 
 #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(-warningVerb) ) {
+  if( DicomVerb(warningVerb) ) {
     G4cout << "IMAGE SIZE " << G4endl
 	   << " X: " << imNVoxX << " " << imMinX << " " << imMaxX << G4endl
 	   << " Y: " << imNVoxY << " " << imMinY << " " << imMaxY << G4endl
@@ -341,7 +341,7 @@ void DicomOperExtendAir::OperateStr( DicomVImageStr* imageStr, G4int newNoVoxels
 		(" New maxX "+GmGenUtils::ftoa(newMaxX)+" is smaller than old one: "+GmGenUtils::ftoa(imMaxX)+" DIFF= "+GmGenUtils::ftoa(fabs(newMaxX-imMaxX))).c_str());
   }
   #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(-infoVerb) ) G4cout << " DicomOperExtendAir::Operate minX " << changeMinX << "=" << imMinX<<" - "<<newMinX <<" ; "<< nBinMinX <<"="<< changeMinX <<" / "<< imVoxDimX << G4endl
+  if( DicomVerb(infoVerb) ) G4cout << " DicomOperExtendAir::Operate minX " << changeMinX << "=" << imMinX<<" - "<<newMinX <<" ; "<< nBinMinX <<"="<< changeMinX <<" / "<< imVoxDimX << G4endl
 				    << " DicomOperExtendAir::Operate maxX " << changeMaxX << "=" << -imMaxX << " + " << newMaxX <<" ; "<< nBinMaxX<<"="<< changeMaxX << " / " << imVoxDimX << G4endl;
 #endif
 
@@ -374,7 +374,7 @@ void DicomOperExtendAir::OperateStr( DicomVImageStr* imageStr, G4int newNoVoxels
 		(" New maxY "+GmGenUtils::ftoa(newMaxY)+" is smaller than old one: "+GmGenUtils::ftoa(imMaxY)+" DIFF= "+GmGenUtils::ftoa(fabs(newMaxY-imMaxY))).c_str());
   }
   #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(-infoVerb) ) G4cout << " DicomOperExtendAir::Operate minY " << changeMinY << "=" << imMinY<<" - "<<newMinY <<" ; "<< nBinMinY <<"="<< changeMinY <<" / "<< imVoxDimY << G4endl
+  if( DicomVerb(infoVerb) ) G4cout << " DicomOperExtendAir::Operate minY " << changeMinY << "=" << imMinY<<" - "<<newMinY <<" ; "<< nBinMinY <<"="<< changeMinY <<" / "<< imVoxDimY << G4endl
 				    << " DicomOperExtendAir::Operate maxY " << changeMaxY << "=" << -imMaxY << " + " << newMaxY <<" ; "<< nBinMaxY<<"="<< changeMaxY << " / " << imVoxDimY << G4endl;
 #endif
 
@@ -407,7 +407,7 @@ void DicomOperExtendAir::OperateStr( DicomVImageStr* imageStr, G4int newNoVoxels
 		(" New maxZ "+GmGenUtils::ftoa(newMaxZ)+" is smaller than old one: "+GmGenUtils::ftoa(imMaxZ)+" DIFF= "+GmGenUtils::ftoa(fabs(newMaxZ-imMaxZ))).c_str());
   }
   #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(-infoVerb) ) G4cout << " DicomOperExtendAir::Operate minZ " << changeMinZ << "=" << imMinZ<<" - "<<newMinZ <<" ; "<< nBinMinZ <<"="<< changeMinZ <<" / "<< imVoxDimZ << G4endl
+  if( DicomVerb(infoVerb) ) G4cout << " DicomOperExtendAir::Operate minZ " << changeMinZ << "=" << imMinZ<<" - "<<newMinZ <<" ; "<< nBinMinZ <<"="<< changeMinZ <<" / "<< imVoxDimZ << G4endl
 				    << " DicomOperExtendAir::Operate maxZ " << changeMaxZ << "=" << -imMaxZ << " + " << newMaxZ <<" ; "<< nBinMaxZ<<"="<< changeMaxZ << " / " << imVoxDimZ << G4endl;
 #endif
 
@@ -420,7 +420,7 @@ void DicomOperExtendAir::OperateStr( DicomVImageStr* imageStr, G4int newNoVoxels
   G4int iNewMinZ = 0 - nBinMinZ;
   G4int iNewMaxZ = imNVoxZ + nBinMaxZ;
   #ifndef GAMOS_NO_VERBOSE
-  if( DicomVerb(-infoVerb) ) G4cout << " DicomOperExtendAir::Operate iMinMaxX= " << iNewMinX << " " << iNewMinY 
+  if( DicomVerb(infoVerb) ) G4cout << " DicomOperExtendAir::Operate iMinMaxX= " << iNewMinX << " " << iNewMinY 
 				    << " Y= " << iNewMinY << " " << iNewMaxY
 				    << " Z= " << iNewMinZ << " " << iNewMaxZ << G4endl;
 #endif

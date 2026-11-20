@@ -7,6 +7,8 @@
 #include "G4UImanager.hh"
 #include "G4ios.hh"
 #include "G4RunManager.hh"
+#include "G4AutoLock.hh"
+#include "G4Threading.hh"
 
 #include <math.h>
 
@@ -106,6 +108,8 @@ GmHistosGammaAtSD::GmHistosGammaAtSD()
 
   cRAYL = 0;
   cCONV = 0;
+  //--- Multithreading: worker counts are added to the master instance, which prints them
+  SetRunOnMaster(true);
   
 }
 
@@ -224,7 +228,7 @@ void GmHistosGammaAtSD::FillHistos()
   cClassification[evtClass] ++;
 
   //  G4cout << " GmHistosGammaAtSD::FillHistos CLASS " << icl << " evtClass " << evtClass << G4endl;
-  G4double energyEntering;
+  G4double energyEntering = 0.;
   G4double energyLost = 0.;
   for( G4int ii = 0; ii < npoints; ii++ ){
     //----- Fill histograms
@@ -389,6 +393,10 @@ void GmHistosGammaAtSD::FillHistos()
 
 void GmHistosGammaAtSD::EndOfRunAction( const G4Run* )
 {
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    MergeToMaster();
+    return;
+  }
 #ifndef GAMOS_NO_ROOT
   TH1F* hisN = theAnaMgr->GetHisto1(103000+1);
   int nbins = hisN->GetNbinsX();
@@ -462,6 +470,22 @@ void GmHistosGammaAtSD::EndOfRunAction( const G4Run* )
   }
 }
 
+
+//------------------------------------------------------------------------
+void GmHistosGammaAtSD::MergeToMaster()
+{
+  GmHistosGammaAtSD* master = dynamic_cast<GmHistosGammaAtSD*>(GmUserAction::GetMasterUserAction(GetName()));
+  if( !master ) return;
+  G4AutoLock l(&GmUserAction::GetMergeMutex());
+  master->cRAYL += cRAYL;
+  master->cCONV += cCONV;
+  cRAYL = 0;
+  cCONV = 0;
+  for( auto ite = cGammasInSD.begin(); ite != cGammasInSD.end(); ite++ ) master->cGammasInSD[ite->first] += ite->second;
+  cGammasInSD.clear();
+  for( auto ite = cClassification.begin(); ite != cClassification.end(); ite++ ) master->cClassification[ite->first] += ite->second;
+  cClassification.clear();
+}
 
 /*
     n out SD : ALL, (ent)/nevents

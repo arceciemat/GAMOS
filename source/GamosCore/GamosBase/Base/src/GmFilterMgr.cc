@@ -10,7 +10,7 @@
 #include "GamosCore/GamosBase/Base/include/GmFilterFactory.hh"
 #endif
 
-GmFilterMgr* GmFilterMgr::theInstance = 0;
+G4ThreadLocal GmFilterMgr* GmFilterMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 GmFilterMgr::GmFilterMgr()

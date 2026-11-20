@@ -2,8 +2,6 @@
 #define MCNPFileData_hh
 
 #include "FileData.hh"
-#include "MCNPTallyData.hh"
-#include <map>
 
 class MCNPFileData : public FileData
 {

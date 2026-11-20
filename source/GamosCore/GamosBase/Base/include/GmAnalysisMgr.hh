@@ -104,7 +104,7 @@ public:
 
   void DeleteEmptyHistos();
   static std::map<G4String,GmAnalysisMgr*> GetInstances() { 
-    return theInstances;
+    return *GetInstancesTL();
   }
 
 #ifdef WIN32  //WINDEB                                                                       
@@ -139,8 +139,23 @@ private:
   void NormalizeToNEvents( GmHisto1* his );
   void NormalizeToNEvents( GmHisto2* his );
 
+ public:
+  //--- Multithreading: add the histograms of this worker thread to those of the master (same file and histogram name) and reset them
+  static void MergeToMaster();
+  // Instances of the master thread (in sequential mode the same as GetInstances())
+  static std::map<G4String,GmAnalysisMgr*> GetMasterInstances() {
+    return theMasterInstances;
+  }
  private:
-  static std::map<G4String,GmAnalysisMgr*> theInstances;
+  void MergeToMaster( GmAnalysisMgr* masterMgr );
+
+ private:
+  static G4ThreadLocal std::map<G4String,GmAnalysisMgr*>* theInstancesTL;
+  static std::map<G4String,GmAnalysisMgr*>* GetInstancesTL() {
+    if( !theInstancesTL ) theInstancesTL = new std::map<G4String,GmAnalysisMgr*>;
+    return theInstancesTL;
+  }
+  static std::map<G4String,GmAnalysisMgr*> theMasterInstances;
 
   mih1 theHistos1;
   mih2 theHistos2;

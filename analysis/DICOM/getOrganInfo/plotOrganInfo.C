@@ -104,7 +104,7 @@ void plotOrganInfo(std::string fileListName, bool bog=1, bool bpe=0)
       std::map<int,std::string>::const_iterator iteon = organNames.find(id);
       if( iteon == organNames.end() ) {
 	organNames[id] = name;
-	std::cout << " ORGAN NAME " << id << " = " << name << std::endl; //GDEB
+	//std::cout << " ORGAN NAME " << id << " = " << name << std::endl; //GDEB
       } else {
 	if( organNames[id] != name ) {
 	  std::cerr << "!! ERROR: TWO FILES DO NOT CONTAINS SAME DATA FOR ORGAN ID "
@@ -130,7 +130,7 @@ void plotOrganInfo(std::string fileListName, bool bog=1, bool bpe=0)
       //      for( int ii = 0; ii < nofData/nMaxDataPH; ii++ ) {
       int nbins = std::min(nMaxDataPH,nofData+1-iGifFile*nMaxDataPH);
       histo = new TH1F("","",nbins+1,-0.5,nbins+0.5);
-      if( verbose >= 3 ) std::cout << " NEW HISTO " << nbins << std::endl; //GDEB
+      if( verbose >= 3 ) std::cout << " NEW HISTO " << nbins << std::endl;
       histo->SetMaximum( valMax );
       histo->SetMinimum( valMin );
       //	theHistos.push_back(histo);
@@ -142,7 +142,7 @@ void plotOrganInfo(std::string fileListName, bool bog=1, bool bpe=0)
 	  histo->GetXaxis()->SetBinLabel(ii-ibin+1,(*iteon).second.c_str());
 	  if( verbose >= 3 ) std::cout << histo->GetLabelSize() << " histo->GetXaxis()->SetBinLabel " << ii-ibin << " : " << (*iteon).second << std::endl;
 	} else {
-	  std::cerr << "!! ORGAN NAME FOR LABEL NOT FOUND " << ibin << " : " << ii-ibin << std::endl; //GDEB
+	  //std::cerr << "!! ORGAN NAME FOR LABEL NOT FOUND " << ibin << " : " << ii-ibin << std::endl; //GDEB
 	}
       }
       histo->Draw();
@@ -268,7 +268,7 @@ void ReadDataFromFile( std::string fileName )
       if( theOrganGroupNames.find(wl[1]) != theOrganGroupNames.end() ) {
 	id = theOrganGroupIDs[idOld];
 	name = theOrganGroupNames[wl[1]];
-	std::cout << " SET NAME " << name << " = " << theOrganGroupNames[wl[1]] << std::endl; //GDEB
+	//std::cout << " SET NAME " << name << " = " << theOrganGroupNames[wl[1]] << std::endl; //GDEB
 	double valOld = organData1[id].value;
 	double errOld = organData1[id].error;
 	double massOld = organData1[id].mass;
@@ -296,7 +296,7 @@ void ReadDataFromFile( std::string fileName )
     odat.error = err;
     odat.mass = mass;
     organData1[id] = odat;
-    if( verbose >= 2 ) std::cout << " ADD ORGAN to list " << id << " : " << name << " " << val << " +- " << err << " " << mass << std::endl; //GDEB
+    if( verbose >= 2 ) std::cout << " ADD ORGAN to list " << id << " : " << name << " " << val << " +- " << err << " " << mass << std::endl;
   }
   if( organData1.size() == 0 ) {
     std::cerr << " !!!ERROR: NO DATA IN FILE " << fileName << std::endl;
@@ -357,7 +357,7 @@ void ReadDataFromFileMCNP( std::string fileName )
 	name = theOrganGroupNames[wl[1]];
 	double valOld = organData1[id].value;
 	if( organData1[id].mass != 0)  valOld /= organData1[id].mass;
-	std::cout << " VALOLD " << valOld << " " << organData1[id].value << " / " << organData1[id].mass << std::endl; //GDEB
+	//std::cout << " VALOLD " << valOld << " " << organData1[id].value << " / " << organData1[id].mass << std::endl; //GDEB
 	double errOld = organData1[id].error;
 	double massOld = organData1[id].mass;
 	double wOld = massOld/(mass+massOld);
@@ -384,7 +384,7 @@ void ReadDataFromFileMCNP( std::string fileName )
     odat.error = err;
     odat.mass = mass;
     organData1[id] = odat;
-    if( verbose >= 2 ) std::cout << " ADD ORGAN to list " << id << " : " << name << " " << val << " +- " << err << " " << mass << std::endl; //GDEB
+    if( verbose >= 2 ) std::cout << " ADD ORGAN to list " << id << " : " << name << " " << val << " +- " << err << " " << mass << std::endl;
     //      std::cout << " ADD to list " << name << " " << id << " " << theOrganData[id].value << std::endl; //GDEB
   }
 

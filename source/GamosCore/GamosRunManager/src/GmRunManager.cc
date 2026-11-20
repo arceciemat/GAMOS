@@ -2,6 +2,8 @@
 
 #include "GmRunManager.hh"
 #include "GmRunMessenger.hh"
+#include "GmActionInitialization.hh"
+#include "GmWorkerTaskRunManager.hh"
 #include "GmFactoriesMessenger.hh"
 #include "GmDeprecatedCommandsMessenger.hh"
 
@@ -35,6 +37,12 @@
 #include "G4Scheduler.hh"
 #include "G4UserTimeStepAction.hh"
 #include "G4ParticleHPManager.hh"
+#include "G4Threading.hh"
+#ifdef G4MULTITHREADED
+#include "G4RunManagerFactory.hh"
+#include "G4MTRunManager.hh"
+#include "G4TaskRunManager.hh"
+#endif
 
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
@@ -75,14 +83,11 @@ GmRunManager::GmRunManager()
   auto now = std::chrono::system_clock::now();
   std::time_t current_time_t = std::chrono::system_clock::to_time_t(now);
   std::tm* local_tm = std::localtime(&current_time_t);
-  std::cout << "GAMOS starts RUN at : ";
-  std::cout << std::put_time(local_tm, "%a %b %e %H:%M:%S %Z %Y") << std::endl;
+  G4cout << "GAMOS starts RUN at : ";
+  G4cout << std::put_time(local_tm, "%a %b %e %H:%M:%S %Z %Y") << std::endl;
 
   theRunManager = this;
 
-  new GmFactoriesMessenger( this );
-
-  new GmDeprecatedCommandsMessenger;
 
   theGeometryName = "";
   thePhysicsListName = "";
@@ -91,22 +96,9 @@ GmRunManager::GmRunManager()
   InitialiseFactories();
 
   GmParameterMgr::GetInstance();
-  theGmSDMessenger = new GmSDMessenger();
-  theGmAnalysisMessenger =  new GmAnalysisMessenger();
-  theGmRunMessenger = new GmRunMessenger(this);
+  CreateMessengers( true );
 
-  new GmBaseMessenger();
-
-  new GmGeometryMessenger();
-
-  new GmExtraPhysicsMessenger();
-  new GmUserLimitsMessenger();
-  new GmBiasingMessenger();
-  new GmVarianceReductionMessenger();
-
-  new GmScoringMessenger();
-
-  if( G4bool(GmParameterMgr::GetInstance()->GetNumericValue("  MagneticFieldModelManager:On",0)) ) {
+  if( G4bool(GmParameterMgr::GetInstance()->GetNumericValue("MagneticFieldModelManager:On",0)) ) {
     MagneticFieldModelManager::GetInstance();
   }
 
@@ -118,9 +110,53 @@ GmRunManager::GmRunManager()
 }
 
 //----------------------------------------------------------------------
+void GmRunManager::CreateMessengers( G4bool bMaster )
+{
+  //--- Messengers needed in all threads
+  GmFactoriesMessenger* factMess = new GmFactoriesMessenger( this );
+  GmSDMessenger* sdMess = new GmSDMessenger();
+  new GmGeometryMessenger(); // /gamos/field commands must be executed in each thread
+  new GmBiasingMessenger(); // biasing operators are thread local
+  new GmVarianceReductionMessenger();
+  new GmScoringMessenger();
+  new GmBaseMessenger(); // filters, classifiers and distributions are thread local
+  new GmExtraPhysicsMessenger(); // processes added in Idle state are thread local (worker processes must match master ones, so commands are replayed in the same order)
+  new GmUserLimitsMessenger(); // only the processes are added in workers (user limits are shared)
+
+  if( bMaster ) {
+    theGmSDMessenger = sdMess;
+    theGmAnalysisMessenger = new GmAnalysisMessenger(); // static histogram settings, shared by all threads
+    new GmDeprecatedCommandsMessenger;
+    theGmRunMessenger = new GmRunMessenger(this);
+  }
+  (void)factMess;
+}
+
+//----------------------------------------------------------------------
+void GmRunManager::BuildForWorker()
+{
+  //--- Create the messengers in this worker thread, so that the master commands are replayed here
+  CreateMessengers( false );
+  //--- GmScoringUA is created on the master when the physics list is selected (and /gamos/physicsList is not replayed on workers)
+  if( thePhysicsListName != "" ) SelectUserAction("GmScoringUA");
+}
+
+//----------------------------------------------------------------------
 void GmRunManager::CreateG4RunManager()
 {
+#ifdef G4MULTITHREADED
+  //--- Same as Geant4: run manager type from G4RUN_MANAGER_TYPE (Serial, MT, Tasking, ...), number of threads from /run/numberOfThreads or G4FORCENUMBEROFTHREADS
+  theG4RunManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::Default);
+  if( G4Threading::IsMultithreadedApplication() ) {
+    if( dynamic_cast<G4TaskRunManager*>(theG4RunManager) ) {
+      //--- avoid that G4WorkerTaskRunManager::ProcessUI() applies GAMOS commands twice
+      theG4RunManager->SetUserInitialization( new GmUserTaskThreadInitialization );
+    }
+    theG4RunManager->SetUserInitialization( new GmActionInitialization );
+  }
+#else
   theG4RunManager = new G4RunManager;
+#endif
   theG4RunManager->SetVerboseLevel(1);
   G4cout << " Using Random Engine: " << CLHEP::HepRandom::getTheEngine()->name() << G4endl; 
 
@@ -162,8 +198,8 @@ GmRunManager::~GmRunManager()
   auto now = std::chrono::system_clock::now();
   std::time_t current_time_t = std::chrono::system_clock::to_time_t(now);
   std::tm* local_tm = std::localtime(&current_time_t);
-  std::cout << "GAMOS ends RUN at : ";
-  std::cout << std::put_time(local_tm, "%a %b %e %H:%M:%S %Z %Y") << std::endl;
+  G4cout << "GAMOS ends RUN at : ";
+  G4cout << std::put_time(local_tm, "%a %b %e %H:%M:%S %Z %Y") << std::endl;
 
 }
 
@@ -234,7 +270,7 @@ void GmRunManager::SelectPhysicsList( const G4String& name )
 //----------------------------------------------------------------------
 void GmRunManager::SelectGenerator( const G4String& name )
 {
-  if( theGeneratorName != "" ) {
+  if( theGeneratorName != "" && G4Threading::IsMasterThread() ) {
     G4cerr << "!!WARNING: selecting generator " << name << " while generator " << theGeneratorName << " was previously selected " << G4endl;
   }
 
@@ -247,8 +283,11 @@ void GmRunManager::SelectGenerator( const G4String& name )
   if( theGenerator == 0 ) {
     G4cerr << "!!ERROR: generator " << name << " does not exist, program will crash if another generator is not selected " << G4endl;
   } else {
-    theGeneratorName = name;
-    theG4RunManager->SetUserAction( theGenerator );
+    if( G4Threading::IsMasterThread() ) theGeneratorName = name;
+    //--- Multithreading: the generator is used by the worker run managers; the one created on the master only receives the commands
+    if( !G4Threading::IsMultithreadedApplication() || !G4Threading::IsMasterThread() ) {
+      G4RunManager::GetRunManager()->SetUserAction( theGenerator );
+    }
   }
 }
 
@@ -277,6 +316,8 @@ void GmRunManager::SelectUserAction( const G4String& values )
       userAction->SetFilterOrClassifier(wl[ii]);
     }
     userAction->InitialiseHistoNames();
+    //--- Multithreading: workers may merge their results into the master instance with the same name
+    GmUserAction::RegisterMasterUserAction( userAction );
   }
 }
 
@@ -391,11 +432,37 @@ void GmRunManager::SetRandomSeeds( G4int index, G4int nTries )
 
 }
 
+//---------------------------------------------------------------------
+// masterRNGEngine is protected in G4MTRunManager and (redeclared) in G4TaskRunManager: access through pointers to member
+namespace {
+  struct GmMTRMEngineAccess : public G4MTRunManager {
+    static CLHEP::HepRandomEngine* G4MTRunManager::* Ptr() { return &GmMTRMEngineAccess::masterRNGEngine; }
+  };
+  struct GmTaskRMEngineAccess : public G4TaskRunManager {
+    static CLHEP::HepRandomEngine* G4TaskRunManager::* Ptr() { return &GmTaskRMEngineAccess::masterRNGEngine; }
+  };
+}
+
+void GmRunManager::UpdateMTMasterRandomEngine()
+{
+  if( !G4Threading::IsMasterThread() ) return;
+  G4RunManager* rm = G4RunManager::GetRunManager();
+  if( !rm ) return;
+  CLHEP::HepRandomEngine* eng = CLHEP::HepRandom::getTheEngine();
+  if( G4TaskRunManager* trm = dynamic_cast<G4TaskRunManager*>(rm) ) {
+    trm->*(GmTaskRMEngineAccess::Ptr()) = eng;
+    static_cast<G4MTRunManager*>(trm)->*(GmMTRMEngineAccess::Ptr()) = eng;
+  } else if( G4MTRunManager* mrm = dynamic_cast<G4MTRunManager*>(rm) ) {
+    mrm->*(GmMTRMEngineAccess::Ptr()) = eng;
+  }
+}
+
 #include <sstream>
 //---------------------------------------------------------------------
 void GmRunManager::RestoreRandomSeeds( G4int index, G4int nTries )
 {
   CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom);
+  UpdateMTMasterRandomEngine();
   if( CLHEP::HepRandom::getTheEngine()->name() != "HepJamesRandom" ) {
     G4Exception("GmRunManager::RestoreRandomSeeds",
 		"",

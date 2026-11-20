@@ -5,7 +5,7 @@
 
 class GmGeometryUtils;
 class GmReadPhantomStMgr;
-class G4VTouchable;
+#include "G4VTouchable.hh"
 
 class GmDataInitialPhantomStruct : public GmVDataString
 {

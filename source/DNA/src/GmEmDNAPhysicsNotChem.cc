@@ -44,7 +44,7 @@ GmEmDNAPhysicsNotChem::GmEmDNAPhysicsNotChem()
 void GmEmDNAPhysicsNotChem::BuildDNAChemistry()
 {
   /*     
-  G4String chemName = GmParameterMgr::GetInstance()->GetStringValue("GmEmDNAPhysicsNotChem:registerChemistry","DNA_option2");
+  G4String chemName = GmParameterMgr::GetInstance()->GetStringValue("GmEmDNAPhysicsNotChem:RegisterChemistry","DNA_option2");
   // Replace standard processes for gammas
   if (chemName == "DNA") { 
     RegisterPhysics( new G4EmDNAChemistry() );

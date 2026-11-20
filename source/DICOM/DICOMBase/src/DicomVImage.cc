@@ -414,7 +414,7 @@ void DicomVImage::DumpToSqdoseFile(FILE* fout, DicomVImage* doseSqImage )
   if(fwrite(vlimz, sizeof(float),theNoVoxelsZ+1,fout)!=size_t(theNoVoxelsZ+1))
     printf("\n Error writing VoxelLimitsZ. \n");
 
-  //  std::cout << " ROTATION EULER " << theRotation->getPhi() << " " << theRotation->getTheta() << " " << theRotation->getPsi() << G4endl; //GDEB
+  //  G4cout << " ROTATION EULER " << theRotation->getPhi() << " " << theRotation->getTheta() << " " << theRotation->getPsi() << G4endl; //GDEB
   /*  if( fabs(1.-fOrientationRows*G4ThreeVector(1.,0.,0.)) > 1.E-6 ) {
     G4Exception("DicomFileRTDose::DumpToSqdoseFile",
 		"",
@@ -1646,7 +1646,7 @@ G4bool DicomVImage::operator==(const DicomVImage& right)
 	 << " MaxX " << (theMaxX - right.GetMaxX()) 
 	 << " MaxY " << (theMaxY - right.GetMaxY()) 
 	 << " MaxZ " << (theMaxZ - right.GetMaxZ())
-	 << G4endl; //GDEB
+	 << G4endl;
   
   G4cout << " NX " << theNoVoxelsX << " ==? " << right.GetNoVoxelsX() 
 	 << " NY " << theNoVoxelsY << " ==? " << right.GetNoVoxelsY()  
@@ -1657,7 +1657,7 @@ G4bool DicomVImage::operator==(const DicomVImage& right)
 	 << " MaxX " << theMaxX << " ==? " << right.GetMaxX() 
 	 << " MaxY " << theMaxY << " ==? " << right.GetMaxY() 
 	 << " MaxZ " << theMaxZ << " ==? " << right.GetMaxZ()
-	 << G4endl; //GDEB
+	 << G4endl;
 
   return equ;
 }

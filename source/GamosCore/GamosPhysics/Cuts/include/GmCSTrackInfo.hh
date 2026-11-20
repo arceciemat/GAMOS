@@ -52,7 +52,7 @@ protected:
   G4bool bAccepted;
 
 private:
-  static GmCutsEnergy2Range* theEnergy2Range;
+  static G4ThreadLocal GmCutsEnergy2Range* theEnergy2Range;
 
 };
 

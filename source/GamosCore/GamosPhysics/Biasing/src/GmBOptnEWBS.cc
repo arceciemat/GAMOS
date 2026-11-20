@@ -22,12 +22,12 @@ GmBOptnEWBS::GmBOptnEWBS(G4String name)
   addPartProcCmd = new GmUIcmdWithAString("/gamos/physics/biasing/EWBS/addParticleProcesses2Oper",this);
   addPartProcCmd->SetGuidance("Add a process of a particle to be biased to EWBS  operator");
   addPartProcCmd->SetParameterName("choice",true);
-  addPartProcCmd->AvailableForStates(G4State_PreInit);
+  addPartProcCmd->AvailableForStates(G4State_PreInit,G4State_Idle); // Idle: replayed on worker threads
 
   addSplittingProcCmd = new GmUIcmdWithAString("/gamos/physics/biasing/EWBS/addSplittingProcess",this);
   addSplittingProcCmd->SetGuidance("Add a process of a particle to be biased to EWBS  operator");
   addSplittingProcCmd->SetParameterName("choice",true);
-  addSplittingProcCmd->AvailableForStates(G4State_PreInit);
+  addSplittingProcCmd->AvailableForStates(G4State_PreInit,G4State_Idle); // Idle: replayed on worker threads
 
 }
 

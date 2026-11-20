@@ -34,8 +34,7 @@ int64_t GmClassifierByMaterial::GetIndexFromStep(const G4Step* aStep)
   G4Material* mate = aStep->GetPreStepPoint()->GetMaterial();
   std::map<G4Material*,int64_t>::const_iterator ite = theIndexMap.find(mate);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+theMaxIndex;
-    theIndexMap[mate] = index;
+    index = AssignNewIndex( this, &GmClassifierByMaterial::theIndexMap, mate, 0, true ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }
@@ -57,8 +56,7 @@ int64_t GmClassifierByMaterial::GetIndexFromTrack(const G4Track* aTrack)
   G4Material* mate = aStep->GetPreStepPoint()->GetMaterial();
   std::map<G4Material*,int64_t>::const_iterator ite = theIndexMap.find(mate);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+theMaxIndex;
-    theIndexMap[mate] = index;
+    index = AssignNewIndex( this, &GmClassifierByMaterial::theIndexMap, mate, 0, true ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

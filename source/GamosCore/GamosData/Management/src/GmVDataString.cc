@@ -157,6 +157,7 @@ void GmVDataString::WriteText( const G4Run* aRun, G4bool bIsFirst )
 void GmVDataString::WriteBin( const G4Step* aStep )
 {
   G4String data = GetStringValueFromStep( aStep );
+  data.resize(theNChar,'\0'); // write always theNChar characters: pad with '\0' (before, characters after the string end were read) or truncate
   theFileOutBin->write(data.c_str(), sizeof(char)*theNChar);
 
 #ifndef GAMOS_NO_VERBOSE
@@ -169,6 +170,7 @@ void GmVDataString::WriteBin( const G4Step* aStep )
 void GmVDataString::WriteBin( const G4Track* aTrack )
 {
   G4String data = GetStringValueFromTrack( aTrack );
+  data.resize(theNChar,'\0'); // write always theNChar characters: pad with '\0' (before, characters after the string end were read) or truncate
   theFileOutBin->write(data.c_str(), sizeof(char)*theNChar);
 
 #ifndef GAMOS_NO_VERBOSE
@@ -182,6 +184,7 @@ void GmVDataString::WriteBin( const G4Track* aTrack )
 void GmVDataString::WriteBin( const G4Track* aTrack1, const G4Track* aTrack2 )
 {
   G4String data = GetStringValueFromSecoTrack( aTrack1, aTrack2 ).c_str();
+  data.resize(theNChar,'\0'); // write always theNChar characters: pad with '\0' (before, characters after the string end were read) or truncate
   theFileOutBin->write(data.c_str(), sizeof(char)*theNChar);
 
 #ifndef GAMOS_NO_VERBOSE
@@ -195,6 +198,7 @@ void GmVDataString::WriteBin( const G4Event* aEvent )
 {
 
   G4String data = GetStringValueFromEvent( aEvent );
+  data.resize(theNChar,'\0'); // write always theNChar characters: pad with '\0' (before, characters after the string end were read) or truncate
   theFileOutBin->write(data.c_str(), sizeof(char)*theNChar);
 
 #ifndef GAMOS_NO_VERBOSE
@@ -207,6 +211,7 @@ void GmVDataString::WriteBin( const G4Run* aRun )
 {
 
   G4String data = GetStringValueFromRun( aRun );
+  data.resize(theNChar,'\0'); // write always theNChar characters: pad with '\0' (before, characters after the string end were read) or truncate
   theFileOutBin->write(data.c_str(), sizeof(char)*theNChar);
 
 #ifndef GAMOS_NO_VERBOSE

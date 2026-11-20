@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "GmMovementMgr.hh"
 #include "GmVMovement.hh"
 #include "GmMovementFromFile.hh"
@@ -7,7 +8,7 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 
 //----------------------------------------------------------------------
-GmMovementMgr* GmMovementMgr::theInstance = 0;
+G4ThreadLocal GmMovementMgr* GmMovementMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 GmMovementMgr* GmMovementMgr::GetInstance()
@@ -23,6 +24,13 @@ GmMovementMgr* GmMovementMgr::GetInstance()
 //-----------------------------------------------------------------------
 GmMovementMgr::GmMovementMgr()
 {
+  //--- Multithreading: the geometry is shared by all threads, it cannot be moved between events
+  if( G4Threading::IsMultithreadedApplication() ) {
+    G4Exception("GmMovementMgr::GmMovementMgr",
+		"",
+		FatalException,
+		"Geometry movements (/gamos/movement/...) cannot be used in multithreading mode: run with G4RUN_MANAGER_TYPE=Serial");
+  }
   bApplyMovements = FALSE;
 
 }

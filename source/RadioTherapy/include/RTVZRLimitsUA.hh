@@ -27,6 +27,8 @@ public:
   virtual void BeginOfRunAction( const G4Run* aRun );
   virtual void UserSteppingAction(const G4Step* aStep);
   virtual void EndOfRunAction( const G4Run* aRun );
+  // Multithreading: in a worker adds the counts to the master instance and returns true
+  G4bool MergeToMasterIfWorker();
  
 protected:
   void GetWorld();

@@ -1,6 +1,19 @@
-# - GAMOS_analysis_RTPhaseSpace_analysePS module build definition
+# - analysePS module build definition
 
-include(UseGamosAtGeant4)
+gamos_add_module(analysePS
+  SOURCES
+    dummy.cc
+)
 
-geant4_add_module(GAMOS_analysis_RTPhaseSpace_analysePS
-  PUBLIC_HEADERS
+# Program analysePS
+gamos_add_executable(analysePS
+  SOURCES
+    analysePS.cc
+  LINK_LIBRARIES
+    analysePS
+    GamosCore_GamosBase_Base
+    GamosCore_GamosRunManager
+    GamosCore_GamosUtils
+    RadioTherapy
+    sumPS
+)

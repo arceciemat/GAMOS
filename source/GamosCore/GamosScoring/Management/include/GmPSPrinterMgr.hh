@@ -29,7 +29,7 @@ public:
 private:
   void AddPSPrinter( GmVPSPrinter* PSPrinter );
 
-  static GmPSPrinterMgr* theInstance;
+  static G4ThreadLocal GmPSPrinterMgr* theInstance;
 
   std::map<G4String,GmVPSPrinter*> thePSPrinters;
 

@@ -1,6 +1,17 @@
-# - GAMOS_analysis_Shielding_sumActivation module build definition
+# - sumActivation module build definition
 
-include(UseGamosAtGeant4)
+gamos_add_module(sumActivation
+  SOURCES
+    dummy.cc
+)
 
-geant4_add_module(GAMOS_analysis_Shielding_sumActivation
-  PUBLIC_HEADERS
+# Program sumActivation
+gamos_add_executable(sumActivation
+  SOURCES
+    sumActivation.cc
+  LINK_LIBRARIES
+    sumActivation
+    GamosCore_GamosRunManager
+    GamosCore_GamosUtils
+    Shielding
+)

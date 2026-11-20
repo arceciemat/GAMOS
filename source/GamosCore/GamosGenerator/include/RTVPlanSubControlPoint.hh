@@ -2,27 +2,25 @@
 #ifndef RTVPlanSubControlPoint_H
 #define RTVPlanSubControlPoint_H
 #include "G4ThreeVector.hh"
-#include <map>
-#include <vector>
 
 class RTVPlanControlPoint;
 class RTVPlanBeam;
 
 struct RTBeamStateData {
-  G4double PositionX;
-  G4double PositionY;
-  G4double PositionZ;
-  G4double Energy;
-  G4double RotAngleX;
-  G4double RotAngleY;
-  G4double RotAngleZ;
-  G4double SpotSize;
-  G4double SourceAxisDistanceX;
-  G4double SourceAxisDistanceY;
-  RTVPlanControlPoint* ControlPoint;
-  RTVPlanBeam* Beam;
+  G4double PositionX = 0.;
+  G4double PositionY = 0.;
+  G4double PositionZ = 0.;
+  G4double Energy = 0.;
+  G4double RotAngleX = 0.;
+  G4double RotAngleY = 0.;
+  G4double RotAngleZ = 0.;
+  G4double SpotSize = 0.;
+  G4double SourceAxisDistanceX = 0.;
+  G4double SourceAxisDistanceY = 0.;
+  RTVPlanControlPoint* ControlPoint = nullptr;
+  RTVPlanBeam* Beam = nullptr;
   G4ThreeVector IsocenterPosition;
-  G4double LimitingDeviceAngle;
+  G4double LimitingDeviceAngle = 0.;
 };
 
 class RTVPlanSubControlPoint 

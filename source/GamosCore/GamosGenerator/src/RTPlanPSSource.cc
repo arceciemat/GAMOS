@@ -56,7 +56,7 @@ void RTPlanPSSource::ReadPlanData()
   GmFileIn fin = GmFileIn::GetInstance(thePlanFileName,1);
   ReadParams(fin);
 
-  G4cout << "RTPlanPSSource::ReadPlanData() N PARAM " << theParams.size() << G4endl; //GDEB
+  //G4cout << "RTPlanPSSource::ReadPlanData() N PARAM " << theParams.size() << G4endl; //GDEB
   std::set<int> fracGroups;
   for(int ii = 0; ii < 1000;ii++) { // only up to 1000!!
     G4String fgstr = "FractionGroup_"+GmGenUtils::itoa(ii);

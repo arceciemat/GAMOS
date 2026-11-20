@@ -17,7 +17,7 @@ void GmKillAtStackingActionRandomUA::BeginOfRunAction(const G4Run* )
 {
   theProbability = GmParameterMgr::GetInstance()->GetNumericValue(theName+":Probability",1.);
   bKillEvent = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theName+":KillEvent",0));
-  std::cout << "bKillEvent: " << bKillEvent << " P: " << theProbability << std::endl;
+  //  G4cout << "bKillEvent: " << bKillEvent << " P: " << theProbability << std::endl; //GDEB
 }
 
 void

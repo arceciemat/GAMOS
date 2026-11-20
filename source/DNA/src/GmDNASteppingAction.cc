@@ -105,7 +105,9 @@ void GmDNASteppingAction::UserSteppingAction(const G4Step* step)
   G4double zz=step->GetPreStepPoint()->
     GetPosition().z()/nanometer;
   G4double diffEKin = (step->GetPreStepPoint()->GetKineticEnergy() - step->GetPostStepPoint()->GetKineticEnergy())/eV;
-  G4int copyNo = step->GetPostStepPoint()->GetTouchable()->GetReplicaNumber();
+  //--- copy number of the volume where the energy is deposited (pre-step point, as fVolumeType and the Geant4 example
+  //    dnadamage1); the post-step point gave the next volume for steps limited by a boundary
+  G4int copyNo = step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetCopyNo();
   G4int eventId = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
   G4int trackID = aTrack->GetTrackID();
@@ -144,7 +146,7 @@ void GmDNASteppingAction::UserSteppingAction(const G4Step* step)
 		  // G4cout << " RETURN Delay track " << G4endl; //GDEB
                     return;
                 }
-                G4cout << " KILL Delay track " << G4endl; //GDEB
+                //G4cout << " KILL Delay track " << G4endl; //GDEB
                 track->SetTrackStatus(fStopAndKill);
             } 
         }

@@ -10,7 +10,6 @@ class DicomVLineSet;
 
 #include "DICOM/DICOMBase/include/DicomJobUtils.hh"
 #include <vector>
-#include <map>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 class DCMDrawDICOM : public DicomJobUtils
@@ -31,6 +30,9 @@ public:
 
   void DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lineSets, G4String extraFileName="");
 
+  // CT image to be drawn in grey scale below the dose and nuclear medicine images (0 if none)
+  DicomVImage* GetOverlayCTImage();
+
 private:
     
   DicomVDrawer* theDrawer;
@@ -46,6 +48,7 @@ private:
   G4bool bDrawStructID1Fig;
   G4bool bDrawStruct1Fig;
   G4bool bDrawIsodLines;
+  G4bool bOverlayCT;
   std::vector<G4double> theIsodPerCents;
   std::vector<G4double> theIsodPerCentsAbs;
 };

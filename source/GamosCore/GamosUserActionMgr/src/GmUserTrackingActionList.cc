@@ -4,6 +4,7 @@
 
 #include "G4Track.hh"
 #include "G4RunManager.hh"
+#include "G4Threading.hh"
 #include "GamosCore/GamosUserActionMgr/include/GmUAVerbosity.hh"
 
 //-----------------------------------------------------------------------
@@ -69,7 +70,8 @@ void GmUserTrackingActionList::AddAction( GmUserTrackingAction* ua )
     if( UAVerb(infoVerb) ) G4cout << " GmUserTrackingActionList::AddAction " << ua << " N " << theTrackingActions.size() << G4endl;
 #endif
     //--- first user action, register it to G4RunManager
-    if( theTrackingActions.size() == 1) G4RunManager::GetRunManager()->SetUserAction( this );
+    //--- Multithreading: G4MTRunManager only accepts run actions, the other actions are set in the worker run managers
+  if( theTrackingActions.size() == 1 && (!G4Threading::IsMultithreadedApplication() || !G4Threading::IsMasterThread()) ) G4RunManager::GetRunManager()->SetUserAction( this );
     ua->SetTrackingManager( fpTrackingManager );
     // }
 }

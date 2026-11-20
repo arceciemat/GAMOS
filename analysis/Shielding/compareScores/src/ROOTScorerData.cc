@@ -1,3 +1,4 @@
+#ifndef GAMOS_NO_ROOT // ROOT files can only be read if GAMOS is built with ROOT
 #include "ROOTScorerData.hh"
 #include "ROOTScoreData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -88,3 +89,4 @@ G4double ROOTScorerData::GetIndexVal( G4String doseName, G4bool bLogX )
 
   return indexVal;
 }
+#endif

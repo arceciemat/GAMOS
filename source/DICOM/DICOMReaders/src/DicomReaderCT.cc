@@ -107,7 +107,7 @@ void DicomReaderCT::DICOMCreateImages()
     for( size_t ir = 0; ir < theNoVoxelsY; ir += theCompression ) {
       for( size_t ic = 0; ic < theNoVoxelsX; ic += theCompression ) {
 	//	size_t copyNoC = ic+ir*theNoVoxelsXC+iz*theNoVoxelsXYC;
-	if( DicomVerb(testVerb) )  G4cout << "iz " << iz << " ir " << ir << " ic " << ic << G4endl; //GDEB
+	if( DicomVerb(testVerb) )  G4cout << "iz " << iz << " ir " << ir << " ic " << ic << G4endl;
 	meanHU = 0.;
 	int isumrMax = min(ir+theCompression,theNoVoxelsY);
 	int isumcMax = min(ic+theCompression,theNoVoxelsX);

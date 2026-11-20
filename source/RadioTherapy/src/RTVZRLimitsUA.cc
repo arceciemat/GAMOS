@@ -4,6 +4,8 @@
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
 #include "G4Run.hh"
+#include "G4Threading.hh"
+#include "G4AutoLock.hh"
 #include "G4Event.hh"
 #include "G4ios.hh"
 #include "G4EventManager.hh"
@@ -23,6 +25,21 @@ RTVZRLimitsUA::RTVZRLimitsUA()
 {
   bRussRoul = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("RTVZRLimitsUA:UseRussianRoulette",0));
   theRussRoulValue = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("RTVZRLimitsUA:RussianRouletteValue",100));
+  //--- Multithreading: worker counts are added to the master instance, which prints them
+  SetRunOnMaster(true);
+}
+
+//---------------------------------------------------------------------
+G4bool RTVZRLimitsUA::MergeToMasterIfWorker()
+{
+  if( !G4Threading::IsMultithreadedApplication() || G4Threading::IsMasterThread() ) return false;
+  RTVZRLimitsUA* master = dynamic_cast<RTVZRLimitsUA*>(GmUserAction::GetMasterUserAction(GetName()));
+  if( master ) {
+    G4AutoLock l(&GmUserAction::GetMergeMutex());
+    for( auto ite = theXYcounts.begin(); ite != theXYcounts.end(); ite++ ) master->theXYcounts[ite->first] += ite->second;
+    theXYcounts.clear();
+  }
+  return true;
 }
 
 //---------------------------------------------------------------------
@@ -105,6 +122,7 @@ void RTVZRLimitsUA::UserSteppingAction(const G4Step* aStep)
 //---------------------------------------------------------------------
 void RTVZRLimitsUA::EndOfRunAction( const G4Run* )
 {
+  if( MergeToMasterIfWorker() ) return;
   std::map<G4double,G4String>::const_iterator itename;
   std::map<G4double,G4int>::const_iterator itec;
     G4cout << "%%%%%%%%%%%% Number of killed particles with too big X or Y " << G4endl;

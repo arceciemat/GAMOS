@@ -34,7 +34,7 @@ private:
   void AddSplittingProcess( std::vector<G4String> params);
   
 private:
-  static GmBiasingMgr* theInstance;
+  static G4ThreadLocal GmBiasingMgr* theInstance;
   std::map<G4String,GmVBiasingOperator*> theOperators;
   GmGenericBiasingPhysics* theBiasingPhysics;
 };

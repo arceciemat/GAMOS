@@ -264,3 +264,31 @@ G4THitsMap<G4double>* GmScoringRun::GetRunMap(GmVPrimitiveScorer* scorer )
   
   return RunMap;
 }
+
+//----------------------------------------------------------------
+void GmScoringRun::Merge(const G4Run* aRun)
+{
+  const GmScoringRun* workerRun = dynamic_cast<const GmScoringRun*>(aRun);
+  if( workerRun ) {
+    //--- sum the hits maps of the worker run
+    G4int nmap = workerRun->theRunMap.size();
+    for( G4int ii = 0; ii < nmap; ii++ ) {
+      G4THitsMap<G4double>* masterMap = GetHitsMap( workerRun->theCollName[ii] );
+      if( !masterMap ) {
+	G4Exception("GmScoringRun::Merge",
+		    "",
+		    FatalException,
+		    ("Scorer collection " + workerRun->theCollName[ii] + " exists in worker thread but not in master").c_str());
+      }
+      *masterMap += *(workerRun->theRunMap[ii]);
+    }
+    //--- sum the scorer data (sum of squares, ...) of this worker thread
+    std::map<G4String,GmVPrimitiveScorer*> workerScorers = GmScoringMgr::GetInstance()->GetScorers(); // worker instance (this is called in the worker thread)
+    for( auto ite = workerScorers.begin(); ite != workerScorers.end(); ite++ ) {
+      GmVPrimitiveScorer* masterScorer = theScoringMgr->GetScorer( ite->first, true );
+      ite->second->MergeToMaster( masterScorer );
+    }
+  }
+
+  G4Run::Merge(aRun);
+}

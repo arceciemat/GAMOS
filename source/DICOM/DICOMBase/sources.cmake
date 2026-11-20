@@ -1,91 +1,93 @@
-#------------------------------------------------------------------------------
-# Module : DICOMBase
-# Package: DICOM_DICOMBase
-#
-#------------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME DICOMBase
-	 HEADERS
-		Dicom2DOperAddError.hh
-		DicomOperLogN.hh
-		DicomLineDrawingOptions.hh
-		DicomOperIntersectStruct.hh
-		DicomPolygonSet.hh
-		DicomOperLog.hh
-		DicomOperMultByNumber.hh
-		DicomVOperator.hh
-		DicomPolygon.hh
-		DicomDrawerROOT.hh
-		DicomOperPrintMax.hh
-		DicomVImage.hh
-		DicomLine.hh
-		DicomNDOperArithm.hh
-		DicomParameterMgr.hh
-		DicomVLine.hh
-		DicomMgr.hh
-		DicomVLineList.hh
-		DicomJobUtils.hh
-		DicomOperPrintValueAtPoint.hh
-		DicomVDrawer.hh
-		DicomVObjectWithParams.hh
-		DicomPolygonList.hh
-		DicomOperRotateXY180.hh
-		DicomLineSet.hh
-		DicomVLineSet.hh
-		DicomVerbosity.hh
-		DicomOperLog10.hh
-		DicomOperMirrorY.hh
-		DicomOperCompressXY.hh
-		DicomLineList.hh
-		DicomOperExtendAir.hh
-	 SOURCES
-		DicomLineList.cc
-		DicomNDOperArithm.cc
-		DicomVerbosity.cc
-		plugin.cc
-		DicomParameterMgr.cc
-		DicomVLine.cc
-		DicomOperPrintMax.cc
-		DicomVOperator.cc
-		DicomPolygonSet.cc
-		DicomVImage.cc
-		DicomLineDrawingOptions.cc
-		DicomOperLog.cc
-		DicomOperExtendAir.cc
-		DicomVLineList.cc
-		DicomVObjectWithParams.cc
-		DicomVLineSet.cc
-		DicomJobUtils.cc
-		DicomMgr.cc
-		DicomPolygon.cc
-		DicomLine.cc
-		DicomOperCompressXY.cc
-		DicomOperMirrorY.cc
-		DicomPolygonList.cc
-		DicomOperPrintValueAtPoint.cc
-		DicomVDrawer.cc
-		DicomOperLog10.cc
-		Dicom2DOperAddError.cc
-		DicomOperLogN.cc
-		DicomOperIntersectStruct.cc
-		DicomDrawerROOT.cc
-		DicomLineSet.cc
-		DicomOperRotateXY180.cc
-		DicomOperMultByNumber.cc
-		
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-		${DCMTK_LIBRARIES} 
+# - DICOMBase module build definition
 
-	LINK_LIBRARIES
+gamos_add_module(DICOMBase
+  PUBLIC_HEADERS
+    Dicom2DOperAddError.hh
+    DicomDrawerROOT.hh
+    DicomDrawerSVG.hh
+    DicomJobUtils.hh
+    DicomLine.hh
+    DicomLineDrawingOptions.hh
+    DicomLineList.hh
+    DicomLineSet.hh
+    DicomMgr.hh
+    DicomNDOperArithm.hh
+    DicomOperCompressXY.hh
+    DicomOperExtendAir.hh
+    DicomOperIntersectStruct.hh
+    DicomOperLog.hh
+    DicomOperLog10.hh
+    DicomOperLogN.hh
+    DicomOperMirrorY.hh
+    DicomOperMultByNumber.hh
+    DicomOperPrintMax.hh
+    DicomOperPrintValueAtPoint.hh
+    DicomOperReflectY.hh
+    DicomOperResize.hh
+    DicomOperRotateXY180.hh
+    DicomOperSoften.hh
+    DicomParameterMgr.hh
+    DicomPolygon.hh
+    DicomPolygonList.hh
+    DicomPolygonSet.hh
+    DicomVDrawer.hh
+    DicomVImage.hh
+    DicomVImageStr.hh
+    DicomVLine.hh
+    DicomVLineList.hh
+    DicomVLineSet.hh
+    DicomVObjectWithParams.hh
+    DicomVOperator.hh
+    DicomVerbosity.hh
+  SOURCES
+    Dicom2DOperAddError.cc
+    DicomDrawerROOT.cc
+    DicomDrawerSVG.cc
+    DicomJobUtils.cc
+    DicomLine.cc
+    DicomLineDrawingOptions.cc
+    DicomLineList.cc
+    DicomLineSet.cc
+    DicomMgr.cc
+    DicomNDOperArithm.cc
+    DicomOperCompressXY.cc
+    DicomOperExtendAir.cc
+    DicomOperIntersectStruct.cc
+    DicomOperLog.cc
+    DicomOperLog10.cc
+    DicomOperLogN.cc
+    DicomOperMirrorY.cc
+    DicomOperMultByNumber.cc
+    DicomOperPrintMax.cc
+    DicomOperPrintValueAtPoint.cc
+    DicomOperReflectY.cc
+    DicomOperResize.cc
+    DicomOperRotateXY180.cc
+    DicomOperSoften.cc
+    DicomParameterMgr.cc
+    DicomPolygon.cc
+    DicomPolygonList.cc
+    DicomPolygonSet.cc
+    DicomVDrawer.cc
+    DicomVImage.cc
+    DicomVImageStr.cc
+    DicomVLine.cc
+    DicomVLineList.cc
+    DicomVLineSet.cc
+    DicomVObjectWithParams.cc
+    DicomVOperator.cc
+    DicomVerbosity.cc
+    plugin.cc
 )
+
+gamos_module_link_libraries(DICOMBase
+  PUBLIC
+    GamosCore_GamosBase_Base
+    GamosCore_GamosUtils
+    lcg_PluginManager
+    lcg_SealBase
+    ${GAMOS_DCMTK_LIBRARIES}
+)
+
+# DICOMReaders uses DICOMBase and DICOMBase uses DICOMReaders: see above
+gamos_module_link_libraries(DICOMBase INTERFACE DICOMReaders)

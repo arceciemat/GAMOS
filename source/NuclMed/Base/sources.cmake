@@ -1,102 +1,96 @@
 # - NuclMed_Base module build definition
 
-include(UseGamosAtGeant4)
-include(UseROOT)
-
-geant4_add_module(NuclMed_Base
+gamos_add_module(NuclMed_Base
   PUBLIC_HEADERS
-    DetCClassifNRecHit.hh
-    DetCClassifZPosMin.hh
-    DetCClassifYZPosMin.hh
-    DetCountScatteringUA.hh
-    DetCAlgoZPos.hh
-    DetComptClassificationVariableFactory.hh
-    DetV1stHitAlgorithm.hh
-    Det1stHitByComptonCone.hh
-    DetVComptAlgorithmVariable.hh
-    DetCClassifXYZPosMin.hh
-    DetCAlgoXZPos.hh
-    DetCAlgoYZPos.hh
-    DetCClassifYPosMin.hh
-    Det1stHitByEnergy.hh
-    DetCClassifXPosMin.hh
-    DetHistosGammaDist.hh
-    DetVComptClassificationVariable.hh
-    DetComptAlgorithmVariableFactory.hh
-    DetComptonStudyHistosUA.hh
-    Det1stHitByXYPos.hh
-    DetCutsStudyFilter.hh
-    DetRecHitCone.hh
-    DetCClassifXYPosMin.hh
-    DetCAlgoXPos.hh
-    Det1stHitByXPos.hh
-    DetCClassifXZPosMin.hh
-    DetCClassifEnergyMin.hh
-    DetCClassifEnergyAverage.hh
-    DetRecHitSet.hh
-    DetCAlgoYPos.hh
     Det1stHitAlgorithmFactory.hh
+    Det1stHitByComptonCone.hh
     Det1stHitByDistanceToOther.hh
-    DetVerbosity.hh
-    DetCClassifEnergyMax.hh
-    DetCAlgoXYZPos.hh
+    Det1stHitByEnergy.hh
+    Det1stHitByXPos.hh
+    Det1stHitByXYPos.hh
     Det1stHitByXYZPos.hh
     DetCAlgoEnergy.hh
-    DetCClassifALL.hh
+    DetCAlgoXPos.hh
     DetCAlgoXYPos.hh
+    DetCAlgoXYZPos.hh
+    DetCAlgoXZPos.hh
+    DetCAlgoYPos.hh
+    DetCAlgoYZPos.hh
+    DetCAlgoZPos.hh
+    DetCClassifALL.hh
+    DetCClassifEnergyAverage.hh
+    DetCClassifEnergyMax.hh
+    DetCClassifEnergyMin.hh
+    DetCClassifNRecHit.hh
+    DetCClassifXPosMin.hh
+    DetCClassifXYPosMin.hh
+    DetCClassifXYZPosMin.hh
+    DetCClassifXZPosMin.hh
+    DetCClassifYPosMin.hh
+    DetCClassifYZPosMin.hh
+    DetCClassifZPosMin.hh
+    DetComptAlgorithmVariableFactory.hh
+    DetComptClassificationVariableFactory.hh
+    DetComptonStudyHistosUA.hh
+    DetCountScatteringUA.hh
+    DetCutsStudyFilter.hh
+    DetHistosGammaDist.hh
+    DetRecHitCone.hh
+    DetRecHitSet.hh
+    DetV1stHitAlgorithm.hh
+    DetVComptAlgorithmVariable.hh
+    DetVComptClassificationVariable.hh
+    DetVerbosity.hh
   SOURCES
-    DetCClassifNRecHit.cc
-    DetCClassifEnergyAverage.cc
-    DetCAlgoXYPos.cc
-    Det1stHitByXPos.cc
-    DetCClassifALL.cc
-    DetCountScatteringUA.cc
-    DetVComptAlgorithmVariable.cc
-    DetHistosGammaDist.cc
-    DetCAlgoXPos.cc
-    DetComptonStudyHistosUA.cc
-    DetCClassifEnergyMin.cc
-    Det1stHitByXYPos.cc
-    Det1stHitByDistanceToOther.cc
-    DetCClassifEnergyMax.cc
-    DetCClassifYPosMin.cc
-    plugin.cc
-    DetRecHitCone.cc
-    DetCutsStudyFilter.cc
-    DetCClassifXPosMin.cc
-    Det1stHitByXYZPos.cc
     Det1stHitAlgorithmFactory.cc
-    Det1stHitByEnergy.cc
-    DetCAlgoYZPos.cc
-    DetCClassifYZPosMin.cc
-    DetVerbosity.cc
-    DetCAlgoXZPos.cc
-    DetCAlgoXYZPos.cc
-    DetCClassifXYPosMin.cc
-    DetComptClassificationVariableFactory.cc
-    DetComptAlgorithmVariableFactory.cc
-    DetCClassifXZPosMin.cc
-    DetVComptClassificationVariable.cc
-    DetCClassifXYZPosMin.cc
-    DetCClassifZPosMin.cc
     Det1stHitByComptonCone.cc
-    DetCAlgoZPos.cc
-    DetCAlgoYPos.cc
+    Det1stHitByDistanceToOther.cc
+    Det1stHitByEnergy.cc
+    Det1stHitByXPos.cc
+    Det1stHitByXYPos.cc
+    Det1stHitByXYZPos.cc
     DetCAlgoEnergy.cc
-    DetV1stHitAlgorithm.cc
+    DetCAlgoXPos.cc
+    DetCAlgoXYPos.cc
+    DetCAlgoXYZPos.cc
+    DetCAlgoXZPos.cc
+    DetCAlgoYPos.cc
+    DetCAlgoYZPos.cc
+    DetCAlgoZPos.cc
+    DetCClassifALL.cc
+    DetCClassifEnergyAverage.cc
+    DetCClassifEnergyMax.cc
+    DetCClassifEnergyMin.cc
+    DetCClassifNRecHit.cc
+    DetCClassifXPosMin.cc
+    DetCClassifXYPosMin.cc
+    DetCClassifXYZPosMin.cc
+    DetCClassifXZPosMin.cc
+    DetCClassifYPosMin.cc
+    DetCClassifYZPosMin.cc
+    DetCClassifZPosMin.cc
+    DetComptAlgorithmVariableFactory.cc
+    DetComptClassificationVariableFactory.cc
+    DetComptonStudyHistosUA.cc
+    DetCountScatteringUA.cc
+    DetCutsStudyFilter.cc
+    DetHistosGammaDist.cc
+    DetRecHitCone.cc
     DetRecHitSet.cc
+    DetV1stHitAlgorithm.cc
+    DetVComptAlgorithmVariable.cc
+    DetVComptClassificationVariable.cc
+    DetVerbosity.cc
+    plugin.cc
 )
-# - Add path to generated header
-geant4_module_include_directories(NuclMed_Base
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
- PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
 
-geant4_module_link_libraries(NuclMed_Base
+gamos_module_link_libraries(NuclMed_Base
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosAnalysis
+    GamosCore_GamosBase_Base
+    GamosCore_GamosSD
+    GamosCore_GamosUserActionMgr
+    GamosCore_GamosUtils
+    lcg_PluginManager
+    lcg_SealBase
 )

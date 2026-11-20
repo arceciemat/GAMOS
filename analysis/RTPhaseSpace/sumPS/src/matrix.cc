@@ -192,6 +192,7 @@ void matrix::plot_matrix(string filename, string colorscale){
   FILE* gnuplotfile;
 
   octaveplotfile = popen("octave -q","w");
+  if( !octaveplotfile ) { std::cerr << "!! WARNING: cannot run octave, matrix not plotted" << std::endl; return; }
   fprintf(octaveplotfile,"figure(1);");
   
   fprintf(octaveplotfile,"load %s \n",filename.c_str());
@@ -200,9 +201,10 @@ void matrix::plot_matrix(string filename, string colorscale){
   fprintf(octaveplotfile,"colormap(%s);",colorscale.c_str());
   fprintf(octaveplotfile,"imagesc(%s,1) \n",filename.c_str());
   fflush(octaveplotfile);
-  fclose(octaveplotfile);
+  pclose(octaveplotfile);
 
   gnuplotfile = popen("gnuplot -persist","w");
+  if( !gnuplotfile ) { std::cerr << "!! WARNING: cannot run gnuplot, matrix not plotted" << std::endl; return; }
   fprintf(gnuplotfile,"set contour base %s \n",filename.c_str()); 
   fprintf(gnuplotfile,"set title 'Phase space %s' \n", filename.c_str());
   fprintf(gnuplotfile,"set xlabel 'x'\n");
@@ -233,7 +235,7 @@ void matrix::plot_matrix(string filename, string colorscale){
   fprintf(gnuplotfile,"set terminal postscript\n");
   fprintf(gnuplotfile,"set output '%s.ps'\n",filename.c_str());
   fflush(gnuplotfile);
-  fclose(gnuplotfile);
+  pclose(gnuplotfile);
 #endif
 }
 

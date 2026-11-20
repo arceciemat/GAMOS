@@ -1,33 +1,29 @@
 # - NuclMed_SPECT module build definition
 
-include(UseGamosAtGeant4)
-include(UseROOT)
-
-geant4_add_module(NuclMed_SPECT
+gamos_add_module(NuclMed_SPECT
   PUBLIC_HEADERS
-    SPECTVerbosity.hh
-    SPECTIOMgr.hh
     SPECTEventClassifierUA.hh
+    SPECTIOMgr.hh
     SPECTProjDataMgr.hh
+    SPECTVerbosity.hh
   SOURCES
     SPECTEventClassifierUA.cc
+    SPECTIOMgr.cc
     SPECTProjDataMgr.cc
     SPECTVerbosity.cc
     plugin.cc
-    SPECTIOMgr.cc
 )
-# - Add path to generated header
-geant4_module_include_directories(NuclMed_SPECT
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
- PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
 
-geant4_module_link_libraries(NuclMed_SPECT
+gamos_module_link_libraries(NuclMed_SPECT
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosAnalysis
+    GamosCore_GamosBase_Base
+    GamosCore_GamosGeometry
+    GamosCore_GamosMovement
+    GamosCore_GamosSD
+    GamosCore_GamosUserActionMgr
+    GamosCore_GamosUtils
     NuclMed_Base
+    lcg_PluginManager
+    lcg_SealBase
 )

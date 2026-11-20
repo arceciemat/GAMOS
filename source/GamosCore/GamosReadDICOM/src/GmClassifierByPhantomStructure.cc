@@ -75,7 +75,7 @@ int64_t GmClassifierByPhantomStructure::GetIndexFromTrack(const G4Track* aTrack)
 #endif
 
   std::vector<G4String> stidlistStr = GmGenUtils::StringSplit(stid1,":");
-  int64_t stid;
+  int64_t stid = 0;
   for( size_t ii = 0; ii < stidlistStr.size(); ii++ ) {
     stid += GmGenUtils::GetInt(stidlistStr[ii])*std::pow(100,ii);
 #ifndef GAMOS_NO_VERBOSE

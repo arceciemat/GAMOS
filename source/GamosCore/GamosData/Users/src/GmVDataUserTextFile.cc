@@ -1,3 +1,4 @@
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #include "GmVDataUserTextFile.hh"
 #include "GamosCore/GamosData/Management/include/GmDataVerbosity.hh"
 
@@ -23,6 +24,8 @@ void GmVDataUserTextFile::WriteHeaderText()
 #endif
 
   if( !bWriteHeaderData ) return;
+  //--- Multithreading: the header line is kept only from the first thread file when merging them
+  GmMTMergeMgr::SetThreadFileMergeMode( theFileNameOut, GmMTMergeMgr::TFMSkipHeaderLines, 1 );
 
   unsigned int ndata = theData.size();
   *theFileOut << "HEADER: ";

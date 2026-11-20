@@ -85,7 +85,7 @@ void GmInMassPhysicalVolumeReplicatedFilter::SetParameters( std::vector<G4String
 }
 
 //-------------------------------------------------------------------------
-G4bool GmInMassPhysicalVolumeReplicatedFilter::AcceptStackedTrack(const G4Track* aTrack)
+G4bool GmInMassPhysicalVolumeReplicatedFilter::AcceptStackedTrack(const G4Track* )
 {
   G4Exception(" GmInMassPhysicalVolumeReplicatedFilter::AcceptStackedTrack",
 	      "",

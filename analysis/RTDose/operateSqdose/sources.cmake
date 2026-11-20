@@ -1,17 +1,18 @@
-# - GAMOS_analysis_RTDose_sumSqdose module build definition
+# - operateSqdose module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_RTDose_sumSqdose
+gamos_add_module(operateSqdose
   PUBLIC_HEADERS
     Merge3ddoseUA.hh
   SOURCES
     dummy.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_RTDose_sumSqdose
-  PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    RadioTherapy
-    ${SEAL_LIBRARIES} 
+
+# Program operateSqdose
+gamos_add_executable(operateSqdose
+  SOURCES
+    operateSqdose.cc
+  LINK_LIBRARIES
+    operateSqdose
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
 )

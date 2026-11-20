@@ -10,7 +10,7 @@ GmUIcmdWithAString::GmUIcmdWithAString
 }
 
 
-G4int GmUIcmdWithAString::DoIt(G4String parameterList)
+G4int GmUIcmdWithAString::DoIt(const G4String& parameterList)
 {
 
   G4String correctParameters;
@@ -119,7 +119,6 @@ G4int GmUIcmdWithAString::DoIt(G4String parameterList)
 
   if(CheckNewValue( correctParameters ))
     { return fParameterOutOfRange+99; }
-
 
   messenger->SetNewValue( this, correctParameters );
   return 0;

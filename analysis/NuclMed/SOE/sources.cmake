@@ -1,40 +1,40 @@
-# - GAMOS_analysis_NuclMed_SOE module build definition
+# - SOE_ImageRecon module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_NuclMed_SOE
+gamos_add_module(SOE_ImageRecon
   PUBLIC_HEADERS
-    CHit.h
-    CUserParameters.h
+    C3Matrix.h
     C3Vector.h
-    CDensityMatrix.h
-    CEventManager.h
+    CCone.h
+    CConeExtension.h
     CCurrentState.h
     CDataSetManager.h
-    C3Matrix.h
-    constants.h
-    CConeExtension.h
+    CDensityMatrix.h
     CEvent.h
-    CCone.h
+    CEventManager.h
+    CHit.h
     CPETLine.h
+    CUserParameters.h
+    constants.h
   SOURCES
-    constants.cc
+    C3Matrix.cc
+    C3Vector.cc
+    CCone.cc
     CConeExtension.cc
+    CCurrentState.cc
+    CDataSetManager.cc
+    CDensityMatrix.cc
     CEvent.cc
-    CPETLine.cc
     CEventManager.cc
     CHit.cc
-    C3Vector.cc
-    C3Matrix.cc
-    CCone.cc
+    CPETLine.cc
     CUserParameters.cc
-    CCurrentState.cc
-    CDensityMatrix.cc
-    CDataSetManager.cc
+    constants.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_NuclMed_SOE
-  PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
+
+# Program SOE_ImageRecon
+gamos_add_executable(SOE_ImageRecon
+  SOURCES
+    SOE_ImageRecon.cc
+  LINK_LIBRARIES
+    SOE_ImageRecon
 )

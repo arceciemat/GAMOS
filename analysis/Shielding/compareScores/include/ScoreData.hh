@@ -3,7 +3,7 @@
 #include "globals.hh"
 #include <vector>
 
-enum DoseType{ST_ROOT, ST_TEXT};
+enum DoseType{ST_ROOT, ST_TEXT, ST_CSV};
 enum DoseIndexValType{SIVT_LOWER, SIVT_MIDDLE, SIVT_UPPER};
 
 class ScorerData;

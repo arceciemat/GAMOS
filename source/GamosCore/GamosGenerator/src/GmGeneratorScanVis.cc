@@ -15,8 +15,6 @@
 
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
-#else
-#include "GamosCore/GamosBase/Base/include/GmFilterFactory.hh"
 #endif
 
 //------------------------------------------------------------------------
@@ -137,14 +135,14 @@ void GmGeneratorScanVis::Initialise()
 }
 
 //------------------------------------------------------------------------
-void GmGeneratorScanVis::GeneratePrimaries(G4Event* evt)
+void GmGeneratorScanVis::GeneratePrimaries([[maybe_unused]] G4Event* evt)
 {
 #ifndef GAMOS_NO_ROOT
   if( !IncrementPosTransv() ) return;
   
   //  G4cout << " thePlaneFig " << thePlaneFig << " theAngles " << theAngles.size() << G4endl; //GDEB
 #ifndef GAMOS_NO_VERBOSE
-  if( GenerVerb(infoVerb) )   G4cout << "GmGeneratorScanVis::GeneratePrimaries  PosTransv " << thePosTransv << G4endl; //GDEB
+  if( GenerVerb(infoVerb) )   G4cout << "GmGeneratorScanVis::GeneratePrimaries  PosTransv " << thePosTransv << G4endl;
 #endif
   
   double sstep;
@@ -161,7 +159,7 @@ void GmGeneratorScanVis::GeneratePrimaries(G4Event* evt)
 	double posY = theScanWorldMinY + sstep;
 	for( ; posY < theScanWorldMaxY; posY += sstep ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(testVerb) ) G4cout << "PF_XY posY " << posY << " " <<G4ThreeVector(theScanWorldMinX, posY, thePosTransv) << G4endl; //GDEB
+    if( GenerVerb(testVerb) ) G4cout << "PF_XY posY " << posY << " " <<G4ThreeVector(theScanWorldMinX, posY, thePosTransv) << G4endl;
 #endif
 	  GenerateParticle( G4ThreeVector(theScanWorldMinX, posY, thePosTransv), evt ); 
 	}
@@ -171,7 +169,7 @@ void GmGeneratorScanVis::GeneratePrimaries(G4Event* evt)
 	  double posX = theScanWorldMinX + sstep;
 	  for( ; posX < theScanWorldMaxX; posX += sstep ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(testVerb) ) G4cout << "PF_XY posX " << posX << " " <<G4ThreeVector(posX, theScanWorldMinY, thePosTransv) << G4endl; //GDEB
+    if( GenerVerb(testVerb) ) G4cout << "PF_XY posX " << posX << " " <<G4ThreeVector(posX, theScanWorldMinY, thePosTransv) << G4endl;
 #endif
 	    GenerateParticle( G4ThreeVector(posX, theScanWorldMinY, thePosTransv), evt ); 
 	  }
@@ -234,14 +232,14 @@ void GmGeneratorScanVis::GeneratePrimaries(G4Event* evt)
     //---------------------------------------    
   } else if( thePlaneFig == PF_XZ ) {
  #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(testVerb) ) G4cout << "PF_XZ NAngles " <<theAngles.size() << G4endl; //GDEB
+    if( GenerVerb(testVerb) ) G4cout << "PF_XZ NAngles " <<theAngles.size() << G4endl;
 #endif
    for( size_t ii = 0; ii < theAngles.size(); ii++ ) {
       G4double angle = theAngles[ii]; 
       //      G4cout << " ANGLE " << angle/CLHEP::deg << G4endl; //GDEB
       SetDir( angle );
  #ifndef GAMOS_NO_VERBOSE
-      if( GenerVerb(testVerb) ) G4cout << ii << " Angle " << angle << G4endl; //GDEB
+      if( GenerVerb(testVerb) ) G4cout << ii << " Angle " << angle << G4endl;
 #endif
       double cosAng = cos(angle);
       double sinAng = sin(angle);
@@ -250,7 +248,7 @@ void GmGeneratorScanVis::GeneratePrimaries(G4Event* evt)
 	sstep = fabs(theStepScan/cosAng);
 	double posZ = theScanWorldMinZ + sstep;
 #ifndef GAMOS_NO_VERBOSE
-	if( GenerVerb(testVerb) ) G4cout << "PF_XZ 0posZ " << posZ << " theScanWorldMaxZ " << theScanWorldMaxZ << " sstep " << sstep << G4endl; //GDEB
+	if( GenerVerb(testVerb) ) G4cout << "PF_XZ 0posZ " << posZ << " theScanWorldMaxZ " << theScanWorldMaxZ << " sstep " << sstep << G4endl;
 #endif
 	for( ; posZ < theScanWorldMaxZ; posZ += sstep ) {
 	  //	  G4cout << " 0posZ " << posZ << G4endl; //GDEB

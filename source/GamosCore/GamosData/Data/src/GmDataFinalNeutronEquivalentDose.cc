@@ -13,9 +13,9 @@ GmDataFinalNeutronEquivalentDose::GmDataFinalNeutronEquivalentDose()
   theExcludedTypes.insert(DTTrack);
   theExcludedTypes.insert(DTSeco);
   theExcludedTypes.insert(DTEvent);
-  theFlux2Dose = ReadEnergyBinsForNeutrons();
-
   SetEquivDoseType("GmDataFinalNeutronEquivalentDose");
+
+  theFlux2Dose = ReadEnergyBinsForNeutrons();
 }
 
 //----------------------------------------------------------------

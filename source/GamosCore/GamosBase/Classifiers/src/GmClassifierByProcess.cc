@@ -38,8 +38,7 @@ int64_t GmClassifierByProcess::GetIndexFromStep(const G4Step* aStep)
   }
   std::map<const G4String,int64_t>::const_iterator ite = theIndexMap.find(procName);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[procName] = index;
+    index = AssignNewIndex( this, &GmClassifierByProcess::theIndexMap, procName ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }
@@ -65,8 +64,7 @@ int64_t GmClassifierByProcess::GetIndexFromTrack(const G4Track* aTrack)
   }
   std::map<const G4String,int64_t>::const_iterator ite = theIndexMap.find(procName);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[procName] = index;
+    index = AssignNewIndex( this, &GmClassifierByProcess::theIndexMap, procName ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

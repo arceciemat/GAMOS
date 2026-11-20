@@ -1,7 +1,6 @@
 #include "TextDoserData.hh"
 #include "DoseData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include <set>
 
 //----------------------------------------------------------------------
 TextDoserData::TextDoserData() : DoserData()

@@ -11,7 +11,7 @@
 /process/em/augerCascade true
 /process/em/deexcitationIgnoreCut true 
 #
-/process/em/AddDNARegion World DNA_Opt0
+/process/em/AddDNARegion World DNA_Opt2
 #
 /run/initialize 
 #
@@ -22,7 +22,11 @@
 /gamos/userAction GmCountProcessesUA
 #
 
-/P GmStepDataHistosUA:DataList EventID TrackID ParentTrackID StepNumber ParticleType FinalProcess FinalPosX FinalPosY FinalPosZ AccumulatedEnergyDeposited*eV AccumulatedLength AccumulatedEnergyLost*eV InitialKineticEnergy cos(AngleChange) 
+#/P GmStepDataTextFileUA:DataList EventID TrackID ParentTrackID StepNumber ParticleType FinalProcess FinalPosX FinalPosY FinalPosZ AccumulatedEnergyDeposited*eV AccumulatedLength AccumulatedEnergyLost*eV InitialKineticEnergy cos(AngleChange) 
+#/gamos/userAction GmStepDataTextFileUA
+
+/P GmStepDataHistosUA:DataList EventID TrackID ParentTrackID StepNumber FinalPosX FinalPosY FinalPosZ AccumulatedEnergyDeposited*eV AccumulatedLength AccumulatedEnergyLost*eV InitialKineticEnergy cos(AngleChange) 
 /gamos/userAction GmStepDataHistosUA
-  
+
 /run/beamOn 10
+ 

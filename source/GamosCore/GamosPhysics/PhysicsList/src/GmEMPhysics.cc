@@ -70,6 +70,9 @@ void GmEMPhysics::ConstructParticles()
   G4AntiNeutrinoE::AntiNeutrinoEDefinition();
   G4MuonMinus::MuonMinusDefinition();
   G4MuonPlus::MuonPlusDefinition();
+  // needed by GmGenerator: isotopes.dat contains alpha decays (GmIsotopeDecay aborts if the particle does not exist)
+  G4Alpha::AlphaDefinition();
+  G4GenericIon::GenericIonDefinition(); // G4PhysicsListHelper requires it once an ion (alpha) exists
 
   auto particleIterator=GetParticleIterator();
   particleIterator->reset();

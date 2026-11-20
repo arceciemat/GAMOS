@@ -1,3 +1,4 @@
+#include "G4AutoLock.hh"
 #include "G4Event.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
@@ -303,7 +304,20 @@ G4bool GmGeneratorFromBinFile::CheckDataName( G4int ii, G4String dataName )
 }
 
 //------------------------------------------------------------------------
+//--- Multithreading: one instance reads the file for all threads (one file position, each event generated once as in
+//    sequential mode); the particles are created by the calling thread in its own event
+namespace {
+  G4Mutex theGmGeneratorFromBinFileMutex = G4MUTEX_INITIALIZER;
+  GmGeneratorFromBinFile* theGmGeneratorFromBinFileReader = nullptr;
+}
 void GmGeneratorFromBinFile::GeneratePrimaries(G4Event* evt)
+{
+  G4AutoLock l(&theGmGeneratorFromBinFileMutex);
+  if( !theGmGeneratorFromBinFileReader ) theGmGeneratorFromBinFileReader = this;
+  theGmGeneratorFromBinFileReader->GeneratePrimariesFromFile(evt);
+}
+
+void GmGeneratorFromBinFile::GeneratePrimariesFromFile(G4Event* evt)
 {
  
   // GenerFile gf;

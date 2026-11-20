@@ -24,7 +24,6 @@
 // ********************************************************************
 //
 #include "G4UImanager.hh"
-#include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
 
 #include "G4GeometryManager.hh"

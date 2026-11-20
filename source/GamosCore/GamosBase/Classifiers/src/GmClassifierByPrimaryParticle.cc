@@ -39,8 +39,7 @@ int64_t GmClassifierByPrimaryParticle::GetIndexFromStep(const G4Step* aStep)
   int64_t index;
   std::map<G4ParticleDefinition*,int64_t>::const_iterator ite = theIndexMap.find(thePrimaryParticle);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[thePrimaryParticle] = index;
+    index = AssignNewIndex( this, &GmClassifierByPrimaryParticle::theIndexMap, thePrimaryParticle ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }
@@ -58,8 +57,7 @@ int64_t GmClassifierByPrimaryParticle::GetIndexFromTrack(const G4Track* aTrack)
   int64_t index;
   std::map<G4ParticleDefinition*,int64_t>::const_iterator ite = theIndexMap.find(thePrimaryParticle);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[thePrimaryParticle] = index;
+    index = AssignNewIndex( this, &GmClassifierByPrimaryParticle::theIndexMap, thePrimaryParticle ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

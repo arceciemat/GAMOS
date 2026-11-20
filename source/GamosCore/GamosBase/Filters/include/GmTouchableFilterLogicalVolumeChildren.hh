@@ -2,7 +2,7 @@
 #define GmTouchableFilterLogicalVolumeChildren_h 1
 
 class G4LogicalVolume;
-class G4VTouchable;
+#include "G4VTouchable.hh"
 #include "GmVTouchableFilterVolume.hh"
 #include <vector>
 #include <set>

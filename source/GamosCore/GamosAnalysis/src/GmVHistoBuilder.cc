@@ -9,7 +9,7 @@
 #include "CLHEP/Random/RandFlat.h"
 
 //----------------------------------------------------------------------------
-std::set<G4int> GmVHistoBuilder::theHistoNumbers;
+G4ThreadLocal std::set<G4int> GmVHistoBuilder::theHistoNumbers;
 
 //----------------------------------------------------------------------------
 GmVHistoBuilder::GmVHistoBuilder()

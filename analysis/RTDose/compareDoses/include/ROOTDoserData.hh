@@ -1,3 +1,4 @@
+#ifndef GAMOS_NO_ROOT 
 #ifndef ROOTDoserData__HH
 #define ROOTDoserData__HH
 #include "DoserData.hh"
@@ -19,4 +20,5 @@ public:
   
 };
 
+#endif
 #endif

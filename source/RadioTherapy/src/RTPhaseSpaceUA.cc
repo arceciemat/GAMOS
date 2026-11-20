@@ -1,3 +1,6 @@
+#include <cstring>
+#include <vector>
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4Event.hh"
@@ -38,7 +41,7 @@ RTPhaseSpaceUA::RTPhaseSpaceUA()
 
   GmParameterMgr* paramMgr = GmParameterMgr::GetInstance();
   
-  G4String foutName = paramMgr->GetStringValue("RTPhaseSpaceUA:TextFileName","");
+  G4String foutName = GmMTMergeMgr::GetThreadFileName(paramMgr->GetStringValue("RTPhaseSpaceUA:TextFileName",""));
   fileOut = 0;
   if( foutName != "" ) fileOut = new std::ofstream(foutName);
 
@@ -123,8 +126,9 @@ G4bool RTPhaseSpaceUA::CreateIAEAheader(G4double zstop)
   
   //strcpy(fiaeaphsp,"test");
   
-  G4String fname = theFileName;
-  if( theZStops.size() != 1 || bZStopInFileName ) fname += "_" + GmGenUtils::ftoa(zstop);
+  //--- Multithreading: each worker thread writes its own file (NAME.thN.IAEAphsp/.IAEAheader),
+  //    merged into NAME.IAEAphsp/.IAEAheader at the end of run (MergeThreadFiles)
+  G4String fname = GetPSFileName(zstop, true);
   strcpy(fiaeaphsp,fname.c_str());
   
   p_iaea_record->p_file = open_file(fiaeaphsp,(char *)(".IAEAphsp"),(char *)("wb"));
@@ -448,6 +452,8 @@ void RTPhaseSpaceUA::EndOfEventAction(const G4Event* evt)
 //---------------------------------------------------------------------
 void  RTPhaseSpaceUA::EndOfRunAction(const G4Run*)
 {
+  //--- the text file is never closed: flush it (its last buffer was lost; in MT the thread files are merged at the end of the job)
+  if( fileOut ) fileOut->flush();
 #ifndef GAMOS_NO_VERBOSE
     if( RTVerb(debugVerb) ) G4cout << " RTPhaseSpaceUA::EndOfRunAction " << GmNumberOfEvent::GetNumberOfEvent() <<G4endl; 
 #endif
@@ -464,7 +470,106 @@ int RTPhaseSpaceUA::CloseIAEAFiles()
   G4double nevents = GmNumberOfEvent::GetNumberOfEvent();
   CloseIAEAHeaderFiles(nevents);
   CloseIAEARecordFiles();
+  if( GmMTMergeMgr::IsWorkerThread() ) MergeThreadFiles();
   return 0;
+}
+
+//---------------------------------------------------------------------
+G4String RTPhaseSpaceUA::GetPSFileName( G4double zstop, G4bool bThread ) const
+{
+  G4String fname = theFileName;
+  if( theZStops.size() != 1 || bZStopInFileName ) fname += "_" + GmGenUtils::ftoa(zstop);
+  if( bThread && GmMTMergeMgr::IsWorkerThread() ) fname += ".th" + GmGenUtils::itoa(G4Threading::G4GetThreadId());
+  return fname;
+}
+
+//---------------------------------------------------------------------
+#include "G4AutoLock.hh"
+#include <cstdio>
+namespace {
+  G4Mutex thePSMergeMutex = G4MUTEX_INITIALIZER;
+  struct RTMergedPS {
+    iaea_header_type* header = nullptr;
+    FILE* phsp = nullptr;
+    G4int nThreads = 0;
+  };
+  // merged phase space files of the current run, by file name (shared by all threads)
+  std::map<G4String,RTMergedPS>& GetMergedPS() {
+    static std::map<G4String,RTMergedPS> merged;
+    return merged;
+  }
+  // master, at end of run: write the merged headers and close the merged files
+  void WriteMergedPS() {
+    G4AutoLock lock(&thePSMergeMutex);
+    for( auto& mp : GetMergedPS() ) {
+      RTMergedPS& mps = mp.second;
+      fclose(mps.phsp);
+      char L_fname[1024];
+      strcpy(L_fname,mp.first.c_str());
+      mps.header->fheader = open_file(L_fname,(char *)(".IAEAheader"),(char *)("wb"));
+      if( mps.header->fheader == NULL || mps.header->write_header() != OK ) {
+	G4Exception("RTPhaseSpaceUA::WriteMergedPS","",JustWarning,
+		    ("Error writing merged IAEA header " + mp.first + ".IAEAheader").c_str());
+      } else {
+	G4cout << "RTPhaseSpaceUA: phase space files of " << mps.nThreads << " threads merged into "
+	       << mp.first << ".IAEAphsp/.IAEAheader: " << mps.header->nParticles << " particles, "
+	       << mps.header->orig_histories << " original histories" << G4endl;
+      }
+      if( mps.header->fheader ) fclose(mps.header->fheader);
+      free(mps.header);
+    }
+    GetMergedPS().clear();
+  }
+}
+
+void RTPhaseSpaceUA::MergeThreadFiles()
+{
+  G4bool bKeep = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("RTPhaseSpaceUA:KeepThreadFiles",0));
+  G4AutoLock lock(&thePSMergeMutex);
+  for( unsigned int ii = 0; ii < theZStops.size(); ii++ ){
+    G4double zstop = theZStops[ii];
+    iaea_header_type * p_iaea_header = p_iaea_headers[zstop];
+    G4String thName = GetPSFileName(zstop, true);
+    G4String name = GetPSFileName(zstop, false);
+    RTMergedPS& mps = GetMergedPS()[name];
+    if( mps.header == nullptr ) {
+      mps.header = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
+      memcpy(mps.header, p_iaea_header, sizeof(iaea_header_type));
+      mps.header->fheader = NULL;
+      mps.phsp = fopen((name+".IAEAphsp").c_str(),"wb");
+      if( mps.phsp == NULL ) {
+	G4Exception("RTPhaseSpaceUA::MergeThreadFiles","",FatalException,
+		    ("Cannot open merged phase space file " + name + ".IAEAphsp").c_str());
+      }
+    } else {
+      if( mps.header->record_length != p_iaea_header->record_length ) {
+	G4Exception("RTPhaseSpaceUA::MergeThreadFiles","",FatalException,
+		    ("Different record length in thread phase space file " + thName).c_str());
+      }
+      mps.header->add_counters(p_iaea_header);
+    }
+    mps.nThreads++;
+    //--- append the records of this thread
+    FILE* fin = fopen((thName+".IAEAphsp").c_str(),"rb");
+    if( fin == NULL ) {
+      G4Exception("RTPhaseSpaceUA::MergeThreadFiles","",FatalException,
+		  ("Cannot open thread phase space file " + thName + ".IAEAphsp").c_str());
+    }
+    std::vector<char> buf(1<<22);
+    size_t nr;
+    while( (nr = fread(buf.data(),1,buf.size(),fin)) > 0 ) {
+      if( fwrite(buf.data(),1,nr,mps.phsp) != nr ) {
+	G4Exception("RTPhaseSpaceUA::MergeThreadFiles","",FatalException,
+		    ("Error writing merged phase space file " + name + ".IAEAphsp").c_str());
+      }
+    }
+    fclose(fin);
+    if( !bKeep ) {
+      std::remove((thName+".IAEAphsp").c_str());
+      std::remove((thName+".IAEAheader").c_str());
+    }
+  }
+  GmMTMergeMgr::RegisterMasterEndOfRunAction("RTPhaseSpaceUA", [](){ WriteMergedPS(); });
 }
 
 
@@ -495,8 +600,7 @@ int RTPhaseSpaceUA::CloseIAEAHeaderFiles(G4int nevents)
     //p_iaea_header->fheader = open_file("test",".IAEAheader","wb");
     
     char L_fname[120];
-    G4String fname = theFileName;
-    if( theZStops.size() != 1 ) fname += "_" + GmGenUtils::ftoa(zstop);
+    G4String fname = GetPSFileName(zstop, true);
     strcpy(L_fname,fname.c_str());
 
     p_iaea_header->fheader = open_file(L_fname,(char *)(".IAEAheader"),(char *)("wb"));

@@ -218,7 +218,7 @@ void RTPSPDoseHistos::FillHisto1N_Z( std::vector<G4String>& wl  )
 void RTPSPDoseHistos::FillHisto1N_X( const G4String& hisName, G4double nXmin, G4double nXmax, G4double nYmin, G4double nYmax, G4double nZmin, G4double nZmax, G4double )
 { 
 #ifndef GAMOS_NO_VERBOSE
-  if( RTVerb(-debugVerb) ) G4cout << " FillHisto1N_X " << hisName 
+  if( RTVerb(debugVerb) ) G4cout << " FillHisto1N_X " << hisName 
 	 << " nXmin " << nXmin << " nXmax " << nXmax 
 	 << " nYmin " << nYmin << " nYmax " << nYmax 
 	 << " nZmin " << nZmin << " nZmax " << nZmax 
@@ -585,7 +585,7 @@ void RTPSPDoseHistos::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer*
   G4double doseMax = -DBL_MAX;
 
   std::map<G4int,G4double*>::iterator ite;
-  int iir = 0; //GDEB
+  int iir = 0;
   for(ite = RunMap->GetMap()->begin(); ite != RunMap->GetMap()->end(); ite++,iir++){
     G4double val = *(ite->second)*theUnitRatio;
     if( val == 0) continue;
@@ -679,18 +679,18 @@ void RTPSPDoseHistos::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScorer*
     }
     
     if( val > theDose20 ) {
-      //      std::cout << (*ite).first << " VOXEL>20 " << error << " / " << val << G4endl; 
+      //      G4cout << (*ite).first << " VOXEL>20 " << error << " / " << val << G4endl; 
       theF20 += error/val;
       theN20++;
       //      G4cout << theN20 << "F20 " << theF20 << " val " << val << " /" << theScorer->GetError( (*ite).first ) << " error " << theScorer->GetError( (*ite).first ) << " index " << (*ite).first << G4endl;
     }
     if( val > theDose50 ) {
-      //      std::cout << (*ite).first << " VOXEL>50 " << error << " / " << val << G4endl; 
+      //      G4cout << (*ite).first << " VOXEL>50 " << error << " / " << val << G4endl; 
       theF50 += error/val;
       theN50++;
     }
     if( val > theDose90 ) {
-      //      std::cout << "VOXEL>90 " << ite->first << G4endl; 
+      //      G4cout << "VOXEL>90 " << ite->first << G4endl; 
       theF90 += error/val;
       theN90++;
       //      if( (*ite).first%1000 == 1 ) G4cout << (*ite).first << "F90 " << theF90 << " " << error << " /" << val << " = " << error/val << " N " << theN90 << G4endl; //GDEB
@@ -792,7 +792,7 @@ void RTPSPDoseHistos::FillHistosFromFile( G4String fileName )
       //      G4cout << "CALLING 1N_Y " << wl[1]<< " " <<hminX<< " " <<hmaxX<< " " <<hminY<< " " <<hmaxY<< " " <<hminZ<< " " <<hmaxZ << G4endl;
       FillHisto1N_Y(wl[1],hminX,hmaxX,hminY,hmaxY,hminZ,hmaxZ,ZSlope);
     } else if( wl[0] == "1Z" ) {
-      G4cout << "CALLING 1N_Z " << wl[1]<< " " <<hminX<< " " <<hmaxX<< " " <<hminY<< " " <<hmaxY<< " " <<hminZ<< " " <<hmaxZ << G4endl; //GDEB
+      //G4cout << "CALLING 1N_Z " << wl[1]<< " " <<hminX<< " " <<hmaxX<< " " <<hminY<< " " <<hmaxY<< " " <<hminZ<< " " <<hmaxZ << G4endl; //GDEB
       FillHisto1N_Z(wl[1],hminX,hmaxX,hminY,hmaxY,hminZ,hmaxZ,ZSlope);
     } else if( wl[0] == "2XY" ) {
       FillHisto2N_XY(wl[1],hminX,hmaxX,hminY,hmaxY,hminZ,hmaxZ,ZSlope);

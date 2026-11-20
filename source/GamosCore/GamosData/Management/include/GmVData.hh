@@ -133,6 +133,10 @@ public:
     return bInitial;
   }
 
+  // Multithreading: add the values accumulated in a worker thread (run data are sums)
+  void AddDataAccumulated( const std::map<G4int, G4double>& dataAcc ) {
+    for( auto ite = dataAcc.begin(); ite != dataAcc.end(); ite++ ) theDataAccumulated[ite->first] += ite->second;
+  }
   std::map<G4int, G4double> GetDataAccumulated() const 
   {
     return theDataAccumulated;

@@ -2,7 +2,7 @@
 #define MCNPVTallierData_hh
 
 #include "ScorerData.hh"
-#include "GamosCore/GamosUtils/include/GmFileIn.hh"
+class GmFileIn;
 
 class MCNPVTallierData : public ScorerData
 {

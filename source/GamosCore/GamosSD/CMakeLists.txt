@@ -1,13 +1,2 @@
-#------------------------------------------------------------------------------
-# Module : GamosSD
-# Package: GamosCore_GamosSD
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include(Geant4MacroLibraryTargets)
-if(GEANT4_BUILD_GRANULAR_LIBS)
-    GEANT4_GRANULAR_LIBRARY_TARGET(COMPONENTS sources.cmake)
-else()
-   GEANT4_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
-endif()
+# - GamosCore_GamosSD module build (source/GamosCore/GamosSD)
+include(sources.cmake)

@@ -1,5 +1,6 @@
 #include "G4Run.hh"
 #include "G4Event.hh"
+#include "G4Threading.hh"
 
 #include "GmDumpMateG4dcmUA.hh"
 #include "GmRegularParamUtils.hh"
@@ -19,6 +20,8 @@
 //-----------------------------------------------------------------------
 GmDumpMateG4dcmUA::GmDumpMateG4dcmUA()
 {
+  //--- Multithreading: the geometry is shared, the file is written once by the master
+  SetRunOnMaster(true);
   //  thePhantomName = GmParameterMgr::GetInstance()->GetStringValue("GmDumpMateG4dcmUA::CrystalName","lyso_crystal");
 
 }
@@ -26,6 +29,7 @@ GmDumpMateG4dcmUA::GmDumpMateG4dcmUA()
 //-----------------------------------------------------------------------
 void GmDumpMateG4dcmUA::BeginOfRunAction( const G4Run* )
 {
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) return;
   theOutputType = "DumpMate";
 
   G4bool phantomRegular = FALSE;
@@ -104,7 +108,7 @@ void GmDumpMateG4dcmUA::PrintImage()
   G4VSolid* phantomCont = theRegularParam->GetContainerSolid();
 std::vector<GmTouchable*> touchs = GmGeometryUtils::GetInstance()->GetTouchables( phantomCont->GetName() );
 G4ThreeVector transl = touchs[0]->GetGlobalPosition();
-G4cout << " PHANTOM CONTAINER GLOBAL POS " << transl << G4endl; //GDEB
+//G4cout << " PHANTOM CONTAINER GLOBAL POS " << transl << G4endl; //GDEB
 
 G4String patientPosition = "HFS";
 const GmReadPhantomG4Geometry* g4geom = dynamic_cast<const GmReadPhantomG4Geometry*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());

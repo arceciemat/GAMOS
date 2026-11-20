@@ -226,7 +226,7 @@ void GmCrossPhantomGeometry::ConstructPhantom(G4LogicalVolume* parentLV)
   phantomParamX->SetVoxelDimensions( dimX/2., dimY/2., dimZ/2. );
   phantomParamX->SetNoVoxels( nVoxelX, 1, nVoxelZ );
   phantomParamX->SetMaterialIndices( theMateIDs );
-  G4cout << phantomParamX << " phantomParamX " << G4endl; //GDEB
+  //G4cout << phantomParamX << " phantomParamX " << G4endl; //GDEB
   //  G4cout << " Number of Materials " << thePhantomMaterials.size() << G4endl;
   //  G4cout << " SetMaterialIndices(0) " << mateIDs[0] << G4endl;
 
@@ -299,7 +299,7 @@ void GmCrossPhantomGeometry::ConstructPhantom(G4LogicalVolume* parentLV)
 
   //----- Build phantom
   G4PhantomParameterisation* phantomParamYN = new G4PhantomParameterisation();
-  G4cout << phantomParamYN << " phantomParamYN " << G4endl; //GDEB
+  //G4cout << phantomParamYN << " phantomParamYN " << G4endl; //GDEB
   phantomParamYN->SetMaterials( thePhantomMaterials );
   phantomParamYN->SetVoxelDimensions( dimX/2., dimY/2., dimZ/2. );
   phantomParamYN->SetNoVoxels( 1, (nVoxelY-1)/2, nVoxelZ );
@@ -378,7 +378,7 @@ void GmCrossPhantomGeometry::ConstructPhantom(G4LogicalVolume* parentLV)
 
   //----- Build phantom
   G4PhantomParameterisation* phantomParamYP = new G4PhantomParameterisation();
-  G4cout << phantomParamYP << " phantomParamYP " << G4endl; //GDEB
+  //G4cout << phantomParamYP << " phantomParamYP " << G4endl; //GDEB
   phantomParamYP->SetMaterials( thePhantomMaterials );
   phantomParamYP->SetVoxelDimensions( dimX/2., dimY/2., dimZ/2. );
   phantomParamYP->SetNoVoxels( 1, (nVoxelY-1)/2, nVoxelZ );

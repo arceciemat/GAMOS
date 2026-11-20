@@ -150,7 +150,7 @@ void DCMCleanOutsideStruct::ReadFilesAndGetImages()
   std::vector<DicomVImage*> images = theDicomMgr->GetImages(DIM_RTStruct, false);
   if( images.size() != 0 ) {
     theStructImage = dynamic_cast<DicomVImageStr*>(images[0]);
-    G4cout << "DCMCleanOutsideStruct::ReadFilesAndGetImages()  theStructImage  DIM_RTStruct " << *theStructImage << G4endl; //GDEB
+    //G4cout << "DCMCleanOutsideStruct::ReadFilesAndGetImages()  theStructImage  DIM_RTStruct " << *theStructImage << G4endl; //GDEB
       
   }
   /* NOT IMPLEMENTED YET   if( !theStructImage ) {

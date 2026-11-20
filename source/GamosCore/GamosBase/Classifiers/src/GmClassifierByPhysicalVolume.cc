@@ -35,8 +35,7 @@ int64_t GmClassifierByPhysicalVolume::GetIndexFromStep(const G4Step* aStep)
   int64_t index;
   std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(pvNameNum);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[pvNameNum] = index;
+    index = AssignNewIndex( this, &GmClassifierByPhysicalVolume::theIndexMap, pvNameNum ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }
@@ -55,8 +54,7 @@ int64_t GmClassifierByPhysicalVolume::GetIndexFromTrack(const G4Track* aTrack)
   G4String pvNameNum = GmG4Utils::GetNameNumberFromTouchable(aTrack->GetTouchable());
   std::map<G4String,int64_t>::const_iterator ite = theIndexMap.find(pvNameNum);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[pvNameNum] = index;
+    index = AssignNewIndex( this, &GmClassifierByPhysicalVolume::theIndexMap, pvNameNum ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

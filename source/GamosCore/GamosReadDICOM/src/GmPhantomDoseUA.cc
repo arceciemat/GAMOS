@@ -1,3 +1,5 @@
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
+#include "G4AutoLock.hh"
 #include "G4Run.hh"
 #include "G4Event.hh"
 
@@ -19,6 +21,9 @@ GmPhantomDoseUA::GmPhantomDoseUA()
   //  thePhantomName = GmParameterMgr::GetInstance()->GetStringValue("GmPhantomDoseUA::CrystalName","lyso_crystal");
 
   theAnaMgr = GmAnalysisMgr::GetInstance("EGSphantom") ;
+  theDoseFile = 0;
+  //--- Multithreading: worker doses are added to the master instance, which writes the file
+  SetRunOnMaster(true);
 }
 
 //-----------------------------------------------------------------------
@@ -38,7 +43,7 @@ void GmPhantomDoseUA::BeginOfRunAction( const G4Run* )
       phantomRegular = TRUE;
       thePhantomStructure = *cite;
       theRegularParam = paramreg;
-      Write3ddoseHeader();
+      if( !GmMTMergeMgr::IsWorkerThread() ) Write3ddoseHeader(); // multithreading: only master writes the file
       InitialiseDoseCounters();
     }
   }
@@ -60,7 +65,7 @@ void GmPhantomDoseUA::BeginOfEventAction( const G4Event* )
 //-----------------------------------------------------------------------
 void GmPhantomDoseUA::EndOfEventAction( const G4Event* evt )
 {
-  if( evt->GetEventID() % 100000 == 99999 ) {
+  if( theDoseFile && evt->GetEventID() % 100000 == 99999 ) {
     *theDoseFile << " $$$$$ evt->GetEventID() " << G4endl;
     //    Write3ddose();
   }
@@ -70,6 +75,21 @@ void GmPhantomDoseUA::EndOfEventAction( const G4Event* evt )
 //-----------------------------------------------------------------------
 void GmPhantomDoseUA::EndOfRunAction( const G4Run* )
 {
+  if( GmMTMergeMgr::IsWorkerThread() ) {
+    GmPhantomDoseUA* master = dynamic_cast<GmPhantomDoseUA*>(GmUserAction::GetMasterUserAction(GetName()));
+    if( master ) {
+      G4AutoLock l(&GmUserAction::GetMergeMutex());
+      for( size_t ii = 0; ii < theDose.size() && ii < master->theDose.size(); ii++ ) {
+	master->theDose[ii] += theDose[ii];
+	master->theDose2[ii] += theDose2[ii];
+	master->theDoseCounts[ii] += theDoseCounts[ii];
+	theDose[ii] = 0.;
+	theDose2[ii] = 0.;
+	theDoseCounts[ii] = 0;
+      }
+    }
+    return;
+  }
   Write3ddose();
   FillDoseHistos();
 }

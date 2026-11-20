@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
 	//	int autoname=0;
 
 	fstream * check_file = new fstream;
-	phspheader* inputphsp;
+	phspheader* inputphsp = 0;
 	headerstats statsphsp[1];
 
 	string aux;
@@ -123,6 +123,10 @@ int main(int argc, char *argv[]){
 	  if( finlis.eof() ) break;
 	}
 	
+	if( inputphsp == 0 ) {
+	  cerr << "!!! ERROR : no phase space file was read" << endl;
+	  exit(1);
+	}
 	cout << " * * * * N Particles   = " << Npar  << endl;
 	cout << " * * * * N Photons   = " << statsphsp[0].nPhotons   << endl;
 	cout << " * * * * N Electrons = " << statsphsp[0].nElectrons << endl;

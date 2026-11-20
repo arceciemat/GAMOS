@@ -1,6 +1,5 @@
 #include "GmPSRBEPhenom_Wilkens.hh"
 #include "G4UnitsTable.hh"
-#include "G4EmCalculator.hh"
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
 
 //--------------------------------------------------------------------
@@ -17,7 +16,7 @@ GmPSRBEPhenom_Wilkens::~GmPSRBEPhenom_Wilkens()
 {;}
 
 //--------------------------------------------------------------------
-G4double GmPSRBEPhenom_Wilkens::GetRBEMin( G4double LETd, G4double alphaBetaX )
+G4double GmPSRBEPhenom_Wilkens::GetRBEMin( G4double /*LETd*/, G4double /*alphaBetaX*/ )
 {
 
   G4double rbeMin = 1.0;

@@ -15,7 +15,7 @@
 
 #include <set>
 
-GmStepMgr* GmStepMgr::theInstance = 0;
+G4ThreadLocal GmStepMgr* GmStepMgr::theInstance = 0;
 
 //-----------------------------------------------------------------------
 GmStepMgr::GmStepMgr()

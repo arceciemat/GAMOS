@@ -16,7 +16,7 @@ GmBiasingMessenger::GmBiasingMessenger()
   operatorCmd = new GmUIcmdWithAString("/gamos/physics/biasing/createOperator",this);
   operatorCmd->SetGuidance("Creates a Geant4 biasing operator");
   operatorCmd->SetParameterName("choice",true);
-  operatorCmd->AvailableForStates(G4State_PreInit);
+  operatorCmd->AvailableForStates(G4State_PreInit,G4State_Idle); // Idle: replayed on worker threads
 
   oper2LogVolCmd = new GmUIcmdWithAString("/gamos/physics/biasing/associateOper2LogVol",this);
   oper2LogVolCmd->SetGuidance("Associate a logical volume to a biasing operator");
@@ -26,17 +26,17 @@ GmBiasingMessenger::GmBiasingMessenger()
   addProcCmd = new GmUIcmdWithAString("/gamos/physics/biasing/addProcesses2Oper",this);
   addProcCmd->SetGuidance("Add a process to be biased to an operator");
   addProcCmd->SetParameterName("choice",true);
-  addProcCmd->AvailableForStates(G4State_PreInit);
+  addProcCmd->AvailableForStates(G4State_PreInit,G4State_Idle); // Idle: replayed on worker threads
 
   addPartCmd = new GmUIcmdWithAString("/gamos/physics/biasing/addParticles2Oper",this);
   addPartCmd->SetGuidance("Add a particle to be biased (all processes plus NonPhysicsBias) to an operator");
   addPartCmd->SetParameterName("choice",true);
-  addPartCmd->AvailableForStates(G4State_PreInit);
+  addPartCmd->AvailableForStates(G4State_PreInit,G4State_Idle); // Idle: replayed on worker threads
 
   addPartProcCmd = new GmUIcmdWithAString("/gamos/physics/biasing/addParticleProcesses2Oper",this);
   addPartProcCmd->SetGuidance("Add a process of a particle to be biased to an operator");
   addPartProcCmd->SetParameterName("choice",true);
-  addPartProcCmd->AvailableForStates(G4State_PreInit);
+  addPartProcCmd->AvailableForStates(G4State_PreInit,G4State_Idle); // Idle: replayed on worker threads
 
 }
 

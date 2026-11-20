@@ -269,9 +269,10 @@ void GmHit::Print(FILE* fout, G4bool )
   fwrite((float *) &theEventID,  sizeof(float), 1, fout);
   G4String sdtype = GetSDType();
   sdtype = sdtype.substr(1,sdtype.size()-2);
-  fwrite((char *) &sdtype, sizeof(char*), sdtype.length(), fout);
+  fwrite(sdtype.c_str(), sizeof(char), sdtype.length(), fout); // write the characters (before the G4String object memory was written: sizeof(char*)*length bytes from &sdtype)
   fwrite((unsigned long long *) &theDetUnitID,  sizeof(unsigned long long), 1, fout);
-  fwrite((float *) &theEnergy,  sizeof(float), 1, fout);
+  float energy = theEnergy; // theEnergy is double: convert it (before, its first 4 bytes were written as a float)
+  fwrite((float *) &energy,  sizeof(float), 1, fout);
   fwrite((G4double *) &theTimeMin,  sizeof(G4double), 1, fout);
   fwrite((G4double *) &theTimeMax,  sizeof(G4double), 1, fout);
 
@@ -335,7 +336,7 @@ void GmHit::Build(std::vector<G4String>& wl )
   thePosition = G4ThreeVector( posx, posy, posz );
   theHitsTimeType = 1;
 
-  if( SDVerb(infoVerb) ) Print(std::cout, 0);
+  if( SDVerb(infoVerb) ) Print(G4cout, 0);
 
 }
 

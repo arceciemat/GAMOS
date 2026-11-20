@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "SPECTEventClassifierUA.hh"
 #include "SPECTVerbosity.hh"
 #include "SPECTIOMgr.hh"
@@ -19,7 +20,6 @@
 #include "GamosCore/GamosAnalysis/include/GmCheckOriginalGamma.hh"
 
 #include <math.h>
-#include <iomanip>
 #include "G4Run.hh"
 #include "G4Event.hh"
 #include "G4EventManager.hh"
@@ -33,6 +33,7 @@
 //----------------------------------------------------------------------
 SPECTEventClassifierUA::SPECTEventClassifierUA()
 {
+  SetRunOnMaster(true); // multithreading: master prints merged results
   GmParameterMgr* paramMgr = GmParameterMgr::GetInstance();
 
   bDumpLM = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("SPECT:EvtClass:DumpEventListMode",0));
@@ -709,6 +710,13 @@ G4int SPECTEventClassifierUA::CheckTraverseCollimator(DetRecHitSetList& rhitsets
 //----------------------------------------------------------------------
 void SPECTEventClassifierUA::EndOfRunAction(const G4Run* aRun )
 {
+  //--- Multithreading: workers close their list mode files and give their projection data to the master;
+  //    the master prints the classification table (from merged histograms) and writes the merged projection data
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    if( bDumpLM && !G4Threading::IsMultithreadedApplication() ) SPECTIOMgr::GetInstance()->CloseFileOut();
+    if( bDumpPD ) SPECTProjDataMgr::GetInstance()->WriteInterfile();
+    return;
+  }
   G4int nevt = aRun->GetNumberOfEvent();
   if (nevt == 0) {
     G4cout << "Nevt = 0 !!!" << G4endl;
@@ -717,7 +725,7 @@ void SPECTEventClassifierUA::EndOfRunAction(const G4Run* aRun )
 
   PrintSPECTClassificationTable( nevt );
 
-  if( bDumpLM ) SPECTIOMgr::GetInstance()->CloseFileOut();
+  if( bDumpLM && !G4Threading::IsMultithreadedApplication() ) SPECTIOMgr::GetInstance()->CloseFileOut();
   
   if( bDumpPD ) SPECTProjDataMgr::GetInstance()->WriteInterfile();
 
@@ -727,7 +735,7 @@ void SPECTEventClassifierUA::EndOfRunAction(const G4Run* aRun )
 //----------------------------------------------------------------------
 SPAlgo SPECTEventClassifierUA::SelectPosAlgorithm(const G4String& SelectPosStr)
 {
-  SPAlgo spa;
+  SPAlgo spa = SPByEnergy;  // overwritten below or fatal exception
   if( SelectPosStr == "Energy" ){
     spa = SPByEnergy;
   }else if( SelectPosStr == "XYRadius" || SelectPosStr == "TransaxialPos" ) {

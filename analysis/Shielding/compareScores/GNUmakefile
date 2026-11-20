@@ -12,4 +12,4 @@ include $(GAMOSINSTALL)/config/gamos_libraries.gmk
 
 INCFLAGS += -I$(GAMOSINSTALL)/analysis
 
-EXTRALIBS += -lsumScores -lGamosCore_GamosUtils
+EXTRALIBS += -lsumScores -lGamosCore_GamosBase_Base -lGamosCore_GamosUtils

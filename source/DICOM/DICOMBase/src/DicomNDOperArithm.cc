@@ -32,7 +32,7 @@ DicomNDOperArithm::DicomNDOperArithm( G4int iOrder, G4String name, G4String arit
   size_t ifdatold = 0;
   G4int ndat = 1;
   G4String checkArithm = "";
-  G4cout << " DicomNDOperArithm " << theArithmeticOperation << G4endl; //GDEB
+  //G4cout << " DicomNDOperArithm " << theArithmeticOperation << G4endl; //GDEB
   do {
     if( GmGenUtils::GetInt(theArithmeticOperation.substr(ifdat+4,1)) != ndat ) {
       G4Exception("DicomNDOperArithm::DicomNDOperArithm",

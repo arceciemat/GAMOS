@@ -2,7 +2,7 @@
 #define GmTouchableFilterRegion_h 1
 
 class G4Region;
-class G4VTouchable;
+#include "G4VTouchable.hh"
 #include "GmVTouchableFilterVolume.hh"
 #include <vector>
 #include <set>

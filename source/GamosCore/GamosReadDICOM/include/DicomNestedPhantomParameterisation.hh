@@ -40,7 +40,7 @@
 #include "G4VNestedParameterisation.hh" 
 
 class G4VPhysicalVolume;
-class G4VTouchable; 
+#include "G4VTouchable.hh" 
 class G4VSolid;
 class G4Material;
 class G4VisAttributes;

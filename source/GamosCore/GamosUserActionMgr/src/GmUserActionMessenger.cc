@@ -19,12 +19,12 @@ GmUserActionMessenger::GmUserActionMessenger(GmUserActionMgr* myua):
   listOFFCmd->SetGuidance("Dump the list of DISABLED UserActions");
   listOFFCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  EnableCmd = new GmUIcmdWithAString("/gamos/userAction/Enable",this);
+  EnableCmd = new GmUIcmdWithAString("/gamos/userAction/enable",this);
   EnableCmd->SetGuidance("Enable a User Action by name");
   EnableCmd->SetParameterName("choice",true);
   EnableCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  DisableCmd = new GmUIcmdWithAString("/gamos/userAction/Disable",this);
+  DisableCmd = new GmUIcmdWithAString("/gamos/userAction/disable",this);
   DisableCmd->SetGuidance("Disable a User Action by name");
   DisableCmd->SetParameterName("choice",true);
   DisableCmd->AvailableForStates(G4State_PreInit,G4State_Idle);

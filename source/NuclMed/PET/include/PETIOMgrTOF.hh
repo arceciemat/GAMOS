@@ -40,7 +40,7 @@ class PETIOMgrTOF : public GmIObinMgr
   void PrintEvent(const G4String& text, const PETOutput& po, G4bool bCart );
 
 private:
-  static PETIOMgrTOF* theInstance;
+  static G4ThreadLocal PETIOMgrTOF* theInstance;
   G4bool bDumpCout;
   G4bool bCartesian;
 };

@@ -17,8 +17,8 @@
 #include "G4TransportationManager.hh"
 #include "G4GammaGeneralProcess.hh"
 #include "G4GammaConversionToMuons.hh"
+#include "G4HadronicProcess.hh"
 
-#include <iomanip>
 
 //------------------------------------------------------------------
 GmPDSCreateAngleTablesUA::GmPDSCreateAngleTablesUA() : GmUserRunAction(), GmUserSteppingAction()
@@ -130,7 +130,7 @@ void GmPDSCreateAngleTablesUA::Initialise( const G4Event* evt )
     if( particle->GetParticleName() == thePrimaryParticleName ){
 #ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
-      if( ScoringVerb(-debugVerb) ) G4cout << "GmPDSCreateAngleTablesUA:  PARTICLE is " << particle->GetParticleName() << G4endl;
+      if( ScoringVerb(debugVerb) ) G4cout << "GmPDSCreateAngleTablesUA:  PARTICLE is " << particle->GetParticleName() << G4endl;
 #endif
 #endif
       pmanager = particle->GetProcessManager();
@@ -154,6 +154,9 @@ void GmPDSCreateAngleTablesUA::Initialise( const G4Event* evt )
 	  }
 	  if( ggproc->GetConversionMM() != 0 ) {
 	    theProclis.push_back( dynamic_cast<G4GammaConversionToMuons*>(ggproc->GetConversionMM()) );
+	  }
+	  if( ggproc->GetGammaNuclear() != 0 ) {
+	    theProclis.push_back( ggproc->GetGammaNuclear() );
 	  }
 	}
       }
@@ -283,7 +286,6 @@ void GmPDSCreateAngleTablesUA::UserSteppingAction(const G4Step* aStep)
 	for( itep = theProcesses.begin(); itep != theProcesses.end(); itep++ ) {
 	  G4cerr << "PROCESS: " << itep->first << " : " << itep->second << G4endl; 
 	}
-	std::map<G4String,int>::iterator itep = theProcesses.find( procName );
 	G4Exception("GmPDSCreateAngleTablesUA::UserSteppingAction",
 		    "Process not defined: particle is not the same as the primary one!",
 		    JustWarning,

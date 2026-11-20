@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "GmGenerVerbosity.hh"
 #include "GmGeneratorChangeEnergyAndMaterial.hh"
 #include "GmParticleSource.hh"
@@ -32,11 +33,18 @@
 //------------------------------------------------------------------
 GmGeneratorChangeEnergyAndMaterial::GmGeneratorChangeEnergyAndMaterial() : GmGenerator()
 {
+  //--- Multithreading: the (shared) geometry is changed between events and sources are sequenced by event number
+  if( G4Threading::IsMultithreadedApplication() ) {
+    G4Exception("GmGeneratorChangeEnergyAndMaterial::GmGeneratorChangeEnergyAndMaterial",
+		"",
+		FatalException,
+		"This generator changes the geometry between events and cannot be used in multithreading mode: run with G4RUN_MANAGER_TYPE=Serial");
+  }
   bInitialised = false;
 
   GmParameterMgr* parMgr = GmParameterMgr::GetInstance();
 
-  theNEventsPerRun = G4int(parMgr->GetNumericValue("GmGeneratorChangeEnergyAndMaterial:nEventsPerRun",100));
+  theNEventsPerRun = G4int(parMgr->GetNumericValue("GmGeneratorChangeEnergyAndMaterial:NEventsPerRun",100));
 
   GetEnergyParameters("GmGeneratorChangeEnergyAndMaterial");
 
@@ -103,7 +111,7 @@ void GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromGeom()
 {
   //----- Create n geometries
   theMaterials = GmGeometryUtils::GetInstance()->GetMaterialsUsed();
-  G4cout << this << " GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromGe " << theMaterials.size() << G4endl; //GDEB
+  //G4cout << this << " GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromGe " << theMaterials.size() << G4endl; //GDEB
 }
 
 //------------------------------------------------------------------
@@ -133,7 +141,7 @@ void GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromNameList()
     theMaterials.push_back(mate);
   }
 
-   G4cout << this << " GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromGe " << theMaterials.size() << G4endl; //GDEB
+   //G4cout << this << " GmGeneratorChangeEnergyAndMaterial::BuildMaterialsFromGe " << theMaterials.size() << G4endl; //GDEB
 
 }
 

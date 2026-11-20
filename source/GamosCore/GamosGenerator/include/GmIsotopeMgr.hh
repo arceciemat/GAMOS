@@ -39,7 +39,7 @@ class GmIsotopeMgr
   //-  void SetIsotopeActivity(G4double);
 
 private:
-  static GmIsotopeMgr* theInstance;
+  static G4ThreadLocal GmIsotopeMgr* theInstance;
 
   std::vector<GmIsotope*> theIsotopes;
 

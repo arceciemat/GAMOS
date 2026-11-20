@@ -1,3 +1,4 @@
+#include "G4AutoLock.hh"
 #include "G4Event.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
@@ -37,7 +38,20 @@ GmGeneratorFromTextFileWithParent::~GmGeneratorFromTextFileWithParent()
 }
 
 //------------------------------------------------------------------------
+//--- Multithreading: one instance reads the file for all threads (one file position, each event generated once as in
+//    sequential mode); the particles are created by the calling thread in its own event
+namespace {
+  G4Mutex theGmGeneratorFromTextFileWithParentMutex = G4MUTEX_INITIALIZER;
+  GmGeneratorFromTextFileWithParent* theGmGeneratorFromTextFileWithParentReader = nullptr;
+}
 void GmGeneratorFromTextFileWithParent::GeneratePrimaries(G4Event* evt)
+{
+  G4AutoLock l(&theGmGeneratorFromTextFileWithParentMutex);
+  if( !theGmGeneratorFromTextFileWithParentReader ) theGmGeneratorFromTextFileWithParentReader = this;
+  theGmGeneratorFromTextFileWithParentReader->GeneratePrimariesFromFile(evt);
+}
+
+void GmGeneratorFromTextFileWithParent::GeneratePrimariesFromFile(G4Event* evt)
 {
   if( theFileIn.eof() ) {
     G4RunManager::GetRunManager()->AbortRun();  //  /abortrun

@@ -2,10 +2,9 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 
 #include <stdlib.h>
-#include <iostream>
 #include <fstream>
 
-std::vector<GmFileIn*> GmFileIn::theInstances;
+G4ThreadLocal std::vector<GmFileIn*> GmFileIn::theInstances;
 
 //-----------------------------------------------------------------------
 GmFileIn::GmFileIn()
@@ -101,6 +100,10 @@ G4int GmFileIn::GetWordsInLine(std::vector<G4String>& wordlist)
   for (G4int ii = 0; ii < wsiz; ii++) {
     wordlist.pop_back();
   } 
+
+  //---------- A file that could not be opened is read as an empty file
+  //  (getline on it never sets eof, and the loop below would never end)
+  if( !theFiles[theCurrentFile]->is_open() ) return 0;
 
   //---------- Loop lines while there is an ending '\' or line is blank   
   const G4int NMAXLIN = 100000;

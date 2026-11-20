@@ -25,6 +25,8 @@ public:
   GmGeneratorFromTextFileWithParent();
   ~GmGeneratorFromTextFileWithParent();
   void GeneratePrimaries(G4Event* evt);
+  // Multithreading: the file is read by the first instance (shared by all threads), under a mutex
+  void GeneratePrimariesFromFile(G4Event* evt);
 
 private:
   void GenerateParticle( const GenerTextFileDataWP& evtDat, G4Event* evt );

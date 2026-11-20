@@ -12,7 +12,7 @@ void IsotActivation::AddData(std::vector<std::string> wl )
   // %%% SHActivationUA  TIME= 420 sec Al26[0.0]  ACTIVITY= 0.63173602 decays/sec  HALFLIFE= 2.3350006e+13 sec  NATOMS_IN_JOB= 2270 NATOMS= 2.1281252e+13
 
   // %%% SHActivationUA  TIME= 1 sec Al24  ACTIVITY= 598.88076 decays/sec  HALFLIFE= 2.0530001 sec  NATOMS_IN_JOB= 1 NATOMS= 1773.7968
-  if( verbose >= 3 ) std::cout << " IsotActivation::AddData " << wl.size() << std::endl; //GDEB
+  if( verbose >= 3 ) std::cout << " IsotActivation::AddData " << wl.size() << std::endl;
   //-  theEndProductionTime = atof( wl[3].c_str() );  
   double time = atof( wl[3].c_str());
   theTimes.insert( time );

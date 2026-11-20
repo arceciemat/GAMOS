@@ -1,11 +1,19 @@
 #include "ROOTFileData.hh"
 #include "TextFileData.hh"
+#include "CSVFileData.hh"
 
 //-------------------------------------------------------------------
 void ReadScoresROOT( G4String fileName ) 
 {
+#ifndef GAMOS_NO_ROOT
   ROOTFileData* fileData = new ROOTFileData(fileName, bInvertX);
   theFileData.push_back( fileData ); 
+#else
+  G4Exception("ReadScores",
+	      "",
+	      FatalException,
+	      (G4String("File ") + fileName + " is of type ROOT, but GAMOS is built without ROOT (GAMOS_NO_ROOT). Use CSV (GAMOS .csv histogram files) or TEXT files (and write CSV or TEXT as third word in the compare file lines)").c_str());
+#endif
 
 }
 
@@ -18,6 +26,14 @@ void ReadScoresText( G4String fileName )
 }
 
 //-------------------------------------------------------------------
+// GAMOS .csv histogram file (GmHistoWriterCSV): each 1D histogram is a scorer (as for ROOT files)
+void ReadScoresCSV( G4String fileName ) 
+{
+  CSVFileData* fileData = new CSVFileData(fileName, bInvertX);
+  theFileData.push_back( fileData ); 
+}
+
+//-------------------------------------------------------------------
 void ReadScores( G4String fileName, G4String fileType ) 
 {
 
@@ -26,11 +42,13 @@ void ReadScores( G4String fileName, G4String fileType )
   } else if( fileType == "TEXT" ) {	
 //    G4cout << " TFN " << fileName << G4endl; //GDEB
     ReadScoresText( fileName );
+  } else if( fileType == "CSV" ) {
+    ReadScoresCSV( fileName );
   } else {
     G4Exception("ReadScores",
 		"",
 		FatalException,
-		(G4String("Wrong file type=" + fileType + " Options are: ROOT / TEXT ")).c_str());
+		(G4String("Wrong file type=" + fileType + " Options are: ROOT / TEXT / CSV ")).c_str());
   }
 
 }

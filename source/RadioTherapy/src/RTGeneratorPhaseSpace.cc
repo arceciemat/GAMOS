@@ -25,6 +25,7 @@
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
 #include "iaea_record.hh"
 #include "iaea_utilities.hh"
+#include "RTIAEASharedReader.hh"
 #include "RTVerbosity.hh"
 #include "RTPhaseSpaceHistos.hh"
 
@@ -223,7 +224,11 @@ RTGeneratorPhaseSpace::~RTGeneratorPhaseSpace()
 //------------------------------------------------------------------------
 void RTGeneratorPhaseSpace::GeneratePrimaries(G4Event* evt)
 {
-  if( bMaxNReuseAutomatic && evt->GetEventID() == 0 ) {
+  //--- Multithreading: first event of each run in this thread (in sequential: event 0)
+  static G4ThreadLocal G4int autoReuseRunID = -1;
+  G4int currentRunID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  if( bMaxNReuseAutomatic && currentRunID != autoReuseRunID ) {
+    autoReuseRunID = currentRunID;
     G4int nGammas = p_iaea_header->particle_number[0];
     G4int nElectrons = p_iaea_header->particle_number[1];
     G4int nPositrons = p_iaea_header->particle_number[2];
@@ -242,13 +247,7 @@ void RTGeneratorPhaseSpace::GeneratePrimaries(G4Event* evt)
     //    G4Exception("RTGeneratorPhaseSpace::GeneratePrimaries: more events than those on file = " + GmGenUtils::itoa(maxNEvents) );
     }*/
 
-  p_iaea_read->p_file = p_rfile;
-  //skip first particles
-  if( evt->GetEventID() == 0 ) {
-    for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
-      p_iaea_read->read_particle();
-    }
-  }
+  //--- skipping of first particles is done in RTIAEASharedReader (at start of each run)
 
   //---- Reuse the same particle theMaxNReuse times  !! do not reuse charged particles
   if( theNReused == 0 || !theParticleDef || theParticleDef->GetPDGCharge() != 0 ) { // first time theNReused = 0, after theMaxNReuse times 
@@ -256,34 +255,18 @@ void RTGeneratorPhaseSpace::GeneratePrimaries(G4Event* evt)
     //    do {
     G4ThreeVector pos;
     do {
-      int fileEnd = p_iaea_read->read_particle();
+      //--- Multithreading: the file is read by all threads with a shared position (each particle read once)
+      RTIAEASharedReader::ReadResult readResult = RTIAEASharedReader::ReadParticle( p_iaea_read, p_rfile, theFileName, G4int(theNEventsSkip), theMaxNRecycle, theNRecycled, "RTGeneratorPhaseSpace" );
       pos = G4ThreeVector(p_iaea_read->x,p_iaea_read->y,p_iaea_read->z) * CLHEP::cm;
-;
-//-      G4cout << " CHECK POSX " << theMinPosX << " <? " << fabs(pos.x()) << " <? " << theMaxPosX << G4endl; //GDEB
       theNParticlesRead ++;
       theExtraInfoMgr->FillExtraInfo( p_iaea_read );
-      //      if( theBase.size() != 0 ) bFilter = theBase[0]->AcceptStep((G4Step*)0);
-      if( fileEnd == FAIL) {
-	if( theNRecycled < theMaxNRecycle ) {
-	  fclose(p_rfile);
-	  p_rfile = open_file(const_cast<char*>(theFileName.c_str()),(char *)(".IAEAphsp"),(char *)("rb"));
-#ifndef GAMOS_NO_VERBOSE
-	  if( RTVerb(infoVerb) ) G4cout << "RTGeneratorPhaseSpace::GeneratePrimaries  RECYCLING phase space file " << theNRecycled << G4endl;
-#endif
-	  theNRecycled++; 
-	  //skip first particles
-	  for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
-	    p_iaea_read->read_particle(); // use fseek
-	  }
-	} else{
-	  fclose(p_rfile);
-	  G4RunManager::GetRunManager()->AbortRun();
-	  G4Exception("RTGeneratorPhaseSpace::GeneratePrimaries",
-		      "Too many events demanded",
-		      JustWarning,
-		      G4String("FAILED reading event  " + GmGenUtils::itoa(evt->GetEventID())).c_str() );
-	  return;
-	}
+      if( readResult == RTIAEASharedReader::RTIAEA_EXHAUSTED ) {
+	G4RunManager::GetRunManager()->AbortRun();
+	G4Exception("RTGeneratorPhaseSpace::GeneratePrimaries",
+		    "Too many events demanded",
+		    JustWarning,
+		    G4String("FAILED reading event  " + GmGenUtils::itoa(evt->GetEventID())).c_str() );
+	return;
       }
       //    }while( !bFilter );
     }while( fabs(pos.x()) < theMinPosX || fabs(pos.x()) > theMaxPosX );
@@ -356,7 +339,7 @@ void RTGeneratorPhaseSpace::GeneratePrimaries(G4Event* evt)
   G4double momdirz = p_iaea_read->w;
 
   G4double mom = sqrt( p_iaea_read->energy*p_iaea_read->energy + 2.*p_iaea_read->energy*theParticleDef->GetPDGMass() );
-   //  G4cout << " MOM " << mom << " " <<  p_iaea_read->energy*p_iaea_read->energy + 2.*p_iaea_read->energy*theParticleDef->GetPDGMass() << " " << p_iaea_read->energy << " + 2.* " << theParticleDef->GetPDGMass() << G4endl;//GDEB
+  //  G4cout << " MOM " << mom << " " <<  p_iaea_read->energy*p_iaea_read->energy + 2.*p_iaea_read->energy*theParticleDef->GetPDGMass() << " " << p_iaea_read->energy << " + 2.* " << theParticleDef->GetPDGMass() << G4endl;//GDEB
 
   G4ThreeVector pos;  
   G4int nMirror = 0;
@@ -456,6 +439,7 @@ void RTGeneratorPhaseSpace::GeneratePrimaries(G4Event* evt)
   vtx = new G4PrimaryVertex( pos, 0. );
   vtx->SetPrimary(particle);
 
-  evt->AddPrimaryVertex( vtx );
+  //  G4cout << " POS " << pos << " MOM " << momV << " E " << p_iaea_read->energy << G4endl;//GDEB
+  evt->AddPrimaryVertex( vtx ); 
  
 }

@@ -260,7 +260,9 @@ lor ReadData(){
   
   if (typeINfile==0){
     
-    fread (&arce_out, sizeof(struct arce_str),1,theINfile);
+    if( fread (&arce_out, sizeof(struct arce_str),1,theINfile) != 1 ) {
+      // end of file or read error: the caller stops on feof/ferror
+    }
     lorOUT.p1.X=arce_out.x1 + offsetX;
     lorOUT.p1.Y=arce_out.y1;
     lorOUT.p1.Z=arce_out.z1;

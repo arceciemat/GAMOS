@@ -1,7 +1,6 @@
 #include "ScorerData.hh"
 #include "ScoreData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include <set>
 
 //-----------------------------------------------------------------
 ScorerData::ScorerData()
@@ -28,7 +27,7 @@ void ScorerData::SetNEvents(G4double evts)
 }
 
 //-----------------------------------------------------------------
-ScorerData ScorerData::operator+=( const ScorerData& sd2 )
+ScorerData& ScorerData::operator+=( const ScorerData& sd2 )
 {
   if( ScoreData::verbosity >= 1 ) G4cout << "  ScorerData::operator+=: ADDING DOSER " << sd2.GetName() << "  N= " << sd2.GetNScores() << "  TO  " << theName << "  N= " << theNDoses << G4endl;
 

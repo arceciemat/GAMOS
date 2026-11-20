@@ -2,7 +2,7 @@
 #define GmVGeomCondition_h 1
 
 #include "globals.hh"
-class G4VTouchable;
+#include "G4VTouchable.hh"
 class G4Track;
 class G4Step;
 class G4StepPoint;

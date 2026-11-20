@@ -52,7 +52,7 @@ public: // With description
 protected:
   std::vector<G4String> theIndexNames;
 
-  static std::vector<bs32*> theWords;
+  static G4ThreadLocal std::vector<bs32*> theWords;
 
   G4int theShift;
   G4int theNBits;

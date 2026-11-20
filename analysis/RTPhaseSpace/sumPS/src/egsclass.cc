@@ -157,7 +157,8 @@ phspheader::phspheader(string fegsname){
 	if (type == "EGS"){
 		TITLE = fegsname;
 		phspfile = fopen(fegsname.c_str(), "rb");
-		fread(mode,5*sizeof(char),1,phspfile);
+		size_t nHeaderRead = 0; // each header fread must return 1
+		nHeaderRead += fread(mode,5*sizeof(char),1,phspfile);
 		mode[5]='\0';
 
 		if(mode[4] == '0')
@@ -165,11 +166,15 @@ phspheader::phspheader(string fegsname){
 		else
 			mode_n = 2;
 
-		fread(&n_of_particles,sizeof(int),1,phspfile);
-		fread(&n_of_photons,sizeof(int),1,phspfile);
-		fread(&energy_max,sizeof(float),1,phspfile);
-		fread(&energy_min,sizeof(float),1,phspfile);
-		fread(&p_incident,sizeof(float),1,phspfile);
+		nHeaderRead += fread(&n_of_particles,sizeof(int),1,phspfile);
+		nHeaderRead += fread(&n_of_photons,sizeof(int),1,phspfile);
+		nHeaderRead += fread(&energy_max,sizeof(float),1,phspfile);
+		nHeaderRead += fread(&energy_min,sizeof(float),1,phspfile);
+		nHeaderRead += fread(&p_incident,sizeof(float),1,phspfile);
+		if( nHeaderRead != 6 ) {
+			std::cerr << "!!! FATAL ERROR: cannot read header of phase space file " << fegsname << std::endl;
+			exit(1);
+		}
 
 		file_pointer = 5*sizeof(char)+2*sizeof(int)+3*sizeof(float)+3;
 
@@ -578,7 +583,8 @@ void phspheader::write_EGSphsp(string outputphsp){
 		load_particles(0,1);
 
 		(void) fseek(outphspfile,(long) 0,SEEK_SET);
-		sprintf(mode,"MODE0 %1d",mode_n);
+		// records are always written in MODE0 format (only the 5 first chars are written)
+		snprintf(mode,sizeof(mode),"MODE0");
 		fwrite(mode,5*sizeof(char),1,outphspfile);
 		fwrite(&n_of_particles,sizeof(int),1,outphspfile); 
 		fwrite(&n_of_photons,sizeof(int),1,outphspfile);
@@ -595,7 +601,8 @@ void phspheader::write_EGSphsp(string outputphsp){
 		load_particles(0,1);
 
 		(void) fseek(outphspfile,(long) 0,SEEK_SET);
-		sprintf(mode,"MODE0 %1d",0);
+		// records are always written in MODE0 format (only the 5 first chars are written)
+		snprintf(mode,sizeof(mode),"MODE0");
 		fwrite(mode,5*sizeof(char),1,outphspfile);
 		fwrite(&PARTICLES,sizeof(int),1,outphspfile); 
 		fwrite(&PHOTONS,sizeof(int),1,outphspfile);

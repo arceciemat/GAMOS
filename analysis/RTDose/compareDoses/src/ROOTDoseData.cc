@@ -1,3 +1,4 @@
+#ifndef GAMOS_NO_ROOT 
 #include "ROOTDoseData.hh"
 #include "DoserData.hh"
 #include "ROOTDoserData.hh"
@@ -91,3 +92,5 @@ void ROOTDoseData::Print( std::ofstream& fout )
   //  fout << " non_weighted_average " << theDose/DoserData::GetNEventsSum(theDoserData->GetName())  << " dose " << theDose << " NEV " << DoserData::GetNEventsSum(theDoserData->GetName()) 
 
 }
+
+#endif

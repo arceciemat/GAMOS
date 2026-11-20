@@ -2,7 +2,7 @@
 #define MCNPTallierFNData_hh
 
 #include "MCNPVTallierData.hh"
-#include "GamosCore/GamosUtils/include/GmFileIn.hh"
+class GmFileIn;
 
 class MCNPTallierFNData : public MCNPVTallierData
 {

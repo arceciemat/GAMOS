@@ -167,7 +167,7 @@ void InterpolatedField::GetFieldValue(const G4double yTrack[4],G4double *MagFiel
   	
   
   }	
- // std::cout<<i<<'\t'<<j<<'\t'<<k<<std::endl;
+ // G4cout<<i<<'\t'<<j<<'\t'<<k<<std::endl;
 
   k=int( (z-zmin)/dz);
   fk = (z- (zmin+k*dz)) /dz;

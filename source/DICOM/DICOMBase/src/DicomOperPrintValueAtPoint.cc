@@ -50,7 +50,7 @@ void DicomOperPrintValueAtPoint::Operate( DicomVImage* image )
   }
   size_t iPt = ix+iy*imNVoxX+iz*imNVoxXY;
 
-  std::cout << "@@@ DicomOperPrintValueAtPoint " << image->GetName() << " MAXIMUM_AT_POINT " << thePoint << " = " << data->at(iPt) 
+  G4cout << "@@@ DicomOperPrintValueAtPoint " << image->GetName() << " MAXIMUM_AT_POINT " << thePoint << " = " << data->at(iPt) 
 	    << " AT ID " << iPt << " = " << ix << " : " << iy << " : " << iz
 	    << G4endl;
   

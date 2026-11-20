@@ -21,7 +21,7 @@ public:
   ~GmGeneratorMgr();
   
 private:
-  static GmGeneratorMgr* theInstance;
+  static G4ThreadLocal GmGeneratorMgr* theInstance;
 
   // GDEB
 public: 

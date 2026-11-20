@@ -1,3 +1,4 @@
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #include "GmUserLimitsMgr.hh"
 #include "GmUserSpecialCuts.hh"
 #include "GmStepLimiter.hh"
@@ -194,7 +195,8 @@ void GmUserLimitsMgr::AddLVAndParticle( std::vector<G4String>& wl )
   }
 
   G4UserLimits* ul = (*ite).second;
-  AssociateLVAndParticle( wl[1], wl[2], ul, FALSE);
+  //--- Multithreading: logical volumes are shared (associated by master); process managers are thread local
+  if( !GmMTMergeMgr::IsWorkerThread() ) AssociateLVAndParticle( wl[1], wl[2], ul, FALSE);
 
   //----- Check if G4UserLimits has stepLimiter or specialCuts
   G4bool bStepLimiter = FALSE;
@@ -212,6 +214,11 @@ void GmUserLimitsMgr::AddLVAndParticle( std::vector<G4String>& wl )
 //----------------------------------------------------------------------
 void GmUserLimitsMgr::CreateUserLimits( std::vector<G4String>& wl, G4bool bStepLimiter, G4bool bSpecialCuts )
 {
+  //--- Multithreading: G4UserLimits and logical volumes are shared (created by master); process managers are thread local
+  if( GmMTMergeMgr::IsWorkerThread() ) {
+    AssociateProcesses2Particle( wl[2], bStepLimiter, bSpecialCuts );
+    return;
+  }
   if( theUserLimits.find( wl[0] ) != theUserLimits.end() ){
     G4Exception("GmUserLimitsMgr::CreateUserLimits","User limits name already used", FatalErrorInArgument,wl[0]);
   }

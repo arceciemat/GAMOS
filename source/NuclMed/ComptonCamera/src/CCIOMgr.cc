@@ -1,10 +1,8 @@
 #include "CCIOMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
-#include <iomanip>
-#include <iostream>
 
 //----------------------------------------------------------------------
-CCIOMgr* CCIOMgr::theInstance = 0;
+G4ThreadLocal CCIOMgr* CCIOMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 CCIOMgr* CCIOMgr::GetInstance()
@@ -97,8 +95,8 @@ CCOutput CCIOMgr::ReadEvent( G4bool& bEof )
   }
 
   CCOutput po;
-  fread (&po, sizeof(struct CCOutput),1,theFileIn);
-  if ( feof( theFileIn ) ) {
+  size_t nread = fread (&po, sizeof(struct CCOutput),1,theFileIn);
+  if ( nread != 1 || feof( theFileIn ) ) {
     bEof = TRUE;
   } else {
     bEof = FALSE;

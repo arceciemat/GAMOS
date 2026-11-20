@@ -16,7 +16,7 @@
 
 #include "GamosCore/GamosUserActionMgr/include/GmUAVerbosity.hh"
 
-GmUserActionMgr* GmUserActionMgr::theInstance = 0;
+G4ThreadLocal GmUserActionMgr* GmUserActionMgr::theInstance = 0;
 
 //------------------------------------------------------------------------
 GmUserActionMgr::~GmUserActionMgr()

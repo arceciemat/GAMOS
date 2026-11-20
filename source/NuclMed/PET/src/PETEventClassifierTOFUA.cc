@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "PETEventClassifierTOFUA.hh"
 #include "NuclMed/Base/include/DetV1stHitAlgorithm.hh"
 #include "NuclMed/Base/include/DetCountScatteringUA.hh"
@@ -14,8 +15,6 @@
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosSD/include/GmHitsEventMgr.hh"
 #include "GamosCore/GamosUtils/include/GmCone.hh"
-#include "GamosCore/GamosAnalysis/include/GmTrajStep.hh"
-#include "GamosCore/GamosAnalysis/include/GmCheckOriginalGamma.hh"
 #include "GamosCore/GamosUserActionMgr/include/GmUserActionMgr.hh"
 #include "GamosCore/GamosUserActionMgr/include/GmUserEventActionList.hh"
 
@@ -36,6 +35,7 @@ using namespace CLHEP;
 //----------------------------------------------------------------------
 PETEventClassifierTOFUA::PETEventClassifierTOFUA()
 {
+  SetRunOnMaster(true); // multithreading: master prints merged results
   bDumpLM = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("PET:EvtClass:DumpEventListMode",0));
   if( bDumpLM ) PETIOMgrTOF::GetInstance()->OpenFileOut();
 
@@ -235,7 +235,7 @@ int64_t PETEventClassifierTOFUA::ClassifyPET( gamosRecHitList& rhitList, const G
     if( PETVerb(debugVerb) ) G4cout << " PETEventClassifierTOFUA::ClassifyPET  creating line " << the511RecHits[0].GetPosition() << " " << the511RecHits[1].GetPosition() << G4endl;
 #endif
     theEventClass += 1;
-    G4double linedist;
+    G4double linedist = 0.;  // stays 0 if both hits are at the same position
     if( the511RecHits[1].GetPosition() != the511RecHits[0].GetPosition() ) {
       thePetLine = GmLine( the511RecHits[0].GetPosition(), the511RecHits[1].GetPosition()-the511RecHits[0].GetPosition() );
       G4ThreeVector eventVtx = GetEventVertex( evt );
@@ -750,6 +750,13 @@ G4bool PETEventClassifierTOFUA::CheckRecHitOriginalGammaScattered( GmRecHit* rhi
 //----------------------------------------------------------------------
 void PETEventClassifierTOFUA::EndOfRunAction(const G4Run* aRun )
 {
+  //--- Multithreading: workers close their list mode files and give their projection data to the master;
+  //    the master prints the classification table (from merged histograms) and writes the merged projection data
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    if( bDumpLM && !G4Threading::IsMultithreadedApplication() ) PETIOMgrTOF::GetInstance()->CloseFileOut();
+    if( bDumpPD ) PETProjDataMgr::GetInstance()->WriteInterfile();
+    return;
+  }
   G4int nevt = aRun->GetNumberOfEvent();
   if (nevt == 0) {
     G4cout << "Nevt = 0 !!!" << G4endl;
@@ -758,7 +765,7 @@ void PETEventClassifierTOFUA::EndOfRunAction(const G4Run* aRun )
 
   PrintPETClassificationTable( nevt );
 
-  if( bDumpLM ) PETIOMgrTOF::GetInstance()->CloseFileOut();
+  if( bDumpLM && !G4Threading::IsMultithreadedApplication() ) PETIOMgrTOF::GetInstance()->CloseFileOut();
 
   if( bDumpPD ) PETProjDataMgr::GetInstance()->WriteInterfile();
 

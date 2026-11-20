@@ -1,6 +1,26 @@
-# - GAMOS_analysis_RTPhaseSpace_analysePS module build definition
+# - randomizePS module build definition
 
-include(UseGamosAtGeant4)
+gamos_add_module(randomizePS
+  SOURCES
+    dummy.cc
+)
 
-geant4_add_module(GAMOS_analysis_RTPhaseSpace_analysePS
-  PUBLIC_HEADERS
+gamos_module_link_libraries(randomizePS
+  PUBLIC
+    GamosCore_GamosBase_Base
+    GamosCore_GamosRunManager
+    GamosCore_GamosUtils
+    RadioTherapy
+)
+
+# Program randomizePS
+gamos_add_executable(randomizePS
+  SOURCES
+    randomizePS.cc
+  LINK_LIBRARIES
+    randomizePS
+    GamosCore_GamosBase_Base
+    GamosCore_GamosRunManager
+    GamosCore_GamosUtils
+    RadioTherapy
+)

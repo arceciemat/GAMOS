@@ -12,6 +12,7 @@ DicomVLineSet::DicomVLineSet(G4String name, DPOrientation ori)
   : theName(name), theOrientation(ori)
 {
 
+  bHasBeenReflectedY = false; // was not initialized: lines were sometimes not reflected
   bHasBeenRotatedXY180 = false;
 }
 

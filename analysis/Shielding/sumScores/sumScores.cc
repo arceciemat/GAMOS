@@ -8,8 +8,14 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosRunManager/include/GmRunManager.hh"
+#ifndef GAMOS_NO_ROOT
 #include "ROOTUtilities/PlotData/DrawHisto.C"
 #include "ROOTUtilities/PlotData/PlotUtils.C"
+typedef TH1F CDHisto;
+#else
+// Without ROOT: same drawing functions, written as SVG (optionally converted to png/jpg/pdf)
+#include "ROOTUtilities/PlotData/PlotDataSVG.cc"
+#endif
 
 void PrintHelp();
 void PlotData( FileData* fd );
@@ -120,6 +126,12 @@ int main(int argc,char** argv)
 	}
       } else if( argvstr == "-bHistos" ) {
 	bHistosData = G4bool(GmGenUtils::GetValue(argv[ii+1]));
+#ifdef GAMOS_NO_ROOT
+      } else if( argvstr == "-SVGFormat" ) {
+	theSVGFormat = argv[ii+1];
+      } else if( argvstr == "-SVGConverter" ) {
+	theSVGConverter = argv[ii+1];
+#endif
       } else {
 	PrintHelp();
 	G4Exception("sumScores",
@@ -239,6 +251,11 @@ void PrintHelp()
 	 << " -indexValType  Type of treatment of score index (get upper limit, lower limit or average " << G4endl
 	 << " -bHistos    Draw histograms or not (1)" << G4endl
 	 << " -help       prints the set of arguments " << G4endl;
+#ifdef GAMOS_NO_ROOT
+  G4cout << " Without ROOT the figures are written as SVG files: " << G4endl
+	 << " -SVGFormat     png    (png/jpg/pdf: converted from SVG if a converter is found; svg: no conversion) " << G4endl
+	 << " -SVGConverter  auto   (auto: look for rsvg-convert, inkscape, magick, convert in PATH; none; or program name/path) " << G4endl;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -303,7 +320,7 @@ void PlotData( FileData* fd )
 
     //build histo names
     G4String hisFileName = scoreName;
-    TH1F* his = 0;
+    CDHisto* his = 0;
     double xInit = 30;
     double yInit = 375;
     his = DrawEmptyHistogram( "", Definitions::xDataMin, Definitions::xDataMax, Definitions::yDataMin, Definitions::yDataMax, theCanvas );
@@ -345,7 +362,11 @@ void PlotData( FileData* fd )
 	}
 	if( !bMakeFile ) return;
 	G4int nBins = G4int((Definitions::xDataMax - Definitions::xDataMin )/binw+1);
+#ifndef GAMOS_NO_ROOT
 	new TH1F( scoreName.c_str(), scoreName.c_str(), nBins, Definitions::xDataMin, Definitions::xDataMax );
+#else
+	(void)nBins;
+#endif
 	
       }
     }

@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "GmUserLimitsMessenger.hh"
 #include "GmUserLimitsMessenger.hh"
 #include "GmUserLimitsMgr.hh"
@@ -94,6 +95,9 @@ void GmUserLimitsMessenger::SetNewValue(G4UIcommand * command,
 						   G4String newValues)    
 { 
   std::vector<G4String> wl = GmGenUtils::GetWordsInString( newValues );
+
+  //--- Multithreading: regions and production cuts are shared, only master
+  if( !G4Threading::IsMasterThread() && (command == regionCmd || command == prodCutsCmd) ) return;
   
   if (command == regionCmd) {
     GmRegionCutsMgr::GetInstance()->AddRegionData( wl );

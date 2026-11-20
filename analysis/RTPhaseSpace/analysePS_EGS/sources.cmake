@@ -1,6 +1,17 @@
-# - GAMOS_analysis_RTPhaseSpace_analysePS_EGS module build definition
+# - analysePS_EGS module build definition
 
-include(UseGamosAtGeant4)
+gamos_add_module(analysePS_EGS
+  SOURCES
+    dummy.cc
+)
 
-geant4_add_module(GAMOS_analysis_RTPhaseSpace_analysePS_EGS
-  PUBLIC_HEADERS
+# Program analysePS_EGS
+gamos_add_executable(analysePS_EGS
+  SOURCES
+    analysePS_EGS.cc
+  LINK_LIBRARIES
+    analysePS_EGS
+    GamosCore_GamosBase_Base
+    GamosCore_GamosUtils
+    RadioTherapy
+)

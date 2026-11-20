@@ -161,7 +161,7 @@ void GmCellyzUA::EndOfEventAction(const G4Event* evt)
     G4double y = (epsilon/eV)/(theVolumeChord/nm);
     G4double z = (epsilon/theVolumeMass)/gray;
 #ifndef GAMOS_NO_VERBOSE
-    if( DNAVerb(-debugVerb) ) G4cout << " GmCellUA FINAL y= " << y << " z= " << z << G4endl;
+    if( DNAVerb(debugVerb) ) G4cout << " GmCellUA FINAL y= " << y << " z= " << z << G4endl;
 #endif
 
     if( bTextFile ) {
@@ -194,14 +194,7 @@ void GmCellyzUA::EndOfEventAction(const G4Event* evt)
       if( theAnaMgr->GetHisto1(theHistoNumber+8,false) )
 	theAnaMgr->GetHisto1(theHistoNumber+8)->Fill(log10(z*z));
     }
-    theSumY += y;
-    theSumY2 += y*y;
-    theSumY4 += pow(y,4);
-    theSumZ += z;
-    theSumZ2 += z*z;
-    theSumZ4 += pow(z,4);
-    theSumWei += 1;
-    theSumWei2 += 1;
+    AddEntry( y, z, 1. );
 
     ite = hitsInID.second;
     // G4cout << "END LOOP " <<  std::distance(theHitsPerCrystal.begin(),ite) << G4endl; //GDEB

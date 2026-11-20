@@ -4,7 +4,13 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosRunManager/include/GmRunManager.hh"
+#ifndef GAMOS_NO_ROOT
 #include "ROOTUtilities/PlotData/DrawHisto.C"
+typedef TH1F CDHisto;
+#else
+// Without ROOT: same drawing functions, written as SVG (optionally converted to png/jpg/pdf)
+#include "ROOTUtilities/PlotData/PlotDataSVG.cc"
+#endif
 #include "ROOTUtilities/Activation/readExemption.C"
 
 #include <fstream>
@@ -94,7 +100,7 @@ int main(int argc,char** argv)
 	runManager->SelectVerbosity(verbstr);
       } else if( argvstr == "-nIsotopesPerPage" ) {
 	theNPerPage = GmGenUtils::GetInt(argv[ii+1]);
-      } else if( argvstr == "-timeUnit " ) {
+      } else if( argvstr == "-timeUnit" ) {
 	theTimeUnit = argv[ii+1];
       } else if( argvstr == "-hYMin" ) {
 	theHYMin = GmGenUtils::GetValue(argv[ii+1]);
@@ -109,6 +115,12 @@ int main(int argc,char** argv)
 	bExemption = true;
       } else if( argvstr == "-minActivity" ) {
 	theMinActivity = GmGenUtils::GetValue(argv[ii+1]);
+#ifdef GAMOS_NO_ROOT
+      } else if( argvstr == "-SVGFormat" ) {
+	theSVGFormat = argv[ii+1];
+      } else if( argvstr == "-SVGConverter" ) {
+	theSVGConverter = argv[ii+1];
+#endif
       } else {
 	PrintHelp();
 	G4Exception("sumActivation",
@@ -186,7 +198,7 @@ void ReadActivityResults(G4String fileName)
   std::map<G4String,SHRadDecayChainSet*>::const_iterator ites;
   for(;;){
     if( !fin.GetWordsInLine(wl) ) break;
-    //    std::cout << " LINE " << wl.size() << " " << wl[0] << std::endl;
+    //    G4cout << " LINE " << wl.size() << " " << wl[0] << std::endl;
     if( wl.size() > 1 && wl[0].find("%%") != G4String::npos && wl[1].find("SHActivation") != G4String::npos ) {
       ites =  theIsotopeSets.find(wl[1]);
       if( ites !=  theIsotopeSets.end() ) {
@@ -325,7 +337,7 @@ void PlotData()
     G4int ii = 0;
     G4String hisFileName = setName + ".1.";
     std::multimap<G4double, msmdpdd::const_iterator>::reverse_iterator iteod;
-    TH1F* his = 0;
+    CDHisto* his = 0;
     double xInit = 30;
     double yInit = 375;
     double xInitExemp = 30;
@@ -353,7 +365,7 @@ void PlotData()
       DrawHisto( data1, color, 20+ii%theNPerPage, (*itecs).first );
       if( bExemption ) DrawExemptionLine( his, chainName, color, xInitExemp );
       DrawWordAndMarker( his, chainName, xInit, yInit, color, 20+ii%theNPerPage );
-      //      std::cout << " PRINTING chaing " << chainName << " " << xInit << " " << yInit << G4endl; //GDEB
+      //      G4cout << " PRINTING chaing " << chainName << " " << xInit << " " << yInit << G4endl; //GDEB
       if( ii % theNPerPage != theNPerPage -1 && ii != G4int(orderedData.size())-1) {
 	hisFileName += chainName + "_";
       } else {
@@ -396,4 +408,9 @@ void PrintHelp()
 	 << " -exemption Draw isotope exemption value as a line " << G4endl
 	 << " -verb       verbosity: sets the ShieldingVerbosity" << G4endl
 	 << " -help       prints the set of arguments " << G4endl;
+#ifdef GAMOS_NO_ROOT
+  G4cout << " Without ROOT the figures are written as SVG files: " << G4endl
+	 << " -SVGFormat     png    (png/jpg/pdf: converted from SVG if a converter is found; svg: no conversion) " << G4endl
+	 << " -SVGConverter  auto   (auto: look for rsvg-convert, inkscape, magick, convert in PATH; none; or program name/path) " << G4endl;
+#endif
 }

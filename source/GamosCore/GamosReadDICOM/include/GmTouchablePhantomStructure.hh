@@ -2,7 +2,7 @@
 #define GmTouchablePhantomStructure_h 1
 
 class G4VPhysicalVolume;
-class G4VTouchable;
+#include "G4VTouchable.hh"
 #include "GamosCore/GamosBase/Filters/include/GmVTouchableFilterVolume.hh"
 #include <vector>
 #include <set>

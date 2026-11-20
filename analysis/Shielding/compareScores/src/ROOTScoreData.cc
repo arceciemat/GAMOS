@@ -1,3 +1,4 @@
+#ifndef GAMOS_NO_ROOT // ROOT files can only be read if GAMOS is built with ROOT
 #include "ROOTScoreData.hh"
 #include "ScorerData.hh"
 #include "ROOTScorerData.hh"
@@ -91,3 +92,4 @@ void ROOTScoreData::Print( std::ofstream& fout )
   //  fout << " non_weighted_average " << theDose/ScorerData::GetNEventsSum(theScorerData->GetName())  << " dose " << theDose << " NEV " << ScorerData::GetNEventsSum(theScorerData->GetName()) 
 
 }
+#endif

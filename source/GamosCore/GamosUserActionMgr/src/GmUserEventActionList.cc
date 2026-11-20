@@ -3,6 +3,7 @@
 
 #include "G4Event.hh"
 #include "G4RunManager.hh"
+#include "G4Threading.hh"
 
 #include "GamosCore/GamosUserActionMgr/include/GmUAVerbosity.hh"
 
@@ -51,7 +52,8 @@ void GmUserEventActionList::AddAction( GmUserEventAction* ua )
   if( UAVerb(infoVerb) ) G4cout << " GmUserEventActionList::AddAction " << ua << " N " << theEventActions.size() << G4endl;
 #endif
   //--- first user action, register it to G4RunManager
-  if( theEventActions.size() == 1) G4RunManager::GetRunManager()->SetUserAction( this );
+  //--- Multithreading: G4MTRunManager only accepts run actions, the other actions are set in the worker run managers
+  if( theEventActions.size() == 1 && (!G4Threading::IsMultithreadedApplication() || !G4Threading::IsMasterThread()) ) G4RunManager::GetRunManager()->SetUserAction( this );
   ua->SetEventManager( fpEventManager );
 }
 

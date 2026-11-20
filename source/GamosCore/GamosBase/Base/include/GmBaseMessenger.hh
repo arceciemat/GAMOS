@@ -18,6 +18,8 @@ private:
   GmUIcmdWithAString* classifierCmd;
   GmUIcmdWithAString* classifierIndicesCmd;
   GmUIcmdWithAString* distributionCmd;
+  GmUIcmdWithAString* SVGImageFormatCmd;
+  GmUIcmdWithAString* SVGJpgQualityCmd;
 
 };
 

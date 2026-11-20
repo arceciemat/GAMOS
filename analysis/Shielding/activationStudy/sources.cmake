@@ -1,6 +1,20 @@
-# - GAMOS_analysis_Shielding_activationStudy module build definition
+# - activationStudy module build definition
 
-include(UseGamosAtGeant4)
+gamos_add_module(activationStudy
+  SOURCES
+    dummy.cc
+)
 
-geant4_add_module(GAMOS_analysis_Shielding_activationStudy
-  PUBLIC_HEADERS
+gamos_module_link_libraries(activationStudy
+  PUBLIC
+    GamosCore_GamosUtils
+)
+
+# Program activationStudy
+gamos_add_executable(activationStudy
+  SOURCES
+    activationStudy.cc
+  LINK_LIBRARIES
+    activationStudy
+    GamosCore_GamosUtils
+)

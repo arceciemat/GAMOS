@@ -38,11 +38,11 @@ public:
   virtual void VerboseParticleChange();
 
 private:
-  static GmTimeStudyMgr* theInstance;
+  static G4ThreadLocal GmTimeStudyMgr* theInstance;
 
   std::vector<GmTimeStudyUA*> theTimeStudies;
 
-  static G4SteppingVerbose* theG4Verbose;
+  static G4ThreadLocal G4SteppingVerbose* theG4Verbose;
   static int theG4VerboseLevel;
 
 };

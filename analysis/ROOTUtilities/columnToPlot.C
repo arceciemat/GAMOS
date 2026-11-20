@@ -35,7 +35,7 @@ void columnToPlot( std::string fName, std::string fMetaName = "" )
     if( !GetWordsInLine(fin,wl) ) break;
     if( ii == 0 ) {
       for( size_t iw = 0; iw < wl.size(); iw++ ) {
-	if(verbose >= 3) std::cout << iw << " WORD " << wl[iw] << std::endl; //GDEB
+	if(verbose >= 3) std::cout << iw << " WORD " << wl[iw] << std::endl;
 	if( theCSkip.find(iw) != theCSkip.end() ) continue;
 	std::vector<double>* data1 = new  std::vector<double>;
 	theData[iw] = data1;

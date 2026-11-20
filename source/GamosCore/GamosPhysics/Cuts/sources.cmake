@@ -1,61 +1,52 @@
 # - GamosCore_GamosPhysics_Cuts module build definition
 
-include(UseGamosAtGeant4)
-include(UseROOT)
-
-geant4_add_module(GamosCore_GamosPhysics_Cuts
+gamos_add_module(GamosCore_GamosPhysics_Cuts
   PUBLIC_HEADERS
-    GmMinRangeLimitsStudyUA.hh
-    GmRangeRejectionUA.hh
-    GmUserLimitsMessenger.hh
+    GmCSTrackInfo.hh
     GmCSTrackStepInfo.hh
-    GmStepLimiter.hh
-    GmProdCutsForAllProcessesUA.hh
-    GmUserSpecialCuts.hh
-    GmCutsEnergy2RangeUA.hh
-    GmProdCutsStudyUA.hh
     GmCutsEnergy2Range.hh
+    GmCutsEnergy2RangeUA.hh
+    GmCutsStudyMgr.hh
+    GmCutsTrackInfo.hh
     GmInitialRangeFilter.hh
     GmMinRangeLimitsStudyCreateInfoUA.hh
-    GmUserLimitsMgr.hh
-    GmCSTrackInfo.hh
-    GmCutsTrackInfo.hh
+    GmMinRangeLimitsStudyUA.hh
+    GmProdCutsForAllProcessesUA.hh
+    GmProdCutsStudyUA.hh
     GmRangeFilter.hh
-    GmCutsStudyMgr.hh
+    GmRangeRejectionUA.hh
+    GmStepLimiter.hh
+    GmUserLimitsMessenger.hh
+    GmUserLimitsMgr.hh
+    GmUserSpecialCuts.hh
   SOURCES
-    GmRangeFilter.cc
-    GmInitialRangeFilter.cc
     GmCSTrackInfo.cc
-    GmCutsEnergy2Range.cc
-    GmRangeRejectionUA.cc
-    GmCutsEnergy2RangeUA.cc
-    GmCutsTrackInfo.cc
-    GmProdCutsStudyUA.cc
-    GmMinRangeLimitsStudyCreateInfoUA.cc
     GmCSTrackStepInfo.cc
-    GmUserSpecialCuts.cc
+    GmCutsEnergy2Range.cc
+    GmCutsEnergy2RangeUA.cc
     GmCutsStudyMgr.cc
-    plugin.cc
-    GmStepLimiter.cc
+    GmCutsTrackInfo.cc
+    GmInitialRangeFilter.cc
+    GmMinRangeLimitsStudyCreateInfoUA.cc
     GmMinRangeLimitsStudyUA.cc
+    GmProdCutsForAllProcessesUA.cc
+    GmProdCutsStudyUA.cc
+    GmRangeFilter.cc
+    GmRangeRejectionUA.cc
+    GmStepLimiter.cc
     GmUserLimitsMessenger.cc
     GmUserLimitsMgr.cc
-    GmProdCutsForAllProcessesUA.cc
+    GmUserSpecialCuts.cc
+    plugin.cc
 )
-# - Add path to generated header
-geant4_module_include_directories(GamosCore_GamosPhysics_Cuts
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
- PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
 
-geant4_module_link_libraries(GamosCore_GamosPhysics_Cuts
+gamos_module_link_libraries(GamosCore_GamosPhysics_Cuts
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
-    GamosCore_GamosUtils
+    GamosCore_GamosBase_Base
     GamosCore_GamosGeometry
     GamosCore_GamosPhysics_PhysicsList
+    GamosCore_GamosUserActionMgr
+    GamosCore_GamosUtils
+    lcg_PluginManager
+    lcg_SealBase
 )

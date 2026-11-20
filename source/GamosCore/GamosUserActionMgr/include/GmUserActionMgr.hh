@@ -92,7 +92,7 @@ private:
   void Initialise();
 
 private:
-  static GmUserActionMgr* theInstance;
+  static G4ThreadLocal GmUserActionMgr* theInstance;
 
   //--- Pointers to the action lists
   GmUserRunActionList* theRunActionList;

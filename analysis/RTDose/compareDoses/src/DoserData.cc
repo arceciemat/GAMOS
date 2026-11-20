@@ -1,7 +1,6 @@
 #include "DoserData.hh"
 #include "DoseData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include <set>
 
 //-----------------------------------------------------------------
 DoserData::DoserData()
@@ -28,7 +27,7 @@ void DoserData::SetNEvents(G4double evts)
 }
 
 //-----------------------------------------------------------------
-DoserData DoserData::operator+=( const DoserData& sd2 )
+DoserData& DoserData::operator+=( const DoserData& sd2 )
 {
   if( DoseData::verbosity >= 1 ) G4cout << "  DoserData::operator+=: ADDING DOSER " << sd2.GetName() << "  N= " << sd2.GetNDoses() << "  TO  " << theName << "  N= " << theNDoses << G4endl;
 

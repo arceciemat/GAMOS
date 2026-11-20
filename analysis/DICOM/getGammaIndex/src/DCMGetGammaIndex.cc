@@ -17,12 +17,15 @@
 #include "DICOM/DICOMBase/include/DicomPolygonList.hh"
 #include "DICOM/DICOMBase/include/DicomVDrawer.hh"
 #include "DICOM/DICOMBase/include/DicomDrawerROOT.hh"
+#include "DICOM/DICOMBase/include/DicomDrawerSVG.hh"
 #include "DICOM/DICOMBase/include/DicomOperIntersectStruct.hh"
 
+#include "GamosCore/GamosUtils/include/GmSVGCanvas.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
+#ifndef GAMOS_NO_ROOT
 #include "TStyle.h"
-#include <iostream>
+#endif
 #include <set>
 #include <map>
 
@@ -263,7 +266,10 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
   bDumpPerSt = G4bool(theParamMgr->GetNumericValue("bDumpPerSt",bDumpPerSt));
   theOnly1StName = theParamMgr->GetStringValue("only1St","");
   G4int palette = G4int(theParamMgr->GetNumericValue("palette",55));
+#ifndef GAMOS_NO_ROOT
   gStyle->SetPalette(palette);
+#endif
+  GmSVGCanvas::SetPalette(palette); // SVG drawer: same palettes as ROOT (1, 51-113)
   bUseMateID = G4bool(theParamMgr->GetNumericValue("bUseMateID",bUseMateID));
   bUseStructID = G4bool(theParamMgr->GetNumericValue("bUseStructID",bUseStructID));
   if( bUseMateID && bUseStructID ) {
@@ -340,9 +346,9 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
       theStIDImage = dynamic_cast<DicomVImageStr*>(stImages[0]);
       //---- CHECK IT HAS SAME DIMENSIONS AS SECOND FILE
       DicomVImage* secondImage = theDicomMgr->GetImagesVector()[1];
-      G4cerr << " theStIDImage " << stImages.size() << G4endl; //GDEB
-      G4cerr << " theStIDImage " << *theStIDImage << G4endl; //GDEB
-      G4cerr << " theStIDImage " << *secondImage << G4endl; //GDEB
+      //G4cerr << " theStIDImage " << stImages.size() << G4endl; //GDEB
+      //G4cerr << " theStIDImage " << *theStIDImage << G4endl; //GDEB
+      //G4cerr << " theStIDImage " << *secondImage << G4endl; //GDEB
       if( ! (*theStIDImage == *secondImage) ) {
 	G4cerr << " G4dcmCT_StructID " << *theStIDImage
 	       << " Second image " << *secondImage << G4endl;
@@ -469,11 +475,15 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
 	  images.push_back(img);
       }
     }
-    G4cout << img->GetModalityStr() << " N IMAGES " << images.size() << G4endl; //GDEB
+    //G4cout << img->GetModalityStr() << " N IMAGES " << images.size() << G4endl; //GDEB
   }
 
-  G4cout << " N IMAGES " << images.size() << G4endl; //GDEB
+  //G4cout << " N IMAGES " << images.size() << G4endl; //GDEB
+#ifndef GAMOS_NO_ROOT
   DicomVDrawer* theDrawer = new DicomDrawerROOT();
+#else
+  DicomVDrawer* theDrawer = new DicomDrawerSVG(); // SVG figures (converted to imageFormat if possible); histograms in GAMOS .csv format
+#endif
   // get structure lines
   std::vector<DicomVReader*> VRTFiles = theReaderMgr->GetReaders(DRM_RTStruct, false);
   if( VRTFiles.size() > 1 ) {
@@ -769,7 +779,7 @@ void DCMGetGammaIndex::CalculateDumpPerSt()
       //      DicomReaderG4dcmDose* readerSqdose = static_cast<DicomReaderG4dcmDose*>(reader);
       imageWithErrors.push_back(pii(reader->GetImage(), (DicomVImage*)(0)));
     }
-    G4cout << " CalculateDumpPerSt imageWithErrors " << imageWithErrors.size() << " " << reader->GetImage()->GetName() << G4endl; //GDEB
+    //G4cout << " CalculateDumpPerSt imageWithErrors " << imageWithErrors.size() << " " << reader->GetImage()->GetName() << G4endl; //GDEB
   }
 
   DicomOperIntersectStruct* operInters = new DicomOperIntersectStruct;
@@ -830,7 +840,7 @@ void DCMGetGammaIndex::CalculateDumpPerSt()
 	  delete structImage;
 	  // print difference of this structure
 	  diffErrSt = std::sqrt(diffErrSt);
-	  std::cout << "DIFF= " << std::setw(15) << polyList->GetName() << " " << diffSt << " +- " << diffErrSt << " VOL= " << volSt << " DOSE1= " << dose1St << " +- " << dose1ErrSt << " DOSE2= " << dose2St << " +- " << dose2ErrSt << std::endl; 
+	  G4cout << "DIFF= " << std::setw(15) << polyList->GetName() << " " << diffSt << " +- " << diffErrSt << " VOL= " << volSt << " DOSE1= " << dose1St << " +- " << dose1ErrSt << " DOSE2= " << dose2St << " +- " << dose2ErrSt << std::endl; 
 	  //	  fout << std::setw(15) << polyList->GetName() << " " << diffSt << " +- " << diffErrSt << " VOL= " << volSt << " DOSE1= " << dose1St << " +- " << dose1ErrSt << " DOSE2= " << dose2St << " +- " << dose2ErrSt << std::endl; 
 	  fout << std::setw(15) << polyList->GetName() << " " << diffSt/volSt << " +- " << diffErrSt/volSt << " DOSE1= " << dose1St/volSt << " +- " << dose1ErrSt/volSt << " DOSE2= " << dose2St/volSt << " +- " << dose2ErrSt/volSt << " VOL= " << volSt << std::endl; 
 	  //	  theDrawerRoot->DrawXY( structImage, theLineSets );
@@ -860,8 +870,12 @@ void DCMGetGammaIndex::CalculateDumpPerSt()
 	structImage->DumpHeaderToTextFile(foutDcm);
 	structImage->DumpDataToTextFile(foutDcm);	  
 	delete structImage;
+#ifndef GAMOS_NO_ROOT
 	DicomDrawerROOT*  theDrawer = new DicomDrawerROOT();
-	G4cout << " DCMGetGammaIndex theDrawer " << theDrawer<< G4endl;//GDEB
+#else
+	DicomDrawerSVG*  theDrawer = new DicomDrawerSVG();
+#endif
+	//G4cout << " DCMGetGammaIndex theDrawer " << theDrawer<< G4endl;//GDEB
 	//-theDrawer->SetFigureTitle(G4bool(theParamMgr->GetNumericValue("bFigureTitle",1)));
 	theDrawer->DrawXY(structImage,theLineSets,".DumpPerSt."+polyList->GetName());
 	//G4cout << " DCMGetGammaIndex drawnXY " << G4endl;//GDEB
@@ -894,7 +908,7 @@ void DCMGetGammaIndex::PrintHelp()
  G4cout << "@@@ LIST OF ARGUMENTS: " << G4endl
 	<< " -fSqDose       sqdose file name" << G4endl
 	<< " -fDCMDose      DCMDose file name" << G4endl
-        << " -percent       gamma index percentage " << G4endl
+        << " -perCent       gamma index percentage " << G4endl
         << " -distance      gamma index distance " << G4endl
 	<< " -fRTStruct     DCM file with the structures: gamma index per structure will be calculated" << G4endl
 	<< " -norm          normalization of both images (by default no normalization) " << G4endl
@@ -925,6 +939,14 @@ void DCMGetGammaIndex::PrintHelp()
 	<< " -bOutputFile    write the 2D histograms in an output file getGammaIndex_PC_DIST_2D.root" << G4endl
 	<< " -verb          verbosity: sets the verbosity" << G4endl
 	<< " -help          prints the list of arguments " << G4endl;
+#ifdef GAMOS_NO_ROOT
+  G4cout << " Without ROOT the figures are drawn as SVG files and the -bOutputFile histograms are written in GAMOS .csv files (instead of .root): " << G4endl
+	 << " -imageFormat FORMAT   svg (no conversion), png, jpg (default), gif, bmp, tiff (built-in renderer), pdf, ps, eps, webp (converted from SVG if a converter is found) " << G4endl
+	 << " -jpgQuality N   quality (1-100, default 90) of jpg files written by the built-in renderer " << G4endl
+	 << " Environment variable GM_FIGURE_NTHREADS: number of threads writing png/jpg/gif/bmp/tiff figures in background (default: number of cores - 1, at most 16; 0: no threads) " << G4endl
+	 << " -SVGConverter  auto   (auto/builtin: built-in renderer for png/jpg/gif/bmp/tiff, for the other formats look for rsvg-convert, inkscape, magick, convert in PATH; none; or program name/path) " << G4endl
+	 << " -nContours N   number of color levels (default 20) " << G4endl;
+#endif
 }
 
   

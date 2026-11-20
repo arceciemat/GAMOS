@@ -68,6 +68,8 @@ class GmConvergenceTester
    public:
 
       void AddScore( G4double );
+      //--- Multithreading: append the histories of another tester (of a worker thread), as if its events were run after these, and reset it
+      void Merge( GmConvergenceTester* other );
 
       void ShowHistory();
       void ShowResult();

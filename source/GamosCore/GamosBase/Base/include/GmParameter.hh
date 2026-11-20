@@ -21,6 +21,8 @@ public:
     //  G4cout << " new GmParameter " << theValue << G4endl; 
   }
 
+  GmParameter(const par& rh) : theValue(rh.theValue) {}
+
   ///
   GmParameter & operator=(const par& rh) {
     theValue=rh.theValue;
@@ -55,8 +57,6 @@ protected:
   
 };
 
-#include<iomanip>
-#include<algorithm>
 
 /*
 template<class T>

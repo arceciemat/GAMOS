@@ -5,7 +5,6 @@
 #include "globals.hh"
 
 #include "FileData.hh"
-#include "DoserData.hh"
 
 class TextFileData : public FileData
 {

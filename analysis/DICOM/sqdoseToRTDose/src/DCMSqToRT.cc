@@ -210,7 +210,7 @@ void DCMSqToRT::ConvertImages()
 );
   //  OFCondition status = fileFormat.saveFile(OFFilename(theRTDoseOutFN),EXS_LittleEndianImplicit);
   if (status.bad()) {
-    std::cerr << "Error: cannot save DICOM file (" << status.text() << ")" << std::endl;
+    G4cerr << "Error: cannot save DICOM file (" << status.text() << ")" << std::endl;
   }
 }
 
@@ -254,11 +254,11 @@ void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset* dataset )
   
   SetFromReference( dataset,DCM_ImplementationVersionName, "1", "1", "MetaInformationHeader","ShortString");
   SetFromReference( dataset,DCM_PrivateInformationCreatorUID, "1", "1", "MetaInformationHeader");
-  G4cout << " @@@ DATASET PrivateInformationCreatorUID " << G4endl; //GDEB
-  dataset->print(G4cout); //GDEB  
+  //G4cout << " @@@ DATASET PrivateInformationCreatorUID " << G4endl; //GDEB
+  //dataset->print(G4cout); //GDEB  
   SetFromReference( dataset,DCM_PrivateInformation, "1", "1", "MetaInformationHeader","OtherByteOtherWord");
-  G4cout << " @@@ DATASET PrivateInformation  " << G4endl; //GDEB
-  dataset->print(G4cout); //GDEB  
+  //G4cout << " @@@ DATASET PrivateInformation  " << G4endl; //GDEB
+  //dataset->print(G4cout); //GDEB  
 
   SetFromReference( dataset,DCM_SpecificCharacterSet, "1", "1", "GeneralStudyModule","CodeString");
   DcmDate InstanceCreationDate(DCM_InstanceCreationDate); InstanceCreationDate.putString(date);
@@ -320,8 +320,8 @@ void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset* dataset )
   SetFromReference( dataset,DCM_SeriesNumber, "1", "1", "GeneralStudyModule","IntegerString");
   DcmIntegerString InstanceNumber(DCM_InstanceNumber); InstanceNumber.putString("3");
   addElementToDataset(result, dataset, new DcmIntegerString(InstanceNumber), "1", "1", "GeneralEquipmentModule");
-  G4cout << " @@@ DATASET InstanceNumber " << G4endl; //GDEB
-  dataset->print(G4cout); //GDEB  
+  //G4cout << " @@@ DATASET InstanceNumber " << G4endl; //GDEB
+  //dataset->print(G4cout); //GDEB  
 
   // imagePositionPatient: hadd 1/2 voxel size 
   double PixelWidth = widthX;
@@ -329,7 +329,7 @@ void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset* dataset )
   G4double imagePosPatX = voxelLimitsX[0] + 0.5*PixelWidth;
   G4double imagePosPatY = voxelLimitsY[0] + 0.5*PixelHeight;
   G4double imagePosPatZ = voxelLimitsZ[0] + 0.5*widthZ;
-  G4cout << " imagePosPatZ " << imagePosPatZ << " " << voxelLimitsZ[0] << "+ *widthZ" << widthZ<< G4endl;//GDEB
+  //G4cout << " imagePosPatZ " << imagePosPatZ << " " << voxelLimitsZ[0] << "+ *widthZ" << widthZ<< G4endl;//GDEB
   G4String imagePos = GmGenUtils::ftoa(imagePosPatX) + "\\" +
     GmGenUtils::ftoa(imagePosPatY) + "\\" +
     GmGenUtils::ftoa(imagePosPatZ);  
@@ -338,8 +338,8 @@ void DCMSqToRT::fillRTDoseFromSqdose( GmSqdose* sqdose, DcmDataset* dataset )
   G4String imageOrient = "1\\0\\0\\0\\1\\0";
   DcmDecimalString ImageOrientationPatient(DCM_ImageOrientationPatient); ImageOrientationPatient.putString(imageOrient);
   addElementToDataset(result, dataset, new DcmDecimalString(ImageOrientationPatient), "6", "1", "ImagePlaneModule");
-    G4cout << " @@@ DATASET ImageOrientationPatient " << G4endl; //GDEB
-  dataset->print(G4cout); //GDEB  
+    //G4cout << " @@@ DATASET ImageOrientationPatient " << G4endl; //GDEB
+  //dataset->print(G4cout); //GDEB  
 
   // --- FrameOfReferenceModule (M) ---
   SetFromReference( dataset,DCM_FrameOfReferenceUID, "1", "1", "FrameOfReferenceModule");

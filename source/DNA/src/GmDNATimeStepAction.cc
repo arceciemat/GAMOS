@@ -1,3 +1,4 @@
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 //
 // ********************************************************************
 // * License and Disclaimer                                           *
@@ -87,6 +88,7 @@ GmDNATimeStepAction::GmDNATimeStepAction()
   G4String prefix = parmgr->GetStringValue("GmAnalysisMgr:FileNamePrefix","");
   fileOutName = prefix + fileOutName;
   if(fileOutName != "" ) {
+    fileOutName = GmMTMergeMgr::GetThreadFileName(fileOutName); // Multithreading: one file per thread
     theFileOut = new std::ofstream(fileOutName);
   } else {
     theFileOut = 0;
@@ -122,8 +124,15 @@ GmDNATimeStepAction::GmDNATimeStepAction()
   damagingRadicalNames = GmParameterMgr::GetInstance()->GetVStringValue("GmDNATimeStepAction:DamagingRadicals",damagingRadicalNames);
   for( size_t ii = 0; ii < damagingRadicalNames.size(); ii++ ) {
     G4String damagingRadiName =  damagingRadicalNames[ii];
-    G4ParticleDefinition* particle = GmG4Utils::GetG4Particle(damagingRadiName);
-    const G4MoleculeDefinition* molecule = dynamic_cast<const G4MoleculeDefinition*>(particle);
+    const G4MoleculeDefinition* molecule = nullptr;
+    //--- "OH" is the hydroxyl radical (G4OH, named "°OH"), as in the Geant4 example dnadamage1;
+    //    GetG4Particle("OH") returned the hydroxide ion OH^-1 (named "OH"), so no reaction with °OH was written
+    if( damagingRadiName == "OH" || damagingRadiName == "°OH" ) {
+      molecule = G4OH::Definition();
+    } else {
+      G4ParticleDefinition* particle = GmG4Utils::GetG4Particle(damagingRadiName);
+      molecule = dynamic_cast<const G4MoleculeDefinition*>(particle);
+    }
     if( !molecule ) {
       G4Exception("GmDNATimeStepAction::GmDNATimeStepAction",
 		  "",

@@ -4,6 +4,8 @@
 #include <vector>
 #include <set>
 #include "globals.hh"
+#include "G4Threading.hh"
+#include "G4AutoLock.hh"
 #include "G4THitsMap.hh"
 class G4Step;
 class G4Track;
@@ -51,6 +53,43 @@ public: // with description
 
   G4bool IsOnSecondary() {
     return bOnSecondary; }
+
+  //--- Multithreading: classifiers created on the master are registered by name; worker classifiers that assign
+  //    indices in order of appearance ask the master classifier of the same name, so that the indices are the same
+  //    in all threads (results are merged by index) and the master knows the names of all indices
+  static void RegisterMasterClassifier( GmVClassifier* cls );
+  static GmVClassifier* GetMasterClassifier( const G4String& name );
+  static G4Mutex& GetIndexMutex();
+
+protected:
+  // Assign the index of a new key: in sequential mode / master as before (size+1+theMaxIndex),
+  // in a worker thread the index is assigned by the master classifier (under mutex) and cached in this one
+  template<class CLS, class MAP, class KEY>
+  int64_t AssignNewIndex( CLS* cls, MAP CLS::* mapMember, const KEY& key, int64_t add = 1, G4bool bAddMaxIndex = true ) {
+    MAP& localMap = cls->*mapMember;
+    if( !G4Threading::IsMultithreadedApplication() || G4Threading::IsMasterThread() ) {
+      int64_t index = localMap.size()+add+(bAddMaxIndex ? theMaxIndex : 0);
+      localMap[key] = index;
+      return index;
+    }
+    G4AutoLock l(&GetIndexMutex());
+    CLS* master = dynamic_cast<CLS*>(GetMasterClassifier(theName));
+    int64_t index;
+    if( !master ) {
+      index = localMap.size()+add+(bAddMaxIndex ? theMaxIndex : 0);
+    } else {
+      MAP& masterMap = master->*mapMember;
+      typename MAP::const_iterator ite = masterMap.find(key);
+      if( ite == masterMap.end() ) {
+	index = masterMap.size()+add+(bAddMaxIndex ? master->theMaxIndex : 0);
+	masterMap[key] = index;
+      } else {
+	index = ite->second;
+      }
+    }
+    localMap[key] = index;
+    return index;
+  }
 
 protected:
   G4String theName;

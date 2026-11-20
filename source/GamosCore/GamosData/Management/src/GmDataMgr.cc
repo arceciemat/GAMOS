@@ -14,7 +14,7 @@
 #include "GamosCore/GamosData/Management/include/GmDataFactory.hh"
 #endif
 
-GmDataMgr* GmDataMgr::theInstance = 0;
+G4ThreadLocal GmDataMgr* GmDataMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 GmDataMgr::GmDataMgr()

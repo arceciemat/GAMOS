@@ -1,3 +1,5 @@
+#include "G4AutoLock.hh"
+#include <map>
 #include "GmFromTextFileSource.hh"
 #include "G4PrimaryVertex.hh"
 
@@ -32,6 +34,7 @@ GmFromTextFileSource::GmFromTextFileSource( const G4String& name, const G4String
   theFileIn.SetSeparator(',');
 
   Initialize();
+  bFromFile = true;
   theMaxNVertices = GmParameterMgr::GetInstance()->GetNumericValue("GmFromTextFileSource:MaxNVertices",100);
 }
 
@@ -39,6 +42,7 @@ GmFromTextFileSource::GmFromTextFileSource( const G4String& name, const G4String
 GmFromTextFileSource::GmFromTextFileSource( const G4String& name ): GmParticleSource( name )
 {
   Initialize();
+  bFromFile = false;
   theMaxNVertices = GmParameterMgr::GetInstance()->GetNumericValue("GmFromTextFileSource:MaxNVertices",100);
 }
 
@@ -71,7 +75,7 @@ void  GmFromTextFileSource::Initialize()
 //-----------------------------------------------------------------------
 void GmFromTextFileSource::SetNEventsInFile( G4int nEvts )
 {
-  bRandomNEventsToSkip = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("GmFromTextFileSource::SkipRandomNEvents",0));  
+  bRandomNEventsToSkip = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("GmFromTextFileSource:SkipRandomNEvents",0));  
   theNEventsInFile = nEvts;
 }
     
@@ -82,7 +86,27 @@ GmFromTextFileSource::~GmFromTextFileSource()
 }
 
 //-----------------------------------------------------------------------
+//--- Multithreading: one instance per source name reads the file for all threads (one file position, each event
+//    generated once as in sequential mode); the vertices are created by the calling thread
+namespace {
+  G4Mutex theTextSourceMutex = G4MUTEX_INITIALIZER;
+  std::map<G4String,GmFromTextFileSource*> theTextSourceReaders;
+}
 std::vector<G4PrimaryVertex*> GmFromTextFileSource::GenerateVertices( G4double time )
+{
+  if( !bFromFile ) return GenerateVerticesFromFile( time );
+  G4AutoLock l(&theTextSourceMutex);
+  GmFromTextFileSource*& reader = theTextSourceReaders[theName];
+  if( !reader ) reader = this;
+  std::vector<G4PrimaryVertex*> vtxs = reader->GenerateVerticesFromFile( time );
+  if( reader != this ) {
+    theTime = reader->theTime; // time to next event, used by GenerateTime() of this thread's source
+    theLastEventTime = reader->theLastEventTime;
+  }
+  return vtxs;
+}
+
+std::vector<G4PrimaryVertex*> GmFromTextFileSource::GenerateVerticesFromFile( G4double time )
 {
   if( !bInitialised ) {
     if( bRandomNEventsToSkip ) {
@@ -228,7 +252,7 @@ G4bool GmFromTextFileSource::ReadOneParticle()
     } else {
       theFileIn.Rewind();
 #ifndef GAMOS_NO_VERBOSE
-      if( GenerVerb(-debugVerb) ) G4cout << "GmFromTextFileSource::ReadOneParticle() FILE Rewind " << theName << G4endl;
+      if( GenerVerb(debugVerb) ) G4cout << "GmFromTextFileSource::ReadOneParticle() FILE Rewind " << theName << G4endl;
 #endif
       if( !theFileIn.GetWordsInLine(wl) ) {
 	if( GenerVerb(warningVerb) ) G4cout << "GmFromTextFileSource::ReadOneParticle() " << theName << " 2NO RECYCLE, ABORT RUN " << G4endl;
@@ -281,7 +305,7 @@ G4bool GmFromTextFileSource::ReadOneParticle()
 //-----------------------------------------------------------------------
 void GmFromTextFileSource::SetNLinesToSkip( G4int nLinesToSkip )
 {
-  G4cout << theName << " GmFromTextFileSource::SetNLinesToSkip( " << nLinesToSkip << G4endl; //GDEB
+  //G4cout << theName << " GmFromTextFileSource::SetNLinesToSkip( " << nLinesToSkip << G4endl; //GDEB
   for( G4int ii = 0; ii < nLinesToSkip; ii++ ) {
     //    G4cout << theName << " GmFromTextFileSource::SetNLinesToSkip(ReadOneParticle " << ii << G4endl; //GDEB
     if( !ReadOneParticle() ) {

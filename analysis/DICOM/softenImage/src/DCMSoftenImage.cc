@@ -128,7 +128,7 @@ void DCMSoftenImage::ReadFilesAndGetImages()
 
   imageReaders =  theReaderMgr->GetImageReaders(DRM_G4dcmCT,false);
 
-  G4cout << " N READERS " << imageReaders.size() << G4endl; //GDEB
+  //G4cout << " N READERS " << imageReaders.size() << G4endl; //GDEB
   for( size_t ii = 0; ii < imageReaders.size(); ii++ ) {    
     DicomReaderG4dcmCT* readerCT = dynamic_cast<DicomReaderG4dcmCT*>(imageReaders[ii]);
     if( fileName == "" ) fileName = readerCT->GetFileName()+".new";
@@ -191,7 +191,7 @@ void DCMSoftenImage::ReadFilesAndGetImages()
     GmSqdoseHeader* sqdoseHeader = sqdose->GetHeader();
     DicomVImage* doseImage = readerSqdose->GetDoseImage();
     theSoftenOperator->Operate(doseImage, theFactor, theNAround, theMaxValue, theMinSpareValue, theMaxSpareValue);
-    G4cout << " DOSEIMAGE SOFTENED " << doseImage->GetData(1476) << G4endl; //GDEB
+    //G4cout << " DOSEIMAGE SOFTENED " << doseImage->GetData(1476) << G4endl; //GDEB
     float theNoEvent = sqdoseHeader->GetNumberOfEvents();
     if(fwrite(&theNoEvent,sizeof(float),1,fout)!=1)
       printf("\n Error writing nEvent. \n");
@@ -307,7 +307,7 @@ void DCMSoftenImage::ReadFilesAndGetImages()
 		    "Error writing dose");
       }
     }
-    G4cout << " DOSEIMAGE SOFTENED WRITE " << theData->at(1476) << G4endl; //GDEB
+    //G4cout << " DOSEIMAGE SOFTENED WRITE " << theData->at(1476) << G4endl; //GDEB
 
     for( size_t iv = 0; iv < siz; iv++ ) {
       size_t copyNo = iv;

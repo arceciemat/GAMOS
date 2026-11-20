@@ -146,7 +146,7 @@ void MagneticFieldModelManager::SelectGlobalField(G4String field_name)
   
  
   if (!field_have_been_found){
-  	std::cout<<"Warning! The field that you wanted to set as the gobal field does not  exist."<<std::endl;
+  	G4cout<<"Warning! The field that you wanted to set as the gobal field does not  exist."<<std::endl;
   }
   
  	
@@ -171,7 +171,7 @@ void MagneticFieldModelManager::AddField(G4MagneticField* aField,G4String field_
 	listOfCreatedFields.push_back(aField);
   }
   else {
-  	std::cout<<"Warning ! This field will not be added to the list of field that can be used."<<std::endl; 
+  	G4cout<<"Warning ! This field will not be added to the list of field that can be used."<<std::endl; 
   }
  	
 }
@@ -209,7 +209,7 @@ void MagneticFieldModelManager::AddParametrizedFieldCreator(ParametrizedFieldCre
 	
   }
   else {
-  	std::cout<<"Warning ! This field creator will not be added to the list of field creators."<<std::endl; 
+  	G4cout<<"Warning ! This field creator will not be added to the list of field creators."<<std::endl; 
   }
    
   
@@ -227,7 +227,7 @@ void MagneticFieldModelManager::CreateInstanceOfParametrizedField(G4String aMode
 	} 
   } 
   if (!did_find_the_model){
-  	std::cout<<"Warning! A problem occured when trying to create a parametrized field."<<std::endl; 
+  	G4cout<<"Warning! A problem occured when trying to create a parametrized field."<<std::endl; 
   }
 }
 
@@ -237,7 +237,7 @@ void MagneticFieldModelManager::CreateInstanceOfParametrizedField(G4String aMode
 void MagneticFieldModelManager::CalculateJCurrentBetweenTwoPositions(G4String FieldName, G4ThreeVector pos1,G4ThreeVector pos2,G4double t, G4int npos,G4double ds, G4String output_file_name)
 { G4MagneticField* aField = GetCreatedField(FieldName);
   if (! aField){
-  	std::cout<<"Warning! The field that you wanted to select does not  exist."<<std::endl;
+  	G4cout<<"Warning! The field that you wanted to select does not  exist."<<std::endl;
 	return;
   }
   JCurrentCalculator* theCurrentCalculator = JCurrentCalculator::GetInstance();
@@ -357,7 +357,7 @@ void MagneticFieldModelManager::CalculateJCurrentOnACartesianGrid(G4String Field
 					 G4String file_output)
 { G4MagneticField* aField = GetCreatedField(FieldName);
   if (! aField){
-  	std::cout<<"Warning! The field that you wanted to select does not  exist."<<std::endl;
+  	G4cout<<"Warning! The field that you wanted to select does not  exist."<<std::endl;
 	return;
   }
   JCurrentCalculator* theCurrentCalculator = JCurrentCalculator::GetInstance();
@@ -380,7 +380,7 @@ void MagneticFieldModelManager::ComputeBfieldOnACartesianGrid(G4String FieldName
   
   G4MagneticField* aField = GetCreatedField(FieldName);
   if (! aField){
-  	std::cout<<"Warning! The field that you wanted to select does not  exist."<<std::endl;
+  	G4cout<<"Warning! The field that you wanted to select does not  exist."<<std::endl;
 	return;
   }
   
@@ -439,7 +439,7 @@ void MagneticFieldModelManager::ComputeBfieldOnACylindricalGrid(G4String FieldNa
   
   G4MagneticField* aField = GetCreatedField(FieldName);
   if (! aField){
-  	std::cout<<"Warning! The field that you wanted to select does not  exist."<<std::endl;
+  	G4cout<<"Warning! The field that you wanted to select does not  exist."<<std::endl;
 	return;
   }
   

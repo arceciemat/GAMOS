@@ -1,18 +1,18 @@
-# - GAMOS_analysis_RTDose_sum3ddose module build definition
+# - sum3ddose module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_RTDose_sum3ddose
+gamos_add_module(sum3ddose
   PUBLIC_HEADERS
     Merge3ddoseUA.hh
   SOURCES
     dummy.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_RTDose_sum3ddose
-  PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    RadioTherapy
-    gamos
-    ${SEAL_LIBRARIES} 
+
+# Program sum3ddose
+gamos_add_executable(sum3ddose
+  SOURCES
+    sum3ddose.cc
+  LINK_LIBRARIES
+    sum3ddose
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
 )

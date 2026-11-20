@@ -52,9 +52,9 @@ int64_t GmClassifierCrossPhantom::GetIndexFromStep(const G4Step* aStep)
   G4TouchableHistory* th = (G4TouchableHistory*)(preStep->GetTouchable());
   //  if( th->GetHistoryDepth() <= 2 ) {
   if( th->GetHistoryDepth() < 2 ) {
-    std::cerr << " NDEPTH " <<   th->GetHistoryDepth() << std::endl; 
+    G4cerr << " NDEPTH " <<   th->GetHistoryDepth() << std::endl; 
     for( int ii = 0; ii < th->GetHistoryDepth(); ii++ ) {
-      std::cerr << " DEPTH " << ii << " " << th->GetVolume(ii)->GetName() << std::endl;
+      G4cerr << " DEPTH " << ii << " " << th->GetVolume(ii)->GetName() << std::endl;
     } 
     G4Exception("GmClassifierCrossPhantom::GetIndexFromStep",
 		"",

@@ -13,7 +13,7 @@ DicomReaderSqdose::DicomReaderSqdose(G4String fName, G4String name ) : DicomVRea
 //  : theFileName(fName), theName(name)
 {
   theFileName = fName;
-  G4cout << "DicomReaderSqdose(G4String fName) " << theFileName << G4endl; //GDEB
+  //G4cout << "DicomReaderSqdose(G4String fName) " << theFileName << G4endl; //GDEB
   theName = name;
   if( name == "" ) theName = theFileName;
   thePatientPosition = "HFS";
@@ -82,7 +82,7 @@ void DicomReaderSqdose::ReadHeaderAndPixels(G4bool bReadPixelData)
   std::vector<G4double>* imgDataErr = new std::vector<G4double>;
   for( size_t ii = 0; ii < nVox; ii++ ) {
     imgDataErr->push_back(doseErrors[ii]);
-    //    if (  doseErrors[ii] != 0 )  std::cout << ii << " DOSE ERR " << doseErrors[ii] << " " << doses[ii] << " " << doseSqs[ii] << G4endl; //GDEB
+    //    if (  doseErrors[ii] != 0 )  G4cout << ii << " DOSE ERR " << doseErrors[ii] << " " << doses[ii] << " " << doseSqs[ii] << G4endl; //GDEB
   }
   theDoseErrImage->SetData(imgDataErr);
 
@@ -97,7 +97,7 @@ void DicomReaderSqdose::ReadHeaderAndPixels(G4bool bReadPixelData)
       //      if( errRel != 0 ) G4cout << ii%theNoVoxelsX << " " << (ii/theNoVoxelsX)%theNoVoxelsY << " " << ii/theNoVoxelsX/theNoVoxelsY << " errRel " << errRel << " = " <<doseErrors[ii] << " / " <<doses[ii] << G4endl; //GDEB 
       imgDataErrRel->push_back(errRel);
     }
-    //    if (  doseErrors[ii] != 0 )  std::cout << ii << " DOSE ERR " << doseErrors[ii] << " " << doses[ii] << " " << doseSqs[ii] << G4endl; //GDEB
+    //    if (  doseErrors[ii] != 0 )  G4cout << ii << " DOSE ERR " << doseErrors[ii] << " " << doses[ii] << " " << doseSqs[ii] << G4endl; //GDEB
     doseErrRelImage->SetData(imgDataErrRel);
   }
   
@@ -114,8 +114,8 @@ void DicomReaderSqdose::ReadHeaderAndPixels(G4bool bReadPixelData)
       //   if( iz != 33 ){ doses[ii] = ix;theDicomImage->SetData(ii,ix+0.1); }
       //if( iz == 33 ){ doses[ii] = ix;theVoxelData->at(ii) = ix; }
       //      if( doses[ii] != 0 )
-      //      std::cout << ii << " = " << ix << " : " << iy << " : " << iz << " DOSE= " << " " << doses[ii] << " +- " << doseErrors[ii] << G4endl; 
-      //      std::cout << ii << " =xyz " << theMinX+(ix+0.5)*theWidthX << " : " << theMinY+(iy+0.5)*theWidthY  << " : " << theMinZ+(iz+0.5)*theWidthZ << " DOSE= " << " " << doses[ii] << " +- " << doseErrors[ii] << G4endl; 
+      //      G4cout << ii << " = " << ix << " : " << iy << " : " << iz << " DOSE= " << " " << doses[ii] << " +- " << doseErrors[ii] << G4endl; 
+      //      G4cout << ii << " =xyz " << theMinX+(ix+0.5)*theWidthX << " : " << theMinY+(iy+0.5)*theWidthY  << " : " << theMinZ+(iz+0.5)*theWidthZ << " DOSE= " << " " << doses[ii] << " +- " << doseErrors[ii] << G4endl; 
     }
   }
 #endif
@@ -126,7 +126,7 @@ void DicomReaderSqdose::ReadHeaderAndPixels(G4bool bReadPixelData)
   if( DicomVerb(testVerb) ) {
     size_t nVoxelXY = theNoVoxelsX*theNoVoxelsY;
     for( size_t ii = 0; ii < nVox; ii++ ) {
-      std::cout << ii << " DOSE " << doses[ii] << " +- " << doseErrors[ii] << " Sqs " << doseSqs[ii] << G4endl; //GDEB
+      G4cout << ii << " DOSE " << doses[ii] << " +- " << doseErrors[ii] << " Sqs " << doseSqs[ii] << G4endl; //GDEB
     }
   }
 #endif

@@ -14,7 +14,7 @@ RTReuseAtZPlaneMessenger::RTReuseAtZPlaneMessenger()
   theRTDir = new G4UIdirectory("/gamos/RT/");
   theRTDir->SetGuidance("Command to define uniform magnetic fields");
   
-  theReuseCmd = new G4UIcmdWithoutParameter("/gamos/RT/ReuseAtZPlane",this);  
+  theReuseCmd = new G4UIcmdWithoutParameter("/gamos/RT/reuseAtZPlane",this);  
   theReuseCmd->SetGuidance("Define magnetic field vector: FIELD_X FIELD_Y FIELD_Z");
   theReuseCmd->AvailableForStates(G4State_Idle); 
 

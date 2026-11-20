@@ -1,18 +1,26 @@
-# - GAMOS_analysis_Shielding_addScoresWeighted module build definition
+# - addScoresWeighted module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_Shielding_addScoresWeighted
+gamos_add_module(addScoresWeighted
   PUBLIC_HEADERS
     ScoreSet.hh
   SOURCES
     ScoreSet.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_Shielding_addScoresWeighted
+
+gamos_module_link_libraries(addScoresWeighted
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    sumScores
+    GamosCore_GamosRunManager
     GamosCore_GamosUtils
-    ${SEAL_LIBRARIES} 
+    sumScores
+)
+
+# Program addScoresWeighted
+gamos_add_executable(addScoresWeighted
+  SOURCES
+    addScoresWeighted.cc
+  LINK_LIBRARIES
+    addScoresWeighted
+    GamosCore_GamosRunManager
+    GamosCore_GamosUtils
+    sumScores
 )

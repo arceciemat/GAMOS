@@ -140,7 +140,7 @@ void DicomReaderInterfile::ReadHeader()
 		("!!!! patient orientation is not supported: "+thePatientOrientation+" PatientPosition will be set to HFS").c_str()); 
   }
 
-  Print(std::cout);
+  Print(G4cout);
   */
   
 }

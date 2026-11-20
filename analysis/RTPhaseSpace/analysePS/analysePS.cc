@@ -1,5 +1,4 @@
 #include "globals.hh"
-#include <fstream>
 #include "RadioTherapy/include/iaea_header.hh"
 #include "RadioTherapy/include/iaea_record.hh"
 //#include "RadioTherapy/include/iaeaUtilities.hh"
@@ -13,7 +12,6 @@
 #include "GamosCore/GamosRunManager/include/GmRunManager.hh"
 
 #include "G4UImanager.hh"
-#include "G4StateManager.hh"
 using namespace CLHEP;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

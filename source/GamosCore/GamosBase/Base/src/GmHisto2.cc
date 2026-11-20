@@ -1,20 +1,39 @@
 #ifdef GAMOS_NO_ROOT
 
 #include "GmHisto2.hh"
+#include <algorithm>
+#include <iostream>
+
+// The algorithms reproduce those of ROOT 6.26 classes TH1, TH2, TH2F and TAxis (fixed bin size, no buffer, no axis range, no extendable axes,
+// statistics without underflow/overflow (TH1::GetStatOverflows() false), default error option)
 
 //----------------------------------------------------------------------
-GmHisto2::GmHisto2( const std::string& name, int nBinsX, double lowerEdgeX, double upperEdgeX, int nBinsY, double lowerEdgeY, double upperEdgeY ) 
+GmHisto2::GmHisto2( const std::string& name, int nBinsX, double lowerEdgeX, double upperEdgeX, int nBinsY, double lowerEdgeY, double upperEdgeY )
   : theName(name), theNBinsX(nBinsX), theLowerEdgeX(lowerEdgeX), theUpperEdgeX(upperEdgeX), theNBinsY(nBinsY), theLowerEdgeY(lowerEdgeY), theUpperEdgeY(upperEdgeY)
 {
-  //-- Check consistency of data
-  if(theNBinsX == 0) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The number of bins in Xaxis is 0 " << std::endl;
-    std::exception();
-  }
+  CheckLimits();
+}
 
-  if(theNBinsY == 0) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The number of bins in Yaxis is 0 " << std::endl;
+//----------------------------------------------------------------------
+GmHisto2::GmHisto2( const std::string& name, const std::string& , int nBinsX, double lowerEdgeX, double upperEdgeX, int nBinsY, double lowerEdgeY, double upperEdgeY )
+  : theName(name), theNBinsX(nBinsX), theLowerEdgeX(lowerEdgeX), theUpperEdgeX(upperEdgeX), theNBinsY(nBinsY), theLowerEdgeY(lowerEdgeY), theUpperEdgeY(upperEdgeY)
+{
+  CheckLimits();
+}
+
+//----------------------------------------------------------------------
+void GmHisto2::CheckLimits()
+{
+  //-- Check consistency of data
+  if(theNBinsX <= 0) {
+    G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The number of bins in Xaxis is " << theNBinsX << std::endl;
     std::exception();
+    theNBinsX = 1;
+  }
+  if(theNBinsY <= 0) {
+    G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The number of bins in Yaxis is " << theNBinsY << std::endl;
+    std::exception();
+    theNBinsY = 1;
   }
 
   theBinWidthX = (theUpperEdgeX-theLowerEdgeX)/theNBinsX;
@@ -22,222 +41,70 @@ GmHisto2::GmHisto2( const std::string& name, int nBinsX, double lowerEdgeX, doub
 
   //-- Check consistency of data
   if(theBinWidthX == 0.) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The lower and upper edges in X axis are equal " << std::endl;
+    G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The lower and upper edges in X axis are equal " << std::endl;
     std::exception();
   }
   if(theBinWidthX < 0.) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The lower edge in X axis is bigger than the upper edge " << std::endl;
+    G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The lower edge in X axis is bigger than the upper edge " << std::endl;
     std::exception();
   }
   if(theBinWidthY == 0.) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The lower and upper edges in Y axis are equal " << std::endl;
+    G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The lower and upper edges in Y axis are equal " << std::endl;
     std::exception();
   }
   if(theBinWidthY < 0.) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The lower edge in Y axis is bigger than the upper edge " << std::endl;
+    G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The lower edge in Y axis is bigger than the upper edge " << std::endl;
     std::exception();
   }
 
-  if( nBinsX > pow(2.,sizeof(int)*8 ) ){
-    std::cerr << "!!! ERROR too many histogram bins in axis X GmHisto2: " << name << "     The maximum number is pow(2.,sizeof(int)*8 =  " << pow(2.,sizeof(int)*8) << std::endl;
-    std::exception();
-  }
-  if( nBinsY > pow(2.,sizeof(int)*8 ) ){
-    std::cerr << "!!! ERROR too many histogram bins in axis Y GmHisto2: " << name << "     The maximum number is pow(2.,sizeof(int)*8 =  " << pow(2.,sizeof(int)*8) << std::endl;
-    std::exception();
-  }
+  theNcells = (theNBinsX+2)*(theNBinsY+2);
+  theArray.assign(theNcells,0.);
+  theSumw2.clear();
 
-  theSumWX = 0.; 
-  theSumWX2 = 0.; 
-  theSumWY = 0.; 
-  theSumWY2 = 0.; 
-  theSumW = 0.; 
-  theSumW2 = 0.; 
-  theEntries = 0;
+  theEntries = 0.;
+  theTsumw = 0.;
+  theTsumw2 = 0.;
+  theTsumwx = 0.;
+  theTsumwx2 = 0.;
+  theTsumwy = 0.;
+  theTsumwy2 = 0.;
+  theTsumwxy = 0.;
 }
 
 //----------------------------------------------------------------------
-GmHisto2::GmHisto2( const std::string& name, const std::string& , int nBinsX, double lowerEdgeX, double upperEdgeX, int nBinsY, double lowerEdgeY, double upperEdgeY ) 
-  : theName(name), theNBinsX(nBinsX), theLowerEdgeX(lowerEdgeX), theUpperEdgeX(upperEdgeX), theNBinsY(nBinsY), theLowerEdgeY(lowerEdgeY), theUpperEdgeY(upperEdgeY)
+int GmHisto2::FindBinX( double value ) const
 {
-  //-- Check consistency of data
-  if(theNBinsX == 0) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The number of bins in Xaxis is 0 " << std::endl;
-    std::exception();
-  }
-
-  if(theNBinsY == 0) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The number of bins in Yaxis is 0 " << std::endl;
-    std::exception();
-  }
-
-  theBinWidthX = (theUpperEdgeX-theLowerEdgeX)/theNBinsX;
-  theBinWidthY = (theUpperEdgeY-theLowerEdgeY)/theNBinsY;
-
-  //-- Check consistency of data
-  if(theBinWidthX == 0.) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The lower and upper edges in X axis are equal " << std::endl;
-    std::exception();
-  }
-  if(theBinWidthX < 0.) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The lower edge in X axis is bigger than the upper edge " << std::endl;
-    std::exception();
-  }
-  if(theBinWidthY == 0.) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The lower and upper edges in Y axis are equal " << std::endl;
-    std::exception();
-  }
-  if(theBinWidthY < 0.) {
-    std::cerr << "!!! ERROR creating GmHisto2: " << name << "     The lower edge in Y axis is bigger than the upper edge " << std::endl;
-    std::exception();
-  }
-
-  if( nBinsX > pow(2.,sizeof(int)*8 ) ){
-    std::cerr << "!!! ERROR too many histogram bins in axis X GmHisto2: " << name << "     The maximum number is pow(2.,sizeof(int)*8 =  " << pow(2.,sizeof(int)*8) << std::endl;
-    std::exception();
-  }
-  if( nBinsY > pow(2.,sizeof(int)*8 ) ){
-    std::cerr << "!!! ERROR too many histogram bins in axis Y GmHisto2: " << name << "     The maximum number is pow(2.,sizeof(int)*8 =  " << pow(2.,sizeof(int)*8) << std::endl;
-    std::exception();
-  }
-
-  theSumWX = 0.; 
-  theSumWX2 = 0.; 
-  theSumWY = 0.; 
-  theSumWY2 = 0.; 
-  theSumW = 0.; 
-  theSumW2 = 0.; 
-  theEntries = 0;
-}
-
-
-//----------------------------------------------------------------------
-void GmHisto2::Fill( double valueX, double valueY, double weight )
-{
-  //--- Get bin
-  int ibinX = int((valueX - theLowerEdgeX)/theBinWidthX) + 1;
-  if( ibinX < 0 ) ibinX = 0;
-  if( ibinX > int(theNBinsX+1) ) ibinX = theNBinsX+1;
-  int ibinY = int((valueY - theLowerEdgeY)/theBinWidthY) + 1;
-  if( ibinY < 0 ) ibinY = 0;
-  if( ibinY > int(theNBinsY+1) ) ibinY = theNBinsY+1;
-
-  int ibin = ibinX + (theNBinsX+2)*ibinY;
-  theBinN[ibin] ++;
-  theBinSumW[ibin] += weight;
-  //   std::cout << " FILL GmHISTO1 " << ibin << " = " << weight << std::endl;
-  double w2 = weight*weight;
-  theBinSumW2[ibin] += w2;
-
-  if( valueX >= theLowerEdgeX && valueX <= theUpperEdgeX 
-      && valueY >= theLowerEdgeY && valueY <= theUpperEdgeY ) {
-    theSumWX += valueX*weight; 
-    theSumWX2 += valueX*valueX*weight; 
-    theSumWY += valueY*weight; 
-    theSumWY2 += valueY*valueY*weight; 
-    //  std::cout << " theSumWX2 " << theSumWX2 << " " << theSumWX2/theBinN[ibin] << std::endl;
-    //  theSumWY += valueY*weight; 
-    // theSumWY2 += valueY*valueY*weight; 
-    //  std::cout << " theSumWY2 " << theSumWY2 << " " << theSumWY2/theBinN[ibin] << std::endl;
-    
-    theSumW += weight;
-    theSumW2 += w2;
-  }
-
-  theEntries++;
-}
-
-
-//----------------------------------------------------------------------
-double GmHisto2::GetBinContent(int ibinX, int ibinY) const 
-{
-  if( ibinX < 0 ) {
-    std::cerr << "GmHisto2::GetBinContent binX " << ibinX << "  is less than 0 " << std::endl;
-    std::exception();
-  }
-  if( ibinY < 0 ) {
-    std::cerr << "GmHisto2::GetBinContent binY " << ibinY << "  is less than 0 " << std::endl;
-    std::exception();
-  }
-  if( ibinX > int(theNBinsX+2) ) {
-    std::cerr << "GmHisto2::GetBinContent binX " << ibinX << "  is too big ( > " << theNBinsX+1 << std::endl;
-    std::exception();
-  }
-  if( ibinY > int(theNBinsY+1) ) {
-    std::cerr << "GmHisto2::GetBinContent binY " << ibinY << "  is too big ( > " << theNBinsY+1 << std::endl;
-    std::exception();
-  }
-  
-  int ibin = ibinX + (theNBinsX+2)*ibinY;
-  std::map<int,double>::const_iterator ite = theBinSumW.find(ibin);
-  if( ite != theBinSumW.end() ) {
-    return (*ite).second;
+  // as TAxis::FindBin (note the way to catch NaN)
+  if( value < theLowerEdgeX ) {
+    return 0;
+  } else if( !(value < theUpperEdgeX) ) {
+    return theNBinsX+1;
   } else {
-    return 0.;
+    return 1 + int( theNBinsX*(value-theLowerEdgeX)/(theUpperEdgeX-theLowerEdgeX) );
   }
 }
 
 //----------------------------------------------------------------------
-double GmHisto2::GetBinError(int ibinX, int ibinY) const 
+int GmHisto2::FindBinY( double value ) const
 {
-  if( ibinX < 0 ) {
-    std::cerr << "GmHisto2::GetBinXError binX " << ibinX << "  is less than 0 " << std::endl;
-    std::exception();
-  }
-  if( ibinY < 0 ) {
-    std::cerr << "GmHisto2::GetBinError binY " << ibinY << "  is less than 0 " << std::endl;
-    std::exception();
-  }
-  if( ibinX > int(theNBinsX+1) ) {
-    std::cerr << "GmHisto2::GetBinError binX " << ibinX << "  is too big ( > " << theNBinsX+1 << std::endl;
-    std::exception();
-  }
-  if( ibinY > int(theNBinsY+1) ) {
-    std::cerr << "GmHisto2::GetBinError binY " << ibinY << "  is too big ( > " << theNBinsY+1 << std::endl;
-    std::exception();
-  }
-  
-  int ibin = ibinX + (theNBinsX+2)*ibinY;
-  std::map<int,double>::const_iterator ite = theBinSumW2.find(ibin);
-  if( ite != theBinSumW2.end() ) {
-    return sqrt((*ite).second);
+  // as TAxis::FindBin (note the way to catch NaN)
+  if( value < theLowerEdgeY ) {
+    return 0;
+  } else if( !(value < theUpperEdgeY) ) {
+    return theNBinsY+1;
   } else {
-    return 0.;
+    return 1 + int( theNBinsY*(value-theLowerEdgeY)/(theUpperEdgeY-theLowerEdgeY) );
   }
-}
-
-
-//----------------------------------------------------------------------
-int GmHisto2::GetEntries() const
-{
-
-  return theEntries;
-  /*  int nbin = (theNBinsY+2) * (theNBinsX+2);
-
-  int nent = 0;
-  for( int ibin = 0; ibin < nbin; ibin++ ){
-    std::map<int,int>::const_iterator ite = theBinN.find(ibin);
-    if( ite != theBinN.end() ) nent += (*ite).second;
-  }
-  
-  return nent;
-  */
-}
-
-//----------------------------------------------------------------------
-double GmHisto2::GetIntegral() const
-{
-  return theSumW;
 }
 
 //----------------------------------------------------------------------
 int GmHisto2::GetBinX(float binx ) const
 {
-  int ibinX = int((binx-theLowerEdgeX)/theBinWidthX)+1;
+  int ibinX = FindBinX(binx);
   if( ibinX < 1 ){
-    std::cerr << "!!! ERROR: GetBinX failed for histogram " << theName << " " << binx << " < " << theLowerEdgeX << std::endl;
+    G4cerr << "!!! ERROR: GetBinX failed for histogram " << theName << " " << binx << " < " << theLowerEdgeX << std::endl;
   } else if( ibinX > int(theNBinsX) ){
-    std::cerr << "!!! ERROR: GetBinX failed for histogram " << theName << " " << binx << " > " << theUpperEdgeX << std::endl;
+    G4cerr << "!!! ERROR: GetBinX failed for histogram " << theName << " " << binx << " > " << theUpperEdgeX << std::endl;
   }
 
   return ibinX;
@@ -246,179 +113,439 @@ int GmHisto2::GetBinX(float binx ) const
 //----------------------------------------------------------------------
 int GmHisto2::GetBinY(float biny ) const
 {
-  int ibinY = int((biny-theLowerEdgeY)/theBinWidthY)+1;
+  int ibinY = FindBinY(biny);
   if( ibinY < 1 ){
-    std::cerr << "!!! ERROR: GetBinY failed for histogram " << theName << " " << biny << " < " << theLowerEdgeY << std::endl;
+    G4cerr << "!!! ERROR: GetBinY failed for histogram " << theName << " " << biny << " < " << theLowerEdgeY << std::endl;
   } else if( ibinY > int(theNBinsY) ){
-    std::cerr << "!!! ERROR: GetBinY failed for histogram " << theName << " " << biny << " > " << theUpperEdgeY << std::endl;
+    G4cerr << "!!! ERROR: GetBinY failed for histogram " << theName << " " << biny << " > " << theUpperEdgeY << std::endl;
   }
 
   return ibinY;
 }
 
-
 //----------------------------------------------------------------------
-double GmHisto2::GetBinLowEdgeX( int ibin ) const
+int GmHisto2::GetBin( int binx, int biny ) const
 {
-  return theLowerEdgeX+theBinWidthX*ibin;
+  // as TH2::GetBin
+  int ofx = theNBinsX + 1; // overflow bin
+  if( binx < 0 ) binx = 0;
+  if( binx > ofx ) binx = ofx;
+  int ofy = theNBinsY + 1; // overflow bin
+  if( biny < 0 ) biny = 0;
+  if( biny > ofy ) biny = ofy;
+  return binx + (theNBinsX + 2) * biny;
 }
 
 //----------------------------------------------------------------------
-double GmHisto2::GetBinUpEdgeX( int ibin ) const
+int GmHisto2::Fill( double valueX, double valueY )
 {
-  return theLowerEdgeX+theBinWidthX*(ibin+1);
+  theEntries++;
+  int binx = FindBinX(valueX);
+  int biny = FindBinY(valueY);
+  if( binx < 0 || biny < 0 ) return -1;
+  int bin  = biny*(theNBinsX+2) + binx;
+  AddBinContent(bin);
+  if( theSumw2.size() ) ++theSumw2[bin];
+  if( binx == 0 || binx > theNBinsX ) return -1;
+  if( biny == 0 || biny > theNBinsY ) return -1;
+  ++theTsumw;
+  ++theTsumw2;
+  theTsumwx  += valueX;
+  theTsumwx2 += valueX*valueX;
+  theTsumwy  += valueY;
+  theTsumwy2 += valueY*valueY;
+  theTsumwxy += valueX*valueY;
+  return bin;
 }
 
 //----------------------------------------------------------------------
-double GmHisto2::GetBinLowEdgeY( int ibin ) const
+int GmHisto2::Fill( double valueX, double valueY, double weight )
 {
-  return theLowerEdgeY+theBinWidthY*ibin;
+  theEntries++;
+  int binx = FindBinX(valueX);
+  int biny = FindBinY(valueY);
+  if( binx < 0 || biny < 0 ) return -1;
+  int bin  = biny*(theNBinsX+2) + binx;
+  if( !theSumw2.size() && weight != 1.0 ) Sumw2(); // must be called before AddBinContent
+  if( theSumw2.size() ) theSumw2[bin] += weight*weight;
+  AddBinContent(bin, weight);
+  if( binx == 0 || binx > theNBinsX ) return -1;
+  if( biny == 0 || biny > theNBinsY ) return -1;
+  double z = weight;
+  theTsumw   += z;
+  theTsumw2  += z*z;
+  theTsumwx  += z*valueX;
+  theTsumwx2 += z*valueX*valueX;
+  theTsumwy  += z*valueY;
+  theTsumwy2 += z*valueY*valueY;
+  theTsumwxy += z*valueX*valueY;
+  return bin;
 }
 
 //----------------------------------------------------------------------
-double GmHisto2::GetBinUpEdgeY( int ibin ) const
+void GmHisto2::AddBinContent(int ibin)
 {
-  return theLowerEdgeY+theBinWidthY*(ibin+1);
+  float val = float(theArray[ibin]);
+  ++val;
+  theArray[ibin] = double(val);
 }
- 
 
 //----------------------------------------------------------------------
-GmHisto2 operator+(const GmHisto2 &h1, const GmHisto2 &h2)
+void GmHisto2::AddBinContent(int ibin, double val)
 {
-  GmHisto2* his = new GmHisto2( h1.GetName(), h1.GetNbinsX(), 
-				h1.GetLowerEdgeX(), h1.GetUpperEdgeX(),
-				h1.GetNbinsY(), 
-				h1.GetLowerEdgeY(), h1.GetUpperEdgeY() );
-  for(int ibinX = 0; ibinX <= h1.GetNbinsX()+1; ibinX++ ){
-    for(int ibinY = 0; ibinY <= h1.GetNbinsY()+1; ibinY++ ){
-      int ibin = ibinX + (h1.theNBinsX+2)*ibinY;
-      his->theBinN[ibin] = h1.GetBinContent(ibinX,ibinY) + h2.GetBinContent(ibinX,ibinY);
-      his->theBinSumW[ibin] = h2.GetBinSumW(ibin) + h2.GetBinSumW(ibin);
-      his->theBinSumW2[ibin] = h1.GetBinSumW2(ibin) + h2.GetBinSumW2(ibin);
-    }
-  }
+  float valf = float(theArray[ibin]);
+  valf += float(val);
+  theArray[ibin] = double(valf);
+}
 
-  his->theSumWX = h1.GetSumWX() + h2.GetSumWX();
-  his->theSumWX2 = h1.GetSumWX2() + h2.GetSumWX2();
-  his->theSumWY = h1.GetSumWY() + h2.GetSumWY();
-  his->theSumWY2 = h1.GetSumWY2() + h2.GetSumWY2();
-  his->theSumW = h1.GetSumW() + h2.GetSumW();
-  his->theSumW2 = h1.GetSumW2() + h2.GetSumW2();
-  
-  return *his;
+//----------------------------------------------------------------------
+double GmHisto2::GetBinContent(int ibin) const
+{
+  if( ibin < 0 ) ibin = 0;
+  if( ibin >= theNcells ) ibin = theNcells-1;
+  return RetrieveBinContent(ibin);
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetBinContent(int ibinX, int ibinY) const
+{
+  return GmHisto2::GetBinContent( GetBin(ibinX,ibinY) );
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetBinError(int ibin) const
+{
+  if( ibin < 0 ) ibin = 0;
+  if( ibin >= theNcells ) ibin = theNcells-1;
+  if( theSumw2.size() ) return sqrt(theSumw2[ibin]);
+  return sqrt(fabs(RetrieveBinContent(ibin)));
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetBinError(int ibinX, int ibinY) const
+{
+  return GetBinError( GetBin(ibinX,ibinY) );
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetBinSumW(int ibin) const
+{
+  if( ibin < 0 || ibin >= theNcells ) return 0.;
+  return theArray[ibin];
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetBinSumW2(int ibin) const
+{
+  if( ibin < 0 || ibin >= theNcells ) return 0.;
+  return GetBinErrorSqUnchecked(ibin);
+}
+
+//----------------------------------------------------------------------
+void GmHisto2::SetBinContent(int ibin, double val)
+{
+  theEntries++;
+  theTsumw = 0; // statistics will be recalculated from bin contents
+  if( ibin < 0 ) return;
+  if( ibin >= theNcells ) return;
+  UpdateBinContent(ibin, val);
 }
 
 //----------------------------------------------------------------------
 void GmHisto2::SetBinContent(int ibinX, int ibinY, double val)
 {
-  int ibin = ibinX + (theNBinsX+2)*ibinY;
+  SetBinContent( GetBin(ibinX,ibinY), val );
+}
 
-  double oldVal =  theBinN[ibin];
-
-  theBinN[ibin] = val;
-  if( theBinSumW[ibin] == 0 ){ // not set before
-    theSumW += 1;
-    theSumW2 += 1;
-  }
-  theBinSumW[ibin] = 1;
-  //   std::cout << " FILL GmHISTO1 " << ibin << " = " << weight << std::endl;
-  theBinSumW2[ibin] += 1;
-
-  theSumWX += -oldVal + val; 
-  theSumWX2 += -oldVal*oldVal + val*val; 
-  //  std::cout << " theSumWX2 " << theSumWX2 << " " << theSumWX2/theBinN[ibin] << std::endl;
-
+//----------------------------------------------------------------------
+void GmHisto2::SetBinError(int ibin, double val)
+{
+  if( ibin < 0 || ibin >= theNcells ) return;
+  if( !theSumw2.size() ) Sumw2();
+  theSumw2[ibin] = val*val;
 }
 
 //----------------------------------------------------------------------
 void GmHisto2::SetBinError(int ibinX, int ibinY, double val)
-{ 
-  int ibin = ibinX + (theNBinsX+2)*ibinY;
+{
+  if( ibinX < 0 || ibinX > theNBinsX + 1 ) return;
+  if( ibinY < 0 || ibinY > theNBinsY + 1 ) return;
+  SetBinError( GetBin(ibinX,ibinY), val );
+}
 
-  double oldVal =  theBinSumW[ibin];
-  theBinSumW[ibin] = val;
-  //   std::cout << " FILL GmHISTO1 " << ibin << " = " << weight << std::endl;
-  theBinSumW2[ibin] = val*val;
+//----------------------------------------------------------------------
+void GmHisto2::Sumw2( bool flag )
+{
+  if( !flag ) {
+    theSumw2.clear();
+    return;
+  }
 
-  theSumWX += -oldVal + val; 
-  theSumWX2 += -oldVal*oldVal+val*val; 
-  theSumWY += -oldVal + val; 
-  theSumWY2 += -oldVal*oldVal+val*val; 
-  //  std::cout << " theSumWX2 " << theSumWX2 << " " << theSumWX2/theBinN[ibin] << std::endl;
-  theSumW = -oldVal + val;
-  theSumW2 +=  -oldVal*oldVal+val*val; 
+  if( int(theSumw2.size()) == theNcells ) {
+    G4cerr << "Warning in <GmHisto2::Sumw2>: Sum of squares of weights structure already created " << theName << std::endl;
+    return;
+  }
+
+  theSumw2.assign(theNcells,0.);
+  if( theEntries > 0 ) {
+    for( int ii = 0; ii < theNcells; ii++ ) {
+      theSumw2[ii] = fabs(RetrieveBinContent(ii));
+    }
+  }
+}
+
+//----------------------------------------------------------------------
+void GmHisto2::GetStats(double* stats) const
+{
+  if( theTsumw == 0 && theEntries > 0 ) {
+    // recalculate statistics from bin contents
+    std::fill(stats, stats + 7, 0);
+    for( int biny = 1; biny <= theNBinsY; ++biny ) {
+      double y = GetBinCenterY(biny);
+      for( int binx = 1; binx <= theNBinsX; ++binx ) {
+	double x = GetBinCenterX(binx);
+	int bin = GetBin(binx,biny);
+	double w = RetrieveBinContent(bin);
+	double wx = w * x; // avoid some extra multiplications at the expense of some clarity
+	double wy = w * y;
+	stats[0] += w;
+	stats[1] += GetBinErrorSqUnchecked(bin);
+	stats[2] += wx;
+	stats[3] += wx * x;
+	stats[4] += wy;
+	stats[5] += wy * y;
+	stats[6] += wx * y;
+      }
+    }
+  } else {
+    stats[0] = theTsumw;
+    stats[1] = theTsumw2;
+    stats[2] = theTsumwx;
+    stats[3] = theTsumwx2;
+    stats[4] = theTsumwy;
+    stats[5] = theTsumwy2;
+    stats[6] = theTsumwxy;
+  }
+}
+
+//----------------------------------------------------------------------
+void GmHisto2::PutStats(double* stats)
+{
+  theTsumw   = stats[0];
+  theTsumw2  = stats[1];
+  theTsumwx  = stats[2];
+  theTsumwx2 = stats[3];
+  theTsumwy  = stats[4];
+  theTsumwy2 = stats[5];
+  theTsumwxy = stats[6];
+}
+
+//----------------------------------------------------------------------
+void GmHisto2::ResetStats()
+{
+  double stats[kNstat] = {0};
+  theTsumw = 0;
+  theEntries = 1; // to force re-calculation of the statistics in GetStats
+  GetStats(stats);
+  PutStats(stats);
+  theEntries = fabs(theTsumw);
+  // use effective entries for weighted histograms:  (sum_w) ^2 / sum_w2
+  if( theSumw2.size() && theTsumw > 0 && stats[1] > 0 ) theEntries = stats[0]*stats[0]/ stats[1];
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetMean( int axis ) const
+{
+  if( axis < 1 || (axis > 3 && axis < 11) || axis > 13 ) return 0;
+  double stats[kNstat] = {0};
+  GetStats(stats);
+  if( stats[0] == 0 ) return 0;
+  if( axis < 4 ) {
+    int ax[3] = {2,4,7};
+    return stats[ax[axis-1]]/stats[0];
+  } else {
+    // mean error = std dev / sqrt( Neff )
+    double stddev = GetStdDev(axis-10);
+    double neff = GetEffectiveEntries();
+    return ( neff > 0 ? stddev/sqrt(neff) : 0. );
+  }
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetStdDev( int axis ) const
+{
+  if( axis < 1 || (axis > 3 && axis < 11) || axis > 13 ) return 0;
+  double stats[kNstat] = {0};
+  GetStats(stats);
+  if( stats[0] == 0 ) return 0;
+  int ax[3] = {2,4,7};
+  int axm = ax[axis%10 - 1];
+  double x = stats[axm]/stats[0];
+  // for negative stddev (e.g. when having negative weights) - return stdev=0
+  double stddev2 = std::max( stats[axm+1]/stats[0] -x*x, 0.0 );
+  if( axis < 10 ) {
+    return sqrt(stddev2);
+  } else {
+    // formula valid for only gaussian distribution ( 4-th momentum =  3 * sigma^4 )
+    double neff = GetEffectiveEntries();
+    return ( neff > 0 ? sqrt(stddev2/(2*neff) ) : 0. );
+  }
 }
 
 //----------------------------------------------------------------------
 double GmHisto2::GetEffectiveEntries() const
 {
-   // number of effective entries of the histogram,
-   // i.e. the number of unweighted entries a histogram would need to 
-   // have the same statistical power as this histogram with possibly 
-   // weighted entries 
-
-  //  std::cout << theName << "  GmHisto2::GetEffectiveEntries " << theSumW*theSumW/theSumW2 << " " << theSumW<< " " << theSumW2 << std::endl; //GDEB
-   return (theSumW2 ? theSumW*theSumW/theSumW2 : 0.);
+  // number of effective entries of the histogram,
+  // i.e. the number of unweighted entries a histogram would need to
+  // have the same statistical power as this histogram with possibly
+  // weighted entries
+  double stats[kNstat] = {0};
+  GetStats(stats); // s[1] sum of squares of weights, s[0] sum of weights
+  return ( stats[1] ? stats[0]*stats[0]/stats[1] : fabs(stats[0]) );
 }
 
 //----------------------------------------------------------------------
-double GmHisto2::GetMean( int axis ) const
-{ 
-  // return GetMean();
-  if( axis == 1 ) {
-    return ( theSumW ? theSumWX / theSumW : 0. );
-  } else if( axis == 2 ) {
-    return ( theSumW ? theSumWY / theSumW : 0. );
-  }
-  return 0.;
-}
-
-//----------------------------------------------------------------------
-double GmHisto2::GetMeanError( int axis ) const
-{ 
- 
-  double rms = GetRMS(axis);
-  double neff = GetEffectiveEntries();
-  //  std::cout << theName << " GmHisto2::GetMeanError " << rms/sqrt(neff) << " " << rms << " " << neff << std::endl; //GDEB
-  return ( neff > 0 ? rms/sqrt(neff) : 0. ); 
-}
-
-//----------------------------------------------------------------------
-double GmHisto2::GetRMS( int axis ) const
-{ 
-  if( axis == 1 ) { 
-    double sumr = theSumWX/theSumW;
-    return ( theSumW ? sqrt(theSumWX2/theSumW - (sumr*sumr) ) : 0. );
-  } else if( axis == 2 ) {
-    double sumr = theSumWY/theSumW;
-    return ( theSumW ? sqrt(theSumWY2/theSumW - (sumr*sumr) ) : 0. );
-  }
-  return 0.;
-
-}
-
-//----------------------------------------------------------------------
-double GmHisto2::GetRMSError( int axis ) const
+double GmHisto2::Integral() const
 {
-  double rms = GetRMS(axis);
-  double neff = GetEffectiveEntries();
-  return ( neff > 0 ? sqrt(rms*rms/(2*neff) ) : 0. ); 
+  double integral = 0.;
+  for( int binx = 1; binx <= theNBinsX; binx++ ) {
+    for( int biny = 1; biny <= theNBinsY; biny++ ) {
+      integral += RetrieveBinContent(GetBin(binx,biny));
+    }
+  }
+  return integral;
 }
 
-//----------------------------------------------------------------------                                         
+//----------------------------------------------------------------------
+double GmHisto2::GetBinLowEdgeX( int ibin ) const
+{
+  double binwidth = (theUpperEdgeX - theLowerEdgeX) / double(theNBinsX);
+  return theLowerEdgeX + (ibin-1) * binwidth;
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetBinUpEdgeX( int ibin ) const
+{
+  double binwidth = (theUpperEdgeX - theLowerEdgeX) / double(theNBinsX);
+  return theLowerEdgeX + ibin*binwidth;
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetBinLowEdgeY( int ibin ) const
+{
+  double binwidth = (theUpperEdgeY - theLowerEdgeY) / double(theNBinsY);
+  return theLowerEdgeY + (ibin-1) * binwidth;
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetBinUpEdgeY( int ibin ) const
+{
+  double binwidth = (theUpperEdgeY - theLowerEdgeY) / double(theNBinsY);
+  return theLowerEdgeY + ibin*binwidth;
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetBinCenterX( int ibin ) const
+{
+  double binwidth = (theUpperEdgeX - theLowerEdgeX) / double(theNBinsX);
+  return theLowerEdgeX + (ibin-1) * binwidth + 0.5*binwidth;
+}
+
+//----------------------------------------------------------------------
+double GmHisto2::GetBinCenterY( int ibin ) const
+{
+  double binwidth = (theUpperEdgeY - theLowerEdgeY) / double(theNBinsY);
+  return theLowerEdgeY + (ibin-1) * binwidth + 0.5*binwidth;
+}
+
+//----------------------------------------------------------------------
+void GmHisto2::Scale(double fac)
+{
+  // store bin errors when scaling since cannot anymore be computed as sqrt(N)
+  if( GetSumw2N() == 0 ) Sumw2();
+  for( int ii = 0; ii < theNcells; ++ii ) UpdateBinContent(ii, fac * RetrieveBinContent(ii));
+  if( theSumw2.size() ) for( int ii = 0; ii < theNcells; ++ii ) theSumw2[ii] *= (fac * fac); // update errors
+  // update global histograms statistics
+  double stats[kNstat] = {0};
+  GetStats(stats);
+  for( int ii = 0; ii < kNstat; ii++ ) {
+    if( ii == 1 ) stats[ii] = fac*fac*stats[ii];
+    else          stats[ii] = fac*stats[ii];
+  }
+  PutStats(stats);
+}
+
+//----------------------------------------------------------------------
+bool GmHisto2::Add(const GmHisto2* his, double fac)
+{
+  if( !his ) {
+    G4cerr << "Error in <GmHisto2::Add>: Attempt to add a non-existing histogram" << std::endl;
+    return false;
+  }
+  if( his->GetNbinsX() != theNBinsX || his->GetNbinsY() != theNBinsY ) {
+    G4cerr << "Error in <GmHisto2::Add>: Attempt to add histograms with different number of bins" << std::endl;
+    return false;
+  }
+  if( his->GetLowerEdgeX() != theLowerEdgeX || his->GetUpperEdgeX() != theUpperEdgeX
+      || his->GetLowerEdgeY() != theLowerEdgeY || his->GetUpperEdgeY() != theUpperEdgeY ) {
+    G4cerr << "Warning in <GmHisto2::Add>: Attempt to add histograms with different axis limits" << std::endl;
+  }
+
+  //   Create Sumw2 if his has Sumw2 set
+  if( theSumw2.size() == 0 && his->GetSumw2N() != 0 ) Sumw2();
+
+  //   - Add statistics
+  double entries = fabs( GetEntries() + fac * his->GetEntries() );
+
+  // statistics can be preserved only in case of positive coefficients
+  bool resetStats = (fac < 0);
+  double s1[kNstat] = {0};
+  double s2[kNstat] = {0};
+  if( !resetStats ) {
+    GetStats(s1);
+    his->GetStats(s2);
+  }
+
+  double fac2 = fac * fac;
+  for( int bin = 0; bin < theNcells; ++bin ) {
+    AddBinContent(bin, fac * his->RetrieveBinContent(bin));
+    if( theSumw2.size() ) theSumw2[bin] += fac2 * his->GetBinErrorSqUnchecked(bin);
+  }
+
+  if( resetStats )  {
+    ResetStats();
+  } else {
+    for( int ii = 0; ii < kNstat; ii++ ) {
+      if( ii == 1 ) s1[ii] += fac*fac*s2[ii];
+      else          s1[ii] += fac*s2[ii];
+    }
+    PutStats(s1);
+    SetEntries(entries);
+  }
+  return true;
+}
+
+//----------------------------------------------------------------------
+GmHisto2 operator+(const GmHisto2 &h1, const GmHisto2 &h2)
+{
+  GmHisto2 hnew = h1;
+  hnew.Add(&h2,1);
+  return hnew;
+}
+
+//----------------------------------------------------------------------
 void GmHisto2::Reset()
 {
-	theEntries = 0;
-	theBinN.clear();
-	theBinSumW.clear();
-	theBinSumW2.clear();
-
-	theSumW = 0;
-	theSumW2 = 0;
-	theSumWX = 0;
-	theSumWX2 = 0;
-	theSumWY = 0;
-	theSumWY2 = 0;
+  std::fill(theArray.begin(), theArray.end(), 0.);
+  std::fill(theSumw2.begin(), theSumw2.end(), 0.);
+  theTsumw = 0;
+  theTsumw2 = 0;
+  theTsumwx = 0;
+  theTsumwx2 = 0;
+  theTsumwy = 0;
+  theTsumwy2 = 0;
+  theTsumwxy = 0;
+  theEntries = 0;
 }
 
 #endif

@@ -33,8 +33,7 @@ int64_t GmClassifierByLogicalVolume::GetIndexFromStep(const G4Step* aStep)
   G4LogicalVolume* lv = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
   std::map<G4LogicalVolume*,int64_t>::const_iterator ite = theIndexMap.find(lv);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[lv] = index;
+    index = AssignNewIndex( this, &GmClassifierByLogicalVolume::theIndexMap, lv ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }
@@ -54,8 +53,7 @@ int64_t GmClassifierByLogicalVolume::GetIndexFromTrack(const G4Track* aTrack)
   G4LogicalVolume* lv = pv->GetLogicalVolume();
   std::map<G4LogicalVolume*,int64_t>::const_iterator ite = theIndexMap.find(lv);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[lv] = index;
+    index = AssignNewIndex( this, &GmClassifierByLogicalVolume::theIndexMap, lv ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

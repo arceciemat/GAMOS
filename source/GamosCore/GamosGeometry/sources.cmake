@@ -1,89 +1,73 @@
 # - GamosCore_GamosGeometry module build definition
 
-include(UseGamosAtGeant4)
-include(UseROOT)
-
-geant4_add_module(GamosCore_GamosGeometry
+gamos_add_module(GamosCore_GamosGeometry
   PUBLIC_HEADERS
-    GmGeomVerbosity.hh
-    GmModuleRangeModulator.hh
-    GmOpticalPropertiesMgr.hh
-    GmUniformMagField.hh
-    GmSolid.hh
     GmDICOMIntersectVolume.hh
-    GmGeometryUtils.hh
-    GmParallelWorldCreator.hh
-    GmTouchable.hh
-    GmRegionData.hh
-    GmModuleMLC.hh
     GmDetector.hh
-    GmGeometryUseMaterials.hh
     GmDetectorPart.hh
+    GmGeomTextDetectorBuilder.hh
+    GmGeomTextDumperUA.hh
+    GmGeomTextLineProcessor.hh
+    GmGeomUseMateDetectorBuilder.hh
+    GmGeomVerbosity.hh
     GmGeometryFactory.hh
     GmGeometryFromText.hh
-    GmUniformElectricField.hh
-    GmGeomTextLineProcessor.hh
-    GmGeomTextDumperUA.hh
-    GmGeomUseMateDetectorBuilder.hh
-    GmModuleMgr.hh
-    GmRegionCutsMgr.hh
-    GmUniformEMField.hh
-    GmReadPhantomGeometry.hh
-    GmParallelWorld.hh
-    GmGeomTextDetectorBuilder.hh
-    GmModuleJaws.hh
     GmGeometryMessenger.hh
+    GmGeometryUseMaterials.hh
+    GmGeometryUtils.hh
+    GmModuleJaws.hh
+    GmModuleMLC.hh
+    GmModuleMgr.hh
+    GmModuleRangeModulator.hh
+    GmOpticalPropertiesMgr.hh
+    GmParallelWorld.hh
+    GmParallelWorldCreator.hh
+    GmReadPhantomGeometry.hh
+    GmRegionCutsMgr.hh
+    GmRegionData.hh
+    GmSolid.hh
+    GmTouchable.hh
+    GmUniformEMField.hh
+    GmUniformElectricField.hh
+    GmUniformMagField.hh
     GmVModule.hh
   SOURCES
-    GmSolid.cc
-    GmGeomTextLineProcessor.cc
-    GmGeometryUtils.cc
-    GmOpticalPropertiesMgr.cc.old
     GmDICOMIntersectVolume.cc
-    GmModuleMLC.cc.old
-    GmModuleMLC.cc
-    GmVModule.cc
-    GmTouchable.cc
-    GmReadPhantomGeometry.cc
-    GmUniformMagField.cc
-    GmParallelWorldCreator.cc
-    GmOpticalPropertiesMgr.cc
-    plugin.cc
-    GmParallelWorld.cc
     GmDetector.cc
-    GmGeometryFromText.cc
-    GmGeomUseMateDetectorBuilder.cc
-    GmRegionCutsMgr.cc
+    GmGeomTextDetectorBuilder.cc
     GmGeomTextDumperUA.cc
-    GmRegionData.cc
-    GmModuleJaws.cc
-    GmGeometryMessenger.cc
+    GmGeomTextLineProcessor.cc
+    GmGeomUseMateDetectorBuilder.cc
+    GmGeomVerbosity.cc
     GmGeometryFactory.cc
-    GmModuleJaws.cc.new
-    GmUniformEMField.cc
-    GmMaterialList.icc
+    GmGeometryFromText.cc
+    GmGeometryMessenger.cc
+    GmGeometryUseMaterials.cc
+    GmGeometryUtils.cc
+    GmModuleJaws.cc
+    GmModuleMLC.cc
     GmModuleMgr.cc
     GmModuleRangeModulator.cc
-    GmGeomTextDetectorBuilder.cc
+    GmOpticalPropertiesMgr.cc
+    GmParallelWorld.cc
+    GmParallelWorldCreator.cc
+    GmReadPhantomGeometry.cc
+    GmRegionCutsMgr.cc
+    GmRegionData.cc
+    GmSolid.cc
+    GmTouchable.cc
+    GmUniformEMField.cc
     GmUniformElectricField.cc
-    GmGeomVerbosity.cc
-    GmGeometryUseMaterials.cc
+    GmUniformMagField.cc
+    GmVModule.cc
+    plugin.cc
 )
-# - Add path to generated header
-geant4_module_include_directories(GamosCore_GamosGeometry
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
- PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
 
-geant4_module_link_libraries(GamosCore_GamosGeometry
+gamos_module_link_libraries(GamosCore_GamosGeometry
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
     GamosCore_GamosBase_Base
-    GamosCore_GamosUtils
     GamosCore_GamosUserActionMgr
-    GamosCore_GamosData_Distributions
+    GamosCore_GamosUtils
+    lcg_PluginManager
+    lcg_SealBase
 )

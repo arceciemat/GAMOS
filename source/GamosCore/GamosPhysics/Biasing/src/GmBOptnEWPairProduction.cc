@@ -81,7 +81,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
     G4int nSplit = 1;  // no splitting
 #ifndef BEAMZPOS
     if( gammaWeight == 1 && track->GetPosition().z() < theRRZ ) {
-      G4cout << "PAIRPRODUCTION RRZ " <<  track->GetPosition().z() <<  " " << theRRZ << G4endl;//GDEB
+      //G4cout << "PAIRPRODUCTION RRZ " <<  track->GetPosition().z() <<  " " << theRRZ << G4endl;//GDEB
       nSplit = fNSplit; // create fNSplit e-e+ for fat photons
     }
 #else

@@ -5,7 +5,6 @@
 #include "G4UrbanMscModel.hh"
 #include "G4WentzelVIModel.hh"
 #include "G4GoudsmitSaundersonMscModel.hh"
-#include "G4MscStepLimitType.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -45,7 +44,7 @@ void GmPhysicsMultipleScattering::InitialiseProcess(const G4ParticleDefinition*)
   }
   modelName = GmParameterMgr::GetInstance()->GetStringValue("GmPhysicsMultipleScattering:Model:"+theParticleName,modelName);
 
-  G4VMscModel* mscModel;
+  G4VMscModel* mscModel = nullptr;
   if( modelName == "Urban" ) {
     mscModel = new G4UrbanMscModel();
   }else if( modelName == "WentzelVI" ) {

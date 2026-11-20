@@ -7,7 +7,7 @@ GmVerbosity RTVerb;
 RTVerbosity::RTVerbosity()
 {
   RTVerb.SetFilterLevel(2);
-  //  std::cout << RTVerb(3) << " RTVerbosity " << RTVerb.GetFilterLevel() << std::endl;
+  //  G4cout << RTVerb(3) << " RTVerbosity " << RTVerb.GetFilterLevel() << std::endl;
 }
 
 

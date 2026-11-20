@@ -1,5 +1,21 @@
 
 #include "GmParameterMgr.hh"
+#include "G4AutoLock.hh"
+
+namespace {
+  //--- Multithreading: parameters are shared by all threads; the usage bookkeeping is written when reading them
+  G4Mutex parameterUsageMutex = G4MUTEX_INITIALIZER;
+}
+
+//----------------------------------------------------------------------
+void GmParameterMgr::RecordUsage( const G4String& parstr )
+{
+  G4AutoLock l(&parameterUsageMutex);
+  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) {
+    theParametersInScript[parstr] ++;
+  }
+  theParametersInCode.insert(parstr);
+}
 #include "GmParameterMessenger.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -120,10 +136,7 @@ paramType GmParameterMgr::SetParamType( G4bool noNumber, G4int nwords )
 //----------------------------------------------------------------------
 G4double GmParameterMgr::GetNumericValue( const G4String& parstr, const G4double def, G4bool mustExist )
 {
-  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) {
-    theParametersInScript[parstr] ++;
-  }
-  theParametersInCode.insert(parstr);
+  RecordUsage( parstr );
 
   G4bool parExists;
   G4double val = theParametersDouble.GetValue( parstr, parExists );
@@ -160,15 +173,7 @@ G4bool GmParameterMgr::GetBooleanValue( const G4String& parstr, const G4bool def
 //----------------------------------------------------------------------
 G4String GmParameterMgr::GetStringValue( const G4String& parstr, const G4String& def, G4bool mustExist )
 {
-  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) {
-    theParametersInScript[parstr] ++;
-  }
-  for( GmParameterList<G4String>::iterator ites = theParametersString.begin(); ites != theParametersString.end(); ites++ ) {
-    GmParameter<G4String> param = ites->second;
-    //    G4cout << " GmParameterMgr::GetStringValue " << ites->first << G4endl; //GDEB
-  }
-
-  theParametersInCode.insert(parstr);
+  RecordUsage( parstr );
 
   G4bool parExists;
   G4String val = theParametersString.GetValue( parstr, parExists );
@@ -199,12 +204,7 @@ G4String GmParameterMgr::GetStringValue( const G4String& parstr, const G4String&
 //----------------------------------------------------------------------
 std::vector<G4double> GmParameterMgr::GetVNumericValue( const G4String& parstr, const std::vector<G4double> def, G4bool )
 {
-  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) {
-    theParametersInScript[parstr] ++;
-    //    G4cout << " ADD theParametersInScriptV NUM " << parstr << " N=" << theParametersInScript[parstr] << G4endl;//GDEB
-  }
-      
-  theParametersInCode.insert(parstr);
+  RecordUsage( parstr );
 
   /*  std::vector<G4double> def;
   std::vector<G4String> wl = GmGenUtils::GetWordsInString( defs );
@@ -286,11 +286,7 @@ std::vector<G4int> GmParameterMgr::GetVIntegerValue( const G4String& parstr, con
 //----------------------------------------------------------------------
 std::vector<G4String> GmParameterMgr::GetVStringValue( const G4String& parstr, const std::vector<G4String>& def, G4bool )
 {
-  if( theParametersInScript.find( parstr ) != theParametersInScript.end() ) {
-    theParametersInScript[parstr] ++;
-    //    G4cout << " ADD theParametersInScript VSTRING " << parstr << " N=" << theParametersInScript[parstr] << G4endl;//GDEB
-  }
-  theParametersInCode.insert(parstr);
+  RecordUsage( parstr );
 
   G4bool parExists;
   std::vector<G4String> val = theParametersVString.GetValue( parstr, parExists );

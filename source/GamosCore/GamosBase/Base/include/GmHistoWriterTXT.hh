@@ -41,7 +41,6 @@ private:
   private:
   std::ofstream theFile;
 
-  static G4bool bHistoTXTErrors;
 
 };
 

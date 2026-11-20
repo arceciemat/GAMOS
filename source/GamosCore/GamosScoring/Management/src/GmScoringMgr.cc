@@ -22,7 +22,7 @@
 #include "GmPrimitiveScorerFactory.hh"
 #endif
 
-GmScoringMgr* GmScoringMgr::theInstance = 0;
+G4ThreadLocal GmScoringMgr* GmScoringMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 GmScoringMgr::GmScoringMgr()

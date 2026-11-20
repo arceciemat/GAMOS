@@ -619,7 +619,7 @@ G4double GmHitList::GetTriggerTime( G4double hitTime, unsigned long long detUnit
 	//      G4cout << " HITTRIGID " << hitTrigID << " DetUnitID " <<  (*iteh)->GetDetUnitID() << G4endl;
       }
     }
-    unsigned long long hitTrigID = (*iteh)->GetDetUnitID() / (unsigned long long)(pow(double(theNShift),theNTrigAncestors));
+    unsigned long long hitTrigID = detUnitID / (unsigned long long)(pow(double(theNShift),theNTrigAncestors));
 
     return theCurrentIntervalStartTimes[hitTrigID] - theMeasuringTime;
   }

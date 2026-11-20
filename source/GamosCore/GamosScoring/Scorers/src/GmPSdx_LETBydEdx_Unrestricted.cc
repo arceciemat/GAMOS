@@ -24,7 +24,7 @@ G4bool GmPSdx_LETBydEdx_Unrestricted::ProcessHits(G4Step* aStep,G4TouchableHisto
   G4double edep = aStep->GetTotalEnergyDeposit();
   if ( edep == 0. ) return FALSE;
 
-  G4ParticleDefinition* particleDef = aStep->GetTrack()->GetDefinition();
+  //  G4ParticleDefinition* particleDef = aStep->GetTrack()->GetDefinition();
   
   G4StepPoint* stepPoint = aStep->GetPreStepPoint();
   G4ProductionCuts* prodCuts = stepPoint->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetProductionCuts();

@@ -27,6 +27,7 @@
 #include "iaea_header.hh"
 #include "iaea_record.hh"
 #include "iaea_utilities.hh"
+#include "RTIAEASharedReader.hh"
 #include "RTVerbosity.hh"
 #include "RTPhaseSpaceHistos.hh"
 #include "GamosCore/GamosGenerator/include/RTPlanSource.hh"
@@ -267,7 +268,11 @@ RTGeneratorPhaseSpaceRTPlan::~RTGeneratorPhaseSpaceRTPlan()
 //------------------------------------------------------------------------
 void RTGeneratorPhaseSpaceRTPlan::GeneratePrimaries(G4Event* evt)
 {
-  if( bMaxNReuseAutomatic && evt->GetEventID() == 0 ) {
+  //--- Multithreading: first event of each run in this thread (in sequential: event 0)
+  static G4ThreadLocal G4int autoReuseRunID = -1;
+  G4int currentRunID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  if( bMaxNReuseAutomatic && currentRunID != autoReuseRunID ) {
+    autoReuseRunID = currentRunID;
     //set MaxNReuse, MaxNRecycle automatically for each run
     theMaxNReuse = G4int( (G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed()-1) / theNEventsInFile ) + 1;
     theMaxNRecycle = 1; 
@@ -279,13 +284,7 @@ void RTGeneratorPhaseSpaceRTPlan::GeneratePrimaries(G4Event* evt)
     //    G4Exception("RTGeneratorPhaseSpaceRTPlan::GeneratePrimaries: more events than those on file = " + GmGenUtils::itoa(maxNEvents) );
     }*/
 
-  p_iaea_read->p_file = p_rfile;
-  //skip first particles
-  if( evt->GetEventID() == 0 ) {
-    for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
-      p_iaea_read->read_particle();
-    }
-  }
+  //--- skipping of first particles is done in RTIAEASharedReader (at start of each run)
   if( !bEventSkipInitialised ) {
     evt->SetEventID( theNEventsSkip* GmNumberOfEvent::GetNumberOfEventFactor() );//for RTPlan
 #ifndef GAMOS_NO_VERBOSE
@@ -300,34 +299,18 @@ void RTGeneratorPhaseSpaceRTPlan::GeneratePrimaries(G4Event* evt)
     //    do {
     G4ThreeVector pos;
     do {
-      int fileEnd = p_iaea_read->read_particle();
+      //--- Multithreading: the file is read by all threads with a shared position (each particle read once)
+      RTIAEASharedReader::ReadResult readResult = RTIAEASharedReader::ReadParticle( p_iaea_read, p_rfile, theFileName, G4int(theNEventsSkip), theMaxNRecycle, theNRecycled, "RTGeneratorPhaseSpaceRTPlan" );
       pos = G4ThreeVector(p_iaea_read->x,p_iaea_read->y,p_iaea_read->z) * CLHEP::cm;
-;
-//-      G4cout << " CHECK POSX " << theMinPosX << " <? " << fabs(pos.x()) << " <? " << theMaxPosX << G4endl; //GDEB
       theNParticlesRead ++;
       theExtraInfoMgr->FillExtraInfo( p_iaea_read );
-      //      if( theBase.size() != 0 ) bFilter = theBase[0]->AcceptStep((G4Step*)0);
-      if( fileEnd == FAIL) {
-	if( theNRecycled < theMaxNRecycle ) {
-	  fclose(p_rfile);
-	  p_rfile = open_file(const_cast<char*>(theFileName.c_str()),(char *)(".IAEAphsp"),(char *)("rb"));
-#ifndef GAMOS_NO_VERBOSE
-	  if( RTVerb(infoVerb) ) G4cout << "RTGeneratorPhaseSpaceRTPlan::GeneratePrimaries  RECYCLING phase space file " << theNRecycled << G4endl;
-#endif
-	  theNRecycled++; 
-	  //skip first particles
-	  for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
-	    p_iaea_read->read_particle(); // use fseek
-	  }
-	} else{
-	  fclose(p_rfile);
-	  G4RunManager::GetRunManager()->AbortRun();
-	  G4Exception("RTGeneratorPhaseSpaceRTPlan::GeneratePrimaries",
-		      "Too many events demanded",
-		      JustWarning,
-		      G4String("FAILED reading event  " + GmGenUtils::itoa(evt->GetEventID())).c_str() );
-	  return;
-	}
+      if( readResult == RTIAEASharedReader::RTIAEA_EXHAUSTED ) {
+	G4RunManager::GetRunManager()->AbortRun();
+	G4Exception("RTGeneratorPhaseSpaceRTPlan::GeneratePrimaries",
+		    "Too many events demanded",
+		    JustWarning,
+		    G4String("FAILED reading event  " + GmGenUtils::itoa(evt->GetEventID())).c_str() );
+	return;
       }
       //    }while( !bFilter );
     }while( fabs(pos.x()) < theMinPosX || fabs(pos.x()) > theMaxPosX );

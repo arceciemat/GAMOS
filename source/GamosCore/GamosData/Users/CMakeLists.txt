@@ -1,13 +1,2 @@
-#------------------------------------------------------------------------------
-# Module : Users
-# Package: GamosCore_GamosData_Users
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include(Geant4MacroLibraryTargets)
-if(GEANT4_BUILD_GRANULAR_LIBS)
-    GEANT4_GRANULAR_LIBRARY_TARGET(COMPONENTS sources.cmake)
-else()
-   GEANT4_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
-endif()
+# - GamosCore_GamosData_Users module build (source/GamosCore/GamosData/Users)
+include(sources.cmake)

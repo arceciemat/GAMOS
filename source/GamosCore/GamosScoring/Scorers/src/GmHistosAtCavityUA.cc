@@ -4,6 +4,8 @@
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
 
 #include "G4Run.hh"
+#include "G4Threading.hh"
+#include "G4AutoLock.hh"
 #include "G4Event.hh"
 #include "G4VProcess.hh"
 #include "G4Gamma.hh"
@@ -40,6 +42,8 @@ E2: particle from second or later interaction in the chamber
 //----------------------------------------------------------------------
 GmHistosAtCavityUA::GmHistosAtCavityUA()
 {
+  //--- Multithreading: worker counters are added to the master instance, which prints them
+  SetRunOnMaster(true);
   //-  theAnaMgr = GmAnalysisMgr::GetInstance("gammaSD") ;
   G4String sepa = GmParameterMgr::GetInstance()->GetStringValue("Histos:Separator",":");
 
@@ -242,19 +246,19 @@ void GmHistosAtCavityUA::EndOfEventAction( const G4Event* )
   if( theEdepo1 != 0. ) {
     theCountersE1[pow(10,iord+1)*8+theClass]++; 
 #ifndef GAMOS_NO_VERBOSE
-	if( ScoringVerb(testVerb) ) G4cout << "  GmHistosAtCavityUA::EndOfEventAction( " << pow(10,iord+1)*8+theClass << " E1=  " << theEdepo1 << G4endl; //GDEB 
+	if( ScoringVerb(testVerb) ) G4cout << "  GmHistosAtCavityUA::EndOfEventAction( " << pow(10,iord+1)*8+theClass << " E1=  " << theEdepo1 << G4endl;
 #endif
   }
   if( theEdepo2 != 0. ) {
     theCountersE2[pow(10,iord+1)*9+theClass]++;
 #ifndef GAMOS_NO_VERBOSE
-	if( ScoringVerb(testVerb) ) G4cout << "  GmHistosAtCavityUA::EndOfEventAction( " << pow(10,iord+1)*9+theClass << " E2=  " << theEdepo1 << G4endl; //GDEB 
+	if( ScoringVerb(testVerb) ) G4cout << "  GmHistosAtCavityUA::EndOfEventAction( " << pow(10,iord+1)*9+theClass << " E2=  " << theEdepo1 << G4endl;
 #endif
   }
   if( theEdepo1 != 0. && theEdepo2 != 0. ) {
     theCountersE12[pow(10,iord+1)*89+theClass]++;
 #ifndef GAMOS_NO_VERBOSE
-	if( ScoringVerb(testVerb) ) G4cout << "  GmHistosAtCavityUA::EndOfEventAction( " << pow(10,iord+1)*89+theClass << " E12= " << theEdepo12 << G4endl; //GDEB 
+	if( ScoringVerb(testVerb) ) G4cout << "  GmHistosAtCavityUA::EndOfEventAction( " << pow(10,iord+1)*89+theClass << " E12= " << theEdepo12 << G4endl;
 #endif
   }
   
@@ -263,6 +267,18 @@ void GmHistosAtCavityUA::EndOfEventAction( const G4Event* )
 //----------------------------------------------------------------------
 void GmHistosAtCavityUA::EndOfRunAction( const G4Run* )
 {
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    GmHistosAtCavityUA* master = dynamic_cast<GmHistosAtCavityUA*>(GmUserAction::GetMasterUserAction(GetName()));
+    if( master ) {
+      G4AutoLock l(&GmUserAction::GetMergeMutex());
+      for( auto ite = theCounters.begin(); ite != theCounters.end(); ite++ ) master->theCounters[ite->first] += ite->second;
+      for( auto ite = theCountersE1.begin(); ite != theCountersE1.end(); ite++ ) master->theCountersE1[ite->first] += ite->second;
+      for( auto ite = theCountersE2.begin(); ite != theCountersE2.end(); ite++ ) master->theCountersE2[ite->first] += ite->second;
+      for( auto ite = theCountersE12.begin(); ite != theCountersE12.end(); ite++ ) master->theCountersE12[ite->first] += ite->second;
+      theCounters.clear(); theCountersE1.clear(); theCountersE2.clear(); theCountersE12.clear();
+    }
+    return;
+  }
   std::map<size_t,G4String> theClassNames;
   theClassNames[1] = "CH_EXN";
   theClassNames[2] = "CH_EXY";

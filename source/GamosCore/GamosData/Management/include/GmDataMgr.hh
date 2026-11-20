@@ -20,7 +20,7 @@ public:
   GmVData* CreateData( G4String dataName );
 
 private:
-  static GmDataMgr* theInstance;
+  static G4ThreadLocal GmDataMgr* theInstance;
 
   G4bool IsSeparator( const G4String word );
   std::string::size_type GetNextSeparator( G4int iSeparator, G4String dataName );

@@ -1,3 +1,4 @@
+#include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GmChangeEnergies.hh"
 
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
@@ -16,10 +17,10 @@ void GmChangeEnergies::GetEnergyParameters(G4String name)
 {
   GmParameterMgr* parMgr = GmParameterMgr::GetInstance();
 
-  theMinE = parMgr->GetNumericValue(name+":minE",1.E-12*CLHEP::MeV);
-  theMaxE = parMgr->GetNumericValue(name+":maxE",1.E+2*CLHEP::MeV);
-  theNStepsE = (unsigned int)(parMgr->GetNumericValue(name+":nStepsE",15));
-  bLogE = G4bool(parMgr->GetNumericValue(name+":logE",1));
+  theMinE = parMgr->GetNumericValue(name+":MinE",1.E-12*CLHEP::MeV);
+  theMaxE = parMgr->GetNumericValue(name+":MaxE",1.E+2*CLHEP::MeV);
+  theNStepsE = (unsigned int)(parMgr->GetNumericValue(name+":NStepsE",15));
+  bLogE = G4bool(parMgr->GetNumericValue(name+":LogE",1));
 
   theEnergyFileName = parMgr->GetStringValue(name+":EnergiesFileName","");
   if( theEnergyFileName == "" ) {
@@ -37,7 +38,7 @@ void GmChangeEnergies::BuildEnergies()
 {
 
   if( bEnergyFromFile ) {
-    G4tgrFileIn fin = G4tgrFileIn::GetInstance(theEnergyFileName);
+    GmFileIn& fin = GmFileIn::GetInstance(theEnergyFileName, true); // thread local (G4tgrFileIn instances are shared by all threads)
     std::vector<G4String> wl;
     for(G4int ii = 0; ;ii++){
       if( !fin.GetWordsInLine(wl) ) break;

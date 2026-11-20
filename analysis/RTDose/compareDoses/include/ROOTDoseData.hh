@@ -1,3 +1,4 @@
+#ifndef GAMOS_NO_ROOT 
 #ifndef ROOTDoseData__HH
 #define ROOTDoseData__HH
 #include "DoseData.hh"
@@ -13,4 +14,5 @@ public:
 private:
 };
 
+#endif
 #endif

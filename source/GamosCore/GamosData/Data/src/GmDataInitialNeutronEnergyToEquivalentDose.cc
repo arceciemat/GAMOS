@@ -13,9 +13,9 @@ GmDataInitialNeutronEnergyToEquivalentDose::GmDataInitialNeutronEnergyToEquivale
   theExcludedTypes.insert(DTTrack);
   theExcludedTypes.insert(DTSeco);
   theExcludedTypes.insert(DTEvent);
-  theFlux2Dose = ReadEnergyBinsForNeutrons();
-
   SetEquivDoseType("GmDataInitialNeutronEnergyToEquivalentDose");
+
+  theFlux2Dose = ReadEnergyBinsForNeutrons();
 
 }
 

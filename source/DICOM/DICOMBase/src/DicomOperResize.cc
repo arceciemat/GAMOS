@@ -47,8 +47,8 @@ void DicomOperResize::Operate( DicomVImage* image )
   G4bool bChangeNZ = newNoVoxelsZ == image->GetNoVoxelsZ();
   //----- DO NOT INTERPOLATE: MOVE MIN/MAX TO VOXEL EDGES
   //  G4cout << " BINTERPOLATE " << bInterpolate << "=" << paramMgr->GetNumericValue("bInterpolate",1) << G4endl; //GDEB
-  bInterpolate = true; //GDEB
-  G4cout << " BINTERPOLATE " << bInterpolate << G4endl; //GDEB
+  bInterpolate = true;
+  //G4cout << " BINTERPOLATE " << bInterpolate << G4endl; //GDEB
   if( !bInterpolate ) {
     if( bChangeNX ) {
       G4cout << bChangeNX << " newNoVoxelsX " << newNoVoxelsX << "==" << image->GetNoVoxelsX() << G4endl;
@@ -185,7 +185,7 @@ void DicomOperResize::Operate( DicomVImage* image, G4int newNoVoxelsX, G4double 
   G4double PRECISION = std::min(1e-5,2*image->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
   PRECISION *= 1.2;
   //-G4double PRECISION = 2*image->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ));
-  G4cout << " 2PRECISION " << PRECISION << " " << image->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
+  //G4cout << " 2PRECISION " << PRECISION << " " << image->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
   G4int newNoVoxelsXY = newNoVoxelsX*newNoVoxelsY;
   //----- Extract the old image data
   size_t oldNVoxX = image->GetNoVoxelsX();
@@ -466,7 +466,7 @@ void DicomOperResize::OperateStr( DicomVImageStr* imageStr )
   G4bool bChangeNY = newNoVoxelsY == imageStr->GetNoVoxelsY();
   G4bool bChangeNZ = newNoVoxelsZ == imageStr->GetNoVoxelsZ();
   //----- DO NOT INTERPOLATE: MOVE MIN/MAX TO VOXEL EDGES
-  G4cout << " BINTERPOLATE= " << bInterpolate << G4endl; //GDEB
+  //G4cout << " BINTERPOLATE= " << bInterpolate << G4endl; //GDEB
   if( !bInterpolate ) {
     if( bChangeNX ) {
       G4Exception("DicomOperResize::Operate",
@@ -599,7 +599,7 @@ void DicomOperResize::OperateStr( DicomVImageStr* imageStr, G4int newNoVoxelsX, 
   //  G4cout << imageStr <<" 2DicomOperResize::OperateStr( " << imageStr->GetModalityStr() << G4endl; //GDEB
   G4double PRECISION = std::min(1e-5,2*imageStr->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ)));
   //- G4double PRECISION = 2*imageStr->GetPrecision()*std::min(newNoVoxelsX,std::min(newNoVoxelsY,newNoVoxelsZ));
-  G4cout << " 1PRECISION " << PRECISION << " " << imageStr->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
+  //G4cout << " 1PRECISION " << PRECISION << " " << imageStr->GetPrecision() << " " << newNoVoxelsX << " " << newNoVoxelsY << " " << newNoVoxelsZ << G4endl; //GDEB
   G4int newNoVoxelsXY = newNoVoxelsX*newNoVoxelsY;
   //----- Extract the old imageStr data
   size_t oldNVoxX = imageStr->GetNoVoxelsX();

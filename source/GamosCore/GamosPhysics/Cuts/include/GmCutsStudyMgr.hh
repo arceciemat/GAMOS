@@ -45,7 +45,7 @@ private:
   void CleanTrackInfos();
 
 private:
-  static GmCutsStudyMgr* theInstance;
+  static G4ThreadLocal GmCutsStudyMgr* theInstance;
   std::multimap<G4Region*,GmCSTrackInfo*> theTrackInfos;
   GmVCSFilter* theFilter;
 };

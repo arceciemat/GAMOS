@@ -21,7 +21,7 @@ void ReadScoresMCNP( G4String fileName )
 //-------------------------------------------------------------------
 void ReadScoresText( G4String fileName ) 
 {
-G4cout << " ReadScoresText " << fileName << G4endl; //GDEB 
+//G4cout << " ReadScoresText " << fileName << G4endl; //GDEB 
   TextFileData* fileData = new TextFileData(fileName);
   theFileData.push_back( fileData ); 
 
@@ -37,7 +37,7 @@ void ReadScores( G4String fileName, G4String fileType )
     ReadScoresMCNP( fileName );
   } else if( fileType == "text" ||
  	 fileType == "TEXT" ) {
-G4cout << " TFN " << fileName << G4endl; //GDEB
+//G4cout << " TFN " << fileName << G4endl; //GDEB
     ReadScoresText( fileName );
   } else {
     G4Exception("ReadScores",

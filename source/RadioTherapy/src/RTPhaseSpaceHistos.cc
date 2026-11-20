@@ -80,7 +80,7 @@ void RTPhaseSpaceHistos::DefineHistoLimits()
 //---------------------------------------------------------------------
 void RTPhaseSpaceHistos::BookHistos(G4String partName, G4int index)
 {
-  G4cout << " RTPhaseSpaceHistos::BookHistos " << partName << " " << index << G4endl; //GDEB
+  //G4cout << " RTPhaseSpaceHistos::BookHistos " << partName << " " << index << G4endl; //GDEB
   G4int hid = theParticleHistoIDs.size();
   theParticleHistoIDs[partName] = hid;
 

@@ -62,7 +62,7 @@ void GmModuleMLC::BuildObjects()
   if( GeomVerb(debugVerb) ) G4cout << " GmModuleMLC::BuildObjects " << PrintWVal("LONGHDIM") << G4endl;
 #endif  
   
-  G4double TIP_RADIUS;
+  G4double TIP_RADIUS = 0.;
   //  SetWord("TIP_CIRCLE_Z",-1);
   G4double TIP_CIRCLE_Z = 0.;
   if( theWords["LEAFTIPTYPE"] == "ROUND" 
@@ -689,8 +689,8 @@ void GmModuleMLC::BuildObjects()
 	  
 	G4double angleI = (180.*CLHEP::deg-angleN)/2.; // angle of isosceles triangle formed by rotation origin, border point at Y=0,Z=RADIUS if no rotation and border point after rotating N
 	G4double lenI = 2*RADIUS*sin(angleN/2.);
-	G4double borderT;
-	G4double borderZ;
+	G4double borderT = 0.;
+	G4double borderZ = 0.;
 	if( theWords["LEAFTIPTYPE"] == "STRAIGHT" ) {
 	  borderT = lenI*sin(angleI);
 	  borderZ = Z_TOP + lenI*cos(angleI);

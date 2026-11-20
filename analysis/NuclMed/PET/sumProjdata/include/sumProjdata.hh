@@ -1,19 +1,19 @@
-using namespace std;  // if not commented "cout" instead of  "std::cout" etc...
+using namespace std;  // if not commented "cout" instead of  "G4cout" etc...
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <iostream>
+#include "G4ios.hh"
 #include <fstream>
 #include <vector>
 
-#include "GamosCore/GamosUserActionMgr/include/GmUserRunAction.hh"
 //#include "GamosCore/GamosBase/include/GmAnalysisMgr.hh"
 
 
 typedef unsigned short SINO_TYPE;  //!!TO DO: read from .hv/.hs !!
 
-unsigned long int read_data(const char* theName, SINO_TYPE* theSino);
+unsigned long int read_data(const char* theName, SINO_TYPE* theSino, unsigned long int maxElements);
 void write_sino3D(SINO_TYPE* sino);
 
 // Global variables:

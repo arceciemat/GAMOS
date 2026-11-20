@@ -1,5 +1,4 @@
 #include "globals.hh"
-#include <fstream>
 #include "RadioTherapy/include/iaea_header.hh"
 #include "RadioTherapy/include/iaea_record.hh"
 #include "RadioTherapy/include/RTVerbosity.hh"

@@ -5,8 +5,6 @@
 #include "GamosCore/GamosBase/Base/include/GmHistoWriterCSV.hh"
 #include "TFile.h"
 #include "TKey.h"
-#include "TH1F.h"
-#include "TH2F.h"
 
 //using namespace std;
 
@@ -38,7 +36,7 @@ int main( int argc, char **argv )
     } else if( dynamic_cast<TH2F*>(obj) ) {
       histo2 = dynamic_cast<TH2F*>(obj);
       theHistos2.push_back(histo2);
-      G4cout << " root2csv CreateHisto2D " << histo2->GetName() << G4endl; //GDEB
+      //G4cout << " root2csv CreateHisto2D " << histo2->GetName() << G4endl; //GDEB
     }
   }
 
@@ -50,7 +48,7 @@ int main( int argc, char **argv )
   }
   for( size_t ii = 0; ii < theHistos2.size(); ii++ ) {
     hwcsv->SaveHisto2D("2D",theHistos2[ii]);
-    G4cout << " root2csv SaveHisto2D " << theHistos2[ii]->GetName() << G4endl; //GDEB
+    //G4cout << " root2csv SaveHisto2D " << theHistos2[ii]->GetName() << G4endl; //GDEB
   }
   
 }

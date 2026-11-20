@@ -841,7 +841,7 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
   G4double limitingDeviceAngle = bsdata.LimitingDeviceAngle; //??*CLHEP::deg;
   if( theAcceleratorPV && limitingDeviceAngle != 0. ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( GenerVerb(-debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator limitingDeviceAngle " << limitingDeviceAngle/CLHEP::deg << G4endl;
+    if( GenerVerb(debugVerb) ) G4cout << "RTVPlanSource::MoveAccelerator limitingDeviceAngle " << limitingDeviceAngle/CLHEP::deg << G4endl;
 #endif
     G4ThreeVector accelAxis(0.,0.,1.);
     G4RotationMatrix* accelRM = theAcceleratorPV->GetRotation();
@@ -1370,14 +1370,14 @@ void RTVPlanSource::ReadCorrectPosDirExpMCProfAir1D(G4String energyNominal)
     G4double dataExp2 = ExpHistoX->GetBinContent(ibinExp2);
     //    G4cout << xval << " ibinExp12 " << ibinExp1 << " " << ibinExp2 << " dataExp12 " << dataExp1 << " " << dataExp2 << G4endl; //GDEB
     G4double dataExp = dataExp1 + (dataExp2-dataExp1)/Expbinw*(xval-(ExpXmin+(ibinExp1-1)*Expbinw)); 
-    G4cout << energyNominal << " " << ii <<" " << xval << " ReadCorrectPosDirExpMCProfAir1D " << ibinExp1 << " dataExp= "<< dataExp << " = " << dataExp1 <<"+" << (dataExp2-dataExp1)/Expbinw<<"*("<<xval<<"-"<<(ExpXmin+(ibinExp1-1)*Expbinw) << G4endl; //GDEB
+    //G4cout << energyNominal << " " << ii <<" " << xval << " ReadCorrectPosDirExpMCProfAir1D " << ibinExp1 << " dataExp= "<< dataExp << " = " << dataExp1 <<"+" << (dataExp2-dataExp1)/Expbinw<<"*("<<xval<<"-"<<(ExpXmin+(ibinExp1-1)*Expbinw) << G4endl; //GDEB
     G4double data = 0.;
     if ( dataMC != 0 ) {
       data = dataExp/dataMC;
     }
     if( abs(posX) < 5. ) data *= 1.1;
     dataVec.push_back(data);
-    G4cout << ii << " " << xval << " ReadCorrectPosDirExpMCProfAir1D CORR_FACTOR X " << data << " : dataExp " << dataExp << " dataMC " << dataMC << G4endl; //GDEB
+    //G4cout << ii << " " << xval << " ReadCorrectPosDirExpMCProfAir1D CORR_FACTOR X " << data << " : dataExp " << dataExp << " dataMC " << dataMC << G4endl; //GDEB
   
   }
   
@@ -1415,16 +1415,16 @@ void RTVPlanSource::ReadCorrectPosDirExpMCProfAir1D(G4String energyNominal)
     G4int ibinExp2 = ibinExp1+1;
     G4double dataExp1 = ExpHistoY->GetBinContent(ibinExp1);
     G4double dataExp2 = ExpHistoY->GetBinContent(ibinExp2);
-    G4cout << yval << " ibinExp12 " << ibinExp1 << " " << ibinExp2 << " dataExp12 " << dataExp1 << " " << dataExp2 << G4endl; //GDEB
+    //G4cout << yval << " ibinExp12 " << ibinExp1 << " " << ibinExp2 << " dataExp12 " << dataExp1 << " " << dataExp2 << G4endl; //GDEB
     G4double dataExp = dataExp1 + (dataExp2-dataExp1)/Expbinw*(yval-(ExpYmin+(ibinExp1-1)*Expbinw));
-    G4cout << energyNominal << " " << ii << " ReadCorrectPosDirExpMCProfAir1D " << ibinExp1 << " dataExp= "<< dataExp << " = " << dataExp1 <<"+" << (dataExp2-dataExp1)/Expbinw<<"*("<<yval<<"-"<<(ExpYmin+(ibinExp1-1)*Expbinw) << G4endl; //GDEB
+    //G4cout << energyNominal << " " << ii << " ReadCorrectPosDirExpMCProfAir1D " << ibinExp1 << " dataExp= "<< dataExp << " = " << dataExp1 <<"+" << (dataExp2-dataExp1)/Expbinw<<"*("<<yval<<"-"<<(ExpYmin+(ibinExp1-1)*Expbinw) << G4endl; //GDEB
     G4double data = 0.;
     if ( dataMC != 0 ) {
       data = dataExp/dataMC;
     }
     if( abs(posY) < 5. ) data *= 1.1;
     dataVec.push_back(data);
-    G4cout << ii << " " << yval << " ReadCorrectPosDirExpMCProfAir1D CORR_FACTOR Y " << data << " : dataExp " << dataExp << " dataMC " << dataMC << G4endl; //GDEB
+    //G4cout << ii << " " << yval << " ReadCorrectPosDirExpMCProfAir1D CORR_FACTOR Y " << data << " : dataExp " << dataExp << " dataMC " << dataMC << G4endl; //GDEB
   }
 
   GmPhysicsLinearVector* distExpMCY = new GmPhysicsLinearVector(MCYmin,MCYmax,MCNbin,false);

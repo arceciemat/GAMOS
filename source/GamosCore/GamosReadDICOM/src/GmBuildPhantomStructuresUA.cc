@@ -1,5 +1,6 @@
 #include "G4Run.hh"
 #include "G4Event.hh"
+#include "G4Threading.hh"
 
 #include "GmReadDICOMVerbosity.hh"
 #include "GmBuildPhantomStructuresUA.hh"
@@ -21,11 +22,14 @@
 //-----------------------------------------------------------------------
 GmBuildPhantomStructuresUA::GmBuildPhantomStructuresUA()
 {
+  //--- Multithreading: the geometry is shared, the file is written once by the master
+  SetRunOnMaster(true);
 }
 
 //-----------------------------------------------------------------------
 void GmBuildPhantomStructuresUA::BeginOfRunAction( const G4Run* )
 {
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) return;
   //--- Read structure file, with contours at each Z plane
   std::vector<G4String> fileNames;
   fileNames = GmParameterMgr::GetInstance()->GetVStringValue(theName+":FileNames",fileNames);

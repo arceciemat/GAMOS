@@ -8,6 +8,7 @@
 #define GmUserAction_h 1
 
 #include "globals.hh"
+#include "G4Threading.hh"
 class G4Run;
 class G4Event;
 class G4Track;
@@ -34,6 +35,20 @@ class GmUserAction
   const G4String GetName() const{ 
     return theName; 
   }
+  //--- Multithreading: if true, the run action methods of the instance created on the master thread are called (e.g. to print merged results). Instances on worker threads are always called
+  G4bool IsRunOnMaster() const {
+    return bRunOnMaster;
+  }
+  void SetRunOnMaster( G4bool brm ) {
+    bRunOnMaster = brm;
+  }
+
+  //--- Multithreading: instance created on the master thread with the same name (registered by GmRunManager::SelectUserAction); 0 if none
+  static GmUserAction* GetMasterUserAction( const G4String& name );
+  static void RegisterMasterUserAction( GmUserAction* ua );
+  // Mutex to be used by user actions that merge their data into the master instance at worker end of run
+  static G4Mutex& GetMergeMutex();
+
   bool IsEnabled() const{
     return isEnabled; 
   }
@@ -87,6 +102,7 @@ public:
 protected:
   G4String theName;
   G4bool isEnabled;
+  G4bool bRunOnMaster;
 
   G4bool bApplyFiltersToStepping;
   G4bool bApplyFiltersToPreTracking;

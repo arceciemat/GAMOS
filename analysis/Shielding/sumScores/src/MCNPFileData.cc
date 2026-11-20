@@ -3,7 +3,6 @@
 #include "MCNPTallierF5Data.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
-#include "G4tgrUtils.hh"
 #include <vector>
 
 //----------------------------------------------------------

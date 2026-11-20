@@ -30,6 +30,13 @@ public:
   EColor GetColor( int icol );
 #endif
 
+  // ROOT color index (kRed, kBlue+2, ...) as integer, available also without ROOT
+  G4int GetColorIndex() const {
+    return theColorIndex;
+  }
+  // same mapping as GetColor, but without ROOT types
+  static G4int GetColorIndexFromNumber( int icol );
+
   G4int GetWidth() const {
     return theWidth;
   }
@@ -44,6 +51,7 @@ protected:
 #ifndef GAMOS_NO_ROOT
   EColor theTColor;
 #endif
+  G4int theColorIndex;
   G4int theWidth;
   G4double theTextSize;
 };

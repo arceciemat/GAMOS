@@ -1,3 +1,4 @@
+#ifndef GAMOS_NO_ROOT 
 #include "ROOTDoserData.hh"
 #include "ROOTDoseData.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
@@ -88,3 +89,4 @@ G4double ROOTDoserData::GetIndexVal( G4String doseName, G4bool bLogX )
 
   return indexVal;
 }
+#endif

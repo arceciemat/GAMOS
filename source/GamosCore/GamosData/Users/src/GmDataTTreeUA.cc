@@ -1,5 +1,6 @@
 #ifndef GAMOS_NO_ROOT
 #include "GmDataTTreeUA.hh"
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 
 GmDataTTreeUA::GmDataTTreeUA()
 {
@@ -388,7 +389,8 @@ bool GmDataTTreeUA::CreateTree(const G4String TreeName)
 {
   if(!this->theTree) {
     if( DataVerb(infoVerb) ) G4cout<<"*** GmDataTTreeUA::CreateTree ***"<<G4endl;
-    G4String FileName = Form("%s_tree_%d.root",this->theTreeFileName.c_str(),theTTreeStartingIndex);
+    //--- Multithreading: each worker thread writes its own file NAME_tree_INDEX.thN.root (same TTree name, to be merged with hadd)
+    G4String FileName = GmMTMergeMgr::GetThreadFileName(Form("%s_tree_%d.root",this->theTreeFileName.c_str(),theTTreeStartingIndex));
     this->theTreeFile = new TFile(FileName.c_str(),"RECREATE");
     this->theTree = new TTree(TreeName.c_str(),TreeName.c_str());
     this->theTree->SetDirectory(this->theTreeFile);

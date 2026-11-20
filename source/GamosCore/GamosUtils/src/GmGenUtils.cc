@@ -2,6 +2,19 @@
 
 #include "G4tgrFileIn.hh"
 #include "G4tgrUtils.hh"
+#include "G4AutoLock.hh"
+
+namespace {
+  //--- Multithreading: G4tgrEvaluator (CLHEP Evaluator) is a shared singleton, not thread safe
+  G4RecursiveMutex tgrEvaluatorMutex = G4MUTEX_INITIALIZER;
+}
+
+//------------------------------------------------------------------------
+G4double GmGenUtils::GetDoubleTgr( const G4String& str, G4double unitval )
+{
+  G4RecursiveAutoLock l(&tgrEvaluatorMutex);
+  return G4tgrUtils::GetDouble(str, unitval);
+}
 #include "G4UnitsTable.hh"
 
 #include <fstream>
@@ -156,7 +169,7 @@ G4int GmGenUtils::GetInteger( const G4String& str )
     strnew = strnew.substr(0,strnew.length()-1);
   }
 #endif
-  return G4tgrUtils::GetInt(strnew);
+  { G4RecursiveAutoLock l(&tgrEvaluatorMutex); return G4tgrUtils::GetInt(strnew); }
 } 
 
 
@@ -190,10 +203,10 @@ G4double GmGenUtils::GetValue( const G4String& str )
     strnew = GmGenUtils::CorrectByTime( strnew, "week", "604800.E9" ); 
     strnew = GmGenUtils::CorrectByTime( strnew, "month", "2592000.E9" ); 
     strnew = GmGenUtils::CorrectByTime( strnew, "year", "31536000.E9" ); 
-    return G4tgrUtils::GetDouble(strnew);
+    { G4RecursiveAutoLock l(&tgrEvaluatorMutex); return G4tgrUtils::GetDouble(strnew); }
   }
 
-  return G4tgrUtils::GetDouble(str);
+  { G4RecursiveAutoLock l(&tgrEvaluatorMutex); return G4tgrUtils::GetDouble(str); }
 
 }
   
@@ -653,25 +666,25 @@ G4bool GmGenUtils::IsLittleEndian()
 //-----------------------------------------------------------------------
 size_t GmGenUtils::freadLittleEndian4 ( void * ptr, size_t size, size_t count, FILE * stream )
 {
-  fread(ptr, size, count, stream );
-  if( !IsLittleEndian() ) {
+  size_t nread = fread(ptr, size, count, stream );
+  if( nread == count && !IsLittleEndian() ) {
     float* newVal = static_cast<float*>(ptr);
     float newValE = reverseEndian(*newVal);
     *newVal = newValE;
   }
-  return count;
+  return nread;
 }
 
 //-----------------------------------------------------------------------
 size_t GmGenUtils::freadLittleEndian8( void * ptr, size_t size, size_t count, FILE * stream )
 {
-  fread(ptr, size, count, stream );
-  if( !IsLittleEndian() ) {
+  size_t nread = fread(ptr, size, count, stream );
+  if( nread == count && !IsLittleEndian() ) {
     size_t* newVal = static_cast<size_t*>(ptr);
     size_t newValE = reverseEndian(*newVal);
     *newVal = newValE;
   }
-  return count;
+  return nread;
 }
 
 //-----------------------------------------------------------------------
@@ -742,8 +755,32 @@ size_t GmGenUtils::fwriteLittleEndian8( const void * ptr, size_t size, size_t co
 //------------------------------------------------------------------------
 void GmGenUtils::ReadUnits()
 {
-  G4String path( getenv( "G4INSTALL" ) );
-  std::ifstream fin( (path+"/source/externals/clhep/include/CLHEP/Units/SystemOfUnits.h").c_str() );
+  //--- CLHEP units header: in the Geant4 source tree ($G4INSTALL, GNUmake build) or in the installed
+  //    Geant4 headers (directory GAMOS_G4_INCLUDE_DIR, defined by the CMake build); G4INSTALL may be undefined
+  std::vector<G4String> candidates;
+  const char* g4install = getenv( "G4INSTALL" );
+  if( g4install ) {
+    candidates.push_back( G4String(g4install)+"/source/externals/clhep/include/CLHEP/Units/SystemOfUnits.h" );
+    candidates.push_back( G4String(g4install)+"/include/Geant4/CLHEP/Units/SystemOfUnits.h" );
+  }
+#ifdef GAMOS_G4_INCLUDE_DIR
+  candidates.push_back( G4String(GAMOS_G4_INCLUDE_DIR)+"/CLHEP/Units/SystemOfUnits.h" );
+#endif
+  G4String unitsFile;
+  for( size_t ic = 0; ic < candidates.size(); ic++ ) {
+    std::ifstream ftest( candidates[ic].c_str() );
+    if( ftest.good() ) {
+      unitsFile = candidates[ic];
+      break;
+    }
+  }
+  if( unitsFile == "" ) {
+    G4Exception("GmGenUtils::ReadUnits",
+		"",
+		FatalException,
+		"CLHEP/Units/SystemOfUnits.h not found: define G4INSTALL (Geant4 source or install directory)");
+  }
+  std::ifstream fin( unitsFile.c_str() );
 
   // skip the first 50 lines ( problem reading to avoid reading #include "CLHEP/Units/defs.h"
   const G4int NMAXLIN = 10000;
@@ -853,7 +890,7 @@ G4double GmGenUtils::InterpolateLinLog( G4double indexVal, std::map<G4double,G4d
   
   G4double value = exp( log(valDown) + (indexVal-indexDown)/(indexUp-indexDown)*(log(valUp)-log(valDown)));
 
-  /*  std::cout << "Dose  GmNumericDistributionLinLog::InterpolateValue " << value 
+  /*  G4cout << "Dose  GmNumericDistributionLinLog::InterpolateValue " << value 
 	    << " logValDown= " << log(valDown) << " logValUp= " << log(valUp)
 	    << " indexVal= " << indexVal 
 	    << " indexDown= " << indexDown << " indexUp= " << indexUp << std::endl

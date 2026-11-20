@@ -89,10 +89,10 @@ void DicomPolygon::BuildDirections()
     theDirections.push_back(thePoints[ii+1] - thePoints[ii]);
   }
   theDirections.push_back(thePoints[0]-thePoints[ii]);
-  /*  std::cout << ii << " NDIRS " << theDirections.size() << " " << thePoints.size() << G4endl; //GDEB
+  /*  G4cout << ii << " NDIRS " << theDirections.size() << " " << thePoints.size() << G4endl; //GDEB
   for( ii = 0; ii < thePoints.size(); ii++ ) {
-    std::cout << " PTS " << thePoints[ii] << G4endl; //GDEB
-    std::cout << " DIRS " << theDirections[ii] << G4endl; //GDEB
+    G4cout << " PTS " << thePoints[ii] << G4endl; //GDEB
+    G4cout << " DIRS " << theDirections[ii] << G4endl; //GDEB
     }*/
 
 }

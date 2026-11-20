@@ -40,7 +40,7 @@ class SPECTIOMgr : public GmIObinMgr
   void PrintEvent(const G4String& text, const SPECTOutput& po, G4bool bCart );
 
 private:
-  static SPECTIOMgr* theInstance;
+  static G4ThreadLocal SPECTIOMgr* theInstance;
   G4bool bDumpCout;
   G4bool bCartesian;
 };

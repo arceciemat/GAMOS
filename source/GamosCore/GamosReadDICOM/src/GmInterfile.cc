@@ -2,7 +2,20 @@
 #include "GmReadDICOMVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
-#include <limits>
+
+//-----------------------------------------------------------------------
+namespace {
+  void CheckInterfileRead( size_t nRead, size_t nExpected )
+  {
+    if( nRead != nExpected ) {
+      G4Exception("GmInterfile::Read",
+		  "",
+		  FatalException,
+		  ("Interfile data truncated: read "+std::to_string(nRead)
+		   +" bytes, expected "+std::to_string(nExpected)).c_str());
+    }
+  }
+}
 
 //-----------------------------------------------------------------------
 GmInterfile::GmInterfile()
@@ -127,7 +140,7 @@ void GmInterfile::Read( FILE* fin )
     //theData = calloc( nVoxels,sizeof(float));
     fData = (float*) malloc(nVoxels*sizeof(float));
     //    fread(fData,1,nVoxels*nBytesPerPixel, fin);
-    fread(fData,1,nVoxels*sizeof(float), fin);
+    CheckInterfileRead( fread(fData,1,nVoxels*sizeof(float), fin), nVoxels*sizeof(float) );
     for( size_t ii = 0; ii < nVoxels; ii ++ ) {
       theData.push_back(fData[ii]);
       //      G4cout << "  GmInterfile::Read( " << ii << " : " << fData[ii] << G4endl; //GDEB
@@ -136,7 +149,7 @@ void GmInterfile::Read( FILE* fin )
     double *fData;
     //theData = calloc( nVoxels,sizeof(double));
     fData = (double*) malloc(nVoxels*sizeof(double));
-    fread(fData,1,nVoxels*nBytesPerPixel, fin);
+    CheckInterfileRead( fread(fData,1,nVoxels*nBytesPerPixel, fin), nVoxels*nBytesPerPixel );
     for( size_t ii = 0; ii < nVoxels; ii ++ ) {
       theData.push_back(double(fData[ii]));
     }
@@ -144,7 +157,7 @@ void GmInterfile::Read( FILE* fin )
     long double *fData;
     //theData = calloc( nVoxels,sizeof(long double));
     fData = (long double*) malloc(nVoxels*sizeof(long double));
-    fread(fData,1,nVoxels*nBytesPerPixel, fin);
+    CheckInterfileRead( fread(fData,1,nVoxels*nBytesPerPixel, fin), nVoxels*nBytesPerPixel );
     for( size_t ii = 0; ii < nVoxels; ii ++ ) {
       theData.push_back((long double)fData[ii]);
     }
@@ -153,7 +166,7 @@ void GmInterfile::Read( FILE* fin )
       int8_t *fData;
       //theData = calloc( nVoxels,sizeof(int8_t));
       fData = (int8_t*) malloc(nVoxels*sizeof(int8_t));
-      fread(fData,1,nVoxels*nBytesPerPixel, fin);
+      CheckInterfileRead( fread(fData,1,nVoxels*nBytesPerPixel, fin), nVoxels*nBytesPerPixel );
       for( size_t ii = 0; ii < nVoxels; ii ++ ) {      
 	theData.push_back((int8_t)fData[ii]);
       }
@@ -161,15 +174,15 @@ void GmInterfile::Read( FILE* fin )
       int16_t *fData;
       //theData = calloc( nVoxels,sizeof(int16_t));
       fData = (int16_t*) malloc(nVoxels*sizeof(int16_t));
-      fread(fData,1,nVoxels*nBytesPerPixel, fin);
+      CheckInterfileRead( fread(fData,1,nVoxels*nBytesPerPixel, fin), nVoxels*nBytesPerPixel );
       for( size_t ii = 0; ii < nVoxels; ii ++ ) {      
 	theData.push_back((int16_t)fData[ii]);
 	/*	if( ii%100000 == 0 ) {
  	  G4cout << ii << " data= " << fData[ii] << G4endl; //GDEB
 	  for(int16_t bit = sizeof(fData[ii])*8 - 1; bit >= 0; --bit) {
-	    std::cout << ((fData[ii] >> bit) & 1);
+	    G4cout << ((fData[ii] >> bit) & 1);
 	  }
-	  std::cout << std::endl;
+	  G4cout << std::endl;
 	}
 	}*/
       }
@@ -177,7 +190,7 @@ void GmInterfile::Read( FILE* fin )
       int32_t *fData;
       //theData = calloc( nVoxels,sizeof(int32_t));
       fData = (int32_t*) malloc(nVoxels*sizeof(int32_t));
-      fread(fData,1,nVoxels*nBytesPerPixel, fin);
+      CheckInterfileRead( fread(fData,1,nVoxels*nBytesPerPixel, fin), nVoxels*nBytesPerPixel );
       for( size_t ii = 0; ii < nVoxels; ii ++ ) {      
 	theData.push_back((int32_t)fData[ii]);
       }
@@ -290,7 +303,7 @@ void GmInterfile::SumDisplaced( GmInterfile* fileNew )
   G4int idyMax = int(dispYMax/voxelWidthY1);
   G4int idzMax = int(dispZMax/voxelWidthZ1);
 #ifndef GAMOS_NO_VERBOSE
-  if( ReadDICOMVerb(-debugVerb) )
+  if( ReadDICOMVerb(debugVerb) )
     G4cout << " GmInterfile::SumDisplaced " 
 	   << " idxMin/Max " << idxMin <<"/"<< idxMax << " " << dispXMin << " " <<dispXMax << " " << voxelWidthX1 
 	   << " idyMin/Max " << idyMin <<"/"<< idyMax << " " << dispYMin << " " <<dispYMax << " " << voxelWidthY1 
@@ -320,7 +333,7 @@ void GmInterfile::SumDisplaced( GmInterfile* fileNew )
   head1->ChangeVoxelLimits(ixmin,ixmax,iymin,iymax,izmin,izmax);
 
 #ifndef GAMOS_NO_VERBOSE
-  if( ReadDICOMVerb(-debugVerb) )
+  if( ReadDICOMVerb(debugVerb) )
     G4cout << " GmInterfile::SumDisplaced: ixmin/max " << ixmin<<"/"<<ixmax << " nVoxelsX1/2 " << nVoxelsX1<<"/"<<nVoxelsX2 
 	   << " iymin/max " << iymin<<"/"<<iymax << " nVoxelsY1/2 " << nVoxelsY1<<"/"<<nVoxelsY2
 	   << " izmin/max " << izmin<<"/"<<izmax << " nVoxelsZ1/2 " << nVoxelsZ1<<"/"<<nVoxelsZ2 << G4endl;

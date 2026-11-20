@@ -14,7 +14,7 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
 
-GmCutsEnergy2Range* GmCSTrackInfo::theEnergy2Range = 0;
+G4ThreadLocal GmCutsEnergy2Range* GmCSTrackInfo::theEnergy2Range = 0;
 
 GmCSTrackInfo::GmCSTrackInfo(const G4Track* aTrack)
 {

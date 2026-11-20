@@ -71,7 +71,7 @@ std::vector<GVSTouchableInfo*> GmPositionUserVolumes::AddTouchableInfos( const s
       CheckNoSolidParams(params[6],12,params.size());
       G4VSolid* solid = new G4Tubs( "DUMMY_VOLUME", GmGenUtils::GetValue(params[7]), GmGenUtils::GetValue(params[8]), GmGenUtils::GetValue(params[9]), GmGenUtils::GetValue(params[10]), GmGenUtils::GetValue(params[11]) );
       tinfo = AddVolume( solid, params, iSolid );
-      G4cout << " USER VOLUME " << solid->GetEntityType() << " " << *solid << " DELTA PHI " << params[11] << " = " << GmGenUtils::GetValue(params[11]) <<G4endl; //GDEB
+      //G4cout << " USER VOLUME " << solid->GetEntityType() << " " << *solid << " DELTA PHI " << params[11] << " = " << GmGenUtils::GetValue(params[11]) <<G4endl; //GDEB
       
     } else if( params[6] == "CONE" ){
       CheckNoSolidParams(params[6],12,params.size());

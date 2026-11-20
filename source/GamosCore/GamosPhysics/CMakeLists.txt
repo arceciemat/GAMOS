@@ -1,9 +1,5 @@
-#------------------------------------------------------------------------------
-# Module : GamosPhysics
-# Package: GamosCore_GamosPhysics
-#
-#------------------------------------------------------------------------------
-# 
+# - source/GamosCore/GamosPhysics
+
 add_subdirectory(PhysicsList)
 add_subdirectory(OtherPhysicsLists)
 add_subdirectory(Cuts)

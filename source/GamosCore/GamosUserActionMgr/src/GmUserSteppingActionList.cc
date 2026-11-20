@@ -3,6 +3,7 @@
 
 #include "G4Step.hh"
 #include "G4RunManager.hh"
+#include "G4Threading.hh"
 #include <iostream>
 #include "GamosCore/GamosUserActionMgr/include/GmUAVerbosity.hh"
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
@@ -125,7 +126,8 @@ void GmUserSteppingActionList::AddAction( GmUserSteppingAction* ua )
   if( UAVerb(infoVerb) ) G4cout << " GmUserSteppingActionList::AddAction " << ua << " N " << theSteppingActions.size() << G4endl;
 #endif
   //--- first user action, register it to G4RunManager
-  if( theSteppingActions.size() == 1) G4RunManager::GetRunManager()->SetUserAction( this );
+  //--- Multithreading: G4MTRunManager only accepts run actions, the other actions are set in the worker run managers
+  if( theSteppingActions.size() == 1 && (!G4Threading::IsMultithreadedApplication() || !G4Threading::IsMasterThread()) ) G4RunManager::GetRunManager()->SetUserAction( this );
   ua->SetSteppingManager( fpSteppingManager );
 }
 

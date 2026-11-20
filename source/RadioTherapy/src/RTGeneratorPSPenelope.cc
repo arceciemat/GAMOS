@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "G4Event.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
@@ -24,6 +25,16 @@
 #include "GamosCore/GamosBase/Base/include/GmVFilter.hh"
 #include "RTVerbosity.hh"
 #include "RTPhaseSpaceHistos.hh"
+#include "G4AutoLock.hh"
+
+//--- Multithreading: one input file shared by all threads (one file position for the job, as in sequential mode):
+//    each particle is read once; the skipping of the first particles and the recycling of the file are global
+namespace {
+  G4Mutex thePenelopeMutex = G4MUTEX_INITIALIZER;
+  std::ifstream* theSharedFileIn = nullptr;
+  G4int theSharedNRecycled = 1;
+  G4bool bSharedExhausted = false;
+}
 
 //------------------------------------------------------------------------
 RTGeneratorPSPenelope::RTGeneratorPSPenelope( G4String )
@@ -56,6 +67,9 @@ void RTGeneratorPSPenelope::Init()
 
   if( theMaxNReuse == -1 ){ //set it automatically for each run
     bMaxNReuseAutomatic = TRUE;
+    //--- the number of particles in a PENELOPE file is not known in advance: no automatic reuse
+    //    (theMaxNReuse = -1 gave weights -weight and no reuse)
+    theMaxNReuse = 1;
   } else {
     bMaxNReuseAutomatic = FALSE;
   }
@@ -146,32 +160,45 @@ void RTGeneratorPSPenelope::Init()
   theNNewEvents = 0;
   theNParticlesRead = 0.;
 
-  theFileIn2 = new std::ifstream(theFileName);
-  // skip header
-  if( !theFileIn2->is_open() ) {
-	G4Exception("RTGeneratorPSPenelope::RTGeneratorPSPenelope",
-		    "",
-		    JustWarning,
-		    G4String("FAILED opening file " + theFileName).c_str() );
+  theNEventsSkip = parmgr->GetNumericValue("RTGeneratorPSPenelope:NEventsSkip", 0);
+  theParticleDef = nullptr;
+  theHistos = nullptr;
+
+  G4AutoLock l(&thePenelopeMutex);
+  if( !theSharedFileIn ) { // first generator instance (in MT the first worker) opens the file and skips the first particles
+    theSharedFileIn = new std::ifstream(theFileName);
+    if( !theSharedFileIn->is_open() ) {
+      G4Exception("RTGeneratorPSPenelope::RTGeneratorPSPenelope",
+		  "",
+		  JustWarning,
+		  G4String("FAILED opening file " + theFileName).c_str() );
+    }
+    // skip header
+    for( G4int ii = 0; ii < 4; ii++ ) {
+      theSharedFileIn->getline(theLineRead,200);
+    }
+    //skip first particles
+    for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
+      theSharedFileIn->getline(theLineRead,200);
+      theNEventsInFile++;      
+      theNOrigEvents++; 
+      theNNewEvents++;
+    }
   }
-  for( G4int ii = 0; ii < 4; ii++ ) {
-    //    *theFileIn2 >> theLineRead;
-    theFileIn2->getline(theLineRead,200);
-  }
-  //skip first particles
-  for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
-    theFileIn2->getline(theLineRead,200);
-    theNEventsInFile++;      
-    theNOrigEvents++; 
-    theNNewEvents++;
-  }
+  theFileIn2 = theSharedFileIn;
 }
 
 
 //------------------------------------------------------------------------
 RTGeneratorPSPenelope::~RTGeneratorPSPenelope()
 {
-  theFileIn2->close();
+  G4AutoLock l(&thePenelopeMutex);
+  if( theSharedFileIn ) {
+    theSharedFileIn->close();
+    delete theSharedFileIn;
+    theSharedFileIn = nullptr;
+  }
+  theFileIn2 = nullptr;
 }
 
 //------------------------------------------------------------------------
@@ -183,36 +210,60 @@ void RTGeneratorPSPenelope::GeneratePrimaries(G4Event* evt)
   if( theNReused == 0 || !theParticleDef || theParticleDef->GetPDGCharge() != 0 ) { // first time theNReused = 0, after theMaxNReuse times
     G4ThreeVector pos;
 
-    theFileIn2->getline(theLineRead,200);
-    theNEventsInFile++;      
-    theNOrigEvents++;
-    theNNewEvents++;
-    //    std::cout << " RTGeneratorPSPenelope::GeneratePrimaries getline " << theLineRead << " NEVENTS " << theNEventsInFile << std::endl; //GDEB
-    theNParticlesRead ++;
-    //      if( theBase.size() != 0 ) bFilter = theBase[0]->AcceptStep((G4Step*)0);
-    if ( theFileIn2->eof() ) {
-      theFileIn2->close();
-      if( theNRecycled < theMaxNRecycle ) {
-	theFileIn2 = new std::ifstream(theFileName);
+    G4bool bExhausted = false;
+    {
+      G4AutoLock l(&thePenelopeMutex);
+      if( bSharedExhausted || !theSharedFileIn ) {
+	bExhausted = true;
+      } else {
+	theSharedFileIn->getline(theLineRead,200);
+	theNEventsInFile++;      
+	theNOrigEvents++;
+	theNNewEvents++;
+	theNParticlesRead ++;
+	if ( theSharedFileIn->eof() ) {
+	  theSharedFileIn->close();
+	  delete theSharedFileIn;
+	  theSharedFileIn = nullptr;
+	  if( theSharedNRecycled < theMaxNRecycle ) {
+	    theSharedFileIn = new std::ifstream(theFileName);
 #ifndef GAMOS_NO_VERBOSE
-	if( RTVerb(infoVerb) ) G4cout << "RTGeneratorPSPenelope::GeneratePrimaries  RECYCLING phase space file " << theNRecycled << G4endl;
+	    if( RTVerb(infoVerb) ) G4cout << "RTGeneratorPSPenelope::GeneratePrimaries  RECYCLING phase space file " << theSharedNRecycled << G4endl;
 #endif
-	theNRecycled++; 
-	//skip first particles
-	for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
-	  theFileIn2->getline(theLineRead,200);
-	  theNEventsInFile++;      
-	  theNOrigEvents++; 
-	  theNNewEvents++;
+	    theSharedNRecycled++; 
+	    // skip header
+	    for( G4int ii = 0; ii < 4; ii++ ) {
+	      theSharedFileIn->getline(theLineRead,200);
+	    }
+	    //skip first particles
+	    for( G4int ii = 0; ii < theNEventsSkip; ii++ ){
+	      theSharedFileIn->getline(theLineRead,200);
+	      theNEventsInFile++;      
+	      theNOrigEvents++; 
+	      theNNewEvents++;
+	    }
+	    theSharedFileIn->getline(theLineRead,200);
+	    theNEventsInFile++;      
+	    theNOrigEvents++;
+	    theNNewEvents++;
+	    theNParticlesRead ++;
+	    if( theSharedFileIn->eof() ) bExhausted = true;
+	  } else {
+	    bExhausted = true;
+	  }
+	  if( bExhausted ) bSharedExhausted = true;
 	}
-      } else{
-	G4RunManager::GetRunManager()->AbortRun();
-	G4Exception("RTGeneratorPSPenelope::GeneratePrimaries",
-		    "Too many events demanded",
-		    JustWarning,
-		    G4String("FAILED reading event  " + GmGenUtils::itoa(evt->GetEventID())).c_str() );
-	return;     
       }
+      theNRecycled = theSharedNRecycled;
+      theFileIn2 = theSharedFileIn;
+    }
+    if( bExhausted ) {
+      G4RunManager::GetRunManager()->AbortRun();
+      G4Exception("RTGeneratorPSPenelope::GeneratePrimaries",
+		  "Too many events demanded",
+		  JustWarning,
+		  G4String("FAILED reading event  " + GmGenUtils::itoa(evt->GetEventID())).c_str() );
+      return;     
     }
     //    }while( !bFilter );
     
@@ -260,8 +311,8 @@ void RTGeneratorPSPenelope::GeneratePrimaries(G4Event* evt)
   istr_line >> idPart >> energy >> posx >> posy >> posz >> momu >> momv >> momw >> weight;
   energy *= CLHEP::eV;
 
-  //  std::cout << " RTGeneratorPSPenelope::GeneratePrimaries getline " << theLineRead << std::endl; //GDEB
-  //  std::cout << " RTGeneratorPSPenelope::GeneratePrimaries idPart " << idPart << " E= " << energy << " pos " << posx << " " << posy << " " << posz << std::endl; //GDEB
+  //  G4cout << " RTGeneratorPSPenelope::GeneratePrimaries getline " << theLineRead << std::endl; //GDEB
+  //  G4cout << " RTGeneratorPSPenelope::GeneratePrimaries idPart " << idPart << " E= " << energy << " pos " << posx << " " << posy << " " << posz << std::endl; //GDEB
   switch( idPart ){
   case 2:
     theParticleDef = G4Gamma::Gamma();

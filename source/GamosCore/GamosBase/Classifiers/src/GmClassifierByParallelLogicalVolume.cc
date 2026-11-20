@@ -114,8 +114,7 @@ int64_t GmClassifierByParallelLogicalVolume::GetIndexFromTrack(const G4Track* aT
   G4LogicalVolume* lv = pv->GetLogicalVolume();
   std::map<G4LogicalVolume*,int64_t>::const_iterator ite = theIndexMap.find(lv);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1+theMaxIndex;
-    theIndexMap[lv] = index;
+    index = AssignNewIndex( this, &GmClassifierByParallelLogicalVolume::theIndexMap, lv ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

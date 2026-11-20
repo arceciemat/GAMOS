@@ -41,7 +41,7 @@ GmVEmDNAPhysics::GmVEmDNAPhysics()
 void GmVEmDNAPhysics::BuildDNAPhysics()
 {
   // EM physics
-  G4String physName = GmParameterMgr::GetInstance()->GetStringValue("GmEmDNAPhysics:registerPhysics","DNA_option2");
+  G4String physName = GmParameterMgr::GetInstance()->GetStringValue("GmEmDNAPhysics:RegisterPhysics","DNA_option2");
 #ifndef GAMOS_NO_VERBOSE
   if( DNAVerb(infoVerb) ) G4cout << "GmEmDNAPhysics::GmEmDNAPhysics " << physName << G4endl;
 #endif

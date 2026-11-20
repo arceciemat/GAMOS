@@ -20,8 +20,7 @@ public:
 public:
 
   void AddDoseData(DoseData*);
-  DoserData operator=( const DoserData& sd2 );
-  DoserData operator+=( const DoserData& sd2 );
+  DoserData& operator+=( const DoserData& sd2 );
   DoserData & operator*=( G4double wei );
   bool operator!=( const DoserData& sd2 );
 

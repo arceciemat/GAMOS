@@ -1,19 +1,24 @@
-# - GAMOS_analysis_DICOM_changeStructure module build definition
+# - getImageValue module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_DICOM_changeStructure
+gamos_add_module(getImageValue
   PUBLIC_HEADERS
     DCMGetImageValue.hh
   SOURCES
     DCMGetImageValue.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_DICOM_changeStructure
+
+gamos_module_link_libraries(getImageValue
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
     DICOMBase
     DICOMReaders
-    DICOM2G4
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosBase_Base
+    GamosCore_GamosUtils
+)
+
+# Program getImageValue
+gamos_add_executable(getImageValue
+  SOURCES
+    getImageValue.cc
+  LINK_LIBRARIES
+    getImageValue
 )

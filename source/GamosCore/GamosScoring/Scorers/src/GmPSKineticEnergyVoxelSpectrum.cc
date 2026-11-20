@@ -78,7 +78,7 @@ G4bool GmPSKineticEnergyVoxelSpectrum::ProcessHits(G4Step* aStep,G4TouchableHist
   G4ParticleDefinition* part = aStep->GetTrack()->GetDefinition();
   G4double kinEnergyPre = preSP->GetKineticEnergy();
   
-  G4double distIn = theElossExt->TrueStepLength( kinEnergyPre, distToOut , mate, part );
+  //  G4double distIn = theElossExt->TrueStepLength( kinEnergyPre, distToOut , mate, part );
   G4double kinEnergyPost = theElossExt->EnergyAfterStep(kinEnergyPre, distToOut, mate, part);
   //  G4cout << "GmPSKineticEnergyVoxelSpectrum kinEnergyPre " << kinEnergyPre << " kinEnergyPost " << kinEnergyPost << " distToOut " <<distToOut << " ->distIn " << distIn << " DENSITY " << mate->GetDensity()/(CLHEP::g/CLHEP::cm3) << G4endl; //GDEB
   

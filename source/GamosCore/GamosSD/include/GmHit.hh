@@ -23,7 +23,7 @@ public:
   GmHit(){}
   GmHit(G4Step* aStep, G4double energy, unsigned long long id, const G4String& sdtyp, G4int evtid );
   GmHit( std::vector<G4String> wl );
-  ~GmHit();
+  virtual ~GmHit();
 
   G4bool CheckSameCell( unsigned long long idx );
   G4bool CheckSameCellAndTime( unsigned long long id, G4double time, G4double triggerTime, G4double measuringTime );

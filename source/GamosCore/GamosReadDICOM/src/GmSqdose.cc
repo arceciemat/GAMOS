@@ -3,7 +3,6 @@
 #include "GmReadDICOMVerbosity.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
-#include <limits>
 #include <sys/stat.h>
 
 G4bool GmSqdose::bNo0Dose = false;
@@ -205,7 +204,7 @@ void GmSqdose::Read( FILE* fin )
 #ifndef GAMOS_NO_VERBOSE
   G4int nVoxX =  theHeader->GetNoVoxelsX();
   G4int nVoxY =  theHeader->GetNoVoxelsY();
-  G4int nVoxZ =  theHeader->GetNoVoxelsZ();
+  //  G4int nVoxZ =  theHeader->GetNoVoxelsZ();
   G4int nVoxXY = nVoxX * nVoxY;
   G4double minX =  theHeader->GetMinX();
   G4double minY =  theHeader->GetMinY();
@@ -253,7 +252,7 @@ void GmSqdose::Read( FILE* fin )
 	G4int iz = G4int(iv/nVoxXY);
 	G4int ix = G4int(iv%nVoxX);
 	G4int iy = G4int(iv/nVoxX%nVoxY);
-	G4cout << " GmSqdoseSqs " << ix << ":" << iy << ":" << iz << " copyNo " << iv << " XYZ  " << minX+voxX*(ix+0.5) << " " <<minY+voxY*(iy+0.5) << " " <<minZ+voxZ*(iz+0.5) <<  " = " << ftmp << G4endl; //GDEB
+	G4cout << " GmSqdoseSqs " << ix << ":" << iy << ":" << iz << " copyNo " << iv << " XYZ  " << minX+voxX*(ix+0.5) << " " <<minY+voxY*(iy+0.5) << " " <<minZ+voxZ*(iz+0.5) <<  " = " << ftmp << G4endl;
 	//      if( theDoseSqs.size()%1000 == 1 ) G4cout << iv << " READ dose2 " << theDoseSqs.size() << " = " << theDoseSqs[theDoseSqs.size()-1] << G4endl;//GDEB
       }
 #endif

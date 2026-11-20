@@ -10,6 +10,8 @@
 class GmGenUtils 
 {
 public:
+    //--- G4tgrUtils::GetDouble protected by a mutex (G4tgrEvaluator is not thread safe)
+  static G4double GetDoubleTgr( const G4String& str, G4double unitval = 1. );
   static G4bool bCheckTimeUnits;
 
 #ifdef WIN32  //WINDEB                                                                                           

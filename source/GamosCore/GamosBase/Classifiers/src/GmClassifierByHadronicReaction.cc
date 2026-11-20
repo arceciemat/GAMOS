@@ -72,8 +72,7 @@ int64_t GmClassifierByHadronicReaction::GetIndexFromStep(const G4Step* aStep)
 
   std::map<const G4String,int64_t>::const_iterator ite = theIndexMap.find(indexName);
   if( ite == theIndexMap.end() ){
-    index = theIndexMap.size()+1;
-    theIndexMap[indexName] = index;
+    index = AssignNewIndex( this, &GmClassifierByHadronicReaction::theIndexMap, indexName, 1, false ); // multithreading: same index in all threads
   } else {
     index = (*ite).second;
   }

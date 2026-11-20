@@ -12,7 +12,6 @@
 #include "TText.h"
 #include <fstream>
 
-bool bHistoTXTErrors = true;
 void SaveHisto1D(const std::string& hisType, const TH1* his );
 void SaveHisto2D(const std::string& hisType, const TH2* his );
 std::ofstream theFile;
@@ -62,14 +61,10 @@ void SaveHisto1D(const std::string& hisType, const TH1* his )
   int nbins = his->GetXaxis()->GetNbins();
   theFile << '"' << hisType << '"' << " " << '"' << his->GetName() << '"' << " " << nbins << " " << his->GetXaxis()->GetXmin() << " " << his->GetXaxis()->GetXmax();
   theFile << " NENT= " << his->GetEntries() << " MEAN= " << his->GetMean();
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError();  
-  }
+  theFile << " +- " << his->GetMeanError();  
   
   theFile << " RMS= " << his->GetRMS();  
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetRMSError();  
-  }    
+  theFile << " +- " << his->GetRMSError();  
 
   theFile << " UFLOW= " << his->GetBinContent(0);  
   theFile << " OFLOW= " << his->GetBinContent(nbins+1);  
@@ -77,9 +72,7 @@ void SaveHisto1D(const std::string& hisType, const TH1* his )
 
   for( int ii = 1; ii <= nbins; ii++ ){
     theFile << his->GetXaxis()->GetXmin()+his->GetXaxis()->GetBinWidth(ii)*(ii-0.5) << " " << his->GetBinContent(ii);
-    if( bHistoTXTErrors ) {
-      theFile << " " << his->GetBinError(ii);
-    }
+    theFile << " " << his->GetBinError(ii);
     theFile << std::endl;
   }
 
@@ -93,24 +86,16 @@ void SaveHisto2D(const std::string& hisType, const TH2* his )
   theFile << '"' << hisType << '"' << " " << '"' << his->GetName() << '"' << " " << nbinsx << " " << his->GetXaxis()->GetXmin() << " " << his->GetXaxis()->GetXmax() << " " << nbinsy << " " << his->GetYaxis()->GetXmin() << " " << his->GetYaxis()->GetXmax();
 
   theFile << " NENT= " << his->GetEntries() << " MEAN= " << his->GetMean(1);
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError(1);
-  }
+  theFile << " +- " << his->GetMeanError(1);
   
   theFile << " RMSX= " << his->GetRMS(1);  
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetRMSError(1);  
-  } 
+  theFile << " +- " << his->GetRMSError(1);  
 
   theFile << " MEANY= " << his->GetMean(2);
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError(2);
-  }
+  theFile << " +- " << his->GetMeanError(2);
   
   theFile << " RMSY= " << his->GetRMS(2);  
-  if( bHistoTXTErrors ) {
-    theFile << " " << his->GetRMSError(2) << std::endl;  
-  }
+  theFile << " " << his->GetRMSError(2) << std::endl;  
 
   double flow;
   int ii, jj;
@@ -148,9 +133,7 @@ void SaveHisto2D(const std::string& hisType, const TH2* his )
       theFile << his->GetXaxis()->GetXmin()+his->GetXaxis()->GetBinWidth(ii)*(ii-0.5) 
 	      << " " << his->GetYaxis()->GetXmin()+his->GetYaxis()->GetBinWidth(jj)*(jj-0.5) 
 	      << " " << his->GetBinContent(ii,jj);
-      if( bHistoTXTErrors ) {
-	theFile << " " << his->GetBinError(ii,jj);
-      } 
+      theFile << " " << his->GetBinError(ii,jj);
       theFile << std::endl;
     }
   }

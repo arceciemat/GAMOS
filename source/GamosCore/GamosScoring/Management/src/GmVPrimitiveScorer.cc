@@ -607,7 +607,7 @@ G4bool GmVPrimitiveScorer::FillScorerSpectrum(G4Step* , G4int index, G4double va
   } else {
     ibin = GmGenUtils::GetBelowInt( (log10(val)-log10(theSpectrumMinimum))/theSpectrumBinWidth );
   }    
-  G4cout << bSpectrumBinLog10 << " FillScorerSpectrum ibin= " << ibin << " val " << val << " MIN " << theSpectrumMinimum << " WIDTH " << theSpectrumBinWidth << G4endl; //GDEB
+  //G4cout << bSpectrumBinLog10 << " FillScorerSpectrum ibin= " << ibin << " val " << val << " MIN " << theSpectrumMinimum << " WIDTH " << theSpectrumBinWidth << G4endl; //GDEB
   mid::const_iterator item = sumVIdx_tmp->find(ibin);
   if( item == sumVIdx_tmp->end() ) {
     (*sumVIdx_tmp)[ibin] = 0;
@@ -814,4 +814,45 @@ void GmVPrimitiveScorer::CheckSpectrumDims()
     }
   }
   
+}
+
+//----------------------------------------------------------------
+void GmVPrimitiveScorer::MergeToMaster( GmVPrimitiveScorer* master )
+{
+  for( auto ite = theSumV2.begin(); ite != theSumV2.end(); ite++ ) {
+    master->theSumV2[ite->first] += ite->second;
+  }
+  theSumV2.clear();
+  for( auto ite = theNFilled.begin(); ite != theNFilled.end(); ite++ ) {
+    master->theNFilled[ite->first] += ite->second;
+  }
+  theNFilled.clear();
+  master->sumALL += sumALL;
+  sumALL = 0.;
+
+  //--- spectrum sums
+  for( auto ite = theSpectrumSumV.begin(); ite != theSpectrumSumV.end(); ite++ ) {
+    G4int idx = ite->first;
+    if( master->theSpectrumSumV.find(idx) == master->theSpectrumSumV.end() ) {
+      master->theSpectrumSumV[idx] = new mid;
+      master->theSpectrumSumV2[idx] = new mid;
+    }
+    mid* sumVM = master->theSpectrumSumV[idx];
+    mid* sumV2M = master->theSpectrumSumV2[idx];
+    mid* sumV2W = theSpectrumSumV2[idx];
+    for( auto item = ite->second->begin(); item != ite->second->end(); item++ ) {
+      (*sumVM)[item->first] += item->second;
+    }
+    if( sumV2W ) {
+      for( auto item = sumV2W->begin(); item != sumV2W->end(); item++ ) {
+	(*sumV2M)[item->first] += item->second;
+      }
+      sumV2W->clear();
+    }
+    ite->second->clear();
+  }
+
+  if( theConvergenceTester && master->theConvergenceTester ) {
+    master->theConvergenceTester->Merge( theConvergenceTester );
+  }
 }

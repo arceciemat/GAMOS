@@ -12,7 +12,7 @@ GmIsotopeDecay::GmIsotopeDecay( const G4String& energy, const G4String& prob, G4
 		    FatalErrorInArgument,
 		G4String("Energy should be given as a number " + energy).c_str());
   }
-  theEnergy = G4tgrUtils::GetDouble( energy, CLHEP::keV); 
+  theEnergy = GmGenUtils::GetDoubleTgr( energy, CLHEP::keV); 
 
   if( !GmGenUtils::IsNumber( prob ) ){
     G4Exception("GmIsotopeDecay::GmIsotopeDecay",

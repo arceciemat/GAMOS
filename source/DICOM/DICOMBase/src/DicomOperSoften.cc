@@ -88,7 +88,7 @@ void DicomOperSoften::Operate( DicomVImage* image, G4double factor, G4int nAroun
   //----- Change image
   image->SetData(newData);
 
-  G4cout << " DOSEIMAGE IN SOFTENING " << image->GetData(1476) << G4endl; //GDEB
+  //G4cout << " DOSEIMAGE IN SOFTENING " << image->GetData(1476) << G4endl; //GDEB
 
   //  G4cout << "DicomOperSoften new image " << *image << G4endl; //GDEB
 }

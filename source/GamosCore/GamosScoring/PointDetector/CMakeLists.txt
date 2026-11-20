@@ -1,13 +1,2 @@
-#------------------------------------------------------------------------------
-# Module : PointDetector
-# Package: GamosCore_GamosScoring_PointDetector
-#
-#------------------------------------------------------------------------------
-# 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include(Geant4MacroLibraryTargets)
-if(GEANT4_BUILD_GRANULAR_LIBS)
-    GEANT4_GRANULAR_LIBRARY_TARGET(COMPONENTS sources.cmake)
-else()
-   GEANT4_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
-endif()
+# - GamosCore_GamosScoring_PointDetector module build (source/GamosCore/GamosScoring/PointDetector)
+include(sources.cmake)

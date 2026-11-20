@@ -24,7 +24,7 @@ RTPlanControlPoint::RTPlanControlPoint( const G4String& fileName, RTPlanBeam* be
     //------------------------------- parameter number
     if( wl[0]== ":P" )  {
       CheckIfNewParameter( wl, 0 );
-      theParams[ wl[1] ] = G4tgrUtils::GetDouble( wl[2] );
+      theParams[ wl[1] ] = GmGenUtils::GetDoubleTgr( wl[2] );
       //      G4cout << this << " CPReadParams " << wl[1] << " = " << wl[2] << G4endl; //GDEB
    //------------------------------- parameter string
     } else if( wl[0] == ":PS" ) {

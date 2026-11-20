@@ -34,16 +34,16 @@ void GmMaterialBudgetUA::BookHistos(G4int index)
 {
   theHistos.insert(index);
 
-  G4double worldHalfX;
-  G4double worldHalfY;
-  G4double worldHalfZ;
+  G4double worldHalfX = 0.;
+  G4double worldHalfY = 0.;
+  G4double worldHalfZ = 0.;
   G4LogicalVolume* worldLV = GmGeometryUtils::GetInstance()->GetTopLV();
-  if( worldLV->GetSolid()->GetEntityType() != "G4Box" ){
+  if( worldLV->GetSolid()->GetEntityType() == "G4Box" ){
     G4Box* world = static_cast<G4Box*>(worldLV->GetSolid());
     worldHalfX = world->GetXHalfLength();
     worldHalfY = world->GetYHalfLength();
     worldHalfZ = world->GetZHalfLength();
-  } else if( worldLV->GetSolid()->GetEntityType() != "G4Tubs" ){
+  } else if( worldLV->GetSolid()->GetEntityType() == "G4Tubs" ){
     G4Tubs* world = static_cast<G4Tubs*>(worldLV->GetSolid());
     worldHalfX = world->GetOuterRadius();
     worldHalfY = world->GetOuterRadius();
@@ -64,9 +64,9 @@ void GmMaterialBudgetUA::BookHistos(G4int index)
   theAnaMgr->CreateHistoProfile1D(histoName+": Position X",nBins,-worldHalfX,worldHalfX,histoNumber+11);
   theAnaMgr->CreateHistoProfile1D(histoName+": Position Y",nBins,-worldHalfY,worldHalfY,histoNumber+12);
   theAnaMgr->CreateHistoProfile1D(histoName+": Position Z",nBins,-worldHalfZ,worldHalfZ,histoNumber+13);
-  theAnaMgr->CreateHistoProfile2D(histoName+": Position XY",nBins,worldHalfX,worldHalfX,nBins,worldHalfY,worldHalfY,histoNumber+21);
-  theAnaMgr->CreateHistoProfile2D(histoName+": Position XZ",nBins,worldHalfX,worldHalfX,nBins,worldHalfZ,worldHalfZ,histoNumber+22);
-  theAnaMgr->CreateHistoProfile2D(histoName+": Position YZ",nBins,worldHalfY,worldHalfY,nBins,worldHalfZ,worldHalfZ,histoNumber+23);
+  theAnaMgr->CreateHistoProfile2D(histoName+": Position XY",nBins,-worldHalfX,worldHalfX,nBins,-worldHalfY,worldHalfY,histoNumber+21);
+  theAnaMgr->CreateHistoProfile2D(histoName+": Position XZ",nBins,-worldHalfX,worldHalfX,nBins,-worldHalfZ,worldHalfZ,histoNumber+22);
+  theAnaMgr->CreateHistoProfile2D(histoName+": Position YZ",nBins,-worldHalfY,worldHalfY,nBins,-worldHalfZ,worldHalfZ,histoNumber+23);
 
 }
 

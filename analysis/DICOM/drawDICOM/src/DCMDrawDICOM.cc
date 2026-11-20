@@ -8,15 +8,19 @@
 #include "DICOM/DICOMBase/include/DicomVLineList.hh"
 
 #include "DICOM/DICOMBase/include/DicomDrawerROOT.hh"
+#include "DICOM/DICOMBase/include/DicomDrawerSVG.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderMgr.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderRTStruct.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderG4dcmCT.hh"
 #include "DICOM/DICOMReaders/include/DicomReaderTextLines.hh"
 
+#include "GamosCore/GamosUtils/include/GmSVGCanvas.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
+#ifndef GAMOS_NO_ROOT
 #include "TStyle.h"
+#endif
 
 //---------------------------------------------------------------------------
 DCMDrawDICOM::DCMDrawDICOM()
@@ -59,7 +63,7 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
 		    "WRONG NUMBER OF ARGUMENTS: THEY MUST BE -XX1 VAL_XX1 -XX2 VAL_XX2 ... ");
       }
       G4String argvstr = argv[ii];
-      //      std::cout << ii << "ARGV " << argv[ii] << std::endl; //GDEB
+      //      G4cout << ii << "ARGV " << argv[ii] << std::endl; //GDEB
       G4String argvstr1 = argv[ii+1];
       G4String argvName = argvstr.substr(1,999);
       if( argvstr == "-drawerType" ) {
@@ -76,6 +80,10 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
 		 || argvstr == "-bDrawStruct1Fig"
 		 || argvstr == "-bDrawIsodLines" 
 		 || argvstr == "-overSurrounding" 
+		 || argvstr == "-bOverlayCT"
+		 || argvstr == "-overlayOpacity"
+		 || argvstr == "-CTMin"
+		 || argvstr == "-CTMax"
 		 || argvstr == "-bFigureTitle" ) {
 	theParamMgr->AddParam( argvName + " " + argvstr1, PTdouble );
 	ii++;
@@ -140,11 +148,22 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
   G4String drawLinesFN = theParamMgr->GetStringValue("fDrawLines","");
   theDicomMgr->ReadLineDrawingOptions( drawLinesFN );
   
+#ifndef GAMOS_NO_ROOT
   G4String theDrawerType = theParamMgr->GetStringValue("drawerType","ROOT");
+#else
+  G4String theDrawerType = theParamMgr->GetStringValue("drawerType","SVG");
+#endif
   if( theDrawerType == "ROOT" ) {
+#ifndef GAMOS_NO_ROOT
     theDrawer = new DicomDrawerROOT();
+#else
+    DicomException(theExeName + ": DRAWER 'ROOT' NOT AVAILABLE, GAMOS IS BUILT WITHOUT ROOT (GAMOS_NO_ROOT); USE 'SVG'");
+#endif
+  } else if( theDrawerType == "SVG" ) {
+    // SVG figures (GmSVGCanvas), converted to imageFormat (default jpg) if a converter is found
+    theDrawer = new DicomDrawerSVG();
   } else { 
-    DicomException(theExeName + ": UNKNOWN DRAWER, IT CAN ONLY BE 'ROOT', WHILE IT IS "+ theDrawerType);
+    DicomException(theExeName + ": UNKNOWN DRAWER, IT CAN ONLY BE 'ROOT' OR 'SVG', WHILE IT IS "+ theDrawerType);
   }
 
   if( theParamMgr->GetNumericValue("overSurrounding",-1.) != -1. ) {
@@ -152,7 +171,10 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
   }
   
   G4int palette = G4int(theParamMgr->GetNumericValue("palette",55));
+#ifndef GAMOS_NO_ROOT
   gStyle->SetPalette(palette);
+#endif
+  GmSVGCanvas::SetPalette(palette); // SVG drawer: same palettes as ROOT (1, 51-113)
   /*  Int_t myPalette[5];
   myPalette[0] = 1;
   myPalette[1] = 2;
@@ -171,6 +193,7 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
   bDrawStructID1Fig = G4bool(theParamMgr->GetNumericValue("bDrawStructID1Fig",0));
   bDrawStruct1Fig = G4bool(theParamMgr->GetNumericValue("bDrawStruct1Fig",0));
   bDrawIsodLines = G4bool(theParamMgr->GetNumericValue("bDrawIsodLines",0));
+  bOverlayCT = G4bool(theParamMgr->GetNumericValue("bOverlayCT",1));
 
   theDrawer->SetFigureTitle(G4bool(theParamMgr->GetNumericValue("bFigureTitle",1)));
 
@@ -283,7 +306,7 @@ void DCMDrawDICOM::DrawImages()
   } else if( VRTFiles.size() == 1 ) {
     RTFile = dynamic_cast<DicomReaderRTStruct*>(VRTFiles[0]);
     theStPolygonSet = RTFile->GetPolygonSet();
-    DicomPolygonSet* polyset = dynamic_cast<DicomPolygonSet*>(theStPolygonSet);
+    //    DicomPolygonSet* polyset = dynamic_cast<DicomPolygonSet*>(theStPolygonSet);
     //    G4cout << " CREATE POLYSET " << polyset << " " << theStPolygonSet << G4endl; //GDEB
     theVLineSets.push_back(theStPolygonSet);
     // GDEB
@@ -576,12 +599,57 @@ void DCMDrawDICOM::DrawImages()
 }
 
 //-------------------------------------------------------------------
+DicomVImage* DCMDrawDICOM::GetOverlayCTImage()
+{
+  static G4bool bSearched = false;
+  static DicomVImage* ctImage = 0;
+  if( bSearched ) return ctImage;
+  bSearched = true;
+  std::vector<DicomVImage*> images = theReaderMgr->GetImages();
+  G4int nCT = 0;
+  for( size_t ii = 0; ii < images.size(); ii++ ) {
+    DIModality mod = images[ii]->GetModality();
+    if( mod == DIM_CT || mod == DIM_G4dcmCT_MateDens || mod == DIM_InterfileCT ) {
+      if( nCT == 0 ) ctImage = images[ii];
+      nCT++;
+    }
+  }
+  if( nCT > 1 ) {
+    G4Exception("DCMDrawDICOM::GetOverlayCTImage",
+		"",
+		JustWarning,
+		("There are " + GmGenUtils::itoa(nCT) + " CT images, only the first one, " + ctImage->GetName() + " , is drawn below the dose and nuclear medicine images").c_str());
+  }
+  return ctImage;
+}
+
+//-------------------------------------------------------------------
 void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lineSets, G4String extraFileName)
 {
+  //--- dose and nuclear medicine images are drawn over the CT image (CT in grey scale)
+  DicomVImage* ctImage = 0;
+  if( bOverlayCT ) {
+    DIModality mod = image->GetModality();
+    if( image->IsDose() || mod == DIM_NM || mod == DIM_G4dcmNM || mod == DIM_Interfile ) {
+      ctImage = GetOverlayCTImage();
+    }
+  }
+#ifndef GAMOS_NO_ROOT
+  if( ctImage != 0 && dynamic_cast<DicomDrawerSVG*>(theDrawer) == 0 ) {
+    static G4bool bWarned = false;
+    if( !bWarned ) G4Exception("DCMDrawDICOM::DrawImage",
+			       "",
+			       JustWarning,
+			       "Drawing the CT image below the dose and nuclear medicine images is only available with the SVG drawer (-drawerType SVG)");
+    bWarned = true;
+  }
+#endif
+  theDrawer->SetBackgroundImage( ctImage );
+
   std::vector<DicomVLineSet*> newLineSets;
   //   G4cout << " DrawImage DrawXY " << bDrawXY << G4endl; //GDEB
   for( size_t ils = 0; ils < lineSets.size(); ils++ ) { // only polygons from RTStruct are included 
-    DicomVLineSet* lineSet = lineSets[ils];
+    //    DicomVLineSet* lineSet = lineSets[ils]; // only used in debug printout below
     // GDEB
     /*    G4cout << " DCMDrawDICOM::DrawImage( BEFORE DRAW POLYGON SET " << lineSet->GetName() << " Nlists " <<  lineSet->GetLineLists().size() << G4endl;
     for( size_t ii = 0; ii <  lineSet->GetLineLists().size(); ii++ ) {
@@ -686,7 +754,19 @@ void DCMDrawDICOM::PrintHelp()
 	 << " -isodPerCents N_VALUES %VALUE_1 %VALUE_2 ...    Define the isodose percentages (w.r.t. to maximum value in image) (default = 90 50 10)" << G4endl
 	 << " -isodPerCentsAbs N_VALUES %VALUE_1 %VALUE_2 ...    Define the isodose percentages (in absolute values) (default = 90 50 10)" << G4endl
 	 << " -overSurrounding FACTOR   limit voxel values to FACTOR*average values of surrounding voxels" << G4endl
+	 << " -bOverlayCT 0/1   if there is a CT image, draw the dose and nuclear medicine images over it, with the CT in grey scale (default = 1, only with SVG drawer)" << G4endl
+	 << " -overlayOpacity VALUE   opacity (0-1) of the dose or nuclear medicine colors drawn over the CT (default = 0.6)" << G4endl
+	 << " -CTMin VALUE   CT value drawn as black when the CT is drawn below another image (default = minimum value in CT image)" << G4endl
+	 << " -CTMax VALUE   CT value drawn as white when the CT is drawn below another image (default = maximum value in CT image)" << G4endl
 	 << " -bFigureTitle    Show the figure titleor not (1) " << G4endl;
+#ifdef GAMOS_NO_ROOT
+  G4cout << " Without ROOT the figures are drawn as SVG files (-drawerType SVG, default): " << G4endl
+	 << " -imageFormat FORMAT   svg (no conversion), png, jpg (default), gif, bmp, tiff (built-in renderer), pdf, ps, eps, webp (converted from SVG if a converter is found) " << G4endl
+	 << " -jpgQuality N   quality (1-100, default 90) of jpg files written by the built-in renderer " << G4endl
+	 << " Environment variable GM_FIGURE_NTHREADS: number of threads writing png/jpg/gif/bmp/tiff figures in background (default: number of cores - 1, at most 16; 0: no threads) " << G4endl
+	 << " -SVGConverter  auto   (auto/builtin: built-in renderer for png/jpg/gif/bmp/tiff, for the other formats look for rsvg-convert, inkscape, magick, convert in PATH; none; or program name/path) " << G4endl
+	 << " -nContours N   number of color levels (default 20) " << G4endl;
+#endif
 }
 
   

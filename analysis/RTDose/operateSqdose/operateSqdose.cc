@@ -29,7 +29,6 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosReadDICOM/include/GmSqdose.hh"
 
-#include "G4tgrUtils.hh"
 
 G4String theOperation;
 std::vector<G4String> theFileInNames;
@@ -44,7 +43,7 @@ int verbose = 1;
 
 int main(int argc,char** argv) 
 {
-  G4tgrUtils::bAllowErrors = true;
+  //  G4tgrUtils::bAllowErrors = true;
   
   theOperation = argv[1];
   theFileOutName =  argv[2];

@@ -1,43 +1,52 @@
-# - GAMOS_analysis_Shielding_sumScores module build definition
+# - sumScores module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_Shielding_sumScores
+gamos_add_module(sumScores
   PUBLIC_HEADERS
-    ReadScores.icc
     FileData.hh
-    TextScorerData.hh
-    MCNPFileData.hh
-    TextFileData.hh
-    ScoreData.hh
-    MCNPTallyData.hh
-    MCNPVTallierData.hh
-    MCNPTallierFNData.hh
-    ScorerData.hh
     GAMOSFileData.hh
     GAMOSScoreData.hh
-    TextScoreData.hh
-    MCNPTallierF5Data.hh
     GAMOSScorerData.hh
+    MCNPFileData.hh
+    MCNPTallierF5Data.hh
+    MCNPTallierFNData.hh
+    MCNPTallyData.hh
+    MCNPVTallierData.hh
+    ReadScores.icc
+    ScoreData.hh
+    ScorerData.hh
+    TextFileData.hh
+    TextScoreData.hh
+    TextScorerData.hh
   SOURCES
-    TextScoreData.cc
-    MCNPTallierFNData.cc
-    ScoreData.cc
-    ScorerData.cc
+    FileData.cc
+    GAMOSFileData.cc
     GAMOSScoreData.cc
     GAMOSScorerData.cc
-    TextScorerData.cc
-    MCNPTallyData.cc
-    MCNPTallierF5Data.cc
-    MCNPVTallierData.cc
     MCNPFileData.cc
-    GAMOSFileData.cc
-    FileData.cc
+    MCNPTallierF5Data.cc
+    MCNPTallierFNData.cc
+    MCNPTallyData.cc
+    MCNPVTallierData.cc
+    ScoreData.cc
+    ScorerData.cc
     TextFileData.cc
+    TextScoreData.cc
+    TextScorerData.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_Shielding_sumScores
+
+gamos_module_link_libraries(sumScores
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosUtils
+)
+
+# Program sumScores
+gamos_add_executable(sumScores
+  SOURCES
+    sumScores.cc
+  LINK_LIBRARIES
+    sumScores
+    GamosCore_GamosRunManager
+    GamosCore_GamosUtils
+    compareDoses
+    compareScores
 )

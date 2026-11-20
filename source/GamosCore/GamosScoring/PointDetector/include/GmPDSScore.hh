@@ -21,6 +21,8 @@ public:
   void FillEnergy( G4double wei, const Flux2Dose& flux2Dose, G4int enerID );
   void UpdateFluxErrorsThisEvent();
   void PrintResults( std::ostream& out, GmPDSDetector* det );
+  //--- Multithreading: add the sums of another score (of another thread) to this one
+  void Add( const GmPDSScore* score );
   G4int GetID() const {
     return theID; }
 
@@ -71,7 +73,7 @@ protected:
   G4double theHp60;
   G4double theHp75;
 
-  static G4int theNumberOfScores;
+  static G4ThreadLocal G4int theNumberOfScores;
 
   GmConvergenceTester* theConvergenceTester;
 

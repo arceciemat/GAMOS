@@ -17,7 +17,7 @@ public:
   void AddSD( GmVSD* sd );
   
 private:
-  static GmVSDList* theInstance;
+  static G4ThreadLocal GmVSDList* theInstance;
   std::set<G4String> theSDTypeList;
 };
 

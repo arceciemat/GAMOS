@@ -1,6 +1,6 @@
 #include "GamosCore/GamosSD/include/GmVSDList.hh"
 
-GmVSDList* GmVSDList::theInstance = 0;
+G4ThreadLocal GmVSDList* GmVSDList::theInstance = 0;
 
 GmVSDList* GmVSDList::GetInstance()
 {

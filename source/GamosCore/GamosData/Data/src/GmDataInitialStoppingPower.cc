@@ -7,7 +7,7 @@
 #include "G4TouchableHistory.hh"
 #include "G4TransportationManager.hh"
 #include "G4PVParameterised.hh"
-#include "G4DensityEffectData.hh" //GDEB
+#include "G4DensityEffectData.hh"
 
 //----------------------------------------------------------------
 GmDataInitialStoppingPower::GmDataInitialStoppingPower()

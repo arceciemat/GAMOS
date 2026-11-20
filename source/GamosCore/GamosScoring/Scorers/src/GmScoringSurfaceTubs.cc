@@ -107,7 +107,7 @@ G4bool GmScoringSurfaceTubs::IsSelectedSurface(G4StepPoint* stepPoint, G4Step* a
     }
 
     if( theSurfaces.find( "UP" ) != theSurfaces.end() ) {
-      G4bool bInSurface;
+      G4bool bInSurface = false;
       if( theDirection == fFlux_In || theDirection == fFlux_InOut ) {
 	bInSurface = CheckSurfaceCap( GetLocalPoint(aStep->GetPreStepPoint()->GetPosition(), aStep).z(), theTubs->GetZHalfLength() );
       }
@@ -124,7 +124,7 @@ G4bool GmScoringSurfaceTubs::IsSelectedSurface(G4StepPoint* stepPoint, G4Step* a
     }
 
     if( theSurfaces.find( "DOWN" ) != theSurfaces.end() ) {
-      G4bool bInSurface;
+      G4bool bInSurface = false;
       if( theDirection == fFlux_In || theDirection == fFlux_InOut ) {
 	bInSurface = CheckSurfaceCap( GetLocalPoint(aStep->GetPreStepPoint()->GetPosition(),aStep).z(), -theTubs->GetZHalfLength() );
       }

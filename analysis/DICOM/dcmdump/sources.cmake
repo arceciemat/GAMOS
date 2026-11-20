@@ -1,6 +1,19 @@
-# - GAMOS_analysis_DICOM_dcmdump module build definition
+# - dcmdump module build definition
 
-include(UseGamosAtGeant4)
+gamos_add_module(dcmdump
+  SOURCES
+    dummy.cc
+)
 
-geant4_add_module(GAMOS_analysis_DICOM_dcmdump
-  PUBLIC_HEADERS
+gamos_module_link_libraries(dcmdump
+  PUBLIC
+    ${GAMOS_DCMTK_LIBRARIES}
+)
+
+# Program dcmdump
+gamos_add_executable(dcmdump
+  SOURCES
+    dcmdump.cc
+  LINK_LIBRARIES
+    dcmdump
+)

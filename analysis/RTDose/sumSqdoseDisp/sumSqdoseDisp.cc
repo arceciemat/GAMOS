@@ -24,7 +24,6 @@
 // ********************************************************************
 //
 #include "G4UImanager.hh"
-#include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
 
 #include "G4GeometryManager.hh"
@@ -70,7 +69,7 @@ int main(int argc,char** argv)
 		    ("FILE_WITH_LIST LINES CANNOT HAVE "+GmGenUtils::itoa(wl.size())+" WORDS, ONLY 1, 2 or 5").c_str());
       }
       theDisp = G4ThreeVector(GmGenUtils::GetValue(wl[2]),GmGenUtils::GetValue(wl[3]),GmGenUtils::GetValue(wl[4]));
-      G4cout << "sumSqdoseDisp theDisp " << theDisp << G4endl; //GDEB
+      //G4cout << "sumSqdoseDisp theDisp " << theDisp << G4endl; //GDEB
     }
     
     if( ii == 0 ) {

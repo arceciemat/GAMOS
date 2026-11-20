@@ -13,6 +13,8 @@
 //----------------------------------------------------------------
 GmRunDataTextFileUA::GmRunDataTextFileUA()
 {
+  //--- Multithreading: workers accumulate, the master instance (with the summed data) writes
+  SetRunOnMaster(true);
 
   theDataType = DTTrack;
 }
@@ -25,8 +27,10 @@ void GmRunDataTextFileUA::BeginOfRunAction( const G4Run* aRun)
   theOutputType = theName;
 
   //  G4cout << " theOutputType " << theOutputType << " filters " << theFilters.size() << G4endl;
+  if( !IsMTWorker() ) {
   Init();
   OpenFileOut();
+  }
 
   theDataList.clear();
   theDataList.push_back("RunID");
@@ -34,6 +38,10 @@ void GmRunDataTextFileUA::BeginOfRunAction( const G4Run* aRun)
   theDataList.push_back("AccumulatedEnergyDeposited");
 
   BuildData() ;
+  if( IsMTWorker() ) {
+    for( std::vector<GmVData*>::const_iterator itew = theData.begin(); itew != theData.end(); itew++ ) (*itew)->Initialise();
+    return;
+  }
   std::vector<GmVData*>::const_iterator ite;
   for( ite = theData.begin(); ite != theData.end(); ite++ )
     {
@@ -70,6 +78,10 @@ void GmRunDataTextFileUA::UserSteppingAction(const G4Step* aStep )
 //----------------------------------------------------------------
 void GmRunDataTextFileUA::EndOfRunAction( const G4Run* aRun)
 {
+  if( IsMTWorker() ) {
+    MergeRunDataToMaster( dynamic_cast<GmVDataUser*>(GmUserAction::GetMasterUserAction(GetName())) );
+    return;
+  }
   std::vector<GmVData*>::const_iterator ite;
   for( ite = theData.begin(); ite != theData.end(); ite++ )
     {

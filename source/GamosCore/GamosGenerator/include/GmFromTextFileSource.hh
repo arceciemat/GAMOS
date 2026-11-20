@@ -16,6 +16,8 @@ public:
   void Initialize();
 
   virtual std::vector<G4PrimaryVertex*> GenerateVertices( G4double time );
+  // Multithreading: the lines of the file are read by one instance per source name (shared by all threads), under a mutex
+  std::vector<G4PrimaryVertex*> GenerateVerticesFromFile( G4double time );
   virtual G4PrimaryVertex* GenerateVertex( G4double time );
   virtual G4double GenerateTime();
   virtual G4String GetParticleName() const {
@@ -45,6 +47,7 @@ private:
   G4int theMaxNVertices;
   G4String theFileName;
   G4bool bInitialised;
+  G4bool bFromFile; // built with a file name (GmMultiIsotopesSource is not)
   G4bool bRandomNEventsToSkip;
   G4int theNEventsInFile;
   

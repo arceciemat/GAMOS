@@ -2,7 +2,6 @@
 #include "GamosCore/GamosData/Distributions/include/GmDistributionVerbosity.hh"
 
 #include "GamosCore/GamosData/Management/include/GmVData.hh"
-#include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
 //---------------------------------------------------------------------
 GmNumericDistributionUpper::GmNumericDistributionUpper(G4String name)
@@ -23,7 +22,7 @@ G4double GmNumericDistributionUpper::InterpolateValue(const G4double& , const G4
 }
 
 //---------------------------------------------------------------------
-G4double GmNumericDistributionUpper::GetMinimum(TH1F*)
+G4double GmNumericDistributionUpper::GetMinimum(GmHisto1*)
 {
   return 0.;
 }

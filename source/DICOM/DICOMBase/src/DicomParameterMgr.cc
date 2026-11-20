@@ -14,6 +14,7 @@
 #include "DicomVerbosity.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
+#include "GamosCore/GamosUtils/include/GmSVGRaster.hh"
 #include "GamosCore/GamosBase/Base/include/GmVVerbosity.hh"
 #include "GamosCore/GamosReadDICOM/include/GmReadPhantomStMgr.hh"
 
@@ -41,7 +42,6 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
   G4int iAddPar = 0;
 
   G4bool bResize = false;
-  G4bool bExtendAir = false;
   G4bool bReflectYSet = false;
   G4bool bRotateXY180Set = false; 
 
@@ -115,17 +115,17 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
     //    GetVStringValue("fSqdose",files);
     //-    G4cout << " N SQdose " << files.size();
     //    PrintParametersUsage(99); //GDEB
-    G4cout << " ADD FILENAMES " << addPstr << " " << PTVstring << "   " << argvstr << " " << argvstr1 << G4endl; //GDEB
+    //G4cout << " ADD FILENAMES " << addPstr << " " << PTVstring << "   " << argvstr << " " << argvstr1 << G4endl; //GDEB
     theDICOMImageFileNames.emplace(argvstr.substr(1,9999),argvstr1); // STORE FILE NAMES IN ORDER
   } else if( argvstr == "-fRTStruct" ||
 	     argvstr == "-fVOIStruct" ) {    
     AddParam( argvName+ " " + argvstr1, PTstring );
-    G4cout << " ADD PARAM fRTStruct " <<argvName+ " zz " + argvstr1 <<  G4endl; //GDEB
+    //G4cout << " ADD PARAM fRTStruct " <<argvName+ " zz " + argvstr1 <<  G4endl; //GDEB
     theDICOMImageFileNames.emplace(argvstr.substr(1,9999),argvstr1); // STORE FILE NAMES IN ORDER
   } else if( argvstr == "-fOut" ||
 	     argvstr == "-fDrawLines" ) {    
     AddParam( argvName+ " " + argvstr1, PTstring );
-    G4cout << " ADD PARAM fRTStruct " <<argvName+ " zz " + argvstr1 <<  G4endl; //GDEB
+    //G4cout << " ADD PARAM fRTStruct " <<argvName+ " zz " + argvstr1 <<  G4endl; //GDEB
     theDICOMImageFileNames.emplace(argvstr.substr(1,9999),argvstr1); // STORE FILE NAMES IN ORDER
   } else if( argvstr == "-multByNumber" ) {
     AddParam( argvName+ " " + argvstr1, PTdouble );
@@ -163,8 +163,21 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
     G4ThreeVector pt( GmGenUtils::GetValue(argv[iPar+1]), GmGenUtils::GetValue(argv[iPar+2]), GmGenUtils::GetValue(argv[iPar+3]));
     new DicomOperPrintValueAtPoint( pt, 3, "DicomOperPrintValueAtPoint");
     iAddPar = 3;
-  } else if( argvstr == "-imageFormat" ) {
+  } else if( argvstr == "-imageFormat"
+	     || argvstr == "-SVGConverter" ) { // SVGConverter: for SVG drawer (auto/none/program)
     AddParam( argvName+ " " + argvstr1, PTstring );
+  } else if( argvstr == "-jpgQuality" ) { // quality of JPG files of SVG drawer (built-in renderer)
+    G4int quality = GmGenUtils::IsInteger(argvstr1) ? G4int(GmGenUtils::GetValue(argvstr1)) : 0;
+    if( quality < 1 || quality > 100 ) {
+      G4Exception("DicomParameterMgr",
+		  "",
+		  FatalErrorInArgument,
+		  ("-jpgQuality must be an integer between 1 and 100, it is '" + argvstr1 + "'").c_str());
+    }
+    AddParam( argvName+ " " + argvstr1, PTdouble );
+    GmSVGRaster::SetJpegQuality( quality );
+  } else if( argvstr == "-nContours" ) { // number of color levels of SVG drawer
+    AddParam( argvName+ " " + argvstr1, PTdouble );
     
   } else if( argvstr == "-palette"
 	     || argvstr == "-paletteMin"

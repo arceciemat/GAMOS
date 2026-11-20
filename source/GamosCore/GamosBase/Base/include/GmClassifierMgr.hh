@@ -31,7 +31,7 @@ public:
 private:
   void AddClassifier( GmVClassifier* classifier );
 
-  static GmClassifierMgr* theInstance;
+  static G4ThreadLocal GmClassifierMgr* theInstance;
 
   std::map<G4String,GmVClassifier*> theClassifiers;
 

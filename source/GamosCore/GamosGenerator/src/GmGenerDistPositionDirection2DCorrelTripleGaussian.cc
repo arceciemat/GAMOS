@@ -454,7 +454,7 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy( G4Stri
     fclose(file);
     bFileOK = true;
   } else {
-    G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+energy << " trying with " << theConfFileNamePrefix+"0"+energy << G4endl; //GDEB
+    //G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+energy << " trying with " << theConfFileNamePrefix+"0"+energy << G4endl; //GDEB
     bFileOK = false;    
   }
   if (!bFileOK ) {
@@ -463,7 +463,7 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy( G4Stri
       bFileOK = true;
       energyFinal = "0"+energy; // conf3E99.9 -> conf3E099.9
     } else {
-      G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+"0"+energy << " trying with " << theConfFileNamePrefix+energy+".0" << G4endl; //GDEB
+      //G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+"0"+energy << " trying with " << theConfFileNamePrefix+energy+".0" << G4endl; //GDEB
       bFileOK = false;
     }
   }
@@ -473,7 +473,7 @@ void GmGenerDistPositionDirection2DCorrelTripleGaussian::SetParamsEnergy( G4Stri
       bFileOK = true;
       energyFinal = energy+".0";  // conf3E148. -> conf3E148.0
     } else {
-      G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+"0"+energy << " trying with " << theConfFileNamePrefix+"0"+energy+".0" << G4endl; //GDEB
+      //G4cout << " FILE NOT FOUND " << theConfFileNamePrefix+"0"+energy << " trying with " << theConfFileNamePrefix+"0"+energy+".0" << G4endl; //GDEB
       bFileOK = false;
     }
   }

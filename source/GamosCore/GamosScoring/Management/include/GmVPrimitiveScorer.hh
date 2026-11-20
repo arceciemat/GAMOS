@@ -55,6 +55,8 @@ public:
   G4bool IsRegularScoring( G4Step*aStep );
 
   virtual void SumEndOfEvent();
+  //--- Multithreading: add the run sums of this (worker thread) scorer to the master scorer and clear them
+  virtual void MergeToMaster( GmVPrimitiveScorer* masterScorer );
 
   void SetGmFilter(GmVFilter* f)
   { theFilter = f; }

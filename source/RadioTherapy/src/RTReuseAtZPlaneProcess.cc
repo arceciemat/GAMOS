@@ -172,7 +172,7 @@ G4double RTReuseAtZPlaneProcess::GetMeanFreePath(const G4Track& aTrack,
       G4double distZ = theZPlane - aTrack.GetPosition().z();
       G4double cosTrk = aTrack.GetMomentumDirection().z();
 #ifndef GAMOS_NO_VERBOSE
-      if( RTVerb(-debugVerb) ) G4cout << "RTReuseAtZPlaneProcess::GetMeanFreePath =  track already reused, do not reuse " << " distZ " << distZ << " cosTrk " << cosTrk << " dir " << aTrack.GetMomentumDirection() << G4endl;
+      if( RTVerb(debugVerb) ) G4cout << "RTReuseAtZPlaneProcess::GetMeanFreePath =  track already reused, do not reuse " << " distZ " << distZ << " cosTrk " << cosTrk << " dir " << aTrack.GetMomentumDirection() << G4endl;
 #endif
     }
     //    RTReuseAtZPlaneTrackInfo* trkInfoS = (RTReuseAtZPlaneTrackInfo*)trkInfo;

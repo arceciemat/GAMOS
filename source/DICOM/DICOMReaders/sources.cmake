@@ -1,62 +1,54 @@
-#------------------------------------------------------------------------------
-# Module : DICOMReaders
-# Package: DICOM_DICOMReaders
-#
-#------------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/include)
+# - DICOMReaders module build definition
 
-include_directories(G:/GAMOSwin/external/dmctk/dcmtk-3.18.2/include)
+gamos_add_module(DICOMReaders
+  PUBLIC_HEADERS
+    DicomROI.hh
+    DicomROIContour.hh
+    DicomReaderCT.hh
+    DicomReaderG4dcmCT.hh
+    DicomReaderG4dcmDose.hh
+    DicomReaderG4dcmNM.hh
+    DicomReaderInterfile.hh
+    DicomReaderInterfileCT.hh
+    DicomReaderLine.hh
+    DicomReaderMgr.hh
+    DicomReaderNM.hh
+    DicomReaderRTDose.hh
+    DicomReaderRTStruct.hh
+    DicomReaderSqdose.hh
+    DicomReaderTextLines.hh
+    DicomReaderVOIStruct.hh
+    DicomUIDInfo.hh
+    DicomVReader.hh
+    DicomVReaderImage.hh
+  SOURCES
+    DicomROI.cc
+    DicomROIContour.cc
+    DicomReaderCT.cc
+    DicomReaderG4dcmCT.cc
+    DicomReaderG4dcmDose.cc
+    DicomReaderG4dcmNM.cc
+    DicomReaderInterfile.cc
+    DicomReaderInterfileCT.cc
+    DicomReaderLine.cc
+    DicomReaderMgr.cc
+    DicomReaderNM.cc
+    DicomReaderRTDose.cc
+    DicomReaderRTStruct.cc
+    DicomReaderSqdose.cc
+    DicomReaderTextLines.cc
+    DicomReaderVOIStruct.cc
+    DicomUIDInfo.cc
+    DicomVReader.cc
+    DicomVReaderImage.cc
+)
 
-#
-# Define the GAMOS Module.
-include(UseGamosAtGeant4)
-#
-GEANT4_DEFINE_MODULE(NAME DICOMReaders
-	 HEADERS
-		DicomReaderG4dcmDose.hh
-		DicomReaderRTDose.hh
-		DicomReaderTextLines.hh
-		DicomVReaderImage.hh
-		DicomReaderLine.hh
-		DicomReaderG4dcmNM.hh
-		DicomROIContour.hh
-		DicomReaderSqdose.hh
-		DicomReaderNM.hh
-		DicomVReader.hh
-		DicomReaderRTStruct.hh
-		DicomReaderMgr.hh
-		DicomUIDInfo.hh
-		DicomReaderG4dcmCT.hh
-		DicomReaderCT.hh
-		DicomROI.hh
-	 SOURCES
-		DicomReaderLine.cc
-		DicomReaderG4dcmCT.cc
-		DicomVReader.cc
-		DicomReaderRTStruct.cc
-		DicomUIDInfo.cc
-		DicomReaderG4dcmNM.cc
-		DicomReaderNM.cc
-		DicomVReaderImage.cc
-		DicomROIContour.cc
-		DicomReaderMgr.cc
-		DicomROI.cc
-		DicomReaderTextLines.cc
-		DicomReaderG4dcmDose.cc
-		DicomReaderCT.cc
-		DicomReaderRTDose.cc
-		DicomReaderSqdose.cc
-	 
-	 GRANULAR_DEPENDENCIES
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${GAMOS_LIBRARIES} 
-		${SEAL_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-		${DCMTK_LIBRARIES} 
-		DICOMBase
-
-	LINK_LIBRARIES
+gamos_module_link_libraries(DICOMReaders
+  PUBLIC
+    DICOMBase
+    GamosCore_GamosBase_Base
+    GamosCore_GamosReadDICOM
+    GamosCore_GamosUtils
+    lcg_PluginManager
+    ${GAMOS_DCMTK_LIBRARIES}
 )

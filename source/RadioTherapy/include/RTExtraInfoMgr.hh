@@ -62,7 +62,7 @@ class RTExtraInfoMgr
   }
 
 private:
-  static RTExtraInfoMgr* theInstance;
+  static G4ThreadLocal RTExtraInfoMgr* theInstance;
 
   std::vector<RTVExtraInfoProviderLong*> theProvidersLong;
   std::vector<RTVExtraInfoProviderFloat*> theProvidersFloat;

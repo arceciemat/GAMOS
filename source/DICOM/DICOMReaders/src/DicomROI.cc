@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 DicomROI::DicomROI(int ROINumber, OFString ROIName) : theNumber(ROINumber+1), theName(ROIName)
 {
-  if( DicomVerb(debugVerb) ) G4cout << " CREATED  DicomROI "  << theNumber << " : " << theName << G4endl; //GDEB
+  if( DicomVerb(debugVerb) ) G4cout << " CREATED  DicomROI "  << theNumber << " : " << theName << G4endl;
 }
 
 //-----------------------------------------------------------------------------

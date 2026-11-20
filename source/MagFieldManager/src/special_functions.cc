@@ -15,7 +15,7 @@ double special_functions::rf(double x, double y, double z)
    double min2 = std::min( std::min(x+y,x+z),y+z);
    double max1 = std::max( std::max(x,y),z); 
    if (min1 < 0.0 || min2 < tiny || max1 > big){
-   	std::cout<<"Invalid arguments for the function special_functions::rf"<<std::endl;
+   	G4cout<<"Invalid arguments for the function special_functions::rf"<<std::endl;
    	return -99999.;
    }
 			
@@ -54,7 +54,7 @@ double special_functions::rd(double x, double y, double z)
     double min2=std::min(x+y,y);;
     double max1=std::max(std::max(x,y),z);
     if (min1 < 0.0 || min2 < tiny || max1 > big){
-   	std::cout<<"Invalid arguments for the function special_functions::rd"<<std::endl;
+   	G4cout<<"Invalid arguments for the function special_functions::rd"<<std::endl;
    	return -99999.;
     }
    

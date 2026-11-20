@@ -1,3 +1,4 @@
+#include "GmFileIn.hh"
 #include "GmG4Utils.hh"
 #include "GmGenUtils.hh"
 
@@ -27,7 +28,7 @@
 #include "G4GammaGeneralProcess.hh"
 #include "G4GammaConversionToMuons.hh"
 
-std::map<const G4ParticleDefinition*,G4DecayTable*> GmG4Utils::thePartDecayTable;
+G4ThreadLocal std::map<const G4ParticleDefinition*,G4DecayTable*> GmG4Utils::thePartDecayTable;
 
 /*//------------------------------------------------------------------
 G4VProcess* GetProcess(const G4String& particleName, const G4String& processName )
@@ -381,8 +382,8 @@ G4ThreeVector GmG4Utils::GetLocalFromGlobalDir( const G4ThreeVector globalDir, c
   
 }
 
-std::map<G4int,G4String> GmG4Utils::theElements;
-std::map<G4String,G4int> GmG4Utils::theElementsInv;
+G4ThreadLocal std::map<G4int,G4String> GmG4Utils::theElements;
+G4ThreadLocal std::map<G4String,G4int> GmG4Utils::theElementsInv;
 typedef std::pair<G4String,G4String> pps;
 typedef std::vector<pps> vpps;
 //----------------------------------------------------------------
@@ -602,7 +603,7 @@ void GmG4Utils::BuildElementNames()
   G4String fileName = "elementsZ.lis";
   fileName = GmGenUtils::FileInPath( fileName );
 
-  G4tgrFileIn fin = G4tgrFileIn::GetInstance(fileName);
+  GmFileIn& fin = GmFileIn::GetInstance(fileName, true); // thread local (G4tgrFileIn instances are shared by all threads)
   std::vector<G4String> wl;
   for(;;){
     if( !fin.GetWordsInLine(wl) ) break;

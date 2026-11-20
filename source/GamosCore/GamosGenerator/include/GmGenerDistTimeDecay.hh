@@ -32,7 +32,7 @@ public:
 #endif
 
 protected:
-	static G4double theCurrentActivity;
+	static G4ThreadLocal G4double theCurrentActivity;
 	G4double theActivity;
   G4double theLifeTime;
   GmGenerator* theGenerator;

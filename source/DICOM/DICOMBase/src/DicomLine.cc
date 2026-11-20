@@ -401,7 +401,7 @@ std::map<G4double,G4double> DicomLine::FindValuesInSteps( DicomVImage* image, G4
 	distAccum += step;
 	pos += dir*step;
 	bNotNow = true;
-	G4cout << " SKIP NOW " << G4endl; //GDEB
+	//G4cout << " SKIP NOW " << G4endl; //GDEB
 	break;
       }
     }

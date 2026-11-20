@@ -11,7 +11,7 @@
 #include "GmDistributionFactory.hh"
 #endif
 
-GmDistributionMgr* GmDistributionMgr::theInstance = 0;
+G4ThreadLocal GmDistributionMgr* GmDistributionMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 GmDistributionMgr::GmDistributionMgr()

@@ -1,3 +1,4 @@
+#include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #include "GmShowerShapeUA.hh"
 #include "GmUtilsUAVerbosity.hh"
 
@@ -94,11 +95,12 @@ void GmShowerShapeUA::InitialiseHistoNames()
 void GmShowerShapeUA::BeginOfRunAction( const G4Run* )
 {
   if( theTextFileName != "" ) { 
-    theTextFileOut = new std::ofstream(theTextFileName);
+    //--- Multithreading: one file per thread (the name is not changed, as this is called at each run)
+    theTextFileOut = new std::ofstream(GmMTMergeMgr::GetThreadFileName(theTextFileName));
   }
 
   if( theBinFileName != "" ) { 
-    theBinFileOut = fopen(theBinFileName,"wb");
+    theBinFileOut = fopen(GmMTMergeMgr::GetThreadFileName(theBinFileName),"wb");
   }
 
 }
@@ -236,6 +238,7 @@ void GmShowerShapeUA::EndOfEventAction( const G4Event* evt )
   std::map<G4int, GmSSData*>::const_iterator ite;
   if( theTextFileOut ) DumpText( evt );
   if( theBinFileOut ) DumpBin( evt );
+  if( theBinFileOut ) fflush( theBinFileOut ); // complete at the end of the job, when thread files are merged
 
   for( ite = theShowerData.begin(); ite != theShowerData.end(); ite++ ){
     GmSSData* ssdata = (*ite).second;

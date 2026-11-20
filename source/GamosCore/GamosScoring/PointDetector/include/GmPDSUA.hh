@@ -49,6 +49,9 @@ private:
 
   std::map<G4String,GmPDSScore*>* theScoresN;
   std::map<G4String,GmPDSScore*>* theScoresG;
+  //--- Multithreading: merge scores of this worker into those of the first worker of the run, printed by the master
+  void MergeScoresForMaster();
+  void PrintAllResults( GmPDSProcessHelper* helperN, GmPDSProcessHelper* helperG, GmPDSProcessHelper* helperOP );
 
   G4bool bInitialised;
 

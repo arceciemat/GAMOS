@@ -4,7 +4,6 @@
 #include "GmHistoProfile1.hh"
 #include "GmHistoProfile2.hh"
 
-G4bool GmHistoWriterTXT::bHistoTXTErrors = TRUE;
 
 //----------------------------------------------------------------------
 GmHistoWriterTXT::GmHistoWriterTXT(const G4String& filename)
@@ -77,14 +76,10 @@ void GmHistoWriterTXT::SaveHisto1D(const G4String& hisType, const TH1* his )
   G4int nbins = his->GetXaxis()->GetNbins();
   theFile << '"' << hisType << '"' << " " << '"' << his->GetName() << '"' << " " << nbins << " " << his->GetXaxis()->GetXmin() << " " << his->GetXaxis()->GetXmax();
   theFile << " NENT= " << his->GetEntries() << " MEAN= " << his->GetMean();
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError();  
-  }
+  theFile << " +- " << his->GetMeanError();  
   
   theFile << " RMS= " << his->GetRMS();  
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetRMSError();  
-  }    
+  theFile << " +- " << his->GetRMSError();  
 
   theFile << " UFLOW= " << his->GetBinContent(0);  
   theFile << " OFLOW= " << his->GetBinContent(nbins+1);  
@@ -92,9 +87,7 @@ void GmHistoWriterTXT::SaveHisto1D(const G4String& hisType, const TH1* his )
 
   for( G4int ii = 1; ii <= nbins; ii++ ){
     theFile << his->GetXaxis()->GetXmin()+his->GetXaxis()->GetBinWidth(ii)*(ii-0.5) << " " << his->GetBinContent(ii);
-    if( bHistoTXTErrors ) {
-      theFile << " " << his->GetBinError(ii);
-    }
+    theFile << " " << his->GetBinError(ii);
     theFile << G4endl;
   }
 
@@ -108,14 +101,10 @@ void GmHistoWriterTXT::SaveHisto1D(const G4String& hisType, const GmHisto1* his 
   theFile << '"' << hisType << '"' << " " << '"' << his->GetName() << '"' << " " << nbins << " " << his->GetLowerEdge() << " " << his->GetUpperEdge();
 
   theFile << " NENT= " << his->GetEntries() << " MEAN= " << his->GetMean();
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError();  
-  }
+  theFile << " +- " << his->GetMeanError();  
   
   theFile << " RMS= " << his->GetRMS();  
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetRMSError();  
-  }    
+  theFile << " +- " << his->GetRMSError();  
 
   theFile << " UFLOW= " << his->GetBinContent(0);  
   theFile << " OFLOW= " << his->GetBinContent(nbins+1);  
@@ -123,9 +112,7 @@ void GmHistoWriterTXT::SaveHisto1D(const G4String& hisType, const GmHisto1* his 
 
   for( G4int ii = 0; ii <= nbins+1; ii++ ){
     theFile << his->GetLowerEdge()+his->GetBinWidth(ii)*(ii-0.5) << " " << his->GetBinContent(ii);
-    if( bHistoTXTErrors ) {
-      theFile << " " << his->GetBinError(ii);
-    }
+    theFile << " " << his->GetBinError(ii);
     theFile << G4endl;
 
   }
@@ -140,14 +127,10 @@ void GmHistoWriterTXT::SaveHisto1D(const G4String& hisType, const GmHistoProfile
   theFile << '"' << hisType << '"' << " " << '"' << his->GetName() << '"' << " " << nbins << " " << his->GetLowerEdge() << " " << his->GetUpperEdge();
 
   theFile << " NENT= " << his->GetEntries() << " MEAN= " << his->GetMean();
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError();  
-  }
+  theFile << " +- " << his->GetMeanError();  
   
   theFile << " RMS= " << his->GetRMS();  
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetRMSError();  
-  }    
+  theFile << " +- " << his->GetRMSError();  
 
   theFile << " UFLOW= " << his->GetBinContent(0);  
   theFile << " OFLOW= " << his->GetBinContent(nbins+1);  
@@ -155,9 +138,7 @@ void GmHistoWriterTXT::SaveHisto1D(const G4String& hisType, const GmHistoProfile
 
   for( G4int ii = 0; ii <= nbins+1; ii++ ){
     theFile << his->GetLowerEdge()+his->GetBinWidth(ii)*(ii-0.5) << " " << his->GetBinContent(ii);
-    if( bHistoTXTErrors ) {
-      theFile << " " << his->GetBinError(ii);
-    }
+    theFile << " " << his->GetBinError(ii);
     theFile << G4endl;
 
   }
@@ -174,24 +155,16 @@ void GmHistoWriterTXT::SaveHisto2D(const G4String& hisType, const TH2* his )
   theFile << '"' << hisType << '"' << " " << '"' << his->GetName() << '"' << " " << nbinsx << " " << his->GetXaxis()->GetXmin() << " " << his->GetXaxis()->GetXmax() << " " << nbinsy << " " << his->GetYaxis()->GetXmin() << " " << his->GetYaxis()->GetXmax();
 
   theFile << " NENT= " << his->GetEntries() << " MEAN= " << his->GetMean(1);
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError(1);
-  }
+  theFile << " +- " << his->GetMeanError(1);
   
   theFile << " RMSX= " << his->GetRMS(1);  
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetRMSError(1);  
-  } 
+  theFile << " +- " << his->GetRMSError(1);  
 
   theFile << " MEANY= " << his->GetMean(2);
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError(2);
-  }
+  theFile << " +- " << his->GetMeanError(2);
   
   theFile << " RMSY= " << his->GetRMS(2);  
-  if( bHistoTXTErrors ) {
-    theFile << " " << his->GetRMSError(2);  
-  }
+  theFile << " " << his->GetRMSError(2);  
 
   G4double flow;
   G4int ii, jj;
@@ -229,9 +202,7 @@ void GmHistoWriterTXT::SaveHisto2D(const G4String& hisType, const TH2* his )
       theFile << his->GetXaxis()->GetXmin()+his->GetXaxis()->GetBinWidth(ii)*(ii-0.5) 
 	      << " " << his->GetYaxis()->GetXmin()+his->GetYaxis()->GetBinWidth(jj)*(jj-0.5) 
 	      << " " << his->GetBinContent(ii,jj);
-      if( bHistoTXTErrors ) {
-	theFile << " " << his->GetBinError(ii,jj);
-      } 
+      theFile << " " << his->GetBinError(ii,jj);
       theFile << G4endl;
     }
   }
@@ -246,64 +217,54 @@ void GmHistoWriterTXT::SaveHisto2D(const G4String& hisType, const GmHisto2* his 
   theFile << '"' << hisType << '"' << " " << '"' << his->GetName() << '"' << " " << nbinsx << " " << his->GetLowerEdgeX() << " " << his->GetUpperEdgeX() << " " << nbinsy << " " << his->GetLowerEdgeY() << " " << his->GetUpperEdgeY();
 
   theFile << " NENT= " << his->GetEntries() << " MEAN= " << his->GetMean(1);
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError(1);
-  }
+  theFile << " +- " << his->GetMeanError(1);
   
   theFile << " RMSX= " << his->GetRMS(1);  
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetRMSError(1);  
-  } 
+  theFile << " +- " << his->GetRMSError(1);  
 
   theFile << " MEANY= " << his->GetMean(2);
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError(2);
-  }
+  theFile << " +- " << his->GetMeanError(2);
   
   theFile << " RMSY= " << his->GetRMS(2);  
-  if( bHistoTXTErrors ) {
-    theFile << " " << his->GetRMSError(2) << G4endl;  
-  }
+  theFile << " " << his->GetRMSError(2) << G4endl;  
 
   G4double flow;
   G4int ii, jj;
   flow = 0;
   ii = 0;
-  for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( jj = 0; jj <= nbinsy+1; jj++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " UFLOWX= " << flow;
 
   flow = 0.;
   ii = nbinsx+1;
-  for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( jj = 0; jj <= nbinsy+1; jj++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " OFLOWX= " << flow;
 
   flow = 0.;
   jj = 0;
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
+  for( ii = 0; ii <= nbinsx+1; ii++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " UFLOWY= " << flow;
 
   flow = 0.;
   jj = nbinsy+1;
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
+  for( ii = 0; ii <= nbinsx+1; ii++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " OFLOWY= " << flow;
 
 
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
-    for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( ii = 0; ii <= nbinsx+1; ii++ ){
+    for( jj = 0; jj <= nbinsy+1; jj++ ){
       theFile << his->GetLowerEdgeX()+his->GetBinWidthX(ii)*(ii-0.5) 
 	      << " " << his->GetLowerEdgeY()+his->GetBinWidthY(jj)*(jj-0.5) 
 	      << " " << his->GetBinContent(ii,jj);
-      if( bHistoTXTErrors ) {
-	theFile << " " << his->GetBinError(ii,jj);
-      }
+      theFile << " " << his->GetBinError(ii,jj);
       theFile << G4endl;
     }
   }
@@ -318,86 +279,66 @@ void GmHistoWriterTXT::SaveHisto2D(const G4String& hisType, const GmHistoProfile
   theFile << '"' << hisType << '"' << " " << '"' << his->GetName() << '"' << " " << nbinsx << " " << his->GetLowerEdgeX() << " " << his->GetUpperEdgeX() << " " << nbinsy << " " << his->GetLowerEdgeX() << " " << his->GetUpperEdgeY();
 
   theFile << " NENT= " << his->GetEntries() << " MEAN= " << his->GetMean(1);
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError(1);
-  }
+  theFile << " +- " << his->GetMeanError(1);
   
   theFile << " RMSX= " << his->GetRMS(1);  
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetRMSError(1);  
-  } 
+  theFile << " +- " << his->GetRMSError(1);  
 
   theFile << " MEANY= " << his->GetMean(2);
-  if( bHistoTXTErrors ) {
-    theFile << " +- " << his->GetMeanError(2);
-  }
+  theFile << " +- " << his->GetMeanError(2);
   
   theFile << " RMSY= " << his->GetRMS(2);  
-  if( bHistoTXTErrors ) {
-    theFile << " " << his->GetRMSError(2) << G4endl;  
-  }
+  theFile << " " << his->GetRMSError(2) << G4endl;  
 
   G4double flow;
   G4int ii, jj;
   flow = 0;
   ii = 0;
-  for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( jj = 0; jj <= nbinsy+1; jj++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " UFLOWX= " << flow;
 
   flow = 0.;
   ii = nbinsx+1;
-  for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( jj = 0; jj <= nbinsy+1; jj++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " OFLOWX= " << flow;
 
   flow = 0.;
   jj = 0;
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
+  for( ii = 0; ii <= nbinsx+1; ii++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " UFLOWY= " << flow;
 
   flow = 0.;
   jj = nbinsy+1;
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
+  for( ii = 0; ii <= nbinsx+1; ii++ ){
     flow += his->GetBinContent(ii,jj);
   }
   theFile << " OFLOWY= " << flow;
 
-  for( G4int ii = 0; ii <= nbinsx+1; ii++ ){
-    for( G4int jj = 0; jj <= nbinsy+1; jj++ ){
+  for( ii = 0; ii <= nbinsx+1; ii++ ){
+    for( jj = 0; jj <= nbinsy+1; jj++ ){
       theFile << " " << his->GetBinContent(ii,jj);
-      if( bHistoTXTErrors ) {
-	theFile << " " << his->GetBinError(ii,jj);
-      }
+      theFile << " " << his->GetBinError(ii,jj);
       theFile << G4endl;
     }
   }
 
   theFile << " " << his->GetEntries() << " " << his->GetMean(1);
-  if( bHistoTXTErrors ) {
-    theFile << " " << his->GetMeanError(1);
-  }
+  theFile << " " << his->GetMeanError(1);
   
   theFile << " " << his->GetRMS(1);
-  if( bHistoTXTErrors ) {
-    theFile << " " << his->GetRMSError(1); 
-  } 
+  theFile << " " << his->GetRMSError(1); 
 
   theFile << " " << his->GetMean(2);
-  if( bHistoTXTErrors ) {
-    theFile << " " << his->GetMeanError(2);  
-  }
+  theFile << " " << his->GetMeanError(2);  
   
   theFile << " " << his->GetRMS(2);  
-  if( bHistoTXTErrors ) {
-    theFile << " " << his->GetRMSError(2) << G4endl;  
-  } else {
-    theFile << G4endl;  
-  }
+  theFile << " " << his->GetRMSError(2) << G4endl;  
 
 }
 #endif

@@ -43,12 +43,25 @@ public:
   void SetDrawHisto1( G4bool bdh ) {
     bDrawHisto1 = G4bool(bdh);
   }
+  // CT image drawn in grey scale below the images drawn next (dose, NM), 0 = none
+  virtual void SetBackgroundImage( DicomVImage* img ) {
+    theBackgroundImage = img;
+  }
+  DicomVImage* GetBackgroundImage() const {
+    return theBackgroundImage;
+  }
+
+protected:
+  // common to all drawers (moved from DicomDrawerROOT)
+  DicomPolygonSet* VoxelsInUseClosest( DicomPolygonSet* polySet, DicomVImage* image );
+  virtual G4double GetValueSurrounding(size_t ix, size_t iy, size_t iz, G4double value, DicomVImage* image, std::vector<G4double>* imgDatap );
 
 protected:
   G4bool bColorsInitialized;
   G4bool bAverageSurroundingBig;
   G4double theOverSurrounding;
   G4bool bDrawHisto1;
+  DicomVImage* theBackgroundImage;
   
 };
 

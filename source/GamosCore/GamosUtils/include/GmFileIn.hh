@@ -67,7 +67,7 @@ class GmFileIn
     return theStrTemp;
   }
   void SetUseCommentDoubleSlash( G4bool buse ) {
-    G4cout << " SetUseCommentDoubleSlash " << buse << G4endl; //GDEB
+    //G4cout << " SetUseCommentDoubleSlash " << buse << G4endl; //GDEB
     bUseCommentDoubleSlash = buse;
   }
   void SetUseCommentHashtag( G4bool buse ) {
@@ -87,7 +87,7 @@ class GmFileIn
 
  // private DATA MEMEBERS
   // Vector of class instances (each one identified by its name)
-  static std::vector<GmFileIn*> theInstances;
+  static G4ThreadLocal std::vector<GmFileIn*> theInstances;
  
   /// Name of file
   G4String theName;

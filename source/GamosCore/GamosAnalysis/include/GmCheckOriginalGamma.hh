@@ -31,9 +31,9 @@ class GmCheckOriginalGamma : public GmUserEventAction, public GmUserTrackingActi
 #endif
 
 private:
-  static std::set<G4int> theOrigGammas;
-  static std::map<G4int,G4int> theTrackAndParentIDs;
-  static std::map<G4int,G4bool> isFromRadiactiveDecay;
+  static G4ThreadLocal std::set<G4int> theOrigGammas;
+  static G4ThreadLocal std::map<G4int,G4int> theTrackAndParentIDs;
+  static G4ThreadLocal std::map<G4int,G4bool> isFromRadiactiveDecay;
 
   static G4int bCheckParentID;
 };

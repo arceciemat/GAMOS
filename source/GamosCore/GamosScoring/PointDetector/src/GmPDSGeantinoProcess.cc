@@ -152,7 +152,7 @@ void GmPDSGeantinoProcess::SplitOriginalParticle( const G4Track& aTrack, const G
 {
   G4double logwei = log(GetWeight(&aTrack));
 #ifndef GAMOS_NO_VERBOSE
-  if( ScoringVerb(-testVerb) ) G4cout << "GmPDSGeantinoProcess::SplitOriginalPartile logwei " << logwei << " minimum " << theMinimumWeightForSplitting << " maximum " << theMaximumWeightForSplitting << G4endl;
+  if( ScoringVerb(testVerb) ) G4cout << "GmPDSGeantinoProcess::SplitOriginalPartile logwei " << logwei << " minimum " << theMinimumWeightForSplitting << " maximum " << theMaximumWeightForSplitting << G4endl;
 #endif
   if( logwei > theMinimumWeightForSplitting && logwei < theMaximumWeightForSplitting ) {
     G4VUserTrackInformation* trki = aTrack.GetUserInformation();

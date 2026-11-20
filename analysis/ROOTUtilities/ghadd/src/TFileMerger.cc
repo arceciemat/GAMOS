@@ -874,7 +874,7 @@ Bool_t TFileMerger::PartialMerge(Int_t in_type)
 	 //histo = histo1;
 	 for( size_t ii = 0; ii < histo->GetXaxis()->GetNbins(); ii++ ) {
 	   if( histo->GetBinContent(ii) != 0 ) {
-	     std::cout << ii << " " << histo->GetName() << histo->GetBinContent(ii) << std::endl; //GDEB
+	     //std::cout << ii << " " << histo->GetName() << histo->GetBinContent(ii) << std::endl; //GDEB
 	   }
 	 }
 	  

@@ -8,6 +8,7 @@
 #include "G4ParticleDefinition.hh"
 #include "G4TrackVector.hh"
 #include "G4ThreeVector.hh"
+#include "G4VTouchable.hh"
 class G4NavigationHistory;
 class G4VProcess;
 class G4Step;
@@ -15,7 +16,6 @@ class G4SteppingManager;
 class G4Material;
 class G4Ions;
 class G4Nucleus;
-class G4VTouchable;
 class G4ProcessVector;
 
 class GmG4Utils {
@@ -41,8 +41,8 @@ public:
   static G4String GetInelasticName( std::map<G4String,G4int> secosN, const G4ParticleDefinition* primaryParticle, const G4Nucleus* targetNucleus = 0 );
   static G4String GetNucleusNameFromSecos(  std::map<G4String,G4int> channelParticleList, const G4ParticleDefinition* primaryParticle );
 
-  static std::map<G4int,G4String> theElements;
-  static std::map<G4String,G4int> theElementsInv;
+  static G4ThreadLocal std::map<G4int,G4String> theElements;
+  static G4ThreadLocal std::map<G4String,G4int> theElementsInv;
   static void BuildElementNames();
   static G4String GetElementNameFromZ(G4int Z);
   static G4int GetElementZFromName(G4String name);
@@ -55,7 +55,7 @@ public:
   static G4ProcessVector* GetGammaProcessVector(G4ProcessVector* provVectorOrig );
 
 private:
-  static std::map<const G4ParticleDefinition*,G4DecayTable*> thePartDecayTable;
+  static G4ThreadLocal std::map<const G4ParticleDefinition*,G4DecayTable*> thePartDecayTable;
 
 };
 

@@ -1,37 +1,52 @@
-# - GAMOS_analysis_Shielding_compareScores module build definition
+# - compareScores module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_Shielding_compareScores
+gamos_add_module(compareScores
   PUBLIC_HEADERS
-    ReadScores.icc
+    CSVFileData.hh
+    CSVScoreData.hh
+    CSVScorerData.hh
     FileData.hh
-    TextScorerData.hh
-    ROOTScoreData.hh
-    TextFileData.hh
     ROOTFileData.hh
-    ScoreData.hh
-    ScorerData.hh
+    ROOTScoreData.hh
     ROOTScorerData.hh
-    TextScoreData.hh
+    ReadScores.icc
+    ScoreData.hh
     ScoreSet.hh
+    ScorerData.hh
+    TextFileData.hh
+    TextScoreData.hh
+    TextScorerData.hh
   SOURCES
-    TextScoreData.cc
-    ScoreData.cc
-    ScorerData.cc
-    ScoreSet.cc
-    ROOTScoreData.cc
-    TextScorerData.cc
-    ROOTFileData.cc
-    ROOTScorerData.cc
+    CSVFileData.cc
+    CSVScoreData.cc
+    CSVScorerData.cc
     FileData.cc
+    ROOTFileData.cc
+    ROOTScoreData.cc
+    ROOTScorerData.cc
+    ScoreData.cc
+    ScoreSet.cc
+    ScorerData.cc
     TextFileData.cc
+    TextScoreData.cc
+    TextScorerData.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_Shielding_compareScores
+
+gamos_module_link_libraries(compareScores
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    sumScores
+    GamosCore_GamosBase_Base
     GamosCore_GamosUtils
-    ${SEAL_LIBRARIES} 
+)
+
+# Program compareScores
+gamos_add_executable(compareScores
+  SOURCES
+    compareScores.cc
+  LINK_LIBRARIES
+    compareScores
+    GamosCore_GamosBase_Base
+    GamosCore_GamosRunManager
+    GamosCore_GamosUtils
+    compareDoses
+    sumScores
 )

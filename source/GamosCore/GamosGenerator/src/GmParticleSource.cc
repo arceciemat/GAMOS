@@ -17,6 +17,7 @@
 // CorrectPosDir
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosBase/Base/include/GmHistoReaderCSV.hh"
+#include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmPhysicsLinearVector.hh"
 #include "GmGenerDistEnergyFromMultiFileE.hh"
 #include "GmGenerDistEnergyFromFile.hh"
@@ -633,13 +634,13 @@ void GmParticleSource::ReadCorrectPosDirExpMCProfAir1D(G4String energyNominal)
     G4double dataExp2 = ExpHistoX->GetBinContent(ibinExp2);
     //    G4cout << xval << " ibinExp12 " << ibinExp1 << " " << ibinExp2 << " dataExp12 " << dataExp1 << " " << dataExp2 << G4endl; //GDEB
     G4double dataExp = dataExp1 + (dataExp2-dataExp1)/Expbinw*(xval-(ExpXmin+(ibinExp1-1)*Expbinw)); 
-    G4cout << energyNominal << " " << ii <<" " << xval << " ReadCorrectPosDirExpMCProfAir1D " << ibinExp1 << " dataExp= "<< dataExp << " = " << dataExp1 <<"+" << (dataExp2-dataExp1)/Expbinw<<"*("<<xval<<"-"<<(ExpXmin+(ibinExp1-1)*Expbinw) << G4endl; //GDEB
+    //G4cout << energyNominal << " " << ii <<" " << xval << " ReadCorrectPosDirExpMCProfAir1D " << ibinExp1 << " dataExp= "<< dataExp << " = " << dataExp1 <<"+" << (dataExp2-dataExp1)/Expbinw<<"*("<<xval<<"-"<<(ExpXmin+(ibinExp1-1)*Expbinw) << G4endl; //GDEB
     G4double data = 0.;
     if ( dataMC != 0 ) {
       data = dataExp/dataMC;
     }
     dataVec.push_back(data);
-    G4cout << ii << " " << xval << " ReadCorrectPosDirExpMCProfAir1D CORR_FACTOR X " << data << " : dataExp " << dataExp << " dataMC " << dataMC << G4endl; //GDEB
+    //G4cout << ii << " " << xval << " ReadCorrectPosDirExpMCProfAir1D CORR_FACTOR X " << data << " : dataExp " << dataExp << " dataMC " << dataMC << G4endl; //GDEB
   
   }
   
@@ -677,15 +678,15 @@ void GmParticleSource::ReadCorrectPosDirExpMCProfAir1D(G4String energyNominal)
     G4int ibinExp2 = ibinExp1+1;
     G4double dataExp1 = ExpHistoY->GetBinContent(ibinExp1);
     G4double dataExp2 = ExpHistoY->GetBinContent(ibinExp2);
-    G4cout << yval << " ibinExp12 " << ibinExp1 << " " << ibinExp2 << " dataExp12 " << dataExp1 << " " << dataExp2 << G4endl; //GDEB
+    //G4cout << yval << " ibinExp12 " << ibinExp1 << " " << ibinExp2 << " dataExp12 " << dataExp1 << " " << dataExp2 << G4endl; //GDEB
     G4double dataExp = dataExp1 + (dataExp2-dataExp1)/Expbinw*(yval-(ExpYmin+(ibinExp1-1)*Expbinw));
-    G4cout << energyNominal << " " << ii << " ReadCorrectPosDirExpMCProfAir1D " << ibinExp1 << " dataExp= "<< dataExp << " = " << dataExp1 <<"+" << (dataExp2-dataExp1)/Expbinw<<"*("<<yval<<"-"<<(ExpYmin+(ibinExp1-1)*Expbinw) << G4endl; //GDEB
+    //G4cout << energyNominal << " " << ii << " ReadCorrectPosDirExpMCProfAir1D " << ibinExp1 << " dataExp= "<< dataExp << " = " << dataExp1 <<"+" << (dataExp2-dataExp1)/Expbinw<<"*("<<yval<<"-"<<(ExpYmin+(ibinExp1-1)*Expbinw) << G4endl; //GDEB
     G4double data = 0.;
     if ( dataMC != 0 ) {
       data = dataExp/dataMC;
     }
     dataVec.push_back(data);
-    G4cout << ii << " " << yval << " ReadCorrectPosDirExpMCProfAir1D CORR_FACTOR Y " << data << " : dataExp " << dataExp << " dataMC " << dataMC << G4endl; //GDEB
+    //G4cout << ii << " " << yval << " ReadCorrectPosDirExpMCProfAir1D CORR_FACTOR Y " << data << " : dataExp " << dataExp << " dataMC " << dataMC << G4endl; //GDEB
   }
 
   GmPhysicsLinearVector* distExpMCY = new GmPhysicsLinearVector(MCYmin,MCYmax,MCNbin,false);

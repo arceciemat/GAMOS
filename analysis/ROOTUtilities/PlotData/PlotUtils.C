@@ -119,7 +119,7 @@ int GetStyleP( int isty ) //https://root.cern.ch/doc/master/classTAttMarker.html
 {
 
   int isty1 = 100*(isty>=100)+(isty%100)%12;
-  std::cout << " ISTY " << isty << " : " << isty1 << std::endl; //GDEB
+  //std::cout << " ISTY " << isty << " : " << isty1 << std::endl; //GDEB
   switch (isty1)  {
   case 0: 
     return 24; // CIRCLE
@@ -194,7 +194,7 @@ double GetXPos( double xPoints, double hxMin, double hxWidth )
   } else {
     xPos = hxMin * std::pow(hxWidth, xPoints/Definitions::TOTAL_WIDTH);
   }
-if( verbose >= 2 ) std::cout << " GETXPOS " << xPos << " = hxMin " << hxMin << " + " << " hxWidth " << hxWidth << " * xPoints " << xPoints << " / " << Definitions::TOTAL_WIDTH << std::endl; //GDEB
+if( verbose >= 2 ) std::cout << " GETXPOS " << xPos << " = hxMin " << hxMin << " + " << " hxWidth " << hxWidth << " * xPoints " << xPoints << " / " << Definitions::TOTAL_WIDTH << std::endl;
   return xPos;
 }
 
@@ -390,7 +390,7 @@ void DrawWordInPave( TH1F* his, std::string title, double& xInit, double& yInit,
   }
 
   if( bCheckProtrude && xInit + tx > Definitions::TOTAL_WIDTH ) {
-    if( verbose >= 1 ) std::cout << " DrawWordInPave: PROTRUDE " << title << " " << xInit + tx << " > " << Definitions::TOTAL_WIDTH << " : " << xInit << " + " << " + " << tx  << std::endl; //GDEB
+    if( verbose >= 1 ) std::cout << " DrawWordInPave: PROTRUDE " << title << " " << xInit + tx << " > " << Definitions::TOTAL_WIDTH << " : " << xInit << " + " << " + " << tx  << std::endl;
     xInit = 30;
     yInit -= 15;
   }
@@ -445,7 +445,7 @@ void DrawWordAndMarker( TH1F* his, std::string title, double& xInit, double& yIn
   //--- Check if it protrudes
   //t  if( xInit + markerWidth + tx > Definitions::TOTAL_WIDTH ) {
   if( bCheckProtrude && xInit + markerWidth + tx > Definitions::TOTAL_WIDTH ) {
-    if( verbose >= 1 ) std::cout << " DrawWordAndMarker: PROTRUDE " << title << " " << xInit + markerWidth + tx << " > " << Definitions::TOTAL_WIDTH << " : " << xInit << " + " << markerWidth << " + " << tx  << std::endl; //GDEB
+    if( verbose >= 1 ) std::cout << " DrawWordAndMarker: PROTRUDE " << title << " " << xInit + markerWidth + tx << " > " << Definitions::TOTAL_WIDTH << " : " << xInit << " + " << markerWidth << " + " << tx  << std::endl;
     xInit = 30;
     yInit -= 15;
   }
@@ -456,7 +456,7 @@ void DrawWordAndMarker( TH1F* his, std::string title, double& xInit, double& yIn
     yPos = GetYPos( yInit+ty*Definitions::markerTextDispY, hyMin, hyWidth ); //FINAL
     //  std::cout << " DrawWordAndMarker TMarker at " << xPos << " , " << yPos << " " << yInit << " + " << ty << " * " << Definitions::markerTextDispY << " , " << hyMin << " " << hyWidth << " max " << hyMax << std::endl; //GDEB
     TMarker* marker;
-    std::cout << " DrawWordAndMarker TMarker " << iMarker << " " << Definitions::canvasSizeX << std::endl; //GDEB
+    //std::cout << " DrawWordAndMarker TMarker " << iMarker << " " << Definitions::canvasSizeX << std::endl; //GDEB
     if( iMarker >= 0 ) {
       marker = new TMarker(xPos, yPos, iMarker);
       marker->SetMarkerColor(color);
@@ -518,7 +518,7 @@ void DrawWordAndMarker( TProfile* his, std::string title, double& xInit, double&
   //--- Check if it protrudes
   //t  if( xInit + markerWidth + tx > Definitions::TOTAL_WIDTH ) {
   if( bCheckProtrude && xInit + markerWidth + tx > Definitions::TOTAL_WIDTH ) {
-    if( verbose >= 1 ) std::cout << " DrawWordAndMarker: PROTRUDE " << title << " " << xInit + markerWidth + tx << " > " << Definitions::TOTAL_WIDTH << " : " << xInit << " + " << markerWidth << " + " << tx  << std::endl; //GDEB
+    if( verbose >= 1 ) std::cout << " DrawWordAndMarker: PROTRUDE " << title << " " << xInit + markerWidth + tx << " > " << Definitions::TOTAL_WIDTH << " : " << xInit << " + " << markerWidth << " + " << tx  << std::endl;
     xInit = 30;
     yInit -= size*1000;;
   }

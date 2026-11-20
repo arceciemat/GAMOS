@@ -77,6 +77,7 @@ void RTZRLimitsUA::BuildXYLimits()
 //---------------------------------------------------------------------
 void RTZRLimitsUA::EndOfRunAction( const G4Run* )
 {
+  if( MergeToMasterIfWorker() ) return;
   std::map<G4double,G4String>::const_iterator itename;
   std::map<G4double,G4int>::const_iterator itec;
     G4cout << "%%%%%%%%%%%% Number of killed particles with too big X or Y " << G4endl;
