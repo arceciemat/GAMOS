@@ -1,23 +1,34 @@
-GO TO A DIRECTORY: PETTutorial/exercise2/exercise2b
+QA of a new GAMOS version with the tutorials (see the GAMOS User's Guide, Appendix A,
+"Comparing two GAMOS versions with the tutorials"). No ROOT is needed: StatTest/statTest.py
+uses only the Python 3 standard library.
 
-1. Prepare reference files merging N jobs
-1.1. Select what to merge: build qa file 
-cd GAMOS_OLD
-sh buildQA.exercise2b.sh std
-=> exercise2b.qa
-1.2. Run N jobs producing reference text and histo files
-cd GAMOS_OLD
-../runN.sh exercise2 exercise2b
-=> ref.out.exercise2b
-=> ref.gammaSD.exercise2b.root
-=> ref.hits.exercise2b.root
+EXAMPLE: PETTutorial/exercise2/exercise2b
 
-2. Compare current release with reference files
-2.1. Select what to merge: build qa file 
-cd GAMOS_OLD
-sh buildQA.exercise2b.sh ref
-=> exercise2b.qaref
-cp GAMOS_OLD/exercise2b.qaref GAMOS_NEW
-2.2. Run jobs to check if it passes. If not run it again (10 times) and see if same test fail, until there is no test that always fails
-cd GAMOS_NEW
-sh run1qa.sh PETTutorial exercise2 exercise2b
+0. Configuration file exercise2b.qaref: lines of the text output and histograms to compare, and tests to use.
+   It is created only once for each exercise, from the output of one job and its CSV histogram files:
+cd PETTutorial/exercise2
+gamos exercise2b.in > out.exercise2b
+sh buildQA.exercise2b.sh        (or e.g. sh ../../buildQA.countTracks.sh exercise2b)
+   which calls StatTest/prepareQATemplate.py (one template for each kind of lines)
+   and StatTest/prepareQA.py (joins the templates and adds the histograms)
+
+1. With the OLD release, build the reference files, merging 10 jobs
+cd GAMOS_OLD/tutorials/PETTutorial
+bash ../run1qa.sh exercise2 exercise2b
+=> exercise2/ref.out.exercise2b
+=> exercise2/ref.gammaSD.exercise2b.csv
+=> exercise2/ref.hits.exercise2b.csv
+
+2. With the NEW release, build the reference files in the same way
+cd GAMOS_NEW/tutorials/PETTutorial
+bash ../run1qa.sh exercise2 exercise2b
+
+3. Compare them (gamos is not run)
+cd GAMOS_NEW/tutorials
+export GAMOS_RELEASE_OLD=GAMOS_OLD/tutorials
+bash run1qa.sh PETTutorial exercise2 exercise2b
+=> PETTutorial/exercise2/qatest.summary.*          tests that failed
+=> PETTutorial/exercise2/qatest.report.*.pdf       plots of the histograms
+
+All tutorials: bash runAllN with each release, then bash runAllQA with the new one, and bash showQA.sh
+(the PDF viewer is evince, or the one set in the environment variable QA_PDF_VIEWER)

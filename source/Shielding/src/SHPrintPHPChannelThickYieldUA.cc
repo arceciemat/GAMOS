@@ -122,7 +122,8 @@ void SHPrintPHPChannelThickYieldUA::BeginOfEventAction(const G4Event* evt)
       }
 
       G4String modelName = hadModel->GetModelName();
-      if( modelName == "ParticleHPInelastic" ){
+      //--- by type: the model name depends on the physics list (Geant4 11.4: "ProtonHPInelastic", "NeutronHPInelastic", ...)
+      if( dynamic_cast<G4ParticleHPInelastic*>(hadModel) != nullptr ){
 	G4ParticleHPInelastic* HPinelas = (G4ParticleHPInelastic*)(hadModel);
 
 	if( SHUtils::GetNChannelParticles() == 0 ) SHUtils::BuildChannelList(primParticle->GetParticleDefinition(), theName);

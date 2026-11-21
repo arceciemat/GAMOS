@@ -124,7 +124,8 @@ void SHPlotPHPDBSpectraUA::BeginOfEventAction(const G4Event* evt)
 	G4HadProjectile hadProj(*aParticle);
 	G4Nucleus targetNucleus = *( hadProc->GetTargetNucleusPointer());
 	G4HadronicInteraction* hadModel = hadProc->ChooseHadronicInteraction(hadProj, targetNucleus, material, (*elementVector)[0]); // same model is assumed for all elements !!
-	if( hadModel->GetModelName() == "ParticleHPInelastic" ){
+	//--- by type: the model name depends on the physics list (Geant4 11.4: "ProtonHPInelastic", "NeutronHPInelastic", ...)
+	if( dynamic_cast<G4ParticleHPInelastic*>(hadModel) != nullptr ){
 	  if( SHUtils::GetNChannelParticles() == 0 ) SHUtils::BuildChannelList(primParticle->GetParticleDefinition(), theName);
 
 	  //	  G4HadProjectile hadProj(*aParticle);

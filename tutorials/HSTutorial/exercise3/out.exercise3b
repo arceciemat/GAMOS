@@ -1,9 +1,9 @@
 @@@@@ Running GAMOS with script: exercise3b.in
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+GAMOS starts RUN at : Fri Nov 20 18:14:42 CET 2026
 
 **************************************************************
- Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
+ Geant4 version Name: geant4-11-04-patch-03 [MT]   (01-October-2026)
+  << in Multi-threaded mode >> 
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -20,14 +20,24 @@ You have successfully registered the following graphics systems.
 Registered graphics systems are:
   ASCIITree (ATree)
   DAWNFILE (DAWNFILE)
-  G4HepRepFile (HepRepFile)
-  RayTracer (RayTracer)
+  RayTracer (RT)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
-  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
   TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
-  OpenGLStoredX (OGLSX, OGL, OGLS)
+  OpenGLStoredX (OGLSX, OGLS)
+  TOOLSSG_X11_GLES (TSG_X11_GLES, TSGX11, TSG, OGL)
+  TOOLSSG_X11_ZB (TSG_X11_ZB, TSGX11ZB, TSGZB)
+You may choose a graphics system (driver) with a parameter of
+the command "/vis/open" or "/vis/sceneHandler/create",
+or you may omit the driver parameter and choose at run time:
+- by argument in the construction of G4VisExecutive;
+- by environment variable "G4VIS_DEFAULT_DRIVER";
+- by entry in "~/.g4session";
+- by build flags.
+- Note: This feature is not allowed in batch mode.
+For further information see "examples/basic/B1/exampleB1.cc"
+and "vis.mac".
 
 Registering model factories...
 
@@ -69,19 +79,16 @@ GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
 GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/generator GmGenerator
 /run/initialize
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
 Checking overlaps for volume source:1 (G4Tubs) ... OK! 
 Checking overlaps for volume container:1 (G4Box) ... OK! 
 Checking overlaps for volume detector:1 (G4Tubs) ... OK! 
 Checking overlaps for volume container:2 (G4Box) ... OK! 
-/gamos/generator/addSingleParticleSource source gamma 1.*MeV
-/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
-/gamos/scoring/createMFDetector collisionDet *
-/gamos/scoring/addScorer2MFD collisionScorer GmG4PSNofCollision collisionDet
-GmEnergySplitter::GmEnergySplitter
- GmVPrimitiveScorer::SetParameters: no parameters 
-/gamos/classifier processAndVolumeClassifier GmCompoundClassifier GmClassifierByLogicalVolume GmClassifierByProcess
-/gamos/scoring/assignClassifier2Scorer processAndVolumeClassifier collisionScorer
-/run/beamOn 10000
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -103,10 +110,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -120,7 +130,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -211,6 +221,99 @@ eIoni:  for e+  XStype:3  SubType=2
       StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu+ ]2:anti_nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu- ]2:nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+/gamos/scoring/createMFDetector collisionDet *
+/gamos/scoring/addScorer2MFD collisionScorer GmG4PSNofCollision collisionDet
+ GmVPrimitiveScorer::SetParameters: no parameters 
+/gamos/classifier processAndVolumeClassifier GmCompoundClassifier GmClassifierByLogicalVolume GmClassifierByProcess
+/gamos/scoring/assignClassifier2Scorer processAndVolumeClassifier collisionScorer
+/run/beamOn 10000
 
 ========= Table of registered couples ============================
 
@@ -244,34 +347,83 @@ Index : 3     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
+G4WT7 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT4 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT6 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT10 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT3 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT41 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT26 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT2 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT33 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT17 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT14 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT23 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT11 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT21 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT5 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT44 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT24 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT42 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT29 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT30 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT27 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT37 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT19 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT12 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT9 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT36 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT20 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT32 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT13 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT39 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT18 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT46 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT38 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT22 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT31 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT40 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT34 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT0 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT8 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT45 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT47 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT43 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT25 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT35 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT16 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT28 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT1 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT15 >  GmVPrimitiveScorer::SetParameters: no parameters 
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 100 tasks with 100 events/task...
+============================================================================================
+
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=0.060000s Real=0.059545s Sys=0.000000s
- GmScoringRun::DumpAllScorer() 1 1
- GmVPSPrinter::SetUnit GmPSPrinterCout 1 New 1 Ratio 1
+  User=1.780000s Real=0.364372s Sys=0.010000s [Cpu=491.3%]
 
  MultiFunctionalDet: collisionDet
  PrimitiveScorer: collisionScorer
- Number of entries= 14
-  index: "detector compt"  = 0.0221 +-(REL) 0.0783924  sumV2= 3.05e-06
-  index: "source compt"  = 0.008 +-(REL) 0.111361  sumV2= 8e-07
-  index: "container compt"  = 0.0216 +-(REL) 0.073107  sumV2= 2.54e-06
-  index: "world compt"  = 0.0001 +-(REL) 1  sumV2= 1e-08
-  index: "detector eBrem"  = 0.0015 +-(REL) 0.258018  sumV2= 1.5e-07
+ Number of entries= 13
+  index: "detector compt"  = 0.0297 +-(REL) 0.0756062  sumV2= 5.13e-06
+  index: "source compt"  = 0.0071 +-(REL) 0.118262  sumV2= 7.1e-07
+  index: "container compt"  = 0.0199 +-(REL) 0.078666  sumV2= 2.49e-06
+  index: "world compt"  = 0.0006 +-(REL) 0.408146  sumV2= 6e-08
+  index: "detector eBrem"  = 0.0011 +-(REL) 0.327641  sumV2= 1.3e-07
   index: "source eBrem"  = 0.0001 +-(REL) 1  sumV2= 1e-08
-  index: "container eBrem"  = 0.0008 +-(REL) 0.35343  sumV2= 8e-08
-  index: "detector phot"  = 0.0012 +-(REL) 0.288516  sumV2= 1.2e-07
-  index: "source phot"  = 0.0001 +-(REL) 1  sumV2= 1e-08
-  index: "container phot"  = 0.0006 +-(REL) 0.408146  sumV2= 6e-08
-  index: "detector eIoni"  = 0.0005 +-(REL) 0.447124  sumV2= 5e-08
-  index: "source eIoni"  = 0.0001 +-(REL) 1  sumV2= 1e-08
-  index: "container eIoni"  = 0.0005 +-(REL) 0.447124  sumV2= 5e-08
-  index: "world eIoni"  = 0.0062 +-(REL) 0.234641  sumV2= 2.12e-06
-collisionScorer SUM_ALL: 0.0634 +-(REL) 0.0471992 
+  index: "container eBrem"  = 0.0006 +-(REL) 0.408146  sumV2= 6e-08
+  index: "detector phot"  = 0.001 +-(REL) 0.346283  sumV2= 1.2e-07
+  index: "container phot"  = 0.0004 +-(REL) 0.499925  sumV2= 4e-08
+  index: "detector eIoni"  = 0.0009 +-(REL) 0.3332  sumV2= 9e-08
+  index: "source eIoni"  = 0.0004 +-(REL) 0.499925  sumV2= 4e-08
+  index: "container eIoni"  = 0.0004 +-(REL) 0.499925  sumV2= 4e-08
+  index: "world eIoni"  = 0.0062 +-(REL) 0.208827  sumV2= 1.68e-06
+collisionScorer SUM_ALL: 0.0684 +-(REL) 0.0472924 
 Graphics systems deleted.
 Visualization Manager deleting...
+GAMOS ends RUN at : Fri Nov 20 18:14:43 CET 2026
 %%%%% Compound classifier using indices from 2

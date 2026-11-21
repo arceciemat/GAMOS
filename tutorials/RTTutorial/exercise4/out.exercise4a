@@ -1,9 +1,9 @@
 @@@@@ Running GAMOS with script: exercise4a.in
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+GAMOS starts RUN at : Fri Nov 20 18:15:56 CET 2026
 
 **************************************************************
- Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
+ Geant4 version Name: geant4-11-04-patch-03 [MT]   (01-October-2026)
+  << in Multi-threaded mode >> 
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -20,14 +20,24 @@ You have successfully registered the following graphics systems.
 Registered graphics systems are:
   ASCIITree (ATree)
   DAWNFILE (DAWNFILE)
-  G4HepRepFile (HepRepFile)
-  RayTracer (RayTracer)
+  RayTracer (RT)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
-  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
   TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
-  OpenGLStoredX (OGLSX, OGL, OGLS)
+  OpenGLStoredX (OGLSX, OGLS)
+  TOOLSSG_X11_GLES (TSG_X11_GLES, TSGX11, TSG, OGL)
+  TOOLSSG_X11_ZB (TSG_X11_ZB, TSGX11ZB, TSGZB)
+You may choose a graphics system (driver) with a parameter of
+the command "/vis/open" or "/vis/sceneHandler/create",
+or you may omit the driver parameter and choose at run time:
+- by argument in the construction of G4VisExecutive;
+- by environment variable "G4VIS_DEFAULT_DRIVER";
+- by entry in "~/.g4session";
+- by build flags.
+- Note: This feature is not allowed in batch mode.
+For further information see "examples/basic/B1/exampleB1.cc"
+and "vis.mac".
 
 Registering model factories...
 
@@ -81,6 +91,11 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /run/setCut 0.01
 /gamos/userAction GmCountTracksUA
 /run/initialize
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
 Warning : Region <targetReg> does not have specific production cuts,
 even though it appears in the current tracking world.
 Default cuts are used for this region.
@@ -96,11 +111,7 @@ Default cuts are used for this region.
 Warning : Region <jawsReg> does not have specific production cuts,
 even though it appears in the current tracking world.
 Default cuts are used for this region.
-/gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-7 1.E1 10.
-/gamos/classifier ClassifierParticleAndKinEnergy GmCompoundClassifier GmClassifierByParticle energyClassifier
-/gamos/generator/addSingleParticleSource source e- 6.*MeV
-/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
-/run/beamOn 200
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -122,10 +133,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -139,7 +153,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -235,6 +249,96 @@ eIoni:  for e+  XStype:3  SubType=2
       StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu+ ]2:anti_nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu- ]2:nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-7 1.E1 10.
+/gamos/classifier ClassifierParticleAndKinEnergy GmCompoundClassifier GmClassifierByParticle energyClassifier
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+/run/beamOn 200
 
 ========= Table of registered couples ============================
 
@@ -271,73 +375,442 @@ Index : 3     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- CreateHisto1D N trackInfos per Track in target = 980091
- CreateHisto2D trackInfo Region vs trackInfo Region = 980092
- %%% EVENT 0 NTRACKS 16 TOTAL NTRACKS 16
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Range) = 1020011
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Energy) = 1020012
- CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: eBrem:  Safety-Range vs Range) = 1020013
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: phot:  log10(Range) = 1030021
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: phot:  log10(Energy) = 1030022
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: phot:  Safety-Range vs Range) = 1030023
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: conv:  log10(Range) = 1030031
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: conv:  log10(Energy) = 1030032
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: e+: conv:  Safety-Range vs Range) = 1030033
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: annihil:  log10(Range) = 1030041
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: annihil:  log10(Energy) = 1030042
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: annihil:  Safety-Range vs Range) = 1030043
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: compt:  log10(Range) = 1030051
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: compt:  log10(Energy) = 1030052
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: e-: compt:  Safety-Range vs Range) = 1030053
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: eBrem:  log10(Range) = 1030011
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: eBrem:  log10(Energy) = 1030012
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: eBrem:  Safety-Range vs Range) = 1030013
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run10035
+      issued by : G4TaskRunManager::InitializeEventLoop()
+Event modulo is reduced to 4 (was 14) to distribute events to all threads.
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run10035
+      issued by : G4TaskRunManager::InitializeEventLoop()
+Event modulo is reduced to 4 (was 14) to distribute events to all threads.
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+
+=========================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 50 tasks with 4 events/task...
+=========================================================================================
+
+G4WT4 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT4 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT16 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT16 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT30 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT30 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT33 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT24 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT33 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT24 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT11 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT13 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT11 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT15 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT13 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT15 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT19 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT19 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT2 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT2 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT22 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT22 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT14 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT38 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT14 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT38 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT17 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT12 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT17 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT7 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT7 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT41 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT41 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT5 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT12 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT5 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT18 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT20 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT45 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT45 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT20 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT23 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT18 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT23 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT29 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT29 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT46 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT8 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT8 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT10 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT46 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT1 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT10 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT1 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT42 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT42 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT43 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT37 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT43 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT44 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT37 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT36 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT32 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT44 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT36 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT32 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT28 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT28 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT26 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT26 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT0 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT0 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT40 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT40 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT25 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT25 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT35 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT35 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT4 >  %%% EVENT 0 NTRACKS 46 TOTAL NTRACKS 46
+G4WT15 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Range) = 1020011
+G4WT15 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Energy) = 1020012
+G4WT15 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: eBrem:  Safety-Range vs Range) = 1020013
+G4WT38 >  CreateHisto1D GmProdCutsStudyUA: targetReg: e-: eIoni:  log10(Range) = 1020011
+G4WT38 >  CreateHisto1D GmProdCutsStudyUA: targetReg: e-: eIoni:  log10(Energy) = 1020012
+G4WT38 >  CreateHisto2D GmProdCutsStudyUA: targetReg: e-: eIoni:  Safety-Range vs Range) = 1020013
+G4WT38 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Range) = 1020021
+G4WT38 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Energy) = 1020022
+G4WT39 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT39 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT38 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: eBrem:  Safety-Range vs Range) = 1020023
+G4WT3 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT3 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT20 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Range) = 1020011
+G4WT20 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Energy) = 1020012
+G4WT20 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: eBrem:  Safety-Range vs Range) = 1020013
+G4WT13 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Range) = 1020011
+G4WT13 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Energy) = 1020012
+G4WT13 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: eBrem:  Safety-Range vs Range) = 1020013
+G4WT31 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT31 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT5 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Range) = 1020011
+G4WT5 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Energy) = 1020012
+G4WT5 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: eBrem:  Safety-Range vs Range) = 1020013
+G4WT27 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT27 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT6 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT6 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT21 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT21 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT9 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT9 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT34 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT34 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT47 >  CreateHisto1D N trackInfos per Track in target = 980091
+G4WT47 >  CreateHisto2D trackInfo Region vs trackInfo Region = 980092
+G4WT34 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Range) = 1020011
+G4WT34 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Energy) = 1020012
+G4WT34 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: eBrem:  Safety-Range vs Range) = 1020013
+G4WT15 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020021
+G4WT2 > 
+G4WT25 > 
+G4WT29 > 
+G4WT36 > 
+G4WT25 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT25 > 
+G4WT16 > 
+G4WT18 > 
+G4WT8 > 
+G4WT3 > 
+G4WT26 > 
+G4WT9 > 
+G4WT27 > 
+G4WT38 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020031
+G4WT27 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT45 > 
+G4WT19 > 
+G4WT19 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT2 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT2 > 
+G4WT44 > 
+G4WT44 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT29 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT31 > 
+G4WT5 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020021
+G4WT5 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020022
+G4WT31 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT47 > 
+G4WT36 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT36 > 
+G4WT36 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT36 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT6 > 
+G4WT5 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020023
+G4WT13 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020021
+G4WT6 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT21 > 
+G4WT13 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020022
+G4WT42 > 
+G4WT21 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT15 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020022
+G4WT25 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT33 > 
+G4WT12 > 
+G4WT33 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT33 > 
+G4WT12 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT12 > 
+G4WT16 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT37 > 
+G4WT16 > 
+G4WT37 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT28 > 
+G4WT24 > 
+G4WT30 > 
+G4WT17 > 
+G4WT8 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT3 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT3 > 
+G4WT3 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT10 > 
+G4WT10 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT35 > 
+G4WT10 > 
+G4WT0 > 
+G4WT40 > 
+G4WT35 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT7 > 
+G4WT34 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020021
+G4WT14 > 
+G4WT34 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020022
+G4WT9 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT9 > 
+G4WT27 > 
+G4WT39 > 
+G4WT38 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020032
+G4WT45 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT27 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT45 > 
+G4WT41 > 
+G4WT27 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT45 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT4 > 
+G4WT44 > 
+G4WT29 > 
+G4WT44 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT44 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT29 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT47 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT29 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT42 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT42 > 
+G4WT25 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT46 > 
+G4WT46 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT13 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020023
+G4WT46 > 
+G4WT33 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT33 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT12 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT18 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT12 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT37 > 
+G4WT28 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT11 > 
+G4WT24 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT30 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT11 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT24 > 
+G4WT15 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020023
+G4WT30 > 
+G4WT43 > 
+G4WT30 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT10 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT30 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT40 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT10 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 0
+G4WT0 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT35 > 
+G4WT1 > 
+G4WT0 > 
+G4WT7 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT1 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT0 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT14 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT9 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT0 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT19 > 
+G4WT38 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020033
+G4WT2 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT31 > 
+G4WT2 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT4 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT31 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT21 > 
+G4WT31 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT6 > 
+G4WT47 > 
+G4WT42 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT46 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT20 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020021
+G4WT46 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT42 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT37 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT28 > 
+G4WT8 > 
+G4WT28 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT8 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT28 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT24 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT8 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT3 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT43 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT43 > 
+G4WT26 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT43 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT40 > 
+G4WT35 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT26 > 
+G4WT40 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT26 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT39 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT34 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020023
+G4WT39 > 
+G4WT39 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT14 > 
+G4WT39 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT14 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT32 > 
+G4WT45 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT19 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT4 > 
+G4WT23 > 
+G4WT21 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT21 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT23 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT47 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT23 > 
+G4WT6 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT23 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT37 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT20 >  CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020022
+G4WT23 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT11 > 
+G4WT24 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT15 > 
+G4WT11 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT15 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT43 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT15 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 37.7041
+G4WT15 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 37.7041
+G4WT1 > 
+G4WT35 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 0
+G4WT1 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT40 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT26 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT41 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT7 > 
+G4WT9 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT7 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT14 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT7 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 0
+G4WT32 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT32 > 
+G4WT4 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT32 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT18 > 
+G4WT16 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT32 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 0
+G4WT16 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT17 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT47 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT22 > 
+G4WT5 > 
+G4WT15 > 
+G4WT1 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT22 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT41 > 
+G4WT22 > 
+G4WT13 > 
+G4WT4 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 0
+G4WT13 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT6 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 0
+G4WT13 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 67.4068
+G4WT5 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT13 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 67.4068
+G4WT5 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 66.6921
+G4WT13 > 
+G4WT5 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 66.6921
+G4WT5 > 
+G4WT13 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT22 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT22 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT41 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT17 > 
+G4WT41 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT17 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT11 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT17 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 0
+G4WT18 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT5 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT18 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT15 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT19 > NUMBER OF TRACKS ACCEPTED 0 N ANCESTORS 0
+G4WT38 >  CreateHisto1D GmProdCutsStudyUA: targetReg: e-: ALL:  log10(Range) = 1020041
+G4WT38 >  CreateHisto1D GmProdCutsStudyUA: targetReg: e-: ALL:  log10(Energy) = 1020042
+G4WT20 >  CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020023
+G4WT38 >  CreateHisto2D GmProdCutsStudyUA: targetReg: e-: ALL:  Safety-Range vs Range) = 1020043
+G4WT5 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
+G4WT15 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
+G4WT13 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
+G4WT5 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
+G4WT5 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 1
+G4WT34 > 
+G4WT34 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT34 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 76.3337
+G4WT34 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 76.3337
+G4WT34 > 
+G4WT34 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT15 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
+G4WT15 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 1
+G4WT13 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
+G4WT13 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 1
+G4WT34 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
+G4WT38 > 
+G4WT38 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT38 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 1.89574
+G4WT38 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 1.89574
+G4WT38 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= e- PROCESS= ALL MIN RANGE= 1.56524
+G4WT38 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= e- PROCESS= eIoni MIN RANGE= 1.56524
+G4WT38 > 
+G4WT38 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT20 > 
+G4WT20 >  %%%%% PRODUCTION CUTS STUDY RESULTS 
+G4WT20 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 129.155
+G4WT20 > GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 129.155
+G4WT20 > 
+G4WT20 >  %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
+G4WT38 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
+G4WT34 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
+G4WT34 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 1
+G4WT20 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
+G4WT38 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
+G4WT20 > RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
+G4WT20 > NUMBER OF TRACKS ACCEPTED 1 N ANCESTORS 1
+G4WT38 > RangeRejection: REGION= targetReg PARTICLE= e- PROCESS= ALL NTRACKS= 0
+G4WT38 > RangeRejection: REGION= targetReg PARTICLE= e- PROCESS= eIoni NTRACKS= 0
+G4WT38 > NUMBER OF TRACKS ACCEPTED 2 N ANCESTORS 3
  Run terminated.
 Run Summary
   Number of events processed : 200
-  User=0.220000s Real=0.223024s Sys=0.010000s
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020061
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020062
- CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020063
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  log10(Range) = 1030061
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  log10(Energy) = 1030062
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  Safety-Range vs Range) = 1030063
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: ALL:  log10(Range) = 1030071
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: ALL:  log10(Energy) = 1030072
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: e-: ALL:  Safety-Range vs Range) = 1030073
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: ALL:  log10(Range) = 1030081
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: ALL:  log10(Energy) = 1030082
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: e+: ALL:  Safety-Range vs Range) = 1030083
-
- %%%%% PRODUCTION CUTS STUDY RESULTS 
-GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 19.3659
-GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 19.3659
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 0.210899
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= phot MIN RANGE= 0.210899
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 26.8542
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= annihil MIN RANGE= 17.0405
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e- PROCESS= ALL MIN RANGE= 0.388594
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e- PROCESS= compt MIN RANGE= 0.388594
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e+ PROCESS= ALL MIN RANGE= 0.178384
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e+ PROCESS= conv MIN RANGE= 0.178384
-
- %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
-RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
-RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
-RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
-RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= phot NTRACKS= 0
-RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
-RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= annihil NTRACKS= 0
-RangeRejection: REGION= collimatorReg PARTICLE= e- PROCESS= ALL NTRACKS= 1
-RangeRejection: REGION= collimatorReg PARTICLE= e- PROCESS= compt NTRACKS= 1
-RangeRejection: REGION= collimatorReg PARTICLE= e+ PROCESS= ALL NTRACKS= 1
-RangeRejection: REGION= collimatorReg PARTICLE= e+ PROCESS= conv NTRACKS= 1
-NUMBER OF TRACKS ACCEPTED 11 N ANCESTORS 15
+  User=0.970000s Real=0.287863s Sys=0.070000s [Cpu=361.3%]
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 prodcuts.exercise4a:NormalizeToNEvents
 === saving histograms in file === prodcuts.exercise4a.csv
+GAMOS ends RUN at : Fri Nov 20 18:15:57 CET 2026
 %%%%% Compound classifier using indices from 2

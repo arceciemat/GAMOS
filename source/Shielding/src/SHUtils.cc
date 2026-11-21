@@ -1,3 +1,4 @@
+#include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "SHUtils.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
@@ -11,10 +12,10 @@
 #include "G4ProcessManager.hh"
 
 #include <iomanip>
-std::vector<G4HadronicProcess*> SHUtils::theHadronicProcesses;
-std::map<G4String, ChannelData > SHUtils::theChannelParticles;
-std::map<G4int,G4String> SHUtils::theElements;
-std::map<G4double,G4int> SHUtils::theProductIDs;
+G4ThreadLocal std::vector<G4HadronicProcess*> SHUtils::theHadronicProcesses;
+G4ThreadLocal std::map<G4String, ChannelData > SHUtils::theChannelParticles;
+G4ThreadLocal std::map<G4int,G4String> SHUtils::theElements;
+G4ThreadLocal std::map<G4double,G4int> SHUtils::theProductIDs;
 
 //------------------------------------------------------------------
 SHUtils::SHUtils() 
@@ -64,7 +65,7 @@ void SHUtils::BuildChannelList(const G4ParticleDefinition* particle, G4String UA
   G4String fileName = GmParameterMgr::GetInstance()->GetStringValue(UAName+":ChannelListFileName","channel.lis");
   fileName = GmGenUtils::FileInPath( fileName );
 
-  G4tgrFileIn fin = G4tgrFileIn::GetInstance(fileName);
+  GmFileIn& fin = GmFileIn::GetInstance(fileName, true); // thread local (G4tgrFileIn instances are shared by all threads)
   std::vector<G4String> wl;
   G4int nProtonsProjectile = -particle->GetAtomicNumber();
   G4int nNeutronsProjectile = -(particle->GetAtomicMass() - nProtonsProjectile);
@@ -140,7 +141,7 @@ void SHUtils::BuildElementNames()
   G4String fileName = GmParameterMgr::GetInstance()->GetStringValue("SHUtils:ElementsFileName","elementsZ.lis");
   fileName = GmGenUtils::FileInPath( fileName );
 
-  G4tgrFileIn fin = G4tgrFileIn::GetInstance(fileName);
+  GmFileIn& fin = GmFileIn::GetInstance(fileName, true); // thread local (G4tgrFileIn instances are shared by all threads)
   std::vector<G4String> wl;
   for(;;){
     if( !fin.GetWordsInLine(wl) ) break;

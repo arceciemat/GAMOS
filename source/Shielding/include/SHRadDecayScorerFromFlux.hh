@@ -30,6 +30,10 @@ public: // with description
 
   G4Ions* GetIon(G4int index) const;
 
+  // Multithreading: adds the run values of this (worker) scorer to the master one; indices are assigned in order of
+  // appearance in each thread, so the values are matched by ion
+  void AddToMaster( SHRadDecayScorerFromFlux* master );
+
   G4THitsMap<G4double>* GetRunMap() const {
     return theRunMap;
   }

@@ -1,0 +1,36 @@
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .exercise0b
+/gamos/setParam GmGeometryFromText:FileName exercise0.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+/run/initialize
+
+### Generator distributions 
+/gamos/generator/addSingleParticleSource mySource e- 150.*keV
+/gamos/generator/directionDist mySource GmGenerDistDirectionConst 0. 0. 1. 
+
+#/control/execute ../../../examples/visVRML2FILE.in
+
+###  Count number of particles and different types of interactions
+/gamos/userAction GmCountProcessesUA
+
+### Make a histogram of the initial kinetic energy of all particles (use GmTrackDataHistosUA)
+/gamos/analysis/histo1Max *Energy* 160*keV
+/gamos/setParam GmTrackDataHistosUA:DataList InitialKineticEnergy
+/gamos/userAction GmTrackDataHistosUA
+
+### Make a histogram of the initial kinetic energy of each particle type (use GmClassifierByParticle)
+/gamos/setParam GmTrackDataHistosUA_GmClassifierByParticle:DataList InitialKineticEnergy
+/gamos/userAction GmTrackDataHistosUA GmClassifierByParticle
+
+#### Make a histogram the length travelled by the gamma particles at each step (use GmStepDataHistosUA and GmGammaFilter)
+/gamos/setParam GmStepDataHistosUA_GmGammaFilter:DataList log10(AccumulatedLength)
+/gamos/userAction GmStepDataHistosUA GmGammaFilter
+
+/gamos/userAction GmCountTracksUA
+
+/gamos/random/setSeeds 2142  22211 
+
+/run/beamOn 100000
+

@@ -1,9 +1,7 @@
 //<<<<<< INCLUDES                                                       >>>>>>
 
 #include "SealBase/Log.h"
-#include <limits.h>
 #include <cctype>
-#include <cstdlib>
 #include <cstring>
 #include <fcntl.h>
 #ifdef _WIN32
@@ -181,8 +179,8 @@ FileLog::initialise (const char *args)
 
     if (m_fd == -1)
 	return 0;
-    else
-	::write (m_fd, "\n---------- Log file opened ----------\n", 39);
+    else if (::write (m_fd, "\n---------- Log file opened ----------\n", 39) < 0)
+	{ /* ignore: the log is best-effort */ }
 
     return this;
 }
@@ -200,7 +198,7 @@ FileLog::~FileLog (void)
 void FileLog::emit (const char *string, int length)
 {
     ASSERT (m_fd != -1);
-    ::write (m_fd, string, length);
+    if (::write (m_fd, string, length) < 0) { /* ignore: the log is best-effort */ }
 
 
     // Close and reopen the file ever `FLUSH_INTERVAL' bytes.
@@ -220,7 +218,7 @@ void FileLog::emit (const char *string, int length)
 void FileLog::close (void)
 {
     ASSERT (m_fd != -1);
-    write (m_fd, "\n---------- Log file closed ----------\n", 39);
+    if (write (m_fd, "\n---------- Log file closed ----------\n", 39) < 0) { /* ignore */ }
     ::close (m_fd);
 
     m_fd = -1;

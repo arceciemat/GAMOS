@@ -49,7 +49,7 @@ void GmSetG4RadDecayTime0UA::UserSteppingAction(const G4Step* aStep)
   for (size_t ii = 0; ii < secos.size(); ii++) {
     secos[ii]->SetGlobalTime(aTrack->GetGlobalTime());
 #ifndef GAMOS_NO_VERBOSE
-    if( SHVerb(debugVerb) ) G4cout << " GmSetG4RadDecayTime0UA::UserSteppingAction(Set secos " << secos[ii]->GetGlobalTime() << G4endl; //GDEB
+    if( SHVerb(debugVerb) ) G4cout << " GmSetG4RadDecayTime0UA::UserSteppingAction(Set secos " << secos[ii]->GetGlobalTime() << G4endl;
 #endif
   }
     
@@ -71,7 +71,7 @@ void GmSetG4RadDecayTime0UA::SetTime(const G4Step* aStep)
   G4double gtime = preSP->GetGlobalTime();
   //  preSP->SetGlobalTime(gtime);
 #ifndef GAMOS_NO_VERBOSE
-  if( SHVerb(debugVerb) ) G4cout << " GmSetG4RadDecayTime0UA::SetTime " << gtime << " " << timeChange << G4endl; //GDEB
+  if( SHVerb(debugVerb) ) G4cout << " GmSetG4RadDecayTime0UA::SetTime " << gtime << " " << timeChange << G4endl;
 #endif
   gtime += timeChange;
   postSP->SetGlobalTime(gtime);

@@ -53,7 +53,7 @@ void DCMDrawDICOM2::ProcessArguments(int argc,char** argv)
 		    "WRONG NUMBER OF ARGUMENTS: THEY MUST BE -XX1 VAL_XX1 -XX2 VAL_XX2 ... ");
       }
       G4String argvstr = argv[ii];
-      //      std::cout << ii << "ARGV " << argv[ii] << std::endl; //GDEB
+      //      G4cout << ii << "ARGV " << argv[ii] << std::endl; //GDEB
       G4String argvstr1 = argv[ii+1];
       G4String argvName = argvstr.substr(1,999);
       if( argvstr == "-drawerType" ) {
@@ -189,7 +189,7 @@ void DCMDrawDICOM2::ProcessArguments(int argc,char** argv)
 	argvstr == "-fRTDose" ||
 	argvstr == "-fInterfile" ) {
       theFileNames.push_back( argv[ii+1] );
-      G4cout << " theFileNames " << argv[ii+1] << G4endl; //GDEB
+      //G4cout << " theFileNames " << argv[ii+1] << G4endl; //GDEB
     }
   } 
 
@@ -335,7 +335,7 @@ void DCMDrawDICOM2::DrawImages()
   std::vector<DicomVImage*> images; 
   for( size_t ii = 0; ii < 2; ii++ ) {
     for( mmmdri::const_iterator ite = imageReaders.begin(); ite != imageReaders.end(); ite++ ){
-      G4cout << " TEST NAME " << ite->second->GetFileName() << "==" << theFileNames[ii] << G4endl; //GDEB
+      //G4cout << " TEST NAME " << ite->second->GetFileName() << "==" << theFileNames[ii] << G4endl; //GDEB
       if( ite->second->GetFileName() == theFileNames[ii] ) {
 	DicomVImage* image = GetImage( ite->second );
 	images.push_back( image );
@@ -417,7 +417,7 @@ DicomVImage* DCMDrawDICOM2::BuildCombinedImage( DicomVImage* image1, DicomVImage
   max1 = std::min(max1,theParamMgr->GetNumericValue("imageMax1",DBL_MAX));
   G4double max2 = image2->GetMaxValue();
   max2 = std::min(max2,theParamMgr->GetNumericValue("imageMax2",DBL_MAX));
-  G4cout << " DCMDrawDICOM2 max's " << max1 << " " << max2 << G4endl; //GDEB
+  //G4cout << " DCMDrawDICOM2 max's " << max1 << " " << max2 << G4endl; //GDEB
   for( size_t ii = 0; ii < nVoxels; ii++, imgData1++, imgData2++ ) {
     G4double value = (*imgData1)/max1*colorFraction+(*imgData2)/max2*(1-colorFraction);
     imgCombData->at(ii) = value;

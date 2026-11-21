@@ -28,7 +28,8 @@
 /process/msc/StepLimit Minimal
 
 ### Write phase space
-/gamos/analysis/histo1Max *Energy* 2.
+/gamos/analysis/histo1NBins *Energy* 200
+/gamos/analysis/histo1Max *Energy* 0.2
 /gamos/setParam RTPhaseSpaceUA:FileName xrayZBS
 /gamos/setParam RTPhaseSpaceUA:ZStops -10.*cm
 /gamos/setParam RTPhaseSpaceUA:KillAfterLastZStop 1
@@ -36,10 +37,14 @@
 
 ### Print some info
 /gamos/userAction GmCountProcessesUA
+/gamos/setParam GmCountTracksUA:EachNEvent 10000
 /gamos/userAction GmCountTracksUA
 
 /gamos/random/setSeeds 2142  22211 
 
+/gamos/analysis/addFileFormat csv
+/gamos/analysis/addFileFormat root
+
 
 /gamos/random/restoreSeeds  1201 1201
-/run/beamOn 1000000
+/run/beamOn 100000

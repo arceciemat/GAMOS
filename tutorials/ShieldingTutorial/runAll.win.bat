@@ -7,8 +7,8 @@
 ..\run1.win.bat exercise3 exercise3.angle.e+g
 ..\run1.win.bat exercise3 exercise3.angle.ng
 ..\run1.win.bat exercise3 exercise3.angle.nn
-hadd exercise3\angleDeviation.gammaALL.root exercise3\angleDeviation.gamma.gamma.root exercise3\angleDeviation.e-.gamma.root exercise3\angleDeviation.e+.gamma.root
-hadd exercise3\angleDeviation.neutronALL.root exercise3\angleDeviation.neutron.gamma.root exercise3\angleDeviation.neutron.neutron.root
+python $PYTHONPATH/sumHist.py -fOut exercise3/angleDeviation.gammaALL.csv -f exercise3/angleDeviation.*gamma.csv
+python $PYTHONPATH/sumHist.py -fOut exercise3/angleDeviation.neutronALL.csv -f exercise3/angleDeviation.*neutron.csv
 ..\run1.win.bat exercise3 exercise3a
 ..\run1.win.bat exercise3 exercise3b
 ..\run1.win.bat exercise4 exercise4a

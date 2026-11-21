@@ -1,9 +1,9 @@
 @@@@@ Running GAMOS with script: exercise2b.in
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+GAMOS starts RUN at : Fri Nov 20 18:15:55 CET 2026
 
 **************************************************************
- Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
+ Geant4 version Name: geant4-11-04-patch-03 [MT]   (01-October-2026)
+  << in Multi-threaded mode >> 
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -20,14 +20,24 @@ You have successfully registered the following graphics systems.
 Registered graphics systems are:
   ASCIITree (ATree)
   DAWNFILE (DAWNFILE)
-  G4HepRepFile (HepRepFile)
-  RayTracer (RayTracer)
+  RayTracer (RT)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
-  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
   TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
-  OpenGLStoredX (OGLSX, OGL, OGLS)
+  OpenGLStoredX (OGLSX, OGLS)
+  TOOLSSG_X11_GLES (TSG_X11_GLES, TSGX11, TSG, OGL)
+  TOOLSSG_X11_ZB (TSG_X11_ZB, TSGX11ZB, TSGZB)
+You may choose a graphics system (driver) with a parameter of
+the command "/vis/open" or "/vis/sceneHandler/create",
+or you may omit the driver parameter and choose at run time:
+- by argument in the construction of G4VisExecutive;
+- by environment variable "G4VIS_DEFAULT_DRIVER";
+- by entry in "~/.g4session";
+- by build flags.
+- Note: This feature is not allowed in batch mode.
+For further information see "examples/basic/B1/exampleB1.cc"
+and "vis.mac".
 
 Registering model factories...
 
@@ -69,72 +79,32 @@ Some /vis commands (optionally) take a string to specify colour.
 
 /gamos/generator GmGenerator
 /run/initialize
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
 Checking overlaps for volume phantom:1 (G4Tubs) ... OK! 
-/home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7
-@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Inelastic
-@@@ G4ParticleHPInelasticData instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7
-NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Capture/CrossSection/6_nat_Carbon
-NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Elastic/CrossSection/6_nat_Carbon
-NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Inelastic/CrossSection/6_nat_Carbon
-@@@ G4ParticleHPInelasticData instantiated for particle proton data directory variable is G4PROTONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Proton
-/home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Proton
-@@@ G4ParticleHPInelastic instantiated for particle proton data directory variable is G4PROTONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Proton/Inelastic
-/home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Deuteron
-@@@ G4ParticleHPInelastic instantiated for particle deuteron data directory variable is G4DEUTERONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Deuteron/Inelastic
-@@@ G4ParticleHPInelasticData instantiated for particle deuteron data directory variable is G4DEUTERONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Deuteron
-/home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Triton
-@@@ G4ParticleHPInelastic instantiated for particle triton data directory variable is G4TRITONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Triton/Inelastic
-@@@ G4ParticleHPInelasticData instantiated for particle triton data directory variable is G4TRITONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Triton
-/home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/He3
-@@@ G4ParticleHPInelastic instantiated for particle He3 data directory variable is G4HE3HPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/He3/Inelastic
-@@@ G4ParticleHPInelasticData instantiated for particle He3 data directory variable is G4HE3HPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/He3
-/home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Alpha
-@@@ G4ParticleHPInelastic instantiated for particle alpha data directory variable is G4ALPHAHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Alpha/Inelastic
-@@@ G4ParticleHPInelasticData instantiated for particle alpha data directory variable is G4ALPHAHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Alpha
-/gamos/physics/addPhysics radioactiveDecay
-G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as Radioactivation for GenericIon
-It will not be added !!
 
--------- WWWW ------- G4Exception-START -------- WWWW -------
-*** G4Exception : Run0111
-      issued by : G4PhysicsListHelper::RegisterProcess
-Duplication of processes
-*** This is just a warning message. ***
--------- WWWW -------- G4Exception-END --------- WWWW -------
-
-/control/execute ../exercise0/pbsSource.in
-/gamos/generator/addSingleParticleSource source proton 226.62*MeV
-/gamos/generator/energyDist source GmGenerDistEnergyConstant 226.62*MeV
-/gamos/generator/timeDist source GmGenerDistTimeConstantChange 32.*ps
-/gamos/generator/positionDist source GmGenerDistPositionDisc 1.5*mm 0. 0. -400.*mm
-/gamos/generator/directionDist source GmGenerDistDirectionCone 0. 0. 1. 3.6*mrad
-/gamos/userAction GmCountTracksUA
-/gamos/filter exitPhantomFilter GmExitLogicalVolumeFilter phantom
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
-/gamos/filter exitGmGammaFilter GmANDFilter exitPhantomFilter GmGammaFilter
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
-/gamos/filter exitGmNeutronFilter GmANDFilter exitPhantomFilter GmNeutronFilter
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
-/gamos/setParam GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:FileName Ekin_exitGamma
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
-/gamos/setParam GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:DataList FinalKineticEnergy
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
-/gamos/analysis/histo1Max GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:*:FinalKineticEnergy 20
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
-/gamos/analysis/histo1NBins GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:*:FinalKineticEnergy 200
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
-/gamos/userAction GmStepDataHistosUA exitGmGammaFilter GmClassifierByCreatorProcess
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
-/gamos/setParam GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:FileName Ekin_exitNeutron
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
-/gamos/setParam GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:DataList FinalKineticEnergy
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
-/gamos/analysis/histo1Max GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:*:FinalKineticEnergy 20
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
-/gamos/analysis/histo1NBins GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:*:FinalKineticEnergy 200
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
-/gamos/userAction GmStepDataHistosUA exitGmNeutronFilter GmClassifierByCreatorProcess
-/run/beamOn 100000
+ hInelastic QGSP_BIC_AllHP  Thresholds: 
+    0) between BIC and BERT for p, n over the interval 1 to 1.5 GeV. 
+    1) between BERT  and FTF/P over the interval 3 to 6 GeV. 
+    2) between FTF/P and QGS/P over the interval 12 to 25 GeV. 
+  -- quasiElastic: 1 for QGS  and 0 for FTF
+@@@ G4ParticleHPInelasticData instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1
+NeutronHP: /Capture file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Capture/CrossSection/18_37_Argon
+NeutronHP: /Elastic file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_37_Argon
+NeutronHP: /Inelastic file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Inelastic/CrossSection/18_37_Argon
+NeutronHP: /Capture file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Capture/CrossSection/18_39_Argon
+NeutronHP: /Elastic file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_39_Argon
+NeutronHP: /Inelastic file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Inelastic/CrossSection/18_39_Argon
+@@@ G4ParticleHPInelasticData instantiated for particle proton data directory variable is G4PROTONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4TENDL1.4/Proton
+@@@ G4ParticleHPInelasticData instantiated for particle proton data directory variable is G4PROTONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4TENDL1.4/Proton
+@@@ G4ParticleHPInelasticData instantiated for particle deuteron data directory variable is G4DEUTERONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4TENDL1.4/Deuteron
+@@@ G4ParticleHPInelasticData instantiated for particle triton data directory variable is G4TRITONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4TENDL1.4/Triton
+@@@ G4ParticleHPInelasticData instantiated for particle He3 data directory variable is G4HE3HPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4TENDL1.4/He3
+@@@ G4ParticleHPInelasticData instantiated for particle alpha data directory variable is G4ALPHAHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4TENDL1.4/Alpha
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -156,10 +126,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                AllisonPositronium
+Enable 3 gamma annihilation on fly                 1
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -173,7 +146,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    1
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Urban
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 1
@@ -276,7 +249,7 @@ ePairProd:  for e-  XStype:1  SubType=4
 
 CoulombScat:  for e- XStype:1 SubType=1 BuildTable=1
       Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
 
@@ -310,13 +283,13 @@ ePairProd:  for e+  XStype:1  SubType=4
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            ePairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
-annihil:  for e+ XStype:2 SubType=5 BuildTable=0
+annihil:  for e+ XStype:2 SubType=5 AtRestModel:Allison BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+    eplusTo2or3gamma : Emin=    0 eV  Emax=  100 TeV
 
 CoulombScat:  for e+ XStype:1 SubType=1 BuildTable=1
       Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
 
@@ -342,13 +315,13 @@ hBrems:  for proton  XStype:1  SubType=3
 hPairProd:  for proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      Sampling table 17x1001, from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for proton XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -359,16 +332,22 @@ nuclearStopping:  for proton SubType=8 BuildTable=0
 =======================================================
 ======       ParticleHP Physics Parameters     ========
 =======================================================
- UseOnlyPhotoEvaporation ? 0
- SkipMissingIsotopes ?     0
- NeglectDoppler ?          0
- DoNotAdjustFinalState ?   0
- ProduceFissionFragments ? 0
- UseWendtFissionModel ?    0
- UseNRESP71Model ?         0
+ Use only photo-evaporation      0
+ Skip missing isotopes           0
+ Neglect Doppler                 0
+ Do not adjust final state       0
+ Produce fission fragments       0
+ Use WendtFissionModel           0
+ Use NRESP71Model                0
+ Use DBRC                        0
+ PHP use Poisson                 0
+ PHP check                       1
+ CHECK HP NAMES                  0
+ Enable DEBUG                    0
+ Use probability tables from     
 =======================================================
 
-@@@ G4ParticleHPInelastic instantiated for particle proton data directory variable is G4PROTONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Proton/Inelastic
+@@@ G4ParticleHPInelastic instantiated for particle proton/n    data directory is /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4TENDL1.4/Proton/Inelastic
 
 msc:  for GenericIon  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
@@ -400,22 +379,8 @@ Auger electron emission enabled                   1
 Check EM cuts disabled for atomic de-excitation   1
 Use Bearden atomic level energies                 0
 Use ANSTO fluorescence model                      0
-Threshold for very long decay time at rest        3.171e+10 y  
+Threshold for very long decay time at rest        1 y  
 ======================================================================
-
-=======================================================
-======       ParticleHP Physics Parameters     ========
-=======================================================
- UseOnlyPhotoEvaporation ? 0
- SkipMissingIsotopes ?     0
- NeglectDoppler ?          0
- DoNotAdjustFinalState ?   0
- ProduceFissionFragments ? 0
- UseWendtFissionModel ?    0
- UseNRESP71Model ?         0
-=======================================================
-
-@@@ G4ParticleHPInelastic instantiated for particle He3 data directory variable is G4HE3HPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/He3/Inelastic
 
 msc:  for alpha  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
@@ -433,20 +398,6 @@ ionIoni:  for alpha  XStype:3  SubType=2
 nuclearStopping:  for alpha SubType=8 BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    ICRU49NucStopping : Emin=    0 eV  Emax=    1 MeV
-
-=======================================================
-======       ParticleHP Physics Parameters     ========
-=======================================================
- UseOnlyPhotoEvaporation ? 0
- SkipMissingIsotopes ?     0
- NeglectDoppler ?          0
- DoNotAdjustFinalState ?   0
- ProduceFissionFragments ? 0
- UseWendtFissionModel ?    0
- UseNRESP71Model ?         0
-=======================================================
-
-@@@ G4ParticleHPInelastic instantiated for particle alpha data directory variable is G4ALPHAHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Alpha/Inelastic
 
 msc:  for anti_proton  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
@@ -470,29 +421,15 @@ hBrems:  for anti_proton  XStype:1  SubType=3
 hPairProd:  for anti_proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      Sampling table 17x1001, from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for anti_proton XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
-
-=======================================================
-======       ParticleHP Physics Parameters     ========
-=======================================================
- UseOnlyPhotoEvaporation ? 0
- SkipMissingIsotopes ?     0
- NeglectDoppler ?          0
- DoNotAdjustFinalState ?   0
- ProduceFissionFragments ? 0
- UseWendtFissionModel ?    0
- UseNRESP71Model ?         0
-=======================================================
-
-@@@ G4ParticleHPInelastic instantiated for particle deuteron data directory variable is G4DEUTERONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Deuteron/Inelastic
 
 msc:  for kaon+  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
@@ -516,13 +453,13 @@ hBrems:  for kaon+  XStype:1  SubType=3
 hPairProd:  for kaon+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for kaon+ XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -548,13 +485,13 @@ hBrems:  for kaon-  XStype:1  SubType=3
 hPairProd:  for kaon-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for kaon- XStype:1 SubType=1 BuildTable=1
       Used Lambda table of kaon+
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -580,13 +517,13 @@ muBrems:  for mu+  XStype:1  SubType=3
 muPairProd:  for mu+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu+ XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -612,34 +549,23 @@ muBrems:  for mu-  XStype:1  SubType=3
 muPairProd:  for mu-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu- XStype:1 SubType=1 BuildTable=1
       Used Lambda table of mu+
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
-NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Capture/CrossSection/6_nat_Carbon
-NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Elastic/CrossSection/6_nat_Carbon
-NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Inelastic/CrossSection/6_nat_Carbon
-NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Elastic/CrossSection/6_nat_Carbon
-
-=======================================================
-======       ParticleHP Physics Parameters     ========
-=======================================================
- UseOnlyPhotoEvaporation ? 0
- SkipMissingIsotopes ?     0
- NeglectDoppler ?          0
- DoNotAdjustFinalState ?   0
- ProduceFissionFragments ? 0
- UseWendtFissionModel ?    0
- UseNRESP71Model ?         0
-=======================================================
-
-@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Inelastic
-NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Capture/CrossSection/18_37_Argon
+NeutronHP: /Elastic file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_37_Argon
+NeutronHP: /Inelastic file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Inelastic/CrossSection/18_37_Argon
+NeutronHP: /Capture file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Capture/CrossSection/18_39_Argon
+NeutronHP: /Elastic file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_39_Argon
+NeutronHP: /Inelastic file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Inelastic/CrossSection/18_39_Argon
+NeutronHP: /Elastic file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_37_Argon
+NeutronHP: /Elastic file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_39_Argon
 
 msc:  for pi+  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
@@ -663,13 +589,13 @@ hBrems:  for pi+  XStype:1  SubType=3
 hPairProd:  for pi+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      Sampling table 20x1001, from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for pi+ XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -695,472 +621,356 @@ hBrems:  for pi-  XStype:1  SubType=3
 hPairProd:  for pi-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      Sampling table 20x1001, from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
       Used Lambda table of pi+
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
-======================================================================
-======          Radioactive Decay Physics Parameters           =======
-======================================================================
-min MeanLife (from G4NuclideTable)                1 ns 
-Max life time (from G4DeexPrecoParameters)        1000 ps 
-Internal e- conversion flag                       1
-Stored internal conversion coefficients           1
-Enabled atomic relaxation mode                    1
-Enable correlated gamma emission                  0
-Max 2J for sampling of angular correlations       10
-Atomic de-excitation enabled                      1
-Auger electron emission enabled                   1
-Check EM cuts disabled for atomic de-excitation   1
-Use Bearden atomic level energies                 0
-Use ANSTO fluorescence model                      0
-Threshold for very long decay time at rest        3.171e+10 y  
-======================================================================
-
-=======================================================
-======       ParticleHP Physics Parameters     ========
-=======================================================
- UseOnlyPhotoEvaporation ? 0
- SkipMissingIsotopes ?     0
- NeglectDoppler ?          0
- DoNotAdjustFinalState ?   0
- ProduceFissionFragments ? 0
- UseWendtFissionModel ?    0
- UseNRESP71Model ?         0
-=======================================================
-
-@@@ G4ParticleHPInelastic instantiated for particle triton data directory variable is G4TRITONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4TENDL1.4/Triton/Inelastic
 
 ====================================================================
                   HADRONIC PROCESSES SUMMARY (verbose level 1)
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for GenericIon
-
   Process: ionElastic
         Model:          NNDiffuseElastic: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
   Process: ionInelastic
         Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
-  Process: Radioactivation
-
-  Process: Radioactivation
-
----------------------------------------------------
+  Process: RadioactiveDecay
+-----------------------------------------------------------------------
                            Hadronic Processes for He3
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
   Process: He3Inelastic
         Model:       ParticleHPInelastic: 0 eV /n ---> 200 MeV/n
         Model:  Binary Light Ion Cascade: 190 MeV/n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:          He3HPInelasticXS: 0 eV  ---> 200 MeV
-
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for alpha
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
   Process: alphaInelastic
         Model:       ParticleHPInelastic: 0 eV /n ---> 200 MeV/n
         Model:  Binary Light Ion Cascade: 190 MeV/n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:        AlphaHPInelasticXS: 0 eV  ---> 200 MeV
-
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_He3
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_He3Inelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_alpha
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_alphaInelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_deuteron
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_deuteronInelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-------------------------------------------------------------------------
                            Hadronic Processes for anti_hypertriton
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_lambda
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: anti_lambdaInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 0 eV  ---> 25 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_neutron
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100.1 MeV
         Model:              AntiAElastic: 100 MeV ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_neutronInelastic
         Model:                      FTFP: 0 eV  ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_proton
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100.1 MeV
         Model:              AntiAElastic: 100 MeV ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_protonInelastic
         Model:                      FTFP: 0 eV  ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_triton
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_tritonInelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for deuteron
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
   Process: dInelastic
         Model:       ParticleHPInelastic: 0 eV /n ---> 200 MeV/n
         Model:  Binary Light Ion Cascade: 190 MeV/n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:     DeuteronHPInelasticXS: 0 eV  ---> 200 MeV
-
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for e+
-
   Process: positronNuclear
         Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for e-
-
   Process: electronNuclear
         Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for gamma
-
   Process: photonNuclear
         Model:               GammaNPreco: 0 eV  ---> 200 MeV
         Model:            BertiniCascade: 199 MeV ---> 6 GeV
         Model:           TheoFSGenerator: 3 GeV ---> 100 TeV
      Cr_sctns:            GammaNuclearXS: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for kaon+
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: kaon+Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for kaon-
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: kaon-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: hBertiniCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for lambda
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: lambdaInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for mu+
-
   Process: muonNuclear
         Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for mu-
-
   Process: muonNuclear
         Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
-
-
   Process: muMinusCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for neutron
-
   Process: hadElastic
         Model:             hElasticCHIPS: 19.5 MeV ---> 100 TeV
         Model:          NeutronHPElastic: 0 eV  ---> 20 MeV
      Cr_sctns:        NeutronHPElasticXS: 0 eV  ---> 20 MeV
-
      Cr_sctns:        G4NeutronElasticXS: 0 eV  ---> 100 TeV
-
-
   Process: neutronInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
-        Model:            Binary Cascade: 19.9 MeV ---> 6 GeV
+        Model:            BertiniCascade: 1 GeV ---> 6 GeV
+        Model:            Binary Cascade: 19.9 MeV ---> 1.5 GeV
         Model:        NeutronHPInelastic: 0 eV  ---> 20 MeV
      Cr_sctns:      NeutronHPInelasticXS: 0 eV  ---> 20 MeV
-
      Cr_sctns:      G4NeutronInelasticXS: 0 eV  ---> 100 TeV
-
-
-  Process: nCapture
-        Model:          NeutronHPCapture: 0 eV  ---> 20 MeV
-        Model:               nRadCapture: 19.9 MeV ---> 100 TeV
-     Cr_sctns:        NeutronHPCaptureXS: 0 eV  ---> 20 MeV
-
+  Process: nCaptureHP
+        Model:             nRadCaptureHP: 0 eV  ---> 100 TeV
+     Cr_sctns:        NeutronHPCaptureXS: 0 eV  ---> 100 TeV
      Cr_sctns:        G4NeutronCaptureXS: 0 eV  ---> 100 TeV
-
-
-  Process: nFission
+  Process: nFissionHP
         Model:          NeutronHPFission: 0 eV  ---> 20 MeV
-        Model:                G4LFission: 19.9 MeV ---> 100 TeV
      Cr_sctns:        NeutronHPFissionXS: 0 eV  ---> 20 MeV
-
      Cr_sctns:                    ZeroXS: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for pi+
-
   Process: hadElastic
         Model:           hElasticGlauber: 0 eV  ---> 100 TeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
   Process: pi+Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for pi-
-
   Process: hadElastic
         Model:           hElasticGlauber: 0 eV  ---> 100 TeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
   Process: pi-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
   Process: hBertiniCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for proton
-
   Process: hadElastic
         Model:             hElasticCHIPS: 0 eV  ---> 100 TeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
   Process: protonInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
-        Model:            Binary Cascade: 190 MeV ---> 6 GeV
-        Model:       ParticleHPInelastic: 0 eV  ---> 200 MeV
+        Model:            BertiniCascade: 1 GeV ---> 6 GeV
+        Model:            Binary Cascade: 190 MeV ---> 1.5 GeV
+        Model:         ProtonHPInelastic: 0 eV  ---> 200 MeV
      Cr_sctns:       ProtonHPInelasticXS: 0 eV  ---> 200 MeV
-
-     Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+     Cr_sctns:       ProtonHPInelasticXS: 0 eV  ---> 20 MeV
+     Cr_sctns:          protonParticleXS: 0 eV  ---> 100 TeV
+-----------------------------------------------------------------------
                            Hadronic Processes for sigma-
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: sigma-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: hBertiniCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for triton
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
   Process: tInelastic
         Model:       ParticleHPInelastic: 0 eV /n ---> 200 MeV/n
         Model:  Binary Light Ion Cascade: 190 MeV/n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:       TritonHPInelasticXS: 0 eV  ---> 200 MeV
-
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
-================================================================
+  Process: RadioactiveDecay
 =======================================================================
-======       Pre-compound/De-excitation Physics Parameters     ========
+======       Geant4 Native Pre-compound Model Parameters       ========
 =======================================================================
-Type of pre-compound inverse x-section              3
+Type of pre-compound model                          0
+Type of pre-compound inverse x-section              1
 Pre-compound model active                           1
-Pre-compound excitation low energy                  100 keV
-Pre-compound excitation high energy                 30 MeV
+Pre-compound excitation low energy                  0.1 MeV 
+Pre-compound excitation high energy                 15 MeV 
+Angular generator for pre-compound model            1
+Use NeverGoBack option for pre-compound model       0
+Use SoftCutOff option for pre-compound model        0
+Use CEM transitions for pre-compound model          1
+Use GNASH transitions for pre-compound model        0
+Use HETC submodel for pre-compound model            0
+=======================================================================
+======       Nuclear De-excitation Module Parameters           ========
+=======================================================================
 Type of de-excitation inverse x-section             3
 Type of de-excitation factory                       Evaporation+GEM
 Number of de-excitation channels                    68
-Min excitation energy                               10 eV 
-Min energy per nucleon for multifragmentation       200 GeV
-Limit excitation energy for Fermi BreakUp           20 MeV
+Type of Fermi BreakUp model                         ModelVI
+Min excitation energy                               0.01 keV 
+Min energy per nucleon for multifragmentation       2e+05 MeV
 Level density (1/MeV)                               0.075
 Use simple level density model                      1
-Use discrete excitation energy of the residual      1
-Time limit for long lived isomeres                  1000 ps 
+Use discrete excitation energy of the residual      0
+Time limit for long lived isomeres                  1 ns 
 Isomer production flag                              1
 Internal e- conversion flag                         1
 Store e- internal conversion data                   1
 Correlated gamma emission flag                      0
 Max 2J for sampling of angular correlations         10
 =======================================================================
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/physics/addPhysics radioactiveDecay
+G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+It will not be added !!
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+/control/execute ../exercise0/pbsSource.in
+/gamos/generator/addSingleParticleSource source proton 226.62*MeV
+/gamos/generator/energyDist source GmGenerDistEnergyConstant 226.62*MeV
+/gamos/generator/timeDist source GmGenerDistTimeConstantChange 32.*ps
+/gamos/generator/positionDist source GmGenerDistPositionDisc 1.5*mm 0. 0. -400.*mm
+/gamos/generator/directionDist source GmGenerDistDirectionCone 0. 0. 1. 3.6*mrad
+/gamos/userAction GmCountTracksUA
+/gamos/filter exitPhantomFilter GmExitLogicalVolumeFilter phantom
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
+/gamos/filter exitGmGammaFilter GmANDFilter exitPhantomFilter GmGammaFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
+/gamos/filter exitGmNeutronFilter GmANDFilter exitPhantomFilter GmNeutronFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
+/gamos/setParam GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:FileName Ekin_exitGamma
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
+/gamos/setParam GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:DataList FinalKineticEnergy
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
+/gamos/analysis/histo1Max GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:*:FinalKineticEnergy 20
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
+/gamos/analysis/histo1NBins GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:*:FinalKineticEnergy 200
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING GammaFilter GmGammaFilter
+/gamos/userAction GmStepDataHistosUA exitGmGammaFilter GmClassifierByCreatorProcess
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
+/gamos/setParam GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:FileName Ekin_exitNeutron
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
+/gamos/setParam GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:DataList FinalKineticEnergy
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
+/gamos/analysis/histo1Max GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:*:FinalKineticEnergy 20
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
+/gamos/analysis/histo1NBins GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:*:FinalKineticEnergy 200
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING NeutronFilter GmNeutronFilter
+/gamos/userAction GmStepDataHistosUA exitGmNeutronFilter GmClassifierByCreatorProcess
+/run/beamOn 100000
 
 ========= Table of registered couples ============================
 
@@ -1180,131 +990,1006 @@ Index : 1     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- %%% EVENT 0 NTRACKS 9 TOTAL NTRACKS 9
- CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 130000101
- CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 130000201
- CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 995000101
- CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 130000301
- CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 130000401
- CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 995000401
- CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCapture:FinalKineticEnergy = 130000501
- CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:Radioactivation:FinalKineticEnergy = 130000601
- CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:Radioactivation:FinalKineticEnergy = 995000601
- CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 130000701
- CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 995000701
- %%% EVENT 1000 NTRACKS 30 TOTAL NTRACKS 29896
- CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:alphaInelastic:FinalKineticEnergy = 130000801
- %%% EVENT 2000 NTRACKS 22 TOTAL NTRACKS 57092
- %%% EVENT 3000 NTRACKS 17 TOTAL NTRACKS 84108
- %%% EVENT 4000 NTRACKS 24 TOTAL NTRACKS 116304
- %%% EVENT 5000 NTRACKS 12 TOTAL NTRACKS 141454
- %%% EVENT 6000 NTRACKS 11 TOTAL NTRACKS 172011
- %%% EVENT 7000 NTRACKS 57 TOTAL NTRACKS 203306
- CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:tInelastic:FinalKineticEnergy = 995000901
- %%% EVENT 8000 NTRACKS 6 TOTAL NTRACKS 233949
- %%% EVENT 9000 NTRACKS 19 TOTAL NTRACKS 262829
- %%% EVENT 10000 NTRACKS 146 TOTAL NTRACKS 291148
- %%% EVENT 11000 NTRACKS 9 TOTAL NTRACKS 318521
- %%% EVENT 12000 NTRACKS 12 TOTAL NTRACKS 349512
- %%% EVENT 13000 NTRACKS 7 TOTAL NTRACKS 378530
- %%% EVENT 14000 NTRACKS 18 TOTAL NTRACKS 405339
- %%% EVENT 15000 NTRACKS 16 TOTAL NTRACKS 437708
- %%% EVENT 16000 NTRACKS 15 TOTAL NTRACKS 476012
- %%% EVENT 17000 NTRACKS 16 TOTAL NTRACKS 502878
- CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:alphaInelastic:FinalKineticEnergy = 995000801
- %%% EVENT 18000 NTRACKS 22 TOTAL NTRACKS 532690
- %%% EVENT 19000 NTRACKS 18 TOTAL NTRACKS 561266
- %%% EVENT 20000 NTRACKS 9 TOTAL NTRACKS 591498
- %%% EVENT 21000 NTRACKS 13 TOTAL NTRACKS 619586
- CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:ionInelastic:FinalKineticEnergy = 130001001
- %%% EVENT 22000 NTRACKS 171 TOTAL NTRACKS 648377
- %%% EVENT 23000 NTRACKS 12 TOTAL NTRACKS 680255
- %%% EVENT 24000 NTRACKS 11 TOTAL NTRACKS 709139
- %%% EVENT 25000 NTRACKS 11 TOTAL NTRACKS 737076
- %%% EVENT 26000 NTRACKS 8 TOTAL NTRACKS 771188
- %%% EVENT 27000 NTRACKS 18 TOTAL NTRACKS 801457
- %%% EVENT 28000 NTRACKS 15 TOTAL NTRACKS 829076
- %%% EVENT 29000 NTRACKS 44 TOTAL NTRACKS 862392
- %%% EVENT 30000 NTRACKS 10 TOTAL NTRACKS 890585
- %%% EVENT 31000 NTRACKS 33 TOTAL NTRACKS 920755
- %%% EVENT 32000 NTRACKS 15 TOTAL NTRACKS 950940
- %%% EVENT 33000 NTRACKS 483 TOTAL NTRACKS 980495
- %%% EVENT 34000 NTRACKS 14 TOTAL NTRACKS 1.0149e+06
- %%% EVENT 35000 NTRACKS 11 TOTAL NTRACKS 1.04064e+06
- %%% EVENT 36000 NTRACKS 15 TOTAL NTRACKS 1.07001e+06
- %%% EVENT 37000 NTRACKS 11 TOTAL NTRACKS 1.10072e+06
- %%% EVENT 38000 NTRACKS 10 TOTAL NTRACKS 1.12941e+06
- %%% EVENT 39000 NTRACKS 20 TOTAL NTRACKS 1.15989e+06
- %%% EVENT 40000 NTRACKS 8 TOTAL NTRACKS 1.19136e+06
- %%% EVENT 41000 NTRACKS 17 TOTAL NTRACKS 1.22036e+06
- %%% EVENT 42000 NTRACKS 20 TOTAL NTRACKS 1.25042e+06
- %%% EVENT 43000 NTRACKS 161 TOTAL NTRACKS 1.27972e+06
- %%% EVENT 44000 NTRACKS 38 TOTAL NTRACKS 1.31067e+06
- %%% EVENT 45000 NTRACKS 28 TOTAL NTRACKS 1.34375e+06
- %%% EVENT 46000 NTRACKS 14 TOTAL NTRACKS 1.37287e+06
- %%% EVENT 47000 NTRACKS 10 TOTAL NTRACKS 1.40331e+06
- %%% EVENT 48000 NTRACKS 17 TOTAL NTRACKS 1.4322e+06
- %%% EVENT 49000 NTRACKS 9 TOTAL NTRACKS 1.46104e+06
- %%% EVENT 50000 NTRACKS 17 TOTAL NTRACKS 1.49101e+06
- %%% EVENT 51000 NTRACKS 8 TOTAL NTRACKS 1.52169e+06
- %%% EVENT 52000 NTRACKS 9 TOTAL NTRACKS 1.55142e+06
- %%% EVENT 53000 NTRACKS 284 TOTAL NTRACKS 1.57644e+06
- %%% EVENT 54000 NTRACKS 15 TOTAL NTRACKS 1.605e+06
- %%% EVENT 55000 NTRACKS 13 TOTAL NTRACKS 1.63418e+06
- %%% EVENT 56000 NTRACKS 10 TOTAL NTRACKS 1.66598e+06
- %%% EVENT 57000 NTRACKS 28 TOTAL NTRACKS 1.69316e+06
- %%% EVENT 58000 NTRACKS 33 TOTAL NTRACKS 1.7221e+06
- %%% EVENT 59000 NTRACKS 15 TOTAL NTRACKS 1.75224e+06
- %%% EVENT 60000 NTRACKS 10 TOTAL NTRACKS 1.78038e+06
- %%% EVENT 61000 NTRACKS 9 TOTAL NTRACKS 1.8084e+06
- %%% EVENT 62000 NTRACKS 19 TOTAL NTRACKS 1.83557e+06
- %%% EVENT 63000 NTRACKS 16 TOTAL NTRACKS 1.86462e+06
- %%% EVENT 64000 NTRACKS 16 TOTAL NTRACKS 1.89519e+06
- %%% EVENT 65000 NTRACKS 23 TOTAL NTRACKS 1.92593e+06
- %%% EVENT 66000 NTRACKS 13 TOTAL NTRACKS 1.95826e+06
- %%% EVENT 67000 NTRACKS 197 TOTAL NTRACKS 1.9872e+06
- %%% EVENT 68000 NTRACKS 15 TOTAL NTRACKS 2.01543e+06
- %%% EVENT 69000 NTRACKS 12 TOTAL NTRACKS 2.04794e+06
- %%% EVENT 70000 NTRACKS 13 TOTAL NTRACKS 2.07694e+06
- %%% EVENT 71000 NTRACKS 28 TOTAL NTRACKS 2.10532e+06
- %%% EVENT 72000 NTRACKS 12 TOTAL NTRACKS 2.13366e+06
- %%% EVENT 73000 NTRACKS 22 TOTAL NTRACKS 2.16605e+06
- %%% EVENT 74000 NTRACKS 15 TOTAL NTRACKS 2.20082e+06
- %%% EVENT 75000 NTRACKS 20 TOTAL NTRACKS 2.23277e+06
- %%% EVENT 76000 NTRACKS 11 TOTAL NTRACKS 2.26328e+06
- %%% EVENT 77000 NTRACKS 15 TOTAL NTRACKS 2.29302e+06
- %%% EVENT 78000 NTRACKS 21 TOTAL NTRACKS 2.3237e+06
- %%% EVENT 79000 NTRACKS 13 TOTAL NTRACKS 2.35449e+06
- %%% EVENT 80000 NTRACKS 14 TOTAL NTRACKS 2.38102e+06
- %%% EVENT 81000 NTRACKS 86 TOTAL NTRACKS 2.41067e+06
- %%% EVENT 82000 NTRACKS 21 TOTAL NTRACKS 2.43812e+06
- %%% EVENT 83000 NTRACKS 64 TOTAL NTRACKS 2.47054e+06
- %%% EVENT 84000 NTRACKS 15 TOTAL NTRACKS 2.49881e+06
- %%% EVENT 85000 NTRACKS 5 TOTAL NTRACKS 2.53134e+06
- %%% EVENT 86000 NTRACKS 18 TOTAL NTRACKS 2.56038e+06
- %%% EVENT 87000 NTRACKS 23 TOTAL NTRACKS 2.5892e+06
- %%% EVENT 88000 NTRACKS 8 TOTAL NTRACKS 2.61869e+06
- %%% EVENT 89000 NTRACKS 10 TOTAL NTRACKS 2.6515e+06
- %%% EVENT 90000 NTRACKS 10 TOTAL NTRACKS 2.68346e+06
- %%% EVENT 91000 NTRACKS 16 TOTAL NTRACKS 2.71368e+06
- %%% EVENT 92000 NTRACKS 7 TOTAL NTRACKS 2.74228e+06
- %%% EVENT 93000 NTRACKS 18 TOTAL NTRACKS 2.77116e+06
- %%% EVENT 94000 NTRACKS 6 TOTAL NTRACKS 2.80062e+06
- %%% EVENT 95000 NTRACKS 15 TOTAL NTRACKS 2.83175e+06
- %%% EVENT 96000 NTRACKS 8 TOTAL NTRACKS 2.86668e+06
- %%% EVENT 97000 NTRACKS 15 TOTAL NTRACKS 2.89513e+06
- %%% EVENT 98000 NTRACKS 16 TOTAL NTRACKS 2.92524e+06
- %%% EVENT 99000 NTRACKS 10 TOTAL NTRACKS 2.9546e+06
+G4WT40 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT40 > It will not be added !!
+G4WT40 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT13 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT13 > It will not be added !!
+G4WT13 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT15 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT15 > It will not be added !!
+G4WT15 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT26 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT26 > It will not be added !!
+G4WT11 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT11 > It will not be added !!
+G4WT11 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT26 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT2 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT2 > It will not be added !!
+G4WT1 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT1 > It will not be added !!
+G4WT2 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT1 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT6 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT6 > It will not be added !!
+G4WT6 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT16 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT16 > It will not be added !!
+G4WT16 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT45 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT45 > It will not be added !!
+G4WT28 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT28 > It will not be added !!
+G4WT45 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT42 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT28 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT42 > It will not be added !!
+G4WT7 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT42 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT7 > It will not be added !!
+G4WT7 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT47 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT47 > It will not be added !!
+G4WT47 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT38 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT38 > It will not be added !!
+G4WT38 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT35 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT35 > It will not be added !!
+G4WT35 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT36 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT36 > It will not be added !!
+G4WT36 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT44 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT44 > It will not be added !!
+G4WT44 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT14 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT14 > It will not be added !!
+G4WT14 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT29 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT29 > It will not be added !!
+G4WT29 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT34 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT34 > It will not be added !!
+G4WT34 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT20 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT20 > It will not be added !!
+G4WT20 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT46 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT46 > It will not be added !!
+G4WT46 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT8 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT8 > It will not be added !!
+G4WT22 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT22 > It will not be added !!
+G4WT8 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT22 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT5 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT5 > It will not be added !!
+G4WT5 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT9 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT19 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT30 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT18 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT18 > It will not be added !!
+G4WT30 > It will not be added !!
+G4WT19 > It will not be added !!
+G4WT9 > It will not be added !!
+G4WT18 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT33 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT30 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT12 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT19 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT9 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT12 > It will not be added !!
+G4WT10 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT10 > It will not be added !!
+G4WT12 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT31 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT10 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT31 > It will not be added !!
+G4WT31 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT4 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT4 > It will not be added !!
+G4WT32 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT4 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT32 > It will not be added !!
+G4WT32 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT25 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT25 > It will not be added !!
+G4WT25 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT21 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT21 > It will not be added !!
+G4WT24 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT24 > It will not be added !!
+G4WT21 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT24 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT27 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT27 > It will not be added !!
+G4WT27 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT37 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT37 > It will not be added !!
+G4WT3 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT3 > It will not be added !!
+G4WT37 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT3 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT39 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT23 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT23 > It will not be added !!
+G4WT39 > It will not be added !!
+G4WT39 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT33 > It will not be added !!
+G4WT23 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT33 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT0 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT0 > It will not be added !!
+G4WT43 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT43 > It will not be added !!
+G4WT0 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT43 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT17 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT17 > It will not be added !!
+G4WT17 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+G4WT41 > G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as RadioactiveDecay for GenericIon
+G4WT41 > It will not be added !!
+G4WT41 > 
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run0111
+      issued by : G4PhysicsListHelper::RegisterProcess
+Duplication of processes
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 316 tasks with 316 events/task...
+============================================================================================
+
+G4WT29 >  %%% EVENT 0 NTRACKS 12 TOTAL NTRACKS 12
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 718000101
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 605000201
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 283000301
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 840000301
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 718000301
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 583000101
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 105000301
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 459000301
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 394000201
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 71000301
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 71000201
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 867000201
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 503000201
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 266000201
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 557000201
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 557000101
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 557000401
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 820000201
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 711000201
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 529000201
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 529000501
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 529000101
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 82000201
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 259000601
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 147000601
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 993000301
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 881000201
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 840000301
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 239000301
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 394000301
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 504000201
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 29000301
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 862000601
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 722000201
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 260000301
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 130000201
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 538000201
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 840000601
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 394000601
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 317000201
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 499000201
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 94000301
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 260000201
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 105000201
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 173000201
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 523000601
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 659000201
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 280000301
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 747000601
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 504000301
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 935000501
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 160000301
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 571000201
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 283000201
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 583000201
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 29000601
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 577000201
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 160000101
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 173000301
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 696000201
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 998000201
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 64000301
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 965000301
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 840000601
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 301000301
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 711000601
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 317000301
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 530000301
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 867000301
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 964000301
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 198000301
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 319000201
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 351000201
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 186000201
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 583000301
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 239000501
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 377000201
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 64000601
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 678000301
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 762000301
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 214000501
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 269000201
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 965000201
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 948000201
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 160000601
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 607000301
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 73000201
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 607000101
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 823000301
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 259000101
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 221000201
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 760000201
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 722000601
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 711000501
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 332000201
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 623000601
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 993000201
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 449000301
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 499000301
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 698000201
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 597000201
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 964000601
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 3000601
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 351000601
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 3000301
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 8000301
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 94000201
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 996000201
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 214000601
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 257000601
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 529000601
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 823000201
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 571000601
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 651000301
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 8000201
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 107000601
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 696000501
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 679000601
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 659000601
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 79000201
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 257000201
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 214000301
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 449000601
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 366000601
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 147000201
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 147000101
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 762000601
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 904000301
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 935000601
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 898000201
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 107000301
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 198000201
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 251000601
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 659000501
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 718000601
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 605000601
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 790000301
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 280000601
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 473000601
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 722000301
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 679000301
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 704000601
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 269000601
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 73000301
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 162000201
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 269000301
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 351000301
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 79000301
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 214000301
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 449000201
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 319000301
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 898000301
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 301000101
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 762000201
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 762000101
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 837000601
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 869000301
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 17000201
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 964000201
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 538000301
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 993000201
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 530000101
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 696000301
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 904000201
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 998000301
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 840000201
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 257000501
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 696000601
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 377000301
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 605000101
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 678000201
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 605000401
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 251000101
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 301000601
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 993000301
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 583000601
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 584000301
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 869000201
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 651000601
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 605000301
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 332000601
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 394000101
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 266000301
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 595000601
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 529000301
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 251000201
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 523000201
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 186000301
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 523000101
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 965000601
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 607000201
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 964000501
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 107000501
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 605000501
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 840000301
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 718000201
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 214000601
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 530000601
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 623000301
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 840000501
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 366000201
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 366000501
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 571000501
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 449000101
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 530000501
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 405000201
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 595000101
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 595000301
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 529000401
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 607000601
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 840000101
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 251000301
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 459000201
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 964000101
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 257000301
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 571000101
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 557000601
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 449000501
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 147000301
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 881000301
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 584000201
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 704000201
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 162000301
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 29000101
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 29000401
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 147000401
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 366000301
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 679000101
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 17000301
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 214000101
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 840000501
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 605000301
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 790000201
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 704000501
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 605000201
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 651000201
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 651000501
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 301000201
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 935000101
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 130000301
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 332000101
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 332000401
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 704000301
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 82000301
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 837000301
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 679000501
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 3000201
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 405000301
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 840000201
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 473000501
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 935000201
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 935000401
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 704000101
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 473000201
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 64000201
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 473000301
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 503000301
+G4WT22 >  %%% EVENT 7000 NTRACKS 15 TOTAL NTRACKS 1095
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 679000201
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 623000201
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:nCaptureHP:FinalKineticEnergy = 239000601
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 760000301
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 29000201
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 679000401
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 332000301
+G4WT46 >  %%% EVENT 13000 NTRACKS 59 TOTAL NTRACKS 1118
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 698000301
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 107000201
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 523000301
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 948000301
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 107000101
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 595000401
+G4WT33 >  %%% EVENT 1000 NTRACKS 14 TOTAL NTRACKS 1426
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 607000401
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 557000301
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 820000301
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 583000501
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 840000201
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 840000101
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 221000301
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 214000101
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 214000401
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 722000501
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 607000501
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 473000101
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 659000301
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 214000501
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 623000101
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 722000101
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 837000501
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 747000201
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 747000401
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 530000201
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 837000201
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 837000101
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 711000301
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 597000301
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 762000501
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 651000101
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 651000401
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 747000101
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 747000301
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 257000101
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 935000301
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 523000501
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 214000201
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 64000101
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 332000501
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 840000401
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 280000201
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 696000401
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 394000501
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 251000501
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 996000301
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 214000401
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 239000201
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 239000101
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 239000401
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 837000401
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 696000101
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 571000301
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 659000101
+G4WT12 >  %%% EVENT 4000 NTRACKS 12 TOTAL NTRACKS 5665
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 530000401
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 257000401
+G4WT21 >  %%% EVENT 9000 NTRACKS 17 TOTAL NTRACKS 4236
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 595000201
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 623000501
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 571000401
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 3000501
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 107000401
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 64000501
+G4WT6 >  %%% EVENT 8000 NTRACKS 11 TOTAL NTRACKS 4039
+G4WT4 >  %%% EVENT 15000 NTRACKS 18 TOTAL NTRACKS 4302
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 862000201
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 862000301
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 164000301
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 164000201
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 747000501
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 862000101
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 473000401
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 280000501
+G4WT42 >  %%% EVENT 3000 NTRACKS 13 TOTAL NTRACKS 4752
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 64000401
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 595000501
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 718000501
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 862000501
+G4WT27 >  %%% EVENT 2000 NTRACKS 11 TOTAL NTRACKS 2942
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 259000301
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 259000201
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 259000401
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:neutronInelastic:FinalKineticEnergy = 577000301
+G4WT8 >  %%% EVENT 14000 NTRACKS 9 TOTAL NTRACKS 3552
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 214000201
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 965000101
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 965000401
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 659000401
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 259000501
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 840000401
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 965000501
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 704000401
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 147000501
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 965000701
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 319000701
+G4WT37 >  %%% EVENT 19000 NTRACKS 21 TOTAL NTRACKS 9546
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 198000701
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 718000401
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 722000401
+G4WT12 >  %%% EVENT 16000 NTRACKS 13 TOTAL NTRACKS 13565
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 280000101
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 29000501
+G4WT21 >  %%% EVENT 20000 NTRACKS 23 TOTAL NTRACKS 12040
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 280000401
+G4WT14 >  %%% EVENT 25000 NTRACKS 15 TOTAL NTRACKS 10475
+G4WT20 >  %%% EVENT 10000 NTRACKS 12 TOTAL NTRACKS 7751
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 964000401
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 762000401
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 711000101
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 948000701
+G4WT42 >  %%% EVENT 22000 NTRACKS 6 TOTAL NTRACKS 13780
+G4WT9 >  %%% EVENT 21000 NTRACKS 11 TOTAL NTRACKS 12817
+G4WT16 >  %%% EVENT 5000 NTRACKS 9 TOTAL NTRACKS 5841
+G4WT43 >  %%% EVENT 18000 NTRACKS 19 TOTAL NTRACKS 16113
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 964000701
+G4WT35 >  %%% EVENT 6000 NTRACKS 17 TOTAL NTRACKS 8862
+G4WT2 >  %%% EVENT 27000 NTRACKS 15 TOTAL NTRACKS 19323
+G4WT20 >  %%% EVENT 31000 NTRACKS 10 TOTAL NTRACKS 17196
+G4WT29 >  %%% EVENT 26000 NTRACKS 14 TOTAL NTRACKS 21488
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 530000701
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 790000701
+G4WT3 >  %%% EVENT 29000 NTRACKS 12 TOTAL NTRACKS 27721
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 251000401
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 523000401
+G4WT39 >  %%% EVENT 32000 NTRACKS 10 TOTAL NTRACKS 21005
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:protonInelastic:FinalKineticEnergy = 160000201
+G4WT21 >  %%% EVENT 28000 NTRACKS 25 TOTAL NTRACKS 22987
+G4WT32 >  %%% EVENT 33000 NTRACKS 15 TOTAL NTRACKS 20076
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 160000401
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 459000701
+G4WT44 >  %%% EVENT 11000 NTRACKS 19 TOTAL NTRACKS 7927
+G4WT44 >  %%% EVENT 37000 NTRACKS 8 TOTAL NTRACKS 10044
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:tInelastic:FinalKineticEnergy = 162000801
+G4WT19 >  %%% EVENT 17000 NTRACKS 19 TOTAL NTRACKS 15923
+G4WT13 >  %%% EVENT 30000 NTRACKS 16 TOTAL NTRACKS 24651
+G4WT36 >  %%% EVENT 34000 NTRACKS 6 TOTAL NTRACKS 22326
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 623000401
+G4WT29 >  %%% EVENT 38000 NTRACKS 14 TOTAL NTRACKS 36482
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 3000101
+G4WT3 >  %%% EVENT 35000 NTRACKS 11 TOTAL NTRACKS 36424
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 583000401
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 711000401
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 107000701
+G4WT19 >  %%% EVENT 39000 NTRACKS 13 TOTAL NTRACKS 20837
+G4WT41 >  %%% EVENT 43000 NTRACKS 11 TOTAL NTRACKS 34430
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 862000401
+G4WT3 >  %%% EVENT 41000 NTRACKS 17 TOTAL NTRACKS 44690
+G4WT8 >  %%% EVENT 24000 NTRACKS 7 TOTAL NTRACKS 16074
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 538000401
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 160000501
+G4WT27 >  %%% EVENT 40000 NTRACKS 16 TOTAL NTRACKS 23287
+G4WT8 >  %%% EVENT 44000 NTRACKS 29 TOTAL NTRACKS 18756
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:alphaInelastic:FinalKineticEnergy = 747000901
+G4WT39 >  %%% EVENT 45000 NTRACKS 58 TOTAL NTRACKS 40184
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:ionInelastic:FinalKineticEnergy = 762001001
+G4WT41 >  %%% EVENT 49000 NTRACKS 15 TOTAL NTRACKS 41607
+G4WT14 >  %%% EVENT 50000 NTRACKS 12 TOTAL NTRACKS 25848
+G4WT40 >  %%% EVENT 46000 NTRACKS 11 TOTAL NTRACKS 12145
+G4WT2 >  %%% EVENT 42000 NTRACKS 12 TOTAL NTRACKS 32230
+G4WT25 >  %%% EVENT 51000 NTRACKS 4 TOTAL NTRACKS 36977
+G4WT9 >  %%% EVENT 47000 NTRACKS 5 TOTAL NTRACKS 34459
+G4WT20 >  %%% EVENT 52000 NTRACKS 12 TOTAL NTRACKS 39032
+G4WT21 >  %%% EVENT 55000 NTRACKS 15 TOTAL NTRACKS 35055
+G4WT13 >  %%% EVENT 53000 NTRACKS 18 TOTAL NTRACKS 47942
+G4WT18 >  %%% EVENT 48000 NTRACKS 20 TOTAL NTRACKS 25066
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 351000501
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 351000101
+G4WT6 >  %%% EVENT 54000 NTRACKS 21 TOTAL NTRACKS 34629
+G4WT9 >  %%% EVENT 56000 NTRACKS 8 TOTAL NTRACKS 38676
+G4WT19 >  %%% EVENT 58000 NTRACKS 22 TOTAL NTRACKS 50739
+G4WT1 >  %%% EVENT 61000 NTRACKS 14 TOTAL NTRACKS 26347
+G4WT19 >  %%% EVENT 62000 NTRACKS 4 TOTAL NTRACKS 56950
+G4WT47 >  %%% EVENT 59000 NTRACKS 59 TOTAL NTRACKS 42911
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 3000401
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 351000401
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 449000401
+G4WT0 >  %%% EVENT 12000 NTRACKS 19 TOTAL NTRACKS 9422
+G4WT19 >  %%% EVENT 65000 NTRACKS 284 TOTAL NTRACKS 71800
+G4WT25 >  %%% EVENT 67000 NTRACKS 8 TOTAL NTRACKS 50157
+G4WT27 >  %%% EVENT 68000 NTRACKS 18 TOTAL NTRACKS 54015
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 473000701
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 503000701
+G4WT6 >  %%% EVENT 66000 NTRACKS 104 TOTAL NTRACKS 53726
+G4WT45 >  %%% EVENT 60000 NTRACKS 7 TOTAL NTRACKS 17891
+G4WT16 >  %%% EVENT 73000 NTRACKS 119 TOTAL NTRACKS 41325
+G4WT19 >  %%% EVENT 69000 NTRACKS 19 TOTAL NTRACKS 77353
+G4WT1 >  %%% EVENT 72000 NTRACKS 13 TOTAL NTRACKS 64571
+G4WT41 >  %%% EVENT 71000 NTRACKS 23 TOTAL NTRACKS 97943
+G4WT39 >  %%% EVENT 70000 NTRACKS 151 TOTAL NTRACKS 50382
+G4WT7 >  %%% EVENT 36000 NTRACKS 90 TOTAL NTRACKS 35376
+G4WT4 >  %%% EVENT 74000 NTRACKS 11 TOTAL NTRACKS 25829
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:alphaInelastic:FinalKineticEnergy = 898000901
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:alphaInelastic:FinalKineticEnergy = 762000901
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 301000501
+G4WT0 >  %%% EVENT 75000 NTRACKS 10 TOTAL NTRACKS 21393
+G4WT38 >  %%% EVENT 63000 NTRACKS 10 TOTAL NTRACKS 19374
+G4WT32 >  %%% EVENT 79000 NTRACKS 10 TOTAL NTRACKS 34286
+G4WT7 >  %%% EVENT 76000 NTRACKS 11 TOTAL NTRACKS 40696
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 301000401
+G4WT39 >  %%% EVENT 80000 NTRACKS 9 TOTAL NTRACKS 56979
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 862000701
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 164000701
+G4WT23 >  %%% EVENT 64000 NTRACKS 13 TOTAL NTRACKS 47530
+G4WT19 >  %%% EVENT 78000 NTRACKS 14 TOTAL NTRACKS 90262
+G4WT41 >  %%% EVENT 77000 NTRACKS 26 TOTAL NTRACKS 107291
+G4WT38 >  %%% EVENT 82000 NTRACKS 8 TOTAL NTRACKS 27285
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 269000501
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 269000101
+G4WT8 >  %%% EVENT 86000 NTRACKS 15 TOTAL NTRACKS 52347
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:alphaInelastic:FinalKineticEnergy = 840000901
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 269000401
+G4WT28 >  %%% EVENT 88000 NTRACKS 9 TOTAL NTRACKS 11840
+G4WT41 >  %%% EVENT 87000 NTRACKS 10 TOTAL NTRACKS 113791
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:annihil:FinalKineticEnergy = 366000101
+G4WT34 >  %%% EVENT 84000 NTRACKS 12 TOTAL NTRACKS 55121
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:eBrem:FinalKineticEnergy = 557000501
+G4WT21 >  %%% EVENT 92000 NTRACKS 11 TOTAL NTRACKS 97273
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_exitGmNeutronFilter_GmClassifierByCreatorProcess:dInelastic:FinalKineticEnergy = 998000701
+G4WT42 >  %%% EVENT 89000 NTRACKS 13 TOTAL NTRACKS 49611
+G4WT37 >  %%% EVENT 93000 NTRACKS 153 TOTAL NTRACKS 46562
+G4WT0 >  %%% EVENT 83000 NTRACKS 5 TOTAL NTRACKS 32488
+G4WT28 >  %%% EVENT 94000 NTRACKS 35 TOTAL NTRACKS 22392
+G4WT6 >  %%% EVENT 98000 NTRACKS 45 TOTAL NTRACKS 90623
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 366000401
+G4WT39 >  %%% EVENT 91000 NTRACKS 4 TOTAL NTRACKS 80945
+G4WT16 >  %%% EVENT 96000 NTRACKS 26 TOTAL NTRACKS 68293
+G4WT29 >  %%% EVENT 95000 NTRACKS 19 TOTAL NTRACKS 59875
+G4WT32 >  %%% EVENT 97000 NTRACKS 6 TOTAL NTRACKS 67005
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:alphaInelastic:FinalKineticEnergy = 366000901
+G4WT30 >  %%% EVENT 99000 NTRACKS 121 TOTAL NTRACKS 41014
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_exitGmGammaFilter_GmClassifierByCreatorProcess:RadioactiveDecay:FinalKineticEnergy = 394000401
+G4WT36 >  %%% EVENT 90000 NTRACKS 16 TOTAL NTRACKS 64772
+G4WT22 >  %%% EVENT 81000 NTRACKS 7 TOTAL NTRACKS 10454
+G4WT9 >  %%% EVENT 85000 NTRACKS 19 TOTAL NTRACKS 71544
+G4WT46 >  %%% EVENT 23000 NTRACKS 20 TOTAL NTRACKS 16917
+G4WT44 >  %%% EVENT 57000 NTRACKS 34 TOTAL NTRACKS 37937
  Run terminated.
 Run Summary
   Number of events processed : 100000
-  User=186.040000s Real=186.318522s Sys=0.030000s
+  User=807.310000s Real=75.879382s Sys=1.130000s [Cpu=1065.4%]
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 Ekin_exitGamma:NormalizeToNEvents
 === saving histograms in file === Ekin_exitGamma.csv
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 Ekin_exitNeutron:NormalizeToNEvents
 === saving histograms in file === Ekin_exitNeutron.csv
+GAMOS ends RUN at : Fri Nov 20 18:17:18 CET 2026

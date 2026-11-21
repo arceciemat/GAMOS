@@ -10,6 +10,7 @@
 //#include "G4NuclearLevelManager.hh"
 //#include "G4NuclearLevelStore.hh"
 #include "G4RadioactiveDecay.hh"
+#include "G4IonTable.hh"
 
 
 //-----------------------------------------------------------------
@@ -279,7 +280,7 @@ std::map<G4String,SHRadDecayChain*> SHRadDecayChainSet::BuildPossibleDecayChains
     SHRadDecayChain* chain = new SHRadDecayChain(ion, this);
 #ifndef GAMOS_NO_VERBOSE
     if( SHVerb(testVerb) )
-    G4cout << " NEW CHAIN " << chain->GetName() << G4endl; //GDEB
+    G4cout << " NEW CHAIN " << chain->GetName() << G4endl;
 #endif
     theChainVector.push_back( chain );
     chain->SetNAtomsInJob( (*itei).second );
@@ -303,7 +304,16 @@ std::map<G4String,SHRadDecayChain*> SHRadDecayChainSet::BuildPossibleDecayChains
     if( SHVerb(testVerb) )
     G4cout << theChainVector[ii] << " CHECK CHAIN " << theChainVector[ii]->GetName() << " NIONS " << theChainVector[ii]->GetIons().size() << " BR " << theChainVector[ii]->GetBR() <<G4endl;
 #endif
-    if( bFound ) {
+    if( bFound && theChainVector[ii]->GetFirstIon() != theChainVector[jj]->GetFirstIon()
+	&& theChainVector[jj]->GetBR() != 0. ) {
+      //--- same chain from a different first ion (e.g. Cu64[1594.19] and Cu64, after deleting the short-lived one):
+      //    add its atoms (before, they were lost and which ion survived depended on the order of the G4Ions pointers)
+      theChainVector[jj]->AddNAtomsInJob( theChainVector[ii]->GetNAtomsInJob() * theChainVector[ii]->GetBR() / theChainVector[jj]->GetBR() );
+#ifndef GAMOS_NO_VERBOSE
+      if( SHVerb(testVerb) )
+	G4cout << " MERGE CHAINS (different first ion) " << theChainVector[ii]->GetName() << " NATOMS " << theChainVector[jj]->GetNAtomsInJob() << G4endl;
+#endif
+    } else if( bFound ) {
       theChainVector[jj]->AddBR( theChainVector[ii]->GetBR() );
 #ifndef GAMOS_NO_VERBOSE
     if( SHVerb(testVerb) )
@@ -350,7 +360,7 @@ void SHRadDecayChainSet::AddDaughters( SHRadDecayChain* chain )
   // get last ion added
   G4Ions* ion = chain->GetIon(chain->GetNIons()-1);
 #ifndef GAMOS_NO_VERBOSE
-  if( SHVerb(testVerb) ) G4cout << "  SHRadDecayChainSet::AddDaughters START " << chain->GetName()<< G4endl;//GDEB
+  if( SHVerb(testVerb) ) G4cout << "  SHRadDecayChainSet::AddDaughters START " << chain->GetName()<< G4endl;
 #endif
 
   /*  if( ion->GetPDGStable() ) { e.g. Th228[396.1] is stable, but has a decay table with an IT channel
@@ -361,7 +371,7 @@ void SHRadDecayChainSet::AddDaughters( SHRadDecayChain* chain )
   G4DecayTable* decayTable = GmG4Utils::FindOrBuildDecayTable( ion );
   if( !decayTable ) {
 #ifndef GAMOS_NO_VERBOSE
-    if( SHVerb(debugVerb) )    G4cout << "  SHRadDecayChainSet::AddDaughters END no decayTable " << chain->GetName()<< G4endl;//GDEB
+    if( SHVerb(debugVerb) )    G4cout << "  SHRadDecayChainSet::AddDaughters END no decayTable " << chain->GetName()<< G4endl;
 #endif
     return;
   }
@@ -373,7 +383,7 @@ void SHRadDecayChainSet::AddDaughters( SHRadDecayChain* chain )
     G4VDecayChannel* channel = (*decayTable)[ic];
 #ifndef GAMOS_NO_VERBOSE
     if( SHVerb(testVerb) )
-    G4cout << ic << " SHRadDecayChainSet::AddDaughters start channel  BR " << channel->GetBR() << G4endl;//GDEB
+    G4cout << ic << " SHRadDecayChainSet::AddDaughters start channel  BR " << channel->GetBR() << G4endl;
 #endif
 
     //t?  G4ITDecayChannel* channelIT = dynamic_cast<G4ITDecayChannel*>(channel);
@@ -382,6 +392,25 @@ void SHRadDecayChainSet::AddDaughters( SHRadDecayChain* chain )
 	// add to chain
 	G4ParticleDefinition* daughter = channel->GetDaughter(id); 
 	G4Ions* daughterIon = dynamic_cast<G4Ions*>(daughter);
+	//--- G4ITDecay sets as daughter the parent nucleus itself (final state is computed at decay time): use ground state, else infinite recursion
+	if( daughterIon == ion ) {
+	  if( ion->GetExcitationEnergy() == 0. ) continue;
+	  daughterIon = dynamic_cast<G4Ions*>(G4IonTable::GetIonTable()->GetIon(ion->GetAtomicNumber(), ion->GetAtomicMass()));
+	  if( !daughterIon ) continue;
+	  daughter = daughterIon;
+	}
+	//--- protection against decay loops: do not add an ion already in the chain
+	G4bool bInChain = false;
+	for( G4int ii = 0; ii < chain->GetNIons(); ii++ ) {
+	  if( chain->GetIon(ii) == daughterIon ) bInChain = true;
+	}
+	if( bInChain ) {
+	  G4Exception("SHRadDecayChainSet::AddDaughters",
+		      "Warning",
+		      JustWarning,
+		      ("Decay loop: " + daughterIon->GetParticleName() + " is already in chain " + chain->GetName() + " , it will not be added again").c_str());
+	  continue;
+	}
 #ifndef GAMOS_NO_VERBOSE
     if( SHVerb(testVerb) )
 	G4cout << ic << " " << id << " SHRadDecayChainSet::AddDaughters daughter " << daughter->GetParticleName() 
@@ -401,7 +430,7 @@ void SHRadDecayChainSet::AddDaughters( SHRadDecayChain* chain )
 	  } else {
 #ifndef GAMOS_NO_VERBOSE
     if( SHVerb(testVerb) )
-	    G4cout << " SHRadDecayChainSet::AddDaughters daughter with DECAY TABLE " << daughterIon->GetParticleName() << " " << bFirstDaughter << G4endl;//GDEB
+	    G4cout << " SHRadDecayChainSet::AddDaughters daughter with DECAY TABLE " << daughterIon->GetParticleName() << " " << bFirstDaughter << G4endl;
 #endif
 
 	    // one chain for each daughter
@@ -422,7 +451,7 @@ void SHRadDecayChainSet::AddDaughters( SHRadDecayChain* chain )
 	    SHRadDecayChain* newChain = new SHRadDecayChain(*chain,this); 
 #ifndef GAMOS_NO_VERBOSE
     if( SHVerb(testVerb) )
-	    G4cout << " NEW CHAIN " << newChain->GetName() << G4endl; //GDEB
+	    G4cout << " NEW CHAIN " << newChain->GetName() << G4endl;
 #endif
 	    newChain->AddIon( daughterIon, channel->GetBR());
 	    theChainVector.push_back( newChain );
@@ -536,13 +565,13 @@ void SHRadDecayChainSet::AddDaughters( SHRadDecayChain* chain )
   
 #ifndef GAMOS_NO_VERBOSE
     if( SHVerb(testVerb) )
-  G4cout << "  SHRadDecayChainSet::AddDaughters firstIon " << firstIon << G4endl;//GDEB
+  G4cout << "  SHRadDecayChainSet::AddDaughters firstIon " << firstIon << G4endl;
 #endif
 
   if( firstIon ) {
 #ifndef GAMOS_NO_VERBOSE
     if( SHVerb(testVerb) )
-    G4cout << "  SHRadDecayChainSet::AddDaughters firstIon " << firstIon->GetParticleName()<< G4endl;//GDEB
+    G4cout << "  SHRadDecayChainSet::AddDaughters firstIon " << firstIon->GetParticleName()<< G4endl;
 #endif
     std::vector<SHRadDecayChain*>::const_iterator ite;
     chain->AddIon( firstIon, firstChannelBR );
@@ -551,7 +580,7 @@ void SHRadDecayChainSet::AddDaughters( SHRadDecayChain* chain )
 
 #ifndef GAMOS_NO_VERBOSE
     if( SHVerb(testVerb) )
-  G4cout << "  SHRadDecayChainSet::AddDaughters END " << chain->GetName()<< G4endl;//GDEB
+  G4cout << "  SHRadDecayChainSet::AddDaughters END " << chain->GetName()<< G4endl;
 #endif
 
 

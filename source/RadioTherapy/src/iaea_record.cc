@@ -173,7 +173,7 @@ short iaea_record_type::read_particle()
   
   particle = (short) ctmp;
 
-  //  std::cout << "IAEA particle " << particle << std::endl;
+  //  G4cout << "IAEA particle " << particle << std::endl;
   is = 1; // getting sign of Z director cosine w
   if(particle < 0) {is = -1; particle = -particle;}
 
@@ -201,8 +201,8 @@ short iaea_record_type::read_particle()
   if(floatArray[0]<0) IsNewHistory = 1; // like egsnrc   
   energy = fabs(floatArray[0]);
 
-  //  std::cout << "IAEA IsNewHistory " << IsNewHistory << std::endl;
-  //  std::cout << "IAEA energy " << energy << std::endl;
+  //  G4cout << "IAEA IsNewHistory " << IsNewHistory << std::endl;
+  //  G4cout << "IAEA energy " << energy << std::endl;
 
   i = 0;
   if(ix > 0) x = floatArray[++i]; 
@@ -213,10 +213,10 @@ short iaea_record_type::read_particle()
   if(iweight > 0) weight = floatArray[++i];
   for(j=0;j<iextrafloat;j++) extrafloat[j] = floatArray[++i];
 
-  //  std::cout << "IAEA x " << x << std::endl;
-  //  std::cout << "IAEA u " << u << std::endl;
-  //  std::cout << "IAEA iextrafloat " << iextrafloat << std::endl;
-  //  std::cout << "IAEA iextralong " << iextralong << std::endl;
+  //  G4cout << "IAEA x " << x << std::endl;
+  //  G4cout << "IAEA u " << u << std::endl;
+  //  G4cout << "IAEA iextrafloat " << iextrafloat << std::endl;
+  //  G4cout << "IAEA iextralong " << iextralong << std::endl;
 
   if(iw > 0)
   {
@@ -243,7 +243,7 @@ short iaea_record_type::read_particle()
     for(int l=0,j2=0;j2<iextralong;j2++) extralong[j2] = longArray[l++];
     //GAMOS     reclength += (iextralong)*IAEA_I32;
     reclength += (iextralong)*sizeExtraLong;
-    //   std::cout << "IAEA reclength " << reclength << " " << sizeExtraLong << " " << sizeof(IAEA_I32) << std::endl;
+    //   G4cout << "IAEA reclength " << reclength << " " << sizeExtraLong << " " << sizeof(IAEA_I32) << std::endl;
   }
 
   #ifdef DEBUG

@@ -5,6 +5,5 @@ EXER=exercise4c
 ### GET HISTO FILES TO TEST                                                                             
 histoFiles=`sh ../../getHistoFiles.sh out.$EXER`
 qaFiles=`cat qafiles.$EXER.lis`
-cp out.$EXER std.out.$EXER
-echo ../../StatTest/prepareQA.py $histoFiles  $EXER.qa$1 
-python ../../StatTest/prepareQA.py $histoFiles $EXER.qa$1 
+echo ../../StatTest/prepareQA.py $histoFiles  $EXER.qaref 
+python3 ../../StatTest/prepareQA.py $histoFiles $EXER.qaref 

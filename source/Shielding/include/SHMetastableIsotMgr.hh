@@ -34,7 +34,7 @@ class SHMetastableIsotMgr
 
 private:
 
-  static SHMetastableIsotMgr* theInstance;
+  static G4ThreadLocal SHMetastableIsotMgr* theInstance;
   std::map<G4String, G4Ions* > theMetastableIsotopes;
   std::map<G4String, MetastableData > theMetastableIsotopesData;
 

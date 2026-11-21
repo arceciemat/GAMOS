@@ -1,3 +1,5 @@
+#include "G4Threading.hh"
+#include "G4AutoLock.hh"
 #include "SHStudyDecayChannelsUA.hh"
 #include "ShieldingVerbosity.hh"
 #include "SHMetastableIsotMgr.hh"
@@ -18,6 +20,8 @@
 SHStudyDecayChannelsUA::SHStudyDecayChannelsUA()
 {
   theName = "SHStudyDecayChannelsUA";
+  //--- Multithreading: particles found by the workers are added to the master instance, which prints their decay tables
+  SetRunOnMaster(true);
 
 }
 
@@ -74,6 +78,15 @@ void SHStudyDecayChannelsUA::PostUserTrackingAction(const G4Track* aTrack)
 //-----------------------------------------------------------------
 void SHStudyDecayChannelsUA::EndOfRunAction(const G4Run* )
 {
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    SHStudyDecayChannelsUA* master = dynamic_cast<SHStudyDecayChannelsUA*>(GmUserAction::GetMasterUserAction(GetName()));
+    if( master ) {
+      G4AutoLock l(&GmUserAction::GetMergeMutex());
+      master->theParticles.insert( theParticles.begin(), theParticles.end() );
+      theParticles.clear();
+    }
+    return;
+  }
   std::set<G4ParticleDefinition*>::const_iterator ite;
   for( ite = theParticles.begin(); ite != theParticles.end(); ite++ ){
     G4ParticleDefinition* particle = *ite;

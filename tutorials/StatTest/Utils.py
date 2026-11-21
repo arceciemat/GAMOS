@@ -89,10 +89,10 @@ class logger:
     def __init__(self):
         self.FORMAT = '$(asctime)s %(name)s %(levelname)s: %(message)s'
         self.LEVEL = logging.WARNING
-        try:
-            logging.basicConfig(level=self.LEVEL, foramt = self.FORMAT)
-        except TypeError: #< 2.5
-            logging.basicConfig()
+#        try:
+#            logging.basicConfig(level=self.LEVEL, foramt = self.FORMAT)
+#        except TypeError: #< 2.5
+#            logging.basicConfig()
         l=logging.getLogger()
         l.setLevel(self.LEVEL)
     def getLogger(self,name):

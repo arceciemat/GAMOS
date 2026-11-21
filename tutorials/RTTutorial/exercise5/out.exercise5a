@@ -1,9 +1,9 @@
 @@@@@ Running GAMOS with script: exercise5a.in
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+GAMOS starts RUN at : Fri Nov 20 18:26:48 CET 2026
 
 **************************************************************
- Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
+ Geant4 version Name: geant4-11-04-patch-03 [MT]   (01-October-2026)
+  << in Multi-threaded mode >> 
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -20,14 +20,24 @@ You have successfully registered the following graphics systems.
 Registered graphics systems are:
   ASCIITree (ATree)
   DAWNFILE (DAWNFILE)
-  G4HepRepFile (HepRepFile)
-  RayTracer (RayTracer)
+  RayTracer (RT)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
-  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
   TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
-  OpenGLStoredX (OGLSX, OGL, OGLS)
+  OpenGLStoredX (OGLSX, OGLS)
+  TOOLSSG_X11_GLES (TSG_X11_GLES, TSGX11, TSG, OGL)
+  TOOLSSG_X11_ZB (TSG_X11_ZB, TSGX11ZB, TSGZB)
+You may choose a graphics system (driver) with a parameter of
+the command "/vis/open" or "/vis/sceneHandler/create",
+or you may omit the driver parameter and choose at run time:
+- by argument in the construction of G4VisExecutive;
+- by environment variable "G4VIS_DEFAULT_DRIVER";
+- by entry in "~/.g4session";
+- by build flags.
+- Note: This feature is not allowed in batch mode.
+For further information see "examples/basic/B1/exampleB1.cc"
+and "vis.mac".
 
 Registering model factories...
 
@@ -75,27 +85,12 @@ GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
 GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/generator GmGenerator
 /run/initialize
-/gamos/physics/addPhysics radioactiveDecay
-/gamos/filter nu_eF GmParticleFilter nu_e
-/gamos/userAction GmKillAtStackingActionUA nu_eF
-/gamos/generator/addSingleParticleSource I125_source I125 0.1*keV
-/gamos/scoring/createMFDetector PDDdet phantom
-/gamos/scoring/addScorer2MFD PDDscorer GmG4PSDoseDeposit PDDdet
-GmEnergySplitter::GmEnergySplitter
- GmVPrimitiveScorer::SetParameters: no parameters 
-/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos PDDscorer
- RTPSPDoseHistos nvoxel 100 100 100
- RTPSPDoseHistos half dim 0.5 0.5 0.5
- RTPSPDoseHistos translation (0,0,0)
- RTPSPDoseHistos rotation 
-   [ (           1             0             0)
-     (           0             1             0)
-     (           0             0             1) ]
 
-/gamos/userAction GmCountProcessesUA
-/gamos/userAction GmCountTracksUA
-/run/beamOn 10000
-G4RunManagerKernel -- G4ScoreSplittingProcess is appended to all particles.
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -117,10 +112,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -134,7 +132,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -166,21 +164,11 @@ Type of electron single scattering model           0
 Type of nuclear form-factor                        1
 Screening factor                                   1
 =======================================================================
-======                 Atomic Deexcitation Parameters          ========
-=======================================================================
-Fluorescence enabled                               1
-Directory in G4LEDATA for fluorescence data files  fluor
-Auger electron cascade enabled                     1
-PIXE atomic de-excitation enabled                  0
-De-excitation module ignores cuts                  1
-Type of PIXE cross section for hadrons             Empirical
-Type of PIXE cross section for e+-                 Livermore
-=======================================================================
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
 ### ===  Auger flag: 1
-### ===  Ignore cuts flag:   1
+### ===  Ignore cuts flag:   0
 
 phot:  for gamma SubType=12 BuildTable=0
       LambdaPrime table from 200 keV to 100 TeV in 61 bins 
@@ -244,7 +232,7 @@ eBrem:  for e+  XStype:4  SubType=3
              eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
             eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
 
-annihil:  for e+ SubType=5 BuildTable=0
+annihil:  for e+ SubType=5 AtRestModel:Simple BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             eplus2gg : Emin=    0 eV  Emax=  100 TeV
 
@@ -270,7 +258,7 @@ hBrems:  for proton  XStype:1  SubType=3
 hPairProd:  for proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      Sampling table 17x1001, from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -289,23 +277,6 @@ ionIoni:  for GenericIon  XStype:3  SubType=2
 nuclearStopping:  for GenericIon SubType=8 BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    ICRU49NucStopping : Emin=    0 eV  Emax=   10 GeV
-======================================================================
-======          Radioactive Decay Physics Parameters           =======
-======================================================================
-min MeanLife (from G4NuclideTable)                1 ns 
-Max life time (from G4DeexPrecoParameters)        1 ns 
-Internal e- conversion flag                       1
-Stored internal conversion coefficients           0
-Enabled atomic relaxation mode                    1
-Enable correlated gamma emission                  0
-Max 2J for sampling of angular correlations       10
-Atomic de-excitation enabled                      1
-Auger electron emission enabled                   1
-Check EM cuts disabled for atomic de-excitation   1
-Use Bearden atomic level energies                 0
-Use ANSTO fluorescence model                      0
-Threshold for very long decay time at rest        3.171e+10 y  
-======================================================================
 
 msc:  for alpha  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
@@ -359,7 +330,7 @@ hBrems:  for kaon+  XStype:1  SubType=3
 hPairProd:  for kaon+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -385,7 +356,7 @@ hBrems:  for kaon-  XStype:1  SubType=3
 hPairProd:  for kaon-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -411,13 +382,13 @@ muBrems:  for mu+  XStype:1  SubType=3
 muPairProd:  for mu+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu+ XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 7 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -443,13 +414,13 @@ muBrems:  for mu-  XStype:1  SubType=3
 muPairProd:  for mu-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu- XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 7 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -475,7 +446,7 @@ hBrems:  for pi+  XStype:1  SubType=3
 hPairProd:  for pi+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      Sampling table 20x1001, from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -491,6 +462,30 @@ hIoni:  for pi-  XStype:3  SubType=2
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=297.505 keV
           BetheBloch : Emin=297.505 keV Emax=  100 TeV
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/physics/addPhysics radioactiveDecay
+/gamos/filter nu_eF GmParticleFilter nu_e
+/gamos/userAction GmKillAtStackingActionUA nu_eF
+/gamos/generator/addSingleParticleSource I125_source I125 0.1*keV
+/gamos/scoring/createMFDetector PDDdet phantom
+/gamos/scoring/addScorer2MFD PDDscorer GmG4PSDoseDeposit PDDdet
+ GmVPrimitiveScorer::SetParameters: no parameters 
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos PDDscorer
+ RTPSPDoseHistos nvoxel 100 100 100
+ RTPSPDoseHistos half dim 0.5 0.5 0.5
+ RTPSPDoseHistos translation (0,0,0)
+ RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+/gamos/userAction GmCountProcessesUA
+/gamos/userAction GmCountTracksUA
+/run/beamOn 10000
 
 ========= Table of registered couples ============================
 
@@ -510,25 +505,458 @@ Index : 1     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- %%% EVENT 0 NTRACKS 22 TOTAL NTRACKS 22
- %%% EVENT 1000 NTRACKS 20 TOTAL NTRACKS 19305
- %%% EVENT 2000 NTRACKS 29 TOTAL NTRACKS 38777
- %%% EVENT 3000 NTRACKS 21 TOTAL NTRACKS 58245
- %%% EVENT 4000 NTRACKS 13 TOTAL NTRACKS 77819
- %%% EVENT 5000 NTRACKS 22 TOTAL NTRACKS 97408
- %%% EVENT 6000 NTRACKS 25 TOTAL NTRACKS 117031
- %%% EVENT 7000 NTRACKS 13 TOTAL NTRACKS 136326
- %%% EVENT 8000 NTRACKS 24 TOTAL NTRACKS 155822
- %%% EVENT 9000 NTRACKS 23 TOTAL NTRACKS 175029
+G4WT4 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT4 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT4 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT4 >  RTPSPDoseHistos translation (0,0,0)
+G4WT4 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT26 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT26 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT26 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT26 >  RTPSPDoseHistos translation (0,0,0)
+G4WT26 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT7 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT7 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT7 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT7 >  RTPSPDoseHistos translation (0,0,0)
+G4WT7 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT8 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT8 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT8 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT8 >  RTPSPDoseHistos translation (0,0,0)
+G4WT8 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT30 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT6 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT30 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT30 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT30 >  RTPSPDoseHistos translation (0,0,0)
+G4WT30 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT0 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT0 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT0 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT0 >  RTPSPDoseHistos translation (0,0,0)
+G4WT0 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT28 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT28 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT28 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT28 >  RTPSPDoseHistos translation (0,0,0)
+G4WT28 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT33 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT33 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT33 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT33 >  RTPSPDoseHistos translation (0,0,0)
+G4WT33 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT46 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT46 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT46 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT46 >  RTPSPDoseHistos translation (0,0,0)
+G4WT46 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT12 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT12 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT12 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT12 >  RTPSPDoseHistos translation (0,0,0)
+G4WT12 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT21 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT21 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT21 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT21 >  RTPSPDoseHistos translation (0,0,0)
+G4WT21 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT27 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT27 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT27 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT27 >  RTPSPDoseHistos translation (0,0,0)
+G4WT27 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT35 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT35 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT35 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT35 >  RTPSPDoseHistos translation (0,0,0)
+G4WT35 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT39 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT39 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT39 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT39 >  RTPSPDoseHistos translation (0,0,0)
+G4WT39 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT16 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT11 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT16 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT42 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT16 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT16 >  RTPSPDoseHistos translation (0,0,0)
+G4WT16 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT42 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT42 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT42 >  RTPSPDoseHistos translation (0,0,0)
+G4WT42 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT19 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT19 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT19 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT19 >  RTPSPDoseHistos translation (0,0,0)
+G4WT19 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT1 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT1 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT1 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT1 >  RTPSPDoseHistos translation (0,0,0)
+G4WT1 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT23 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT14 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT23 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT23 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT23 >  RTPSPDoseHistos translation (0,0,0)
+G4WT47 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT23 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT14 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT14 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT14 >  RTPSPDoseHistos translation (0,0,0)
+G4WT14 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT45 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT45 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT45 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT45 >  RTPSPDoseHistos translation (0,0,0)
+G4WT45 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT2 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT2 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT2 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT2 >  RTPSPDoseHistos translation (0,0,0)
+G4WT2 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT17 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT17 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT17 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT17 >  RTPSPDoseHistos translation (0,0,0)
+G4WT17 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT32 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT6 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT6 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT6 >  RTPSPDoseHistos translation (0,0,0)
+G4WT6 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT32 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT32 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT32 >  RTPSPDoseHistos translation (0,0,0)
+G4WT32 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT15 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT15 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT15 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT15 >  RTPSPDoseHistos translation (0,0,0)
+G4WT15 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT41 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT41 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT41 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT41 >  RTPSPDoseHistos translation (0,0,0)
+G4WT41 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT11 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT11 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT11 >  RTPSPDoseHistos translation (0,0,0)
+G4WT11 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT37 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT37 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT10 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT20 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT22 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT25 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT37 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT37 >  RTPSPDoseHistos translation (0,0,0)
+G4WT37 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT22 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT22 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT22 >  RTPSPDoseHistos translation (0,0,0)
+G4WT22 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT20 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT20 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT20 >  RTPSPDoseHistos translation (0,0,0)
+G4WT20 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT44 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT44 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT44 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT44 >  RTPSPDoseHistos translation (0,0,0)
+G4WT44 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT13 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT5 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT34 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT47 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT47 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT47 >  RTPSPDoseHistos translation (0,0,0)
+G4WT47 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT3 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT29 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT34 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT34 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT34 >  RTPSPDoseHistos translation (0,0,0)
+G4WT34 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT43 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT9 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT3 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT3 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT3 >  RTPSPDoseHistos translation (0,0,0)
+G4WT3 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT9 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT9 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT9 >  RTPSPDoseHistos translation (0,0,0)
+G4WT9 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT31 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT31 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT31 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT31 >  RTPSPDoseHistos translation (0,0,0)
+G4WT31 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT24 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT24 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT24 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT24 >  RTPSPDoseHistos translation (0,0,0)
+G4WT24 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT40 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT25 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT25 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT25 >  RTPSPDoseHistos translation (0,0,0)
+G4WT25 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT40 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT40 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT40 >  RTPSPDoseHistos translation (0,0,0)
+G4WT40 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT13 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT13 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT13 >  RTPSPDoseHistos translation (0,0,0)
+G4WT13 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT10 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT10 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT10 >  RTPSPDoseHistos translation (0,0,0)
+G4WT10 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT43 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT43 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT43 >  RTPSPDoseHistos translation (0,0,0)
+G4WT43 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT18 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT18 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT18 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT18 >  RTPSPDoseHistos translation (0,0,0)
+G4WT18 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT38 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT38 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT38 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT38 >  RTPSPDoseHistos translation (0,0,0)
+G4WT38 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT5 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT5 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT5 >  RTPSPDoseHistos translation (0,0,0)
+G4WT5 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT29 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT29 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT29 >  RTPSPDoseHistos translation (0,0,0)
+G4WT29 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT36 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT36 >  RTPSPDoseHistos nvoxel 100 100 100
+G4WT36 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT36 >  RTPSPDoseHistos translation (0,0,0)
+G4WT36 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 100 tasks with 100 events/task...
+============================================================================================
+
+G4WT1 >  %%% EVENT 0 NTRACKS 47 TOTAL NTRACKS 47
+G4WT10 >  %%% EVENT 1000 NTRACKS 41 TOTAL NTRACKS 41
+G4WT19 >  %%% EVENT 2000 NTRACKS 33 TOTAL NTRACKS 33
+G4WT11 >  %%% EVENT 3000 NTRACKS 42 TOTAL NTRACKS 42
+G4WT16 >  %%% EVENT 4000 NTRACKS 31 TOTAL NTRACKS 31
+G4WT17 >  %%% EVENT 5000 NTRACKS 32 TOTAL NTRACKS 3533
+G4WT47 >  %%% EVENT 6000 NTRACKS 33 TOTAL NTRACKS 3302
+G4WT30 >  %%% EVENT 7000 NTRACKS 27 TOTAL NTRACKS 3318
+G4WT33 >  %%% EVENT 8000 NTRACKS 33 TOTAL NTRACKS 3321
+G4WT5 >  %%% EVENT 9000 NTRACKS 28 TOTAL NTRACKS 3241
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=5.240000s Real=5.301560s Sys=0.000000s
- GmScoringRun::DumpAllScorer() 1 1
- GmVPSPrinter::SetUnit RTPSPDoseHistos 1e-12 New 1e-12 Ratio 1
+  User=22.470000s Real=3.164557s Sys=0.090000s [Cpu=712.9%]
  CreateHisto1D RTPSPDoseHistos: Dose = 36201
  CreateHisto1D RTPSPDoseHistos: Dose-volume = 36202
  CreateHisto1D RTPSPDoseHistos: Dose Error REL = 36203
@@ -537,61 +965,59 @@ Run Summary
  CreateHisto1D RTPSPDoseHistos: log10(Dose Error) = 36206
  CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error) = 36207
  CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error REL) = 36208
-RTPSPDoseHistos MINIMUM DOSE 9.52539e-20 Gy 
-RTPSPDoseHistos MAXIMUM DOSE 8.38607e-10 Gy 
-RTPSPDoseHistos AVERAGE ERROR 20% = 0.0203836
-RTPSPDoseHistos AVERAGE ERROR 50% = 0.0203836
-RTPSPDoseHistos AVERAGE ERROR 90% = 0.0203836
-RTPSPDoseHistos TOTAL DOSE = 9.07099e-09 +-(REL) 0.00628664
- FillHisto1N_X RTPSPDoseHistos: Dose Profile X_merged nXmin 0 nXmax 99 nYmin 0 nYmax 99 nZmin 0 nZmax 99
+RTPSPDoseHistos MINIMUM DOSE 7.96438e-18 Gy 
+RTPSPDoseHistos MAXIMUM DOSE 8.00757e-10 Gy 
+RTPSPDoseHistos AVERAGE ERROR 20% = 0.0217998
+RTPSPDoseHistos AVERAGE ERROR 50% = 0.0197072
+RTPSPDoseHistos AVERAGE ERROR 90% = 0.0117697
+RTPSPDoseHistos TOTAL DOSE = 8.27384e-09 +-(REL) 0.00620427
  CreateHisto1D RTPSPDoseHistos: Dose Profile X_merged = 66301
  CreateHisto1D RTPSPDoseHistos: Dose Profile Y_merged = 66302
- FillHisto1N_Z RTPSPDoseHistos: Dose Profile Z_merged nXmin 0 nXmax 99 nYmin 0 nYmax 99 nZmin 0 nZmax 99
  CreateHisto1D RTPSPDoseHistos: Dose Profile Z_merged = 66303
  CreateHisto2D RTPSPDoseHistos: Dose XY_merged = 66304
  CreateHisto2D RTPSPDoseHistos: Dose XZ_merged = 66305
  CreateHisto2D RTPSPDoseHistos: Dose YZ_merged = 66306
 @@@@ GmCountProcessesUA
  PART_COUNT: I125 = 10000
- PART_COUNT: Te125 = 10000
- PART_COUNT: Te125[35.492] = 10000
- PART_COUNT: e- = 155882
- PART_COUNT: gamma = 8618
+ PART_COUNT: Te125 = 9865
+ PART_COUNT: Te125[35.49250] = 9865
+ PART_COUNT: e- = 290162
+ PART_COUNT: gamma = 15948
  PROC_COUNT I125 : RadioactiveDecay = 10000
- PROC_COUNT I125 : Transportation = 88400
- PROC_COUNT I125 : ionIoni_NoSeco = 1160
- PROC_COUNT I125 : ALL = 99560
- PROC_COUNT Te125 : NoProcess = 10000
- PROC_COUNT Te125 : Transportation = 19489
- PROC_COUNT Te125 : ionIoni_NoSeco = 3997
- PROC_COUNT Te125 : ALL = 33486
- PROC_COUNT Te125[35.492] : RadioactiveDecay = 10000
- PROC_COUNT Te125[35.492] : Transportation = 7566
- PROC_COUNT Te125[35.492] : ionIoni_NoSeco = 2989
- PROC_COUNT Te125[35.492] : ALL = 20555
- PROC_COUNT e- : Transportation = 344828
- PROC_COUNT e- : eBrem = 34
- PROC_COUNT e- : eBrem_NoSeco = 1
- PROC_COUNT e- : eIoni = 44
- PROC_COUNT e- : eIoni_NoSeco = 36300
- PROC_COUNT e- : msc = 442186
- PROC_COUNT e- : ALL = 823393
- PROC_COUNT gamma : Rayl = 1911
- PROC_COUNT gamma : Transportation = 3083262
- PROC_COUNT gamma : compt = 5848
- PROC_COUNT gamma : phot = 6804
-PROC_COUNT gamma : ALL = 3.09782e+06
+ PROC_COUNT I125 : Transportation = 8738
+ PROC_COUNT I125 : ionIoni_NoSeco = 1262
+ PROC_COUNT I125 : ALL = 20000
+ PROC_COUNT Te125 : NoProcess = 9865
+ PROC_COUNT Te125 : Transportation = 6998
+ PROC_COUNT Te125 : ionIoni_NoSeco = 2867
+ PROC_COUNT Te125 : ALL = 19730
+ PROC_COUNT Te125[35.49250] : RadioactiveDecay = 9865
+ PROC_COUNT Te125[35.49250] : Transportation = 7578
+ PROC_COUNT Te125[35.49250] : ionIoni_NoSeco = 2282
+ PROC_COUNT Te125[35.49250] : ALL = 19725
+ PROC_COUNT e- : Transportation = 623416
+ PROC_COUNT e- : eBrem = 12
+ PROC_COUNT e- : eIoni = 156
+ PROC_COUNT e- : eIoni_NoSeco = 62709
+ PROC_COUNT e- : msc = 613333
+ PROC_COUNT e- : ALL = 1.29963e+06
+ PROC_COUNT gamma : Rayl = 3382
+ PROC_COUNT gamma : Transportation = 5669233
+ PROC_COUNT gamma : compt = 10708
+ PROC_COUNT gamma : phot = 12705
+PROC_COUNT gamma : ALL = 5.69603e+06
 PROC_CREATOR_COUNT I125 : Primary = 10000
-PROC_CREATOR_COUNT Te125 : RadioactiveDecay = 10000
-PROC_CREATOR_COUNT Te125[35.492] : RadioactiveDecay = 10000
-PROC_CREATOR_COUNT e- : RadioactiveDecay = 136758
-PROC_CREATOR_COUNT e- : compt = 5571
-PROC_CREATOR_COUNT e- : eIoni = 44
-PROC_CREATOR_COUNT e- : phot = 13509
-PROC_CREATOR_COUNT gamma : RadioactiveDecay = 8546
-PROC_CREATOR_COUNT gamma : eBrem = 34
-PROC_CREATOR_COUNT gamma : phot = 38
+PROC_CREATOR_COUNT Te125 : RadioactiveDecay = 9865
+PROC_CREATOR_COUNT Te125[35.49250] : RadioactiveDecay = 9865
+PROC_CREATOR_COUNT e- : RadioactiveDecay = 254643
+PROC_CREATOR_COUNT e- : compt = 10140
+PROC_CREATOR_COUNT e- : eIoni = 156
+PROC_CREATOR_COUNT e- : phot = 25223
+PROC_CREATOR_COUNT gamma : RadioactiveDecay = 15850
+PROC_CREATOR_COUNT gamma : eBrem = 12
+PROC_CREATOR_COUNT gamma : phot = 86
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 dose_RTPSPDoseHistos.exercise5a:NormalizeToNEvents
 === saving histograms in file === dose_RTPSPDoseHistos.exercise5a.csv
+GAMOS ends RUN at : Fri Nov 20 18:26:54 CET 2026

@@ -21,12 +21,12 @@
 # GEANT4 INITIALISATION
 /run/initialize
 
-# ACTIVATE DECAYS
-/gamos/physics/addPhysics radioactiveDecay
-
 #---------- exercise 3e ----------
 # SWITCH OFF EM INTERACTIONS
-/gamos/physics/removeProcessesByType Electromagnetic
+/process/inactivate msc proton 
+/process/inactivate hIoni proton
+/process/inactivate hBrems proton
+#/gamos/physics/removeProcessesByType Electromagnetic
 #---------------------------------
 
 # SOURCE

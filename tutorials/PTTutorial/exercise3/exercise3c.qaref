@@ -1,0 +1,76 @@
+Text = {
+    'DefaultTestName' : 'NormalCDF',
+    'DefaultThresholds' : [ 0.05, 0.3 ],
+
+    'Lines' : [
+        {
+            'Words' : { 1 : 'RTPSPDoseHistos', 2 : 'MINIMUM', 3 : 'DOSE' },
+            'ValueCol' : 4,
+            'ErrorCol' : 6,
+            'ErrorType' : 'ABS'
+        },
+
+        {
+            'Words' : { 1 : 'RTPSPDoseHistos', 2 : 'MAXIMUM', 3 : 'DOSE' },
+            'ValueCol' : 4,
+            'ErrorCol' : 6,
+            'ErrorType' : 'ABS'
+        },
+
+        {
+            'Words' : { 1 : 'RTPSPDoseHistos', 2 : 'AVERAGE', 3 : 'ERROR', 4 : '20%', 5 : '=' },
+            'ValueCol' : 6,
+            'ErrorCol' : 8,
+            'ErrorType' : 'ABS'
+        },
+
+        {
+            'Words' : { 1 : 'RTPSPDoseHistos', 2 : 'AVERAGE', 3 : 'ERROR', 4 : '50%', 5 : '=' },
+            'ValueCol' : 6,
+            'ErrorCol' : 8,
+            'ErrorType' : 'ABS'
+        },
+
+        {
+            'Words' : { 1 : 'RTPSPDoseHistos', 2 : 'AVERAGE', 3 : 'ERROR', 4 : '90%', 5 : '=' },
+            'ValueCol' : 6,
+            'ErrorCol' : 8,
+            'ErrorType' : 'ABS'
+        },
+
+        ] #End of Lines definition
+    } #End of configuration
+Binned = {
+    'DefaultTestName' : 'BinnedKolmogorovSmirnovTest',
+    'DefaultThresholds' : [ 0.05, 0.3 ],
+
+    'Histos' : [
+        {
+            'Name' : 'RTPSPDoseHistos: Dose'
+        },
+        {
+            'Name' : 'RTPSPDoseHistos: Dose-volume'
+        },
+        {
+            'Name' : 'X_Merged'
+        },
+        {
+            'Name' : 'Y_Merged'
+        },
+        {
+            'Name' : 'Z_Merged'
+        },
+        {
+            'Name' : 'BraggPeak_1cm'
+        },
+        {
+            'Name' : 'BraggPeak_2cm'
+        },
+        {
+            'Name' : 'BraggPeak_out'
+        },
+        {
+            'Name' : 'BraggPeak_2mm'
+        },
+        ] #End of Histos definition
+    } #End of configuration

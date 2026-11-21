@@ -1,0 +1,182 @@
+//---------------------------------------------------------------------------
+// DCMGetOrganInfo::WriteHistosToFile without ROOT (GAMOS_NO_ROOT).
+// Included from DCMGetOrganInfo.cc.
+// Same figures as the ROOT version, drawn as SVG (GmSVGCanvas) with the same
+// names (".jpg" -> ".svg"), and converted to the format given by the
+// parameter imageFormat (default jpg) if a converter is found (parameter
+// SVGConverter: auto/none/program). The histograms are saved in the GAMOS .csv
+// file by DCMGetOrganInfo::SaveHistosCSV (as with ROOT).
+//   - The first histogram of a figure defines the axes (as ROOT "histo"/"histoSames")
+//   - Y axis from 0 to 1.05*maximum (as ROOT for positive histograms)
+//---------------------------------------------------------------------------
+
+namespace {
+
+//--- Maximum of the Y axis: GmHisto1::GetMaximum (as TH1::GetMaximum); when drawing errors
+//    ROOT also includes the error bars (bin content + error), as done here
+G4double SVGHistoMaximum( const GmHisto1* his, G4bool bErrors )
+{
+  if( !bErrors ) return his->GetMaximum();
+  G4double hmax = -DBL_MAX;
+  for( G4int ih = 1; ih <= his->GetNbinsX(); ih++ ) {
+    hmax = std::max(hmax,his->GetBinContent(ih)+his->GetBinError(ih));
+  }
+  return hmax;
+}
+
+//--- Frame with axes and title for a histogram, in the full pad of canvas
+GmSVGFrame* SVGHistoFrame( GmSVGCanvas* canvas, const GmHisto1* his, G4bool bErrors,
+			   const G4String& xTitle, const G4String& yTitle,
+			   G4double marginLeft, G4double marginRight )
+{
+  canvas->cd();
+  G4int nBins = his->GetNbinsX();
+  G4double xMin = his->GetBinLowEdge(1);
+  G4double xMax = his->GetBinLowEdge(nBins)+his->GetBinWidth(nBins);
+  G4double yMax = SVGHistoMaximum(his,bErrors)*1.05;
+  if( yMax <= 0. ) yMax = 1.;
+  //--- left margin wide enough for labels with 5 digits (ROOT margins are often too narrow for the SVG labels)
+  marginLeft = std::max(marginLeft,0.16);
+  GmSVGFrame* frame = new GmSVGFrame( his->GetName(), canvas->GetCurrentPad(), xMin, xMax, 0., yMax,
+				      false, false, marginLeft, marginRight, 0.1, 0.1 );
+  frame->DrawAxes( xTitle, yTitle, 0.035, 0.035, 0.035, 0.035, 1., 1. );
+  //--- histogram title on top (as ROOT, statistics box is not drawn: SetOptStat(0))
+  canvas->Text( 0.5*canvas->GetWw(), 0.06*canvas->GetWh(), his->GetName(), 0.03*canvas->GetWh(), "#000000", "middle" );
+  return frame;
+}
+
+//--- Draw histogram outline (ROOT "histo") and optionally error bars (ROOT "Ehisto")
+void SVGDrawHisto( GmSVGFrame* frame, const GmHisto1* his, EColor color, G4bool bErrors )
+{
+  std::string col = ColorToSVG(color);
+  G4double width = 1.;
+  G4int nBins = his->GetNbinsX();
+  G4double yPrev = 0.;
+  for( G4int ih = 1; ih <= nBins; ih++ ) {
+    G4double x1 = his->GetBinLowEdge(ih);
+    G4double x2 = x1 + his->GetBinWidth(ih);
+    G4double yy = his->GetBinContent(ih);
+    frame->DrawLine( x1, yPrev, x1, yy, col, width );
+    frame->DrawLine( x1, yy, x2, yy, col, width );
+    if( bErrors ) {
+      G4double err = his->GetBinError(ih);
+      if( err != 0. ) {
+	G4double xc = 0.5*(x1+x2);
+	frame->DrawLine( xc, yy-err, xc, yy+err, col, width );
+      }
+    }
+    yPrev = yy;
+  }
+  frame->DrawLine( his->GetBinLowEdge(nBins)+his->GetBinWidth(nBins), yPrev,
+		   his->GetBinLowEdge(nBins)+his->GetBinWidth(nBins), 0., col, width );
+}
+
+//--- Figure name: ROOT ".jpg" name -> ".svg", converted to imageFormat
+void SVGPrintFigure( GmSVGCanvas* canvas, G4String figName, DicomParameterMgr* paramMgr )
+{
+  size_t ip = figName.rfind(".jpg");
+  if( ip != std::string::npos && ip == figName.size()-4 ) figName = figName.substr(0,ip);
+  canvas->Print( figName+".svg", paramMgr->GetStringValue("imageFormat","jpg"),
+		 paramMgr->GetStringValue("SVGConverter","auto") );
+}
+
+}
+
+//-----------------------------------------------------------------------------
+//--- Dose and dose-volume histograms: all structures in one figure, and one figure per structure.
+//    templated on the histogram type: GmHisto1 (pmhmh) or GmHistoProfile1 (pmhpmhp, with errors)
+template<class MH>
+static void SVGWriteHistosToFile( const MH& doseHistos, const MH& doseVolumeHistos, G4bool bErrors,
+				  G4bool bLog, G4int canvasSizeXY,
+				  G4double xInit0, G4int nColorsInFile,
+				  std::map<G4int,G4String>& classifNames, std::map<G4String,G4int>& stColor,
+				  const G4String& outputName, const G4String& exeName, DicomParameterMgr* paramMgr )
+{
+  G4String errSuffix = bErrors ? "_ERR" : "";
+  G4double CSR = canvasSizeXY/1000.; // CANVAS SIZE RATIO
+  //--- the figure with all structures uses the global canvas of PlotDataSVG.cc (also used by DrawWordAndMarker)
+  theCanvas->SetCanvasSize(canvasSizeXY,canvasSizeXY);
+
+  for( G4int iDV = 0; iDV < 2; iDV++ ) { // 0: dose, 1: dose-volume
+    const MH& histos = (iDV == 0) ? doseHistos : doseVolumeHistos;
+    G4String xTitle, yTitle;
+    if( iDV == 0 ) {
+      xTitle = bLog ? "log_10(Dose) (Gy)" : "Dose (Gy)";
+      yTitle = "N Voxels";
+    } else {
+      xTitle = bLog ? "log_10(Dose)" : "Dose";
+      yTitle = "% N Voxels";
+    }
+    //--- margins as in ROOT version
+    G4double marginLeft = (iDV == 1 && !bErrors) ? 0.12 : 0.1;
+    G4double marginRight = (iDV == 1 && !bErrors) ? 0.25 : 0.2;
+
+    theCanvas->Clear();
+    GmSVGFrame* frameAll = 0;
+    G4int ii = 0;
+    for( typename MH::const_iterator ite = histos.begin(); ite != histos.end(); ite++, ii++ ) {
+      size_t ist = (*ite).first;
+      GmHisto1* his = (*ite).second;
+      G4String organName = classifNames[ist];
+      EColor color = GetColor(ii+nColorsInFile);
+      std::map<G4String,G4int>::const_iterator itecolor = stColor.find(organName);
+      if( itecolor != stColor.end() ) {
+	color = EColor((*itecolor).second);
+      } else {
+	if( stColor.size() != 0 ) {
+	  G4Exception(exeName.c_str(),
+		      "",
+		      JustWarning,("Color for line not found "+organName+", setting it to "+ GmGenUtils::itoa(color)).c_str());
+	}
+      }
+
+      //--- figure with all structures: first histogram defines the axes
+      if( frameAll == 0 ) frameAll = SVGHistoFrame( theCanvas, his, bErrors, xTitle, yTitle, marginLeft, marginRight );
+      SVGDrawHisto( frameAll, his, color, bErrors );
+      G4double xInit = xInit0;
+      G4double yInit = (590 - ii*(iDV == 0 ? 25 : 22))*CSR;
+      if( yInit < 0 ) {
+	yInit += 600*CSR;
+	xInit = xInit0;
+      }
+      DrawWordAndMarker( frameAll, organName, xInit, yInit, color, 0, 0.025, 0 );
+
+      //--- one figure per structure (default ROOT canvas margins)
+      GmSVGCanvas* canvas1 = new GmSVGCanvas(canvasSizeXY,canvasSizeXY);
+      GmSVGFrame* frame1 = SVGHistoFrame( canvas1, his, bErrors, xTitle, yTitle, 0.1, 0.1 );
+      SVGDrawHisto( frame1, his, color, bErrors );
+      G4String hisName;
+      if( iDV == 0 ) {
+	hisName = outputName+"_Dose"+errSuffix+"_"+organName+".jpg";
+	if( !bErrors ) std::replace(hisName.begin(), hisName.end(), '/','-');
+      } else {
+	hisName = outputName+(bLog ? "_LogDose-Volume" : "_Dose-Volume")+errSuffix+"_"+organName+".jpg";
+      }
+      SVGPrintFigure( canvas1, hisName, paramMgr );
+      delete frame1;
+      delete canvas1;
+      theCanvas->cd();
+    }
+    if( frameAll != 0 ) {
+      SVGPrintFigure( theCanvas, outputName+(iDV == 0 ? "_Dose" : "_Dose-Volume")+errSuffix+".ALL.jpg", paramMgr );
+      delete frameAll;
+    }
+  }
+  theCanvas->Clear();
+}
+
+//-----------------------------------------------------------------------------
+void DCMGetOrganInfo::WriteHistosToFile( pmhmh hpair )
+{
+  SVGWriteHistosToFile( hpair.first, hpair.second, false, bLog, theCanvasSizeXY,
+			theXInit0, theNColorsInFile, theClassifNames, theStColor,
+			theOutputName, theExeName, theParamMgr );
+}
+
+//-----------------------------------------------------------------------------
+void DCMGetOrganInfo::WriteHistosToFile( pmhpmhp hpair )
+{
+  SVGWriteHistosToFile( hpair.first, hpair.second, true, bLog, theCanvasSizeXY,
+			theXInit0, theNColorsInFile, theClassifNames, theStColor,
+			theOutputName, theExeName, theParamMgr );
+}

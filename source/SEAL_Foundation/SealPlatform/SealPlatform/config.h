@@ -39,6 +39,8 @@
 
 
 /* Define if you have long longs. */
+/* dcmtk (osconfig.h) also defines HAVE_LONG_LONG (empty); SEAL needs value 1 */
+#undef HAVE_LONG_LONG
 #define HAVE_LONG_LONG 1
 
 /* Define if you have __int64. */

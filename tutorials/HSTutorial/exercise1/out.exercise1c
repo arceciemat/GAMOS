@@ -1,9 +1,9 @@
 @@@@@ Running GAMOS with script: exercise1c.in
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+GAMOS starts RUN at : Fri Nov 20 18:14:27 CET 2026
 
 **************************************************************
- Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
+ Geant4 version Name: geant4-11-04-patch-03 [MT]   (01-October-2026)
+  << in Multi-threaded mode >> 
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -20,14 +20,24 @@ You have successfully registered the following graphics systems.
 Registered graphics systems are:
   ASCIITree (ATree)
   DAWNFILE (DAWNFILE)
-  G4HepRepFile (HepRepFile)
-  RayTracer (RayTracer)
+  RayTracer (RT)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
-  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
   TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
-  OpenGLStoredX (OGLSX, OGL, OGLS)
+  OpenGLStoredX (OGLSX, OGLS)
+  TOOLSSG_X11_GLES (TSG_X11_GLES, TSGX11, TSG, OGL)
+  TOOLSSG_X11_ZB (TSG_X11_ZB, TSGX11ZB, TSGZB)
+You may choose a graphics system (driver) with a parameter of
+the command "/vis/open" or "/vis/sceneHandler/create",
+or you may omit the driver parameter and choose at run time:
+- by argument in the construction of G4VisExecutive;
+- by environment variable "G4VIS_DEFAULT_DRIVER";
+- by entry in "~/.g4session";
+- by build flags.
+- Note: This feature is not allowed in batch mode.
+For further information see "examples/basic/B1/exampleB1.cc"
+and "vis.mac".
 
 Registering model factories...
 
@@ -70,36 +80,12 @@ GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
 GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/generator GmGenerator
 /run/initialize
-/gamos/generator/addSingleParticleSource source gamma 1.*MeV
-/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
-/gamos/analysis/histo1Max GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost 1.1
-/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter:DataList AccumulatedEnergyLost
-/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
-/gamos/filter comptonFilter GmProcessFilter compt
-gamma GetG4Process compt compt 0x61de33236170
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/filter comptonInGmHistoryFilter GmHistoryFilter comptonFilter
-/gamos/filter detectorEnterFilter GmEnterLogicalVolumeFilter detector
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/setParam GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/analysis/histo1Max GmStepDataHistosUA_*GmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy 1.1
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/userAction GmStepDataHistosUA comptonInGmHistoryFilter detectorEnterFilter GmPrimaryFilter
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/filter noComptonInGmHistoryFilter GmInverseFilter comptonInGmHistoryFilter
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/setParam GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/userAction GmStepDataHistosUA noComptonInGmHistoryFilter detectorEnterFilter GmPrimaryFilter
-/gamos/userAction GmCountProcessesUA
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING TrackDataHistos GmTrackDataHistosUA
-/gamos/setParam GmSecondaryGmTrackDataHistosUAUA_comptonFilter_GmPrimaryFilter:DataList InitialPrimSecoAngle
-/gamos/userAction GmSecondaryTrackDataHistosUA comptonFilter GmPrimaryFilter
-/gamos/setParam GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:DataList AngleChange
-/gamos/userAction GmStepDataHistosUA comptonFilter GmPrimaryFilter
-/run/beamOn 10000
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -121,10 +107,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -138,7 +127,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -229,6 +218,120 @@ eIoni:  for e+  XStype:3  SubType=2
       StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu+ ]2:anti_nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu- ]2:nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+/gamos/analysis/histo1Max GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost 1.1
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter:DataList AccumulatedEnergyLost
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
+/gamos/filter comptonFilter GmProcessFilter compt
+gamma GetG4Process compt compt 0x623d026b3720
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/filter comptonInGmHistoryFilter GmHistoryFilter comptonFilter
+/gamos/filter detectorEnterFilter GmEnterLogicalVolumeFilter detector
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/setParam GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/analysis/histo1Max GmStepDataHistosUA_*GmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy 1.1
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/userAction GmStepDataHistosUA comptonInGmHistoryFilter detectorEnterFilter GmPrimaryFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/filter noComptonInGmHistoryFilter GmInverseFilter comptonInGmHistoryFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/setParam GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/userAction GmStepDataHistosUA noComptonInGmHistoryFilter detectorEnterFilter GmPrimaryFilter
+/gamos/userAction GmCountProcessesUA
+/gamos/setParam GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:DataList InitialPrimSecoAngle
+/gamos/userAction GmSecondaryTrackDataHistosUA comptonFilter GmPrimaryFilter
+/gamos/setParam GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:DataList AngleChange
+/gamos/userAction GmStepDataHistosUA comptonFilter GmPrimaryFilter
+/run/beamOn 10000
 
 ========= Table of registered couples ============================
 
@@ -262,44 +365,306 @@ Index : 3     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 130000001
- CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 112000001
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:TrackID = 473000001
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimMinusSecoKineticEnergy = 473000002
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:FinalPrimMinusSecoKineticEnergy = 473000003
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:SecoDividedInitialPrimKineticEnergy = 473000004
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:SecoKineticEnergy = 473000005
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:FinalPrimSecoAngle = 473000006
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimKineticEnergy = 473000007
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:FinalPrimKineticEnergy = 473000008
- CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 359000001
- CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 995000001
+G4WT47 > gamma GetG4Process compt compt 0x7de81408ae30
+G4WT14 > gamma GetG4Process compt compt 0x7de8a408ae30
+G4WT15 > gamma GetG4Process compt compt 0x7de8a808ae30
+G4WT21 > gamma GetG4Process compt compt 0x7de88408ae30
+G4WT2 > gamma GetG4Process compt compt 0x7de8d808ae20
+G4WT41 > gamma GetG4Process compt compt 0x7de83008ae30
+G4WT43 > gamma GetG4Process compt compt 0x7de82408ae30
+G4WT28 > gamma GetG4Process compt compt 0x7de86408ae30
+G4WT12 > gamma GetG4Process compt compt 0x7de8b008ae30
+G4WT20 > gamma GetG4Process compt compt 0x7de88c08ae30
+G4WT18 > gamma GetG4Process compt compt 0x7de89408ae40
+G4WT29 > gamma GetG4Process compt compt 0x7de86c08ae30
+G4WT22 > gamma GetG4Process compt compt 0x7de88008ae30
+G4WT8 > gamma GetG4Process compt compt 0x7de8c808aea0
+G4WT9 > gamma GetG4Process compt compt 0x7de8c408ae30
+G4WT3 > gamma GetG4Process compt compt 0x7de8cc08ae30
+G4WT1 > gamma GetG4Process compt compt 0x7de8e008ae30
+G4WT31 > gamma GetG4Process compt compt 0x7de85808ae30
+G4WT38 > gamma GetG4Process compt compt 0x7de83808ae30
+G4WT11 > gamma GetG4Process compt compt 0x7de8bc08ae30
+G4WT4 > gamma GetG4Process compt compt 0x7de8d408ae40
+G4WT26 > gamma GetG4Process compt compt 0x7de87408ae30
+G4WT0 > gamma GetG4Process compt compt 0x7de8e808ae30
+G4WT35 > gamma GetG4Process compt compt 0x7de84408ae30
+G4WT36 > gamma GetG4Process compt compt 0x7de84c08ae30
+G4WT16 > gamma GetG4Process compt compt 0x7de8a008ae30
+G4WT45 > gamma GetG4Process compt compt 0x7de81008af00
+G4WT5 > gamma GetG4Process compt compt 0x7de8dc08ae30
+G4WT13 > gamma GetG4Process compt compt 0x7de8ac08ae30
+G4WT7 > gamma GetG4Process compt compt 0x7de8c008ae30
+G4WT32 > gamma GetG4Process compt compt 0x7de85c08b040
+G4WT24 > gamma GetG4Process compt compt 0x7de87008ae30
+G4WT6 > gamma GetG4Process compt compt 0x7de8d008ae40
+G4WT30 > gamma GetG4Process compt compt 0x7de86008ae30
+G4WT23 > gamma GetG4Process compt compt 0x7de87808ae30
+G4WT39 > gamma GetG4Process compt compt 0x7de83c08ae30
+G4WT40 > gamma GetG4Process compt compt 0x7de82808ae30
+G4WT46 > gamma GetG4Process compt compt 0x7de80808ae30
+G4WT37 > gamma GetG4Process compt compt 0x7de84008ae30
+G4WT19 > gamma GetG4Process compt compt 0x7de89808ae40
+G4WT27 > gamma GetG4Process compt compt 0x7de86808ae30
+G4WT33 > gamma GetG4Process compt compt 0x7de84808ae30
+G4WT42 > gamma GetG4Process compt compt 0x7de82008ae30
+G4WT17 > gamma GetG4Process compt compt 0x7de89c08af20
+G4WT10 > gamma GetG4Process compt compt 0x7de8b808ae30
+G4WT25 > gamma GetG4Process compt compt 0x7de87c08ae30
+G4WT34 > gamma GetG4Process compt compt 0x7de85008ae30
+G4WT44 > gamma GetG4Process compt compt 0x7de81808ae30
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 100 tasks with 100 events/task...
+============================================================================================
+
+G4WT37 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 711000001
+G4WT4 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 29000001
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 317000001
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 517000001
+G4WT45 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 394000001
+G4WT4 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 873000001
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 192000001
+G4WT28 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 840000001
+G4WT42 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 214000001
+G4WT20 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 529000001
+G4WT42 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 595000001
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 59000001
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 249000001
+G4WT8 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 214000001
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 314000001
+G4WT19 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 862000001
+G4WT10 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 147000001
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 797000001
+G4WT45 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 577000001
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 148000001
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 53000001
+G4WT12 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 301000001
+G4WT5 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 747000001
+G4WT21 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 651000001
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 35000001
+G4WT16 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 837000001
+G4WT28 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 791000001
+G4WT13 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 704000001
+G4WT6 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 722000001
+G4WT38 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 935000001
+G4WT22 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 473000001
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 970000001
+G4WT26 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 64000001
+G4WT38 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 543000001
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 73000001
+G4WT18 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 259000001
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 326000001
+G4WT24 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 366000001
+G4WT17 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 679000001
+G4WT47 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 595000001
+G4WT30 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 583000001
+G4WT2 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 107000001
+G4WT14 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 239000001
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 934000001
+G4WT30 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 975000001
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 176000001
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 105000001
+G4WT15 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 523000001
+G4WT23 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 607000001
+G4WT24 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 596000001
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 514000001
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 488000001
+G4WT5 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 2000001
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 277000001
+G4WT47 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 39000001
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 558000001
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 849000001
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 698000001
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 51000001
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 131000001
+G4WT43 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 605000001
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 874000001
+G4WT34 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 332000001
+G4WT27 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 251000001
+G4WT31 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 3000001
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 751000001
+G4WT18 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 723000001
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 224000001
+G4WT35 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 965000001
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 410000001
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 606000001
+G4WT25 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 623000001
+G4WT46 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 280000001
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 722000001
+G4WT43 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 862000001
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 463000001
+G4WT39 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 571000001
+G4WT1 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 351000001
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 225000001
+G4WT7 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 269000001
+G4WT11 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 762000001
+G4WT23 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 425000001
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 901000001
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 664000001
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 23000001
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 942000001
+G4WT14 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 627000001
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 283000001
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 2000001
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 604000001
+G4WT7 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 755000001
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 174000001
+G4WT11 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 636000001
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 970000001
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 867000001
+G4WT46 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 156000001
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 527000001
+G4WT27 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 629000001
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 403000001
+G4WT33 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 557000001
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 449000001
+G4WT0 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 696000001
+G4WT35 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 279000001
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 943000001
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 617000001
+G4WT0 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 891000001
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 485000001
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 9000001
+G4WT41 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 257000001
+G4WT36 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 449000001
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 993000001
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 126000001
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 960000001
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 996000001
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 912000001
+G4WT9 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 964000001
+G4WT16 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 827000001
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 470000001
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 744000001
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 999000001
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 804000001
+G4WT12 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 691000001
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 653000001
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 86000001
+G4WT41 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 339000001
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 8000001
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 993000001
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 198000001
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 95000001
+G4WT33 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 845000001
+G4WT9 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 747000001
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 3000001
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 810000001
+G4WT8 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 418000001
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 871000001
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 452000001
+G4WT17 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 66000001
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 642000001
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 591000001
+G4WT21 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 92000001
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 355000001
+G4WT34 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 27000001
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 167000001
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 26000001
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 584000001
+G4WT40 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 530000001
+G4WT44 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 840000001
+G4WT19 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 354000001
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 507000001
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 62000001
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 823000001
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 41000001
+G4WT44 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 486000001
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 111000001
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 993000001
+G4WT10 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 493000001
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 540000001
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 121000001
+G4WT3 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 718000001
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 495000001
+G4WT3 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 725000001
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 851000001
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 162000001
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 577000001
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 283000001
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 612000001
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 864000001
+G4WT1 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 586000001
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 748000001
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 181000001
+G4WT37 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 481000001
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 117000001
+G4WT29 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 160000001
+G4WT13 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 810000001
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 186000001
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 804000001
+G4WT15 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 324000001
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 224000001
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 260000001
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 372000001
+G4WT29 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 990000001
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 417000001
+G4WT31 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 394000001
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 650000001
+G4WT2 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 988000001
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 509000001
+G4WT20 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 972000001
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 443000001
+G4WT22 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 69000001
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 918000001
+G4WT39 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 745000001
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 533000001
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 317000001
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 8000001
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 504000001
+G4WT36 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 324000001
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 644000001
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 499000001
+G4WT26 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 115000001
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 824000001
+G4WT25 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 188000001
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 994000001
+G4WT6 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 245000001
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 631000001
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 173000001
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 221000001
+G4WT40 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 92000001
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 12000001
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 71000001
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 94000001
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 405000001
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 17000001
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 130000001
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 948000001
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 164000001
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 377000001
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 459000001
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 503000001
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 881000001
+G4WT32 >  CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 659000001
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 516000001
+G4WT32 >  CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimSecoAngle = 536000001
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 458000001
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=0.070000s Real=0.069040s Sys=0.000000s
+  User=2.190000s Real=0.418177s Sys=0.010000s [Cpu=526.1%]
 @@@@ GmCountProcessesUA
- PART_COUNT: e- = 474
- PART_COUNT: gamma = 10014
- PROC_COUNT e- : Transportation = 141
- PROC_COUNT e- : eBrem = 14
- PROC_COUNT e- : eIoni = 81
- PROC_COUNT e- : eIoni_NoSeco = 512
- PROC_COUNT e- : msc = 812
- PROC_COUNT e- : ALL = 1560
- PROC_COUNT gamma : Rayl = 2
- PROC_COUNT gamma : Transportation = 25085
- PROC_COUNT gamma : compt = 383
- PROC_COUNT gamma : phot = 10
-PROC_COUNT gamma : ALL = 25480
-PROC_CREATOR_COUNT e- : compt = 383
-PROC_CREATOR_COUNT e- : eIoni = 81
-PROC_CREATOR_COUNT e- : phot = 10
+ PART_COUNT: e- = 499
+ PART_COUNT: gamma = 10012
+ PROC_COUNT e- : Transportation = 128
+ PROC_COUNT e- : eBrem = 12
+ PROC_COUNT e- : eIoni = 71
+ PROC_COUNT e- : eIoni_NoSeco = 521
+ PROC_COUNT e- : msc = 789
+ PROC_COUNT e- : ALL = 1521
+ PROC_COUNT gamma : Rayl = 1
+ PROC_COUNT gamma : Transportation = 25200
+ PROC_COUNT gamma : compt = 421
+ PROC_COUNT gamma : phot = 7
+PROC_COUNT gamma : ALL = 25629
+PROC_CREATOR_COUNT e- : compt = 421
+PROC_CREATOR_COUNT e- : eIoni = 71
+PROC_CREATOR_COUNT e- : phot = 7
 PROC_CREATOR_COUNT gamma : Primary = 10000
-PROC_CREATOR_COUNT gamma : eBrem = 14
+PROC_CREATOR_COUNT gamma : eBrem = 12
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter.exercise1c:NormalizeToNEvents
@@ -312,13 +677,4 @@ Visualization Manager deleting...
 === saving histograms in file === GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter.exercise1c.csv
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 GmTrackDataHistosUA_GmPrimaryFilter.exercise1c:NormalizeToNEvents
 === saving histograms in file === GmTrackDataHistosUA_GmPrimaryFilter.exercise1c.csv
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-%%%%% PARAMETERS NOT USED (DEFINED IN SCRIPT BUT NOT USED BY C++ CODE) 
-%%%    MAYBE YOU HAVE MISSPELLED THEM? 
-%%%    OR YOU HAVE SET THEM AFTER THE CODE THAT USES THEM? 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-PARAMETER: GmSecondaryGmTrackDataHistosUAUA_comptonFilter_GmPrimaryFilter:DataList
-%%%   PLEASE PUT THIS COMMAND AT THE END OF YOUR SCRIPT: 
-%%%   /gamos/base/printParametersUsage 2 
-%%%   AND LOOK FOR A SIMILAR PARAMETER 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+GAMOS ends RUN at : Fri Nov 20 18:14:29 CET 2026

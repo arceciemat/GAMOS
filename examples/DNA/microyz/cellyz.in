@@ -1,0 +1,52 @@
+#/tracking/verbose 1
+#/gamos/verbosity GmDNAVerbosity debug
+
+/gamos/setParam GmAnalysisMgr:FileNameSuffix .microyz.15.t
+/gamos/setParam GmGeometryFromText:FileName world.geom
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEmDNAPhysics
+#/gamos/GmDNAPhysics/replacePhysics DNA_option2
+
+/gamos/generator GmGenerator
+
+/run/initialize 
+
+/gamos/physics/userLimits/setMinEKin UL1 * e- 11*eV
+#
+/process/em/fluo true
+/process/em/auger true
+/process/em/augerCascade true
+/process/em/pixe true
+/process/em/deexcitationIgnoreCut true
+
+/process/inactivate e-_G4DNAVibExcitation
+/process/inactivate e-_G4DNAAttachment
+
+# *** For Geant4 (condensed history) only ***
+#/run/setCut 1 nm
+#/cuts/setLowEdge 100 eV
+#/process/em/lowestElectronEnergy 100 eV
+#/microyz/det/setMaxStepSize 1 nm
+# ***
+
+/gamos/generator/addSingleParticleSource source e- 50*keV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1
+/gamos/generator/positionDist source GmGenerDistPositionSquare 50. 0. 0. 51*um
+/gamos/userAction GmCountProcessesUA
+/gamos/setParam GmCountTracksUA:EachNEvent 100
+/gamos/userAction GmCountTracksUA
+#
+/gamos/random/setSeeds 1112 1112
+
+#/gamos/userAction GmStepDataTextFileUA 
+
+/P GmCellyzUA:SphereRadius 50*um # /2
+/P GmCellyzUA:CellPositions SQUARE_XY 1000 1000 100*um 100*um -(1000-1)*100*um/2 -(1000-1)*100*um/2 0. 0. 25*um
+/gamos/userAction GmCellyzUA
+
+#/gamos/physics/userLimits UL1 world * 1e9 1e9 1e9 11*eV
+
+/run/beamOn 1000
+
+#/gamos/geometry/printVolumeTree 222
+#/gamos/geometry/printTouchables *

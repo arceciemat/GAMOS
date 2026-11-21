@@ -11,7 +11,7 @@
 #include "G4Ions.hh"
 
 //----------------------------------------------------------------------
-SHMetastableIsotMgr* SHMetastableIsotMgr::theInstance = 0;
+G4ThreadLocal SHMetastableIsotMgr* SHMetastableIsotMgr::theInstance = 0;
 
 //----------------------------------------------------------------------
 SHMetastableIsotMgr* SHMetastableIsotMgr::GetInstance()

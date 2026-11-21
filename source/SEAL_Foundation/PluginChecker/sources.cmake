@@ -1,31 +1,21 @@
-#------------------------------------------------------------------------------
-# 
-# Module : SEAL_Foundation_PluginChecker
-# Package: 
-#
-#------------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include(Geant4MacroDefineModule)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/source/SEAL_Foundation/PluginManager)
-include_directories(${CMAKE_SOURCE_DIR}/source/SEAL_Foundation/SealPlatform)
-include_directories(${CMAKE_SOURCE_DIR}/source/SEAL_Foundation/SealBase)
-#
-# Define the GAMOS Module.
-#
-GEANT4_DEFINE_MODULE(NAME SEAL_Foundation_PluginChecker
-	 HEADERS
-	 SOURCES
-		BuildFile
-		dummy.cc
-		SealModuleLoadCheck.cc
-		SealModuleSymCheck
-	 
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-	lcg_SealBase
-	lcg_PluginManager
+# - SealModuleSymCheck module build definition
 
-	LINK_LIBRARIES
+gamos_add_module(SealModuleSymCheck
+  SOURCES
+    SealModuleLoadCheck.cc
+    dummy.cc
+)
+
+gamos_module_link_libraries(SealModuleSymCheck
+  PUBLIC
+    lcg_SealBase
+)
+
+# Program SealModuleSymCheck
+gamos_add_executable(SealModuleSymCheck
+  SOURCES
+    SealModuleSymCheck.cc
+  LINK_LIBRARIES
+    SealModuleSymCheck
+    lcg_SealBase
 )

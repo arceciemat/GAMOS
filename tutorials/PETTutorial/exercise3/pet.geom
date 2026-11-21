@@ -26,7 +26,7 @@
 :VOLU CrystalBlock BOX 8*$crysXY 8*$crysXY $crysZ LSO
 :PLACE_PARAM CrystalBlock 1 CrystalRing CIRCLE_XY RM0 20 18.*deg 0. 60.*cm
 
-:VOLU Crystal BOX  $crysXY $crysXY $crysZ LSO
+:VOLU Crystal BOX  $crysXY $crysXY*$crysXY $crysZ LSO
 :PLACE_PARAM Crystal 1 CrystalBlock SQUARE_XY RM0 8 8 2*cm 2*cm -7*cm -7*cm
 
 :VOLU "water sphere" ORB 20.*cm G4_WATER

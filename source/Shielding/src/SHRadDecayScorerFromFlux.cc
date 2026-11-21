@@ -52,7 +52,7 @@ void SHRadDecayScorerFromFlux::ProcessHits(const G4Step* aStep)
   }
 #ifndef GAMOS_NO_VERBOSE
   if( SHVerb(testVerb) )
-    G4cout << "  SHRadDecayScorerFromFlux::ProcessHits " << G4endl;//GDEB
+    G4cout << "  SHRadDecayScorerFromFlux::ProcessHits " << G4endl;
 #endif
   G4double energyPre = aStep->GetPreStepPoint()->GetKineticEnergy();
   G4double energyPost = aStep->GetPostStepPoint()->GetKineticEnergy();
@@ -60,7 +60,7 @@ void SHRadDecayScorerFromFlux::ProcessHits(const G4Step* aStep)
   G4Material* material = lv->GetMaterial();
 #ifndef GAMOS_NO_VERBOSE
       if( SHVerb(testVerb) )
-	G4cout << "  SHRadDecayScorerFromFlux::ProcessHits G4ParticleHPInelastic mmaterial " << material->GetName() << G4endl;//GDEB
+	G4cout << "  SHRadDecayScorerFromFlux::ProcessHits G4ParticleHPInelastic mmaterial " << material->GetName() << G4endl;
 #endif
   G4double stepLength = aStep->GetStepLength();
   G4double cubicVolume = lv->GetSolid()->GetCubicVolume();
@@ -88,7 +88,7 @@ void SHRadDecayScorerFromFlux::ProcessHits(const G4Step* aStep)
     //-    G4HadronicInteraction* hadModel = hadProc->ChooseHadronicInteraction(energyPre, material, (*elementVector)[0]);
 #ifndef GAMOS_NO_VERBOSE
     if( SHVerb(testVerb) )
-      G4cout << " SHRadDecayScorerFromFlux::hadModel " << hadModel->GetModelName() << G4endl;//GDEB
+      G4cout << " SHRadDecayScorerFromFlux::hadModel " << hadModel->GetModelName() << G4endl;
 #endif
 
     //    G4String modelName = hadModel->GetModelName();
@@ -97,7 +97,7 @@ void SHRadDecayScorerFromFlux::ProcessHits(const G4Step* aStep)
 
 #ifndef GAMOS_NO_VERBOSE
       if( SHVerb(testVerb) )
-	G4cout << "  SHRadDecayScorerFromFlux::ProcessHits G4ParticleHPInelastic nelem " << numberOfElem << G4endl;//GDEB
+	G4cout << "  SHRadDecayScorerFromFlux::ProcessHits G4ParticleHPInelastic nelem " << numberOfElem << G4endl;
 #endif
       //--- loop to elements 
       for (size_t iele=0; iele<numberOfElem; iele++) {
@@ -113,13 +113,13 @@ void SHRadDecayScorerFromFlux::ProcessHits(const G4Step* aStep)
 	G4int numberOfIsos = HPChannels[0]->GetNiso(); // all channels have the same number of isotopes??
 #ifndef GAMOS_NO_VERBOSE
 	if( SHVerb(testVerb) )
-	  G4cout << iele << " SHRadDecayScorerFromFlux::ProcessHits LOOPING ELEM " << elem->GetName() << " nchan " << nChannels << " nisot " << numberOfIsos << G4endl;//GDEB
+	  G4cout << iele << " SHRadDecayScorerFromFlux::ProcessHits LOOPING ELEM " << elem->GetName() << " nchan " << nChannels << " nisot " << numberOfIsos << G4endl;
 #endif
 	for( G4int iiso = 0; iiso < numberOfIsos; iiso++ ) {
 	  //	  G4String isotName = elem->GetIsotope(iiso)->GetName();
 #ifndef GAMOS_NO_VERBOSE
 	if( SHVerb(testVerb) )
-	  G4cout << iele << " SHRadDecayScorerFromFlux::ProcessHits LOOPING ISOT " << elem->GetIsotope(iiso)->GetName() << G4endl;//GDEB
+	  G4cout << iele << " SHRadDecayScorerFromFlux::ProcessHits LOOPING ISOT " << elem->GetIsotope(iiso)->GetName() << G4endl;
 #endif	  
 	  for(G4int ic=0; ic<nChannels; ic++) {
 	    G4ParticleHPChannel* HPChannel = HPChannels[ic];
@@ -462,4 +462,28 @@ G4Ions* SHRadDecayScorerFromFlux::GetIon(G4int index) const
   }
 
   return (*ite).second;
+}
+
+//--------------------------------------------------------------------
+void SHRadDecayScorerFromFlux::AddToMaster( SHRadDecayScorerFromFlux* master )
+{
+  std::map<G4int,G4double*>::iterator ite;
+  for( ite = theRunMap->GetMap()->begin(); ite != theRunMap->GetMap()->end(); ite++ ){
+    G4Ions* ion = GetIon(ite->first);
+    G4int mIndex = -1;
+    for( auto itei = master->theIonIndices.begin(); itei != master->theIonIndices.end(); itei++ ) {
+      if( itei->second == ion ) {
+	mIndex = itei->first;
+	break;
+      }
+    }
+    if( mIndex == -1 ) {
+      mIndex = master->theIonIndices.size();
+      master->theIonIndices[mIndex] = ion;
+    }
+    master->theRunMap->add( mIndex, *(ite->second) );
+    master->theSumV2[mIndex] += theSumV2[ite->first];
+  }
+  theRunMap->clear();
+  theSumV2.clear();
 }

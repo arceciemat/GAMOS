@@ -53,7 +53,7 @@ void SHGetHadronicChannelXSUA::BeginOfRunAction(const G4Run*)
     bParticleYields = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theName+":ParticleYields",0));
     
     bHistos = G4bool(GmParameterMgr::GetInstance()->GetNumericValue(theName+":Histos",1));
-    bLogE = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("GmGeneratorChangeEnergyAndMaterial:logE",0));
+    bLogE = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("GmGeneratorChangeEnergyAndMaterial:LogE",0));
     
     if( bHistos ) {
       const G4VUserPrimaryGeneratorAction* generator = G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction();
@@ -72,10 +72,10 @@ void SHGetHadronicChannelXSUA::BeginOfRunAction(const G4Run*)
 	theMaxE = log10(generatorCEM->GetMaxE()) + 0.5 * step;
 	//	theMinE = log10(generatorCEM->GetMinE()) - 0.5 * generatorCEM->GetStepE();
 	//	theMaxE = log10(generatorCEM->GetMaxE()) + 0.5 * generatorCEM->GetStepE();
-	G4cout << bLogE << " MINE " << theMinE << " " << generatorCEM->GetMinE() << " " << generatorCEM->GetStepE() << " " << log10(generatorCEM->GetMinE()) << " step= " << step <<  G4endl; //GDEB
+	//G4cout << bLogE << " MINE " << theMinE << " " << generatorCEM->GetMinE() << " " << generatorCEM->GetStepE() << " " << log10(generatorCEM->GetMinE()) << " step= " << step <<  G4endl; //GDEB
       } 
-      G4cout << " MAXE " << theMaxE << " " << generatorCEM->GetMaxE() << " " << generatorCEM->GetStepE() << G4endl; //GDEB
-      G4cout << " NSTEPE " << theNStepsE << G4endl; //GDEB
+      //G4cout << " MAXE " << theMaxE << " " << generatorCEM->GetMaxE() << " " << generatorCEM->GetStepE() << G4endl; //GDEB
+      //G4cout << " NSTEPE " << theNStepsE << G4endl; //GDEB
       theMateIdxMax = G4int(GmParameterMgr::GetInstance()->GetNumericValue(theName+":MaterialIndexMax",10));
       theChanIdxMax = G4int(GmParameterMgr::GetInstance()->GetNumericValue(theName+":ChannelIndexMax",200));
       theProdIdxMax = G4int(GmParameterMgr::GetInstance()->GetNumericValue(theName+":ProductIndexMax",100));
@@ -533,7 +533,7 @@ void SHGetHadronicChannelXSUA::EndOfRunAction(const G4Run*)
 	  hisXSmic = theAnaMgr->GetHisto1(histoNYield+6);
 	  G4double enerH = thePrimaryKineticEnergy;
 	  if( bLogE ) enerH = log10(enerH);
-	  G4cout << hisXSmic->GetName() << " FILL TYXSmich " << enerH << "= " <<  (*itepy1).second*(*iteXS).second/ theNEventsInRun << " " <<  (*itepy1).second << " * " <<  (*iteXS).second << " /" << theNEventsInRun << G4endl; //GDEB
+	  //G4cout << hisXSmic->GetName() << " FILL TYXSmich " << enerH << "= " <<  (*itepy1).second*(*iteXS).second/ theNEventsInRun << " " <<  (*itepy1).second << " * " <<  (*iteXS).second << " /" << theNEventsInRun << G4endl; //GDEB
 	  hisY->Fill( enerH, G4double((*itepy1).second)/theNEventsInRun);
 	  hisXSmic->Fill( enerH, (*itepy1).second*(*iteXS).second/ theNEventsInRun );
 	}            

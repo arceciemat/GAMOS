@@ -1,0 +1,513 @@
+#ifndef PlotDataSVG_icc
+#define PlotDataSVG_icc
+//---------------------------------------------------------------------------
+// Replacement of ROOTUtilities/PlotData (Definitions.C, DrawHisto.C,
+// PlotUtils.C, CompareStats.C) for compareDoses when GAMOS is built without
+// ROOT (GAMOS_NO_ROOT). The same functions are provided, with the same
+// arguments and the same placement logic, but drawing into an SVG file
+// (GmSVGCanvas, in GamosUtils), that is optionally converted to png/jpg/pdf.
+//
+// Include it only in one compilation unit (it defines global variables).
+//---------------------------------------------------------------------------
+#include "GamosCore/GamosUtils/include/GmSVGCanvas.hh"
+#include "GamosCore/GamosUtils/include/GmSVGPad.hh"
+#include "GamosCore/GamosUtils/include/GmSVGFrame.hh"
+#include "DoserData.hh" // pdd, mdpdd
+#include "G4Types.hh"
+#include "templates.hh" // sqr
+#include <iostream>
+#include <cmath>
+#include <cfloat>
+#include <algorithm>
+
+typedef GmSVGFrame CDHisto;
+typedef GmSVGPad CDPad;
+
+int verbose = 0;
+
+//--- SVG output options (set from drawing data file: SVGConverter, SVGFormat)
+std::string theSVGConverter = "auto"; // auto / none / program name or path
+std::string theSVGFormat = "png";     // png / jpg / pdf / svg (svg = no conversion)
+
+//===========================================================================
+// Definitions.C
+class Definitions {
+public:
+  static double xDataMin;
+  static double xDataMax;
+  static double yDataMin;
+  static double yDataMax;
+  static bool bLogX;
+  static bool bLogY;
+  static double TOTAL_WIDTH;
+  static double TOTAL_HEIGTH;
+  static std::string xAxisTitle;
+  static std::string yAxisTitle;
+  static double xAxisTitleOffset;
+  static double yAxisTitleOffset;
+  static double xAxisTitleSize;
+  static double yAxisTitleSize;
+  static double xAxisLabelSize;
+  static double yAxisLabelSize;
+  static double xAxisLabelOffset;
+  static double yAxisLabelOffset;
+  static double markerSize;
+  static double markerTextDispX;
+  static double markerTextDispY;
+  static double markerTextSize;
+  static bool lineJoinMarker;
+  static double canvasSizeX;
+  static double canvasSizeY;
+  static double padRightMargin;
+  static double padLeftMargin;
+  static double xHistoLabel;
+  static double yHistoLabel;
+};
+
+double Definitions::xDataMin = DBL_MAX;
+double Definitions::xDataMax = -DBL_MAX;
+double Definitions::yDataMin = DBL_MAX;
+double Definitions::yDataMax = -DBL_MAX;
+bool Definitions::bLogX = 0;
+bool Definitions::bLogY = 0;
+double Definitions::canvasSizeX = 750;
+double Definitions::canvasSizeY = 750;
+double Definitions::TOTAL_WIDTH = 540*Definitions::canvasSizeX/500;
+double Definitions::TOTAL_HEIGTH = 390*Definitions::canvasSizeY/500;
+std::string Definitions::xAxisTitle = "";
+std::string Definitions::yAxisTitle = "";
+double Definitions::xAxisTitleOffset = 1.;
+double Definitions::yAxisTitleOffset = 1.;
+double Definitions::xAxisTitleSize = 0.04;
+double Definitions::yAxisTitleSize = 0.04;
+double Definitions::xAxisLabelSize = 0.04;
+double Definitions::yAxisLabelSize = 0.04;
+double Definitions::xAxisLabelOffset = 0.;
+double Definitions::yAxisLabelOffset = 0.;
+double Definitions::markerSize = 0.5;
+double Definitions::markerTextDispX = 5.;
+double Definitions::markerTextDispY = 1.;
+double Definitions::markerTextSize = 0.02;
+bool Definitions::lineJoinMarker = 1;
+double Definitions::padRightMargin = 0.;
+double Definitions::padLeftMargin = 0.;
+double Definitions::xHistoLabel = 0.;
+double Definitions::yHistoLabel = 0.;
+
+GmSVGCanvas* theCanvas = new GmSVGCanvas(int(Definitions::canvasSizeX),int(Definitions::canvasSizeY));
+GmSVGFrame* theCurrentFrame = 0;
+
+//===========================================================================
+// Colors: same indices as ROOT, converted to RGB
+typedef int EColor;
+const EColor kWhite = 0, kBlack = 1, kGray = 920, kRed = 632, kGreen = 416,
+  kBlue = 600, kYellow = 400, kMagenta = 616, kCyan = 432, kOrange = 800,
+  kSpring = 820, kTeal = 840, kAzure = 860, kViolet = 880, kPink = 900;
+
+EColor GetColor( int icol )
+{
+  int icol1 = icol/14;
+  int icol2 = icol%14;
+  switch (icol2)  {
+  case 0: return EColor(kBlack+icol1);
+  case 1: return EColor(kRed);
+  case 2: return EColor(kGreen);
+  case 3: return EColor(kBlue);
+  case 6: return EColor(kMagenta+icol1);
+  case 4: return EColor(kYellow+icol1+1);
+  case 5: return EColor(kCyan+icol1);
+  case 7: return EColor(kViolet+2);
+  case 8: return EColor(kOrange+icol1+1);
+  case 9: return EColor(kOrange+3);
+  case 11: return EColor(kPink+icol1+1);
+  case 10: return EColor(kTeal-7);
+  case 12: return EColor(kAzure+icol1+1);
+  case 13: return EColor(kGray+icol1);
+  }
+  return EColor(kBlack);
+}
+
+std::string ColorToSVG( EColor color )
+{
+  return GmSVGCanvas::RootColorToSVG(color);
+}
+
+//===========================================================================
+// DrawHisto.C
+void SetHistoLimits(mdpdd* data, bool bInit )
+{
+  bool bOnlyXNonZero = true;
+  bool bOnlyYNonZero = true;
+  if( bInit ) {
+    Definitions::xDataMin = DBL_MAX;
+    Definitions::xDataMax = 0.;
+    Definitions::yDataMin = DBL_MAX;
+    Definitions::yDataMax = 0.;
+  }
+  mdpdd::const_iterator ite;
+  for( ite = data->begin(); ite != data->end(); ite++ ) {
+    double valX = (*ite).first;
+    double valY = (*ite).second.first;
+    double errY = (*ite).second.second;
+    if( bOnlyYNonZero && valY != 0. ) {
+      if( Definitions::bLogX && valX <= 0. ) {
+	Definitions::bLogX = 0;
+	G4cerr << "        issued by : SetHistoLimits " << std::endl;
+	G4cerr << "  Asking for logarithmic X axis while values are <= 0 : " << valX << std::endl;
+	G4cerr << "  *** This is just a warning message. *** " << std::endl;
+	SetHistoLimits( data, bInit );
+	return;
+      }
+      if( Definitions::bLogY && valY < 0. ) {
+	Definitions::bLogY = 0;
+	G4cerr << "        issued by : SetHistoLimits " << std::endl;
+	G4cerr << "  Asking for logarithmic Y axis while values are < 0 : " << valX << std::endl;
+	G4cerr << "  *** This is just a warning message. *** " << std::endl;
+	SetHistoLimits( data, bInit );
+	return;
+      }
+      if( !Definitions::bLogX || !bOnlyXNonZero || valX != 0. ) {
+	Definitions::xDataMin = std::min( valX, Definitions::xDataMin );
+	Definitions::xDataMax = std::max( valX, Definitions::xDataMax );
+      }
+      if( !Definitions::bLogY || valY != 0. ) {
+	Definitions::yDataMin = std::min( valY-errY, Definitions::yDataMin );
+	Definitions::yDataMax = std::max( valY+errY, Definitions::yDataMax );
+      }
+    }
+  }
+  if( verbose >= 2 ) G4cout << "SetHistoLimits: XDATA MIN " << Definitions::xDataMin << " MAX " << Definitions::xDataMax << std::endl;
+  if( verbose >= 2 ) G4cout << "SetHistoLimits: YDATA MIN " << Definitions::yDataMin << " MAX " << Definitions::yDataMax << std::endl;
+}
+
+//------------------------------------------------------------------------
+enum WHLType {WHL_None, WHL_Min, WHL_Max, WHL_MinMax};
+void WidenHistoLimits( double wideFactor , WHLType whlTypeX = WHL_MinMax,  WHLType whlTypeY = WHL_MinMax)
+{
+  if( !Definitions::bLogX ) {
+    double xStep = Definitions::xDataMax - Definitions::xDataMin;
+    if( whlTypeX == WHL_MinMax || whlTypeX == WHL_Min) Definitions::xDataMin -= xStep * wideFactor;
+    if( whlTypeX == WHL_MinMax || whlTypeX == WHL_Max) Definitions::xDataMax += xStep * wideFactor;
+  } else {
+    double xStep = Definitions::xDataMax / Definitions::xDataMin;
+    if( whlTypeX == WHL_MinMax || whlTypeX == WHL_Min) Definitions::xDataMin /= std::pow(xStep, wideFactor);
+    if( whlTypeX == WHL_MinMax || whlTypeX == WHL_Max) Definitions::xDataMax *= std::pow(xStep, wideFactor);
+  }
+  if( !Definitions::bLogY ) {
+    double yStep = Definitions::yDataMax - Definitions::yDataMin;
+    if( whlTypeY == WHL_MinMax || whlTypeY == WHL_Min) Definitions::yDataMin -= yStep * wideFactor;
+    if( whlTypeY == WHL_MinMax || whlTypeY == WHL_Max) Definitions::yDataMax += yStep * wideFactor;
+  } else {
+    double yStep = Definitions::yDataMax / Definitions::yDataMin;
+    if( whlTypeY == WHL_MinMax || whlTypeY == WHL_Min) Definitions::yDataMin /= std::pow(yStep, wideFactor);
+    if( whlTypeY == WHL_MinMax || whlTypeY == WHL_Max)  Definitions::yDataMax *= std::pow(yStep, wideFactor);
+  }
+  if( verbose >= 1 ) G4cout << " WIDENED XDATA MIN " << Definitions::xDataMin << " MAX " << Definitions::xDataMax << " Definitions::bLogX " << Definitions::bLogX << std::endl;
+  if( verbose >= 1 ) G4cout << " WIDENED YDATA MIN " << Definitions::yDataMin << " MAX " << Definitions::yDataMax << " bLogY " << Definitions::bLogY << std::endl;
+}
+
+//---------------------------------------------------------------------------
+//--- Draw an empty histogram (frame with axes) with minimum and maximum values
+CDHisto* DrawEmptyHistogram( std::string histoName, double HXMin, double HXMax, double HYMin, double HYMax, CDPad* pad )
+{
+  if( verbose >= -1 ) G4cout << " DrawEmptyHistogram " << histoName << " XMin " << HXMin << " XMax " << HXMax << " YMin " << HYMin << " YMax " << HYMax << std::endl;
+  if( pad == 0 ) pad = theCanvas->GetCurrentPad();
+  bool bLogX = Definitions::bLogX && !(HXMin == 0. && HXMax == 0.);
+  bool bLogY = Definitions::bLogY && !(HYMin == 0. && HYMax == 0.);
+  if( bLogX && HXMin <= 0. ) HXMin = 1.E-9;
+  if( bLogY && HYMin <= 0. ) HYMin = 1.E-9;
+  if( HYMin == HYMax ) {
+    HYMin /= 10; // big enough so that it shows axis marks
+    HYMax *= 10;
+  }
+  if( HXMin == HXMax ) {
+    HXMin /= 10;
+    HXMax *= 10;
+  }
+  pad->cd();
+
+  //--- frame margins inside the pad (fraction of pad)
+  double marginLeft = (Definitions::padLeftMargin > 0. && Definitions::padLeftMargin < 0.5) ? std::max(Definitions::padLeftMargin,0.10) : 0.13;
+  double marginRight = (Definitions::padRightMargin > 0. && Definitions::padRightMargin < 0.5) ? Definitions::padRightMargin : 0.05;
+  double padHFrac = pad->fY2 - pad->fY1;
+  double marginBottom = std::min(0.4, 0.11/padHFrac); // keep the same absolute space for labels
+  double marginTop = std::min(0.2, 0.05/padHFrac);
+
+  CDHisto* his = new CDHisto( histoName, pad, HXMin, HXMax, HYMin, HYMax, bLogX, bLogY,
+			      marginLeft, marginRight, marginBottom, marginTop );
+  his->DrawAxes( Definitions::xAxisTitle, Definitions::yAxisTitle,
+		 Definitions::xAxisTitleSize, Definitions::yAxisTitleSize,
+		 Definitions::xAxisLabelSize, Definitions::yAxisLabelSize,
+		 Definitions::xAxisTitleOffset, Definitions::yAxisTitleOffset );
+  theCurrentFrame = his;
+  if( verbose >= 1 ) G4cout << "DRAW EMPTY HISTO " << histoName << " XMIN " << HXMin << " XMAX " << HXMax << " YMIN= " << HYMin << " YMAX= " << HYMax << std::endl;
+
+  return his;
+}
+
+//-----------------------------------------------------------------------------
+CDHisto* DrawEmptyHistogram( mdpdd* DataVal, std::string histoName, CDPad* pad )
+{
+  SetHistoLimits( DataVal, true );
+  return DrawEmptyHistogram( histoName, Definitions::xDataMin, Definitions::xDataMax, Definitions::yDataMin, Definitions::yDataMax, pad );
+}
+
+//----------------------------------------------------------------------------
+//--- Line in user coordinates, clipped to the histogram frame (as ROOT does)
+void DrawClippedLine( CDHisto* his, double x1, double y1, double x2, double y2, const std::string& col, double width )
+{
+  his->DrawLine( x1, y1, x2, y2, col, width );
+}
+
+//----------------------------------------------------------------------------
+void DrawHisto( mdpdd* DataVal, EColor color, int marker, std::string histoName = "", bool bError = true)
+{
+  if( verbose >= -2 ) G4cout << "$$$$$$$$$$$ DrawHisto " << DataVal->size() << " name " << histoName << " MARKER " << marker << " COLOR " << color <<" N= " << DataVal->size() << std::endl;
+  CDHisto* his = theCurrentFrame;
+  if( his == 0 ) {
+    G4cerr << " !!! DrawHisto called before DrawEmptyHistogram " << std::endl;
+    return;
+  }
+  std::string col = ColorToSVG(color);
+  double lineWidth = theCanvas->GetWw()/500.;
+
+  //--- lines and error bars first, markers on top
+  mdpdd::const_iterator iteE, iteEprev;
+  std::vector<std::pair<double,double> > markers;
+  bool bFirstPoint = true;
+  for( iteE = DataVal->begin(); iteE != DataVal->end(); iteE++) {
+    double xData = (*iteE).first;
+    double val = (*iteE).second.first;
+    if( xData < Definitions::xDataMin || xData > Definitions::xDataMax ) continue;
+    double error = 0.;
+    if( bError ) error = (*iteE).second.second;
+    if( his->IsInsideY(val) ) markers.push_back( std::pair<double,double>(xData,val) );
+
+    if( Definitions::lineJoinMarker ) {
+      if( !bFirstPoint ) {
+	iteEprev = iteE; iteEprev--;
+	DrawClippedLine( his, (*iteEprev).first, (*iteEprev).second.first, xData, val, col, lineWidth );
+      }
+      if( bError && error != 0. ) {
+	DrawClippedLine( his, xData, val-error, xData, val+error, col, lineWidth );
+      }
+    }
+    bFirstPoint = false;
+    if( verbose >= 3 ) G4cout << " DrawHisto " << xData << " " << val << " color " << color << std::endl;
+  }
+  for( size_t ii = 0; ii < markers.size(); ii++ ) {
+    theCanvas->Marker( his->ToPixX(markers[ii].first), his->ToPixY(markers[ii].second), marker, col, Definitions::markerSize );
+  }
+}
+
+//----------------------------------------------------------------------------
+//--- Draw a line in user coordinates of a histogram frame
+void DrawLine( CDHisto* his, double x1, double y1, double x2, double y2, EColor color = kBlack, double width = 1. )
+{
+  DrawClippedLine( his, x1, y1, x2, y2, ColorToSVG(color), width );
+}
+
+//----------------------------------------------------------------------------
+//--- Write the figure as SVG and convert it if requested
+void PrintFig( std::string hisname )
+{
+  std::string svgFile = hisname + ".svg";
+  theCanvas->Print( svgFile, theSVGFormat, theSVGConverter ); // built-in renderer for png/jpg/gif/bmp/tiff
+  theCanvas->Clear();
+  theCurrentFrame = 0;
+}
+
+//===========================================================================
+// PlotUtils.C
+//--- Text sizes in ROOT are a fraction of the pad size
+double TextSizeToPix( CDHisto* his, double size )
+{
+  CDPad* pad = his->GetPad();
+  return size*std::min(pad->GetPixWidth(),pad->GetPixHeight());
+}
+
+//--- ROOT GetTextExtent equivalents (pixels)
+double GetTextXExtent( CDHisto* his, std::string title, double size )
+{
+  return GmSVGCanvas::TextWidth( title, TextSizeToPix(his,size) );
+}
+double GetTextYExtent( CDHisto* his, double size )
+{
+  return TextSizeToPix(his,size);
+}
+
+//--- Position in 'points' (0..TOTAL_WIDTH / 0..TOTAL_HEIGTH across the frame) to pixels
+double PointsToPixX( CDHisto* his, double xPoints )
+{
+  return his->FracToPixX( xPoints/Definitions::TOTAL_WIDTH );
+}
+double PointsToPixY( CDHisto* his, double yPoints )
+{
+  return his->FracToPixY( yPoints/Definitions::TOTAL_HEIGTH );
+}
+
+//--------------------------------------------------------------------------
+void DrawGlobalTitle( CDHisto* , std::string , EColor = kBlack )
+{
+  return; // as in ROOT version (disabled)
+}
+
+//--------------------------------------------------------------------------
+void DrawWordInPave( CDHisto* his, std::string title, double& xInit, double& yInit, EColor color = kBlack, double size = 0.03, bool bCheckProtrude = true )
+{
+  if( verbose >= 2 ) G4cout << " DRAWWORDINPAVE " << his->GetName() << " : " << title << " Xinit=" << xInit << " Yinit=" << yInit << std::endl;
+  double tx = 0.;
+  double ty = 0.;
+  if( title != "" ) {
+    tx = GetTextXExtent( his, title, size );
+    ty = GetTextYExtent( his, size );
+  }
+  if( bCheckProtrude && xInit + tx > Definitions::TOTAL_WIDTH ) {
+    xInit = 30;
+    yInit -= 15;
+  }
+  if( title != "" ) {
+    //--- text centered in box (xInit,yInit) - (xInit+tx, yInit+1.5*ty)
+    double px = PointsToPixX( his, xInit+tx/2. );
+    double py = PointsToPixY( his, yInit+0.75*ty ) + 0.35*ty;
+    theCanvas->Text( px, py, title, ty, ColorToSVG(color), "middle" );
+  }
+  xInit += tx + 10;
+}
+
+//--------------------------------------------------------------------------
+void DrawWordAndMarker( CDHisto* his, std::string title, double& xInit, double& yInit, EColor color = kBlack, int iMarker = 20, double size = 0.03, bool bCheckProtrude = true )
+{
+  if( title == "" ) return;
+  if( verbose >= 2 ) G4cout << " DRAWWORDANDMARKER " << his->GetName() << " : " << title << " Xinit=" << xInit << " Yinit=" << yInit << " Color= " << color <<std::endl;
+  std::string col = ColorToSVG(color);
+  double tx = GetTextXExtent( his, title, size );
+  double ty = GetTextYExtent( his, size );
+
+  int markerWidth = int(size*50*2);
+  if( bCheckProtrude && xInit + markerWidth + tx > Definitions::TOTAL_WIDTH ) {
+    xInit = 30;
+    yInit -= 15;
+  }
+
+  if( iMarker != 0 ) {
+    double px = PointsToPixX( his, xInit );
+    double py = PointsToPixY( his, yInit+ty*Definitions::markerTextDispY*0.5 );
+    if( iMarker >= 0 ) {
+      theCanvas->Marker( px, py, iMarker, col, Definitions::markerSize );
+    } else {
+      theCanvas->Line( px-Definitions::canvasSizeX*0.01, py, px+Definitions::canvasSizeX*0.01, py, col, 3. );
+    }
+  }
+
+  xInit += markerWidth*Definitions::markerTextDispX;
+  theCanvas->Text( PointsToPixX(his,xInit), PointsToPixY(his,yInit), title, ty, col, "start" );
+
+  xInit += tx + 10;
+}
+
+//===========================================================================
+// CompareStats.C
+struct CompStatData {
+  double chi2;
+  int ndof;
+  double pValue;
+};
+
+//--- Upper regularized incomplete gamma function Q(a,x) (= TMath::Prob(chi2,ndof) with a=ndof/2, x=chi2/2)
+double ChiSquareProb( double chi2, int ndof )
+{
+  if( ndof <= 0 ) return 0.;
+  if( chi2 <= 0. ) return 1.;
+  double aa = 0.5*ndof;
+  double xx = 0.5*chi2;
+  double gln = std::lgamma(aa);
+  if( xx < aa+1. ) { // series
+    double ap = aa, sum = 1./aa, del = sum;
+    for( int nn = 1; nn < 1000; nn++ ) {
+      ap += 1.; del *= xx/ap; sum += del;
+      if( std::fabs(del) < std::fabs(sum)*1.e-14 ) break;
+    }
+    return 1. - sum*std::exp(-xx+aa*std::log(xx)-gln);
+  } else { // continued fraction
+    double bb = xx+1.-aa, cc = 1./1.e-300, dd = 1./bb, hh = dd;
+    for( int ii = 1; ii < 1000; ii++ ) {
+      double an = -ii*(ii-aa);
+      bb += 2.;
+      dd = an*dd+bb; if( std::fabs(dd) < 1.e-300 ) dd = 1.e-300;
+      cc = bb+an/cc; if( std::fabs(cc) < 1.e-300 ) cc = 1.e-300;
+      dd = 1./dd;
+      double del = dd*cc;
+      hh *= del;
+      if( std::fabs(del-1.) < 1.e-14 ) break;
+    }
+    return std::exp(-xx+aa*std::log(xx)-gln)*hh;
+  }
+}
+
+CompStatData CompareStatsChi2( mdpdd* data1, mdpdd* data2, mdpdd& dataDiv)
+{
+  if( data1->size() == 0 || data2->size() == 0 ) {
+    G4cerr << " !!! ERROR IN CompareStats, one of the data is empty: data1) " << data1->size() << " data2= " << data2->size() << std::endl;
+    exit(1);
+  }
+  double PREC_MATCH = 1.e-4;
+  CompStatData cs;
+  mdpdd::iterator itec1,itec2;
+  double chi2 = 0.;
+  G4int ndof = 0;
+  for( itec1 = data1->begin(); itec1 != data1->end(); itec1++ ) {
+    G4double valX = (*itec1).first;
+    itec2 = data2->find(valX); // LOOK FOR VALUE WITH SAME X
+    G4bool bFound = false;
+    if( itec2 != data2->end() ) bFound = true;
+    if( ! bFound ) {  // LOOK FOR VALUE WITH VERY SIMILAR X
+      for( itec2 = data2->begin(); itec2 != data2->end(); itec2++ ) {
+	if( fabs((valX-(*itec2).first)/valX) < PREC_MATCH ) {
+	  bFound = true;
+	  break;
+	}
+      }
+    }
+    if( ! bFound ) {
+      // interpolate linearly between values
+      itec2 = data2->lower_bound(valX);
+      if( itec2 == data2->begin() ) continue;// VALUES BELOW MINIMUM data2
+      if( valX > (*(data2->rbegin())).first ) continue;// VALUES ABOVE MAXIMUM data2
+      mdpdd::iterator itec2b = itec2;
+      itec2b--;
+      G4double slopeVal = ((*itec2b).second.first - (*itec2).second.first ) / ( (*itec2b).first - (*itec2).first );
+      G4double newVal = (*itec2).second.first + slopeVal * ( valX - (*itec2).first );
+      G4double slopeErr = ((*itec2b).second.second - (*itec2b).second.second ) / ( (*itec2b).first - (*itec2).first );
+      G4double newErr = (*itec2).second.second + slopeErr * ( valX - (*itec2).first );
+      if( newVal != 0.  && (*itec1).second.first != 0. ) {
+	newErr = (*itec1).second.first/newVal * sqrt( sqr(newErr/newVal) + sqr((*itec1).second.second/(*itec1).second.first));
+	newVal = (*itec1).second.first/newVal;
+	dataDiv[valX] = pdd(newVal,newErr);
+	if( newErr != 0. && valX < 25e9 ) {
+	  chi2 += sqr((newVal-1.)/newErr);
+	  ndof++;
+	}
+      }
+    } else {
+      if( (*itec1).second.first != 0. && (*itec2).second.first != 0. ) {
+	G4double dose = (*itec1).second.first / (*itec2).second.first;
+	G4double doseErr = (*itec1).second.second/(*itec1).second.first + (*itec2).second.second/(*itec2).second.first;
+	doseErr *= dose;
+	dataDiv[valX] = pdd(dose,doseErr);
+	if( doseErr != 0.  && valX < 25e9 ) {
+	  chi2 += sqr((dose-1.)/doseErr);
+	  ndof++;
+	}
+      } else {
+	dataDiv[valX] = pdd(0.,0.);
+      }
+    }
+  }
+  cs.chi2 = chi2;
+  cs.ndof = ndof;
+  cs.pValue = ChiSquareProb(chi2,cs.ndof);
+  return cs;
+}
+
+#endif

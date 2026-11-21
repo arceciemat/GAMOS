@@ -8,28 +8,12 @@ GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
 GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/generator GmGenerator
 /run/initialize
-/gamos/physics/addPhysics radioactiveDecay
-/gamos/generator/addSingleParticleSource source Co60[0.0] 0*MeV
-/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes SOLUTION_*
-/gamos/analysis/histo1Max *Energy* 1.5
-/gamos/SD/assocSD2LogVol GmSDSimple Detector DETECTOR_Ge
- DeadTimeDUListByBlock: NShift 100
- GmDetUnitIDBuilderFromAncestors sdType Detector
-/gamos/userAction GmHitsHistosUA
-/gamos/userAction GmCountTracksUA
-/gamos/filter enterDetF GmEnterLogicalVolumeFilter DETECTOR_Ge
-/gamos/setParam GmStepDataHistosUA_enterDetF_GmClassifierByParticle:DataList FinalKineticEnergy
-/gamos/userAction GmStepDataHistosUA enterDetF GmClassifierByParticle
-/gamos/filter exitDetF GmExitLogicalVolumeFilter DETECTOR_Ge
-/gamos/setParam GmStepDataHistosUA_exitDetF_GmClassifierByParticle:DataList FinalKineticEnergy
-/gamos/userAction GmStepDataHistosUA exitDetF GmClassifierByParticle
-/gamos/filter comptonF GmProcessFilter compt
-gamma GetG4Process compt compt 0x5d434aef4d40
-/gamos/filter historyComptonF GmHistoryFilter comptonF
-/gamos/setParam GmStepDataHistosUA_enterDetF_historyComptonF:DataList FinalKineticEnergy
-/gamos/userAction GmStepDataHistosUA enterDetF historyComptonF
-/gamos/userAction GmCountProcessesUA
-/run/beamOn 100000
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -51,10 +35,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -68,7 +55,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -100,21 +87,11 @@ Type of electron single scattering model           0
 Type of nuclear form-factor                        1
 Screening factor                                   1
 =======================================================================
-======                 Atomic Deexcitation Parameters          ========
-=======================================================================
-Fluorescence enabled                               1
-Directory in G4LEDATA for fluorescence data files  fluor
-Auger electron cascade enabled                     1
-PIXE atomic de-excitation enabled                  0
-De-excitation module ignores cuts                  1
-Type of PIXE cross section for hadrons             Empirical
-Type of PIXE cross section for e+-                 Livermore
-=======================================================================
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
 ### ===  Auger flag: 1
-### ===  Ignore cuts flag:   1
+### ===  Ignore cuts flag:   0
 
 phot:  for gamma SubType=12 BuildTable=0
       LambdaPrime table from 200 keV to 100 TeV in 61 bins 
@@ -178,7 +155,7 @@ eBrem:  for e+  XStype:4  SubType=3
              eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
             eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
 
-annihil:  for e+ SubType=5 BuildTable=0
+annihil:  for e+ SubType=5 AtRestModel:Simple BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             eplus2gg : Emin=    0 eV  Emax=  100 TeV
 
@@ -204,7 +181,7 @@ hBrems:  for proton  XStype:1  SubType=3
 hPairProd:  for proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      Sampling table 17x1001, from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -223,23 +200,6 @@ ionIoni:  for GenericIon  XStype:3  SubType=2
 nuclearStopping:  for GenericIon SubType=8 BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    ICRU49NucStopping : Emin=    0 eV  Emax=   10 GeV
-======================================================================
-======          Radioactive Decay Physics Parameters           =======
-======================================================================
-min MeanLife (from G4NuclideTable)                1 ns 
-Max life time (from G4DeexPrecoParameters)        1 ns 
-Internal e- conversion flag                       1
-Stored internal conversion coefficients           0
-Enabled atomic relaxation mode                    1
-Enable correlated gamma emission                  0
-Max 2J for sampling of angular correlations       10
-Atomic de-excitation enabled                      1
-Auger electron emission enabled                   1
-Check EM cuts disabled for atomic de-excitation   1
-Use Bearden atomic level energies                 0
-Use ANSTO fluorescence model                      0
-Threshold for very long decay time at rest        3.171e+10 y  
-======================================================================
 
 msc:  for alpha  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
@@ -293,7 +253,7 @@ hBrems:  for kaon+  XStype:1  SubType=3
 hPairProd:  for kaon+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -319,7 +279,7 @@ hBrems:  for kaon-  XStype:1  SubType=3
 hPairProd:  for kaon-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -345,13 +305,13 @@ muBrems:  for mu+  XStype:1  SubType=3
 muPairProd:  for mu+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu+ XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 7 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -377,13 +337,13 @@ muBrems:  for mu-  XStype:1  SubType=3
 muPairProd:  for mu-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu- XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 7 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -409,7 +369,7 @@ hBrems:  for pi+  XStype:1  SubType=3
 hPairProd:  for pi+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      Sampling table 20x1001, from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -425,6 +385,34 @@ hIoni:  for pi-  XStype:3  SubType=2
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=297.505 keV
           BetheBloch : Emin=297.505 keV Emax=  100 TeV
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/physics/addPhysics radioactiveDecay
+/process/had/rdm/thresholdForVeryLongDecayTime 1.e+60 year
+/gamos/generator/addSingleParticleSource source Co60[0.0] 0*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes SOLUTION_*
+/gamos/analysis/histo1Max *Energy* 1.5
+/gamos/SD/assocSD2LogVol GmSDSimple Detector DETECTOR_Ge
+ DeadTimeDUListByBlock: NShift 100
+ GmDetUnitIDBuilderFromAncestors sdType Detector
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmCountTracksUA
+/gamos/filter enterDetF GmEnterLogicalVolumeFilter DETECTOR_Ge
+/gamos/setParam GmStepDataHistosUA_enterDetF_GmClassifierByParticle:DataList FinalKineticEnergy
+/gamos/userAction GmStepDataHistosUA enterDetF GmClassifierByParticle
+/gamos/filter exitDetF GmExitLogicalVolumeFilter DETECTOR_Ge
+/gamos/setParam GmStepDataHistosUA_exitDetF_GmClassifierByParticle:DataList FinalKineticEnergy
+/gamos/userAction GmStepDataHistosUA exitDetF GmClassifierByParticle
+/gamos/filter comptonF GmProcessFilter compt
+gamma GetG4Process compt compt 0x61b2ffbbe5b0
+/gamos/filter historyComptonF GmHistoryFilter comptonF
+/gamos/setParam GmStepDataHistosUA_enterDetF_historyComptonF:DataList FinalKineticEnergy
+/gamos/userAction GmStepDataHistosUA enterDetF historyComptonF
+/gamos/userAction GmCountProcessesUA
+/run/beamOn 100000
 
 ========= Table of registered couples ============================
 
@@ -465,204 +453,68 @@ Index : 4     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- CreateHisto1D Hits: SD ALL:Nhits = 201001
- CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
- CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
- CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
- CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
- CreateHisto1D Hits: SD ALL:N E depos = 201006
- CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
- CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
- CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
- CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
- CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
- CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
- CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
- CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
- CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
- CreateHisto1D Hits: SD Detector: Nhits = 201101
- CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
- CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
- CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
- CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
- CreateHisto1D Hits: SD Detector: N E depos = 201106
- CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
- CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
- CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
- CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
- CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
- CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
- CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
- CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
- CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
- %%% EVENT 0 NTRACKS 18 TOTAL NTRACKS 18
- CreateHisto1D GmStepDataHistosUA_enterDetF_GmClassifierByParticle:anti_nu_e:FinalKineticEnergy = 130000101
- CreateHisto1D GmStepDataHistosUA_exitDetF_GmClassifierByParticle:anti_nu_e:FinalKineticEnergy = 995000101
- CreateHisto1D GmStepDataHistosUA_enterDetF_GmClassifierByParticle:gamma:FinalKineticEnergy = 130000201
- CreateHisto1D GmStepDataHistosUA_exitDetF_GmClassifierByParticle:gamma:FinalKineticEnergy = 995000201
- CreateHisto1D GmStepDataHistosUA_enterDetF_historyComptonF:FinalKineticEnergy = 112000001
- %%% EVENT 1000 NTRACKS 14 TOTAL NTRACKS 10535
- CreateHisto1D GmStepDataHistosUA_enterDetF_GmClassifierByParticle:e-:FinalKineticEnergy = 130000301
- CreateHisto1D GmStepDataHistosUA_exitDetF_GmClassifierByParticle:e-:FinalKineticEnergy = 995000301
- %%% EVENT 2000 NTRACKS 8 TOTAL NTRACKS 20878
- %%% EVENT 3000 NTRACKS 8 TOTAL NTRACKS 31111
- %%% EVENT 4000 NTRACKS 13 TOTAL NTRACKS 41477
- %%% EVENT 5000 NTRACKS 11 TOTAL NTRACKS 51843
- %%% EVENT 6000 NTRACKS 10 TOTAL NTRACKS 62225
- %%% EVENT 7000 NTRACKS 10 TOTAL NTRACKS 72514
- %%% EVENT 8000 NTRACKS 8 TOTAL NTRACKS 83044
- %%% EVENT 9000 NTRACKS 10 TOTAL NTRACKS 93525
- %%% EVENT 10000 NTRACKS 10 TOTAL NTRACKS 103918
- %%% EVENT 11000 NTRACKS 9 TOTAL NTRACKS 114368
- %%% EVENT 12000 NTRACKS 10 TOTAL NTRACKS 124721
- %%% EVENT 13000 NTRACKS 10 TOTAL NTRACKS 135205
- %%% EVENT 14000 NTRACKS 11 TOTAL NTRACKS 145730
- %%% EVENT 15000 NTRACKS 8 TOTAL NTRACKS 156161
- %%% EVENT 16000 NTRACKS 8 TOTAL NTRACKS 166615
- %%% EVENT 17000 NTRACKS 9 TOTAL NTRACKS 177045
- %%% EVENT 18000 NTRACKS 9 TOTAL NTRACKS 187380
- %%% EVENT 19000 NTRACKS 10 TOTAL NTRACKS 197637
- %%% EVENT 20000 NTRACKS 9 TOTAL NTRACKS 208095
- %%% EVENT 21000 NTRACKS 8 TOTAL NTRACKS 218484
- %%% EVENT 22000 NTRACKS 9 TOTAL NTRACKS 228776
- %%% EVENT 23000 NTRACKS 9 TOTAL NTRACKS 239187
- %%% EVENT 24000 NTRACKS 9 TOTAL NTRACKS 249605
- %%% EVENT 25000 NTRACKS 12 TOTAL NTRACKS 259900
- %%% EVENT 26000 NTRACKS 8 TOTAL NTRACKS 270224
- %%% EVENT 27000 NTRACKS 8 TOTAL NTRACKS 280615
- %%% EVENT 28000 NTRACKS 9 TOTAL NTRACKS 290656
- %%% EVENT 29000 NTRACKS 8 TOTAL NTRACKS 300968
- %%% EVENT 30000 NTRACKS 9 TOTAL NTRACKS 311337
- %%% EVENT 31000 NTRACKS 18 TOTAL NTRACKS 321589
- %%% EVENT 32000 NTRACKS 8 TOTAL NTRACKS 332027
- %%% EVENT 33000 NTRACKS 11 TOTAL NTRACKS 342411
- %%% EVENT 34000 NTRACKS 8 TOTAL NTRACKS 352772
- %%% EVENT 35000 NTRACKS 8 TOTAL NTRACKS 363139
- %%% EVENT 36000 NTRACKS 8 TOTAL NTRACKS 373733
- %%% EVENT 37000 NTRACKS 8 TOTAL NTRACKS 384378
- %%% EVENT 38000 NTRACKS 9 TOTAL NTRACKS 394924
- %%% EVENT 39000 NTRACKS 30 TOTAL NTRACKS 405503
- %%% EVENT 40000 NTRACKS 15 TOTAL NTRACKS 415720
- %%% EVENT 41000 NTRACKS 8 TOTAL NTRACKS 426118
- %%% EVENT 42000 NTRACKS 10 TOTAL NTRACKS 436437
- %%% EVENT 43000 NTRACKS 23 TOTAL NTRACKS 446855
- %%% EVENT 44000 NTRACKS 8 TOTAL NTRACKS 457228
- %%% EVENT 45000 NTRACKS 8 TOTAL NTRACKS 467782
- %%% EVENT 46000 NTRACKS 14 TOTAL NTRACKS 478474
- %%% EVENT 47000 NTRACKS 11 TOTAL NTRACKS 488818
- %%% EVENT 48000 NTRACKS 9 TOTAL NTRACKS 498946
- %%% EVENT 49000 NTRACKS 11 TOTAL NTRACKS 509233
- %%% EVENT 50000 NTRACKS 14 TOTAL NTRACKS 519433
- %%% EVENT 51000 NTRACKS 19 TOTAL NTRACKS 529956
- %%% EVENT 52000 NTRACKS 8 TOTAL NTRACKS 540462
- %%% EVENT 53000 NTRACKS 9 TOTAL NTRACKS 551040
- %%% EVENT 54000 NTRACKS 16 TOTAL NTRACKS 561321
- %%% EVENT 55000 NTRACKS 22 TOTAL NTRACKS 571892
- %%% EVENT 56000 NTRACKS 8 TOTAL NTRACKS 582344
- %%% EVENT 57000 NTRACKS 9 TOTAL NTRACKS 592671
- %%% EVENT 58000 NTRACKS 12 TOTAL NTRACKS 603166
- %%% EVENT 59000 NTRACKS 17 TOTAL NTRACKS 613683
- %%% EVENT 60000 NTRACKS 11 TOTAL NTRACKS 624329
- %%% EVENT 61000 NTRACKS 19 TOTAL NTRACKS 634614
- %%% EVENT 62000 NTRACKS 9 TOTAL NTRACKS 644913
- %%% EVENT 63000 NTRACKS 9 TOTAL NTRACKS 655280
- %%% EVENT 64000 NTRACKS 12 TOTAL NTRACKS 665764
- %%% EVENT 65000 NTRACKS 9 TOTAL NTRACKS 676139
- %%% EVENT 66000 NTRACKS 10 TOTAL NTRACKS 686576
- %%% EVENT 67000 NTRACKS 10 TOTAL NTRACKS 696735
- %%% EVENT 68000 NTRACKS 8 TOTAL NTRACKS 707300
- %%% EVENT 69000 NTRACKS 9 TOTAL NTRACKS 718004
- %%% EVENT 70000 NTRACKS 11 TOTAL NTRACKS 728238
- %%% EVENT 71000 NTRACKS 13 TOTAL NTRACKS 738600
- %%% EVENT 72000 NTRACKS 9 TOTAL NTRACKS 749124
- %%% EVENT 73000 NTRACKS 10 TOTAL NTRACKS 759613
- %%% EVENT 74000 NTRACKS 8 TOTAL NTRACKS 770137
- %%% EVENT 75000 NTRACKS 9 TOTAL NTRACKS 780454
- %%% EVENT 76000 NTRACKS 9 TOTAL NTRACKS 790913
- %%% EVENT 77000 NTRACKS 8 TOTAL NTRACKS 801009
- %%% EVENT 78000 NTRACKS 8 TOTAL NTRACKS 811416
- %%% EVENT 79000 NTRACKS 8 TOTAL NTRACKS 821523
- %%% EVENT 80000 NTRACKS 17 TOTAL NTRACKS 831801
- %%% EVENT 81000 NTRACKS 8 TOTAL NTRACKS 842124
- %%% EVENT 82000 NTRACKS 12 TOTAL NTRACKS 852580
- %%% EVENT 83000 NTRACKS 16 TOTAL NTRACKS 863031
- %%% EVENT 84000 NTRACKS 9 TOTAL NTRACKS 873315
- %%% EVENT 85000 NTRACKS 21 TOTAL NTRACKS 883527
- %%% EVENT 86000 NTRACKS 8 TOTAL NTRACKS 893867
- %%% EVENT 87000 NTRACKS 10 TOTAL NTRACKS 904437
- %%% EVENT 88000 NTRACKS 8 TOTAL NTRACKS 914780
- %%% EVENT 89000 NTRACKS 8 TOTAL NTRACKS 925293
- %%% EVENT 90000 NTRACKS 8 TOTAL NTRACKS 935682
- %%% EVENT 91000 NTRACKS 10 TOTAL NTRACKS 945957
- %%% EVENT 92000 NTRACKS 18 TOTAL NTRACKS 956255
- %%% EVENT 93000 NTRACKS 12 TOTAL NTRACKS 966727
- %%% EVENT 94000 NTRACKS 9 TOTAL NTRACKS 976920
- %%% EVENT 95000 NTRACKS 15 TOTAL NTRACKS 987097
- %%% EVENT 96000 NTRACKS 8 TOTAL NTRACKS 997530
- %%% EVENT 97000 NTRACKS 11 TOTAL NTRACKS 1.0078e+06
- %%% EVENT 98000 NTRACKS 12 TOTAL NTRACKS 1.01817e+06
- %%% EVENT 99000 NTRACKS 10 TOTAL NTRACKS 1.02861e+06
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 316 tasks with 316 events/task...
+============================================================================================
+
  Run terminated.
 Run Summary
   Number of events processed : 100000
-  User=5.560000s Real=5.611389s Sys=0.000000s
+  User=42.630000s Real=1.102446s Sys=1.360000s [Cpu=3990.2%]
 @@@@ GmCountProcessesUA
  PART_COUNT: Co60 = 100000
  PART_COUNT: Ni60 = 100000
- PART_COUNT: Ni60[1332.514] = 100000
- PART_COUNT: Ni60[2158.632] = 7
- PART_COUNT: Ni60[2505.753] = 99893
+ PART_COUNT: Ni60[1332.51400] = 100000
+ PART_COUNT: Ni60[2158.63200] = 4
+ PART_COUNT: Ni60[2505.75300] = 99889
  PART_COUNT: anti_nu_e = 100000
- PART_COUNT: e+ = 52
- PART_COUNT: e- = 332399
- PART_COUNT: gamma = 206532
+ PART_COUNT: e+ = 49
+ PART_COUNT: e- = 332357
+ PART_COUNT: gamma = 206703
  PROC_COUNT Co60 : RadioactiveDecay = 100000
  PROC_COUNT Co60 : ALL = 100000
  PROC_COUNT Ni60 : NoProcess = 100000
  PROC_COUNT Ni60 : ionIoni_NoSeco = 100000
  PROC_COUNT Ni60 : ALL = 200000
- PROC_COUNT Ni60[1332.514] : RadioactiveDecay = 100000
- PROC_COUNT Ni60[1332.514] : ALL = 100000
- PROC_COUNT Ni60[2158.632] : RadioactiveDecay = 7
- PROC_COUNT Ni60[2158.632] : ALL = 7
- PROC_COUNT Ni60[2505.753] : RadioactiveDecay = 99893
- PROC_COUNT Ni60[2505.753] : ALL = 99893
- PROC_COUNT anti_nu_e : Transportation = 356758
- PROC_COUNT anti_nu_e : ALL = 356758
- PROC_COUNT e+ : Transportation = 1
- PROC_COUNT e+ : annihil = 52
+ PROC_COUNT Ni60[1332.51400] : RadioactiveDecay = 100000
+ PROC_COUNT Ni60[1332.51400] : ALL = 100000
+ PROC_COUNT Ni60[2158.63200] : RadioactiveDecay = 4
+ PROC_COUNT Ni60[2158.63200] : ALL = 4
+ PROC_COUNT Ni60[2505.75300] : RadioactiveDecay = 99889
+ PROC_COUNT Ni60[2505.75300] : ALL = 99889
+ PROC_COUNT anti_nu_e : Transportation = 357101
+ PROC_COUNT anti_nu_e : ALL = 357101
+ PROC_COUNT e+ : annihil = 49
  PROC_COUNT e+ : eIoni_NoSeco = 51
- PROC_COUNT e+ : msc = 29
- PROC_COUNT e+ : ALL = 133
- PROC_COUNT e- : Transportation = 7856
- PROC_COUNT e- : eBrem = 6063
- PROC_COUNT e- : eBrem_NoSeco = 144
- PROC_COUNT e- : eIoni = 26868
- PROC_COUNT e- : eIoni_NoSeco = 392817
- PROC_COUNT e- : msc = 93138
- PROC_COUNT e- : ALL = 526886
- PROC_COUNT gamma : Rayl = 3430
- PROC_COUNT gamma : Transportation = 729152
- PROC_COUNT gamma : compt = 167420
- PROC_COUNT gamma : conv = 52
- PROC_COUNT gamma : phot = 9463
-PROC_COUNT gamma : ALL = 909517
+ PROC_COUNT e+ : ALL = 100
+ PROC_COUNT e- : Transportation = 7764
+ PROC_COUNT e- : eBrem = 6249
+ PROC_COUNT e- : eBrem_NoSeco = 127
+ PROC_COUNT e- : eIoni = 26900
+ PROC_COUNT e- : eIoni_NoSeco = 392892
+ PROC_COUNT e- : msc = 93863
+ PROC_COUNT e- : ALL = 527795
+ PROC_COUNT gamma : Rayl = 3509
+ PROC_COUNT gamma : Transportation = 728783
+ PROC_COUNT gamma : compt = 166918
+ PROC_COUNT gamma : conv = 49
+ PROC_COUNT gamma : phot = 9574
+PROC_COUNT gamma : ALL = 908833
 PROC_CREATOR_COUNT Co60 : Primary = 100000
 PROC_CREATOR_COUNT Ni60 : RadioactiveDecay = 100000
-PROC_CREATOR_COUNT Ni60[1332.514] : RadioactiveDecay = 100000
-PROC_CREATOR_COUNT Ni60[2158.632] : RadioactiveDecay = 7
-PROC_CREATOR_COUNT Ni60[2505.753] : RadioactiveDecay = 99893
+PROC_CREATOR_COUNT Ni60[1332.51400] : RadioactiveDecay = 100000
+PROC_CREATOR_COUNT Ni60[2158.63200] : RadioactiveDecay = 4
+PROC_CREATOR_COUNT Ni60[2505.75300] : RadioactiveDecay = 99889
 PROC_CREATOR_COUNT anti_nu_e : RadioactiveDecay = 100000
-PROC_CREATOR_COUNT e+ : conv = 52
-PROC_CREATOR_COUNT e- : RadioactiveDecay = 100039
-PROC_CREATOR_COUNT e- : compt = 167190
-PROC_CREATOR_COUNT e- : conv = 52
-PROC_CREATOR_COUNT e- : eIoni = 26868
-PROC_CREATOR_COUNT e- : phot = 38250
-PROC_CREATOR_COUNT gamma : RadioactiveDecay = 199861
-PROC_CREATOR_COUNT gamma : annihil = 104
-PROC_CREATOR_COUNT gamma : eBrem = 6063
-PROC_CREATOR_COUNT gamma : phot = 504
+PROC_CREATOR_COUNT e+ : conv = 49
+PROC_CREATOR_COUNT e- : RadioactiveDecay = 100158
+PROC_CREATOR_COUNT e- : compt = 166678
+PROC_CREATOR_COUNT e- : conv = 49
+PROC_CREATOR_COUNT e- : eIoni = 26900
+PROC_CREATOR_COUNT e- : phot = 38572
+PROC_CREATOR_COUNT gamma : RadioactiveDecay = 199877
+PROC_CREATOR_COUNT gamma : annihil = 98
+PROC_CREATOR_COUNT gamma : eBrem = 6249
+PROC_CREATOR_COUNT gamma : phot = 479

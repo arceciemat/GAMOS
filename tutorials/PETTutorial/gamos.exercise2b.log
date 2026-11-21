@@ -166,13 +166,13 @@ GmEMPhysics::ReplacePhysicsList: electron-lowener is registered
  CreateHisto2D Gamma At SD: Energy of entering gamma 1 vs gamma 2 = 103062
 /gamos/userAction GmHitsHistosUA
 /run/initialize
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
 GmPhysicsGammaLowEner::ConstructProcess 
-/gamos/SD/assocSD2LogVol GmSDSimple Calor Crystal
- DeadTimeDUListByBlock: NShift 100
- GmDetUnitIDBuilderFromAncestors sdType Calor
-/gamos/generator/addIsotopeSource source F18 1.E-3*curie
-/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
-/run/beamOn 10000
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -194,10 +194,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -211,7 +214,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -306,6 +309,99 @@ eIoni:  for e+  XStype:3  SubType=2
       StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu+ ]2:anti_nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu- ]2:nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/SD/assocSD2LogVol GmSDSimple Calor Crystal
+ DeadTimeDUListByBlock: NShift 100
+ GmDetUnitIDBuilderFromAncestors sdType Calor
+/gamos/generator/addIsotopeSource source F18 1.E-3*curie
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes "water sphere"
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter:DataList InitialKineticEnergy InitialPosX
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
+/run/beamOn 10000
 
 ========= Table of registered couples ============================
 
@@ -339,95 +435,68 @@ Index : 3     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- CreateHisto1D Hits: SD ALL:Nhits = 201001
- CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
- CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
- CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
- CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
- CreateHisto1D Hits: SD ALL:N E depos = 201006
- CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
- CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
- CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
- CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
- CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
- CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
- CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
- CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
- CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
- CreateHisto1D Hits: SD Calor: Nhits = 201101
- CreateHisto1D Hits: SD Calor: Energy (MeV) = 201102
- CreateHisto1D Hits: SD Calor: Width R3 (mm) = 201103
- CreateHisto1D Hits: SD Calor: Width Z (mm) = 201104
- CreateHisto1D Hits: SD Calor: Width phi (deg) = 201105
- CreateHisto1D Hits: SD Calor: N E depos = 201106
- CreateHisto1D Hits: SD Calor: Time span (ns) = 201107
- CreateHisto1D Hits: SD Calor: Distance between hits (mm) = 201108
- CreateHisto1D Hits: SD Calor: X hit (mm) = 201111
- CreateHisto1D Hits: SD Calor: Y hit (mm) = 201112
- CreateHisto1D Hits: SD Calor: Z hit (mm) = 201113
- CreateHisto1D Hits: SD Calor: R2 hit (mm) = 201114
- CreateHisto1D Hits: SD Calor: PHI hit (deg) = 201115
- CreateHisto1D Hits: SD Calor: THETA hit (deg) = 201116
- CreateHisto1D Hits: SD Calor: R3 hit (mm) = 201117
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 100 tasks with 100 events/task...
+============================================================================================
+
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=0.750000s Real=0.757246s Sys=0.000000s
+  User=7.930000s Real=0.323452s Sys=0.330000s [Cpu=2553.7%]
 @@@@ GmCountProcessesUA
  PART_COUNT: e+ = 10000
- PART_COUNT: e- = 80947
- PART_COUNT: gamma = 28401
- PROC_COUNT e+ : Transportation = 24
- PROC_COUNT e+ : annihil = 10000
- PROC_COUNT e+ : eBrem = 119
- PROC_COUNT e+ : eBrem_NoSeco = 2
- PROC_COUNT e+ : eIoni = 542
- PROC_COUNT e+ : eIoni_NoSeco = 10176
- PROC_COUNT e+ : msc = 446
- PROC_COUNT e+ : ALL = 21309
- PROC_COUNT e- : Transportation = 255
- PROC_COUNT e- : eBrem = 829
- PROC_COUNT e- : eBrem_NoSeco = 59
- PROC_COUNT e- : eIoni = 1355
- PROC_COUNT e- : eIoni_NoSeco = 82627
- PROC_COUNT e- : msc = 4854
- PROC_COUNT e- : ALL = 89979
- PROC_COUNT gamma : Rayl = 3494
- PROC_COUNT gamma : Transportation = 69312
- PROC_COUNT gamma : compt = 59448
- PROC_COUNT gamma : phot = 19600
-PROC_COUNT gamma : ALL = 151854
+ PART_COUNT: e- = 81134
+ PART_COUNT: gamma = 28650
+ PROC_COUNT e+ : Transportation = 18
+ PROC_COUNT e+ : annihil = 10001
+ PROC_COUNT e+ : eBrem = 135
+ PROC_COUNT e+ : eBrem_NoSeco = 4
+ PROC_COUNT e+ : eIoni = 460
+ PROC_COUNT e+ : eIoni_NoSeco = 12164
+ PROC_COUNT e+ : msc = 895
+ PROC_COUNT e+ : ALL = 23677
+ PROC_COUNT e- : Transportation = 282
+ PROC_COUNT e- : eBrem = 790
+ PROC_COUNT e- : eBrem_NoSeco = 49
+ PROC_COUNT e- : eIoni = 1502
+ PROC_COUNT e- : eIoni_NoSeco = 82881
+ PROC_COUNT e- : msc = 8978
+ PROC_COUNT e- : ALL = 94482
+ PROC_COUNT gamma : Rayl = 3424
+ PROC_COUNT gamma : Transportation = 70120
+ PROC_COUNT gamma : compt = 59240
+ PROC_COUNT gamma : phot = 19930
+PROC_COUNT gamma : ALL = 152714
 PROC_CREATOR_COUNT e+ : Primary = 10000
-PROC_CREATOR_COUNT e- : compt = 59449
-PROC_CREATOR_COUNT e- : eIoni = 1897
-PROC_CREATOR_COUNT e- : phot = 19601
+PROC_CREATOR_COUNT e- : compt = 59241
+PROC_CREATOR_COUNT e- : eIoni = 1962
+PROC_CREATOR_COUNT e- : phot = 19931
 PROC_CREATOR_COUNT gamma : annihil = 20000
-PROC_CREATOR_COUNT gamma : compt = 69
-PROC_CREATOR_COUNT gamma : eBrem = 948
-PROC_CREATOR_COUNT gamma : phot = 7384
+PROC_CREATOR_COUNT gamma : compt = 68
+PROC_CREATOR_COUNT gamma : eBrem = 925
+PROC_CREATOR_COUNT gamma : phot = 7657
 
  $$$$$$$$$$ Classification of Gamma Interactions in SD $$$$$$$$ 
  $$GSD: n Events      : 10000
- $$GSD: n gamma in SD : 10182 : 50.91 % 
- $$GSD:  n PE         : 9803 : 96.2777 % 
- $$GSD:    PE 0 COMP    : 5939 : 60.5835 % 
- $$GSD:    PE 1 COMP    : 2508 : 25.584 % 
- $$GSD:    PE 2 COMP    : 936 : 9.5481 % 
- $$GSD:    PE >2 COMP   : 343 : 3.49893 % 
- $$GSD: No PE 0 COMP    : 159 : 41.9525 % 
- $$GSD: No PE 1 COMP    : 170 : 44.8549 % 
- $$GSD: No PE 2 COMP    : 43 : 11.3456 % 
- $$GSD: No PE >2 COMP   : 7 : 1.84697 % 
- $$GSD:  n COMP       : 4007 : 39.3538 % 
- $$GSD:    1 COMP       : 2678 : 66.833 % 
- $$GSD:    2 COMP       : 979 : 24.4322 % 
- $$GSD:    >2 COMP      : 350 : 8.73471 % 
- $$GSD: nCOMP/gamma     : 0.567963
- $$GSD: n RAYL        : 944 : 9.27126 % 
+ $$GSD: n gamma in SD : 10361 : 51.805 % 
+ $$GSD:  n PE         : 9969 : 96.2166 % 
+ $$GSD:    PE 0 COMP    : 6057 : 60.7584 % 
+ $$GSD:    PE 1 COMP    : 2504 : 25.1179 % 
+ $$GSD:    PE 2 COMP    : 990 : 9.93079 % 
+ $$GSD:    PE >2 COMP   : 347 : 3.48079 % 
+ $$GSD: No PE 0 COMP    : 153 : 39.0306 % 
+ $$GSD: No PE 1 COMP    : 180 : 45.9184 % 
+ $$GSD: No PE 2 COMP    : 53 : 13.5204 % 
+ $$GSD: No PE >2 COMP   : 6 : 1.53061 % 
+ $$GSD:  n COMP       : 4080 : 39.3784 % 
+ $$GSD:    1 COMP       : 2684 : 65.7843 % 
+ $$GSD:    2 COMP       : 1043 : 25.5637 % 
+ $$GSD:    >2 COMP      : 353 : 8.65196 % 
+ $$GSD: nCOMP/gamma     : 0.572242
+ $$GSD: n RAYL        : 914 : 8.82154 % 
  $$GSD: n CONV        : 0 : 0 % 
- $$GSD:  0 Gamma in event : 2525 : 25.25 % 
- $$GSD:  1 Gamma in event : 4768 : 47.68 % 
- $$GSD:  2 Gamma in event : 2707 : 27.07 % 
+ $$GSD:  0 Gamma in event : 2453 : 24.53 % 
+ $$GSD:  1 Gamma in event : 4733 : 47.33 % 
+ $$GSD:  2 Gamma in event : 2814 : 28.14 % 

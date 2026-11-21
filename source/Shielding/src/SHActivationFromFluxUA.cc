@@ -1,3 +1,5 @@
+#include "G4Threading.hh"
+#include "G4AutoLock.hh"
 #include "SHActivationFromFluxUA.hh"
 #include "ShieldingVerbosity.hh"
 #include "SHMetastableIsotMgr.hh"
@@ -58,6 +60,20 @@ void SHActivationFromFluxUA::EndOfEventAction( const G4Event* )
 //-----------------------------------------------------------------
 void SHActivationFromFluxUA::EndOfRunAction(const G4Run* )
 {
+  //--- Multithreading: workers add their scorer values and time span to the master instance, which prints
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    SHActivationFromFluxUA* master = dynamic_cast<SHActivationFromFluxUA*>(GmUserAction::GetMasterUserAction(GetName()));
+    if( master ) {
+      G4AutoLock l(&GmUserAction::GetMergeMutex());
+      theFluxScorer->AddToMaster( master->theFluxScorer );
+      if( theMaximumTime > 0. ) {
+	if( master->theMaximumTime < 0. ) master->theMaximumTime = 0.;
+	master->theMaximumTime += theMaximumTime;
+      }
+      theMaximumTime = -1;
+    }
+    return;
+  }
   G4cout << " SHActivationFromFluxUA::EndOfRunAction " << G4endl;
   // set number of ions from flux
   G4THitsMap<G4double>* RunMap = theFluxScorer->GetRunMap();
@@ -66,6 +82,8 @@ void SHActivationFromFluxUA::EndOfRunAction(const G4Run* )
 
   std::map<G4int,G4double*>::iterator ite;
   G4double nev = GmNumberOfEvent::GetNumberOfEvent();
+  //--- errors must be calculated before GetErrorRelative (it was never called: errors printed were always 0)
+  theFluxScorer->CalculateErrors( RunMap );
 
   for(ite = RunMap->GetMap()->begin(); ite != RunMap->GetMap()->end(); ite++){
     G4double sumX = (*(ite->second));

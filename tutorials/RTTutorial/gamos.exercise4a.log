@@ -19,6 +19,11 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /run/setCut 0.01
 /gamos/userAction GmCountTracksUA
 /run/initialize
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
 Warning : Region <targetReg> does not have specific production cuts,
 even though it appears in the current tracking world.
 Default cuts are used for this region.
@@ -34,11 +39,7 @@ Default cuts are used for this region.
 Warning : Region <jawsReg> does not have specific production cuts,
 even though it appears in the current tracking world.
 Default cuts are used for this region.
-/gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-7 1.E1 10.
-/gamos/classifier ClassifierParticleAndKinEnergy GmCompoundClassifier GmClassifierByParticle energyClassifier
-/gamos/generator/addSingleParticleSource source e- 6.*MeV
-/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
-/run/beamOn 200
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -60,10 +61,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -77,7 +81,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -173,6 +177,96 @@ eIoni:  for e+  XStype:3  SubType=2
       StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu+ ]2:anti_nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu- ]2:nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-7 1.E1 10.
+/gamos/classifier ClassifierParticleAndKinEnergy GmCompoundClassifier GmClassifierByParticle energyClassifier
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+/run/beamOn 200
 
 ========= Table of registered couples ============================
 
@@ -209,68 +303,29 @@ Index : 3     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- CreateHisto1D N trackInfos per Track in target = 980091
- CreateHisto2D trackInfo Region vs trackInfo Region = 980092
- %%% EVENT 0 NTRACKS 16 TOTAL NTRACKS 16
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Range) = 1020011
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: eBrem:  log10(Energy) = 1020012
- CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: eBrem:  Safety-Range vs Range) = 1020013
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: phot:  log10(Range) = 1030021
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: phot:  log10(Energy) = 1030022
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: phot:  Safety-Range vs Range) = 1030023
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: conv:  log10(Range) = 1030031
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: conv:  log10(Energy) = 1030032
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: e+: conv:  Safety-Range vs Range) = 1030033
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: annihil:  log10(Range) = 1030041
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: annihil:  log10(Energy) = 1030042
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: annihil:  Safety-Range vs Range) = 1030043
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: compt:  log10(Range) = 1030051
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: compt:  log10(Energy) = 1030052
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: e-: compt:  Safety-Range vs Range) = 1030053
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: eBrem:  log10(Range) = 1030011
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: eBrem:  log10(Energy) = 1030012
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: eBrem:  Safety-Range vs Range) = 1030013
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run10035
+      issued by : G4TaskRunManager::InitializeEventLoop()
+Event modulo is reduced to 4 (was 14) to distribute events to all threads.
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run10035
+      issued by : G4TaskRunManager::InitializeEventLoop()
+Event modulo is reduced to 4 (was 14) to distribute events to all threads.
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
+
+
+=========================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 50 tasks with 4 events/task...
+=========================================================================================
+
  Run terminated.
 Run Summary
   Number of events processed : 200
-  User=0.220000s Real=0.223024s Sys=0.010000s
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Range) = 1020061
- CreateHisto1D GmProdCutsStudyUA: targetReg: gamma: ALL:  log10(Energy) = 1020062
- CreateHisto2D GmProdCutsStudyUA: targetReg: gamma: ALL:  Safety-Range vs Range) = 1020063
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  log10(Range) = 1030061
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  log10(Energy) = 1030062
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: gamma: ALL:  Safety-Range vs Range) = 1030063
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: ALL:  log10(Range) = 1030071
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e-: ALL:  log10(Energy) = 1030072
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: e-: ALL:  Safety-Range vs Range) = 1030073
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: ALL:  log10(Range) = 1030081
- CreateHisto1D GmProdCutsStudyUA: collimatorReg: e+: ALL:  log10(Energy) = 1030082
- CreateHisto2D GmProdCutsStudyUA: collimatorReg: e+: ALL:  Safety-Range vs Range) = 1030083
-
- %%%%% PRODUCTION CUTS STUDY RESULTS 
-GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 19.3659
-GmProdCutsStudyUA: REGION= targetReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 19.3659
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= ALL MIN RANGE= 0.210899
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= phot MIN RANGE= 0.210899
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= eBrem MIN RANGE= 26.8542
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= gamma PROCESS= annihil MIN RANGE= 17.0405
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e- PROCESS= ALL MIN RANGE= 0.388594
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e- PROCESS= compt MIN RANGE= 0.388594
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e+ PROCESS= ALL MIN RANGE= 0.178384
-GmProdCutsStudyUA: REGION= collimatorReg PARTICLE= e+ PROCESS= conv MIN RANGE= 0.178384
-
- %%%%% RANGE REJECTION STUDY RESULTS (NUMBER OF TRACKS WITH safety > range) 
-RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
-RangeRejection: REGION= targetReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
-RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= ALL NTRACKS= 0
-RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= phot NTRACKS= 0
-RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= eBrem NTRACKS= 0
-RangeRejection: REGION= collimatorReg PARTICLE= gamma PROCESS= annihil NTRACKS= 0
-RangeRejection: REGION= collimatorReg PARTICLE= e- PROCESS= ALL NTRACKS= 1
-RangeRejection: REGION= collimatorReg PARTICLE= e- PROCESS= compt NTRACKS= 1
-RangeRejection: REGION= collimatorReg PARTICLE= e+ PROCESS= ALL NTRACKS= 1
-RangeRejection: REGION= collimatorReg PARTICLE= e+ PROCESS= conv NTRACKS= 1
-NUMBER OF TRACKS ACCEPTED 11 N ANCESTORS 15
+  User=0.970000s Real=0.287863s Sys=0.070000s [Cpu=361.3%]

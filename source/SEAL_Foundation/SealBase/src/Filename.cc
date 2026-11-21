@@ -14,8 +14,6 @@
 #include "StringHack.h"
 #include <map>
 #include <iostream>
-#include <cstring>
-#include <stdlib.h>
 
 namespace seal {
 //<<<<<< PRIVATE DEFINES                                                >>>>>>
@@ -1241,7 +1239,7 @@ size_t
 //		const Filename &dir,
 Filename::glob (std::vector<Filename> &,
 		const Filename &,
-		bool absolute /* = false */) const
+		bool /* absolute = false */) const
 {
     // FIXME: use ::wordexp()(?), ::glob(), ::fnmatch(), our own globbers, ...
     // FIXME: Move this out to globbers -- or keep just the basic code here?

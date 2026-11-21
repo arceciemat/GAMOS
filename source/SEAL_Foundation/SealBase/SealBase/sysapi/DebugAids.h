@@ -68,7 +68,7 @@
 #  define MYWRITE(fd,data,n)	do { DWORD written; WriteFile(fd,data,n,\
 					&written,0); } while (0)
 # else
-#  define MYWRITE(fd,data,n)	write(fd,data,n)
+#  define MYWRITE(fd,data,n)	do { if (write(fd,data,n) < 0) { /* nothing to do */ } } while (0)
 # endif
 
 // Helper to write literals

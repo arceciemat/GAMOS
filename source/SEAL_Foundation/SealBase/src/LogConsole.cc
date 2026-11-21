@@ -87,7 +87,7 @@ ConsoleLog::emit (const char *string, int length)
     ::WriteConsole (GetStdHandle (STD_OUTPUT_HANDLE),
 		    string, length, &written, 0);
 #else
-    ::write (m_fd, string, length);
+    if (::write (m_fd, string, length) < 0) { /* nothing sensible to do */ }
 #endif
 }
 

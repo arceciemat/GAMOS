@@ -32,6 +32,13 @@ public:
   void StoreIon( G4Ions* ion, G4double count){
     theIons[ion] = count;
   }
+  // Multithreading: add the ions counted in a worker thread
+  void AddIons( const std::map<G4Ions*,G4double>& ions ){
+    for( auto ite = ions.begin(); ite != ions.end(); ite++ ) theIons[ite->first] += ite->second;
+  }
+  const std::map<G4Ions*,G4double>& GetIons() const {
+    return theIons;
+  }
   void Clean();
 
   void StoreDecayBranchingRatios( const G4Track* aTrack );

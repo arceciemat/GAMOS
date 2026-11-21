@@ -1,4 +1,6 @@
 #include "SHActivationUA.hh"
+#include "G4Threading.hh"
+#include "G4AutoLock.hh"
 #include "ShieldingVerbosity.hh"
 #include "SHMetastableIsotMgr.hh"
 #include "SHRadDecayChainSet.hh"
@@ -17,6 +19,8 @@ SHActivationUA::SHActivationUA()
   theName = "SHActivationUA";
 
   theMaximumTime = -1;
+  //--- Multithreading: workers add their ions and time span to the master instance, which prints the activities
+  SetRunOnMaster(true);
   //  theMinimumTime = DBL_MAX;
 
   //  theMetastableIsotMgr = SHMetastableIsotMgr::GetInstance();
@@ -86,7 +90,7 @@ void SHActivationUA::InitialiseRun()
   G4double maxTime = 0.;
   for( size_t ii = 0; ii < theTimes.size(); ii++) {
     maxTime = std::max(maxTime, theTimes[ii]);
-    G4cout << ii << "SHRAD TIME " <<  theTimes[ii] << " MAX " << maxTime << G4endl; //GDEB
+    //G4cout << ii << "SHRAD TIME " <<  theTimes[ii] << " MAX " << maxTime << G4endl; //GDEB
   }
   // if not periods, set the that all time production is ON
   if( thePeriods.size() == 0 ) {
@@ -181,6 +185,24 @@ void SHActivationUA::PreUserTrackingAction(const G4Track* aTrack)
 //-----------------------------------------------------------------
 void SHActivationUA::EndOfRunAction(const G4Run* )
 {
+  if( G4Threading::IsMultithreadedApplication() ) {
+    if( !G4Threading::IsMasterThread() ) {
+      SHActivationUA* master = dynamic_cast<SHActivationUA*>(GmUserAction::GetMasterUserAction(GetName()));
+      if( master ) {
+	G4AutoLock l(&GmUserAction::GetMergeMutex());
+	master->theRadDecayChainSet->AddIons( theRadDecayChainSet->GetIons() );
+	theRadDecayChainSet->Clean();
+	//--- each thread has its own time sequence (source activity per thread = total activity):
+	//    the job time equivalent to the sequential one is the sum of the time spans of the threads
+	if( theMaximumTime > 0. ) {
+	  if( master->theMaximumTime < 0. ) master->theMaximumTime = 0.;
+	  master->theMaximumTime += theMaximumTime;
+	}
+	theMaximumTime = -1;
+      }
+      return;
+    }
+  }
   PrintActivities();
 }
 
@@ -201,7 +223,7 @@ void SHActivationUA::PrintActivities()
   //??  radChainSet to radChain (set the name...)
   std::map<G4String, SHRadDecayChain* > chains = theRadDecayChainSet->BuildPossibleDecayChains();
 #ifndef GAMOS_NO_VERBOSE
-  if( SHVerb(testVerb) ) G4cout << "SHActiv  chains " << chains.size() << G4endl; //GDEB
+  if( SHVerb(testVerb) ) G4cout << "SHActiv  chains " << chains.size() << G4endl;
 #endif
 
   // Print activities

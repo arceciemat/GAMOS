@@ -104,7 +104,7 @@ void GmLivermoreRayleighModel_XSChangeNEW::InitialiseLocal(const G4ParticleDefin
   {
     G4cout << "Calling GmLivermoreRayleighModel_XSChangeNEW::InitialiseLocal()" 
 	   << G4endl;
-  } //GDEB
+  }
   SetElementSelectors(masterModel->GetElementSelectors());
 }
 

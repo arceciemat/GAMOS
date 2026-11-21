@@ -7,8 +7,8 @@
 ../runN.sh exercise3 exercise3.angle.e+g
 ../runN.sh exercise3 exercise3.angle.ng
 ../runN.sh exercise3 exercise3.angle.nn
-hadd exercise3/angleDeviation.gammaALL.root exercise3/angleDeviation.*gamma.root
-hadd exercise3/angleDeviation.neutronALL.root exercise3/angleDeviation.*neutron.root
+python $PYTHONPATH/sumHist.py -fOut exercise3/angleDeviation.gammaALL.csv -f exercise3/angleDeviation.*gamma.csv
+python $PYTHONPATH/sumHist.py -fOut exercise3/angleDeviation.neutronALL.csv -f exercise3/angleDeviation.*neutron.csv 
 ../runN.sh exercise3 exercise3a
 ../runN.sh exercise3 exercise3b
 ../runN.sh exercise4 exercise4a

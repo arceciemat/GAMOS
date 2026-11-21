@@ -143,10 +143,10 @@ class Configuration:
         _logger.debug('Creating Configuration instance for file: %s'%confile)
         self.filename = confile
         self.configuration = {}
-        try:
-            execfile( confile , self.configuration )
-        except Exception,e:
-            raise ConfigurationError("Error reading configuration file %s: %s"%(self.filename,str(e)))
+        #       try:
+#        execfile( confile , self.configuration )
+   #     except Exception:
+    #        raise ConfigurationError("Error reading configuration file %s: %s"%(self.filename))
 
     def parseAndCheckText(self):
         """
@@ -226,7 +226,7 @@ class Configuration:
                         bLineOK = 0
                         break
                     _logger.debug("WORDDATA CHK %s = %s"% (words[dwordk-1],dline[Configuration.WORDSKEY][dwordk]))
-                    if words[dwordk-1] <> dline[Configuration.WORDSKEY][dwordk] : 
+                    if words[dwordk-1] != dline[Configuration.WORDSKEY][dwordk] : 
                         bLineOK = 0
                         break
                 if len(dwords) == 0 :
@@ -312,7 +312,7 @@ class Configuration:
                         bLineOK = 0
                         break
                     _logger.debug("TWORDDATA CHK %s = %s"% (words[dwordk-1],dline[Configuration.WORDSKEY][dwordk]))
-                    if words[dwordk-1] <> dline[Configuration.WORDSKEY][dwordk] : 
+                    if words[dwordk-1] != dline[Configuration.WORDSKEY][dwordk] : 
                         bLineOK = 0
                         break
                 if bLineOK :
@@ -597,12 +597,12 @@ def runROOT( aConfigurationFile , aFileName, doText = False , doHistos = True , 
     _logger.info("Reading configuration from file: %s"%aConfigurationFile)
     _logger.info("Inputs are contained in file: %s"%aFileName)
     conf = Configuration(aConfigurationFile)
-    _logger.debug("Configuration is: %s"%conf)
+#    _logger.debug("Configuration is: %s"%conf)
     tfilecontent = []
     #We need to reduce verbosity in ROOT...
     #See: http://root.cern.ch/phpBB3/viewtopic.php?t=10902&p=46976
-    import ROOT
-    ROOT.gErrorIgnoreLevel = 1001
+ #   import ROOT
+  #  ROOT.gErrorIgnoreLevel = 1001
 
     #Text part...
     if doText:
@@ -768,7 +768,7 @@ def runROOT( aConfigurationFile , aFileName, doText = False , doHistos = True , 
             theAlgo = Algorithm( theTest , theResult )
             _logger.debug("Algorithm created %s"%theAlgo)
             if str(theAlgo.test.dataset2) == "<ROOT.TObject object at 0x(nil)>":
-                print "HISTOGRAM NOT FOUND %s IN FILE %s " % (theAlgo.test.dataset1,cc[Configuration.REFERENCEKEY])
+                print("HISTOGRAM NOT FOUND %s IN FILE %s " % (theAlgo.test.dataset1,cc[Configuration.REFERENCEKEY]))
             else :
                 theAlgorithms.append( theAlgo )
             #End of loops on input histograms
@@ -871,19 +871,19 @@ def runROOT( aConfigurationFile , aFileName, doText = False , doHistos = True , 
     [ algo.check() for algo in theAlgorithms ]
     _logger.info("ALGO CHECKED.")
     _logger.info("Printing results...")
-    print "="*80
+    print("="*80)
     from sys import stdout,stderr
     from ROOTIO import makePage
     openpage = True
     errcode = 0
     for algo in theAlgorithms:
- 	_logger.info("histo name %s" %algo.test.dataset2)
+# 	_logger.info("histo name %s" %algo.test.dataset2)
         stdout.write(" ")
         errcode += algo.output.pprint( stdout ,colors= useColorsForOutput )
         stdout.write(" (Test: %s)"%(algo.test.__class__.__name__))
         stdout.write(" (pval= %s)"%algo.output.value)
         stdout.write("\n")
- 	_logger.info("Algo value %s" %algo.output.value)
+ #	_logger.info("Algo value %s" %algo.output.value)
         if doPlots != None:
             _logger.info("histo name %s" % openpage)
             if openpage:
@@ -893,7 +893,7 @@ def runROOT( aConfigurationFile , aFileName, doText = False , doHistos = True , 
                 _logger.info("histo name %s" % openpage)
                 makePage( algo , doPlots )
                 _logger.info("histo name %s" % openpage)
-    print "="*80
+    print("="*80)
     if doPlots != None:
         from ROOT import TCanvas,gROOT
         gROOT.SetBatch(True)
@@ -914,7 +914,7 @@ def testme(files=None):
         hname = "Spectra/hProtonSpectrum"
         h1=in1.Get( hname )
         h2=in2.Get( hname )
-        print h1,h2
+        print(h1,h2)
     else:
         h1 = TH1F("h1","h",100,-10,10)
         h2 = TH1F("h2","h",100,-10,10)
@@ -937,14 +937,14 @@ def testme(files=None):
     c.cd(2)
     anAlgo.test.residuals.Draw()
     anAlgo.test.residuals.Draw()
-    print anAlgo.check()
-    print aResult
+    print(anAlgo.check())
+    print(aResult)
     return h1,h2,anAlgo.test.residuals
 
 
 ######################################################
 def runMerge( aConfigurationFile, aFileName ):
-    print "RUNMERGE : %s"% aFileName
+    print("RUNMERGE : %s"% aFileName)
  
     conf1 = Configuration(aConfigurationFile)
     conf1.parseAndCheckText()

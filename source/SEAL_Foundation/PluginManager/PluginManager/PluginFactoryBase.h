@@ -1,3 +1,4 @@
+#include <mutex>
 #ifndef PLUGIN_MANAGER_PLUGIN_DBVIEW_BASE_H
 # define PLUGIN_MANAGER_PLUGIN_DBVIEW_BASE_H
 
@@ -25,6 +26,9 @@ class PluginFactoryBase
 public:
     PluginFactoryBase (const std::string &tag);
     virtual ~PluginFactoryBase (void);
+
+    // GAMOS multithreading: plug-in creation (and lazy module loading) serialised for all factories
+    static std::recursive_mutex &globalMutex (void);
 
     // Category tag
     const std::string &	category (void) const;

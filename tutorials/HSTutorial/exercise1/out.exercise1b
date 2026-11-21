@@ -1,9 +1,9 @@
 @@@@@ Running GAMOS with script: exercise1b.in
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+GAMOS starts RUN at : Fri Nov 20 18:14:26 CET 2026
 
 **************************************************************
- Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
+ Geant4 version Name: geant4-11-04-patch-03 [MT]   (01-October-2026)
+  << in Multi-threaded mode >> 
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -20,14 +20,24 @@ You have successfully registered the following graphics systems.
 Registered graphics systems are:
   ASCIITree (ATree)
   DAWNFILE (DAWNFILE)
-  G4HepRepFile (HepRepFile)
-  RayTracer (RayTracer)
+  RayTracer (RT)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
-  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
   TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
-  OpenGLStoredX (OGLSX, OGL, OGLS)
+  OpenGLStoredX (OGLSX, OGLS)
+  TOOLSSG_X11_GLES (TSG_X11_GLES, TSGX11, TSG, OGL)
+  TOOLSSG_X11_ZB (TSG_X11_ZB, TSGX11ZB, TSGZB)
+You may choose a graphics system (driver) with a parameter of
+the command "/vis/open" or "/vis/sceneHandler/create",
+or you may omit the driver parameter and choose at run time:
+- by argument in the construction of G4VisExecutive;
+- by environment variable "G4VIS_DEFAULT_DRIVER";
+- by entry in "~/.g4session";
+- by build flags.
+- Note: This feature is not allowed in batch mode.
+For further information see "examples/basic/B1/exampleB1.cc"
+and "vis.mac".
 
 Registering model factories...
 
@@ -71,25 +81,12 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/generator GmGenerator
 /gamos/verbosity GmAnalysisVerbosity debug
 /run/initialize
-/gamos/generator/addSingleParticleSource source gamma 1.*MeV
-/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
-/gamos/filter detectorFilter GmInLogicalVolumeFilter detector
-/gamos/setParam GmTrackDataHistosUA_detectorFilter:FileName mystep
-/gamos/setParam GmTrackDataHistosUA_detectorFilter:DataList AccumulatedEnergyDeposited
-/gamos/userAction GmTrackDataHistosUA detectorFilter
- userHName mystep original hname GmTrackDataHistosUA_detectorFilter
- GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 130000000
-/gamos/setParam GmStepDataHistosUA_GmClassifierByLogicalVolume:DataList AccumulatedEnergyLost
-/gamos/userAction GmStepDataHistosUA GmClassifierByLogicalVolume
- userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
- GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 995000000
-/gamos/filter enterDetectorFilter GmEnterLogicalVolumeFilter detector
-/gamos/setParam GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:DataList FinalKineticEnergy
-/gamos/analysis/histo1Max GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:*:FinalKineticEnergy 1.1
-/gamos/userAction GmStepDataHistosUA enterDetectorFilter GmClassifierByParticle
- userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
- GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 112000000
-/run/beamOn 10000
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -111,10 +108,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -128,7 +128,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -219,6 +219,110 @@ eIoni:  for e+  XStype:3  SubType=2
       StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu+ ]2:anti_nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu- ]2:nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+/gamos/filter detectorFilter GmInLogicalVolumeFilter detector
+/gamos/setParam GmTrackDataHistosUA_detectorFilter:FileName mystep
+/gamos/setParam GmTrackDataHistosUA_detectorFilter:DataList AccumulatedEnergyDeposited
+/gamos/userAction GmTrackDataHistosUA detectorFilter
+ userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+ GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 130000000
+/gamos/setParam GmStepDataHistosUA_GmClassifierByLogicalVolume:DataList AccumulatedEnergyLost
+/gamos/userAction GmStepDataHistosUA GmClassifierByLogicalVolume
+ userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+ GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 995000000
+/gamos/filter enterDetectorFilter GmEnterLogicalVolumeFilter detector
+/gamos/setParam GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:DataList FinalKineticEnergy
+/gamos/analysis/histo1Max GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:*:FinalKineticEnergy 1.1
+/gamos/userAction GmStepDataHistosUA enterDetectorFilter GmClassifierByParticle
+ userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+ GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 112000000
+/run/beamOn 10000
 
 ========= Table of registered couples ============================
 
@@ -252,20 +356,598 @@ Index : 3     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 995000101
- CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 995000201
- CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 995000301
- CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 112000101
- CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 130000001
- CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 995000401
- CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:e-:FinalKineticEnergy = 112000201
+G4WT12 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT20 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT20 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 160000000
+G4WT12 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 251000000
+G4WT20 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT20 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 173000000
+G4WT12 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT12 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 162000000
+G4WT8 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT8 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 214000000
+G4WT3 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT3 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 659000000
+G4WT42 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT42 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 711000000
+G4WT2 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT8 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT2 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 394000000
+G4WT8 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 678000000
+G4WT3 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT3 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 869000000
+G4WT8 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT8 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 612000000
+G4WT3 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT14 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT14 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 747000000
+G4WT11 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT11 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 965000000
+G4WT14 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT14 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 186000000
+G4WT13 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT10 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT2 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT16 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT10 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 257000000
+G4WT22 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT16 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 862000000
+G4WT22 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 840000000
+G4WT18 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT18 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 840000000
+G4WT11 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT11 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 319000000
+G4WT36 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT36 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 718000000
+G4WT10 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT10 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 198000000
+G4WT16 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT16 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 164000000
+G4WT18 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT18 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 993000000
+G4WT36 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT36 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 840000000
+G4WT14 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT14 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 35000000
+G4WT19 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT19 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 837000000
+G4WT31 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT41 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT31 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 64000000
+G4WT41 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 651000000
+G4WT30 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT30 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 107000000
+G4WT40 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT37 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT40 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 473000000
+G4WT37 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 595000000
+G4WT41 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT41 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 73000000
+G4WT30 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT30 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 998000000
+G4WT37 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT1 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT37 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 698000000
+G4WT1 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 280000000
+G4WT9 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT9 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 239000000
+G4WT2 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 266000000
+G4WT45 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT33 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT33 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 557000000
+G4WT23 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT23 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 269000000
+G4WT9 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT9 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 94000000
+G4WT30 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT30 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 934000000
+G4WT3 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 516000000
+G4WT0 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT22 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT0 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 583000000
+G4WT22 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 904000000
+G4WT41 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT41 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 86000000
+G4WT37 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT37 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 999000000
+G4WT0 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT0 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 105000000
+G4WT43 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT43 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 935000000
+G4WT9 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT9 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 131000000
+G4WT22 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT40 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT22 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 249000000
+G4WT40 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 503000000
+G4WT0 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT0 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 558000000
+G4WT40 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT40 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 326000000
+G4WT15 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT15 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 696000000
+G4WT15 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT15 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 996000000
+G4WT15 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT15 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 617000000
+G4WT25 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT31 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT25 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 571000000
+G4WT31 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 130000000
+G4WT25 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT25 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 317000000
+G4WT6 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT6 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 449000000
+G4WT31 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT31 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 874000000
+G4WT25 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT6 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT25 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 9000000
+G4WT6 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 499000000
+G4WT34 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT7 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT34 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 529000000
+G4WT35 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT7 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 366000000
+G4WT35 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 605000000
+G4WT34 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT34 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 82000000
+G4WT35 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT35 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 993000000
+G4WT7 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT7 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 17000000
+G4WT44 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT44 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 259000000
+G4WT44 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT44 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 577000000
+G4WT34 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT34 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 8000000
+G4WT35 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT43 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT35 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 606000000
+G4WT43 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 221000000
+G4WT44 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT44 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 751000000
+G4WT38 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT38 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 623000000
+G4WT43 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT43 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 970000000
+G4WT38 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT38 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 605000000
+G4WT38 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT38 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 2000000
+G4WT5 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT5 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 29000000
+G4WT5 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT5 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 260000000
+G4WT20 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT20 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 372000000
+G4WT5 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT5 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 317000000
+G4WT17 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT17 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 147000000
+G4WT17 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT17 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 881000000
+G4WT17 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT17 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 41000000
+G4WT28 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT28 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 964000000
+G4WT28 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT28 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 459000000
+G4WT45 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 722000000
+G4WT1 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT1 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 504000000
+G4WT28 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT28 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 95000000
+G4WT4 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT4 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 351000000
+G4WT4 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT4 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 79000000
+G4WT21 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT21 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 679000000
+G4WT1 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT1 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 23000000
+G4WT21 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT21 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 584000000
+G4WT36 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT36 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 495000000
+G4WT4 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT4 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 225000000
+G4WT27 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT27 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 301000000
+G4WT27 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT27 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 8000000
+G4WT21 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT21 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 51000000
+G4WT47 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT47 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 3000000
+G4WT46 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT27 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT27 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 744000000
+G4WT11 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT11 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 410000000
+G4WT47 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT47 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 538000000
+G4WT47 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT47 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 864000000
+G4WT2 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT2 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 314000000
+G4WT13 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 523000000
+G4WT39 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT29 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT29 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 762000000
+G4WT24 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT24 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 530000000
+G4WT13 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT13 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 948000000
+G4WT24 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT24 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 790000000
+G4WT29 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT29 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 867000000
+G4WT13 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT13 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 514000000
+G4WT10 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT10 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 960000000
+G4WT24 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT24 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 62000000
+G4WT33 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT33 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 820000000
+G4WT33 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT33 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 449000000
+G4WT42 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT42 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 597000000
+G4WT18 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT18 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 121000000
+G4WT42 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT42 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 517000000
+G4WT26 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT26 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 704000000
+G4WT26 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT26 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 377000000
+G4WT12 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT12 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 901000000
+G4WT39 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 214000000
+G4WT39 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT39 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 283000000
+G4WT26 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT26 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 591000000
+G4WT39 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT39 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 797000000
+G4WT46 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 332000000
+G4WT16 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT16 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 53000000
+G4WT23 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT23 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 71000000
+G4WT46 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT46 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 760000000
+G4WT23 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT23 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 604000000
+G4WT7 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT7 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 452000000
+G4WT19 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT19 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 405000000
+G4WT46 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT46 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 722000000
+G4WT29 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT29 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 942000000
+G4WT32 >  userHName mystep original hname GmTrackDataHistosUA_detectorFilter
+G4WT32 >  GmVHistoBuilder: FileName= mystep HistoFileName= mystep HistoNumber= 607000000
+G4WT32 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT32 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 823000000
+G4WT19 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT19 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 912000000
+G4WT45 >  userHName  original hname GmStepDataHistosUA_GmClassifierByLogicalVolume
+G4WT45 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoFileName= GmStepDataHistosUA_GmClassifierByLogicalVolume HistoNumber= 898000000
+G4WT32 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT32 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 26000000
+G4WT6 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT6 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 126000000
+G4WT45 >  userHName  original hname GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle
+G4WT45 >  GmVHistoBuilder: FileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoFileName= GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle HistoNumber= 804000000
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 100 tasks with 100 events/task...
+============================================================================================
+
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 605000101
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 105000101
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 173000101
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 105000201
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 499000101
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 173000201
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 105000301
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 499000201
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 266000101
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 266000201
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 73000101
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 73000201
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 317000101
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 678000101
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 317000201
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 678000201
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 820000101
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 820000201
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 993000101
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 993000201
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 503000101
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 377000101
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 503000201
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 377000201
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 503000301
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 558000101
+G4WT0 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 583000001
+G4WT0 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 105000401
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 130000101
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 130000201
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 326000101
+G4WT40 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 473000001
+G4WT40 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 503000401
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 266000301
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 377000301
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 820000301
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 449000101
+G4WT33 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 557000001
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 820000401
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 993000301
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 130000301
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 874000101
+G4WT31 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 64000001
+G4WT31 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 130000401
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 317000301
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 9000101
+G4WT25 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 571000001
+G4WT25 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 317000401
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 678000301
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 499000301
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 591000101
+G4WT26 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 704000001
+G4WT26 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 377000401
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 126000101
+G4WT6 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 449000001
+G4WT6 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 499000401
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 606000101
+G4WT35 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 605000001
+G4WT35 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 993000401
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 164000101
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 164000201
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 612000101
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 314000101
+G4WT8 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 214000001
+G4WT8 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 678000401
+G4WT2 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 394000001
+G4WT2 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 266000401
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 164000301
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 53000101
+G4WT16 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 862000001
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 164000401
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 605000201
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 162000101
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 605000301
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 162000201
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 17000101
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 260000101
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 17000201
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 260000201
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 2000101
+G4WT38 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 623000001
+G4WT38 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 605000401
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 17000301
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 452000101
+G4WT7 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 366000001
+G4WT7 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 17000401
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 162000301
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 901000101
+G4WT12 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 251000001
+G4WT12 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 162000401
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 73000301
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 86000101
+G4WT41 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 651000001
+G4WT41 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 73000401
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 996000101
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 996000201
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 8000101
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 8000201
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 8000301
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 260000301
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 317000101
+G4WT5 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 29000001
+G4WT5 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 260000401
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 405000101
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 405000201
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 996000301
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 173000301
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 372000101
+G4WT20 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 160000001
+G4WT20 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 173000401
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 881000101
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 881000201
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 405000301
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 912000101
+G4WT19 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 837000001
+G4WT19 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 405000401
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 617000101
+G4WT15 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 696000001
+G4WT15 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 996000401
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 904000101
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 904000201
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 744000101
+G4WT27 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 301000001
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 8000401
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 904000301
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 698000101
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 698000201
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 823000101
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 823000201
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 698000301
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 999000101
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 760000101
+G4WT37 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 595000001
+G4WT37 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 698000401
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 760000201
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 823000301
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 881000301
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 760000301
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 722000101
+G4WT46 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 332000001
+G4WT46 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 760000401
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 94000101
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 94000201
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 26000101
+G4WT32 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 607000001
+G4WT32 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 823000401
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 94000301
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 131000101
+G4WT9 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 239000001
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 94000401
+G4WT9 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:e-:FinalKineticEnergy = 131000201
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 319000101
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 319000201
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 319000301
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 410000101
+G4WT11 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 965000001
+G4WT11 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 319000401
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 41000101
+G4WT17 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 147000001
+G4WT17 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 881000401
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 993000101
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 993000201
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 249000101
+G4WT22 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 840000001
+G4WT22 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 904000401
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 993000301
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 121000101
+G4WT18 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 840000001
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 993000401
+G4WT18 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:e-:FinalKineticEnergy = 121000201
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 898000101
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 898000201
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 898000301
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 804000101
+G4WT45 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 722000001
+G4WT45 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 898000401
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 948000101
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 948000201
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 790000101
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 790000201
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 790000301
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 948000301
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 514000101
+G4WT13 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 523000001
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 948000401
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 867000101
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 867000201
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 504000101
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 577000101
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 577000201
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 504000201
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 867000301
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 942000101
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 504000301
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 23000101
+G4WT29 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 762000001
+G4WT1 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 280000001
+G4WT1 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 504000401
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 577000301
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 751000101
+G4WT44 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 259000001
+G4WT44 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 577000401
+G4WT29 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 867000401
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 840000101
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 840000201
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 840000301
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 495000101
+G4WT36 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 718000001
+G4WT36 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 840000401
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 221000101
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 538000101
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 538000201
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 71000101
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 71000201
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 584000101
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 584000201
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 998000101
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 998000201
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 538000301
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 864000101
+G4WT47 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 3000001
+G4WT47 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 538000401
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 584000301
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 71000301
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 998000301
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 51000101
+G4WT21 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 679000001
+G4WT21 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 584000401
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 283000101
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 283000201
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 283000301
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 797000101
+G4WT39 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 214000001
+G4WT39 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 283000401
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 221000201
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 79000101
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 79000201
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 459000101
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 459000201
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 459000301
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 95000101
+G4WT28 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 964000001
+G4WT28 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 459000401
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 79000301
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 225000101
+G4WT4 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 351000001
+G4WT4 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 79000401
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 604000101
+G4WT23 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 269000001
+G4WT23 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 71000401
+G4WT16 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:e-:FinalKineticEnergy = 53000201
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 869000101
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 869000201
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 869000301
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 516000101
+G4WT3 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 659000001
+G4WT3 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 869000401
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 221000301
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 970000101
+G4WT43 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 935000001
+G4WT43 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 221000401
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 82000101
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 82000201
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 62000101
+G4WT24 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 530000001
+G4WT24 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 790000401
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 82000301
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 8000101
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 934000101
+G4WT30 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 107000001
+G4WT30 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 998000401
+G4WT13 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:e-:FinalKineticEnergy = 514000201
+G4WT34 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 529000001
+G4WT34 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 82000401
+G4WT33 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:e-:FinalKineticEnergy = 449000201
+G4WT27 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:e-:FinalKineticEnergy = 744000201
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 198000101
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 186000101
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 198000201
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 186000201
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 186000301
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 35000101
+G4WT14 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 747000001
+G4WT14 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 186000401
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 198000301
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 960000101
+G4WT10 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 257000001
+G4WT10 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 198000401
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:source:AccumulatedEnergyLost = 597000101
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:world:AccumulatedEnergyLost = 597000201
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:container:AccumulatedEnergyLost = 597000301
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:gamma:FinalKineticEnergy = 517000101
+G4WT42 >  CreateHisto1D GmTrackDataHistosUA_detectorFilter:AccumulatedEnergyDeposited = 711000001
+G4WT42 >  CreateHisto1D GmStepDataHistosUA_GmClassifierByLogicalVolume:detector:AccumulatedEnergyLost = 597000401
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=0.070000s Real=0.066782s Sys=0.000000s
+  User=2.300000s Real=0.419512s Sys=0.020000s [Cpu=553.0%]
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 GmStepDataHistosUA_GmClassifierByLogicalVolume.exercise1b:NormalizeToNEvents
@@ -274,3 +956,4 @@ Visualization Manager deleting...
 === saving histograms in file === GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle.exercise1b.csv
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 mystep.exercise1b:NormalizeToNEvents
 === saving histograms in file === mystep.exercise1b.csv
+GAMOS ends RUN at : Fri Nov 20 18:14:27 CET 2026

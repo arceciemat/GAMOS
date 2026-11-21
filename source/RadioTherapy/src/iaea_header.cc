@@ -555,6 +555,28 @@ void iaea_header_type::update_counters(iaea_record_type *p_iaea_record)
 
 }
 
+void iaea_header_type::add_counters(const iaea_header_type *h2)
+{
+  orig_histories += h2->orig_histories;
+  nParticles += h2->nParticles;
+  read_indep_histories += h2->read_indep_histories;
+  for(int i=0;i<MAX_NUM_PARTICLES;i++) {
+    particle_number[i] += h2->particle_number[i];
+    sumParticleWeight[i] += h2->sumParticleWeight[i];
+    averageKineticEnergy[i] += h2->averageKineticEnergy[i]; // sum of weight*E until written
+    if( h2->maximumKineticEnergy[i] > maximumKineticEnergy[i] ) maximumKineticEnergy[i] = h2->maximumKineticEnergy[i];
+    if( h2->minimumKineticEnergy[i] < minimumKineticEnergy[i] ) minimumKineticEnergy[i] = h2->minimumKineticEnergy[i];
+    if( h2->maximumWeight[i] > maximumWeight[i] ) maximumWeight[i] = h2->maximumWeight[i];
+    if( h2->minimumWeight[i] < minimumWeight[i] ) minimumWeight[i] = h2->minimumWeight[i];
+  }
+  if( h2->maximumX > maximumX ) maximumX = h2->maximumX;
+  if( h2->minimumX < minimumX ) minimumX = h2->minimumX;
+  if( h2->maximumY > maximumY ) maximumY = h2->maximumY;
+  if( h2->minimumY < minimumY ) minimumY = h2->minimumY;
+  if( h2->maximumZ > maximumZ ) maximumZ = h2->maximumZ;
+  if( h2->minimumZ < minimumZ ) minimumZ = h2->minimumZ;
+}
+
 void iaea_header_type::print_statistics()
 {
    printf("\n *************************************** \n");
@@ -1056,11 +1078,11 @@ void iaea_header_type::copy(iaea_header_type *header2)
     std::cout << " REDCONTCOPIED " << record_contents[ii] << " = " << header2->record_contents[ii] << std::endl; //GDEB
     } */
   //  memcpy(record_constant,header2->record_constant,7);
-  for( int ii = 0; ii < NUM_EXTRA_LONG; ii++ ) {
+  for( size_t ii = 0; ii < sizeof(record_constant)/sizeof(record_constant[0]); ii++ ) {
     record_constant[ii] = header2->record_constant[ii];
   }
-  memcpy(extrafloat_contents,header2->extrafloat_contents,NUM_EXTRA_FLOAT);
-  memcpy(extralong_contents,header2->extralong_contents,NUM_EXTRA_LONG);
+  memcpy(extrafloat_contents,header2->extrafloat_contents,sizeof(extrafloat_contents));
+  memcpy(extralong_contents,header2->extralong_contents,sizeof(extralong_contents));
   record_length = header2->record_length;
   checksum= header2->checksum  ;
   memcpy(coordinate_system_description,header2->coordinate_system_description,MAX_STR_LEN*MAX_NUMB_LINES+1);

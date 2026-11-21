@@ -1,10 +1,7 @@
-#------------------------------------------------------------------------------
-# 
-# Module : SEAL_Foundation
-# Package: SEAL_Foundation
-#
-#------------------------------------------------------------------------------
-add_definitions(-D_ALLOC_EXPORT)
-# 
+# - source/SEAL_Foundation
+
 add_subdirectory(SealBase)
 add_subdirectory(PluginManager)
+add_subdirectory(PluginChecker)
+add_subdirectory(PluginDumper)
+add_subdirectory(PluginRefresh)

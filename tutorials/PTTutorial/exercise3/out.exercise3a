@@ -1,9 +1,9 @@
 @@@@@ Running GAMOS with script: exercise3a.in
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+GAMOS starts RUN at : Fri Nov 20 18:20:46 CET 2026
 
 **************************************************************
- Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
+ Geant4 version Name: geant4-11-04-patch-03 [MT]   (01-October-2026)
+  << in Multi-threaded mode >> 
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -20,14 +20,24 @@ You have successfully registered the following graphics systems.
 Registered graphics systems are:
   ASCIITree (ATree)
   DAWNFILE (DAWNFILE)
-  G4HepRepFile (HepRepFile)
-  RayTracer (RayTracer)
+  RayTracer (RT)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
-  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
   TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
-  OpenGLStoredX (OGLSX, OGL, OGLS)
+  OpenGLStoredX (OGLSX, OGLS)
+  TOOLSSG_X11_GLES (TSG_X11_GLES, TSGX11, TSG, OGL)
+  TOOLSSG_X11_ZB (TSG_X11_ZB, TSGX11ZB, TSGZB)
+You may choose a graphics system (driver) with a parameter of
+the command "/vis/open" or "/vis/sceneHandler/create",
+or you may omit the driver parameter and choose at run time:
+- by argument in the construction of G4VisExecutive;
+- by environment variable "G4VIS_DEFAULT_DRIVER";
+- by entry in "~/.g4session";
+- by build flags.
+- Note: This feature is not allowed in batch mode.
+For further information see "examples/basic/B1/exampleB1.cc"
+and "vis.mac".
 
 Registering model factories...
 
@@ -76,48 +86,25 @@ Some /vis commands (optionally) take a string to specify colour.
 
 /gamos/generator GmGenerator
 /run/initialize
-/home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7
-@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Inelastic
-@@@ G4ParticleHPInelasticData instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7
-NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Capture/CrossSection/6_nat_Carbon
-NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Elastic/CrossSection/6_nat_Carbon
-NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Inelastic/CrossSection/6_nat_Carbon
-/gamos/physics/addPhysics radioactiveDecay
-G4PhysicsListHelper::RegisterProcess :RadioactiveDecay for GenericIon with  type/subtype =6/210  is has same subType as Radioactivation for GenericIon
-It will not be added !!
 
--------- WWWW ------- G4Exception-START -------- WWWW -------
-*** G4Exception : Run0111
-      issued by : G4PhysicsListHelper::RegisterProcess
-Duplication of processes
-*** This is just a warning message. ***
--------- WWWW -------- G4Exception-END --------- WWWW -------
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
 
-/control/execute ../exercise0/pbsSource.in
-/gamos/generator/addSingleParticleSource source proton 226.62*MeV
-/gamos/generator/energyDist source GmGenerDistEnergyConstant 226.62*MeV
-/gamos/generator/timeDist source GmGenerDistTimeConstantChange 32.*ps
-/gamos/generator/positionDist source GmGenerDistPositionDisc 1.5*mm 0. 0. -400.*mm
-/gamos/generator/directionDist source GmGenerDistDirectionCone 0. 0. 1. 3.6*mrad
-/gamos/userAction GmCountTracksUA
-/gamos/scoring/createMFDetector doseDet phantom
-/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
-GmEnergySplitter::GmEnergySplitter
- GmVPrimitiveScorer::SetParameters: no parameters 
-/gamos/setParam RTPSPDoseHistos:FileName doseHistos.a
-/gamos/setParam RTPSPDoseHistos:HistosFileName ./doseHistos.lis
-/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorer
- RTPSPDoseHistos nvoxel 400 400 300
- RTPSPDoseHistos half dim 0.5 0.5 0.5
- RTPSPDoseHistos translation (0,0,0)
- RTPSPDoseHistos rotation 
-   [ (           1             0             0)
-     (           0             1             0)
-     (           0             0             1) ]
 
-/gamos/scoring/addPrinter2Scorer GmPSPrinterSqdose doseScorer
-/run/beamOn 10000
-G4RunManagerKernel -- G4ScoreSplittingProcess is appended to all particles.
+ hInelastic QGSP_BIC_HP  Thresholds: 
+    0) between BIC and BERT for p, n over the interval 1 to 1.5 GeV. 
+    1) between BERT  and FTF/P over the interval 3 to 6 GeV. 
+    2) between FTF/P and QGS/P over the interval 12 to 25 GeV. 
+  -- quasiElastic: 1 for QGS  and 0 for FTF
+@@@ G4ParticleHPInelasticData instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1
+NeutronHP: /Capture file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Capture/CrossSection/18_37_Argon
+NeutronHP: /Elastic file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_37_Argon
+NeutronHP: /Inelastic file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Inelastic/CrossSection/18_37_Argon
+NeutronHP: /Capture file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Capture/CrossSection/18_39_Argon
+NeutronHP: /Elastic file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_39_Argon
+NeutronHP: /Inelastic file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Inelastic/CrossSection/18_39_Argon
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -139,10 +126,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                AllisonPositronium
+Enable 3 gamma annihilation on fly                 1
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -156,7 +146,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    1
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Urban
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 1
@@ -259,7 +249,7 @@ ePairProd:  for e-  XStype:1  SubType=4
 
 CoulombScat:  for e- XStype:1 SubType=1 BuildTable=1
       Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
 
@@ -293,13 +283,13 @@ ePairProd:  for e+  XStype:1  SubType=4
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            ePairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
-annihil:  for e+ XStype:2 SubType=5 BuildTable=0
+annihil:  for e+ XStype:2 SubType=5 AtRestModel:Allison BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
-            eplus2gg : Emin=    0 eV  Emax=  100 TeV
+    eplusTo2or3gamma : Emin=    0 eV  Emax=  100 TeV
 
 CoulombScat:  for e+ XStype:1 SubType=1 BuildTable=1
       Lambda table from 100 MeV to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=  100 MeV Emax=  100 TeV
 
@@ -325,13 +315,13 @@ hBrems:  for proton  XStype:1  SubType=3
 hPairProd:  for proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      Sampling table 17x1001, from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for proton XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -369,7 +359,7 @@ Auger electron emission enabled                   1
 Check EM cuts disabled for atomic de-excitation   1
 Use Bearden atomic level energies                 0
 Use ANSTO fluorescence model                      0
-Threshold for very long decay time at rest        3.171e+10 y  
+Threshold for very long decay time at rest        1 y  
 ======================================================================
 
 msc:  for alpha  SubType= 10
@@ -411,13 +401,13 @@ hBrems:  for anti_proton  XStype:1  SubType=3
 hPairProd:  for anti_proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      Sampling table 17x1001, from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for anti_proton XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -443,13 +433,13 @@ hBrems:  for kaon+  XStype:1  SubType=3
 hPairProd:  for kaon+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for kaon+ XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -475,13 +465,13 @@ hBrems:  for kaon-  XStype:1  SubType=3
 hPairProd:  for kaon-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for kaon- XStype:1 SubType=1 BuildTable=1
       Used Lambda table of kaon+
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -507,13 +497,13 @@ muBrems:  for mu+  XStype:1  SubType=3
 muPairProd:  for mu+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu+ XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -539,34 +529,43 @@ muBrems:  for mu-  XStype:1  SubType=3
 muPairProd:  for mu-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu- XStype:1 SubType=1 BuildTable=1
       Used Lambda table of mu+
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
-NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Capture/CrossSection/6_nat_Carbon
-NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Elastic/CrossSection/6_nat_Carbon
-NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Inelastic/CrossSection/6_nat_Carbon
-NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Capture/CrossSection/18_37_Argon
+NeutronHP: /Elastic file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_37_Argon
+NeutronHP: /Inelastic file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Inelastic/CrossSection/18_37_Argon
+NeutronHP: /Capture file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Capture/CrossSection/18_39_Argon
+NeutronHP: /Elastic file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_39_Argon
+NeutronHP: /Inelastic file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Inelastic/CrossSection/18_39_Argon
+NeutronHP: /Elastic file for Z = 18, A = 36 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_37_Argon
+NeutronHP: /Elastic file for Z = 18, A = 38 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Elastic/CrossSection/18_39_Argon
 
 =======================================================
 ======       ParticleHP Physics Parameters     ========
 =======================================================
- UseOnlyPhotoEvaporation ? 0
- SkipMissingIsotopes ?     0
- NeglectDoppler ?          0
- DoNotAdjustFinalState ?   0
- ProduceFissionFragments ? 0
- UseWendtFissionModel ?    0
- UseNRESP71Model ?         0
+ Use only photo-evaporation      0
+ Skip missing isotopes           0
+ Neglect Doppler                 0
+ Do not adjust final state       0
+ Produce fission fragments       0
+ Use WendtFissionModel           0
+ Use NRESP71Model                0
+ Use DBRC                        0
+ PHP use Poisson                 0
+ PHP check                       1
+ CHECK HP NAMES                  0
+ Enable DEBUG                    0
+ Use probability tables from     
 =======================================================
 
-@@@ G4ParticleHPInelastic instantiated for particle neutron data directory variable is G4NEUTRONHPDATA pointing to /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Inelastic
-NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/arce/gamos/external/geant4/geant4.11.01.p03.gamos/../data/G4NDL4.7/Capture/CrossSection/6_nat_Carbon
+@@@ G4ParticleHPInelastic instantiated for particle neutron/n    data directory is /home/arce/gamos/external/geant4/geant4.11.4.p03.gamos/../data/G4NDL4.7.1/Inelastic
 
 msc:  for pi+  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
@@ -590,13 +589,13 @@ hBrems:  for pi+  XStype:1  SubType=3
 hPairProd:  for pi+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      Sampling table 20x1001, from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for pi+ XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 20 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -622,443 +621,324 @@ hBrems:  for pi-  XStype:1  SubType=3
 hPairProd:  for pi-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 240 bins
       Lambda tables from threshold to 100 TeV, 20 bins/decade, spline: 1
-      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      Sampling table 20x1001, from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for pi- XStype:1 SubType=1 BuildTable=1
       Used Lambda table of pi+
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
-======================================================================
-======          Radioactive Decay Physics Parameters           =======
-======================================================================
-min MeanLife (from G4NuclideTable)                1 ns 
-Max life time (from G4DeexPrecoParameters)        1000 ps 
-Internal e- conversion flag                       1
-Stored internal conversion coefficients           1
-Enabled atomic relaxation mode                    1
-Enable correlated gamma emission                  0
-Max 2J for sampling of angular correlations       10
-Atomic de-excitation enabled                      1
-Auger electron emission enabled                   1
-Check EM cuts disabled for atomic de-excitation   1
-Use Bearden atomic level energies                 0
-Use ANSTO fluorescence model                      0
-Threshold for very long decay time at rest        3.171e+10 y  
-======================================================================
 
 ====================================================================
                   HADRONIC PROCESSES SUMMARY (verbose level 1)
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for GenericIon
-
   Process: ionElastic
         Model:          NNDiffuseElastic: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
   Process: ionInelastic
         Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
-  Process: Radioactivation
-
-  Process: Radioactivation
-
----------------------------------------------------
+  Process: RadioactiveDecay
+-----------------------------------------------------------------------
                            Hadronic Processes for He3
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
   Process: He3Inelastic
         Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for alpha
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
   Process: alphaInelastic
         Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_He3
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_He3Inelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_alpha
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_alphaInelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_deuteron
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_deuteronInelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-------------------------------------------------------------------------
                            Hadronic Processes for anti_hypertriton
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_lambda
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: anti_lambdaInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 0 eV  ---> 25 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_neutron
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100.1 MeV
         Model:              AntiAElastic: 100 MeV ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_neutronInelastic
         Model:                      FTFP: 0 eV  ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_proton
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100.1 MeV
         Model:              AntiAElastic: 100 MeV ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_protonInelastic
         Model:                      FTFP: 0 eV  ---> 100 TeV
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for anti_triton
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100.1 MeV/n
         Model:              AntiAElastic: 100 MeV/n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: anti_tritonInelastic
         Model:                      FTFP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:              AntiAGlauber: 0 eV  ---> 25.6 PeV
-
-
   Process: hFritiofCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for deuteron
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
   Process: dInelastic
         Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for e+
-
   Process: positronNuclear
         Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for e-
-
   Process: electronNuclear
         Model:   G4ElectroVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:          ElectroNuclearXS: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for gamma
-
   Process: photonNuclear
         Model:               GammaNPreco: 0 eV  ---> 200 MeV
         Model:            BertiniCascade: 199 MeV ---> 6 GeV
         Model:           TheoFSGenerator: 3 GeV ---> 100 TeV
      Cr_sctns:            GammaNuclearXS: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for kaon+
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: kaon+Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for kaon-
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: kaon-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: hBertiniCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for lambda
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: lambdaInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for mu+
-
   Process: muonNuclear
         Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for mu-
-
   Process: muonNuclear
         Model:      G4MuonVDNuclearModel: 0 eV  ---> 1 PeV
      Cr_sctns:     KokoulinMuonNuclearXS: 0 eV  ---> 100 TeV
-
-
   Process: muMinusCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for neutron
-
   Process: hadElastic
         Model:             hElasticCHIPS: 19.5 MeV ---> 100 TeV
         Model:          NeutronHPElastic: 0 eV  ---> 20 MeV
      Cr_sctns:        NeutronHPElasticXS: 0 eV  ---> 20 MeV
-
      Cr_sctns:        G4NeutronElasticXS: 0 eV  ---> 100 TeV
-
-
   Process: neutronInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
-        Model:            Binary Cascade: 19.9 MeV ---> 6 GeV
+        Model:            BertiniCascade: 1 GeV ---> 6 GeV
+        Model:            Binary Cascade: 19.9 MeV ---> 1.5 GeV
         Model:        NeutronHPInelastic: 0 eV  ---> 20 MeV
      Cr_sctns:      NeutronHPInelasticXS: 0 eV  ---> 20 MeV
-
      Cr_sctns:      G4NeutronInelasticXS: 0 eV  ---> 100 TeV
-
-
-  Process: nCapture
-        Model:          NeutronHPCapture: 0 eV  ---> 20 MeV
-        Model:               nRadCapture: 19.9 MeV ---> 100 TeV
-     Cr_sctns:        NeutronHPCaptureXS: 0 eV  ---> 20 MeV
-
+  Process: nCaptureHP
+        Model:             nRadCaptureHP: 0 eV  ---> 100 TeV
+     Cr_sctns:        NeutronHPCaptureXS: 0 eV  ---> 100 TeV
      Cr_sctns:        G4NeutronCaptureXS: 0 eV  ---> 100 TeV
-
-
-  Process: nFission
+  Process: nFissionHP
         Model:          NeutronHPFission: 0 eV  ---> 20 MeV
-        Model:                G4LFission: 19.9 MeV ---> 100 TeV
      Cr_sctns:        NeutronHPFissionXS: 0 eV  ---> 20 MeV
-
      Cr_sctns:                    ZeroXS: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for pi+
-
   Process: hadElastic
         Model:           hElasticGlauber: 0 eV  ---> 100 TeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
   Process: pi+Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for pi-
-
   Process: hadElastic
         Model:           hElasticGlauber: 0 eV  ---> 100 TeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
   Process: pi-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
   Process: hBertiniCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for proton
-
   Process: hadElastic
         Model:             hElasticCHIPS: 0 eV  ---> 100 TeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
   Process: protonInelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
-        Model:            Binary Cascade: 0 eV  ---> 6 GeV
+        Model:            BertiniCascade: 1 GeV ---> 6 GeV
+        Model:            Binary Cascade: 0 eV  ---> 1.5 GeV
      Cr_sctns:  BarashenkovGlauberGribov: 0 eV  ---> 100 TeV
-
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for sigma-
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV  ---> 100 TeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: sigma-Inelastic
         Model:                      QGSP: 12 GeV ---> 100 TeV
         Model:                      FTFP: 3 GeV ---> 25 GeV
         Model:            BertiniCascade: 0 eV  ---> 6 GeV
      Cr_sctns:            Glauber-Gribov: 0 eV  ---> 100 TeV
-
-
   Process: hBertiniCaptureAtRest
-
----------------------------------------------------
+-----------------------------------------------------------------------
                            Hadronic Processes for triton
-
   Process: hadElastic
         Model:              hElasticLHEP: 0 eV /n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
   Process: tInelastic
         Model:  Binary Light Ion Cascade: 0 eV /n ---> 6 GeV/n
         Model:                      FTFP: 3 GeV/n ---> 100 TeV/n
      Cr_sctns:  Glauber-Gribov Nucl-nucl: 0 eV  ---> 25.6 PeV
-
-
-================================================================
+  Process: RadioactiveDecay
 =======================================================================
-======       Pre-compound/De-excitation Physics Parameters     ========
+======       Geant4 Native Pre-compound Model Parameters       ========
 =======================================================================
-Type of pre-compound inverse x-section              3
+Type of pre-compound model                          0
+Type of pre-compound inverse x-section              1
 Pre-compound model active                           1
-Pre-compound excitation low energy                  100 keV
-Pre-compound excitation high energy                 30 MeV
+Pre-compound excitation low energy                  0.1 MeV 
+Pre-compound excitation high energy                 15 MeV 
+Angular generator for pre-compound model            1
+Use NeverGoBack option for pre-compound model       0
+Use SoftCutOff option for pre-compound model        0
+Use CEM transitions for pre-compound model          1
+Use GNASH transitions for pre-compound model        0
+Use HETC submodel for pre-compound model            0
+=======================================================================
+======       Nuclear De-excitation Module Parameters           ========
+=======================================================================
 Type of de-excitation inverse x-section             3
 Type of de-excitation factory                       Evaporation+GEM
 Number of de-excitation channels                    68
-Min excitation energy                               10 eV 
-Min energy per nucleon for multifragmentation       200 GeV
-Limit excitation energy for Fermi BreakUp           20 MeV
+Type of Fermi BreakUp model                         ModelVI
+Min excitation energy                               0.01 keV 
+Min energy per nucleon for multifragmentation       2e+05 MeV
 Level density (1/MeV)                               0.075
 Use simple level density model                      1
-Use discrete excitation energy of the residual      1
-Time limit for long lived isomeres                  1000 ps 
+Use discrete excitation energy of the residual      0
+Time limit for long lived isomeres                  1 ns 
 Isomer production flag                              1
 Internal e- conversion flag                         1
 Store e- internal conversion data                   1
 Correlated gamma emission flag                      0
 Max 2J for sampling of angular correlations         10
 =======================================================================
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/control/execute ../exercise0/pbsSource.in
+/gamos/generator/addSingleParticleSource source proton 226.62*MeV
+/gamos/generator/energyDist source GmGenerDistEnergyConstant 226.62*MeV
+/gamos/generator/timeDist source GmGenerDistTimeConstantChange 32.*ps
+/gamos/generator/positionDist source GmGenerDistPositionDisc 1.5*mm 0. 0. -400.*mm
+/gamos/generator/directionDist source GmGenerDistDirectionCone 0. 0. 1. 3.6*mrad
+/gamos/userAction GmCountTracksUA
+/gamos/scoring/createMFDetector doseDet phantom
+/gamos/scoring/addScorer2MFD doseScorer GmG4PSDoseDeposit doseDet
+ GmVPrimitiveScorer::SetParameters: no parameters 
+/gamos/setParam RTPSPDoseHistos:FileName doseHistos.a
+/gamos/setParam RTPSPDoseHistos:HistosFileName ./doseHistos.lis
+/gamos/scoring/addPrinter2Scorer RTPSPDoseHistos doseScorer
+ RTPSPDoseHistos nvoxel 400 400 300
+ RTPSPDoseHistos half dim 0.5 0.5 0.5
+ RTPSPDoseHistos translation (0,0,0)
+ RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+/gamos/scoring/addPrinter2Scorer GmPSPrinterSqdose doseScorer
+/run/beamOn 10000
 
 ========= Table of registered couples ============================
 
@@ -1078,25 +958,458 @@ Index : 1     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- %%% EVENT 0 NTRACKS 99 TOTAL NTRACKS 99
- %%% EVENT 1000 NTRACKS 17 TOTAL NTRACKS 33288
- %%% EVENT 2000 NTRACKS 84 TOTAL NTRACKS 61481
- %%% EVENT 3000 NTRACKS 8 TOTAL NTRACKS 90879
- %%% EVENT 4000 NTRACKS 135 TOTAL NTRACKS 120707
- %%% EVENT 5000 NTRACKS 112 TOTAL NTRACKS 154530
- %%% EVENT 6000 NTRACKS 11 TOTAL NTRACKS 186155
- %%% EVENT 7000 NTRACKS 22 TOTAL NTRACKS 215605
- %%% EVENT 8000 NTRACKS 10 TOTAL NTRACKS 247887
- %%% EVENT 9000 NTRACKS 18 TOTAL NTRACKS 277696
+G4WT42 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT30 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT42 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT42 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT42 >  RTPSPDoseHistos translation (0,0,0)
+G4WT42 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT30 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT30 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT30 >  RTPSPDoseHistos translation (0,0,0)
+G4WT30 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT4 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT4 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT4 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT4 >  RTPSPDoseHistos translation (0,0,0)
+G4WT4 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT34 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT2 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT34 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT34 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT34 >  RTPSPDoseHistos translation (0,0,0)
+G4WT34 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT2 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT2 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT2 >  RTPSPDoseHistos translation (0,0,0)
+G4WT2 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT38 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT39 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT38 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT38 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT38 >  RTPSPDoseHistos translation (0,0,0)
+G4WT38 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT39 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT39 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT39 >  RTPSPDoseHistos translation (0,0,0)
+G4WT39 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT19 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT19 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT19 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT19 >  RTPSPDoseHistos translation (0,0,0)
+G4WT19 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT0 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT26 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT26 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT26 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT26 >  RTPSPDoseHistos translation (0,0,0)
+G4WT26 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT9 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT9 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT9 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT9 >  RTPSPDoseHistos translation (0,0,0)
+G4WT9 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT10 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT21 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT10 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT10 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT10 >  RTPSPDoseHistos translation (0,0,0)
+G4WT10 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT21 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT21 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT21 >  RTPSPDoseHistos translation (0,0,0)
+G4WT21 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT3 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT1 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT18 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT3 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT3 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT3 >  RTPSPDoseHistos translation (0,0,0)
+G4WT3 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT18 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT18 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT18 >  RTPSPDoseHistos translation (0,0,0)
+G4WT18 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT12 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT12 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT12 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT12 >  RTPSPDoseHistos translation (0,0,0)
+G4WT12 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT46 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT46 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT46 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT46 >  RTPSPDoseHistos translation (0,0,0)
+G4WT46 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT16 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT47 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT16 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT16 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT16 >  RTPSPDoseHistos translation (0,0,0)
+G4WT16 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT45 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT47 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT47 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT47 >  RTPSPDoseHistos translation (0,0,0)
+G4WT47 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT45 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT45 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT45 >  RTPSPDoseHistos translation (0,0,0)
+G4WT45 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT6 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT6 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT6 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT6 >  RTPSPDoseHistos translation (0,0,0)
+G4WT6 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT8 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT8 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT8 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT8 >  RTPSPDoseHistos translation (0,0,0)
+G4WT8 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT5 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT5 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT5 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT5 >  RTPSPDoseHistos translation (0,0,0)
+G4WT5 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT43 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT43 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT43 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT43 >  RTPSPDoseHistos translation (0,0,0)
+G4WT43 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT27 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT14 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT27 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT27 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT27 >  RTPSPDoseHistos translation (0,0,0)
+G4WT27 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT32 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT28 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT32 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT32 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT32 >  RTPSPDoseHistos translation (0,0,0)
+G4WT32 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT0 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT0 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT0 >  RTPSPDoseHistos translation (0,0,0)
+G4WT0 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT33 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT20 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT7 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT24 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT35 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT25 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT14 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT14 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT14 >  RTPSPDoseHistos translation (0,0,0)
+G4WT14 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT25 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT25 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT25 >  RTPSPDoseHistos translation (0,0,0)
+G4WT25 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT28 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT28 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT28 >  RTPSPDoseHistos translation (0,0,0)
+G4WT28 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT22 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT22 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT22 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT22 >  RTPSPDoseHistos translation (0,0,0)
+G4WT22 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT29 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT29 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT29 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT29 >  RTPSPDoseHistos translation (0,0,0)
+G4WT29 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT17 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT31 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT31 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT31 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT31 >  RTPSPDoseHistos translation (0,0,0)
+G4WT31 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT36 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT13 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT1 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT1 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT1 >  RTPSPDoseHistos translation (0,0,0)
+G4WT1 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT41 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT36 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT36 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT36 >  RTPSPDoseHistos translation (0,0,0)
+G4WT36 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT41 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT41 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT41 >  RTPSPDoseHistos translation (0,0,0)
+G4WT41 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT37 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT7 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT7 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT7 >  RTPSPDoseHistos translation (0,0,0)
+G4WT7 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT24 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT24 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT24 >  RTPSPDoseHistos translation (0,0,0)
+G4WT24 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT37 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT37 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT37 >  RTPSPDoseHistos translation (0,0,0)
+G4WT37 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT15 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT40 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT20 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT20 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT20 >  RTPSPDoseHistos translation (0,0,0)
+G4WT20 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT35 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT35 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT35 >  RTPSPDoseHistos translation (0,0,0)
+G4WT35 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT40 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT40 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT40 >  RTPSPDoseHistos translation (0,0,0)
+G4WT40 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT13 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT13 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT13 >  RTPSPDoseHistos translation (0,0,0)
+G4WT13 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT33 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT33 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT33 >  RTPSPDoseHistos translation (0,0,0)
+G4WT33 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT23 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT23 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT23 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT23 >  RTPSPDoseHistos translation (0,0,0)
+G4WT23 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT15 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT15 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT15 >  RTPSPDoseHistos translation (0,0,0)
+G4WT15 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT44 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT17 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT17 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT17 >  RTPSPDoseHistos translation (0,0,0)
+G4WT17 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT11 >  GmVPrimitiveScorer::SetParameters: no parameters 
+G4WT11 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT11 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT11 >  RTPSPDoseHistos translation (0,0,0)
+G4WT11 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+G4WT44 >  RTPSPDoseHistos nvoxel 400 400 300
+G4WT44 >  RTPSPDoseHistos half dim 0.5 0.5 0.5
+G4WT44 >  RTPSPDoseHistos translation (0,0,0)
+G4WT44 >  RTPSPDoseHistos rotation 
+   [ (           1             0             0)
+     (           0             1             0)
+     (           0             0             1) ]
+
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 100 tasks with 100 events/task...
+============================================================================================
+
+G4WT22 >  %%% EVENT 0 NTRACKS 10 TOTAL NTRACKS 10
+G4WT37 >  %%% EVENT 3000 NTRACKS 14 TOTAL NTRACKS 14
+G4WT39 >  %%% EVENT 2000 NTRACKS 46 TOTAL NTRACKS 46
+G4WT1 >  %%% EVENT 4000 NTRACKS 12 TOTAL NTRACKS 12
+G4WT3 >  %%% EVENT 1000 NTRACKS 107 TOTAL NTRACKS 107
+G4WT34 >  %%% EVENT 5000 NTRACKS 129 TOTAL NTRACKS 2258
+G4WT29 >  %%% EVENT 6000 NTRACKS 17 TOTAL NTRACKS 2910
+G4WT31 >  %%% EVENT 7000 NTRACKS 11 TOTAL NTRACKS 2374
+G4WT36 >  %%% EVENT 8000 NTRACKS 36 TOTAL NTRACKS 2530
+G4WT15 >  %%% EVENT 9000 NTRACKS 12 TOTAL NTRACKS 3225
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=48.230000s Real=48.333525s Sys=0.090000s
- GmScoringRun::DumpAllScorer() 1 1
- GmVPSPrinter::SetUnit RTPSPDoseHistos 1e-12 New 1e-12 Ratio 1
+  User=87.070000s Real=17.690907s Sys=0.780000s [Cpu=496.6%]
  CreateHisto1D RTPSPDoseHistos: Dose = 36201
  CreateHisto1D RTPSPDoseHistos: Dose-volume = 36202
  CreateHisto1D RTPSPDoseHistos: Dose Error REL = 36203
@@ -1105,32 +1418,21 @@ Run Summary
  CreateHisto1D RTPSPDoseHistos: log10(Dose Error) = 36206
  CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error) = 36207
  CreateHisto2D RTPSPDoseHistos: log10(Dose) .vs. log10(Dose Error REL) = 36208
-RTPSPDoseHistos MINIMUM DOSE 4.39244e-22 Gy 
-RTPSPDoseHistos MAXIMUM DOSE 9.30857e-09 Gy 
-RTPSPDoseHistos AVERAGE ERROR 20% = 0.06552
-RTPSPDoseHistos AVERAGE ERROR 50% = 0.0435076
-RTPSPDoseHistos AVERAGE ERROR 90% = 0.0446814
-RTPSPDoseHistos TOTAL DOSE = 2.84333e-05 +-(REL) 0.000924171
- FillHisto1N_X X_Merged nXmin 0 nXmax 399 nYmin 0 nYmax 399 nZmin 0 nZmax 299
+RTPSPDoseHistos MINIMUM DOSE 6.24071e-22 Gy 
+RTPSPDoseHistos MAXIMUM DOSE 9.28727e-09 Gy 
+RTPSPDoseHistos AVERAGE ERROR 20% = 0.0670968
+RTPSPDoseHistos AVERAGE ERROR 50% = 0.0444432
+RTPSPDoseHistos AVERAGE ERROR 90% = 0.0519075
+RTPSPDoseHistos TOTAL DOSE = 2.85506e-05 +-(REL) 0.000954271
  CreateHisto1D X_Merged = 66301
  CreateHisto1D Y_Merged = 66302
-CALLING 1N_Z Z_Merged 0 399 0 399 0 299
- FillHisto1N_Z Z_Merged nXmin 0 nXmax 399 nYmin 0 nYmax 399 nZmin 0 nZmax 299
  CreateHisto1D Z_Merged = 66303
-CALLING 1N_Z BraggPeak_1cm 195 204 195 204 0 299
- FillHisto1N_Z BraggPeak_1cm nXmin 195 nXmax 204 nYmin 195 nYmax 204 nZmin 0 nZmax 299
  CreateHisto1D BraggPeak_1cm = 66304
-CALLING 1N_Z BraggPeak_2cm 190 209 190 209 0 299
- FillHisto1N_Z BraggPeak_2cm nXmin 190 nXmax 209 nYmin 190 nYmax 209 nZmin 0 nZmax 299
  CreateHisto1D BraggPeak_2cm = 66305
-CALLING 1N_Z BraggPeak_out 190 195 190 195 0 299
- FillHisto1N_Z BraggPeak_out nXmin 190 nXmax 195 nYmin 190 nYmax 195 nZmin 0 nZmax 299
  CreateHisto1D BraggPeak_out = 66306
-CALLING 1N_Z BraggPeak_2mm 199 200 199 200 0 299
- FillHisto1N_Z BraggPeak_2mm nXmin 199 nXmax 200 nYmin 199 nYmax 200 nZmin 0 nZmax 299
  CreateHisto1D BraggPeak_2mm = 66307
- GmVPSPrinter::SetUnit GmPSPrinterSqdose 1e-12 New 1e-12 Ratio 1
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 doseHistos.a:NormalizeToNEvents
 === saving histograms in file === doseHistos.a.csv
+GAMOS ends RUN at : Fri Nov 20 18:21:54 CET 2026

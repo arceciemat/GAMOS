@@ -119,7 +119,7 @@ extern "C" {
     walking only through frames with DWARF2 exception data, so it may
     not be able to go through all C libraries.  It does seem to be
     able to signal frames on a number of platforms however.  */
-static _Unwind_Reason_Code
+static _Unwind_Reason_Code __attribute__((unused)) // fallback; unused where backtrace_symbols_fd exists
 unwindWalkStack (_Unwind_Context *ctx, void *data)
 {
     IOFD		fd = *(IOFD *) data;
@@ -749,7 +749,7 @@ DebugAids::stacktrace (IOFD fd /* = IOFD_INVALID */)
 	    ++nbufs;
 	}
 
-	writev (fd, bufs, nbufs);
+	if (writev (fd, bufs, nbufs) < 0) { /* crash handler: nothing to do */ }
     }
 
 #elif HAVE_EXCPT_H && HAVE_PDSC_H && HAVE_RLD_INTERFACE_H // tru64
@@ -948,7 +948,7 @@ DebugAids::coredump (int sig, ...)
 	if (sig == SIGUSR1)
 	    sig = SIGABRT;	// Could be SIGIOT if SIGABRT is not defined
 #endif
-	Signal::handle (sig, (Signal::HandlerType) SIG_DFL);
+	Signal::handle (sig, (Signal::HandlerType) (void (*) (void)) SIG_DFL);
 	Signal::block (sig, false);
 	Signal::raise (sig);
 

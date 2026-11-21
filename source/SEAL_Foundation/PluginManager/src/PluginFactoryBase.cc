@@ -72,3 +72,10 @@ PluginFactoryBase::rebuild (void)
 }
 
 } // namespace seal
+
+std::recursive_mutex &
+seal::PluginFactoryBase::globalMutex (void)
+{
+    static std::recursive_mutex theMutex;
+    return theMutex;
+}

@@ -18,6 +18,11 @@ GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/userAction RTPhaseSpaceUA
 /gamos/userAction GmCountTracksUA
 /run/initialize
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
 Warning : Region <targetReg> does not have specific production cuts,
 even though it appears in the current tracking world.
 Default cuts are used for this region.
@@ -33,11 +38,7 @@ Default cuts are used for this region.
 Warning : Region <jawsReg> does not have specific production cuts,
 even though it appears in the current tracking world.
 Default cuts are used for this region.
-/gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-8 1.E1 10.
-/gamos/classifier particleAndEnergyClassifier GmCompoundClassifier GmClassifierByLogicalVolume energyClassifier
-/gamos/generator/addSingleParticleSource source e- 6.*MeV
-/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
-/run/beamOn 100000
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -59,10 +60,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -76,7 +80,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -172,6 +176,96 @@ eIoni:  for e+  XStype:3  SubType=2
       StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu+ ]2:anti_nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu- ]2:nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/classifier energyClassifier GmClassifierByKineticEnergy 1.E-8 1.E1 10.
+/gamos/classifier particleAndEnergyClassifier GmCompoundClassifier GmClassifierByLogicalVolume energyClassifier
+/gamos/generator/addSingleParticleSource source e- 6.*MeV
+/gamos/generator/directionDist source GmGenerDistDirectionConst 0. 0. -1.
+/run/beamOn 100000
 
 ========= Table of registered couples ============================
 
@@ -208,242 +302,14 @@ Index : 3     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- %%% EVENT 0 NTRACKS 33 TOTAL NTRACKS 33
- RTPhaseSpaceHistos::BookHistos ALL 0
- CreateHisto1D PhaseSpace: -900: 0:ALL: X at Zstop = 760001
- CreateHisto1D PhaseSpace: -900: 0:ALL: X*10 at Zstop = 760101
- CreateHisto1D PhaseSpace: -900: 0:ALL: Y at Zstop = 760002
- CreateHisto1D PhaseSpace: -900: 0:ALL: Y*10 at Zstop = 760102
- CreateHisto2D PhaseSpace: -900: 0:ALL: XY at Zstop = 760009
- CreateHisto1D PhaseSpace: -900: 0:ALL: R at Zstop = 760003
- CreateHisto1D PhaseSpace: -900: 0:ALL: Direction Theta at Zstop = 760004
- CreateHisto1D PhaseSpace: -900: 0:ALL: Direction Phi at Zstop = 760005
- CreateHisto1D PhaseSpace: -900: 0:ALL: Energy at Zstop = 760006
- CreateHisto1D PhaseSpace: -900: 0:ALL: Energy*10 at Zstop = 760106
- CreateHisto1D PhaseSpace: -900: 0:ALL: Vx at Zstop = 760007
- CreateHisto1D PhaseSpace: -900: 0:ALL: Vy at Zstop = 760008
- CreateHisto1D PhaseSpace: -900: 0:ALL: Vz at Zstop = 760009
- CreateHisto2D PhaseSpace: -900: 0:ALL: R vs Direction Theta at Zstop = 760011
- CreateHisto2D PhaseSpace: -900: 0:ALL: R vs Energy at Zstop = 760012
- CreateHisto2D PhaseSpace: -900: 0:ALL: Direction Theta vs Energy at Zstop = 760013
- CreateHisto1D PhaseSpace: -900: 0:ALL: Weight at Zstop = 760014
- CreateHisto2D PhaseSpace: -900: 0:ALL: X vs Energy at Zstop = 760021
- CreateHisto2D PhaseSpace: -900: 0:ALL: X vs Vx at Zstop = 760022
- CreateHistoProfile1D PhaseSpace: -900: 0:ALL: X prof weight = 760030
- CreateHisto2D PhaseSpace: -900: 0:ALL: X vs log10(Weight) = 760091
- RTPhaseSpaceHistos::BookHistos gamma 0
- CreateHisto1D PhaseSpace: -900: 0:gamma: X at Zstop = 761001
- CreateHisto1D PhaseSpace: -900: 0:gamma: X*10 at Zstop = 761101
- CreateHisto1D PhaseSpace: -900: 0:gamma: Y at Zstop = 761002
- CreateHisto1D PhaseSpace: -900: 0:gamma: Y*10 at Zstop = 761102
- CreateHisto2D PhaseSpace: -900: 0:gamma: XY at Zstop = 761009
- CreateHisto1D PhaseSpace: -900: 0:gamma: R at Zstop = 761003
- CreateHisto1D PhaseSpace: -900: 0:gamma: Direction Theta at Zstop = 761004
- CreateHisto1D PhaseSpace: -900: 0:gamma: Direction Phi at Zstop = 761005
- CreateHisto1D PhaseSpace: -900: 0:gamma: Energy at Zstop = 761006
- CreateHisto1D PhaseSpace: -900: 0:gamma: Energy*10 at Zstop = 761106
- CreateHisto1D PhaseSpace: -900: 0:gamma: Vx at Zstop = 761007
- CreateHisto1D PhaseSpace: -900: 0:gamma: Vy at Zstop = 761008
- CreateHisto1D PhaseSpace: -900: 0:gamma: Vz at Zstop = 761009
- CreateHisto2D PhaseSpace: -900: 0:gamma: R vs Direction Theta at Zstop = 761011
- CreateHisto2D PhaseSpace: -900: 0:gamma: R vs Energy at Zstop = 761012
- CreateHisto2D PhaseSpace: -900: 0:gamma: Direction Theta vs Energy at Zstop = 761013
- CreateHisto1D PhaseSpace: -900: 0:gamma: Weight at Zstop = 761014
- CreateHisto2D PhaseSpace: -900: 0:gamma: X vs Energy at Zstop = 761021
- CreateHisto2D PhaseSpace: -900: 0:gamma: X vs Vx at Zstop = 761022
- CreateHistoProfile1D PhaseSpace: -900: 0:gamma: X prof weight = 761030
- CreateHisto2D PhaseSpace: -900: 0:gamma: X vs log10(Weight) = 761091
- RTPhaseSpaceHistos::BookHistos e- 0
- CreateHisto1D PhaseSpace: -900: 0:e-: X at Zstop = 762001
- CreateHisto1D PhaseSpace: -900: 0:e-: X*10 at Zstop = 762101
- CreateHisto1D PhaseSpace: -900: 0:e-: Y at Zstop = 762002
- CreateHisto1D PhaseSpace: -900: 0:e-: Y*10 at Zstop = 762102
- CreateHisto2D PhaseSpace: -900: 0:e-: XY at Zstop = 762009
- CreateHisto1D PhaseSpace: -900: 0:e-: R at Zstop = 762003
- CreateHisto1D PhaseSpace: -900: 0:e-: Direction Theta at Zstop = 762004
- CreateHisto1D PhaseSpace: -900: 0:e-: Direction Phi at Zstop = 762005
- CreateHisto1D PhaseSpace: -900: 0:e-: Energy at Zstop = 762006
- CreateHisto1D PhaseSpace: -900: 0:e-: Energy*10 at Zstop = 762106
- CreateHisto1D PhaseSpace: -900: 0:e-: Vx at Zstop = 762007
- CreateHisto1D PhaseSpace: -900: 0:e-: Vy at Zstop = 762008
- CreateHisto1D PhaseSpace: -900: 0:e-: Vz at Zstop = 762009
- CreateHisto2D PhaseSpace: -900: 0:e-: R vs Direction Theta at Zstop = 762011
- CreateHisto2D PhaseSpace: -900: 0:e-: R vs Energy at Zstop = 762012
- CreateHisto2D PhaseSpace: -900: 0:e-: Direction Theta vs Energy at Zstop = 762013
- CreateHisto1D PhaseSpace: -900: 0:e-: Weight at Zstop = 762014
- CreateHisto2D PhaseSpace: -900: 0:e-: X vs Energy at Zstop = 762021
- CreateHisto2D PhaseSpace: -900: 0:e-: X vs Vx at Zstop = 762022
- CreateHistoProfile1D PhaseSpace: -900: 0:e-: X prof weight = 762030
- CreateHisto2D PhaseSpace: -900: 0:e-: X vs log10(Weight) = 762091
- RTPhaseSpaceHistos::BookHistos e+ 0
- CreateHisto1D PhaseSpace: -900: 0:e+: X at Zstop = 763001
- CreateHisto1D PhaseSpace: -900: 0:e+: X*10 at Zstop = 763101
- CreateHisto1D PhaseSpace: -900: 0:e+: Y at Zstop = 763002
- CreateHisto1D PhaseSpace: -900: 0:e+: Y*10 at Zstop = 763102
- CreateHisto2D PhaseSpace: -900: 0:e+: XY at Zstop = 763009
- CreateHisto1D PhaseSpace: -900: 0:e+: R at Zstop = 763003
- CreateHisto1D PhaseSpace: -900: 0:e+: Direction Theta at Zstop = 763004
- CreateHisto1D PhaseSpace: -900: 0:e+: Direction Phi at Zstop = 763005
- CreateHisto1D PhaseSpace: -900: 0:e+: Energy at Zstop = 763006
- CreateHisto1D PhaseSpace: -900: 0:e+: Energy*10 at Zstop = 763106
- CreateHisto1D PhaseSpace: -900: 0:e+: Vx at Zstop = 763007
- CreateHisto1D PhaseSpace: -900: 0:e+: Vy at Zstop = 763008
- CreateHisto1D PhaseSpace: -900: 0:e+: Vz at Zstop = 763009
- CreateHisto2D PhaseSpace: -900: 0:e+: R vs Direction Theta at Zstop = 763011
- CreateHisto2D PhaseSpace: -900: 0:e+: R vs Energy at Zstop = 763012
- CreateHisto2D PhaseSpace: -900: 0:e+: Direction Theta vs Energy at Zstop = 763013
- CreateHisto1D PhaseSpace: -900: 0:e+: Weight at Zstop = 763014
- CreateHisto2D PhaseSpace: -900: 0:e+: X vs Energy at Zstop = 763021
- CreateHisto2D PhaseSpace: -900: 0:e+: X vs Vx at Zstop = 763022
- CreateHistoProfile1D PhaseSpace: -900: 0:e+: X prof weight = 763030
- CreateHisto2D PhaseSpace: -900: 0:e+: X vs log10(Weight) = 763091
- RTPhaseSpaceHistos::BookHistos neutron 0
- CreateHisto1D PhaseSpace: -900: 0:neutron: X at Zstop = 764001
- CreateHisto1D PhaseSpace: -900: 0:neutron: X*10 at Zstop = 764101
- CreateHisto1D PhaseSpace: -900: 0:neutron: Y at Zstop = 764002
- CreateHisto1D PhaseSpace: -900: 0:neutron: Y*10 at Zstop = 764102
- CreateHisto2D PhaseSpace: -900: 0:neutron: XY at Zstop = 764009
- CreateHisto1D PhaseSpace: -900: 0:neutron: R at Zstop = 764003
- CreateHisto1D PhaseSpace: -900: 0:neutron: Direction Theta at Zstop = 764004
- CreateHisto1D PhaseSpace: -900: 0:neutron: Direction Phi at Zstop = 764005
- CreateHisto1D PhaseSpace: -900: 0:neutron: Energy at Zstop = 764006
- CreateHisto1D PhaseSpace: -900: 0:neutron: Energy*10 at Zstop = 764106
- CreateHisto1D PhaseSpace: -900: 0:neutron: Vx at Zstop = 764007
- CreateHisto1D PhaseSpace: -900: 0:neutron: Vy at Zstop = 764008
- CreateHisto1D PhaseSpace: -900: 0:neutron: Vz at Zstop = 764009
- CreateHisto2D PhaseSpace: -900: 0:neutron: R vs Direction Theta at Zstop = 764011
- CreateHisto2D PhaseSpace: -900: 0:neutron: R vs Energy at Zstop = 764012
- CreateHisto2D PhaseSpace: -900: 0:neutron: Direction Theta vs Energy at Zstop = 764013
- CreateHisto1D PhaseSpace: -900: 0:neutron: Weight at Zstop = 764014
- CreateHisto2D PhaseSpace: -900: 0:neutron: X vs Energy at Zstop = 764021
- CreateHisto2D PhaseSpace: -900: 0:neutron: X vs Vx at Zstop = 764022
- CreateHistoProfile1D PhaseSpace: -900: 0:neutron: X prof weight = 764030
- CreateHisto2D PhaseSpace: -900: 0:neutron: X vs log10(Weight) = 764091
- RTPhaseSpaceHistos::BookHistos proton 0
- CreateHisto1D PhaseSpace: -900: 0:proton: X at Zstop = 765001
- CreateHisto1D PhaseSpace: -900: 0:proton: X*10 at Zstop = 765101
- CreateHisto1D PhaseSpace: -900: 0:proton: Y at Zstop = 765002
- CreateHisto1D PhaseSpace: -900: 0:proton: Y*10 at Zstop = 765102
- CreateHisto2D PhaseSpace: -900: 0:proton: XY at Zstop = 765009
- CreateHisto1D PhaseSpace: -900: 0:proton: R at Zstop = 765003
- CreateHisto1D PhaseSpace: -900: 0:proton: Direction Theta at Zstop = 765004
- CreateHisto1D PhaseSpace: -900: 0:proton: Direction Phi at Zstop = 765005
- CreateHisto1D PhaseSpace: -900: 0:proton: Energy at Zstop = 765006
- CreateHisto1D PhaseSpace: -900: 0:proton: Energy*10 at Zstop = 765106
- CreateHisto1D PhaseSpace: -900: 0:proton: Vx at Zstop = 765007
- CreateHisto1D PhaseSpace: -900: 0:proton: Vy at Zstop = 765008
- CreateHisto1D PhaseSpace: -900: 0:proton: Vz at Zstop = 765009
- CreateHisto2D PhaseSpace: -900: 0:proton: R vs Direction Theta at Zstop = 765011
- CreateHisto2D PhaseSpace: -900: 0:proton: R vs Energy at Zstop = 765012
- CreateHisto2D PhaseSpace: -900: 0:proton: Direction Theta vs Energy at Zstop = 765013
- CreateHisto1D PhaseSpace: -900: 0:proton: Weight at Zstop = 765014
- CreateHisto2D PhaseSpace: -900: 0:proton: X vs Energy at Zstop = 765021
- CreateHisto2D PhaseSpace: -900: 0:proton: X vs Vx at Zstop = 765022
- CreateHistoProfile1D PhaseSpace: -900: 0:proton: X prof weight = 765030
- CreateHisto2D PhaseSpace: -900: 0:proton: X vs log10(Weight) = 765091
- %%% EVENT 1000 NTRACKS 11 TOTAL NTRACKS 10724
- %%% EVENT 2000 NTRACKS 7 TOTAL NTRACKS 21597
- %%% EVENT 3000 NTRACKS 8 TOTAL NTRACKS 32371
- %%% EVENT 4000 NTRACKS 3 TOTAL NTRACKS 43157
- %%% EVENT 5000 NTRACKS 1 TOTAL NTRACKS 53974
- %%% EVENT 6000 NTRACKS 13 TOTAL NTRACKS 64953
- %%% EVENT 7000 NTRACKS 4 TOTAL NTRACKS 75675
- %%% EVENT 8000 NTRACKS 32 TOTAL NTRACKS 86906
- %%% EVENT 9000 NTRACKS 9 TOTAL NTRACKS 97345
- %%% EVENT 10000 NTRACKS 6 TOTAL NTRACKS 107813
- %%% EVENT 11000 NTRACKS 6 TOTAL NTRACKS 118698
- %%% EVENT 12000 NTRACKS 3 TOTAL NTRACKS 130058
- %%% EVENT 13000 NTRACKS 11 TOTAL NTRACKS 140866
- %%% EVENT 14000 NTRACKS 13 TOTAL NTRACKS 151902
- %%% EVENT 15000 NTRACKS 12 TOTAL NTRACKS 162342
- %%% EVENT 16000 NTRACKS 6 TOTAL NTRACKS 172973
- %%% EVENT 17000 NTRACKS 25 TOTAL NTRACKS 184047
- %%% EVENT 18000 NTRACKS 16 TOTAL NTRACKS 195313
- %%% EVENT 19000 NTRACKS 13 TOTAL NTRACKS 206141
- %%% EVENT 20000 NTRACKS 7 TOTAL NTRACKS 217339
- %%% EVENT 21000 NTRACKS 4 TOTAL NTRACKS 228228
- %%% EVENT 22000 NTRACKS 7 TOTAL NTRACKS 239347
- %%% EVENT 23000 NTRACKS 14 TOTAL NTRACKS 250566
- %%% EVENT 24000 NTRACKS 9 TOTAL NTRACKS 261147
- %%% EVENT 25000 NTRACKS 18 TOTAL NTRACKS 272260
- %%% EVENT 26000 NTRACKS 13 TOTAL NTRACKS 282780
- %%% EVENT 27000 NTRACKS 11 TOTAL NTRACKS 293531
- %%% EVENT 28000 NTRACKS 3 TOTAL NTRACKS 304640
- %%% EVENT 29000 NTRACKS 9 TOTAL NTRACKS 315874
- %%% EVENT 30000 NTRACKS 8 TOTAL NTRACKS 326979
- %%% EVENT 31000 NTRACKS 3 TOTAL NTRACKS 337629
- %%% EVENT 32000 NTRACKS 4 TOTAL NTRACKS 348667
- %%% EVENT 33000 NTRACKS 11 TOTAL NTRACKS 359603
- %%% EVENT 34000 NTRACKS 10 TOTAL NTRACKS 370357
- %%% EVENT 35000 NTRACKS 1 TOTAL NTRACKS 381215
- %%% EVENT 36000 NTRACKS 12 TOTAL NTRACKS 392076
- %%% EVENT 37000 NTRACKS 3 TOTAL NTRACKS 402756
- %%% EVENT 38000 NTRACKS 23 TOTAL NTRACKS 413631
- %%% EVENT 39000 NTRACKS 5 TOTAL NTRACKS 424478
- %%% EVENT 40000 NTRACKS 10 TOTAL NTRACKS 435513
- %%% EVENT 41000 NTRACKS 12 TOTAL NTRACKS 446627
- %%% EVENT 42000 NTRACKS 7 TOTAL NTRACKS 457180
- %%% EVENT 43000 NTRACKS 9 TOTAL NTRACKS 468402
- %%% EVENT 44000 NTRACKS 10 TOTAL NTRACKS 479733
- %%% EVENT 45000 NTRACKS 20 TOTAL NTRACKS 490127
- %%% EVENT 46000 NTRACKS 2 TOTAL NTRACKS 501255
- %%% EVENT 47000 NTRACKS 13 TOTAL NTRACKS 512067
- %%% EVENT 48000 NTRACKS 7 TOTAL NTRACKS 522585
- %%% EVENT 49000 NTRACKS 8 TOTAL NTRACKS 533503
- %%% EVENT 50000 NTRACKS 15 TOTAL NTRACKS 543963
- %%% EVENT 51000 NTRACKS 11 TOTAL NTRACKS 555065
- %%% EVENT 52000 NTRACKS 3 TOTAL NTRACKS 566408
- %%% EVENT 53000 NTRACKS 13 TOTAL NTRACKS 577579
- %%% EVENT 54000 NTRACKS 6 TOTAL NTRACKS 588529
- %%% EVENT 55000 NTRACKS 11 TOTAL NTRACKS 599394
- %%% EVENT 56000 NTRACKS 22 TOTAL NTRACKS 610355
- %%% EVENT 57000 NTRACKS 2 TOTAL NTRACKS 621432
- %%% EVENT 58000 NTRACKS 7 TOTAL NTRACKS 632582
- %%% EVENT 59000 NTRACKS 3 TOTAL NTRACKS 643151
- %%% EVENT 60000 NTRACKS 4 TOTAL NTRACKS 654125
- %%% EVENT 61000 NTRACKS 4 TOTAL NTRACKS 665117
- %%% EVENT 62000 NTRACKS 4 TOTAL NTRACKS 675894
- %%% EVENT 63000 NTRACKS 7 TOTAL NTRACKS 686453
- %%% EVENT 64000 NTRACKS 21 TOTAL NTRACKS 697260
- %%% EVENT 65000 NTRACKS 2 TOTAL NTRACKS 708330
- %%% EVENT 66000 NTRACKS 20 TOTAL NTRACKS 719419
- %%% EVENT 67000 NTRACKS 9 TOTAL NTRACKS 730340
- %%% EVENT 68000 NTRACKS 2 TOTAL NTRACKS 740941
- %%% EVENT 69000 NTRACKS 8 TOTAL NTRACKS 751682
- %%% EVENT 70000 NTRACKS 32 TOTAL NTRACKS 762156
- %%% EVENT 71000 NTRACKS 5 TOTAL NTRACKS 773225
- %%% EVENT 72000 NTRACKS 3 TOTAL NTRACKS 783630
- %%% EVENT 73000 NTRACKS 12 TOTAL NTRACKS 794770
- %%% EVENT 74000 NTRACKS 17 TOTAL NTRACKS 805323
- %%% EVENT 75000 NTRACKS 7 TOTAL NTRACKS 816280
- %%% EVENT 76000 NTRACKS 11 TOTAL NTRACKS 826836
- %%% EVENT 77000 NTRACKS 8 TOTAL NTRACKS 837737
- %%% EVENT 78000 NTRACKS 6 TOTAL NTRACKS 848724
- %%% EVENT 79000 NTRACKS 7 TOTAL NTRACKS 859199
- %%% EVENT 80000 NTRACKS 11 TOTAL NTRACKS 870130
- %%% EVENT 81000 NTRACKS 4 TOTAL NTRACKS 880703
- %%% EVENT 82000 NTRACKS 16 TOTAL NTRACKS 891310
- %%% EVENT 83000 NTRACKS 5 TOTAL NTRACKS 902227
- %%% EVENT 84000 NTRACKS 6 TOTAL NTRACKS 913468
- %%% EVENT 85000 NTRACKS 11 TOTAL NTRACKS 924483
- %%% EVENT 86000 NTRACKS 6 TOTAL NTRACKS 935261
- %%% EVENT 87000 NTRACKS 13 TOTAL NTRACKS 946122
- %%% EVENT 88000 NTRACKS 3 TOTAL NTRACKS 956371
- %%% EVENT 89000 NTRACKS 15 TOTAL NTRACKS 967155
- %%% EVENT 90000 NTRACKS 4 TOTAL NTRACKS 978081
- %%% EVENT 91000 NTRACKS 6 TOTAL NTRACKS 989220
- %%% EVENT 92000 NTRACKS 7 TOTAL NTRACKS 999961
- %%% EVENT 93000 NTRACKS 12 TOTAL NTRACKS 1.01105e+06
- %%% EVENT 94000 NTRACKS 2 TOTAL NTRACKS 1.02195e+06
- %%% EVENT 95000 NTRACKS 7 TOTAL NTRACKS 1.0326e+06
- %%% EVENT 96000 NTRACKS 19 TOTAL NTRACKS 1.04383e+06
- %%% EVENT 97000 NTRACKS 10 TOTAL NTRACKS 1.0547e+06
- %%% EVENT 98000 NTRACKS 14 TOTAL NTRACKS 1.06541e+06
- %%% EVENT 99000 NTRACKS 8 TOTAL NTRACKS 1.07633e+06
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 316 tasks with 316 events/task...
+============================================================================================
+
  Run terminated.
 Run Summary
   Number of events processed : 100000
-  User=4.600000s Real=4.609886s Sys=0.000000s
+  User=21.950000s Real=0.834247s Sys=0.430000s [Cpu=2682.7%]
+RTPhaseSpaceUA: phase space files of 48 threads merged into testNoOpt.IAEAphsp/.IAEAheader: 1168 particles, 100000 original histories

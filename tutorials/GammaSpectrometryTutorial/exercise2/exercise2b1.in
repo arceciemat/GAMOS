@@ -14,6 +14,8 @@
 /run/initialize
 
 /gamos/physics/addPhysics radioactiveDecay
+### Geant4 >= 11.2 does not decay nuclides with lifetime > 1 year (Co60, Cs137, Am241...) unless this threshold is increased
+/process/had/rdm/thresholdForVeryLongDecayTime 1.e+60 year
 
 ### Set generator particle distributions
 /gamos/generator/addSingleParticleSource source Co60[0.0] 0*MeV

@@ -17,9 +17,13 @@ GmEMPhysics::ReplacePhysicsList: electron-lowener is registered
 /gamos/generator GmGenerator
 /gamos/userAction GmCountProcessesUA
 /run/initialize
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
 GmPhysicsGammaLowEner::ConstructProcess 
-/gamos/generator/addSingleParticleSource source gamma 10.*MeV
-/run/beamOn 10
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -41,10 +45,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -58,7 +65,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -153,6 +160,93 @@ eIoni:  for e+  XStype:3  SubType=2
       StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu+ ]2:anti_nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu- ]2:nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/generator/addSingleParticleSource source gamma 10.*MeV
+/run/beamOn 10
 
 ========= Table of registered couples ============================
 
@@ -179,653 +273,55 @@ Index : 2     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
 
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run10035
+      issued by : G4TaskRunManager::InitializeEventLoop()
+Event modulo is reduced to 1 (was 3) to distribute events to all threads.
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
 
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0        10        0        0         0     my tube initStep
-    1    -67.3    -61.5     -100        10        0      135       135       mybox Transportation
-    2     -135     -123     -200        10        0      135       271       world Transportation
-    3     -202     -184     -300        10        0      135       406  OutOfWorld Transportation
 
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run10035
+      issued by : G4TaskRunManager::InitializeEventLoop()
+Event modulo is reduced to 1 (was 3) to distribute events to all threads.
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
 
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0        10        0        0         0     my tube initStep
-    1     52.3    -85.2     -5.4        10        0      100       100       mybox Transportation
-    2     58.1    -94.6       -6         0        0     11.1       111       mybox conv
 
-*********************************************************************************************************
-* G4Track Information:   Particle = e+,   Track ID = 3,   Parent ID = 1
-*********************************************************************************************************
+=========================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 10 tasks with 1 events/task...
+=========================================================================================
 
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     58.1    -94.6       -6      2.94        0        0         0       mybox initStep
-    1     58.5    -95.3    -6.04      2.39    0.391    0.796     0.796       mybox eIoni
-    2     60.5    -95.8    -5.64      1.43     0.96     2.69      3.49       mybox eIoni
-    3     61.2    -95.3     -4.7     0.573    0.857     2.04      5.53       mybox eIoni
-    4     60.8    -95.2    -4.56         0    0.573     1.03      6.56       mybox eIoni
-    5     60.8    -95.2    -4.56         0        0        0      6.56       mybox annihil
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 6,   Parent ID = 3
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     60.8    -95.2    -4.56     0.511        0        0         0       mybox initStep
-    1     56.9    -83.5     7.88     0.338 1.02e-05     17.5      17.5       mybox compt
-    2     57.6    -81.7     7.77     0.338        0     1.94      19.4     my tube Transportation
-    3     79.4    -30.2     4.79     0.306 1.36e-05       56      75.4     my tube compt
-    4     99.1     13.3     32.1     0.306        0       55       130       mybox Transportation
-    5      129     79.6     73.7     0.229 8.12e-05     83.9       214       mybox compt
-    6      150     72.1       94     0.229        0     30.1       244       world Transportation
-    7      300     18.2      240     0.229        0      216       460  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 6
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0      129     79.6     73.7    0.0771        0        0         0       mybox initStep
-    1      129     79.6     73.7         0   0.0771   0.0439    0.0439       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 6
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     79.4    -30.2     4.79     0.032        0        0         0     my tube initStep
-    1     79.4    -30.2     4.78         0    0.032   0.0193    0.0193     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 6
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     56.9    -83.5     7.88     0.173        0        0         0       mybox initStep
-    1     56.8    -83.5     7.92         0    0.173    0.167     0.167       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 5,   Parent ID = 3
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     60.8    -95.2    -4.56     0.511        0        0         0       mybox initStep
-    1     80.5     -150    -64.8     0.511        0     83.8      83.8       world Transportation
-    2      134     -300     -230     0.511        0      229       313  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 3
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     58.5    -95.3    -6.04     0.162        0        0         0       mybox initStep
-    1     58.5    -95.3    -6.02         0    0.162    0.151     0.151       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     58.1    -94.6       -6      6.03        0        0         0       mybox initStep
-    1     58.5    -95.6    -6.19      5.12    0.352     1.11      1.11       mybox eIoni
-    2     58.7    -96.3    -6.31      4.63    0.413    0.692       1.8       mybox eBrem
-    3     58.9    -99.7    -6.11      3.28     1.35     3.97      5.77       mybox eIoni
-    4     59.3     -101    -7.33      2.16    0.972     2.32      8.09       mybox eIoni
-    5     59.2     -103    -8.57      1.34    0.818     2.52      10.6       mybox eIoni
-    6     58.5     -103    -9.07     0.608    0.735     1.95      12.6       mybox eIoni
-    7     58.4     -104    -9.11    0.0585     0.55      1.1      13.7       mybox eIoni
-    8     58.4     -104    -9.11         0   0.0585   0.0273      13.7       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 12,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     59.3     -101    -7.33     0.146        0        0         0       mybox initStep
-    1     59.2     -101    -7.35         0    0.146    0.127     0.127       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 11,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     58.7    -96.3    -6.31    0.0769        0        0         0       mybox initStep
-    1     70.1     -106    -16.1      0.06 8.12e-05     17.7      17.7       mybox compt
-    2     64.7    -95.4    -17.5      0.06        0     11.7      29.4       mybox Rayl
-    3     55.7    -83.1    -16.8      0.06        0     15.3      44.7     my tube Transportation
-    4    -5.16   0.0637    -12.2    0.0489 0.000537      103       148     my tube compt
-    5     41.3    -54.9    -22.5         0 0.000538     72.6       220     my tube phot
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 15,   Parent ID = 11
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     41.3    -54.9    -22.5    0.0484        0        0         0     my tube initStep
-    1     41.3    -54.9    -22.5         0   0.0484     0.04      0.04     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 14,   Parent ID = 11
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -5.16   0.0637    -12.2    0.0106        0        0         0     my tube initStep
-    1    -5.16   0.0648    -12.2         0   0.0106  0.00275   0.00275     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 13,   Parent ID = 11
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     70.1     -106    -16.1    0.0167        0        0         0       mybox initStep
-    1     70.1     -106    -16.1         0   0.0167   0.0031    0.0031       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     58.5    -95.6    -6.19      0.56        0        0         0       mybox initStep
-    1     58.9    -95.7    -6.32         0     0.56    0.984     0.984       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0        10        0        0         0     my tube initStep
-    1     21.6    -1.26       14      2.53 1.36e-05     25.8      25.8     my tube compt
-    2     97.6       22       24      2.53        0     80.1       106       mybox Transportation
-    3      150       38     30.9      2.53        0     55.3       161       world Transportation
-    4      300     83.9     50.6      2.53        0      158       319  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     21.6    -1.26       14      7.47        0        0         0     my tube initStep
-    1     24.5    -1.86     16.5      6.81    0.565     3.94      3.94     my tube eIoni
-    2     32.4    -2.32     21.7      5.27     1.43     9.88      13.8     my tube eBrem
-    3     33.7    -2.03     22.3      4.05    0.254     1.47      15.3     my tube eIoni
-    4     39.2    0.447     22.6      2.97     1.08     6.41      21.7     my tube eIoni
-    5     40.2     1.36     21.9      2.37    0.309     1.52      23.2     my tube eIoni
-    6     41.8     4.64     20.8      1.69    0.682     4.22      27.4     my tube eIoni
-    7     41.7     5.18       21      1.53   0.0687    0.584        28     my tube eIoni
-    8     41.2     7.67     21.8      1.04    0.486      3.1      31.1     my tube eIoni
-    9     41.5     8.64     21.7     0.716     0.21     1.13      32.3     my tube eIoni
-   10     40.6     8.34     22.7     0.334    0.382     1.95      34.2     my tube eIoni
-   11     40.1     8.28     22.4         0    0.334        1      35.2     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     41.5     8.64     21.7     0.114        0        0         0     my tube initStep
-    1     41.5      8.7     21.7         0    0.114    0.177     0.177     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     41.7     5.18       21    0.0943        0        0         0     my tube initStep
-    1     41.8     5.19       21         0   0.0943    0.128     0.128     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 6,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     40.2     1.36     21.9      0.29        0        0         0     my tube initStep
-    1     40.4     1.31     21.6         0     0.29    0.808     0.808     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     33.7    -2.03     22.3     0.966        0        0         0     my tube initStep
-    1     34.7    -1.48     23.8     0.555    0.411     2.33      2.33     my tube eIoni
-    2     35.7    -1.33       24     0.201    0.354     1.65      3.98     my tube eIoni
-    3     35.6    -1.47     24.2         0    0.201    0.452      4.43     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 4,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     32.4    -2.32     21.7     0.109        0        0         0     my tube initStep
-    1     62.2    -10.5     41.1    0.0855 2.92e-05     36.5      36.5     my tube compt
-    2     70.7   -0.592     15.8    0.0767 1.36e-05     28.5      64.9     my tube compt
-    3     72.6    -13.8     5.48    0.0732 1.36e-05     16.9      81.8     my tube compt
-    4       65    -17.6    -21.3         0 0.000538     28.1       110     my tube phot
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 12,   Parent ID = 4
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       65    -17.6    -21.3    0.0727        0        0         0     my tube initStep
-    1       65    -17.5    -21.3         0   0.0727   0.0817    0.0817     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 4
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     72.6    -13.8     5.48   0.00347        0        0         0     my tube initStep
-    1     72.6    -13.8     5.48         0  0.00347 0.000394  0.000394     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 4
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     70.7   -0.592     15.8   0.00881        0        0         0     my tube initStep
-    1     70.7   -0.591     15.8         0  0.00881  0.00198   0.00198     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 4
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     62.2    -10.5     41.1    0.0235        0        0         0     my tube initStep
-    1     62.2    -10.5     41.1         0   0.0235   0.0112    0.0112     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     24.5    -1.86     16.5    0.0919        0        0         0     my tube initStep
-    1     24.5    -1.83     16.6         0   0.0919    0.123     0.123     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0        10        0        0         0     my tube initStep
-    1     23.7     13.6    -15.7      1.12 0.000537     31.6      31.6     my tube compt
-    2     31.9     15.3     -100      1.12        0     84.7       116       mybox Transportation
-    3     34.6     15.8     -127     0.957 4.88e-06     27.6       144       mybox compt
-    4     13.6     25.6     -200     0.957        0     76.1       220       world Transportation
-    5    -15.3       39     -300     0.957        0      105       325  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     34.6     15.8     -127     0.158        0        0         0       mybox initStep
-    1     34.7     15.8     -128         0    0.158    0.145     0.145       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     23.7     13.6    -15.7      8.88        0        0         0     my tube initStep
-    1       27     15.5    -17.4       8.1     0.67     4.15      4.15     my tube eIoni
-    2     27.1     15.6    -17.5      7.96    0.021    0.139      4.29     my tube eIoni
-    3     35.8     19.4    -23.1      6.21     1.75     11.4      15.7     my tube eIoni
-    4     41.4     21.6    -29.5      4.73     1.48     9.19      24.9     my tube eIoni
-    5     44.8     19.2    -34.7      3.69     1.03     7.02      31.9     my tube eBrem
-    6     48.8       16    -36.8      2.79    0.895     5.94      37.9     my tube eIoni
-    7     51.8     14.5    -36.2      1.47    0.584     3.59      41.5     my tube eIoni
-    8     51.9     14.6    -36.1      1.32   0.0205    0.182      41.6     my tube eIoni
-    9     53.4     14.8    -34.7     0.629    0.396     2.31      43.9     my tube eIoni
-   10       54     15.9    -34.6     0.287    0.342      1.8      45.7     my tube eIoni
-   11     54.3     15.8    -34.8         0    0.287    0.796      46.5     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     53.4     14.8    -34.7     0.295        0        0         0     my tube initStep
-    1     53.3     14.9    -34.3         0    0.295    0.831     0.831     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     51.9     14.6    -36.1     0.132        0        0         0     my tube initStep
-    1       52     14.6    -36.1         0    0.132    0.227     0.227     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     51.8     14.5    -36.2     0.735        0        0         0     my tube initStep
-    1     52.8     13.5      -36     0.353    0.383     1.98      1.98     my tube eIoni
-    2     52.3     13.2      -36    0.0662    0.287     1.09      3.07     my tube eIoni
-    3     52.3     13.2      -36         0   0.0662   0.0694      3.14     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 6,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     44.8     19.2    -34.7   0.00424        0        0         0     my tube initStep
-    1     44.9     19.2    -34.7         0 0.000538   0.0639    0.0639     my tube phot
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 6
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     44.9     19.2    -34.7    0.0037        0        0         0     my tube initStep
-    1     44.9     19.2    -34.7         0   0.0037 0.000441  0.000441     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 5,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     27.1     15.6    -17.5     0.113        0        0         0     my tube initStep
-    1     27.1     15.5    -17.6         0    0.113    0.175     0.175     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0       27     15.5    -17.4     0.117        0        0         0     my tube initStep
-    1       27     15.4    -17.4         0    0.117    0.185     0.185     my tube eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0        10        0        0         0     my tube initStep
-    1     10.4    -96.1      100        10        0      139       139       mybox Transportation
-    2     16.3     -150      156        10        0       78       217       world Transportation
-    3     31.3     -288      300        10        0      200       417  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0        10        0        0         0     my tube initStep
-    1    -99.2    -12.4    -81.1        10        0      129       129       mybox Transportation
-    2     -150    -18.7     -123        10        0     65.9       195       world Transportation
-    3     -300    -37.4     -245        10        0      195       389  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0        10        0        0         0     my tube initStep
-    1    -62.4    -28.1     -100        10        0      121       121       mybox Transportation
-    2    -71.3    -32.1     -114         0        0     17.3       138       mybox conv
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e+,   Track ID = 3,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -71.3    -32.1     -114      1.31        0        0         0       mybox initStep
-    1    -71.7    -32.2     -115     0.968    0.192    0.543     0.543       mybox eIoni
-    2    -72.2    -31.8     -115     0.354    0.614     1.63      2.18       mybox eIoni
-    3    -72.1    -31.6     -115         0    0.354    0.513      2.69       mybox eIoni
-    4    -72.1    -31.6     -115         0        0        0      2.69       mybox annihil
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 6,   Parent ID = 3
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -72.1    -31.6     -115     0.511        0        0         0       mybox initStep
-    1     -100     -5.3     -107     0.302 8.12e-05     39.3      39.3       mybox compt
-    2    -99.3    -4.07     -105      0.17 8.12e-05        2      41.3       mybox compt
-    3    -96.8    -6.09     -106     0.108 8.12e-05     3.36      44.7       mybox compt
-    4     -100    -3.44     -102         0  0.00156      6.1      50.8       mybox phot
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 10,   Parent ID = 6
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -100    -3.44     -102     0.107        0        0         0       mybox initStep
-    1     -100    -3.44     -102         0    0.107   0.0759    0.0759       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 9,   Parent ID = 6
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -96.8    -6.09     -106    0.0617        0        0         0       mybox initStep
-    1    -96.8     -6.1     -106         0   0.0617     0.03      0.03       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 8,   Parent ID = 6
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -99.3    -4.07     -105     0.132        0        0         0       mybox initStep
-    1    -99.3    -4.04     -105         0    0.132    0.107     0.107       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 7,   Parent ID = 6
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -100     -5.3     -107     0.209        0        0         0       mybox initStep
-    1     -100    -5.27     -107         0    0.209    0.227     0.227       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 5,   Parent ID = 3
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -72.1    -31.6     -115     0.511        0        0         0       mybox initStep
-    1    -65.3    -38.1     -117     0.314 0.000119     9.58      9.58       mybox compt
-    2    -63.5    -55.2     -100     0.314        0     24.2      33.7     my tube Transportation
-    3    -61.1    -79.2    -76.4     0.314        0     33.7      67.5       mybox Transportation
-    4    -60.6      -84    -71.7     0.268 0.000119     6.71      74.2       mybox compt
-    5    -45.8    -90.9    -56.7     0.252 1.02e-05     22.2      96.3       mybox compt
-    6    -25.1     -136       10     0.221 1.02e-05     83.2       180       mybox compt
-    7    -24.3     -150     13.1     0.221        0     14.1       194       world Transportation
-    8      -16     -300     46.2     0.221        0      154       348  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 14,   Parent ID = 5
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -25.1     -136       10     0.031        0        0         0       mybox initStep
-    1    -25.1     -136       10         0    0.031  0.00911   0.00911       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 13,   Parent ID = 5
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -45.8    -90.9    -56.7    0.0158        0        0         0       mybox initStep
-    1    -45.8    -90.9    -56.7         0   0.0158   0.0028    0.0028       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 12,   Parent ID = 5
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -60.6      -84    -71.7    0.0457        0        0         0       mybox initStep
-    1    -60.6      -84    -71.7         0   0.0457   0.0179    0.0179       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 11,   Parent ID = 5
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -65.3    -38.1     -117     0.197        0        0         0       mybox initStep
-    1    -65.2    -38.1     -117         0    0.197    0.206     0.206       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 4,   Parent ID = 3
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -71.7    -32.2     -115     0.148        0        0         0       mybox initStep
-    1    -71.7    -32.2     -115         0    0.148     0.13      0.13       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -71.3    -32.1     -114      7.67        0        0         0       mybox initStep
-    1    -72.3    -32.6     -117      5.14     1.25     3.34      3.34       mybox eIoni
-    2    -72.3    -33.4     -121       3.8     1.34     4.26       7.6       mybox eIoni
-    3    -72.7    -33.5     -122      2.97    0.481     1.54      9.15       mybox eBrem
-    4      -73    -33.7     -125      1.78     1.19     3.01      12.2       mybox eIoni
-    5    -74.1    -32.6     -124     0.851    0.925     2.26      14.4       mybox eIoni
-    6    -73.5    -32.6     -125    0.0963    0.755     1.48      15.9       mybox eIoni
-    7    -73.5    -32.6     -125         0   0.0963    0.064        16       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 16,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -72.7    -33.5     -122     0.347        0        0         0       mybox initStep
-    1    -75.3    -32.3     -133     0.214 0.000119       11        11       mybox compt
-    2    -18.5    -60.7     -154     0.132 8.12e-05       67        78       mybox compt
-    3    -65.8    -91.9     -155     0.122 8.12e-05     56.7       135       mybox compt
-    4     -108    -79.7     -155         0  0.00156     44.2       179       mybox phot
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 20,   Parent ID = 16
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0     -108    -79.7     -155      0.12        0        0         0       mybox initStep
-    1     -108    -79.7     -155         0     0.12   0.0923    0.0923       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 19,   Parent ID = 16
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -65.8    -91.9     -155    0.0104        0        0         0       mybox initStep
-    1    -65.8    -91.9     -155         0   0.0104  0.00135   0.00135       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 18,   Parent ID = 16
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -18.5    -60.7     -154    0.0814        0        0         0       mybox initStep
-    1    -18.5    -60.7     -154         0   0.0814   0.0481    0.0481       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 17,   Parent ID = 16
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -75.3    -32.3     -133     0.133        0        0         0       mybox initStep
-    1    -75.4    -32.3     -133         0    0.133     0.11      0.11       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 15,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -72.3    -32.6     -117      1.29        0        0         0       mybox initStep
-    1    -72.2      -32     -118     0.604    0.682     1.91      1.91       mybox eIoni
-    2    -72.2    -31.9     -119    0.0849    0.519     1.09      2.99       mybox eIoni
-    3    -72.2    -31.9     -119         0   0.0849   0.0517      3.04       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0        10        0        0         0     my tube initStep
-    1    -8.25     99.7    -3.39        10        0      100       100       mybox Transportation
-    2    -8.53      103     -3.5      8.07 8.12e-05     3.33       103       mybox compt
-    3     -7.3      150    -10.5      8.07        0     47.5       151       world Transportation
-    4     -3.4      300    -32.7      8.07        0      152       303  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -8.53      103     -3.5      1.93        0        0         0       mybox initStep
-    1    -9.87      104    -3.17     0.952    0.539     1.79      1.79       mybox eIoni
-    2    -10.5      104    -2.86     0.412     0.54      1.6      3.39       mybox eIoni
-    3    -10.3      104    -3.01         0    0.412    0.633      4.02       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -9.87      104    -3.17     0.441        0        0         0       mybox initStep
-    1    -10.1      104    -3.31         0    0.441    0.698     0.698       mybox eIoni
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0        10        0        0         0     my tube initStep
-    1    -62.5    -26.1      100        10        0      121       121       mybox Transportation
-    2     -125    -52.3      200        10        0      121       242       world Transportation
-    3     -188    -78.4      300        10        0      121       362  OutOfWorld Transportation
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0        10        0        0         0     my tube initStep
-    1     81.8     57.5    -57.2        10        0      115       115       mybox Transportation
-    2      150      105     -105        10        0       96       211       world Transportation
-    3      300      211     -210        10        0      211       422  OutOfWorld Transportation
  Run terminated.
 Run Summary
   Number of events processed : 10
-  User=0.000000s Real=0.003654s Sys=0.000000s
+  User=1.530000s Real=0.296975s Sys=0.010000s [Cpu=518.6%]
 @@@@ GmCountProcessesUA
  PART_COUNT: e+ = 2
- PART_COUNT: e- = 45
- PART_COUNT: gamma = 18
+ PART_COUNT: e- = 68
+ PART_COUNT: gamma = 24
  PROC_COUNT e+ : annihil = 2
  PROC_COUNT e+ : eIoni = 2
- PROC_COUNT e+ : eIoni_NoSeco = 5
- PROC_COUNT e+ : ALL = 9
- PROC_COUNT e- : eBrem = 4
+ PROC_COUNT e+ : eIoni_NoSeco = 12
+ PROC_COUNT e+ : ALL = 16
+ PROC_COUNT e- : eBrem = 10
  PROC_COUNT e- : eIoni = 14
- PROC_COUNT e- : eIoni_NoSeco = 68
- PROC_COUNT e- : ALL = 86
+ PROC_COUNT e- : eIoni_NoSeco = 98
+ PROC_COUNT e- : ALL = 122
  PROC_COUNT gamma : Rayl = 1
- PROC_COUNT gamma : Transportation = 37
- PROC_COUNT gamma : compt = 22
+ PROC_COUNT gamma : Transportation = 44
+ PROC_COUNT gamma : compt = 40
  PROC_COUNT gamma : conv = 2
- PROC_COUNT gamma : phot = 5
-PROC_COUNT gamma : ALL = 67
+ PROC_COUNT gamma : phot = 10
+PROC_COUNT gamma : ALL = 97
 PROC_CREATOR_COUNT e+ : conv = 2
-PROC_CREATOR_COUNT e- : compt = 22
+PROC_CREATOR_COUNT e- : compt = 40
 PROC_CREATOR_COUNT e- : conv = 2
 PROC_CREATOR_COUNT e- : eIoni = 16
-PROC_CREATOR_COUNT e- : phot = 5
+PROC_CREATOR_COUNT e- : phot = 10
 PROC_CREATOR_COUNT gamma : Primary = 10
 PROC_CREATOR_COUNT gamma : annihil = 4
-PROC_CREATOR_COUNT gamma : eBrem = 4
+PROC_CREATOR_COUNT gamma : eBrem = 10

@@ -8,36 +8,12 @@ GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
 GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/generator GmGenerator
 /run/initialize
-/gamos/generator/addSingleParticleSource source gamma 1.*MeV
-/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
-/gamos/analysis/histo1Max GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost 1.1
-/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter:DataList AccumulatedEnergyLost
-/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
-/gamos/filter comptonFilter GmProcessFilter compt
-gamma GetG4Process compt compt 0x61de33236170
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/filter comptonInGmHistoryFilter GmHistoryFilter comptonFilter
-/gamos/filter detectorEnterFilter GmEnterLogicalVolumeFilter detector
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/setParam GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/analysis/histo1Max GmStepDataHistosUA_*GmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy 1.1
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/userAction GmStepDataHistosUA comptonInGmHistoryFilter detectorEnterFilter GmPrimaryFilter
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/filter noComptonInGmHistoryFilter GmInverseFilter comptonInGmHistoryFilter
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/setParam GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
-/gamos/userAction GmStepDataHistosUA noComptonInGmHistoryFilter detectorEnterFilter GmPrimaryFilter
-/gamos/userAction GmCountProcessesUA
-GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING TrackDataHistos GmTrackDataHistosUA
-/gamos/setParam GmSecondaryGmTrackDataHistosUAUA_comptonFilter_GmPrimaryFilter:DataList InitialPrimSecoAngle
-/gamos/userAction GmSecondaryTrackDataHistosUA comptonFilter GmPrimaryFilter
-/gamos/setParam GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:DataList AngleChange
-/gamos/userAction GmStepDataHistosUA comptonFilter GmPrimaryFilter
-/run/beamOn 10000
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -59,10 +35,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -76,7 +55,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -167,6 +146,120 @@ eIoni:  for e+  XStype:3  SubType=2
       StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu+ ]2:anti_nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu- ]2:nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/generator/addSingleParticleSource source gamma 1.*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes source
+/gamos/analysis/histo1Max GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost 1.1
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter:DataList AccumulatedEnergyLost
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter
+/gamos/filter comptonFilter GmProcessFilter compt
+gamma GetG4Process compt compt 0x623d026b3720
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/filter comptonInGmHistoryFilter GmHistoryFilter comptonFilter
+/gamos/filter detectorEnterFilter GmEnterLogicalVolumeFilter detector
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/setParam GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/analysis/histo1Max GmStepDataHistosUA_*GmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy 1.1
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/userAction GmStepDataHistosUA comptonInGmHistoryFilter detectorEnterFilter GmPrimaryFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/filter noComptonInGmHistoryFilter GmInverseFilter comptonInGmHistoryFilter
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/setParam GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:DataList FinalKineticEnergy
+GmEquivalentCommandMgr::ChangeCommandPath Replace SUBSTRING HistoryFilter GmHistoryFilter
+/gamos/userAction GmStepDataHistosUA noComptonInGmHistoryFilter detectorEnterFilter GmPrimaryFilter
+/gamos/userAction GmCountProcessesUA
+/gamos/setParam GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:DataList InitialPrimSecoAngle
+/gamos/userAction GmSecondaryTrackDataHistosUA comptonFilter GmPrimaryFilter
+/gamos/setParam GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:DataList AngleChange
+/gamos/userAction GmStepDataHistosUA comptonFilter GmPrimaryFilter
+/run/beamOn 10000
 
 ========= Table of registered couples ============================
 
@@ -200,41 +293,32 @@ Index : 3     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter:AccumulatedEnergyLost = 130000001
- CreateHisto1D GmStepDataHistosUA_noComptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 112000001
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:TrackID = 473000001
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimMinusSecoKineticEnergy = 473000002
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:FinalPrimMinusSecoKineticEnergy = 473000003
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:SecoDividedInitialPrimKineticEnergy = 473000004
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:SecoKineticEnergy = 473000005
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:FinalPrimSecoAngle = 473000006
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:InitialPrimKineticEnergy = 473000007
- CreateHisto1D GmSecondaryTrackDataHistosUA_comptonFilter_GmPrimaryFilter:FinalPrimKineticEnergy = 473000008
- CreateHisto1D GmStepDataHistosUA_comptonFilter_GmPrimaryFilter:AngleChange = 359000001
- CreateHisto1D GmStepDataHistosUA_comptonInGmHistoryFilter_detectorEnterFilter_GmPrimaryFilter:FinalKineticEnergy = 995000001
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 100 tasks with 100 events/task...
+============================================================================================
+
  Run terminated.
 Run Summary
   Number of events processed : 10000
-  User=0.070000s Real=0.069040s Sys=0.000000s
+  User=2.190000s Real=0.418177s Sys=0.010000s [Cpu=526.1%]
 @@@@ GmCountProcessesUA
- PART_COUNT: e- = 474
- PART_COUNT: gamma = 10014
- PROC_COUNT e- : Transportation = 141
- PROC_COUNT e- : eBrem = 14
- PROC_COUNT e- : eIoni = 81
- PROC_COUNT e- : eIoni_NoSeco = 512
- PROC_COUNT e- : msc = 812
- PROC_COUNT e- : ALL = 1560
- PROC_COUNT gamma : Rayl = 2
- PROC_COUNT gamma : Transportation = 25085
- PROC_COUNT gamma : compt = 383
- PROC_COUNT gamma : phot = 10
-PROC_COUNT gamma : ALL = 25480
-PROC_CREATOR_COUNT e- : compt = 383
-PROC_CREATOR_COUNT e- : eIoni = 81
-PROC_CREATOR_COUNT e- : phot = 10
+ PART_COUNT: e- = 499
+ PART_COUNT: gamma = 10012
+ PROC_COUNT e- : Transportation = 128
+ PROC_COUNT e- : eBrem = 12
+ PROC_COUNT e- : eIoni = 71
+ PROC_COUNT e- : eIoni_NoSeco = 521
+ PROC_COUNT e- : msc = 789
+ PROC_COUNT e- : ALL = 1521
+ PROC_COUNT gamma : Rayl = 1
+ PROC_COUNT gamma : Transportation = 25200
+ PROC_COUNT gamma : compt = 421
+ PROC_COUNT gamma : phot = 7
+PROC_COUNT gamma : ALL = 25629
+PROC_CREATOR_COUNT e- : compt = 421
+PROC_CREATOR_COUNT e- : eIoni = 71
+PROC_CREATOR_COUNT e- : phot = 7
 PROC_CREATOR_COUNT gamma : Primary = 10000
-PROC_CREATOR_COUNT gamma : eBrem = 14
+PROC_CREATOR_COUNT gamma : eBrem = 12

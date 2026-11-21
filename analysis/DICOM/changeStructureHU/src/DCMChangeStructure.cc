@@ -459,7 +459,7 @@ void DCMChangeStructure::ChangeImagesByStruct()
   //--- LOOP TO VOXELS TO CHANGE MATERIAL OR DENSITY
   G4int nVoxels = theAnalyseImage->GetNoVoxels();
   //  G4cout << " DCMChangeStructure::ChangeImagesByStruct " << nVoxels << G4endl; //GDEB
-  StructData stData = theStructData[0]; //GDEB
+  StructData stData = theStructData[0];
   //    G4cout << " STID SEARCHED " << stData.stID << G4endl; //GDEB
   for( G4int ii = 0; ii < nVoxels; ii++ ) {
     std::set<G4int> stIDList = theStructImage->GetIDList(ii);
@@ -494,9 +494,9 @@ void DCMChangeStructure::ChangeImagesByStruct()
 		      FatalException,
 		      "Not material nor material density to be changed for one StructData");
 	}    
-	//	std::cout << ii << " " << id1 << " " << iis << " stid1 == stData.stID " << stid1 << " == " << stData.stID << std::endl; //GDEB
+	//	G4cout << ii << " " << id1 << " " << iis << " stid1 == stData.stID " << stid1 << " == " << stData.stID << std::endl; //GDEB
 	if( stid1 == stData.stID ) {
-	  //	  std::cout << ii << " stid1 FOUND " << stid1 << " -> " << stData.mateID << " " <<  stData.bOnly << " " <<nSTs << " bImageG4dcmCT " << bImageG4dcmCT << std::endl; //GDEB
+	  //	  G4cout << ii << " stid1 FOUND " << stid1 << " -> " << stData.mateID << " " <<  stData.bOnly << " " <<nSTs << " bImageG4dcmCT " << bImageG4dcmCT << std::endl; //GDEB
 	  //	  if( posZ < -867 && posZ > -871 && posY < -100 && posY > -140 ) G4cout << " CHANGE StIDLIST " << stData.bOnly << " " << nSTs << " " << bImageG4dcmCT << " " << bChangeMaterials << G4endl; //GDEB 
 
 	  if( stData.bOnly == false || nSTs == 1 ) {
@@ -527,7 +527,7 @@ void DCMChangeStructure::ChangeVoxelsPartialStruct()
   //--- LOOP TO VOXELS WITH A PERCENTAGE IN STRUCTURE 
   G4int nVoxels = theAnalyseImage->GetNoVoxels();
   //  G4cout << " DCMChangeStructure::ChangeImagesByStruct " << nVoxels << G4endl; //GDEB
-  StructData stData = theStructData[0]; //GDEB
+  StructData stData = theStructData[0];
   //    G4cout << " STID SEARCHED " << stData.stID << G4endl; //GDEB
   for( G4int ii = 0; ii < nVoxels; ii++ ) {
     std::set<G4int> stIDList = theStructImage->GetIDList(ii);
@@ -562,9 +562,9 @@ void DCMChangeStructure::ChangeVoxelsPartialStruct()
 		      FatalException,
 		      "Not material nor material density to be changed for one StructData");
 	}    
-	//	std::cout << ii << " " << id1 << " " << iis << " stid1 == stData.stID " << stid1 << " == " << stData.stID << std::endl; //GDEB
+	//	G4cout << ii << " " << id1 << " " << iis << " stid1 == stData.stID " << stid1 << " == " << stData.stID << std::endl; //GDEB
 	if( stid1 == stData.stID ) {
-	  //	  std::cout << ii << " stid1 FOUND " << stid1 << " -> " << stData.mateID << " " <<  stData.bOnly << " " <<nSTs << " bImageG4dcmCT " << bImageG4dcmCT << std::endl; //GDEB
+	  //	  G4cout << ii << " stid1 FOUND " << stid1 << " -> " << stData.mateID << " " <<  stData.bOnly << " " <<nSTs << " bImageG4dcmCT " << bImageG4dcmCT << std::endl; //GDEB
 	  //	  if( posZ < -867 && posZ > -871 && posY < -100 && posY > -140 ) G4cout << " CHANGE StIDLIST " << stData.bOnly << " " << nSTs << " " << bImageG4dcmCT << " " << bChangeMaterials << G4endl; //GDEB 
 
 	  if( stData.bOnly == false || nSTs == 1 ) {

@@ -6,6 +6,7 @@
 
 # include "PluginManager/MapUniqueIterator.h"
 # include "PluginManager/PluginFactoryBase.h"
+# include <mutex>
 # include "PluginManager/ModuleDef.h"
 # include "PluginManager/Module.h"
 # include "SealBase/DebugAids.h"
@@ -665,12 +666,12 @@ PluginFactory<R * (void)>::PluginFactory (const std::string &tag)
 template <class R>
 inline R *
 PluginFactory<R * (void)>::create (Iterator info) const
-{ return info == this->end () ? 0 : (*info)->create (); }
+{ std::lock_guard<std::recursive_mutex> sealLock (PluginFactoryBase::globalMutex ()); return info == this->end () ? 0 : (*info)->create (); }
 
 template <class R>
 inline R *
 PluginFactory<R * (void)>::create (const std::string &name) const
-{ return create (this->locate (name)); }
+{ std::lock_guard<std::recursive_mutex> sealLock (PluginFactoryBase::globalMutex ()); return create (this->locate (name)); }
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -684,12 +685,12 @@ PluginFactory<R * (T1)>::PluginFactory (const std::string &tag)
 template <class R, class T1>
 inline R *
 PluginFactory<R * (T1)>::create (Iterator info, T1 a1) const
-{ return info == this->end () ? 0 : (*info)->create (a1); }
+{ std::lock_guard<std::recursive_mutex> sealLock (PluginFactoryBase::globalMutex ()); return info == this->end () ? 0 : (*info)->create (a1); }
 
 template <class R, class T1>
 inline R *
 PluginFactory<R * (T1)>::create (const std::string &name, T1 a1) const
-{ return create (this->locate (name), a1); }
+{ std::lock_guard<std::recursive_mutex> sealLock (PluginFactoryBase::globalMutex ()); return create (this->locate (name), a1); }
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -703,12 +704,12 @@ PluginFactory<R * (T1, T2)>::PluginFactory (const std::string &tag)
 template <class R, class T1, class T2>
 inline R *
 PluginFactory<R * (T1, T2)>::create (Iterator info, T1 a1, T2 a2) const
-{ return info == this->end () ? 0 : (*info)->create (a1, a2); }
+{ std::lock_guard<std::recursive_mutex> sealLock (PluginFactoryBase::globalMutex ()); return info == this->end () ? 0 : (*info)->create (a1, a2); }
 
 template <class R, class T1, class T2>
 inline R *
 PluginFactory<R * (T1, T2)>::create (const std::string &name, T1 a1, T2 a2) const
-{ return create (this->locate (name), a1, a2); }
+{ std::lock_guard<std::recursive_mutex> sealLock (PluginFactoryBase::globalMutex ()); return create (this->locate (name), a1, a2); }
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -722,12 +723,12 @@ PluginFactory<R * (T1, T2, T3)>::PluginFactory (const std::string &tag)
 template <class R, class T1, class T2, class T3>
 inline R *
 PluginFactory<R * (T1, T2, T3)>::create (Iterator info, T1 a1, T2 a2, T3 a3) const
-{ return info == this->end () ? 0 : (*info)->create (a1, a2, a3); }
+{ std::lock_guard<std::recursive_mutex> sealLock (PluginFactoryBase::globalMutex ()); return info == this->end () ? 0 : (*info)->create (a1, a2, a3); }
 
 template <class R, class T1, class T2, class T3>
 inline R *
 PluginFactory<R * (T1, T2, T3)>::create (const std::string &name, T1 a1, T2 a2, T3 a3) const
-{ return create (this->locate (name), a1, a2, a3); }
+{ std::lock_guard<std::recursive_mutex> sealLock (PluginFactoryBase::globalMutex ()); return create (this->locate (name), a1, a2, a3); }
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -741,12 +742,12 @@ PluginFactory<R * (T1, T2, T3, T4)>::PluginFactory (const std::string &tag)
 template <class R, class T1, class T2, class T3, class T4>
 inline R *
 PluginFactory<R * (T1, T2, T3, T4)>::create (Iterator info, T1 a1, T2 a2, T3 a3, T4 a4) const
-{ return info == this->end () ? 0 : (*info)->create (a1, a2, a3, a4); }
+{ std::lock_guard<std::recursive_mutex> sealLock (PluginFactoryBase::globalMutex ()); return info == this->end () ? 0 : (*info)->create (a1, a2, a3, a4); }
 
 template <class R, class T1, class T2, class T3, class T4>
 inline R *
 PluginFactory<R * (T1, T2, T3, T4)>::create (const std::string &name, T1 a1, T2 a2, T3 a3, T4 a4) const
-{ return create (this->locate (name), a1, a2, a3, a4); }
+{ std::lock_guard<std::recursive_mutex> sealLock (PluginFactoryBase::globalMutex ()); return create (this->locate (name), a1, a2, a3, a4); }
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

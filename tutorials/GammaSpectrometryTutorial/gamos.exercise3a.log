@@ -8,26 +8,12 @@ GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
 GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/generator GmGenerator
 /run/initialize
-/gamos/physics/addPhysics radioactiveDecay
-/gamos/generator/addSingleParticleSource source Co60[0.0] 0.
-/gamos/generator/positionDist source GmGenerDistPositionPoint 0. 0. -1*cm
-/gamos/generator/timeDist source GmGenerDistTimeDecay 1E6*Bq
-/gamos/userAction GmNoUseG4RadDecayTimeUA
-/gamos/analysis/histo1Max *Energy* 3000
-/gamos/analysis/histo1NBins *Energy* 300
-/gamos/setParam SD:EnergyResol:Detector 0.03
-/gamos/SD/assocSD2LogVol GmSDSeparateByTime Detector crystal
- DeadTimeDUListByBlock: NShift 100
- GmDetUnitIDBuilderFromAncestors sdType Detector
-/gamos/SD/recHitBuilder GmRecHitBuilderByBlock Detector
-/gamos/userAction GmHitsHistosUA
-/gamos/userAction GmRecHitsHistosUA
-/gamos/userAction GmCountTracksUA
-/gamos/analysis/histo1Max *Time* 0.02
-/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter_GmClassifierByParticle:DataList InitialTime/second
-/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter GmClassifierByParticle
-/gamos/userAction GmCountProcessesUA
-/run/beamOn 10000
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -49,10 +35,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -66,7 +55,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -98,21 +87,11 @@ Type of electron single scattering model           0
 Type of nuclear form-factor                        1
 Screening factor                                   1
 =======================================================================
-======                 Atomic Deexcitation Parameters          ========
-=======================================================================
-Fluorescence enabled                               1
-Directory in G4LEDATA for fluorescence data files  fluor
-Auger electron cascade enabled                     1
-PIXE atomic de-excitation enabled                  0
-De-excitation module ignores cuts                  1
-Type of PIXE cross section for hadrons             Empirical
-Type of PIXE cross section for e+-                 Livermore
-=======================================================================
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
 ### ===  Auger flag: 1
-### ===  Ignore cuts flag:   1
+### ===  Ignore cuts flag:   0
 
 phot:  for gamma SubType=12 BuildTable=0
       LambdaPrime table from 200 keV to 100 TeV in 61 bins 
@@ -176,7 +155,7 @@ eBrem:  for e+  XStype:4  SubType=3
              eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
             eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
 
-annihil:  for e+ SubType=5 BuildTable=0
+annihil:  for e+ SubType=5 AtRestModel:Simple BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             eplus2gg : Emin=    0 eV  Emax=  100 TeV
 
@@ -202,7 +181,7 @@ hBrems:  for proton  XStype:1  SubType=3
 hPairProd:  for proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      Sampling table 17x1001, from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -221,23 +200,6 @@ ionIoni:  for GenericIon  XStype:3  SubType=2
 nuclearStopping:  for GenericIon SubType=8 BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    ICRU49NucStopping : Emin=    0 eV  Emax=   10 GeV
-======================================================================
-======          Radioactive Decay Physics Parameters           =======
-======================================================================
-min MeanLife (from G4NuclideTable)                1 ns 
-Max life time (from G4DeexPrecoParameters)        1 ns 
-Internal e- conversion flag                       1
-Stored internal conversion coefficients           0
-Enabled atomic relaxation mode                    1
-Enable correlated gamma emission                  0
-Max 2J for sampling of angular correlations       10
-Atomic de-excitation enabled                      1
-Auger electron emission enabled                   1
-Check EM cuts disabled for atomic de-excitation   1
-Use Bearden atomic level energies                 0
-Use ANSTO fluorescence model                      0
-Threshold for very long decay time at rest        3.171e+10 y  
-======================================================================
 
 msc:  for alpha  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
@@ -291,7 +253,7 @@ hBrems:  for kaon+  XStype:1  SubType=3
 hPairProd:  for kaon+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -317,7 +279,7 @@ hBrems:  for kaon-  XStype:1  SubType=3
 hPairProd:  for kaon-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -343,13 +305,13 @@ muBrems:  for mu+  XStype:1  SubType=3
 muPairProd:  for mu+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu+ XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 7 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -375,13 +337,13 @@ muBrems:  for mu-  XStype:1  SubType=3
 muPairProd:  for mu-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu- XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 7 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -407,7 +369,7 @@ hBrems:  for pi+  XStype:1  SubType=3
 hPairProd:  for pi+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      Sampling table 20x1001, from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -423,6 +385,32 @@ hIoni:  for pi-  XStype:3  SubType=2
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=297.505 keV
           BetheBloch : Emin=297.505 keV Emax=  100 TeV
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/physics/addPhysics radioactiveDecay
+/process/had/rdm/thresholdForVeryLongDecayTime 1.e+60 year
+/gamos/generator/addSingleParticleSource source Co60[0.0] 0.
+/gamos/generator/positionDist source GmGenerDistPositionPoint 0. 0. -1*cm
+/gamos/generator/timeDist source GmGenerDistTimeDecay 1E6*Bq
+/gamos/userAction GmNoUseG4RadDecayTimeUA
+/gamos/analysis/histo1Max *Energy* 3000
+/gamos/analysis/histo1NBins *Energy* 300
+/gamos/setParam SD:EnergyResol:Detector 0.03
+/gamos/SD/assocSD2LogVol GmSDSeparateByTime Detector crystal
+ DeadTimeDUListByBlock: NShift 100
+ GmDetUnitIDBuilderFromAncestors sdType Detector
+/gamos/SD/recHitBuilder GmRecHitBuilderByBlock Detector
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmRecHitsHistosUA
+/gamos/userAction GmCountTracksUA
+/gamos/analysis/histo1Max *Time* 0.02
+/gamos/setParam GmTrackDataHistosUA_GmPrimaryFilter_GmClassifierByParticle:DataList InitialTime/second
+/gamos/userAction GmTrackDataHistosUA GmPrimaryFilter GmClassifierByParticle
+/gamos/userAction GmCountProcessesUA
+/run/beamOn 10000
 
 ========= Table of registered couples ============================
 
@@ -449,58 +437,64 @@ Index : 2     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- CreateHisto1D Hits: SD ALL:Nhits = 201001
- CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
- CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
- CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
- CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
- CreateHisto1D Hits: SD ALL:N E depos = 201006
- CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
- CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
- CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
- CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
- CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
- CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
- CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
- CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
- CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
- CreateHisto1D Hits: SD Detector: Nhits = 201101
- CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
- CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
- CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
- CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
- CreateHisto1D Hits: SD Detector: N E depos = 201106
- CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
- CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
- CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
- CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
- CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
- CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
- CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
- CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
- CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
- CreateHisto1D RecHits: SD ALL:N rec hits = 202001
- CreateHisto1D RecHits: SD ALL:Energy (MeV) = 202002
- CreateHisto1D RecHits: SD ALL:Width R3 (mm) = 202003
- CreateHisto1D RecHits: SD ALL:Width Z (mm) = 202004
- CreateHisto1D RecHits: SD ALL:Width phi (deg) = 202005
- CreateHisto1D RecHits: SD ALL:N sim hits = 202006
- CreateHisto1D RecHits: SD ALL:Time span (ns) = 202007
- CreateHisto1D RecHits: SD ALL:Distance between hits (mm) = 202008
- CreateHisto1D RecHits: SD Detector: N rec hits = 202101
- CreateHisto1D RecHits: SD Detector: Energy (MeV) = 202102
- CreateHisto1D RecHits: SD Detector: Width R3 (mm) = 202103
- CreateHisto1D RecHits: SD Detector: Width Z (mm) = 202104
- CreateHisto1D RecHits: SD Detector: Width phi (deg) = 202105
- CreateHisto1D RecHits: SD Detector: N sim hits = 202106
- CreateHisto1D RecHits: SD Detector: Time span (ns) = 202107
- CreateHisto1D RecHits: SD Detector: Distance between hits (mm) = 202108
- CreateHisto1D GmTrackDataHistosUA_GmPrimaryFilter_GmClassifierByParticle:Co60:InitialTime/second = 130000101
- %%% EVENT 0 NTRACKS 12 TOTAL NTRACKS 12
-WARNING - Attempt to delete the physical volume store while geometry closed !
-WARNING - Attempt to delete the logical volume store while geometry closed !
-WARNING - Attempt to delete the solid store while geometry closed !
-WARNING - Attempt to delete the region store while geometry closed !
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 100 tasks with 100 events/task...
+============================================================================================
+
+ Run terminated.
+Run Summary
+  Number of events processed : 10000
+  User=5.480000s Real=0.215791s Sys=2.050000s [Cpu=3489.5%]
+@@@@ GmCountProcessesUA
+ PART_COUNT: Co60 = 10000
+ PART_COUNT: Ni60 = 10000
+ PART_COUNT: Ni60[1332.51400] = 10000
+ PART_COUNT: Ni60[2505.75300] = 9989
+ PART_COUNT: anti_nu_e = 10000
+ PART_COUNT: e+ = 19
+ PART_COUNT: e- = 100612
+ PART_COUNT: gamma = 22954
+ PROC_COUNT Co60 : RadioactiveDecay = 10000
+ PROC_COUNT Co60 : ALL = 10000
+ PROC_COUNT Ni60 : NoProcess = 10000
+ PROC_COUNT Ni60 : ionIoni_NoSeco = 10000
+ PROC_COUNT Ni60 : ALL = 20000
+ PROC_COUNT Ni60[1332.51400] : RadioactiveDecay = 10000
+ PROC_COUNT Ni60[1332.51400] : ALL = 10000
+ PROC_COUNT Ni60[2505.75300] : RadioactiveDecay = 9989
+ PROC_COUNT Ni60[2505.75300] : ALL = 9989
+ PROC_COUNT anti_nu_e : Transportation = 24478
+ PROC_COUNT anti_nu_e : ALL = 24478
+ PROC_COUNT e+ : annihil = 19
+ PROC_COUNT e+ : eIoni_NoSeco = 19
+ PROC_COUNT e+ : ALL = 38
+ PROC_COUNT e- : Transportation = 7187
+ PROC_COUNT e- : eBrem = 1016
+ PROC_COUNT e- : eBrem_NoSeco = 26
+ PROC_COUNT e- : eIoni = 32064
+ PROC_COUNT e- : eIoni_NoSeco = 137530
+ PROC_COUNT e- : msc = 37474
+ PROC_COUNT e- : ALL = 215297
+ PROC_COUNT gamma : Rayl = 442
+ PROC_COUNT gamma : Transportation = 45183
+ PROC_COUNT gamma : compt = 5990
+ PROC_COUNT gamma : conv = 19
+ PROC_COUNT gamma : phot = 4235
+PROC_COUNT gamma : ALL = 55869
+PROC_CREATOR_COUNT Co60 : Primary = 10000
+PROC_CREATOR_COUNT Ni60 : RadioactiveDecay = 10000
+PROC_CREATOR_COUNT Ni60[1332.51400] : RadioactiveDecay = 10000
+PROC_CREATOR_COUNT Ni60[2505.75300] : RadioactiveDecay = 9989
+PROC_CREATOR_COUNT anti_nu_e : RadioactiveDecay = 10000
+PROC_CREATOR_COUNT e+ : conv = 19
+PROC_CREATOR_COUNT e- : RadioactiveDecay = 10013
+PROC_CREATOR_COUNT e- : compt = 5986
+PROC_CREATOR_COUNT e- : conv = 19
+PROC_CREATOR_COUNT e- : eIoni = 32064
+PROC_CREATOR_COUNT e- : phot = 52530
+PROC_CREATOR_COUNT gamma : RadioactiveDecay = 19987
+PROC_CREATOR_COUNT gamma : annihil = 38
+PROC_CREATOR_COUNT gamma : eBrem = 1016
+PROC_CREATOR_COUNT gamma : phot = 1913

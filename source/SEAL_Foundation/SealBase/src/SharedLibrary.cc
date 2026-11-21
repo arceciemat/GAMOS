@@ -292,9 +292,8 @@ SharedLibrary::loaded (const InfoHandler &handler)
     char	exe [4096];
 
     memset (exe, 0, sizeof (exe));
-    if (::stat ("/proc/self/exe", &sbuf) == 0)
-	::readlink ("/proc/self/exe", exe, sizeof (exe)-1);
-    else
+    if (::stat ("/proc/self/exe", &sbuf) != 0
+	|| ::readlink ("/proc/self/exe", exe, sizeof (exe)-1) < 0)
 	STDC::strncpy (exe, program_invocation_name, sizeof (exe)-1);
 
     // Get shared libraries

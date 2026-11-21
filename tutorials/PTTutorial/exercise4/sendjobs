@@ -18,7 +18,7 @@ do
   echo " SUFFIX = $SUFFIX "
 
 ### copy the input file into a new one (so that you can keep a track of the different files that are run)
-  new_inputfile="protontherapy4c."$SUFFIX
+  new_inputfile="exercise4c."$SUFFIX
   log_inputfile=zz"_"$new_inputfile
   echo " The new input file = " $new_inputfile
 
@@ -29,7 +29,7 @@ do
     else if($1=="/gamos/generator/addSingleParticleSource") {printf("%s %s %s %s\n",$1,$2,$3,ENERGY"*MeV") }
     else if($2=="GmStepDataHistosUA_enterDetectorFilter_GmClassifierByParticle:FileName") {printf("%s %s %s\n",$1, $2, "FinalTime_enterPET."SUFFIX) } 
     else { print $0 }
-  }' "protontherapy4c.in" > $new_inputfile".inn"
+  }' "exercise4c.in" > $new_inputfile".inn"
 
 ### run job in background: ALL JOBS WILL RUN AT THE SAME TIME
 #  gamos $new_inputfile".inn" 2>&1 | tee $log_inputfile &

@@ -1,9 +1,9 @@
 @@@@@ Running GAMOS with script: exercise4b.in
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
-Warning in <TCanvas::Constructor>: Deleting canvas with same name: dd
+GAMOS starts RUN at : Fri Nov 20 22:05:40 CET 2026
 
 **************************************************************
- Geant4 version Name: geant4-11-01-patch-03    (10-November-2023)
+ Geant4 version Name: geant4-11-04-patch-03 [MT]   (01-October-2026)
+  << in Multi-threaded mode >> 
                        Copyright : Geant4 Collaboration
                       References : NIM A 506 (2003), 250-303
                                  : IEEE-TNS 53 (2006), 270-278
@@ -20,14 +20,24 @@ You have successfully registered the following graphics systems.
 Registered graphics systems are:
   ASCIITree (ATree)
   DAWNFILE (DAWNFILE)
-  G4HepRepFile (HepRepFile)
-  RayTracer (RayTracer)
+  RayTracer (RT)
   VRML2FILE (VRML2FILE)
   gMocrenFile (gMocrenFile)
-  TOOLSSG_OFFSCREEN (TSG_OFFSCREEN)
   TOOLSSG_OFFSCREEN (TSG_OFFSCREEN, TSG_FILE)
   OpenGLImmediateX (OGLIX, OGLI)
-  OpenGLStoredX (OGLSX, OGL, OGLS)
+  OpenGLStoredX (OGLSX, OGLS)
+  TOOLSSG_X11_GLES (TSG_X11_GLES, TSGX11, TSG, OGL)
+  TOOLSSG_X11_ZB (TSG_X11_ZB, TSGX11ZB, TSGZB)
+You may choose a graphics system (driver) with a parameter of
+the command "/vis/open" or "/vis/sceneHandler/create",
+or you may omit the driver parameter and choose at run time:
+- by argument in the construction of G4VisExecutive;
+- by environment variable "G4VIS_DEFAULT_DRIVER";
+- by entry in "~/.g4session";
+- by build flags.
+- Note: This feature is not allowed in batch mode.
+For further information see "examples/basic/B1/exampleB1.cc"
+and "vis.mac".
 
 Registering model factories...
 
@@ -70,19 +80,12 @@ GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
 GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/generator GmGenerator
 /run/initialize
-/gamos/physics/addPhysics radioactiveDecay
-/gamos/generator/addSingleParticleSource source Co60[0.0] 0*MeV
-/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes SOLUTION_*
-/gamos/analysis/histo1Max *Energy* 1.5
-/gamos/SD/assocSD2LogVol GmSDSimple Detector DETECTOR_Ge
- DeadTimeDUListByBlock: NShift 100
- GmDetUnitIDBuilderFromAncestors sdType Detector
-/gamos/userAction GmHitsHistosUA
-/gamos/userAction GmCountTracksUA
-/gamos/filter anti_nu_eF GmParticleFilter anti_nu_e
-/gamos/userAction GmKillAtStackingActionUA anti_nu_eF
-/gamos/physics/userLimits/setMinEKin UL1 DETECTOR_Ge e- 1000.
-/run/beamOn 100000
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -104,10 +107,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -121,7 +127,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -153,21 +159,11 @@ Type of electron single scattering model           0
 Type of nuclear form-factor                        1
 Screening factor                                   1
 =======================================================================
-======                 Atomic Deexcitation Parameters          ========
-=======================================================================
-Fluorescence enabled                               1
-Directory in G4LEDATA for fluorescence data files  fluor
-Auger electron cascade enabled                     1
-PIXE atomic de-excitation enabled                  0
-De-excitation module ignores cuts                  1
-Type of PIXE cross section for hadrons             Empirical
-Type of PIXE cross section for e+-                 Livermore
-=======================================================================
 
 ### ===  Deexcitation model UAtomDeexcitation is activated for 1 region:
           DefaultRegionForTheWorld  1  1  0
 ### ===  Auger flag: 1
-### ===  Ignore cuts flag:   1
+### ===  Ignore cuts flag:   0
 
 phot:  for gamma SubType=12 BuildTable=0
       LambdaPrime table from 200 keV to 100 TeV in 61 bins 
@@ -231,7 +227,7 @@ eBrem:  for e+  XStype:4  SubType=3
              eBremSB : Emin=    0 eV  Emax=    1 GeV  ModifiedTsai
             eBremLPM : Emin=    1 GeV Emax=  100 TeV  ModifiedTsai
 
-annihil:  for e+ SubType=5 BuildTable=0
+annihil:  for e+ SubType=5 AtRestModel:Simple BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             eplus2gg : Emin=    0 eV  Emax=  100 TeV
 
@@ -257,7 +253,7 @@ hBrems:  for proton  XStype:1  SubType=3
 hPairProd:  for proton  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 17x1001; from 7.50618 GeV to 100 TeV 
+      Sampling table 17x1001, from 7.50618 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -276,23 +272,6 @@ ionIoni:  for GenericIon  XStype:3  SubType=2
 nuclearStopping:  for GenericIon SubType=8 BuildTable=0
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
    ICRU49NucStopping : Emin=    0 eV  Emax=   10 GeV
-======================================================================
-======          Radioactive Decay Physics Parameters           =======
-======================================================================
-min MeanLife (from G4NuclideTable)                1 ns 
-Max life time (from G4DeexPrecoParameters)        1 ns 
-Internal e- conversion flag                       1
-Stored internal conversion coefficients           0
-Enabled atomic relaxation mode                    1
-Enable correlated gamma emission                  0
-Max 2J for sampling of angular correlations       10
-Atomic de-excitation enabled                      1
-Auger electron emission enabled                   1
-Check EM cuts disabled for atomic de-excitation   1
-Use Bearden atomic level energies                 0
-Use ANSTO fluorescence model                      0
-Threshold for very long decay time at rest        3.171e+10 y  
-======================================================================
 
 msc:  for alpha  SubType= 10
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
@@ -346,7 +325,7 @@ hBrems:  for kaon+  XStype:1  SubType=3
 hPairProd:  for kaon+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -372,7 +351,7 @@ hBrems:  for kaon-  XStype:1  SubType=3
 hPairProd:  for kaon-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 18x1001; from 3.94942 GeV to 100 TeV 
+      Sampling table 18x1001, from 3.94942 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -398,13 +377,13 @@ muBrems:  for mu+  XStype:1  SubType=3
 muPairProd:  for mu+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu+ XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 7 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -430,13 +409,13 @@ muBrems:  for mu-  XStype:1  SubType=3
 muPairProd:  for mu-  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 21x1001; from 0.85 GeV to 100 TeV 
+      Sampling table 21x1001, from 0.85 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
           muPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
 CoulombScat:  for mu- XStype:1 SubType=1 BuildTable=1
       Lambda table from threshold  to 100 TeV, 7 bins/decade, spline: 0
-      ThetaMin(p) < Theta(degree) < 180; pLimit(GeV^1)= 0.139531
+      ThetaMin(p) < Theta(degree) < 180, pLimit(GeV^1)= 0.139531
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
   eCoulombScattering : Emin=    0 eV  Emax=  100 TeV
 
@@ -462,7 +441,7 @@ hBrems:  for pi+  XStype:1  SubType=3
 hPairProd:  for pi+  XStype:1  SubType=4
       dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
       Lambda tables from threshold to 100 TeV, 7 bins/decade, spline: 1
-      Sampling table 20x1001; from 1.11656 GeV to 100 TeV 
+      Sampling table 20x1001, from 1.11656 GeV to 100 TeV 
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
            hPairProd : Emin=    0 eV  Emax=  100 TeV  ModifiedMephi
 
@@ -478,6 +457,25 @@ hIoni:  for pi-  XStype:3  SubType=2
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
             ICRU73QO : Emin=    0 eV  Emax=297.505 keV
           BetheBloch : Emin=297.505 keV Emax=  100 TeV
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/physics/addPhysics radioactiveDecay
+/process/had/rdm/thresholdForVeryLongDecayTime 1.e+60 year
+/gamos/generator/addSingleParticleSource source Co60[0.0] 0*MeV
+/gamos/generator/positionDist source GmGenerDistPositionInG4Volumes SOLUTION_*
+/gamos/analysis/histo1Max *Energy* 1.5
+/gamos/SD/assocSD2LogVol GmSDSimple Detector DETECTOR_Ge
+ DeadTimeDUListByBlock: NShift 100
+ GmDetUnitIDBuilderFromAncestors sdType Detector
+/gamos/userAction GmHitsHistosUA
+/gamos/userAction GmCountTracksUA
+/gamos/filter anti_nu_eF GmParticleFilter anti_nu_e
+/gamos/userAction GmKillAtStackingActionUA anti_nu_eF
+/gamos/physics/userLimits/setMinEKin UL1 DETECTOR_Ge e- 1000.
+/run/beamOn 100000
 
 ========= Table of registered couples ============================
 
@@ -518,144 +516,1654 @@ Index : 4     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
- CreateHisto1D Hits: SD ALL:Nhits = 201001
- CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
- CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
- CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
- CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
- CreateHisto1D Hits: SD ALL:N E depos = 201006
- CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
- CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
- CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
- CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
- CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
- CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
- CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
- CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
- CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
- CreateHisto1D Hits: SD Detector: Nhits = 201101
- CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
- CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
- CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
- CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
- CreateHisto1D Hits: SD Detector: N E depos = 201106
- CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
- CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
- CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
- CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
- CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
- CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
- CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
- CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
- CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
- %%% EVENT 0 NTRACKS 7 TOTAL NTRACKS 7
- %%% EVENT 1000 NTRACKS 9 TOTAL NTRACKS 9685
- %%% EVENT 2000 NTRACKS 8 TOTAL NTRACKS 18856
- %%% EVENT 3000 NTRACKS 12 TOTAL NTRACKS 28035
- %%% EVENT 4000 NTRACKS 13 TOTAL NTRACKS 37418
- %%% EVENT 5000 NTRACKS 7 TOTAL NTRACKS 46800
- %%% EVENT 6000 NTRACKS 7 TOTAL NTRACKS 56154
- %%% EVENT 7000 NTRACKS 7 TOTAL NTRACKS 65379
- %%% EVENT 8000 NTRACKS 7 TOTAL NTRACKS 74892
- %%% EVENT 9000 NTRACKS 20 TOTAL NTRACKS 84324
- %%% EVENT 10000 NTRACKS 7 TOTAL NTRACKS 93696
- %%% EVENT 11000 NTRACKS 10 TOTAL NTRACKS 103078
- %%% EVENT 12000 NTRACKS 17 TOTAL NTRACKS 112460
- %%% EVENT 13000 NTRACKS 7 TOTAL NTRACKS 121857
- %%% EVENT 14000 NTRACKS 7 TOTAL NTRACKS 131365
- %%% EVENT 15000 NTRACKS 7 TOTAL NTRACKS 140835
- %%% EVENT 16000 NTRACKS 8 TOTAL NTRACKS 150265
- %%% EVENT 17000 NTRACKS 10 TOTAL NTRACKS 159661
- %%% EVENT 18000 NTRACKS 7 TOTAL NTRACKS 169120
- %%% EVENT 19000 NTRACKS 7 TOTAL NTRACKS 178465
- %%% EVENT 20000 NTRACKS 8 TOTAL NTRACKS 187887
- %%% EVENT 21000 NTRACKS 7 TOTAL NTRACKS 197276
- %%% EVENT 22000 NTRACKS 7 TOTAL NTRACKS 206484
- %%% EVENT 23000 NTRACKS 7 TOTAL NTRACKS 215852
- %%% EVENT 24000 NTRACKS 8 TOTAL NTRACKS 225303
- %%% EVENT 25000 NTRACKS 8 TOTAL NTRACKS 234501
- %%% EVENT 26000 NTRACKS 7 TOTAL NTRACKS 243839
- %%% EVENT 27000 NTRACKS 8 TOTAL NTRACKS 253119
- %%% EVENT 28000 NTRACKS 9 TOTAL NTRACKS 262178
- %%% EVENT 29000 NTRACKS 7 TOTAL NTRACKS 271493
- %%% EVENT 30000 NTRACKS 8 TOTAL NTRACKS 280877
- %%% EVENT 31000 NTRACKS 7 TOTAL NTRACKS 290051
- %%% EVENT 32000 NTRACKS 8 TOTAL NTRACKS 299467
- %%% EVENT 33000 NTRACKS 8 TOTAL NTRACKS 308927
- %%% EVENT 34000 NTRACKS 8 TOTAL NTRACKS 318289
- %%% EVENT 35000 NTRACKS 8 TOTAL NTRACKS 327679
- %%% EVENT 36000 NTRACKS 15 TOTAL NTRACKS 337123
- %%% EVENT 37000 NTRACKS 8 TOTAL NTRACKS 346834
- %%% EVENT 38000 NTRACKS 9 TOTAL NTRACKS 356325
- %%% EVENT 39000 NTRACKS 7 TOTAL NTRACKS 365794
- %%% EVENT 40000 NTRACKS 17 TOTAL NTRACKS 375010
- %%% EVENT 41000 NTRACKS 8 TOTAL NTRACKS 384456
- %%% EVENT 42000 NTRACKS 7 TOTAL NTRACKS 393857
- %%% EVENT 43000 NTRACKS 27 TOTAL NTRACKS 403314
- %%% EVENT 44000 NTRACKS 9 TOTAL NTRACKS 412634
- %%% EVENT 45000 NTRACKS 7 TOTAL NTRACKS 422144
- %%% EVENT 46000 NTRACKS 7 TOTAL NTRACKS 431774
- %%% EVENT 47000 NTRACKS 10 TOTAL NTRACKS 441140
- %%% EVENT 48000 NTRACKS 7 TOTAL NTRACKS 450311
- %%% EVENT 49000 NTRACKS 7 TOTAL NTRACKS 459601
- %%% EVENT 50000 NTRACKS 7 TOTAL NTRACKS 468777
- %%% EVENT 51000 NTRACKS 9 TOTAL NTRACKS 478306
- %%% EVENT 52000 NTRACKS 9 TOTAL NTRACKS 487731
- %%% EVENT 53000 NTRACKS 7 TOTAL NTRACKS 497340
- %%% EVENT 54000 NTRACKS 11 TOTAL NTRACKS 506481
- %%% EVENT 55000 NTRACKS 10 TOTAL NTRACKS 515917
- %%% EVENT 56000 NTRACKS 12 TOTAL NTRACKS 525356
- %%% EVENT 57000 NTRACKS 15 TOTAL NTRACKS 534752
- %%% EVENT 58000 NTRACKS 7 TOTAL NTRACKS 544157
- %%% EVENT 59000 NTRACKS 7 TOTAL NTRACKS 553708
- %%% EVENT 60000 NTRACKS 7 TOTAL NTRACKS 563258
- %%% EVENT 61000 NTRACKS 11 TOTAL NTRACKS 572656
- %%% EVENT 62000 NTRACKS 13 TOTAL NTRACKS 581967
- %%% EVENT 63000 NTRACKS 9 TOTAL NTRACKS 591244
- %%% EVENT 64000 NTRACKS 10 TOTAL NTRACKS 600747
- %%% EVENT 65000 NTRACKS 9 TOTAL NTRACKS 610095
- %%% EVENT 66000 NTRACKS 9 TOTAL NTRACKS 619415
- %%% EVENT 67000 NTRACKS 30 TOTAL NTRACKS 628631
- %%% EVENT 68000 NTRACKS 11 TOTAL NTRACKS 638097
- %%% EVENT 69000 NTRACKS 7 TOTAL NTRACKS 647869
- %%% EVENT 70000 NTRACKS 14 TOTAL NTRACKS 657113
- %%% EVENT 71000 NTRACKS 7 TOTAL NTRACKS 666554
- %%% EVENT 72000 NTRACKS 7 TOTAL NTRACKS 676113
- %%% EVENT 73000 NTRACKS 13 TOTAL NTRACKS 685584
- %%% EVENT 74000 NTRACKS 7 TOTAL NTRACKS 695071
- %%% EVENT 75000 NTRACKS 23 TOTAL NTRACKS 704433
- %%% EVENT 76000 NTRACKS 8 TOTAL NTRACKS 713864
- %%% EVENT 77000 NTRACKS 7 TOTAL NTRACKS 723051
- %%% EVENT 78000 NTRACKS 7 TOTAL NTRACKS 732440
- %%% EVENT 79000 NTRACKS 7 TOTAL NTRACKS 741616
- %%% EVENT 80000 NTRACKS 7 TOTAL NTRACKS 750814
- %%% EVENT 81000 NTRACKS 8 TOTAL NTRACKS 760192
- %%% EVENT 82000 NTRACKS 7 TOTAL NTRACKS 769523
- %%% EVENT 83000 NTRACKS 14 TOTAL NTRACKS 778973
- %%% EVENT 84000 NTRACKS 9 TOTAL NTRACKS 788249
- %%% EVENT 85000 NTRACKS 7 TOTAL NTRACKS 797598
- %%% EVENT 86000 NTRACKS 8 TOTAL NTRACKS 806895
- %%% EVENT 87000 NTRACKS 11 TOTAL NTRACKS 816516
- %%% EVENT 88000 NTRACKS 18 TOTAL NTRACKS 825955
- %%% EVENT 89000 NTRACKS 18 TOTAL NTRACKS 835480
- %%% EVENT 90000 NTRACKS 8 TOTAL NTRACKS 844860
- %%% EVENT 91000 NTRACKS 11 TOTAL NTRACKS 854192
- %%% EVENT 92000 NTRACKS 13 TOTAL NTRACKS 863545
- %%% EVENT 93000 NTRACKS 8 TOTAL NTRACKS 872970
- %%% EVENT 94000 NTRACKS 9 TOTAL NTRACKS 882209
- %%% EVENT 95000 NTRACKS 8 TOTAL NTRACKS 891549
- %%% EVENT 96000 NTRACKS 7 TOTAL NTRACKS 900801
- %%% EVENT 97000 NTRACKS 11 TOTAL NTRACKS 910079
- %%% EVENT 98000 NTRACKS 24 TOTAL NTRACKS 919420
- %%% EVENT 99000 NTRACKS 7 TOTAL NTRACKS 928772
+G4WT34 >  DeadTimeDUListByBlock: NShift 100
+G4WT34 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT13 >  DeadTimeDUListByBlock: NShift 100
+G4WT13 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT16 >  DeadTimeDUListByBlock: NShift 100
+G4WT16 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT28 >  DeadTimeDUListByBlock: NShift 100
+G4WT28 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT36 >  DeadTimeDUListByBlock: NShift 100
+G4WT36 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT3 >  DeadTimeDUListByBlock: NShift 100
+G4WT3 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT21 >  DeadTimeDUListByBlock: NShift 100
+G4WT21 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT12 >  DeadTimeDUListByBlock: NShift 100
+G4WT12 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT45 >  DeadTimeDUListByBlock: NShift 100
+G4WT45 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT29 >  DeadTimeDUListByBlock: NShift 100
+G4WT29 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT33 >  DeadTimeDUListByBlock: NShift 100
+G4WT33 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT2 >  DeadTimeDUListByBlock: NShift 100
+G4WT2 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT44 >  DeadTimeDUListByBlock: NShift 100
+G4WT44 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT22 >  DeadTimeDUListByBlock: NShift 100
+G4WT22 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT19 >  DeadTimeDUListByBlock: NShift 100
+G4WT19 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT41 >  DeadTimeDUListByBlock: NShift 100
+G4WT41 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT1 >  DeadTimeDUListByBlock: NShift 100
+G4WT1 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT11 >  DeadTimeDUListByBlock: NShift 100
+G4WT11 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT5 >  DeadTimeDUListByBlock: NShift 100
+G4WT5 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT38 >  DeadTimeDUListByBlock: NShift 100
+G4WT38 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT32 >  DeadTimeDUListByBlock: NShift 100
+G4WT32 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT42 >  DeadTimeDUListByBlock: NShift 100
+G4WT42 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT8 >  DeadTimeDUListByBlock: NShift 100
+G4WT8 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT10 >  DeadTimeDUListByBlock: NShift 100
+G4WT10 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT31 >  DeadTimeDUListByBlock: NShift 100
+G4WT31 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT43 >  DeadTimeDUListByBlock: NShift 100
+G4WT43 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT46 >  DeadTimeDUListByBlock: NShift 100
+G4WT46 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT17 >  DeadTimeDUListByBlock: NShift 100
+G4WT17 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT37 >  DeadTimeDUListByBlock: NShift 100
+G4WT37 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT35 >  DeadTimeDUListByBlock: NShift 100
+G4WT35 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT25 >  DeadTimeDUListByBlock: NShift 100
+G4WT25 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT26 >  DeadTimeDUListByBlock: NShift 100
+G4WT26 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT4 >  DeadTimeDUListByBlock: NShift 100
+G4WT4 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT18 >  DeadTimeDUListByBlock: NShift 100
+G4WT18 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT39 >  DeadTimeDUListByBlock: NShift 100
+G4WT39 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT0 >  DeadTimeDUListByBlock: NShift 100
+G4WT0 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT47 >  DeadTimeDUListByBlock: NShift 100
+G4WT47 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT27 >  DeadTimeDUListByBlock: NShift 100
+G4WT27 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT20 >  DeadTimeDUListByBlock: NShift 100
+G4WT20 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT23 >  DeadTimeDUListByBlock: NShift 100
+G4WT23 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT15 >  DeadTimeDUListByBlock: NShift 100
+G4WT15 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT14 >  DeadTimeDUListByBlock: NShift 100
+G4WT14 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT30 >  DeadTimeDUListByBlock: NShift 100
+G4WT30 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT24 >  DeadTimeDUListByBlock: NShift 100
+G4WT24 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT7 >  DeadTimeDUListByBlock: NShift 100
+G4WT7 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT6 >  DeadTimeDUListByBlock: NShift 100
+G4WT6 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT9 >  DeadTimeDUListByBlock: NShift 100
+G4WT9 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+G4WT40 >  DeadTimeDUListByBlock: NShift 100
+G4WT40 >  GmDetUnitIDBuilderFromAncestors sdType Detector
+
+============================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 316 tasks with 316 events/task...
+============================================================================================
+
+G4WT10 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT10 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT10 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT10 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT10 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT10 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT10 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT10 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT10 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT10 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT10 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT10 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT10 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT10 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT10 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT10 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT10 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT10 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT10 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT10 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT10 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT10 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT10 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT10 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT10 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT10 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT10 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT10 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT10 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT10 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT34 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT34 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT34 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT34 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT34 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT34 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT34 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT34 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT34 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT34 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT34 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT34 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT34 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT34 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT34 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT34 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT34 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT34 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT34 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT34 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT34 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT34 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT34 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT34 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT34 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT34 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT34 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT34 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT34 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT34 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT11 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT11 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT11 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT11 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT11 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT11 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT11 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT11 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT11 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT11 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT11 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT11 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT11 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT11 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT11 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT11 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT11 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT11 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT11 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT11 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT11 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT11 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT11 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT11 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT11 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT11 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT11 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT11 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT11 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT11 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT10 >  %%% EVENT 0 NTRACKS 7 TOTAL NTRACKS 7
+G4WT43 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT43 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT43 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT43 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT43 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT43 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT43 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT43 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT43 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT43 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT43 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT43 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT43 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT43 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT43 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT43 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT43 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT43 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT43 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT43 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT43 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT43 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT43 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT43 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT43 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT43 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT43 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT43 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT43 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT43 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT5 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT5 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT5 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT5 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT5 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT5 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT5 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT5 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT5 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT5 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT5 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT5 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT5 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT5 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT5 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT5 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT5 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT5 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT5 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT5 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT5 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT5 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT5 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT5 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT5 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT5 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT5 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT5 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT5 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT5 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT27 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT27 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT27 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT27 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT27 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT27 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT27 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT27 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT27 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT27 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT27 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT27 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT27 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT27 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT27 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT27 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT27 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT27 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT27 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT27 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT27 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT27 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT27 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT27 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT27 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT27 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT27 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT27 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT27 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT27 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT0 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT0 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT0 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT0 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT0 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT0 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT0 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT0 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT0 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT0 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT0 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT0 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT0 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT0 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT0 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT0 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT0 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT0 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT0 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT0 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT0 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT0 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT0 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT0 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT0 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT0 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT0 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT0 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT0 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT0 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT23 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT23 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT23 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT23 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT23 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT23 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT23 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT23 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT23 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT23 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT23 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT23 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT23 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT14 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT23 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT23 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT23 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT14 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT14 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT14 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT23 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT23 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT14 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT23 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT23 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT14 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT23 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT23 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT23 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT14 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT23 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT23 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT14 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT23 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT23 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT26 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT23 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT14 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT23 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT14 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT26 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT23 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT26 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT26 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT14 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT14 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT14 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT14 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT14 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT26 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT14 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT26 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT14 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT26 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT14 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT26 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT14 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT14 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT26 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT26 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT14 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT14 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT14 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT26 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT26 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT14 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT26 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT14 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT26 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT14 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT14 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT26 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT26 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT14 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT14 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT26 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT14 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT26 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT26 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT26 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT26 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT26 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT26 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT35 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT26 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT26 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT35 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT35 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT26 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT35 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT26 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT35 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT35 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT26 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT35 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT26 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT35 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT35 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT26 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT35 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT35 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT35 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT35 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT35 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT35 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT35 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT35 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT35 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT35 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT35 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT35 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT35 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT35 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT35 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT35 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT35 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT35 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT35 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT35 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT35 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT4 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT4 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT4 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT4 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT38 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT4 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT4 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT4 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT4 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT38 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT38 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT38 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT4 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT4 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT38 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT38 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT38 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT38 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT4 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT4 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT38 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT38 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT40 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT4 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT33 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT38 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT38 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT40 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT40 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT40 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT4 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT4 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT4 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT33 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT33 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT33 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT38 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT40 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT40 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT40 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT4 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT40 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT4 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT4 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT4 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT33 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT33 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT33 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT33 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT38 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT38 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT38 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT40 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT40 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT4 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT4 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT4 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT33 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT33 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT38 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT38 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT38 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT38 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT40 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT40 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT4 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT4 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT4 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT4 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT33 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT33 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT38 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT38 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT38 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT40 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT4 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT4 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT33 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT38 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT20 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT38 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT40 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT40 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT40 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT4 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT33 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT33 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT33 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT20 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT20 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT38 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT20 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT38 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT40 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT40 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT40 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT40 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT33 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT33 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT33 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT33 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT20 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT20 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT38 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT20 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT38 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT20 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT20 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT20 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT40 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT13 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT40 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT33 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT40 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT33 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT33 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT38 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT20 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT20 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT13 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT13 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT13 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT40 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT40 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT33 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT33 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT20 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT13 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT13 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT13 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT40 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT13 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT40 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT33 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT33 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT41 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT20 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT29 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT20 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT20 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT13 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT40 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT13 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT40 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT33 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT33 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT41 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT41 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT29 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT29 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT41 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT29 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT20 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT13 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT40 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT20 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT13 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT20 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT33 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT20 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT41 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT29 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT29 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT41 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT29 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT29 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT41 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT13 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT41 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT20 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT20 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT20 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT29 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT29 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT13 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT13 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT13 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT41 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT41 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT20 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT20 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT29 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT29 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT2 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT13 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT13 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT13 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT13 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT41 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT41 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT20 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT29 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT20 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT2 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT12 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT2 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT19 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT12 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT12 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT29 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT13 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT29 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT13 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT12 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT41 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT13 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT2 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT25 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT29 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT20 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT19 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT20 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT12 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT19 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT30 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT12 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT19 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT41 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT29 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT13 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT29 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT12 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT13 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT29 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT2 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT12 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT25 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT41 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT42 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT41 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT25 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT20 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT30 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT19 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT30 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT19 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT30 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT19 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT19 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT13 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT44 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT25 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT41 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT2 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT41 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT2 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT41 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT30 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT2 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT15 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT29 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT36 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT42 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT41 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT25 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT42 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT13 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT19 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT42 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT2 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT25 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT44 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT12 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT15 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT19 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT44 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT15 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT36 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT46 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT41 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT44 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT12 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT13 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT15 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT2 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT37 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT29 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT32 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT36 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT19 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT30 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT32 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT30 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT13 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT44 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT42 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT46 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT12 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT3 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT24 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT19 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT37 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT36 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT30 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT37 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT32 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT44 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT6 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT19 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT3 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT36 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT29 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT36 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT25 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT29 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT36 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT19 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT19 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT12 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT19 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT46 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT13 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT12 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT46 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT37 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT19 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT19 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT12 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT19 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT46 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT12 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT37 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT42 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT46 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT37 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT25 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT3 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT28 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT36 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT6 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT29 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT16 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT30 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT6 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT32 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT30 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT19 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT6 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT15 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT30 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT39 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT30 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT19 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT2 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT19 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT25 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT6 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT29 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT25 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT8 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT16 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT29 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT25 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT44 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT12 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT8 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT8 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT24 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT12 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT22 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT42 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT12 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT32 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT46 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT22 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT17 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT22 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT3 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT19 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT41 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT30 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT17 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT41 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT19 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT17 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT6 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT3 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT17 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT25 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT6 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT1 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT8 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT24 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT12 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT1 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT15 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT12 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT32 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT2 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT22 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT12 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT39 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT47 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT28 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT18 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT16 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT47 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT29 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT44 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT41 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT30 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT3 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT29 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT18 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT42 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT3 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT8 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT24 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT1 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT8 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT1 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT31 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT15 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT32 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT1 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT15 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT24 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT39 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT1 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT36 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT32 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT28 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT15 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT47 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT36 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT28 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT15 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT36 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT29 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT36 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT6 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT29 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT18 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT36 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT3 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT37 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT18 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT6 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT8 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT12 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT6 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT8 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT12 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT18 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT22 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT24 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT6 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT19 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT22 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT1 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT9 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT41 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT19 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT25 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT47 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT41 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT30 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT41 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT9 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT30 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT28 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT15 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT41 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT42 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT36 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT15 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT42 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT36 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT31 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT7 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT18 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT45 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT39 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT7 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT24 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT7 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT39 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT16 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT30 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT24 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT30 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT32 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT1 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT22 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT24 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT17 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT44 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT32 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT24 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT44 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT46 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT32 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT28 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT37 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT32 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT3 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT36 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT32 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT3 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT15 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT12 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT8 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT12 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT18 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT8 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT15 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT12 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT16 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT30 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT12 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT8 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT19 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT45 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT12 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT22 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT17 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT41 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT2 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT45 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT24 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT41 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT2 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT28 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT24 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT31 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT28 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT31 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT21 >  CreateHisto1D Hits: SD ALL:Nhits = 201001
+G4WT36 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT39 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT28 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT7 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT39 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT6 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT39 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT18 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT1 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT16 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT1 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT16 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT7 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT1 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT18 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT1 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT7 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT18 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT17 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT44 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT1 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT46 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT44 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT18 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT1 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT1 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT32 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT37 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT3 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT32 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT36 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT37 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT28 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT3 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT21 >  CreateHisto1D Hits: SD ALL:Energy (MeV) = 201002
+G4WT15 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT37 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT21 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT3 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT15 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT28 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT21 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT19 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT28 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT3 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT16 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT3 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT16 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT7 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT3 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT42 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT7 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT2 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT2 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT46 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT7 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT2 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT46 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT7 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT18 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT1 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT32 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT45 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT36 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT18 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT39 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT8 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT25 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT37 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT18 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT45 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT6 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT18 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT19 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT37 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT15 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT21 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT19 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT6 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT37 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT16 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT6 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT37 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT3 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT37 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT24 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT3 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT37 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT3 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT37 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT7 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT30 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT37 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT32 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT7 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT39 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT25 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT47 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT25 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT39 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT12 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT39 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT45 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT17 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT39 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT15 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT9 >  CreateHisto1D Hits: SD ALL:Width R3 (mm) = 201003
+G4WT12 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT21 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT36 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT44 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT6 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT2 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT2 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT2 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT16 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT6 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT36 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT1 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT16 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT6 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT1 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT3 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT16 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT30 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT32 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT47 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT16 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT7 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT3 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT16 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT18 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT3 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT16 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT17 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT7 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT3 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT17 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT22 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT18 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT42 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT17 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT44 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT17 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT22 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT44 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT36 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT44 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT24 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT42 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT36 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT30 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT44 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT24 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT32 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT47 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT24 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT45 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT39 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT15 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT7 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT24 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT28 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT9 >  CreateHisto1D Hits: SD ALL:Width Z (mm) = 201004
+G4WT7 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT46 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT2 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT3 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT18 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT2 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT17 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT7 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT37 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT8 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT9 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT22 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT7 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT44 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT42 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT22 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT44 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT47 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT42 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT31 >  CreateHisto1D Hits: SD ALL:Width phi (deg) = 201005
+G4WT42 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT15 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT16 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT31 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT45 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT24 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT21 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT15 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT46 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT21 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT15 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT45 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT18 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT21 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT6 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT45 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT21 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT30 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT8 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT9 >  CreateHisto1D Hits: SD ALL:N E depos = 201006
+G4WT8 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT7 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT8 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT9 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT45 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT37 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT8 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT39 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT22 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT37 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT31 >  CreateHisto1D Hits: SD ALL:Time span (ns) = 201007
+G4WT16 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT37 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT1 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT24 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT16 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT37 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT24 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT3 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT16 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT15 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT24 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT25 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT18 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT24 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT25 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT30 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT36 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT21 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT25 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT44 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT7 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT8 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT47 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT8 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT42 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT8 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT47 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT7 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT31 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT8 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT7 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT47 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT1 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT47 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT46 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT37 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT47 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT1 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT6 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT1 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT37 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT24 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT32 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT37 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT30 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT32 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT6 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT18 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT24 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT9 >  CreateHisto1D Hits: SD ALL:Distance between hits (mm) = 201008
+G4WT21 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT24 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT45 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT42 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT39 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT22 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT21 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT24 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT7 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT17 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT22 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT46 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT17 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT16 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT46 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT7 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT3 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT15 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT46 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT25 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT46 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT37 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT46 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT25 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT46 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT18 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT44 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT46 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT44 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT8 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT39 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT8 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT2 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT21 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT8 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT45 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT21 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT21 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT22 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT17 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT1 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT31 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT16 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT17 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT1 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT7 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT22 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT15 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT30 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT30 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT22 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT7 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT25 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT30 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT22 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT42 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT9 >  CreateHisto1D Hits: SD ALL:X hit (mm) = 201011
+G4WT42 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT22 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT44 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT24 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT18 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT42 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT8 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT22 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT44 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT42 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT21 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT44 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT42 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT45 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT21 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT18 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT36 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT17 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT6 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT18 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT45 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT15 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT7 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT25 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT15 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT9 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT46 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT25 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT47 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT2 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT24 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT15 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT47 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT22 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT24 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT8 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT44 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT21 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT42 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT21 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT42 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT17 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT30 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT21 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT42 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT36 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT42 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT36 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT45 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT42 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT28 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT36 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT18 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT39 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT25 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT46 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT18 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT7 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT31 >  CreateHisto1D Hits: SD ALL:Y hit (mm) = 201012
+G4WT46 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT1 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT47 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT32 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT18 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT1 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT32 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT8 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT1 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT31 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT37 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT3 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT31 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT21 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT6 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT42 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT21 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT31 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT36 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT3 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT25 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT45 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT25 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT9 >  CreateHisto1D Hits: SD ALL:Z hit (mm) = 201013
+G4WT31 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT25 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT7 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT9 >  CreateHisto1D Hits: SD ALL:R2 hit (mm) = 201014
+G4WT18 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT16 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT7 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT24 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT18 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT16 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT8 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT16 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT17 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT30 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT37 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT17 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT17 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT17 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT42 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT6 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT3 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT46 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT36 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT46 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT3 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT15 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT45 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT22 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT15 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT31 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT9 >  CreateHisto1D Hits: SD ALL:PHI hit (deg) = 201015
+G4WT32 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT31 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT32 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT16 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT9 >  CreateHisto1D Hits: SD ALL:THETA hit (deg) = 201016
+G4WT32 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT31 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT21 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT17 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT31 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT39 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT31 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT31 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT47 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT39 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT31 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT47 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT45 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT22 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT39 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT39 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT45 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT22 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT28 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT16 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT22 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT45 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT9 >  CreateHisto1D Hits: SD ALL:R3 hit (mm) = 201017
+G4WT22 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT6 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT45 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT21 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT17 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT45 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT25 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT6 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT17 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT47 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT1 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT39 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT8 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT28 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT45 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT44 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT8 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT45 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT9 >  CreateHisto1D Hits: SD Detector: Nhits = 201101
+G4WT22 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT46 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT21 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT22 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT17 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT6 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT2 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT47 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT9 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT22 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT17 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT9 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT16 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT17 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT9 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT44 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT31 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT9 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT44 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT46 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT32 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT31 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT39 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT46 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT6 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT32 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT47 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT16 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT6 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT46 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT47 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT25 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT17 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT47 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT6 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT9 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT39 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT28 >  CreateHisto1D Hits: SD Detector: Energy (MeV) = 201102
+G4WT9 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT39 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT39 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT21 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT9 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT16 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT44 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT39 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT2 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT47 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT32 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT2 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT28 >  CreateHisto1D Hits: SD Detector: Width R3 (mm) = 201103
+G4WT31 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT39 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT2 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT1 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT39 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT9 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT32 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT47 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT28 >  CreateHisto1D Hits: SD Detector: Width Z (mm) = 201104
+G4WT21 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT2 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT28 >  CreateHisto1D Hits: SD Detector: Width phi (deg) = 201105
+G4WT1 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT47 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT31 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT9 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT28 >  CreateHisto1D Hits: SD Detector: N E depos = 201106
+G4WT21 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT28 >  CreateHisto1D Hits: SD Detector: Time span (ns) = 201107
+G4WT2 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT28 >  CreateHisto1D Hits: SD Detector: Distance between hits (mm) = 201108
+G4WT21 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT31 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT28 >  CreateHisto1D Hits: SD Detector: X hit (mm) = 201111
+G4WT45 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT9 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT31 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT9 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT28 >  CreateHisto1D Hits: SD Detector: Y hit (mm) = 201112
+G4WT31 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT9 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT31 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT47 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT45 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT28 >  CreateHisto1D Hits: SD Detector: Z hit (mm) = 201113
+G4WT28 >  CreateHisto1D Hits: SD Detector: R2 hit (mm) = 201114
+G4WT31 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT47 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT9 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT47 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT45 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT28 >  CreateHisto1D Hits: SD Detector: PHI hit (deg) = 201115
+G4WT28 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT45 >  CreateHisto1D Hits: SD Detector: THETA hit (deg) = 201116
+G4WT47 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT9 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT28 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT45 >  CreateHisto1D Hits: SD Detector: R3 hit (mm) = 201117
+G4WT43 >  %%% EVENT 1000 NTRACKS 13 TOTAL NTRACKS 487
+G4WT24 >  %%% EVENT 7000 NTRACKS 9 TOTAL NTRACKS 422
+G4WT2 >  %%% EVENT 13000 NTRACKS 8 TOTAL NTRACKS 401
+G4WT37 >  %%% EVENT 8000 NTRACKS 12 TOTAL NTRACKS 970
+G4WT9 >  %%% EVENT 14000 NTRACKS 17 TOTAL NTRACKS 889
+G4WT0 >  %%% EVENT 2000 NTRACKS 10 TOTAL NTRACKS 1036
+G4WT26 >  %%% EVENT 3000 NTRACKS 7 TOTAL NTRACKS 1547
+G4WT46 >  %%% EVENT 15000 NTRACKS 10 TOTAL NTRACKS 1375
+G4WT36 >  %%% EVENT 9000 NTRACKS 9 TOTAL NTRACKS 1489
+G4WT38 >  %%% EVENT 4000 NTRACKS 7 TOTAL NTRACKS 2002
+G4WT22 >  %%% EVENT 10000 NTRACKS 7 TOTAL NTRACKS 1930
+G4WT17 >  %%% EVENT 11000 NTRACKS 8 TOTAL NTRACKS 2441
+G4WT20 >  %%% EVENT 5000 NTRACKS 11 TOTAL NTRACKS 2414
+G4WT41 >  %%% EVENT 6000 NTRACKS 11 TOTAL NTRACKS 2848
+G4WT40 >  %%% EVENT 19000 NTRACKS 8 TOTAL NTRACKS 3358
+G4WT44 >  %%% EVENT 12000 NTRACKS 11 TOTAL NTRACKS 2840
+G4WT6 >  %%% EVENT 25000 NTRACKS 10 TOTAL NTRACKS 3350
+G4WT24 >  %%% EVENT 20000 NTRACKS 10 TOTAL NTRACKS 3831
+G4WT46 >  %%% EVENT 26000 NTRACKS 7 TOTAL NTRACKS 3853
+G4WT21 >  %%% EVENT 21000 NTRACKS 7 TOTAL NTRACKS 4343
+G4WT43 >  %%% EVENT 16000 NTRACKS 9 TOTAL NTRACKS 4860
+G4WT20 >  %%% EVENT 27000 NTRACKS 8 TOTAL NTRACKS 4291
+G4WT29 >  %%% EVENT 22000 NTRACKS 7 TOTAL NTRACKS 4784
+G4WT23 >  %%% EVENT 17000 NTRACKS 17 TOTAL NTRACKS 5261
+G4WT45 >  %%% EVENT 28000 NTRACKS 8 TOTAL NTRACKS 4596
+G4WT18 >  %%% EVENT 23000 NTRACKS 7 TOTAL NTRACKS 5328
+G4WT33 >  %%% EVENT 18000 NTRACKS 8 TOTAL NTRACKS 5789
+G4WT47 >  %%% EVENT 29000 NTRACKS 17 TOTAL NTRACKS 5413
+G4WT5 >  %%% EVENT 31000 NTRACKS 9 TOTAL NTRACKS 6096
+G4WT38 >  %%% EVENT 24000 NTRACKS 21 TOTAL NTRACKS 5862
+G4WT37 >  %%% EVENT 37000 NTRACKS 14 TOTAL NTRACKS 6226
+G4WT8 >  %%% EVENT 30000 NTRACKS 7 TOTAL NTRACKS 5792
+G4WT34 >  %%% EVENT 32000 NTRACKS 7 TOTAL NTRACKS 6800
+G4WT3 >  %%% EVENT 43000 NTRACKS 10 TOTAL NTRACKS 6158
+G4WT18 >  %%% EVENT 38000 NTRACKS 8 TOTAL NTRACKS 6718
+G4WT33 >  %%% EVENT 33000 NTRACKS 10 TOTAL NTRACKS 7134
+G4WT7 >  %%% EVENT 44000 NTRACKS 14 TOTAL NTRACKS 6806
+G4WT38 >  %%% EVENT 39000 NTRACKS 9 TOTAL NTRACKS 7235
+G4WT10 >  %%% EVENT 34000 NTRACKS 7 TOTAL NTRACKS 7575
+G4WT8 >  %%% EVENT 45000 NTRACKS 10 TOTAL NTRACKS 7238
+G4WT6 >  %%% EVENT 40000 NTRACKS 7 TOTAL NTRACKS 7809
+G4WT40 >  %%% EVENT 35000 NTRACKS 7 TOTAL NTRACKS 8289
+G4WT45 >  %%% EVENT 41000 NTRACKS 9 TOTAL NTRACKS 7914
+G4WT30 >  %%% EVENT 46000 NTRACKS 11 TOTAL NTRACKS 10437
+G4WT21 >  %%% EVENT 36000 NTRACKS 9 TOTAL NTRACKS 8632
+G4WT20 >  %%% EVENT 42000 NTRACKS 17 TOTAL NTRACKS 8596
+G4WT28 >  %%% EVENT 49000 NTRACKS 8 TOTAL NTRACKS 8896
+G4WT12 >  %%% EVENT 55000 NTRACKS 24 TOTAL NTRACKS 9278
+G4WT19 >  %%% EVENT 50000 NTRACKS 7 TOTAL NTRACKS 9575
+G4WT26 >  %%% EVENT 56000 NTRACKS 7 TOTAL NTRACKS 9596
+G4WT36 >  %%% EVENT 61000 NTRACKS 7 TOTAL NTRACKS 9108
+G4WT21 >  %%% EVENT 51000 NTRACKS 9 TOTAL NTRACKS 10084
+G4WT46 >  %%% EVENT 57000 NTRACKS 20 TOTAL NTRACKS 10061
+G4WT9 >  %%% EVENT 52000 NTRACKS 8 TOTAL NTRACKS 10616
+G4WT11 >  %%% EVENT 47000 NTRACKS 13 TOTAL NTRACKS 11084
+G4WT32 >  %%% EVENT 58000 NTRACKS 18 TOTAL NTRACKS 10497
+G4WT15 >  %%% EVENT 53000 NTRACKS 10 TOTAL NTRACKS 11014
+G4WT34 >  %%% EVENT 48000 NTRACKS 7 TOTAL NTRACKS 11547
+G4WT47 >  %%% EVENT 59000 NTRACKS 7 TOTAL NTRACKS 11023
+G4WT25 >  %%% EVENT 60000 NTRACKS 8 TOTAL NTRACKS 14516
+G4WT38 >  %%% EVENT 54000 NTRACKS 8 TOTAL NTRACKS 11568
+G4WT9 >  %%% EVENT 67000 NTRACKS 7 TOTAL NTRACKS 11942
+G4WT11 >  %%% EVENT 62000 NTRACKS 7 TOTAL NTRACKS 12550
+G4WT46 >  %%% EVENT 73000 NTRACKS 7 TOTAL NTRACKS 11976
+G4WT18 >  %%% EVENT 68000 NTRACKS 7 TOTAL NTRACKS 12501
+G4WT25 >  %%% EVENT 69000 NTRACKS 7 TOTAL NTRACKS 15963
+G4WT34 >  %%% EVENT 63000 NTRACKS 7 TOTAL NTRACKS 12962
+G4WT14 >  %%% EVENT 74000 NTRACKS 7 TOTAL NTRACKS 12339
+G4WT23 >  %%% EVENT 64000 NTRACKS 7 TOTAL NTRACKS 13351
+G4WT47 >  %%% EVENT 75000 NTRACKS 12 TOTAL NTRACKS 12901
+G4WT22 >  %%% EVENT 70000 NTRACKS 7 TOTAL NTRACKS 13424
+G4WT1 >  %%% EVENT 65000 NTRACKS 11 TOTAL NTRACKS 13790
+G4WT17 >  %%% EVENT 71000 NTRACKS 12 TOTAL NTRACKS 13949
+G4WT8 >  %%% EVENT 76000 NTRACKS 8 TOTAL NTRACKS 13475
+G4WT13 >  %%% EVENT 66000 NTRACKS 7 TOTAL NTRACKS 14410
+G4WT43 >  %%% EVENT 79000 NTRACKS 35 TOTAL NTRACKS 14796
+G4WT20 >  %%% EVENT 72000 NTRACKS 8 TOTAL NTRACKS 14478
+G4WT16 >  %%% EVENT 80000 NTRACKS 9 TOTAL NTRACKS 15221
+G4WT17 >  %%% EVENT 86000 NTRACKS 18 TOTAL NTRACKS 15320
+G4WT19 >  %%% EVENT 81000 NTRACKS 7 TOTAL NTRACKS 15641
+G4WT30 >  %%% EVENT 77000 NTRACKS 7 TOTAL NTRACKS 19633
+G4WT0 >  %%% EVENT 87000 NTRACKS 10 TOTAL NTRACKS 15729
+G4WT23 >  %%% EVENT 82000 NTRACKS 7 TOTAL NTRACKS 16257
+G4WT29 >  %%% EVENT 83000 NTRACKS 7 TOTAL NTRACKS 16644
+G4WT44 >  %%% EVENT 88000 NTRACKS 7 TOTAL NTRACKS 16088
+G4WT11 >  %%% EVENT 78000 NTRACKS 8 TOTAL NTRACKS 17290
+G4WT30 >  %%% EVENT 92000 NTRACKS 7 TOTAL NTRACKS 21044
+G4WT39 >  %%% EVENT 89000 NTRACKS 7 TOTAL NTRACKS 16758
+G4WT18 >  %%% EVENT 84000 NTRACKS 9 TOTAL NTRACKS 17492
+G4WT47 >  %%% EVENT 90000 NTRACKS 7 TOTAL NTRACKS 17170
+G4WT6 >  %%% EVENT 85000 NTRACKS 12 TOTAL NTRACKS 17838
+G4WT5 >  %%% EVENT 98000 NTRACKS 8 TOTAL NTRACKS 18033
+G4WT11 >  %%% EVENT 93000 NTRACKS 7 TOTAL NTRACKS 18640
+G4WT7 >  %%% EVENT 91000 NTRACKS 26 TOTAL NTRACKS 18060
+G4WT10 >  %%% EVENT 94000 NTRACKS 7 TOTAL NTRACKS 19147
+G4WT43 >  %%% EVENT 99000 NTRACKS 7 TOTAL NTRACKS 18572
+G4WT9 >  %%% EVENT 97000 NTRACKS 8 TOTAL NTRACKS 20592
+G4WT2 >  %%% EVENT 95000 NTRACKS 11 TOTAL NTRACKS 19802
+G4WT1 >  %%% EVENT 96000 NTRACKS 7 TOTAL NTRACKS 20120
  Run terminated.
 Run Summary
   Number of events processed : 100000
-  User=3.750000s Real=3.792989s Sys=0.000000s
+  User=21.580000s Real=0.564459s Sys=1.580000s [Cpu=4103.0%]
 Graphics systems deleted.
 Visualization Manager deleting...
  GmAnalysisMgr::~GmAnalysisMgr( bNormalizeToNEvents 1 hits.exercise4b:NormalizeToNEvents
 === saving histograms in file === hits.exercise4b.csv
+GAMOS ends RUN at : Fri Nov 20 22:05:41 CET 2026

@@ -21,12 +21,13 @@
 # GEANT4 INITIALISATION
 /run/initialize
 
-# ACTIVATE DECAYS
-/gamos/physics/addPhysics radioactiveDecay
-
 #---------- exercise 3d ----------
 # SWITCH OFF NUCLEAR REACTIONS
-/gamos/physics/removeProcessesByType Hadronic
+/process/inactivate hadElastic proton
+/process/inactivate protonInelastic proton
+/process/inactivate nuclearStopping proton
+#/control/manual
+#/gamos/physics/removeProcessesByType Hadronic
 #---------------------------------
 
 # SOURCE

@@ -4,17 +4,19 @@
 /gamos/geometry GmGeometryUseMaterials
 /gamos/physicsList G4QGSP_BIC_HP
 
-/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nEventsPerRun 10000
-/gamos/setParam GmGeneratorChangeEnergyAndMaterial:minE 1.E-9*MeV
-/gamos/setParam GmGeneratorChangeEnergyAndMaterial:maxE 10.*MeV
-/gamos/setParam GmGeneratorChangeEnergyAndMaterial:nStepsE 11
-/gamos/setParam GmGeneratorChangeEnergyAndMaterial:logE 1
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:NEventsPerRun 10000
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:MinE 1.E-9*MeV
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:MaxE 10.*MeV
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:NStepsE 11
+/gamos/setParam GmGeneratorChangeEnergyAndMaterial:LogE 1
 /gamos/generator GmGeneratorChangeEnergyAndMaterial
 
 /run/initialize
 
-/gamos/physics/removeProcessesByType Electromagnetic
-/gamos/physics/removeProcessesByName hadElastic
+/process/inactivate hadElastic
+/process/inactivate Electromagnetic
+#/gamos/physics/removeProcessesByType Electromagnetic
+#/gamos/physics/removeProcessesByName hadElastic
 
 /gamos/generator/addSingleParticleSource source neutron 1.*MeV
 

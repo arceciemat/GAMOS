@@ -1,19 +1,28 @@
-# - GAMOS_analysis_DICOM_drawDICOM2 module build definition
+# - drawDICOM2 module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_DICOM_drawDICOM2
+gamos_add_module(drawDICOM2
   PUBLIC_HEADERS
     DCMDrawDICOM2.hh
   SOURCES
     DCMDrawDICOM2.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_DICOM_drawDICOM2
+
+gamos_module_link_libraries(drawDICOM2
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
     DICOMBase
-    DICOM2G4
     DICOMReaders
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosBase_Base
+    GamosCore_GamosUtils
+)
+
+# Program drawDICOM2
+gamos_add_executable(drawDICOM2
+  SOURCES
+    drawDICOM2.cc
+  LINK_LIBRARIES
+    drawDICOM2
+    DICOMBase
+    DICOMReaders
+    GamosCore_GamosBase_Base
+    GamosCore_GamosUtils
 )

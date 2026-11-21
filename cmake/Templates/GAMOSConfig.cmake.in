@@ -1,0 +1,67 @@
+# GAMOSConfig.cmake: configuration of an installed GAMOS @PROJECT_VERSION@, for
+#   find_package(GAMOS REQUIRED)
+#
+# It defines (as Geant4Config.cmake):
+#   GAMOS_FOUND, GAMOS_VERSION
+#   GAMOS_INCLUDE_DIRS   : include directory (<prefix>/include/GAMOS)
+#   GAMOS_LIBRARIES      : all the GAMOS libraries (imported targets GAMOS::<library>)
+#   GAMOS_DEFINITIONS    : compile definitions used to build GAMOS
+#   GAMOS_DATA_DIR       : GAMOS data files (<GAMOS source dir>/data, not installed)
+#   GAMOS_MODULE_DIR     : directory of the SEAL plugin registrations (SEAL_PLUGINS)
+#   GAMOS_USE_ROOT, GAMOS_USE_DCMTK
+# Geant4 (and ROOT and DCMTK, if GAMOS uses them) are also found.
+#
+# Example:
+#   find_package(GAMOS REQUIRED)
+#   add_executable(myapp myapp.cc)
+#   target_link_libraries(myapp ${GAMOS_LIBRARIES})
+
+@PACKAGE_INIT@
+
+# GAMOS paths (computed before finding the dependencies, as their configuration
+# files redefine PACKAGE_PREFIX_DIR)
+set_and_check(GAMOS_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@/GAMOS")
+set(GAMOS_DATA_DIR "@PROJECT_SOURCE_DIR@/data")
+set(GAMOS_MODULE_DIR "@PACKAGE_GAMOS_INSTALL_MODULEDIR@")
+
+include(CMakeFindDependencyMacro)
+
+set(GAMOS_VERSION @PROJECT_VERSION@)
+set(GAMOS_USE_ROOT @GAMOS_USE_ROOT@)
+set(GAMOS_USE_DCMTK @GAMOS_USE_DCMTK@)
+
+if(NOT Geant4_DIR)
+  set(Geant4_DIR "@Geant4_DIR@")
+endif()
+find_dependency(Geant4 @Geant4_VERSION@ EXACT COMPONENTS ui_all vis_all)
+find_dependency(Threads)
+if(GAMOS_USE_ROOT)
+  if(NOT ROOT_DIR)
+    set(ROOT_DIR "@ROOT_DIR@")
+  endif()
+  find_dependency(ROOT)
+endif()
+if(GAMOS_USE_DCMTK)
+  if(NOT DCMTK_DIR)
+    set(DCMTK_DIR "@DCMTK_DIR@")
+  endif()
+  find_dependency(DCMTK CONFIG)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/GAMOSLibraryDepends.cmake")
+
+set(GAMOS_INCLUDE_DIRS ${GAMOS_INCLUDE_DIR} ${Geant4_INCLUDE_DIRS})
+if(GAMOS_USE_DCMTK)
+  list(APPEND GAMOS_INCLUDE_DIRS ${DCMTK_INCLUDE_DIRS})
+endif()
+if(GAMOS_USE_ROOT)
+  list(APPEND GAMOS_INCLUDE_DIRS ${ROOT_INCLUDE_DIRS})
+endif()
+set(GAMOS_DEFINITIONS @GAMOS_COMPILE_DEFINITIONS@)
+
+set(GAMOS_LIBRARIES)
+foreach(_lib @GAMOS_LIBRARIES@)
+  list(APPEND GAMOS_LIBRARIES GAMOS::${_lib})
+endforeach()
+
+check_required_components(GAMOS)

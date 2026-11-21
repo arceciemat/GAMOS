@@ -1,25 +1,26 @@
-# - GAMOS_analysis_DICOM_fmjpeg2koj_dcmcjp2k module build definition
+# - dcmcjp2k module build definition
 
-include(UseGamosAtGeant4)
-
-geant4_add_module(GAMOS_analysis_DICOM_fmjpeg2koj_dcmcjp2k
-  PUBLIC_HEADERS
-    fmjpeg2k
+gamos_add_module(dcmcjp2k
   SOURCES
-    djutils.cc
-    memory_file.cc
     djcodecd.cc
     djcodece.cc
-    djencode.cc
-    djrparam.cc
     djcparam.cc
     djdecode.cc
+    djencode.cc
+    djrparam.cc
+    djutils.cc
+    memory_file.cc
 )
-geant4_module_link_libraries(GAMOS_analysis_DICOM_fmjpeg2koj_dcmcjp2k
+
+gamos_module_link_libraries(dcmcjp2k
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    XTRALIBS
-    tiff
-    ${SEAL_LIBRARIES} 
+    ${GAMOS_DCMTK_LIBRARIES}
+)
+
+# Program dcmcjp2k
+gamos_add_executable(dcmcjp2k
+  SOURCES
+    dcmcjp2k.cc
+  LINK_LIBRARIES
+    dcmcjp2k
 )

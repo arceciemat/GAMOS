@@ -8,9 +8,12 @@ GmEMPhysics PhysicsList: DEFAULT = electron-standard is registered
 GmEMPhysics PhysicsList: DEFAULT = positron-standard is registered
 /gamos/generator GmGenerator
 /run/initialize
-/gamos/generator/addSingleParticleSource mySource e- 1.*MeV
-/gamos/physics/userLimits/setMinEKin UL1 * e- 500.*keV
-/run/beamOn 10
+
+==========================================================================================
+G4TaskRunManager :: Using G4ThreadPool...
+==========================================================================================
+
+/run/physicsModified
 =======================================================================
 ======                 Electromagnetic Physics Parameters      ========
 =======================================================================
@@ -32,10 +35,13 @@ Bremsstrahlung energy threshold above which
   primary e+- is added to the list of secondary    100 TeV
 Bremsstrahlung energy threshold above which primary
   muon/hadron is added to the list of secondary    100 TeV
+Positron annihilation at rest model                SimplePositronium
+Enable 3 gamma annihilation on fly                 0
 Lowest triplet kinetic energy                      1 MeV
 Enable sampling of gamma linear polarisation       0
 5D gamma conversion model type                     0
 5D gamma conversion model on isolated ion          0
+Use RiGe 5D e+e- pair production model by muons    0
 Livermore data directory                           epics_2017
 =======================================================================
 ======                 Ionisation Parameters                   ========
@@ -49,7 +55,7 @@ Lowest muon/hadron kinetic energy                  1 keV
 Use ICRU90 data                                    0
 Fluctuations of dE/dx are enabled                  1
 Type of fluctuation model for leptons and hadrons  Universal
-Use built-in Birks satuaration                     0
+Use built-in Birks saturation                      0
 Build CSDA range enabled                           0
 Use cut as a final range enabled                   0
 Enable angular generator interface                 0
@@ -140,6 +146,94 @@ eIoni:  for e+  XStype:3  SubType=2
       StepFunction=(0.2, 1 mm), integ: 3, fluct: 1, linLossLim= 0.01
       ===== EM models for the G4Region  DefaultRegionForTheWorld ======
         MollerBhabha : Emin=    0 eV  Emax=  100 TeV
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]0:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_doublehyperdoubleneutron ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperH4 ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperHe5 ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi+ is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:anti_neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ anti_hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperH4 ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]0:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ doublehyperdoubleneutron ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperH4 ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperHe5 ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hyperalpha ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:proton is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi- is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:neutron is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ hypertriton ]1:pi0 is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu+ ]2:anti_nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+G4VDecayChannel::FillDaughters() - [ mu- ]2:nu_mu is not defined !!
+ The BR of this decay mode is set to zero.
+
+=========================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Initializing workers...
+=========================================================================
+
+/gamos/generator/addSingleParticleSource mySource e- 1.*MeV
+/gamos/physics/userLimits/setMinEKin UL1 * e- 500.*keV
+/run/beamOn 10
 
 ========= Table of registered couples ============================
 
@@ -166,174 +260,29 @@ Index : 2     used in the geometry : Yes
 
 ==================================================================
 
-G4VisManager: Using G4TrajectoryDrawByCharge as fallback trajectory model.
-See commands in /vis/modeling/trajectories/ for other options.
 ### Run 0 starts.
 
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run10035
+      issued by : G4TaskRunManager::InitializeEventLoop()
+Event modulo is reduced to 1 (was 3) to distribute events to all threads.
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
 
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0         1        0        0         0     my tube initStep
-    1   -0.112  -0.0684   -0.155     0.908   0.0382    0.205     0.205     my tube eBrem
-    2    -1.06   -0.598    -1.51     0.391    0.518     2.22      2.42     my tube eIoni
-    3    -1.06   -0.598    -1.51         0    0.391        0      2.42     my tube GmUserSpecialCut
 
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
+-------- WWWW ------- G4Exception-START -------- WWWW -------
+*** G4Exception : Run10035
+      issued by : G4TaskRunManager::InitializeEventLoop()
+Event modulo is reduced to 1 (was 3) to distribute events to all threads.
+*** This is just a warning message. ***
+-------- WWWW -------- G4Exception-END --------- WWWW -------
 
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.112  -0.0684   -0.155    0.0535        0        0         0     my tube initStep
-    1    -26.5     1.88    -65.2         0 0.000543     70.2      70.2     my tube phot
 
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
-*********************************************************************************************************
+=========================================================================================
+--> G4TaskRunManager::CreateAndStartWorkers() --> Creating 10 tasks with 1 events/task...
+=========================================================================================
 
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    -26.5     1.88    -65.2     0.053        0        0         0     my tube initStep
-    1    -26.5     1.88    -65.2         0    0.053        0         0     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0         1        0        0         0     my tube initStep
-    1   -0.744   -0.132     1.72     0.614    0.386     2.35      2.35     my tube eIoni
-    2   -0.824   -0.106     1.81     0.583   0.0213    0.124      2.47     my tube eBrem
-    3    -1.52   -0.091      2.7     0.176    0.407     1.69      4.17     my tube eIoni
-    4    -1.52   -0.091      2.7         0    0.176        0      4.17     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = gamma,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.824   -0.106     1.81   0.00978        0        0         0     my tube initStep
-    1   -0.897  -0.0848     1.94         0 0.000543    0.152     0.152     my tube phot
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 3,   Parent ID = 2
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0   -0.897  -0.0848     1.94   0.00924        0        0         0     my tube initStep
-    1   -0.897  -0.0848     1.94         0  0.00924        0         0     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0         1        0        0         0     my tube initStep
-    1   -0.621    -1.23     1.27     0.583    0.417     2.35      2.35     my tube eIoni
-    2   -0.585    -1.63     0.21     0.278    0.305     1.69      4.04     my tube eIoni
-    3   -0.585    -1.63     0.21         0    0.278        0      4.04     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0         1        0        0         0     my tube initStep
-    1     0.87    -1.14     1.21     0.606    0.394     2.35      2.35     my tube eIoni
-    2    0.924    -1.13     1.27     0.461   0.0129   0.0803      2.43     my tube eIoni
-    3    0.924    -1.13     1.27         0    0.461        0      2.43     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.924    -1.13     1.27     0.132        0        0         0     my tube initStep
-    1    0.924    -1.13     1.27         0    0.132        0         0     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0         1        0        0         0     my tube initStep
-    1   -0.335    -1.67   -0.783      0.44     0.56     2.35      2.35     my tube eIoni
-    2   -0.335    -1.67   -0.783         0     0.44        0      2.35     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0         1        0        0         0     my tube initStep
-    1    0.285   -0.419   0.0839     0.673    0.117    0.537     0.537     my tube eIoni
-    2    0.778     -1.6   -0.239     0.221    0.452     1.85      2.39     my tube eIoni
-    3    0.778     -1.6   -0.239         0    0.221        0      2.39     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.285   -0.419   0.0839      0.21        0        0         0     my tube initStep
-    1    0.285   -0.419   0.0839         0     0.21        0         0     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0         1        0        0         0     my tube initStep
-    1    0.633     1.72    0.412     0.575    0.425     2.35      2.35     my tube eIoni
-    2    0.811     2.65    0.996     0.248    0.327     1.68      4.03     my tube eIoni
-    3    0.811     2.65    0.996         0    0.248        0      4.03     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0         1        0        0         0     my tube initStep
-    1    0.385     1.29     1.31     0.591    0.409     2.35      2.35     my tube eIoni
-    2     1.44    0.938    0.995     0.299    0.293     1.71      4.06     my tube eIoni
-    3     1.44    0.938    0.995         0    0.299        0      4.06     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0         1        0        0         0     my tube initStep
-    1    0.174     1.06     1.54     0.626    0.374     2.35      2.35     my tube eIoni
-    2    0.164     1.06     1.56     0.382   0.0359   0.0187      2.37     my tube eIoni
-    3    0.164     1.06     1.56         0    0.382        0      2.37     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0    0.164     1.06     1.56     0.208        0        0         0     my tube initStep
-    1    0.164     1.06     1.56         0    0.208        0         0     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 1,   Parent ID = 0
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0        0        0        0         1        0        0         0     my tube initStep
-    1  0.00849  -0.0947   -0.035     0.622   0.0117    0.102     0.102     my tube eIoni
-    2   -0.377    -1.24    -0.11     0.279    0.342     1.76      1.87     my tube eIoni
-    3   -0.377    -1.24    -0.11         0    0.279        0      1.87     my tube GmUserSpecialCut
-
-*********************************************************************************************************
-* G4Track Information:   Particle = e-,   Track ID = 2,   Parent ID = 1
-*********************************************************************************************************
-
-Step#    X(mm)    Y(mm)    Z(mm) KinE(MeV)  dE(MeV) StepLeng TrackLeng  NextVolume ProcName
-    0  0.00849  -0.0947   -0.035     0.367        0        0         0     my tube initStep
-    1  0.00849  -0.0947   -0.035         0    0.367        0         0     my tube GmUserSpecialCut
  Run terminated.
 Run Summary
   Number of events processed : 10
-  User=0.000000s Real=0.001460s Sys=0.000000s
+  User=0.460000s Real=0.016320s Sys=0.000000s [Cpu=2818.6%]

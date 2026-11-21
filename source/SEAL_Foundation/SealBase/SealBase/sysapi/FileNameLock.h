@@ -2,9 +2,10 @@
 # define SEAL_BASE_SYSAPI_FILE_NAME_LOCK_H
 
 //<<<<<< INCLUDES                                                       >>>>>>
-#define HAVE_SYS_SYSCTL_H 0
-
 # include "SealBase/config.h"
+// <sys/sysctl.h> no longer exists in glibc: override the configure value
+# undef HAVE_SYS_SYSCTL_H
+# define HAVE_SYS_SYSCTL_H 0
 # include <cerrno>
 # ifndef _WIN32
 #  include <utmp.h>

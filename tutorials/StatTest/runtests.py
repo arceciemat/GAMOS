@@ -4,39 +4,39 @@
 import sys
 def usage():
     print('Usage: runtests.py [-h] [-V] [--list] [--colors] [-g pdfname] [-H -T] conffile inputfile referencefile')
-    print ' Performs statistical tests for distributions contained in inputfile'
-    print ' tests are configured in conffile'
-    print '    conffile : configuration file'
-    print '    inputfile : input file containing distributions'
-    print '    referencefile (optional) : reference file name that overwrites the one contained in the conf file'
-    print '    -h : this help'
-    print '    -v : verbose'
-    print '    -V : very verbose'
-    print '    -g : produce pdf with plos'
-    print '    --list : list all available tests'
-    print '    --colors : use ANSI colors for output results table'
-    print ''
-    print ' Example: runtests.py testconf.qa test.root'
-    print '          See content of example directory for an example of a configuration file'
+    print(' Performs statistical tests for distributions contained in inputfile')
+    print(' tests are configured in conffile')
+    print('    conffile : configuration file')
+    print('    inputfile : input file containing distributions')
+    print('    referencefile (optional) : reference file name that overwrites the one contained in the conf file')
+    print('    -h : this help')
+    print('    -v : verbose')
+    print('    -V : very verbose')
+    print('    -g : produce pdf with plos')
+    print('    --list : list all available tests')
+    print('    --colors : use ANSI colors for output results table')
+    print('')
+    print(' Example: runtests.py testconf.qa test.root')
+    print('          See content of example directory for an example of a configuration file')
 
 def printList():
     from Tests import _testsMap
-    print 'Known Tests:'
+    print('Known Tests:')
     for k,v in _testsMap.iteritems():
-        print "Test: %s"%k
-        print v.__doc__
+        print("Test: %s"%k)
+        print(v.__doc__)
         
 def run( argv = sys.argv ):
     from Interface import runROOT
     colors = False #By default use ANSI colors for output
     if len(argv)>=1:
         import getopt
-        try:
-            opts,args = getopt.getopt( argv ,"hvVTg:H",["list","colors"])
-        except getopt.GetoptError,err:
-            sys.stderr.write( str(err) )
-            usage()
-            sys.exit(2)
+        #        try:
+        opts,args = getopt.getopt( argv ,"hvVTg:H",["list","colors"])
+#        except getopt.GetoptError,err:
+  #          sys.stderr.write( str(err) )
+    #        usage()
+      #      sys.exit(2)
             
         doplots = "report.pdf" 
         input = "TEXT"
@@ -63,21 +63,21 @@ def run( argv = sys.argv ):
             elif op == '-H':
                 input = "HISTOS"
         if len(args)>=2:
-            try:
-                if len(args)>=3:
-                    if input == "TEXT" :
-                        errcode = runROOT( args[0] , args[1] , doPlots = None , doText = True , doHistos = False , doUnBinned = False , defaultReferenceFile = args[2] ) 
-                    else :
-                        errcode = runROOT( args[0] , args[1] , doPlots = doplots , doText = False, doHistos = True , doUnBinned = False , defaultReferenceFile = args[2] , useColorsForOutput = colors)
+   #         try:
+            if len(args)>=3:
+                if input == "TEXT" :
+                    errcode = runROOT( args[0] , args[1] , doPlots = None , doText = True , doHistos = False , doUnBinned = False , defaultReferenceFile = args[2] ) 
+                else :
+                    errcode = runROOT( args[0] , args[1] , doPlots = doplots , doText = False, doHistos = True , doUnBinned = False , defaultReferenceFile = args[2] , useColorsForOutput = colors)
+            else:
+                if input == "TEXT" :
+                    sys.stderr.write("Error: NO REFERENCE FILE %s\n")
+                    sys.exit(1)
                 else:
-                    if input == "TEXT" :
-                        sys.stderr.write("Error: NO REFERENCE FILE %s\n")
-                        sys.exit(1)
-                    else:
-                        errcode = runROOT( args[0] , args[1] , doPlots = doplots , useColorsForOutput = colors)
-            except Exception,e:
-                sys.stderr.write("Error: %s\n"%e)
-                sys.exit(1)
+                    errcode = runROOT( args[0] , args[1] , doPlots = doplots , useColorsForOutput = colors)
+#            except Exception:
+ #               sys.stderr.write("Error: %s\n")
+  #              sys.exit(1)
         else:
             usage()
             sys.exit(0)

@@ -1,9 +1,3 @@
-### GET HISTO FILES CREATED
-histoFiles=""
-grep "saving histograms in fi" $1 | awk '{print $7}' | while read hf; do
-  histoFiles=`echo $histoFiles  -H $hf`
-  echo $histoFiles > histofiles.lis
-done
-histoFiles=`cat histofiles.lis`
-echo $histoFiles
-rm histofiles.lis
+### PRINTS "-H HISTO_FILE" FOR EACH HISTOGRAM FILE SAVED BY THE GAMOS JOB WHOSE OUTPUT IS $1
+grep "saving histograms in fi" $1 | awk '{printf " -H %s", $7}'
+echo

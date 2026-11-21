@@ -51,6 +51,7 @@ File::sysopen (const char *name, int flags, FileAcl perms,
 	openflags |= O_APPEND;
 
 #ifdef O_SYNC
+    (void) newflags;  // only used when O_SYNC is not available
     if (flags & OpenUnbuffered)
 	openflags |= O_SYNC;
 #else

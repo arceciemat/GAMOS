@@ -52,6 +52,7 @@ SHRadDecayChain::SHRadDecayChain( G4Ions* ion, SHRadDecayChainSet* set)
   : theSet(set)
 {
   theIons.push_back( ion );
+  theFirstIon = ion;
   theIonNames.push_back( ion->GetParticleName() );
   //  G4cout << "N0 theInvLifeTimes " << theInvLifeTimes.size() << G4endl; //GDEB
   theInvLifeTimes.push_back( 1. / ion->GetPDGLifeTime() );
@@ -78,6 +79,7 @@ SHRadDecayChain::SHRadDecayChain(SHRadDecayChain& chain, SHRadDecayChainSet* set
   theBRs = chain.GetBRs();
   theName = chain.GetName();
   theNAtomsInJob = chain.GetNAtomsInJob_all();
+  theFirstIon = chain.GetFirstIon();
 
 #ifndef GAMOS_NO_VERBOSE
   if( SHVerb(debugVerb) )  G4cout << " SHRadDecayChain::SHRadDecayChain  chain " << theName << " BR " << theBR << G4endl;
@@ -109,6 +111,7 @@ SHRadDecayChain::SHRadDecayChain(SHRadDecayChain& chain, G4int nIsot, SHRadDecay
   }
   theName = chain.GetSubName(nIsot);
   theNAtomsInJob = chain.GetNAtomsInJob_all();
+  theFirstIon = chain.GetFirstIon();
 
 #ifndef GAMOS_NO_VERBOSE
   if( SHVerb(debugVerb) )  G4cout << " SHRadDecayChain::SHRadDecayChain  chain " << theName << " BR " << theBR << G4endl;
@@ -665,6 +668,13 @@ void SHRadDecayChain::SetNAtomsInJob( double time, double npart )
 		  
 }
  
+//-----------------------------------------------------------------
+void SHRadDecayChain::AddNAtomsInJob( G4double npart )
+{
+  for( auto ite = theNAtomsInJob.begin(); ite != theNAtomsInJob.end(); ite++ ) ite->second += npart;
+  if( theNAtomsInJob.size() == 0 ) SetNAtomsInJob( npart );
+}
+
 //-----------------------------------------------------------------
 void SHRadDecayChain::AddBR( G4double newBR )
 {

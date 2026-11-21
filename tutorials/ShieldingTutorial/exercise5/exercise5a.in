@@ -4,18 +4,17 @@
 /gamos/geometry GmGeometryUseMaterials
 /gamos/physicsList G4QGSP_BIC_HP
 
-/gamos/setParam SHPrintPHPChannelXSUA:minE 1.e-8*MeV
-/gamos/setParam SHPrintPHPChannelXSUA:maxE 10.*MeV
-/gamos/setParam SHPrintPHPChannelXSUA:nStepsE 91
-/gamos/setParam SHPrintPHPChannelXSUA:logE 1
+/gamos/setParam SHPrintPHPChannelXSUA:MinE 1.e-8*MeV
+/gamos/setParam SHPrintPHPChannelXSUA:MaxE 10.*MeV
+/gamos/setParam SHPrintPHPChannelXSUA:NStepsE 91
+/gamos/setParam SHPrintPHPChannelXSUA:LogE 1
 /gamos/setParam SHPrintPHPChannelXSUA:ParticleYields 1
 /gamos/generator GmGenerator
 
 /run/initialize
 
-#/gamos/physics/removeProcessesByType Electromagnetic
-#/gamos/physics/removeProcessesByName hadElastic
-/gamos/physics/removeProcessesByName NeutronInelastic
+#/gamos/physics/removeProcessesByName NeutronInelastic
+/process/inactivate neutronInelastic neutron
 
 /gamos/generator/addSingleParticleSource source neutron 1.*MeV
 

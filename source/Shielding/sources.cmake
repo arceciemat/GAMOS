@@ -1,74 +1,60 @@
 # - Shielding module build definition
 
-include(UseGamosAtGeant4)
-include(UseROOT)
-
-geant4_add_module(Shielding
+gamos_add_module(Shielding
   PUBLIC_HEADERS
-    SHRadDecayChain.hh
-    SHPlotPHPDBSpectraUA.hh
-    GmNoUseG4RadDecayTimeUA.hh
-    SHGetHadronicChannelXSUA.hh
-    SHDecayChains.hh
-    SHActivationFromFluxUA.hh
-    SHMetastableIsotMgr.hh
-    SHPrintPHPChannelXSUA.hh
-    SHRadDecayChainSet.hh
-    SHRadDecayScorerFromFlux.hh
-    SHNthValueLayerUA.hh
-    SHActivationUA.hh
-    ShieldingVerbosity.hh
     GmNoUseG4RadDecayTimePrimaryUA.hh
+    GmNoUseG4RadDecayTimeUA.hh
     GmRadDecayGammaAngleCorrelationUA.hh
     GmSetG4RadDecayTime0UA.hh
-    SHPrintPHPChannelThickYieldUA.hh
-    SHUtils.hh
+    SHActivationFromFluxUA.hh
+    SHActivationUA.hh
     SHDecayChainBuilder.hh
+    SHDecayChains.hh
+    SHGetHadronicChannelXSUA.hh
+    SHMetastableIsotMgr.hh
+    SHNthValueLayerUA.hh
+    SHPlotPHPDBSpectraUA.hh
     SHPrintEMDataUA.hh
+    SHPrintPHPChannelThickYieldUA.hh
+    SHPrintPHPChannelXSUA.hh
+    SHRadDecayChain.hh
+    SHRadDecayChainSet.hh
+    SHRadDecayScorerFromFlux.hh
     SHStudyDecayChannelsUA.hh
+    SHUtils.hh
+    ShieldingVerbosity.hh
   SOURCES
+    GmNoUseG4RadDecayTimePrimaryUA.cc
+    GmNoUseG4RadDecayTimeUA.cc
+    GmRadDecayGammaAngleCorrelationUA.cc
+    GmSetG4RadDecayTime0UA.cc
+    SHActivationFromFluxUA.cc
+    SHActivationUA.cc
+    SHGetHadronicChannelXSUA.cc
+    SHMetastableIsotMgr.cc
+    SHNthValueLayerUA.cc
+    SHPlotPHPDBSpectraUA.cc
+    SHPrintEMDataUA.cc
+    SHPrintPHPChannelThickYieldUA.cc
     SHPrintPHPChannelXSUA.cc
-    SHRadDecayScorerFromFlux.cc
+    SHRadDecayChain.cc
+    SHRadDecayChainBuilder.cc
     SHRadDecayChainSet.cc
+    SHRadDecayScorerFromFlux.cc
+    SHStudyDecayChannelsUA.cc
     SHUtils.cc
     ShieldingVerbosity.cc
-    SHRadDecayChainBuilder.cc
-    SHGetHadronicChannelXSUA.cc
-    GmNoUseG4RadDecayTimeUA.cc
     plugin.cc
-    SHActivationUA.cc
-    SHStudyDecayChannelsUA.cc
-    GmRadDecayGammaAngleCorrelationUA.cc
-    SHPrintEMDataUA.cc
-    SHPlotPHPDBSpectraUA.cc
-    GmSetG4RadDecayTime0UA.cc
-    GmNoUseG4RadDecayTimePrimaryUA.cc
-    SHRadDecayChain.cc
-    SHMetastableIsotMgr.cc
-    SHActivationFromFluxUA.cc
-    SHNthValueLayerUA.cc
-    SHPrintPHPChannelThickYieldUA.cc
 )
-# - Add path to generated header
-geant4_module_include_directories(Shielding
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealBase/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/SealPlatform/include>
- PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source/GAMOS63/SEAL_Foundation/PluginManager/include>
- PUBLIC  $<BUILD_INTERFACE:${ROOT_BASE_DIR}/include>)
 
-geant4_module_link_libraries(Shielding
+gamos_module_link_libraries(Shielding
   PUBLIC
-    ${Geant4_libs}
-    ${ROOT_LIBRARIES}
-    ${SEAL_LIBRARIES} 
+    GamosCore_GamosAnalysis
     GamosCore_GamosBase_Base
-    GamosCore_GamosSD
+    GamosCore_GamosGenerator
+    GamosCore_GamosGeometry
     GamosCore_GamosUserActionMgr
     GamosCore_GamosUtils
-    GamosCore_GamosReadDICOM
-    GamosCore_GamosUtilsUA
-    GamosCore_GamosScoring_Management
-    GamosCore_GamosPhysics_Cuts
-    GamosCore_GamosAnalysis
+    lcg_PluginManager
+    lcg_SealBase
 )

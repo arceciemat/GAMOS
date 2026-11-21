@@ -75,7 +75,7 @@ Time::Time (int year, int month, int day,
 	    bool local /* = true */)
 {
     tm val;
-    memset (&val, sizeof (val), 0);
+    memset (&val, 0, sizeof (val));
     val.tm_sec = sec;
     val.tm_min = min;
     val.tm_hour = hour;
@@ -309,14 +309,17 @@ Time::nanoformat (int minwidth /* = 1 */, int maxwidth /* = 9 */) const
     value -= rem;
     if (rem > modulus / 2)
 	value += modulus;
+    // Rounding up must not carry into a tenth digit (would overflow buf).
+    if (value >= SEC_NSECS)
+	value = SEC_NSECS - modulus;
 
     // Format it, then strip off digits from the right as long as
     // we zeroes.  The above guarantees enough zeroes on right to
     // satisfy maxwidth so we need to concern ourselves only about
     // minwidth.
-    char buf [10];
+    char buf [24];   // 9 digits needed; extra room silences -Wformat-overflow
     char *p = buf + 8;
-    sprintf (buf, "%09ld", value);
+    snprintf (buf, sizeof (buf), "%09ld", value);
     while (p > buf + minwidth - 1 && *p == '0')
 	*p-- = '\0';
 

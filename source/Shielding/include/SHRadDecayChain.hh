@@ -28,6 +28,12 @@ class SHRadDecayChain
   void AddData( std::vector<G4String> wl );
   void ResetBR();
   void AddBR( G4double newBR );
+  // add atoms of another chain with the same name but a different first ion (e.g. A[exc] -> A, after deleting the
+  // short-lived A[exc]): the product NAtoms*BR is conserved
+  void AddNAtomsInJob( G4double npart );
+  G4Ions* GetFirstIon() const {
+    return theFirstIon;
+  }
   G4String GetSubName( G4int nIsot ) const;
 
   void SetName( G4String name );
@@ -125,6 +131,7 @@ private:
   SHRadDecayChainSet* theSet;
   G4String theSetName;
   std::vector<G4Ions*> theIons; // one per isotope in the chain
+  G4Ions* theFirstIon = nullptr; // first ion before deleting the short-lived ones
   std::vector<G4String> theIonNames; // one per isotope in the chain. Store then because when reading from output file, G4Ions are not created
   //  G4int theNIons; // number of isotopes in the chain
   // invLifeTime: N = N_0 exp(- invLifeTime * t )

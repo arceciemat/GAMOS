@@ -170,10 +170,10 @@ Signal::handler (int sig, sigset_t *mask /* = 0 */)
     {
 	if (mask)
 	    *mask = old.sa_mask;
-	return (HandlerType) old.sa_handler;
+	return (HandlerType) (void (*) (void)) old.sa_handler;
     }
     else
-	return (HandlerType) SIG_ERR;
+	return (HandlerType) (void (*) (void)) SIG_ERR;
 #else // ! HAVE_POSIX_SIGNALS
     HandlerType old = (HandlerType) signal (sig, SIG_DFL);
     signal (sig, (DummyHandlerType) old);
@@ -231,7 +231,7 @@ Signal::handle (int sig, HandlerType handler, const sigset_t *blockMask /*=0*/)
     // called in all sorts fragile places like signal handlers, and
     // those are not the place for throwing exceptions or asserting.
     if (sigaction (sig, &act, &old) == -1)
-	return (HandlerType) SIG_ERR;
+	return (HandlerType) (void (*) (void)) SIG_ERR;
     return (HandlerType) old.sa_sigaction;
 #else // ! HAVE_POSIX_SIGNALS
     return (HandlerType) ::signal (sig, (DummyHandlerType) &trampoline);
@@ -241,12 +241,12 @@ Signal::handle (int sig, HandlerType handler, const sigset_t *blockMask /*=0*/)
 /** Revert the signal number @a sig back to its default behaviour.  */
 void
 Signal::revert (int sig)
-{ handle (sig, (HandlerType) SIG_DFL); }
+{ handle (sig, (HandlerType) (void (*) (void)) SIG_DFL); }
 
 /** Ignore the signal number @a sig.  */
 void
 Signal::ignore (int sig)
-{ handle (sig, (HandlerType) SIG_IGN); }
+{ handle (sig, (HandlerType) (void (*) (void)) SIG_IGN); }
 
 /** Block or unblock the signal number @a sig.  The signal is blocked
     if @a sense is @c true, unblocked otherwise.  This function is
@@ -1016,36 +1016,36 @@ Signal::dumpInfo (IOFD fd, char *buf, int sig, const siginfo_t *info)
 
 #elif HAVE_POSIX_SIGNALS
     // These should always be set.
-    write (fd, buf, sprintf (buf,
+    MYWRITE (fd, buf, sprintf (buf,
 			     "  signo  = %d, errno = %d, code = %d (%s)\n",
 			     info->si_signo, info->si_errno, info->si_code,
 			     describe (sig, info->si_code)));
 
     // These are set if the signal was sent by kill, POSIX signal
     // send or SIGCHLD.
-    write (fd, buf, sprintf (buf, "  pid    = %ld, uid = %ld\n",
+    MYWRITE (fd, buf, sprintf (buf, "  pid    = %ld, uid = %ld\n",
 			     (long) info->si_pid, (long) info->si_uid));
 
     // Child status for SIGCHLD.
     if (sig == SIGCHLD)
-	write (fd, buf, sprintf (buf,
+	MYWRITE (fd, buf, sprintf (buf,
 				 "  status = %ld, utime = %ld, stime = %ld\n",
 				 (long) info->si_status,
 				 (long) info->si_utime,
 				 (long) info->si_stime));
 
     // These are set if the POSIX signal sender passed them.
-    write (fd, buf, sprintf (buf, "  value  = (%d, %p)\n",
+    MYWRITE (fd, buf, sprintf (buf, "  value  = (%d, %p)\n",
 			     info->si_int, info->si_ptr));
 
     // This is the interesting address for memory faults.
     if (sig == SIGILL || sig == SIGFPE || sig == SIGSEGV || sig == SIGBUS)
-	write (fd, buf, sprintf (buf, "  addr   = %p\n", info->si_addr));
+	MYWRITE (fd, buf, sprintf (buf, "  addr   = %p\n", info->si_addr));
 
 # ifdef SIGPOLL // not darwin
     // SIGPOLL status data.
     if (sig == SIGPOLL)
-	write (fd, buf, sprintf (buf, "  band   = %ld, fd = %d\n",
+	MYWRITE (fd, buf, sprintf (buf, "  band   = %ld, fd = %d\n",
 				 (long) info->si_band, info->si_fd));
 # endif
 #endif // HAVE_POSIX_SIGNALS
@@ -1129,14 +1129,14 @@ Signal::dumpContext (IOFD fd, char *buf, const void *context)
     // FIXME: how much of this is defined in POSIX or ABIs?
     const ucontext_t *uc = static_cast<const ucontext_t *> (context);
     const mcontext_t *mc = &uc->uc_mcontext;
-    write (fd, buf, sprintf (buf, "  stack  = (%x, %x, %p)",
+    MYWRITE (fd, buf, sprintf (buf, "  stack  = (%x, %x, %p)",
 			     (unsigned int)(uc->uc_stack.ss_flags),
 			     (unsigned int)(uc->uc_stack.ss_size),
 			     //GAMOS  uc->uc_stack.ss_flags,
 			     //GAMOS  uc->uc_stack.ss_size,
 			     uc->uc_stack.ss_sp));
 
-    write (fd, buf, sprintf (buf, "\n"));
+    MYWRITE (fd, buf, sprintf (buf, "\n"));
 #if defined __i386 && defined __linux
 # if !defined REG_CS && defined CS
 #  define REG_CS	CS
@@ -1246,7 +1246,7 @@ Signal::dumpContext (IOFD fd, char *buf, const void *context)
     dumpMemory (fd, buf, mc, sizeof (*mc));
 #endif // __i386 && __linux, __sun, other
 
-    write (fd, "\n", 1);
+    MYWRITE (fd, "\n", 1);
 #endif // HAVE_POSIX_SIGNALS
 }
 

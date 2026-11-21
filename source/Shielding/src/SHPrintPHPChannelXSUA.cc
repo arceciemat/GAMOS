@@ -166,7 +166,8 @@ void SHPrintPHPChannelXSUA::BeginOfEventAction(const G4Event* evt)
       if( SHVerb(debugVerb) ) G4cout << theName << ": MODEL " << hadModel->GetModelName() << G4endl;
 #endif
 
-	if( hadModel->GetModelName() == "ParticleHPInelastic" ){
+	//--- by type: the model name depends on the physics list (Geant4 11.4: "ProtonHPInelastic", "NeutronHPInelastic", ...)
+	if( dynamic_cast<G4ParticleHPInelastic*>(hadModel) != nullptr ){
 	//	if( static_cast<G4ParticleHPInelastic*>(hadModel) != 0 ){
 	  G4ParticleHPInelastic* HPinelas = (G4ParticleHPInelastic*)(hadModel);
 	  if( SHUtils::GetNChannelParticles() == 0 ) SHUtils::BuildChannelList(primParticle->GetParticleDefinition(), theName);
@@ -406,7 +407,7 @@ void SHPrintPHPChannelXSUA::BeginOfEventAction(const G4Event* evt)
 	    } // numberOfIsos
 	  } // nelm
 	  */	
-	}else if( hadModel->GetModelName() == "ParticleHPCapture" ){
+	}else if( dynamic_cast<G4ParticleHPCapture*>(hadModel) != nullptr ){
 	  //	} else if( static_cast<G4ParticleHPCapture*>(hadModel) ) {
 	  //--- loop to elements 
 	  G4double XSSUM = 0;

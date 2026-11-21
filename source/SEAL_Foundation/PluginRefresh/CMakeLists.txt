@@ -1,9 +1,2 @@
-#------------------------------------------------------------------------------
-# 
-# Module : SEAL_Foundation_PluginRefresh
-# Package: SEAL_Foundation
-#
-#------------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include(Geant4MacroLibraryTargets)
-GEANT4_GLOBAL_LIBRARY_TARGET(COMPONENTS sources.cmake)
+# - SealPluginRefresh module build (source/SEAL_Foundation/PluginRefresh)
+include(sources.cmake)

@@ -1,29 +1,19 @@
-#------------------------------------------------------------------------------
-# 
-# Module : SEAL_Foundation_PluginDumper
-# Package: 
-#
-#------------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE ON)
-include(Geant4MacroDefineModule)
-include_directories(${CMAKE_SOURCE_DIR}/source)
-include_directories(${CMAKE_SOURCE_DIR}/source/SEAL_Foundation/PluginManager)
-include_directories(${CMAKE_SOURCE_DIR}/source/SEAL_Foundation/SealPlatform)
-include_directories(${CMAKE_SOURCE_DIR}/source/SEAL_Foundation/SealBase)
-#
-# Define the GAMOS Module.
-#
-GEANT4_DEFINE_MODULE(NAME SEAL_Foundation_PluginDumper
-	 HEADERS
-	 SOURCES
-		BuildFile
-		dummy.cc
-	 
-	 GLOBAL_DEPENDENCIES
-		${Geant4_LIBRARIES} 
-		${ROOT_LIBRARIES} 
-	SEAL_Foundation_SealBase
-	SEAL_Foundation_PluginManager
+# - SealPluginDump module build definition
 
-	LINK_LIBRARIES
+gamos_add_module(SealPluginDump
+  SOURCES
+    dummy.cc
+)
+
+# Program SealPluginDump
+# NO_AS_NEEDED: the Geant4 libraries are loaded at start-up; with a multithreaded Geant4 (initial-exec TLS)
+# they cannot all be loaded later with dlopen ("cannot allocate memory in static TLS block")
+gamos_add_executable(SealPluginDump
+  NO_AS_NEEDED
+  SOURCES
+    SealPluginDump.cc
+  LINK_LIBRARIES
+    SealPluginDump
+    lcg_PluginManager
+    lcg_SealBase
 )

@@ -13,6 +13,8 @@
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4Step.hh"
+#include "G4Threading.hh"
+#include "G4AutoLock.hh"
 #include "G4Box.hh"
 
 #ifndef GAMOS_NO_ROOT
@@ -26,6 +28,8 @@ SHNthValueLayerUA::SHNthValueLayerUA()
 {
   thePrimaryParticleName = "";
   thePrimaryEnergy = -1.;
+  //--- Multithreading: worker counts are added to the master instance, which prints them and fits the reduction
+  SetRunOnMaster(true);
 
 }
 
@@ -79,6 +83,21 @@ void SHNthValueLayerUA::UserSteppingAction(const G4Step* aStep )
 //-----------------------------------------------------------------
 void SHNthValueLayerUA::EndOfRunAction(const G4Run* )
 {
+  if( G4Threading::IsMultithreadedApplication() && !G4Threading::IsMasterThread() ) {
+    SHNthValueLayerUA* master = dynamic_cast<SHNthValueLayerUA*>(GmUserAction::GetMasterUserAction(GetName()));
+    if( master ) {
+      G4AutoLock l(&GmUserAction::GetMergeMutex());
+      for( auto ite = theNSteps.begin(); ite != theNSteps.end(); ite++ ) master->theNSteps[ite->first] += ite->second;
+      master->theNEvents += theNEvents;
+      if( theNEvents != 0 ) { // primary of the last event (as in sequential)
+	master->thePrimaryParticleName = thePrimaryParticleName;
+	master->thePrimaryEnergy = thePrimaryEnergy;
+      }
+      theNSteps.clear();
+      theNEvents = 0;
+    }
+    return;
+  }
   G4String Name = "%%% SHNthValueLayerUA";
   unsigned int ii;
   for( ii = 0; ii < theFilters.size(); ii++ ){

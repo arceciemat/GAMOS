@@ -51,10 +51,10 @@ public:
   }
 
 private:
-  static std::vector<G4HadronicProcess*> theHadronicProcesses;
+  static G4ThreadLocal std::vector<G4HadronicProcess*> theHadronicProcesses;
   
-  static std::map<G4String, ChannelData > theChannelParticles;
-  static std::map<G4int,G4String> theElements;
-  static std::map<G4double,G4int> theProductIDs;
+  static G4ThreadLocal std::map<G4String, ChannelData > theChannelParticles;
+  static G4ThreadLocal std::map<G4int,G4String> theElements;
+  static G4ThreadLocal std::map<G4double,G4int> theProductIDs;
 };
 #endif
