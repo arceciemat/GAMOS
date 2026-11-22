@@ -62,7 +62,7 @@ PLUGINSVC_FACTORY(GmEventDataCoutUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmRunDataCoutUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmStackDataCoutUA,GmUserAction*())
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "GmDataTTreeUA.hh"
 PLUGINSVC_FACTORY(GmDataTTreeUA,GmUserAction*())
 #endif
@@ -106,7 +106,7 @@ DEFINE_GAMOS_USER_ACTION(GmEventDataCoutUA);
 DEFINE_GAMOS_USER_ACTION(GmRunDataCoutUA);
 DEFINE_GAMOS_USER_ACTION(GmStackDataCoutUA);
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "GmDataTTreeUA.hh"
 DEFINE_GAMOS_USER_ACTION(GmDataTTreeUA);
 #endif

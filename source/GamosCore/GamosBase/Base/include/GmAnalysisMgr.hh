@@ -1,7 +1,7 @@
 #ifndef GmAnalysisMgr_h
 #define GmAnalysisMgr_h 1
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TProfile.h"

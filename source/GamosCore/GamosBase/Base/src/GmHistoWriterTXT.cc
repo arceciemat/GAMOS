@@ -23,7 +23,7 @@ GmHistoWriterTXT::~GmHistoWriterTXT()
 
  
 //----------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 void GmHistoWriterTXT::SaveHisto1( const TH1F* his )
 #else  
 void GmHistoWriterTXT::SaveHisto1( const GmHisto1* his )
@@ -34,7 +34,7 @@ void GmHistoWriterTXT::SaveHisto1( const GmHisto1* his )
 
 
 //----------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 void GmHistoWriterTXT::SaveHisto2( const TH2F* his )
 #else 
 void GmHistoWriterTXT::SaveHisto2( const GmHisto2* his )
@@ -43,7 +43,7 @@ void GmHistoWriterTXT::SaveHisto2( const GmHisto2* his )
   SaveHisto2D("2D", his);
 }
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //----------------------------------------------------------------------
 void GmHistoWriterTXT::SaveHistoProf1( const TProfile* his )
 {
@@ -69,7 +69,7 @@ void GmHistoWriterTXT::SaveHistoProf2( const GmHistoProfile2* his )
 }
 #endif
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //----------------------------------------------------------------------
 void GmHistoWriterTXT::SaveHisto1D(const G4String& hisType, const TH1* his )
 {
@@ -146,7 +146,7 @@ void GmHistoWriterTXT::SaveHisto1D(const G4String& hisType, const GmHistoProfile
 }
 #endif
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //----------------------------------------------------------------------
 void GmHistoWriterTXT::SaveHisto2D(const G4String& hisType, const TH2* his )
 {

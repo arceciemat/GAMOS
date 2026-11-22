@@ -9,7 +9,7 @@
 #include "GamosCore/GamosUtils/include/GmNumberOfEvent.hh"
 #include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 #include "G4Threading.hh"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TROOT.h"
 #endif
 #include <mutex>
@@ -49,7 +49,7 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
   theFileName = fileName;
   bDefaultNormalize = true;  
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   //--- Multithreading: ROOT histograms are created in several threads
   static std::once_flag rootMTflag;
   std::call_once( rootMTflag, [](){
@@ -72,7 +72,7 @@ GmAnalysisMgr::GmAnalysisMgr(const G4String& fileName)
   //  G4cout << "GmAnalysisMgr::GmAnalysisMgr creating histo file " << theFileName << G4endl;
 
   if( theFileFormats.size() == 0 ){
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     //    theFileFormats.insert("root");
     theFileFormats.insert("csv");
 #else
@@ -182,12 +182,12 @@ void GmAnalysisMgr::SetFileFormat( G4String ff )
 //----------------------------------------------------------------------
 void GmAnalysisMgr::AddFileFormat( G4String ff ) 
 {
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
   if( ff == "root" || ff == "ROOT" ) {
     G4Exception("GmAnalysisMgr::AddFileFormat",
 		"",
 		JustWarning,
-		G4String("Histo type is not supported, as GAMOS is compiled with GAMOS_NO_ROOT: " + ff).c_str());
+		G4String("Histo type is not supported, as GAMOS is compiled without GAMOS_ROOT: " + ff).c_str());
     return;
   }
 #endif
@@ -222,7 +222,7 @@ void GmAnalysisMgr::Save( const G4String& name, const G4String& format)
   G4String fileName =  name + "." + format;
 
   GmHistoWriter* hisWriter = 0;
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   if( format == "root" ){
     hisWriter = new GmHistoWriterROOT( fileName );
   }
@@ -338,7 +338,7 @@ void GmAnalysisMgr::PrintInfo()
 
 } 
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TAxis.h"
 #endif
 
@@ -363,7 +363,7 @@ void GmAnalysisMgr::PrintInfo1( GmHisto1* his, G4int iverbose )
   } 
   if( iverbose >= 2 ) {
     G4int nbins;
-#ifndef GAMOS_NO_ROOT 
+#ifdef GAMOS_ROOT 
     TAxis* Xaxis = his->GetXaxis();
     nbins =  Xaxis->GetNbins();
     G4cout << "HISINFO: " << his->GetName() 
@@ -416,7 +416,7 @@ void GmAnalysisMgr::PrintInfo2( GmHisto2* his, G4int iverbose )
   if( iverbose >= 2 ) {
      G4int nbinsx;
     G4int nbinsy;
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     TAxis* Xaxis = his->GetXaxis();
     TAxis* Yaxis = his->GetYaxis();
     nbinsx = Xaxis->GetNbins();
@@ -530,7 +530,7 @@ bool GmAnalysisMgr::CreateHisto1D(const G4String & pathAndTitle, int nBins, doub
     }
   }
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   theHistos1[ih] = new TH1F( pathAndTitle.c_str(), pathAndTitle.c_str(), nBins, lowerEdge, upperEdge );
   theHistos1[ih]->SetDirectory(0);
 #else 
@@ -588,7 +588,7 @@ bool GmAnalysisMgr::CreateHisto2D(const G4String & pathAndTitle, int nBinsX, dou
     }
   }
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   theHistos2[ih] = new TH2F( pathAndTitle.c_str(), pathAndTitle.c_str(), nBinsX, lowerEdgeX, upperEdgeX, nBinsY, lowerEdgeY, upperEdgeY);
   theHistos2[ih]->SetDirectory(0);
 #else
@@ -630,7 +630,7 @@ bool GmAnalysisMgr::CreateHistoProfile1D(const G4String & pathAndTitle, int nBin
     }
   }
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   theHistosProf1[ih] = new TProfile( pathAndTitle.c_str(), pathAndTitle.c_str(), nBins, lowerEdge, upperEdge);
   theHistosProf1[ih]->SetDirectory(0);
 #else 
@@ -688,7 +688,7 @@ bool GmAnalysisMgr::CreateHistoProfile2D(const G4String & pathAndTitle, int nBin
     }
   }
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   theHistosProf2[ih] = new TProfile2D( pathAndTitle.c_str(), pathAndTitle.c_str(), nBinsX, lowerEdgeX, upperEdgeX, nBinsY, lowerEdgeY, upperEdgeY);
   theHistosProf2[ih]->SetDirectory(0);
 #else
@@ -745,7 +745,7 @@ G4int GmAnalysisMgr::BuildHistoNumberForType( const std::map< int, TYP* >& histo
 }
 
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //-----------------------------------------------------------------------------
 TH1F* GmAnalysisMgr::GetHisto1D( int ih, bool itExists )
 {
@@ -769,7 +769,7 @@ GmHisto1* GmAnalysisMgr::GetHisto1D( int ih, bool itExists )
 
 
 //-----------------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 TH1F* GmAnalysisMgr::GetHisto1D( const G4String& hnam, bool itExists )
 {
   TH1F* his = 0;
@@ -795,7 +795,7 @@ GmHisto1* GmAnalysisMgr::GetHisto1D( const G4String& hnam, bool itExists )
 
 
 //-----------------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 TH2F* GmAnalysisMgr::GetHisto2D( int ih, bool itExists )
 {
   TH2F* his = 0;
@@ -815,7 +815,7 @@ GmHisto2* GmAnalysisMgr::GetHisto2D( int ih, bool itExists )
 }
 
 //-----------------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 TH2F* GmAnalysisMgr::GetHisto2D( const G4String& hnam, bool itExists )
 {
   TH2F* his = 0;
@@ -841,7 +841,7 @@ GmHisto2* GmAnalysisMgr::GetHisto2D( const G4String& hnam, bool itExists )
 
 
 //-----------------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 TProfile* GmAnalysisMgr::GetHistoProf1( int ih, bool itExists )
 {
   TProfile* his = 0;
@@ -863,7 +863,7 @@ GmHistoProfile1* GmAnalysisMgr::GetHistoProf1( int ih, bool itExists )
 }
 
 //-----------------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 TProfile* GmAnalysisMgr::GetHistoProf1( const G4String& hnam, bool itExists )
 {
   TProfile* his = 0;
@@ -889,7 +889,7 @@ GmHistoProfile1* GmAnalysisMgr::GetHistoProf1( const G4String& hnam, bool itExis
 }
 
 //-----------------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 TProfile2D* GmAnalysisMgr::GetHistoProf2( int ih, bool itExists )
 {
   TProfile2D* his = 0;
@@ -911,7 +911,7 @@ GmHistoProfile2* GmAnalysisMgr::GetHistoProf2( int ih, bool itExists )
 }
 
 //-----------------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 TProfile2D* GmAnalysisMgr::GetHistoProf2( const G4String& hnam, bool itExists )
 {
   TProfile2D* his = 0;
@@ -994,7 +994,7 @@ void GmAnalysisMgr::DeleteInstances()
 namespace {
   template<class HIS>
   HIS* CloneHisto( HIS* his ) {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     HIS* hisc = (HIS*)(his->Clone());
     hisc->SetDirectory(0);
     return hisc;

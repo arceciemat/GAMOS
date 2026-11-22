@@ -8,7 +8,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "G4tgrUtils.hh"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TH2F.h"
 #include "TCanvas.h"
 #include "TEllipse.h"
@@ -146,7 +146,7 @@ RTBeamStateData RTIonPlanControlPoint::GetBeamStateData(RTBeamStateData bsData)
 //-------------------------------------------------------------
 void RTIonPlanControlPoint::PlotBeamStates([[maybe_unused]] G4double minmaxX, [[maybe_unused]] G4double minmaxY, [[maybe_unused]] G4double maxMeterset)
 {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   G4String histoName = "RTIonPlanBeamState_" + GmGenUtils::itoa(theBeam->GetIndex()) + "_" + GmGenUtils::itoa(theIndex);
   TH2F* histo = new TH2F( histoName.c_str(), histoName.c_str(), 100, -minmaxX, minmaxX, 100, -minmaxY, minmaxY );
 

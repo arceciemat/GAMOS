@@ -3,7 +3,7 @@
 //---------------------------------------------------------------------------
 // GmSVGCanvas, GmSVGPad, GmSVGFrame: minimal plotting engine without external dependencies (only zlib, that is
 // always available with Geant4), to produce figures when GAMOS is built
-// without ROOT (GAMOS_NO_ROOT). It can be used also with ROOT.
+// without ROOT (GAMOS_ROOT not defined). It can be used also with ROOT.
 //
 // It writes the figure as PNG, JPG, GIF, BMP or TIFF with the built-in renderer
 // (GmSVGRaster, no external program; the figures are rendered and written in

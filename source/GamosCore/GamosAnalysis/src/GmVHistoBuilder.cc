@@ -79,7 +79,7 @@ G4int GmVHistoBuilder::BuildHistoNumber()
 //----------------------------------------------------------------------------
 void GmVHistoBuilder::PrintHisto( G4int hn )
 {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   TH1F* his = theAnaMgr->GetHisto1(hn);
 #else
   GmHisto1* his = theAnaMgr->GetHisto1(hn);

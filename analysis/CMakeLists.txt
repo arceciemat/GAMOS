@@ -1,6 +1,6 @@
 # - analysis
 
-add_subdirectory(AnalyseOutput)
+add_subdirectory(analyseOutput)
 add_subdirectory(NuclMed)
 add_subdirectory(RTDose)
 add_subdirectory(RTPhaseSpace)

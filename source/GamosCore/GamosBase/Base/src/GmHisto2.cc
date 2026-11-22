@@ -1,4 +1,4 @@
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
 
 #include "GmHisto2.hh"
 #include <algorithm>

@@ -41,7 +41,7 @@ protected:
   virtual void CheckNValues();
   void CheckOtherFileNames( G4String& fileNameROOT, G4String& fileNameCSV, G4String& fileNameText, G4String& fileName, G4int fNumber );
   //?  virtual void ReadFileName( G4String& fileName );
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   virtual void ReadFileROOT( G4String& fileName );
 #endif
   virtual void ReadFileCSV( G4String& fileName );

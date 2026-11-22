@@ -26,7 +26,7 @@
 #include "G4EventManager.hh"
 
 #include "CLHEP/Random/RandFlat.h"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TColor.h"
 #endif
 
@@ -148,7 +148,7 @@ void RTIonPlanScanSpotSource::SetSpotSize( GmVGenerDistPosition2D* , const RTBea
 //-------------------------------------------------------------
 void RTIonPlanScanSpotSource::PlotBeamStates()
 {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   G4double minX = DBL_MAX;
   G4double maxX = -DBL_MAX;
   G4double minY = DBL_MAX;

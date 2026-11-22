@@ -1,6 +1,6 @@
 #ifndef GmHisto1_hh
 #define GmHisto1_hh
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
 
 #include <string>
 #include <vector>
@@ -9,7 +9,7 @@
 #include <cfloat>
 
 //------------------------------------------------------------------------
-// 1D histogram used when GAMOS is compiled without ROOT (GAMOS_NO_ROOT).
+// 1D histogram used when GAMOS is compiled without ROOT (GAMOS_ROOT not defined).
 // It reproduces the behaviour of ROOT TH1F (ROOT 6.26), that is used when GAMOS is compiled with ROOT:
 //  - bin contents are stored in float precision, statistics in double precision
 //  - bin 0 is the underflow and bin nbins+1 the overflow; they are not used in the statistics

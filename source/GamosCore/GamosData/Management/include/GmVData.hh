@@ -6,7 +6,7 @@
 #include <set>
 #include <map>
 #include <vector>
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TProfile.h"

@@ -397,7 +397,7 @@ void GmHistosGammaAtSD::EndOfRunAction( const G4Run* )
     MergeToMaster();
     return;
   }
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   TH1F* hisN = theAnaMgr->GetHisto1(103000+1);
   int nbins = hisN->GetNbinsX();
 #else 

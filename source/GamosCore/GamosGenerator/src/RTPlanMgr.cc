@@ -637,7 +637,7 @@ void RTPlanMgr::FillRTHistoControlPoint( G4int hNum, const RTBeamStateData& bsda
       
   //----- FILL HISTOGRAMS
   GmHisto2* histo2 = theAnaMgr->GetHisto2D(hNum);
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
   G4int hisNBinsX = histo2->GetNbinsX();
   G4double hisMinX = histo2->GetLowerEdgeX();
   G4double hisWidthX = histo2->GetBinWidthX(1);

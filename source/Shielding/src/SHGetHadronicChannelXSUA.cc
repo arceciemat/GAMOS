@@ -400,7 +400,7 @@ void SHGetHadronicChannelXSUA::EndOfRunAction(const G4Run*)
 	  + ichan*theChanIdxMax*10
 	  + iproc*10;
 	G4cout << histoNChann << " " << theHistoNumber << " LOOPING " << ((*itemh).first)->GetProcessName() << " : " << iproc << "  " << channelName << " : " << ichan << "  " << theCurrentMaterial->GetName() << " : " << imat << G4endl;
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	TH1F* hisNP = theAnaMgr->GetHisto1(histoNChann+3,0);
 	TH1F* hisXSmic = 0;
 #else
@@ -471,7 +471,7 @@ void SHGetHadronicChannelXSUA::EndOfRunAction(const G4Run*)
 	      + (itarg+1)*theTargIdxMax*theProdIdxMax*10
 	      + iprod*theProdIdxMax*10
 	      + iproc*10;
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	    TH1F* hisY = theAnaMgr->GetHisto1(histoNYield+5,0);
 	    TH1F* hisXSmic = 0;
 #else
@@ -517,7 +517,7 @@ void SHGetHadronicChannelXSUA::EndOfRunAction(const G4Run*)
 	    + imat*theMateIdxMax*theChanIdxMax*theProdIdxMax*10
 	    + iprod*theProdIdxMax*10
 	    + iproc*10;
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	  TH1F* hisY = theAnaMgr->GetHisto1(histoNYield+5,0);
 	  TH1F* hisXSmic = 0;
 #else

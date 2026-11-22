@@ -5,7 +5,7 @@
 #   cmake -DCMAKE_INSTALL_PREFIX=<install dir> \
 #         -DGeant4_DIR=<geant4 install>/lib/cmake/Geant4 \
 #         [-DDCMTK_DIR=<dcmtk install>/lib/cmake/dcmtk] \
-#         [-DGAMOS_USE_ROOT=ON -DROOT_DIR=<root>/cmake] \
+#         [-DGAMOS_ROOT=ON -DROOT_DIR=<root>/cmake] \
 #         <GAMOS source dir>
 #   make -j<N>
 #   source <GAMOS source dir>/config/confgamos.csh   (or confgamos.sh)

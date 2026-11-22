@@ -9,7 +9,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TFile.h"
 #include "TAxis.h"
 #endif
@@ -94,7 +94,7 @@ void GmVNumericNDimDistribution::ReadFile()
   G4String fileNameROOT = parMgr->GetStringValue(theName+":FileNameROOT","");
   G4String fileNameCSV = parMgr->GetStringValue(theName+":FileNameCSV","");
   G4String fileNameText = parMgr->GetStringValue(theName+":FileNameText","");
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   if( fileNameROOT != "" ) {
     CheckOtherFileNames( fileNameROOT, fileNameCSV, fileNameText, fileName, 0 );
 
@@ -175,7 +175,7 @@ void GmVNumericNDimDistribution::ReadFileUnknown( G4String& fileName )
 {
   G4int fileType = GetFileType( fileName );
   switch (fileType) {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   case 0:
     ReadFileROOT( fileName );
     break;
@@ -190,7 +190,7 @@ void GmVNumericNDimDistribution::ReadFileUnknown( G4String& fileName )
 
 }
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //---------------------------------------------------------------------
 void GmVNumericNDimDistribution::ReadFileROOT( G4String& )
 {

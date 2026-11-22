@@ -1,6 +1,18 @@
 #ifndef ScoreData__HH
 #define ScoreData__HH
+
+// Windows: static data used from other DLLs/programs must be dllexport/dllimport
+#ifdef _WIN32
+# ifdef sumScores_EXPORTS
+#  define SUMSCORES_DATA_API __declspec(dllexport)
+# else
+#  define SUMSCORES_DATA_API __declspec(dllimport)
+# endif
+#else
+# define SUMSCORES_DATA_API
+#endif
 #include "globals.hh"
+#include <cstdlib>
 #include <vector>
 
 enum ScoreType{ST_GAMOS, ST_MCNP_F5, ST_MCNP_FN, ST_TEXT};
@@ -25,7 +37,7 @@ public:
   
   virtual void Print( std::ofstream& ){
     G4cerr << " ERROR Print" << G4endl;
-    std::exception();
+    exit(1);
   };
   void SetScorerData( ScorerData* sd );
   //  void MultiplyByNEvents();
@@ -41,9 +53,9 @@ public:
 
   G4bool SelfCheck() const;
 
-  static int verbosity;
+  SUMSCORES_DATA_API static int verbosity;
 
-  static ScoreIndexValType theIndexValType;
+  SUMSCORES_DATA_API static ScoreIndexValType theIndexValType;
 
 protected:
   long double theScoreDivideError;

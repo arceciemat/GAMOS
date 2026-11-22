@@ -1,6 +1,6 @@
 #ifndef GmHisto2_hh
 #define GmHisto2_hh
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
 #include <string>
@@ -11,7 +11,7 @@
 #include <math.h>
 
 //------------------------------------------------------------------------
-// 2D histogram used when GAMOS is compiled without ROOT (GAMOS_NO_ROOT).
+// 2D histogram used when GAMOS is compiled without ROOT (GAMOS_ROOT not defined).
 // It reproduces the behaviour of ROOT TH2F (ROOT 6.26), that is used when GAMOS is compiled with ROOT (see GmHisto1.hh)
 // Global bin number is binX + (nbinsX+2)*binY, bin 0 is the underflow and bin nbins+1 the overflow in each axis
 //------------------------------------------------------------------------

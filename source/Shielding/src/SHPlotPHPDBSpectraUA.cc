@@ -129,7 +129,7 @@ void SHPlotPHPDBSpectraUA::BeginOfEventAction(const G4Event* evt)
 	  if( SHUtils::GetNChannelParticles() == 0 ) SHUtils::BuildChannelList(primParticle->GetParticleDefinition(), theName);
 
 	  //	  G4HadProjectile hadProj(*aParticle);
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	  TH1* hisE;
 	  TH1* hisTh;
 	  TH1* hisEALL;

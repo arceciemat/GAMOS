@@ -1,6 +1,18 @@
 #ifndef ScoreData__HH
 #define ScoreData__HH
+
+// Windows: static data used from other DLLs/programs must be dllexport/dllimport
+#ifdef _WIN32
+# ifdef compareScores_EXPORTS
+#  define COMPARESCORES_DATA_API __declspec(dllexport)
+# else
+#  define COMPARESCORES_DATA_API __declspec(dllimport)
+# endif
+#else
+# define COMPARESCORES_DATA_API
+#endif
 #include "globals.hh"
+#include <cstdlib>
 #include <vector>
 
 enum DoseType{ST_ROOT, ST_TEXT, ST_CSV};
@@ -25,7 +37,7 @@ public:
   
   virtual void Print( std::ofstream& ){
     G4cerr << " ERROR Print" << G4endl;
-    std::exception();
+    exit(1);
   };
   void SetScorerData( ScorerData* sd );
   //  void MultiplyByNEvents();
@@ -44,9 +56,9 @@ public:
 
   G4bool SelfCheck() const;
 
-  static int verbosity;
+  COMPARESCORES_DATA_API static int verbosity;
 
-  static DoseIndexValType theIndexValType;
+  COMPARESCORES_DATA_API static DoseIndexValType theIndexValType;
 
 protected:
   long double theDoseDivideError;

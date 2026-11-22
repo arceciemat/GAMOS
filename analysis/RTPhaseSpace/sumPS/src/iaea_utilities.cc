@@ -620,6 +620,7 @@ int writeLittleEndianBinaryFile(char *binaryFileName,  int nItemsToWrite, float 
    return(OK);
 }
 /* ***************************************************************************************************** */
+#ifndef _WIN32  // the MSVC C runtime already has strnset
 char *strnset(char *s, int ch, size_t n)
 {  /* mimic strnset command in dos/ os2/ win / ... */
    for(int i=0; i< (int) n; i++)
@@ -629,6 +630,7 @@ char *strnset(char *s, int ch, size_t n)
    }
    return(s);
 }
+#endif
 int get_string(FILE *fspec, char *string)
 {                       
 #ifdef DEBUG

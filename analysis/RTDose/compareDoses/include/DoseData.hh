@@ -1,6 +1,18 @@
 #ifndef DoseData__HH
 #define DoseData__HH
+
+// Windows: static data used from other DLLs/programs must be dllexport/dllimport
+#ifdef _WIN32
+# ifdef compareDoses_EXPORTS
+#  define COMPAREDOSES_DATA_API __declspec(dllexport)
+# else
+#  define COMPAREDOSES_DATA_API __declspec(dllimport)
+# endif
+#else
+# define COMPAREDOSES_DATA_API
+#endif
 #include "globals.hh"
+#include <cstdlib>
 #include <vector>
 
 enum DoseType{ST_ROOT, ST_TEXT};
@@ -25,7 +37,7 @@ public:
   
   virtual void Print( std::ofstream& ){
     G4cerr << " ERROR Print" << G4endl;
-    std::exception();
+    exit(1);
   };
   void SetDoserData( DoserData* sd );
   //  void MultiplyByNEvents();
@@ -44,9 +56,9 @@ public:
 
   G4bool SelfCheck() const;
 
-  static int verbosity;
+  COMPAREDOSES_DATA_API static int verbosity;
 
-  static DoseIndexValType theIndexValType;
+  COMPAREDOSES_DATA_API static DoseIndexValType theIndexValType;
 
 protected:
   long double theDoseDivideError;

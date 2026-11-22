@@ -192,8 +192,8 @@ ifndef INCFLAGS
               -I$(G4BASE)/graphics_reps/include \
               -I$(G4BASE)/intercoms/include \
               -I$(G4BASE)/externals/clhep/include
-  ifdef GAMOS_NO_ROOT
-    INCFLAGS  += -DGAMOS_NO_ROOT
+  ifdef GAMOS_ROOT
+    INCFLAGS  += -DGAMOS_ROOT
   endif
   ifdef BEAMZPOS
     INCFLAGS  += -DBEAMZPOS

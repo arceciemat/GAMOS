@@ -1,12 +1,12 @@
 #ifndef GmHistoProfile2_hh
 #define GmHistoProfile2_hh
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
 
 #include "GmHisto2.hh"
 #include <iostream>
 
 //------------------------------------------------------------------------
-// 2D profile histogram used when GAMOS is compiled without ROOT (GAMOS_NO_ROOT).
+// 2D profile histogram used when GAMOS is compiled without ROOT (GAMOS_ROOT not defined).
 // It reproduces the behaviour of ROOT TProfile2D (ROOT 6.26) with default error option (error on the mean), that is used when GAMOS is compiled with ROOT:
 //  for each bin it stores sum(w*z) (in theArray), sum(w*z*z) (in theSumw2), sum(w) (in theBinEntries) and sum(w*w) (in theBinSumw2, only once a weight != 1 is used)
 //  bin content is the mean of z: sum(w*z)/sum(w)

@@ -1,4 +1,4 @@
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "GmDataTTreeUA.hh"
 #include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 

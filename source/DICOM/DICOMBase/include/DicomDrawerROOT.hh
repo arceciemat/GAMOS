@@ -1,6 +1,6 @@
 #ifndef DicomDrawerROOT__HH
 #define DicomDrawerROOT__HH
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 
 #include "DicomVDrawer.hh"
 #include "DicomMgr.hh"

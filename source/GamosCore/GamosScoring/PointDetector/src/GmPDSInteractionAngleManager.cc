@@ -9,7 +9,7 @@
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 
 #include <vector>
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TFile.h"
 #include "TKey.h"
 #endif
@@ -31,20 +31,20 @@ GmPDSInteractionAngleManager::GmPDSInteractionAngleManager( const G4String& file
   bEnergyLog = G4bool(GmParameterMgr::GetInstance()->GetNumericValue("GmPDS:InteractionAngleManager:EnergyLog",1));
 
   if( filename.size() > 5 && filename.substr(filename.size()-5) == ".root" ) {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     ReadROOTFile( filename, minimumNumberOfEntries );
 #else
     G4Exception("GmPDSInteractionAngleManager::GmPDSInteractionAngleManager",
 		"Wrong argument",
 		FatalErrorInArgument,
-		G4String("File " + filename + " is a ROOT file, but GAMOS is built without ROOT (GAMOS_NO_ROOT). Create the angle tables in CSV format (default without ROOT) and use the '.csv' file").c_str());
+		G4String("File " + filename + " is a ROOT file, but GAMOS is built without ROOT (GAMOS_ROOT not defined). Create the angle tables in CSV format (default without ROOT) and use the '.csv' file").c_str());
 #endif
   } else {
     ReadCSVFile( filename, minimumNumberOfEntries );
   }
 }
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //------------------------------------------------------------------
 void GmPDSInteractionAngleManager::ReadROOTFile( const G4String& filename, G4double minimumNumberOfEntries )
 {
@@ -96,7 +96,7 @@ void GmPDSInteractionAngleManager::ReadCSVFile( const G4String& filename, G4doub
     G4int nbins = histo->GetNbinsX();
     std::vector<G4double> binContents;
     for( G4int ii = 1; ii <= nbins; ii++ ) binContents.push_back( histo->GetBinContent(ii) );
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     G4double xmin = histo->GetXaxis()->GetXmin(); // GmHisto1 is TH1F
     G4double xmax = histo->GetXaxis()->GetXmax();
 #else

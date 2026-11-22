@@ -1,7 +1,7 @@
 #ifndef GmHistoWriterROOT_h
 #define GmHistoWriterROOT_h 1
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "GmHistoWriter.hh"
 class TFile;
 //class GmHisto1;

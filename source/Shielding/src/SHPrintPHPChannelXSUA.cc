@@ -118,7 +118,7 @@ void SHPrintPHPChannelXSUA::BeginOfEventAction(const G4Event* evt)
       G4String hname = material->GetName() + "_" + hadProc->GetProcessName();
       theAnaMgr->CreateHisto1D(hname.c_str(), theNStepsE, theMinE, theMaxE, theHistoNumber+imat*100000+iproc*10000);
       GmHisto1* his = theAnaMgr->GetHisto1( theHistoNumber+imat*100000+iproc*10000);
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
       G4cout << " HIS " << his->GetXaxis()->GetXmin() << " " << his->GetXaxis()->GetXmax() << " " << " " << his->GetXaxis()->GetNbins()  << G4endl;
 #else
       G4cout << " HIS " << his->GetLowerEdge() << " " << his->GetUpperEdge() << " " << " " << his->GetNbins()  << G4endl;
@@ -143,7 +143,7 @@ void SHPrintPHPChannelXSUA::BeginOfEventAction(const G4Event* evt)
 	  his->Fill( ener, cross/nAtomsPermm3/CLHEP::barn );
 	} else {
 	  his->Fill( log10(ener), cross/nAtomsPermm3/CLHEP::barn );
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	  G4cout << ener <<  " BIN " << his->GetXaxis()->FindBin(ener) << " = " << (ener-his->GetXaxis()->GetXmin())/his->GetXaxis()->GetBinWidth(1) << G4endl;
 #endif
 	}
@@ -341,7 +341,7 @@ void SHPrintPHPChannelXSUA::BeginOfEventAction(const G4Event* evt)
 		  + 1;
 		hname = hadProc->GetProcessName() + "_" + material->GetName() + "_" + isotName + "_ALL_" + productName;
 		
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 		TH1F* hisYXSALL = theAnaMgr->GetHisto1(histoNAllChann,0);
 #else
 		GmHisto1* hisYXSALL = theAnaMgr->GetHisto1(histoNAllChann,0);

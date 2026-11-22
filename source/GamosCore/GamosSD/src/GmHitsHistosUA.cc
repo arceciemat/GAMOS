@@ -4,7 +4,7 @@
 #include "GamosCore/GamosSD/include/GmSDVerbosity.hh"
 #include "GamosCore/GamosGeometry/include/GmGeometryUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TAxis.h"
 #endif
 #include "G4Event.hh"
@@ -192,7 +192,7 @@ void GmHitsHistosUA::SumHistos()
 {
   for( unsigned int jj = 1; jj <= 17; jj++ ){
     if( jj == 8 || jj == 9 || jj == 10 ) continue;
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     TH1F* hisAll = theAnaMgr->GetHisto1D(201000+jj);
     for( unsigned int ii = 1; ii <= theSDTypes.size(); ii++ ){
       TH1F* his = theAnaMgr->GetHisto1D(201000+ii*100+jj);

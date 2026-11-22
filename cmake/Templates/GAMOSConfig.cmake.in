@@ -8,7 +8,7 @@
 #   GAMOS_DEFINITIONS    : compile definitions used to build GAMOS
 #   GAMOS_DATA_DIR       : GAMOS data files (<GAMOS source dir>/data, not installed)
 #   GAMOS_MODULE_DIR     : directory of the SEAL plugin registrations (SEAL_PLUGINS)
-#   GAMOS_USE_ROOT, GAMOS_USE_DCMTK
+#   GAMOS_ROOT, GAMOS_USE_DCMTK
 # Geant4 (and ROOT and DCMTK, if GAMOS uses them) are also found.
 #
 # Example:
@@ -27,7 +27,7 @@ set(GAMOS_MODULE_DIR "@PACKAGE_GAMOS_INSTALL_MODULEDIR@")
 include(CMakeFindDependencyMacro)
 
 set(GAMOS_VERSION @PROJECT_VERSION@)
-set(GAMOS_USE_ROOT @GAMOS_USE_ROOT@)
+set(GAMOS_ROOT @GAMOS_ROOT@)
 set(GAMOS_USE_DCMTK @GAMOS_USE_DCMTK@)
 
 if(NOT Geant4_DIR)
@@ -35,7 +35,7 @@ if(NOT Geant4_DIR)
 endif()
 find_dependency(Geant4 @Geant4_VERSION@ EXACT COMPONENTS ui_all vis_all)
 find_dependency(Threads)
-if(GAMOS_USE_ROOT)
+if(GAMOS_ROOT)
   if(NOT ROOT_DIR)
     set(ROOT_DIR "@ROOT_DIR@")
   endif()
@@ -54,7 +54,7 @@ set(GAMOS_INCLUDE_DIRS ${GAMOS_INCLUDE_DIR} ${Geant4_INCLUDE_DIRS})
 if(GAMOS_USE_DCMTK)
   list(APPEND GAMOS_INCLUDE_DIRS ${DCMTK_INCLUDE_DIRS})
 endif()
-if(GAMOS_USE_ROOT)
+if(GAMOS_ROOT)
   list(APPEND GAMOS_INCLUDE_DIRS ${ROOT_INCLUDE_DIRS})
 endif()
 set(GAMOS_DEFINITIONS @GAMOS_COMPILE_DEFINITIONS@)

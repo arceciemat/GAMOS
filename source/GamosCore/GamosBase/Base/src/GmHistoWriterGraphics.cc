@@ -1,4 +1,4 @@
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TH1F.h"
 
 #include "TCanvas.h"

@@ -23,7 +23,7 @@ GmHistoWriterCSV::~GmHistoWriterCSV()
 
  
 //----------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 void GmHistoWriterCSV::SaveHisto1( const TH1F* his )
 #else  
 void GmHistoWriterCSV::SaveHisto1( const GmHisto1* his )
@@ -35,7 +35,7 @@ void GmHistoWriterCSV::SaveHisto1( const GmHisto1* his )
 
 
 //----------------------------------------------------------------------
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 void GmHistoWriterCSV::SaveHisto2( const TH2F* his )
 #else 
 void GmHistoWriterCSV::SaveHisto2( const GmHisto2* his )
@@ -44,7 +44,7 @@ void GmHistoWriterCSV::SaveHisto2( const GmHisto2* his )
   SaveHisto2D("2D", his);
 }
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //----------------------------------------------------------------------
 void GmHistoWriterCSV::SaveHistoProf1( const TProfile* his )
 {
@@ -70,7 +70,7 @@ void GmHistoWriterCSV::SaveHistoProf2( const GmHistoProfile2* his )
 }
 #endif
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //----------------------------------------------------------------------
 void GmHistoWriterCSV::SaveHisto1D(const G4String& hisType, const TH1* his )
 {
@@ -124,7 +124,7 @@ void GmHistoWriterCSV::SaveHisto1D(const G4String& hisType, const GmHistoProfile
 }
 #endif
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //----------------------------------------------------------------------
 void GmHistoWriterCSV::SaveHisto2D(const G4String& hisType,  const TH2* his )
 {

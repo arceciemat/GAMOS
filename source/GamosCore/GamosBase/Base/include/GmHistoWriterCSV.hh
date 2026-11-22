@@ -5,7 +5,7 @@
 #include <fstream>
 
 #include "globals.hh"
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
 class GmHisto1;
 class GmHisto2;
 class GmHistoProfile1;
@@ -22,7 +22,7 @@ public:
   ~GmHistoWriterCSV();
 
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   virtual void SaveHisto1( const TH1F* his );
   virtual void SaveHisto2( const TH2F* his );
   virtual void SaveHistoProf1( const TProfile* his );

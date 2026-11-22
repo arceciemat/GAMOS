@@ -24,7 +24,9 @@
 // ********************************************************************
 //
 #include "G4UImanager.hh"
+#ifndef _WIN32  // tcsh terminal: not available on Windows
 #include "G4UItcsh.hh"
+#endif
 
 #include "G4GeometryManager.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"

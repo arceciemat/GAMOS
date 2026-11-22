@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------
 GmGeneratorScanVis::GmGeneratorScanVis()
 {
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
   G4Exception("GmGeneratorScanVis::GmGeneratorScanVis",
 	      "",
 	      FatalException,
@@ -31,7 +31,7 @@ GmGeneratorScanVis::GmGeneratorScanVis()
 
   
   //----- Create user action that will draw the intersection points
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   theGeneratorUA = new GmGeneratorScanVisUA();
   theGeneratorUA->SetGenerator(this);
 #endif  
@@ -137,7 +137,7 @@ void GmGeneratorScanVis::Initialise()
 //------------------------------------------------------------------------
 void GmGeneratorScanVis::GeneratePrimaries([[maybe_unused]] G4Event* evt)
 {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   if( !IncrementPosTransv() ) return;
   
   //  G4cout << " thePlaneFig " << thePlaneFig << " theAngles " << theAngles.size() << G4endl; //GDEB

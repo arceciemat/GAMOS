@@ -23,7 +23,7 @@ class GmSVGCanvas;
 class GmSVGFrame;
 class GmHistoWriterCSV;
 // GmHisto1/GmHisto2 are ROOT TH1F/TH2F if GAMOS is built with ROOT (as in GmAnalysisMgr.hh)
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 class TH1F;
 typedef TH1F GmHisto1;
 #else

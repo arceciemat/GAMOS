@@ -7,7 +7,7 @@
 #include "G4Box.hh"
 #include "G4VPhysicalVolume.hh"
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TMarker.h"
 #include "TStyle.h"
 #include "TText.h"
@@ -26,7 +26,7 @@
 //------------------------------------------------------------------------
 GmGeneratorScanVisUA::GmGeneratorScanVisUA()
 {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   theFileOut = 0;
 #endif
 }
@@ -40,7 +40,7 @@ GmGeneratorScanVisUA::~GmGeneratorScanVisUA()
 //------------------------------------------------------------------------
 void GmGeneratorScanVisUA::UserSteppingAction([[maybe_unused]] const G4Step* aStep)
 {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   if( aStep->GetPostStepPoint()->GetPhysicalVolume() ) {
     G4ThreeVector pos = aStep->GetPostStepPoint()->GetPosition();
     G4String borderName;
@@ -106,7 +106,7 @@ void GmGeneratorScanVisUA::UserSteppingAction([[maybe_unused]] const G4Step* aSt
 }
 
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 
 //------------------------------------------------------------------------
 void GmGeneratorScanVisUA::BeginOfRunAction(const G4Run* )

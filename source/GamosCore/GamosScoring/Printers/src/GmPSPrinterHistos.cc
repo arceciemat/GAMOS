@@ -105,7 +105,7 @@ void GmPSPrinterHistos::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScore
 
   theAnaMgr->CreateHisto1D( theNameX,theNBinsX,theMinX,theMaxX,theHistoNumber+1);
   GmHisto1* hisX = theAnaMgr->GetHisto1(theHistoNumber+1);
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   for( int ii = 0; ii < hisX->GetXaxis()->GetNbins()+1; ii++ ){
 #else
   for( int ii = 0; ii < hisX->GetNbins()+1; ii++ ){
@@ -118,7 +118,7 @@ void GmPSPrinterHistos::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScore
     theAnaMgr->CreateHisto1D( theNameY,theNBinsY,theMinY,theMaxY,theHistoNumber+2);
     theAnaMgr->CreateHisto2D( theNameX+".vs."+theNameY,theNBinsX,theMinX,theMaxX,theNBinsY,theMinY,theMaxY,theHistoNumber+3);
     hisY = theAnaMgr->GetHisto1(theHistoNumber+2);
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     for( int iy = 0; iy < hisY->GetXaxis()->GetNbins()+1; iy++ ){
 #else
     for( int iy = 0; iy < hisY->GetNbins()+1; iy++ ){
@@ -126,7 +126,7 @@ void GmPSPrinterHistos::DumpAll( G4THitsMap<G4double>* RunMap, GmVPrimitiveScore
       hisY->SetBinContent( iy, 0. );
     }
     hisXY = theAnaMgr->GetHisto2(theHistoNumber+3);
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     for( int ix = 0; ix < hisXY->GetXaxis()->GetNbins()+1; ix++ ){
       for( int iy = 0; iy < hisXY->GetYaxis()->GetNbins()+1; iy++ ){
 #else

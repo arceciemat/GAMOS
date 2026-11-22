@@ -7,7 +7,7 @@ class G4Event;
 #include "GamosCore/GamosUserActionMgr/include/GmUserSteppingAction.hh"
 #include "GamosCore/GamosUserActionMgr/include/GmUserRunAction.hh"
 #include "GamosCore/GamosUserActionMgr/include/GmUserEventAction.hh"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TCanvas.h"
 #include "TH2F.h"
 #include "TColor.h"
@@ -33,7 +33,7 @@ public:
   GmGeneratorScanVisUA();
   ~GmGeneratorScanVisUA();
   virtual void UserSteppingAction(const G4Step* aStep);
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   virtual void BeginOfRunAction(const G4Run* );
   virtual void EndOfRunAction(const G4Run* );
   //  virtual void BeginOfEventAction(const G4Event* );

@@ -12,6 +12,7 @@
  =================================================================*/
 
 #include <stdio.h>
+#include <cstdlib>
 #include <stdlib.h>
 #include <limits>
 #include <string>
@@ -814,7 +815,7 @@ void phspheader::check_inputfile(string input){
 	  type = "IAEA";
 	}else {
 	  std::cerr << "!!! FATAL ERROR: Unknown suffix type of file " << input << std::endl;
-	  std::exception();
+	  exit(1);
 	}
 
 	//	std::cout << " check_inputfile " << input << " firstname " << firstname << std::endl;

@@ -153,7 +153,7 @@ void GmRecHitsHistosUA::EndOfEventAction(const G4Event* )
 void GmRecHitsHistosUA::SumHistos()
 {
   for( unsigned int jj = 1; jj <= 6; jj++ ){
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     TH1F* hisAll = theAnaMgr->GetHisto1D(202000+jj);
     for( unsigned int ii = 1; ii <= theSDTypes.size(); ii++ ){
       TH1F* his = theAnaMgr->GetHisto1D(202000+ii*100+jj);

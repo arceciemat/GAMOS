@@ -71,7 +71,7 @@ int main(int argc, char *argv[]){
 	
 	if( argc != 3 ) {
 	  std::cerr << " !!! ERROR : Two arguments should be provided: INPUT_FILE_LIST_NAME OUTPUT_FILE_NAME" << std::endl;
-	  std::exception();
+	  exit(1);
 	}
 	filename = argv[1];
 	exitname = argv[2];
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]){
 	ifstream  finlis(filename.c_str());
 	if( !finlis.is_open() ) {
 	  cerr << "!!! ERROR :  Unable to read file with list of files: " << filename << endl;
-	  std::exception();
+	  exit(1);
 	}
 	//	for(int i=first; i<=last; i++){
 	for(;;){
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]){
 	    inputphsp -> get_and_append(output,statsphsp);
 	  }else{
 	    cerr << "!!! ERROR : Unable to read file: " << aux << endl;
-	    std::exception();
+	    exit(1);
 	    exit(1);
 	    int tempor;
 	    cin >> tempor;

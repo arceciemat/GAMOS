@@ -1,6 +1,7 @@
 #ifndef ScorerData__HH
 #define ScorerData__HH
 #include "globals.hh"
+#include <cstdlib>
 #include <vector>
 #include <map>
 #include <fstream>
@@ -27,7 +28,7 @@ public:
 
   virtual void Print( std::ofstream& ){
     G4cerr << " ERROR Print" << G4endl;
-    std::exception();
+    exit(1);
   };
 
   ScoreData* GetScoreData(unsigned int) const;
@@ -52,7 +53,7 @@ public:
   }
   virtual G4String GetName() const{
     G4cerr << "!!! ScorerData ERROR GetName() " << G4endl;
-    std::exception();
+    exit(1);
     return "";
   }
 
@@ -66,7 +67,7 @@ public:
   
   virtual G4String GetIndexVal( G4String, G4bool ){
     G4cerr << "!!! ERROR GetIndexVal() " << G4endl;
-    std::exception();
+    exit(1);
     return "0.";
   } 
 

@@ -393,7 +393,7 @@ void GmProdCutsStudyUA::EndOfRunAction(const G4Run* )
 	G4int nbinsY = hisS->GetNbinsY();
 	G4int nent = 0;
 	for( G4int ix = 0; ix <= nbinsX+1; ix++ ){
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
 	  if( hisS->GetBinUpEdgeX( ix ) <= -5. ) continue;
 #else 
 	  if( hisS->GetXaxis()->GetBinUpEdge( ix ) <= -5. ) continue;

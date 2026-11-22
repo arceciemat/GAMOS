@@ -2,6 +2,7 @@
 #define GetWordsInLine_C
 
 #include <iostream>
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -36,7 +37,7 @@ int GetWordsInLine(std::ifstream& fin, std::vector<std::string>& wordlist)
       std::cerr << "!! EXITING: ERROR IN LINE No " << theLineNo << " file: " << std::endl;
       std::cerr << "!!!! line longer than " << NMAXLIN << " characters" << 
 	std::endl << " please split it putting a '\\' at the end of line" << std::endl;
-      std::exception();
+      exit(1);
     }
     
     //---------- End of file
@@ -130,7 +131,7 @@ int GetWordsInLine(std::ifstream& fin, std::vector<std::string>& wordlist)
 	      std::string err2 = " previous word with leading '\"' in line ";
 	      std::string err = err1 + err2;
 	      std::cerr << "!! EXITING: ERROR " << err << std::endl;
-	      std::exception();
+	      exit(1);
 	    }
 	  }
 	imerge = 2;
@@ -173,7 +174,7 @@ int GetWordsInLine(std::ifstream& fin, std::vector<std::string>& wordlist)
 	  std::string err2 = " later word with trailing '\"' in line ";
 	  std::string err = err1 + err2;
 	  std::cerr << "!! EXITING: ERROR " << err << std::endl;
-	  std::exception();
+	  exit(1);
 	}
   }
     

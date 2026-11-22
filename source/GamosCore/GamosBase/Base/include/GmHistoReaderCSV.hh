@@ -4,7 +4,7 @@
 #include "globals.hh"
 #include <map>
 #include <vector>
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
 class GmHisto1;
 class GmHisto2;
 class GmHistoProfile1;

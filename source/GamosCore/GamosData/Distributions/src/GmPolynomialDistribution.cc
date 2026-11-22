@@ -8,7 +8,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TFile.h"
 #include "TAxis.h"
 #endif

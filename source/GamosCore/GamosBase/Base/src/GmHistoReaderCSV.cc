@@ -74,7 +74,7 @@ void GmHistoReaderCSV::FillHisto1D( std::vector<G4String>& wl, GmHisto1* his )
   // 5 header + (nbins+2) (content,error) + entries, mean, mean error, RMS, RMS error = 2*nbins+14 words
   CheckNFields( wl, 2*nbins+14 );
   for( size_t iw = 5; iw < wl.size(); iw++ ) GetNumber(wl,iw); // all fields must be valid numbers
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
   his->SetUseErrors(true);
 #endif
   G4int ii = 5; // "1D", his_name,number_of_bins,Xaxis_minimum, Xaxis_maximum, underflow,underflow_error,bin_content, bin_error,overflow, overflow_error (It has indeed number_of_binsX+2 pairs valueerror, as the first one is the underflow (entries below axis_minimum) and the last one is the overflow (entries above axis maximum).

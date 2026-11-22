@@ -1343,7 +1343,7 @@ void RTVPlanSource::ReadCorrectPosDirExpMCProfAir1D(G4String energyNominal)
   G4double ExpXmin;
   G4double MCXwid = MCHistoX->GetBinWidth(0);
   G4double ExpXwid = ExpHistoX->GetBinWidth(0);
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   MCXmin = MCHistoX->GetXaxis()->GetXmin()+MCXwid/2; // not min value in histogram, but min value for GmPhysicsLinearVector 
   MCXmax = MCHistoX->GetXaxis()->GetXmax()-MCXwid/2;
   ExpXmin = ExpHistoX->GetXaxis()->GetXmin()+ExpXwid/2;
@@ -1392,7 +1392,7 @@ void RTVPlanSource::ReadCorrectPosDirExpMCProfAir1D(G4String energyNominal)
   G4double ExpYmin;
   G4double MCYwid = MCHistoY->GetBinWidth(0);
   G4double ExpYwid = ExpHistoY->GetBinWidth(0);
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   MCYmin = MCHistoY->GetXaxis()->GetXmin()+MCYwid/2;
   MCYmax = MCHistoY->GetXaxis()->GetXmax()-MCYwid/2;
   ExpYmin = ExpHistoY->GetXaxis()->GetXmin()+ExpYwid/2;

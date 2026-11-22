@@ -1,7 +1,7 @@
 #ifndef GmHistoWriter_h
 #define GmHistoWriter_h 1
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TProfile.h"
@@ -20,7 +20,7 @@ class GmHistoWriter
 public:
   GmHistoWriter(){};
   virtual ~GmHistoWriter(){};
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   virtual void SaveHisto1( const TH1F* his ) = 0;
   virtual void SaveHisto2( const TH2F* his ) = 0;
   virtual void SaveHistoProf1( const TProfile* his ) = 0;

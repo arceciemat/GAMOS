@@ -17,7 +17,7 @@
 #include "G4AutoLock.hh"
 #include "G4Box.hh"
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TF1.h"
 #include "TFitResultPtr.h"
 #include "TFitResult.h"
@@ -180,7 +180,7 @@ void SHNthValueLayerUA::EndOfRunAction(const G4Run* )
     his->SetBinContent( jj, (*itei).second );
   }
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   TF1 *f1 = new TF1("f1", "expo", 0., theLayerWidth*nLayers);
   his->Fit("f1", "R");
   /*  TFitResultPtr fitres = his->Fit("f1", "R");
@@ -198,7 +198,7 @@ void SHNthValueLayerUA::EndOfRunAction(const G4Run* )
 
   for( ii = 0; ii < theReductions.size(); ii++ ) {
     G4double reduc = theReductions[ii];
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     G4cout << Name << " : REDUCTION FROM FIT= " << reduc  
 	   << " reached at depth= " << log(reduc) / (-f1->GetParameter(1)) 
 	   << " +- " << log(reduc) * f1->GetParError(1) / sqr(f1->GetParameter(1)) << " mm " << G4endl;

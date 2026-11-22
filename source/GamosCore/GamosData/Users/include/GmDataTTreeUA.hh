@@ -1,4 +1,4 @@
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #ifndef __GmDataTTreeUA__
 #define __GmDataTTreeUA__
 

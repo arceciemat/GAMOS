@@ -7,7 +7,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "G4tgrUtils.hh"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TH2F.h"
 #include "TCanvas.h"
 #include "TEllipse.h"
