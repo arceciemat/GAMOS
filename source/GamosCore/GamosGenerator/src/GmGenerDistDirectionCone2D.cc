@@ -1,4 +1,6 @@
+#ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#endif
 #include "GmGenerDistDirectionCone2D.hh"
 #include "GmGenerVerbosity.hh"
 #include "GamosCore/GamosGenerator/include/GmParticleSource.hh"

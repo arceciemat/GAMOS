@@ -252,7 +252,11 @@ Time::timezone (int *daylight /* = 0 */) const
     return localtm.tm_zone;
 #else
     // extern "C" { extern char *tzname [2]; }
+# ifdef _WIN32
+    return _tzname [localtm.tm_isdst > 0 ? 1 : 0];
+# else
     return tzname [localtm.tm_isdst > 0 ? 1 : 0];
+# endif
 #endif
 }
 

@@ -478,8 +478,14 @@ void GmRunManager::RestoreRandomSeeds( G4int index, G4int nTries )
   nseedS << std::setprecision(2) << theNSeedsInFile;
 
 #ifdef WIN32
-  // convert 1e+010 in 1e+10
-  G4String nseedSs = nseedS.str().substr(0,3) + nseedS.str().substr(4,2);
+  // old Visual C++ versions (before 2015) write 3 exponent digits (1e+011): use the C/Linux format,
+  // with at least 2 exponent digits (1e+11, 1e+05), as in the names of the files in data/initialSeeds
+  G4String nseedSs = nseedS.str();
+  size_t ie = nseedSs.find_first_of("eE");
+  if( ie != std::string::npos && ie+2 < nseedSs.size() ) {
+    size_t id = ie + 2; // first exponent digit, after the sign
+    while( nseedSs.size()-id > 2 && nseedSs[id] == '0' ) nseedSs.erase(id,1);
+  }
   G4String filePrefix = seedFileDir + "\\initialSeeds." + nseedSs + ".";
 #else
   G4String filePrefix = seedFileDir + "/initialSeeds." + nseedS.str() + ".";

@@ -74,12 +74,9 @@ public:
   G4String GetTypeStr() const;
 
   static G4bool bNo0Dose; 
-  static G4bool GetNo0Dose() {
-    return bNo0Dose;
-  }
-  static void SetNo0Dose( G4bool bno0 ) {
-    bNo0Dose = bno0;
-  }
+  // Not inline: on Windows other DLLs/programs cannot access bNo0Dose directly
+  static G4bool GetNo0Dose();
+  static void SetNo0Dose( G4bool bno0 );
   
   
 private:

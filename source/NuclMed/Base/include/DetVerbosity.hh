@@ -15,10 +15,10 @@ public:
 };
 
 #ifdef WIN32
-  #if defined GmDetBase_ALLOC_EXPORT 
-    extern G4DLLEXPORT GmVerbosity DetVerb;
+  #if defined NuclMed_Base_EXPORTS 
+    extern __declspec(dllexport) GmVerbosity DetVerb;
   #else 
-    extern G4DLLIMPORT GmVerbosity DetVerb;
+    extern __declspec(dllimport) GmVerbosity DetVerb;
   #endif
 #else
  extern GmVerbosity DetVerb;

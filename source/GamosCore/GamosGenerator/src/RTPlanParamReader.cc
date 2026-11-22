@@ -74,11 +74,11 @@ G4double RTPlanParamReader::GetParam(G4String parName, G4bool bMustExist ) const
 		"",
 		FatalException,
 		("Parameter not found : " + parName).c_str());
-  } else {
+  } else if( ite != theParams.end() ) {
     return (*ite).second;
   }
 
-  return 0.;
+  return 0.; // not found and !bMustExist (do not dereference end())
 }
 
 //-------------------------------------------------------------

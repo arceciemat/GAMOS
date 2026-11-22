@@ -13,8 +13,9 @@ SDType GmSDType::GetType( const G4String& type )
   //  if( type.c_str()[isiz-1] == '/' ) type.substr( 0, isiz-1 );
   //  if( type.c_str()[0] == '/' ) type.substr( 1, isiz );
 
-  if( type.substr(isiz-1,1) == "/" ) type.substr( 0, isiz-1 );
-  if( type.substr(0,1) == "/" ) type.substr( 1, isiz );
+  // (no-op: the types are compared below with the slashes, e.g. "/Tracker/")
+  //  if( type.substr(isiz-1,1) == "/" ) type.substr( 0, isiz-1 );
+  //  if( type.substr(0,1) == "/" ) type.substr( 1, isiz );
 
   if( type == "/Tracker/" ) {
     return SDTracker;

@@ -14,10 +14,10 @@ public:
 
 };
 #ifdef WIN32
-  #if defined RadioTherapy_ALLOC_EXPORT 
-    extern G4DLLEXPORT GmVerbosity RTVerb;
+  #if defined RadioTherapy_EXPORTS 
+    extern __declspec(dllexport) GmVerbosity RTVerb;
   #else 
-    extern G4DLLIMPORT GmVerbosity RTVerb;
+    extern __declspec(dllimport) GmVerbosity RTVerb;
   #endif
 #else
  extern GmVerbosity RTVerb;

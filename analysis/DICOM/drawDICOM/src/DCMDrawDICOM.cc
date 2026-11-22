@@ -18,7 +18,7 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TStyle.h"
 #endif
 
@@ -148,16 +148,16 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
   G4String drawLinesFN = theParamMgr->GetStringValue("fDrawLines","");
   theDicomMgr->ReadLineDrawingOptions( drawLinesFN );
   
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   G4String theDrawerType = theParamMgr->GetStringValue("drawerType","ROOT");
 #else
   G4String theDrawerType = theParamMgr->GetStringValue("drawerType","SVG");
 #endif
   if( theDrawerType == "ROOT" ) {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     theDrawer = new DicomDrawerROOT();
 #else
-    DicomException(theExeName + ": DRAWER 'ROOT' NOT AVAILABLE, GAMOS IS BUILT WITHOUT ROOT (GAMOS_NO_ROOT); USE 'SVG'");
+    DicomException(theExeName + ": DRAWER 'ROOT' NOT AVAILABLE, GAMOS IS BUILT WITHOUT ROOT (GAMOS_ROOT not defined); USE 'SVG'");
 #endif
   } else if( theDrawerType == "SVG" ) {
     // SVG figures (GmSVGCanvas), converted to imageFormat (default jpg) if a converter is found
@@ -171,7 +171,7 @@ void DCMDrawDICOM::ProcessArguments(int argc,char** argv)
   }
   
   G4int palette = G4int(theParamMgr->GetNumericValue("palette",55));
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   gStyle->SetPalette(palette);
 #endif
   GmSVGCanvas::SetPalette(palette); // SVG drawer: same palettes as ROOT (1, 51-113)
@@ -634,7 +634,7 @@ void DCMDrawDICOM::DrawImage(DicomVImage* image, std::vector<DicomVLineSet*> lin
       ctImage = GetOverlayCTImage();
     }
   }
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   if( ctImage != 0 && dynamic_cast<DicomDrawerSVG*>(theDrawer) == 0 ) {
     static G4bool bWarned = false;
     if( !bWarned ) G4Exception("DCMDrawDICOM::DrawImage",
@@ -759,7 +759,7 @@ void DCMDrawDICOM::PrintHelp()
 	 << " -CTMin VALUE   CT value drawn as black when the CT is drawn below another image (default = minimum value in CT image)" << G4endl
 	 << " -CTMax VALUE   CT value drawn as white when the CT is drawn below another image (default = maximum value in CT image)" << G4endl
 	 << " -bFigureTitle    Show the figure titleor not (1) " << G4endl;
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
   G4cout << " Without ROOT the figures are drawn as SVG files (-drawerType SVG, default): " << G4endl
 	 << " -imageFormat FORMAT   svg (no conversion), png, jpg (default), gif, bmp, tiff (built-in renderer), pdf, ps, eps, webp (converted from SVG if a converter is found) " << G4endl
 	 << " -jpgQuality N   quality (1-100, default 90) of jpg files written by the built-in renderer " << G4endl

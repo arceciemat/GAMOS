@@ -43,3 +43,6 @@ gamos_module_link_libraries(lcg_PluginManager
     ${CMAKE_DL_LIBS}
     Threads::Threads
 )
+
+# Windows: export (not import) PLUGIN_MANAGER_API symbols while building the DLL
+target_compile_definitions(lcg_PluginManager PRIVATE PLUGIN_MANAGER_BUILD_DLL)

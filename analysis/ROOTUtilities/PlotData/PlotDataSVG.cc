@@ -3,7 +3,7 @@
 //---------------------------------------------------------------------------
 // Replacement of ROOTUtilities/PlotData (Definitions.C, DrawHisto.C,
 // PlotUtils.C, CompareStats.C) when GAMOS is built without ROOT
-// (GAMOS_NO_ROOT), for the analysis programs that draw figures
+// (GAMOS_ROOT not defined), for the analysis programs that draw figures
 // (sumScores, compareScores, sumActivation, getOrganInfo, ...).
 // The same functions are provided, with the same arguments and the same
 // placement logic, but drawing into an SVG file (GmSVGCanvas, in GamosUtils),

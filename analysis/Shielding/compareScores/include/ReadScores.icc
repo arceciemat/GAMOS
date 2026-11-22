@@ -5,14 +5,14 @@
 //-------------------------------------------------------------------
 void ReadScoresROOT( G4String fileName ) 
 {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   ROOTFileData* fileData = new ROOTFileData(fileName, bInvertX);
   theFileData.push_back( fileData ); 
 #else
   G4Exception("ReadScores",
 	      "",
 	      FatalException,
-	      (G4String("File ") + fileName + " is of type ROOT, but GAMOS is built without ROOT (GAMOS_NO_ROOT). Use CSV (GAMOS .csv histogram files) or TEXT files (and write CSV or TEXT as third word in the compare file lines)").c_str());
+	      (G4String("File ") + fileName + " is of type ROOT, but GAMOS is built without ROOT (GAMOS_ROOT not defined). Use CSV (GAMOS .csv histogram files) or TEXT files (and write CSV or TEXT as third word in the compare file lines)").c_str());
 #endif
 
 }

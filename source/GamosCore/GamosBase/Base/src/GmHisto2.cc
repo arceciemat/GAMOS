@@ -1,6 +1,7 @@
 #ifndef GAMOS_ROOT
 
 #include "GmHisto2.hh"
+#include "G4Exception.hh"
 #include <algorithm>
 #include <iostream>
 
@@ -27,12 +28,12 @@ void GmHisto2::CheckLimits()
   //-- Check consistency of data
   if(theNBinsX <= 0) {
     G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The number of bins in Xaxis is " << theNBinsX << std::endl;
-    std::exception();
+    G4Exception("GmHisto2::CheckLimits","",JustWarning,("Wrong number of bins in histogram "+theName+", set to 1").c_str());
     theNBinsX = 1;
   }
   if(theNBinsY <= 0) {
     G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The number of bins in Yaxis is " << theNBinsY << std::endl;
-    std::exception();
+    G4Exception("GmHisto2::CheckLimits","",JustWarning,("Wrong number of bins in histogram "+theName+", set to 1").c_str());
     theNBinsY = 1;
   }
 
@@ -42,19 +43,19 @@ void GmHisto2::CheckLimits()
   //-- Check consistency of data
   if(theBinWidthX == 0.) {
     G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The lower and upper edges in X axis are equal " << std::endl;
-    std::exception();
+    G4Exception("GmHisto2::CheckLimits","",FatalException,("Wrong limits in histogram "+theName).c_str());
   }
   if(theBinWidthX < 0.) {
     G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The lower edge in X axis is bigger than the upper edge " << std::endl;
-    std::exception();
+    G4Exception("GmHisto2::CheckLimits","",FatalException,("Wrong limits in histogram "+theName).c_str());
   }
   if(theBinWidthY == 0.) {
     G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The lower and upper edges in Y axis are equal " << std::endl;
-    std::exception();
+    G4Exception("GmHisto2::CheckLimits","",FatalException,("Wrong limits in histogram "+theName).c_str());
   }
   if(theBinWidthY < 0.) {
     G4cerr << "!!! ERROR creating GmHisto2: " << theName << "     The lower edge in Y axis is bigger than the upper edge " << std::endl;
-    std::exception();
+    G4Exception("GmHisto2::CheckLimits","",FatalException,("Wrong limits in histogram "+theName).c_str());
   }
 
   theNcells = (theNBinsX+2)*(theNBinsY+2);

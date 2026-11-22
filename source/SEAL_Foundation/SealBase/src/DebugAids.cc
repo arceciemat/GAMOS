@@ -62,7 +62,7 @@ GetLogicalAddress (PVOID addr, PTSTR name, DWORD length,
     if (! VirtualQuery (addr, &info, sizeof (info)))
 	return false;
 
-    DWORD module = (DWORD) info.AllocationBase;
+    DWORD_PTR module = (DWORD_PTR) info.AllocationBase;  // pointer-sized (x64)
     if (! GetModuleFileName ((HMODULE) module, name, length))
 	return false;
 
@@ -70,7 +70,7 @@ GetLogicalAddress (PVOID addr, PTSTR name, DWORD length,
     PIMAGE_NT_HEADERS		ntheader
 	= (PIMAGE_NT_HEADERS) (module + dosheader->e_lfanew);
     PIMAGE_SECTION_HEADER	sect = IMAGE_FIRST_SECTION (ntheader);
-    DWORD			rva = (DWORD) addr - module;
+    DWORD			rva = (DWORD) ((DWORD_PTR) addr - module);
 
     for (unsigned i = 0; i < ntheader->FileHeader.NumberOfSections; ++i,++sect)
     {
@@ -573,15 +573,23 @@ DebugAids::stacktrace (IOFD fd /* = IOFD_INVALID */)
     IMAGEHLP_MODULE	module;
     char		modulename [MAX_PATH];
     DWORD		section;
+# if defined _M_X64 || defined _M_AMD64
+    DWORD64		offset;
+# else
     DWORD		offset;
+# endif
     char		buf [2*40+6];  // ample for two 128+ bit numbers
     // DWORD		exceptargs [] = { (DWORD) &context };
 
     // FIXME: XP 64-bit adds: RtlCaptureContext (&context);
     // This is documented to *not* work, but apparently it does.
     context.ContextFlags = CONTEXT_FULL;
+# if defined _M_X64 || defined _M_AMD64
+    RtlCaptureContext (&context);
+# else
     if (! GetThreadContext (GetCurrentThread (), &context))
 	return;
+# endif
 
     // LPTOP_LEVEL_EXCEPTION_FILTER oldseh
     //	= SetUnhandledExceptionFilter (&GrabExceptionContext);
@@ -593,16 +601,24 @@ DebugAids::stacktrace (IOFD fd /* = IOFD_INVALID */)
 
     module.SizeOfStruct		= sizeof (module);
 
+# if defined _M_X64 || defined _M_AMD64
+    const DWORD machineType	= IMAGE_FILE_MACHINE_AMD64;
+    frame.AddrPC.Offset		= context.Rip;
+    frame.AddrStack.Offset	= context.Rsp;
+    frame.AddrFrame.Offset	= context.Rbp;
+# else
+    const DWORD machineType	= IMAGE_FILE_MACHINE_I386;
     frame.AddrPC.Offset		= context.Eip;
-    frame.AddrPC.Mode		= AddrModeFlat;
     frame.AddrStack.Offset	= context.Esp;
-    frame.AddrStack.Mode	= AddrModeFlat;
     frame.AddrFrame.Offset	= context.Ebp;
+# endif
+    frame.AddrPC.Mode		= AddrModeFlat;
+    frame.AddrStack.Mode	= AddrModeFlat;
     frame.AddrFrame.Mode	= AddrModeFlat;
 
     while (true)
     {
-	if (! StackWalk (IMAGE_FILE_MACHINE_I386,
+	if (! StackWalk (machineType,
 			 GetCurrentProcess (),
 			 GetCurrentThread (),
 			 &frame,
@@ -620,9 +636,9 @@ DebugAids::stacktrace (IOFD fd /* = IOFD_INVALID */)
 	// Print stack frame too?  If we know how many arguments there
 	// are (from demangling function name -- see below, could count
 	// commas), args are: *((ULONG *)frame.AddrFrame.Offset+2+ARG).
-	MYWRITE (fd, buf, sprintf (buf, "(%2u) 0x%08lx 0x%08lx   ",
-				   level, frame.AddrPC.Offset,
-				   frame.AddrFrame.Offset));
+	MYWRITE (fd, buf, sprintf (buf, "(%2u) 0x%08llx 0x%08llx   ",
+				   level, (unsigned long long) frame.AddrPC.Offset,
+				   (unsigned long long) frame.AddrFrame.Offset));
 
 	memset (&symbol, 0, sizeof (symbol));
 	symbol.sym.SizeOfStruct = sizeof (symbol);
@@ -641,7 +657,7 @@ DebugAids::stacktrace (IOFD fd /* = IOFD_INVALID */)
 	    // 				| UNDNAME_NO_MS_KEYWORDS
 	    // 				| UNDNAME_NO_ACCESS_SPECIFIERS);
 	    MYWRITE (fd, symbol.sym.Name, STDC::strlen (symbol.sym.Name));
-	    MYWRITE (fd, buf, sprintf (buf, " + %lx", offset));
+	    MYWRITE (fd, buf, sprintf (buf, " + %llx", (unsigned long long) offset));
 
 	    if (SymGetModuleInfo (GetCurrentProcess(), frame.AddrPC.Offset,
 				  &module))
@@ -654,10 +670,11 @@ DebugAids::stacktrace (IOFD fd /* = IOFD_INVALID */)
 	}
 	else
 	{
+	    DWORD logoffset = 0;
 	    GetLogicalAddress ((PVOID) frame.AddrPC.Offset,
 			       modulename, sizeof (modulename),
-			       section, offset);
-	    MYWRITE (fd, buf, sprintf (buf, "%04lx:%08lx [", section, offset));
+			       section, logoffset);
+	    MYWRITE (fd, buf, sprintf (buf, "%04lx:%08lx [", section, logoffset));
 	    MYWRITE (fd, modulename, STDC::strlen (modulename));
 	    MYWRITELIT (fd, "]");
 	}

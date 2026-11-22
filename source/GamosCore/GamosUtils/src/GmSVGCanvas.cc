@@ -29,6 +29,9 @@
 
 GmSVGCanvas* GmSVGCanvas::theCurrentCanvas = 0;
 std::string GmSVGCanvas::theImageFormat = "";
+
+void GmSVGCanvas::SetImageFormat( const std::string& format ) { theImageFormat = format; }
+const std::string& GmSVGCanvas::GetImageFormat() { return theImageFormat; }
 int GmSVGCanvas::thePalette = 0;
 std::vector<unsigned char> GmSVGCanvas::thePaletteTable;
 

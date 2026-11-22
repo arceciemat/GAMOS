@@ -2,7 +2,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosRunManager/include/GmRunManager.hh"
-#ifndef GAMOS_NO_ROOT 
+#ifdef GAMOS_ROOT 
 #include "ROOTUtilities/PlotData/DrawHisto.C"
 #include "ROOTUtilities/PlotData/PlotUtils.C"
 #include "ROOTUtilities/PlotData/CompareStats.C"
@@ -150,7 +150,7 @@ int main(int argc,char** argv)
   }
 
   if( theDrawingDataFileName != "" ) ReadDrawingData( theDrawingDataFileName );
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
   //--- Figures are written as SVG; optionally converted with an external program
   theSVGConverter = GetDrawingDataString("SVGConverter", theSVGConverter);
   theSVGFormat = GetDrawingDataString("SVGFormat", theSVGFormat);
@@ -633,7 +633,7 @@ void PlotDosers( DoseSet* doseSet, G4bool bLogX  )
 	DrawGlobalTitle(his, hisFileName);
 	//      DrawXTitle(his,GetDrawingDataString("xAxisTitle"));
 	//      DrawYTitle(his,Definitions::yAxisTitle);
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	TAxis* xAxis = his->GetXaxis();
 	TLine* line = new TLine( xAxis->GetXmin(), 1., xAxis->GetXmax(), 1.); // HORIZ. LINE AT 1
 	line->Draw();
@@ -862,7 +862,7 @@ void PrintHelp()
 	 << " -verb       verbosity: sets the ShieldingVerbosity" << G4endl
 	 << " -indexValType  Type of treatment of dose index (get upper limit, lower limit or average " << G4endl
 	 << " -help       prints the set of arguments " << G4endl;
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
   G4cout << " Without ROOT the figures are written as SVG files. In the drawing data file you can set: " << G4endl
 	 << "   :P SVGFormat     png    (png/jpg/pdf: converted from SVG if a converter is found; svg: no conversion) " << G4endl
 	 << "   :P SVGConverter  auto   (auto: look for rsvg-convert, inkscape, magick, convert in PATH; none; or program name/path) " << G4endl;

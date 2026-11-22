@@ -22,19 +22,10 @@
 #include "dcmtk/dcmrt/drtdose.h"    // DRTDoseIOD
 using namespace std;
 
-#ifdef WIN32	
-#if defined DICOMReaders_ALLOC_EXPORT 
 G4bool DicomReaderCT::bMaterialDensities = false;
 std::map<G4double, G4String> DicomReaderCT::theMaterials;
 std::map<G4int, G4double> DicomReaderCT::theCT2Density;
 std::map<G4double, G4String> DicomReaderCT::theMaterialDensities;
-#endif
-#else
-G4bool DicomReaderCT::bMaterialDensities = false;
-std::map<G4double, G4String> DicomReaderCT::theMaterials;
-std::map<G4int, G4double> DicomReaderCT::theCT2Density;
-std::map<G4double, G4String> DicomReaderCT::theMaterialDensities;
-#endif
  
 #include "CLHEP/Random/RandFlat.h"
 

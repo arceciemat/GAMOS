@@ -1,4 +1,4 @@
-#ifndef GAMOS_NO_ROOT // ROOT files can only be read if GAMOS is built with ROOT
+#ifdef GAMOS_ROOT // ROOT files can only be read if GAMOS is built with ROOT
 #include "ROOTFileData.hh"
 #include "ROOTScorerData.hh"
 #include "ROOTScoreData.hh"

@@ -16,10 +16,10 @@ public:
 };
 
 #ifdef WIN32
-  #if defined GmBaseBase_ALLOC_EXPORT 
-    extern G4DLLEXPORT GmVerbosity FilterVerb;
+  #if defined GamosCore_GamosBase_Filters_EXPORTS 
+    extern __declspec(dllexport) GmVerbosity FilterVerb;
   #else 
-    extern G4DLLIMPORT GmVerbosity FilterVerb;
+    extern __declspec(dllimport) GmVerbosity FilterVerb;
   #endif
 #else
  extern GmVerbosity FilterVerb;

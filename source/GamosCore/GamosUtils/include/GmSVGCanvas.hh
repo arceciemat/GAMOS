@@ -84,8 +84,9 @@ public:
   static std::string FindInPath( const std::string& program );
   // Force the output format of all figures (overrides the format passed to Print/ConvertSVG);
   // "" : use the format passed by the caller (default); "svg": no conversion
-  static void SetImageFormat( const std::string& format ) { theImageFormat = format; }
-  static const std::string& GetImageFormat() { return theImageFormat; }
+  // Not inline: on Windows other DLLs cannot access theImageFormat directly
+  static void SetImageFormat( const std::string& format );
+  static const std::string& GetImageFormat();
 
   //--- utilities
   // convert most common ROOT TLatex symbols (#chi, ^{2}, #pm, ...) to Unicode

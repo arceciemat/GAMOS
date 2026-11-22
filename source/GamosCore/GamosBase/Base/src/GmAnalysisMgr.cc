@@ -18,13 +18,7 @@
 #include "CLHEP/Random/RandFlat.h"
 
 
-#ifdef WIN32
- #if defined GmBaseBase_ALLOC_EXPORT 
-  std::set<G4String> GmAnalysisMgr::theFileFormats;
-#endif
-#else
- std::set<G4String> GmAnalysisMgr::theFileFormats;
-#endif
+std::set<G4String> GmAnalysisMgr::theFileFormats;
 G4ThreadLocal std::map<G4String, GmAnalysisMgr*>* GmAnalysisMgr::theInstancesTL = 0;
 std::map<G4String, GmAnalysisMgr*> GmAnalysisMgr::theMasterInstances;
 

@@ -1,5 +1,7 @@
 #include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
+#ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#endif
 #include "SPECTProjDataMgr.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 #include "SPECTVerbosity.hh"

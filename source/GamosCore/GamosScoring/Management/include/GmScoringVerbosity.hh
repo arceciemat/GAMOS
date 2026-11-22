@@ -16,10 +16,10 @@ public:
 };
 
 #ifdef WIN32
-  #if defined GmScoringMgt_ALLOC_EXPORT 
-    extern G4DLLEXPORT GmVerbosity ScoringVerb;
+  #if defined GamosCore_GamosScoring_Management_EXPORTS 
+    extern __declspec(dllexport) GmVerbosity ScoringVerb;
   #else 
-    extern G4DLLIMPORT GmVerbosity ScoringVerb;
+    extern __declspec(dllimport) GmVerbosity ScoringVerb;
   #endif
 #else
   extern GmVerbosity ScoringVerb;

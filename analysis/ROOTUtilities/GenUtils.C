@@ -1,6 +1,6 @@
 #ifndef GenUtils_C
 #define GenUtils_C
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TColor.h"
 #endif
 #include <iostream>

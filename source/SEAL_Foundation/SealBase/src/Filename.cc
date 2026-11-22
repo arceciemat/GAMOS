@@ -811,7 +811,7 @@ Filename::expandClean (std::string &namestr, bool strip)
     // FIXME: avoid foo/.. strippage? -- it is both good and bad...
 
     // Make sure the string is null-terminated for the right length
-    namestr.c_str ();
+    (void) namestr.c_str ();
 
     // Process it
     char	*begin = &namestr [0];
@@ -841,7 +841,7 @@ Filename::expandClean (std::string &namestr, bool strip)
 		Filename		dir (cwd (*begin).asDirectory ());
 
 		namestr.insert (2, dir);
-		namestr.c_str (); // FIXME: required?
+		(void) namestr.c_str (); // FIXME: required?
 		begin = &namestr [0];
 		out = begin + 2 + dir.size ();
 		p = begin + dir.size () + ppos;
@@ -859,7 +859,7 @@ Filename::expandClean (std::string &namestr, bool strip)
 
 	    if (p[2]) dir = dir.asDirectory ();
 	    namestr.insert (2, dir);
-	    namestr.c_str (); // FIXME: required?
+	    (void) namestr.c_str (); // FIXME: required?
 	    begin = &namestr [0];
 	    out = begin + 2 + dir.size ();
 	    p = begin + dir.size () + ppos;
@@ -1040,7 +1040,7 @@ Filename::substitute (const Environment &env) const
     char	*begin;
     char	*out;
 
-    namestr.c_str ();
+    (void) namestr.c_str ();
     for (p = out = begin = &namestr [0]; *p; )
     {
 	// Not a separator or a variable starter: skip.
@@ -1111,7 +1111,7 @@ Filename::substitute (const Environment &env) const
 		std::string::size_type ppos = p - begin;
 		std::string::size_type pos = out - begin;
 		namestr.insert (pos, value);
-		namestr.c_str ();
+		(void) namestr.c_str ();
 		begin = &namestr [0];
 		out = begin + pos + value.size ();
 		p = begin + ppos + value.size ();

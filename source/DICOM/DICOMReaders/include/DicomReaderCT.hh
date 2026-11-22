@@ -36,24 +36,11 @@ public:
     bOnlyHU = bohu;
   }
   
-#ifdef WIN32  //WINDEB       
-	#if defined DICOMReaders_ALLOC_EXPORT
-		G4DLLEXPORT G4bool IsMaterialDensities();
-		G4DLLEXPORT std::map<G4double, G4String> GetMaterials();
-		G4DLLEXPORT std::map<G4int, G4double> GetCT2Density();
-		G4DLLEXPORT std::map<G4double, G4String> GetMaterialDensities();
-	#else
-		G4DLLIMPORT G4bool IsMaterialDensities();
-		G4DLLIMPORT std::map<G4double, G4String> GetMaterials();
-		G4DLLIMPORT std::map<G4int, G4double> GetCT2Density();
-		G4DLLIMPORT std::map<G4double, G4String> GetMaterialDensities();
-	#endif
-#else
+	// Windows: exported through CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS, no declspec needed
 	static G4bool IsMaterialDensities();
 	static std::map<G4double, G4String> GetMaterials();
 	static std::map<G4int, G4double> GetCT2Density();
 	static std::map<G4double, G4String> GetMaterialDensities();
-#endif
 
 private:
   static G4bool bMaterialDensities;

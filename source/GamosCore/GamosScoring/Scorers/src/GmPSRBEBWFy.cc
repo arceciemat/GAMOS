@@ -119,7 +119,7 @@ G4bool GmPSRBEBWFy::ProcessHits(G4Step* aStep,G4TouchableHistory*)
       G4Exception("GmPSRBEBWFy::ProcessHits",
 		  "",
 		  FatalException,
-		  ("Scoring volume = "+LV->GetName()+" is not a solid, but a ",solid->GetEntityType()).c_str());
+		  ("Scoring volume = "+LV->GetName()+" is not a G4Box, but a "+solid->GetEntityType()).c_str());
     }
     G4AffineTransform transform = G4TransportationManager::GetTransportationManager()->
       GetNavigatorForTracking()->GetGlobalToLocalTransform();

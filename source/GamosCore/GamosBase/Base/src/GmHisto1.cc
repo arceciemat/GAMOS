@@ -1,6 +1,7 @@
 #ifndef GAMOS_ROOT
 
 #include "GmHisto1.hh"
+#include "G4Exception.hh"
 #include <algorithm>
 #include <iostream>
 
@@ -27,7 +28,7 @@ void GmHisto1::CheckLimits()
   //-- Check consistency of data
   if(theNBins <= 0) {
     G4cerr << "!!! ERROR creating GmHisto1: " << theName << "     The number of bins is " << theNBins << std::endl;
-    std::exception();
+    G4Exception("GmHisto1::CheckLimits","",JustWarning,("Wrong number of bins in histogram "+theName+", set to 1").c_str());
     theNBins = 1;
   }
 
@@ -36,11 +37,11 @@ void GmHisto1::CheckLimits()
   //-- Check consistency of data
   if(theBinWidth == 0.) {
     G4cerr << "!!! ERROR creating GmHisto1: " << theName << "     The lower and upper edges are equal " << std::endl;
-    std::exception();
+    G4Exception("GmHisto1::CheckLimits","",FatalException,("Wrong limits in histogram "+theName).c_str());
   }
   if(theBinWidth < 0.) {
     G4cerr << "!!! ERROR creating GmHisto1: " << theName << "     The lower edge is bigger than the upper edge " << std::endl;
-    std::exception();
+    G4Exception("GmHisto1::CheckLimits","",FatalException,("Wrong limits in histogram "+theName).c_str());
   }
 
   theNcells = theNBins+2;

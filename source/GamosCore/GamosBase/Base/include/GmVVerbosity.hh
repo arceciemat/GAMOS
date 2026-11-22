@@ -19,10 +19,10 @@ public:
 
 private:
 #ifdef WIN32
-  #if defined GmBaseBase_ALLOC_EXPORT 
-    G4DLLEXPORT static std::map<G4String,GmVVerbosity*> theManagers;
+  #if defined GamosCore_GamosBase_Base_EXPORTS 
+    __declspec(dllexport) static std::map<G4String,GmVVerbosity*> theManagers;
   #else 
-    G4DLLIMPORT static std::map<G4String,GmVVerbosity*> theManagers;
+    __declspec(dllimport) static std::map<G4String,GmVVerbosity*> theManagers;
   #endif
 #else
   static std::map<G4String,GmVVerbosity*> theManagers;

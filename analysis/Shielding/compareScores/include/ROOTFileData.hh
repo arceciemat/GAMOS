@@ -1,4 +1,4 @@
-#ifndef GAMOS_NO_ROOT // ROOT files can only be read if GAMOS is built with ROOT
+#ifdef GAMOS_ROOT // ROOT files can only be read if GAMOS is built with ROOT
 #ifndef ROOTFileData__HH
 #define ROOTFileData__HH
 #include <vector>

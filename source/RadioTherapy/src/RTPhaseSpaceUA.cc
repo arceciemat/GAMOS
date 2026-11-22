@@ -152,11 +152,11 @@ G4bool RTPhaseSpaceUA::CreateIAEAheader(G4double zstop)
   p_iaea_record->z = zstop/CLHEP::cm;        // Z constant 
   
   // Store read/write logical block in the PHSP header
-  if( p_iaea_header->set_record_contents(p_iaea_record) == FALSE) return FALSE;
+  if( p_iaea_header->set_record_contents(p_iaea_record) != OK) return FALSE;
   
   //  printf("\n DEFINED PHASE SPACE RECORD LENGTH = %i\n",p_iaea_header->record_length);
   
-  return(OK);
+  return(TRUE);
 }
 
 

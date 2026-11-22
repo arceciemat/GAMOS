@@ -1,4 +1,4 @@
-#ifndef GAMOS_NO_ROOT 
+#ifdef GAMOS_ROOT 
 #ifndef ROOTDoserData__HH
 #define ROOTDoserData__HH
 #include "DoserData.hh"

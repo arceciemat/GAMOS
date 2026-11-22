@@ -16,10 +16,10 @@ public:
 
 
 #ifdef WIN32
-  #if defined DICOMBase_ALLOC_EXPORT 
-		extern G4DLLEXPORT GmVerbosity DicomVerb;
+  #if defined DICOMBase_EXPORTS 
+		extern __declspec(dllexport) GmVerbosity DicomVerb;
 	#else 
-		extern G4DLLIMPORT GmVerbosity DicomVerb;
+		extern __declspec(dllimport) GmVerbosity DicomVerb;
 	#endif
 #else
   extern GmVerbosity DicomVerb;

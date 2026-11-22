@@ -6,6 +6,7 @@
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <random>
+#include <chrono>
 
 G4double GmGenerDistEnergyLogGaussian::GenerateEnergy( const GmParticleSource* )
 {

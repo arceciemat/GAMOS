@@ -422,7 +422,7 @@ ResourceInfo::info_self (void)
 #endif // HAVE_GETRUSAGE
 
     void *stack_top = &stack_top;
-    s [RES_VMEMORY_STACK_TOP] = (Value) stack_top;
+    s [RES_VMEMORY_STACK_TOP] = (Value) (uintptr_t) stack_top; // informative only (Value is 32 bits on Win64)
 
 #if 0 && HAVE_SYM_BSS_START
     // FIXME: Disabled for now, symbol too unreliable?

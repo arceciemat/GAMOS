@@ -358,7 +358,7 @@ GmVPrimitiveScorer* GmCompoundScorer::FindOrCreateScorer(G4String scorerClass,G4
   std::map<G4String,GmVPrimitiveScorer*> theScorers = theScoringMgr->GetScorers();
   std::map<G4String,GmVPrimitiveScorer*>::iterator itesco = theScorers.find(scorerName);
   G4int iFound = 0;
-  for( itesco == theScorers.begin(); itesco != theScorers.end(); itesco++ ) { // scorer already created with same name, change name
+  for( itesco = theScorers.begin(); itesco != theScorers.end(); itesco++ ) { // scorer already created with same name, change name
     G4String scorerName_short = itesco->first;
     size_t ius = scorerName_short.find("_");
     if( ius != std::string::npos && GmGenUtils::IsInteger(scorerName_short.substr(ius+1,scorerName_short.length())) ) {

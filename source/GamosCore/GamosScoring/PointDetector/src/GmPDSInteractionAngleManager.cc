@@ -1,7 +1,5 @@
 #include "GmPDSInteractionAngleManager.hh"
-#ifndef WIN32
 #include "GamosCore/GamosScoring/Management/include/GmScoringVerbosity.hh"
-#endif
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
 
@@ -301,10 +299,8 @@ std::map<G4double,G4String>::iterator GmPDSInteractionAngleManager::GetEnergyRan
   ite = energies->upper_bound(ener); // first energy > ener
   if( ite == energies->begin() ) {
     // energy below first histogram energy: return first one (before, begin() was decremented)
-#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(infoVerb) ) G4cerr << " GmPDSInteractionAngleManager::GetEnergyRange energy " << (bEnergyLog ? pow(10.,ener) : ener) << " is smaller than minimum energy, using first histogram " << (*ite).second << G4endl;
-#endif
 #endif
     return ite;
   }
@@ -312,7 +308,6 @@ std::map<G4double,G4String>::iterator GmPDSInteractionAngleManager::GetEnergyRan
   if( ite != energies->end() ) {
     ite--;
   } else {
-#ifndef WIN32
 #ifndef GAMOS_NO_VERBOSE
     if( ScoringVerb(infoVerb) ) {
       G4cerr << "LOOKING FOR ENERGY: " << pow(10.,ener) << " log " << ener << G4endl;
@@ -323,9 +318,8 @@ std::map<G4double,G4String>::iterator GmPDSInteractionAngleManager::GetEnergyRan
 		  "",
 		  JustWarning,
 		  ("Energy is bigger than maximum energy" + GmGenUtils::ftoa( (*(energies->rbegin())).first) ).c_str()); // do not move ite here, it is decremented below
-#endif
-#endif
     }
+#endif
     ite--;
   } 
   

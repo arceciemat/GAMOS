@@ -40,7 +40,7 @@ enum PROCESSINFOCLASS {
 };
 
 typedef LONG  NTSTATUS;
-typedef ULONG KAFFINITY;
+typedef ULONG_PTR KAFFINITY;	// same as <winnt.h>
 typedef LONG  KPRIORITY;
 
 struct PROCESS_BASIC_INFORMATION {

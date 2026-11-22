@@ -6,7 +6,7 @@
 #include <map>
 std::map<std::string,double> theExemption;
 #include "../GetWordsInLine.C"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "../PlotData/PlotUtils.C"
 #else
 #include "ROOTUtilities/PlotData/PlotDataSVG.cc"
@@ -29,7 +29,7 @@ void readExemption(std::string fileName)
   
 }    
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //-------------------------------------------------------------------------
 void DrawExemptionLine( TH1F* his, std::string isotName, EColor color, double& xInitExemp )
 {

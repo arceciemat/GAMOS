@@ -14,15 +14,8 @@ public:
   static G4double GetDoubleTgr( const G4String& str, G4double unitval = 1. );
   static G4bool bCheckTimeUnits;
 
-#ifdef WIN32  //WINDEB                                                                                           
-#if defined GmUtils_ALLOC_EXPORT
-	G4DLLEXPORT  void SetCheckTimeUnits( G4bool bctu );
-#else
-	G4DLLIMPORT  void SetCheckTimeUnits( G4bool bctu );
-#endif
-#else
-	static void SetCheckTimeUnits( G4bool bctu );
-#endif
+  // Windows: exported through CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS, no declspec needed
+  static void SetCheckTimeUnits( G4bool bctu );
   
   static G4bool IsNumber( char ch );
   static G4bool IsNumber( const G4String& str );

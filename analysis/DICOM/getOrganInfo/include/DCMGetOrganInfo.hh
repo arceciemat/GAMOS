@@ -9,8 +9,8 @@ class DicomParameterMgr;
 class DicomVImageStr;
 class GmAnalysisMgr;
 // GmHisto1 / GmHistoProfile1 are TH1F / TProfile if GAMOS is built with ROOT,
-// and the GAMOS own histogram classes if not (GAMOS_NO_ROOT)
-#ifdef GAMOS_NO_ROOT
+// and the GAMOS own histogram classes if not (GAMOS_ROOT not defined)
+#ifndef GAMOS_ROOT
 class GmHisto1;
 class GmHistoProfile1;
 #else // same typedef's as in GmAnalysisMgr.hh
@@ -66,7 +66,7 @@ private:
   void SaveHistosCSV( pmhmh hpair, GmHistoWriterCSV* histosCSV );
   void SaveHistosCSV( pmhpmhp hpair, GmHistoWriterCSV* histosCSV );
   //--- draw histograms (with ROOT they are also written in the .root file)
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   void WriteHistosToFile( pmhmh hpair, TFile* histosFile );
   void WriteHistosToFile( pmhpmhp hpair, TFile* histosFile );
 #else

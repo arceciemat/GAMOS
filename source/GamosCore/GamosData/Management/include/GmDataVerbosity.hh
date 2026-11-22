@@ -16,10 +16,10 @@ public:
 };
 
 #ifdef WIN32
-  #if defined GmDataMgt_ALLOC_EXPORT 
-    extern G4DLLEXPORT GmVerbosity DataVerb;
+  #if defined GamosCore_GamosData_Management_EXPORTS 
+    extern __declspec(dllexport) GmVerbosity DataVerb;
   #else 
-    extern G4DLLIMPORT GmVerbosity DataVerb;
+    extern __declspec(dllimport) GmVerbosity DataVerb;
   #endif
 #else
  extern GmVerbosity DataVerb;

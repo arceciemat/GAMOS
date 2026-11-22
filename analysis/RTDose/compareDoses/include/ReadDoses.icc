@@ -4,14 +4,14 @@
 //-------------------------------------------------------------------
 void ReadDosesROOT( G4String fileName ) 
 {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   ROOTFileData* fileData = new ROOTFileData(fileName, bInvertX);
   theFileData.push_back( fileData ); 
 #else
   G4Exception("ReadDoses",
 	      "",
 	      FatalException,
-	      (G4String("File ") + fileName + " is of type ROOT, but GAMOS is built without ROOT (GAMOS_NO_ROOT). Use TEXT files (and write TEXT as third word in the compare file lines)").c_str());
+	      (G4String("File ") + fileName + " is of type ROOT, but GAMOS is built without ROOT (GAMOS_ROOT not defined). Use TEXT files (and write TEXT as third word in the compare file lines)").c_str());
 #endif
 }
 

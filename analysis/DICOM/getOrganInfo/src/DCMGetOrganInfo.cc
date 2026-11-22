@@ -1,6 +1,6 @@
 #include "DCMGetOrganInfo.hh"
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TStyle.h"
 #include "TCanvas.h"
 #include "TLine.h"
@@ -28,7 +28,7 @@
 #include "GamosCore/GamosBase/Base/include/GmAnalysisMgr.hh"
 
 #include "CLHEP/Random/RandGauss.h"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "ROOTUtilities/PlotData/Definitions.C"
 #include "ROOTUtilities/PlotData/PlotUtils.C"
 #include "ROOTUtilities/GenUtils.C"
@@ -211,7 +211,7 @@ void DCMGetOrganInfo::ProcessArguments(int argc,char** argv)
     }
   }
   G4int palette = G4int(theParamMgr->GetNumericValue("palette",55));
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   gStyle->SetPalette(palette);
 #endif
   GmSVGCanvas::SetPalette(palette); // SVG drawer: same palettes as ROOT (1, 51-113)
@@ -495,12 +495,12 @@ void DCMGetOrganInfo::GetInfoFromImage()
   
   //--- DEFINE DOSE & DOSE-VOLUME HISTOGRAM LIMITS
   std::vector<G4double>* theDoses = theAnalyseImage->GetData();
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   TFile* histosFile = 0;
 #endif
   GmHistoWriterCSV* histosCSV = 0;
   if( bHistos ) {
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     G4String hfn = theParamMgr->GetStringValue("fOut","")+".root";
     histosFile = new TFile(hfn.c_str(),"RECREATE");
 #endif
@@ -997,7 +997,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
       hpair = FillDoseHistos(theAnalyseImageRandom, thePerCentImage);
     }
     SaveHistosCSV( hpair, histosCSV );
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     WriteHistosToFile( hpair, histosFile );
 #else
     WriteHistosToFile( hpair );
@@ -1057,13 +1057,13 @@ void DCMGetOrganInfo::GetInfoFromImage()
       }
       pmhpmhp hpairp(doseHistosProf, doseVolumeHistosProf);
       SaveHistosCSV( hpairp, histosCSV );
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
       WriteHistosToFile( hpairp, histosFile );
 #else
       WriteHistosToFile( hpairp );
 #endif
     } 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     histosFile->Close();
 #endif
     delete histosCSV; // closes the .csv file
@@ -1072,7 +1072,7 @@ void DCMGetOrganInfo::GetInfoFromImage()
 
   if( bDrawImageDoseInSt ) {
     DicomVImage* imageDoseInSt = FillImageDoseInSt( theDosesPerSt );
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     DicomDrawerROOT* theDrawer = new DicomDrawerROOT();
 #else
     DicomDrawerSVG* theDrawer = new DicomDrawerSVG(); // SVG figures (converted to imageFormat if possible)
@@ -1307,7 +1307,7 @@ void DCMGetOrganInfo::SaveHistosCSV( pmhpmhp hpair, GmHistoWriterCSV* histosCSV 
   }
 }
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 //-----------------------------------------------------------------------------
 void DCMGetOrganInfo::WriteHistosToFile( pmhmh hpair, TFile* histosFile )
 {
@@ -2138,7 +2138,7 @@ void DCMGetOrganInfo::PrintHelp()
 	 << " -verb        sets the verbosity: test/debug/info/warning/error/silent" << G4endl
 	 << " -h           prints the set of arguments " << G4endl
 	 << " -help        prints the set of arguments " << G4endl;
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
   G4cout << " Without ROOT the figures are drawn as SVG files and the histograms are written in the GAMOS .csv file getOrganInfo.csv (as with ROOT): " << G4endl
 	 << " -imageFormat FORMAT   svg (no conversion), png, jpg (default), gif, bmp, tiff (built-in renderer), pdf, ps, eps, webp (converted from SVG if a converter is found) " << G4endl
 	 << " -jpgQuality N   quality (1-100, default 90) of jpg files written by the built-in renderer " << G4endl

@@ -12,10 +12,10 @@ private:
 public:
 
 #ifdef WIN32
-#if defined GmUtils_ALLOC_EXPORT
-	G4DLLEXPORT static G4bool bUsingGmGenerator;
+#if defined GamosCore_GamosUtils_EXPORTS
+	__declspec(dllexport) static G4bool bUsingGmGenerator;
 #else
-	G4DLLIMPORT static G4bool bUsingGmGenerator;
+	__declspec(dllimport) static G4bool bUsingGmGenerator;
 #endif
 #else
 	static G4bool bUsingGmGenerator;

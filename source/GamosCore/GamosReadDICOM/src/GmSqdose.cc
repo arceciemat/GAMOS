@@ -6,6 +6,8 @@
 #include <sys/stat.h>
 
 G4bool GmSqdose::bNo0Dose = false;
+G4bool GmSqdose::GetNo0Dose() { return bNo0Dose; }
+void GmSqdose::SetNo0Dose( G4bool bno0 ) { bNo0Dose = bno0; }
 
 //-----------------------------------------------------------------------
 GmSqdose::GmSqdose()

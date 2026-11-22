@@ -23,7 +23,11 @@ namespace seal {
 
 #ifdef _WIN32
 static BOOL CALLBACK
+# ifdef _WIN64	// SymEnumerateModules is SymEnumerateModules64 here
+enumModules (PCSTR name, DWORD64 base_address, PVOID context)
+# else
 enumModules (LPSTR name, ULONG base_address, PVOID context)
+# endif
 {
     IMAGEHLP_MODULE			 moduleinfo;
     const SharedLibrary::InfoHandler	*handler

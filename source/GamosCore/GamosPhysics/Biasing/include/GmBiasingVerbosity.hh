@@ -16,10 +16,10 @@ public:
 };
 
 #ifdef WIN32
-  #if defined GmPhysicsBiasing_ALLOC_EXPORT 
-    extern G4DLLEXPORT GmVerbosity BiasingVerb;
+  #if defined GamosCore_GamosPhysics_Biasing_EXPORTS 
+    extern __declspec(dllexport) GmVerbosity BiasingVerb;
   #else 
-    extern G4DLLIMPORT GmVerbosity BiasingVerb;
+    extern __declspec(dllimport) GmVerbosity BiasingVerb;
   #endif
 #else
 extern GmVerbosity BiasingVerb;

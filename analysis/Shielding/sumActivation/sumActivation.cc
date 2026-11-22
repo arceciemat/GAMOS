@@ -4,7 +4,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosRunManager/include/GmRunManager.hh"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "ROOTUtilities/PlotData/DrawHisto.C"
 typedef TH1F CDHisto;
 #else
@@ -115,7 +115,7 @@ int main(int argc,char** argv)
 	bExemption = true;
       } else if( argvstr == "-minActivity" ) {
 	theMinActivity = GmGenUtils::GetValue(argv[ii+1]);
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
       } else if( argvstr == "-SVGFormat" ) {
 	theSVGFormat = argv[ii+1];
       } else if( argvstr == "-SVGConverter" ) {
@@ -408,7 +408,7 @@ void PrintHelp()
 	 << " -exemption Draw isotope exemption value as a line " << G4endl
 	 << " -verb       verbosity: sets the ShieldingVerbosity" << G4endl
 	 << " -help       prints the set of arguments " << G4endl;
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
   G4cout << " Without ROOT the figures are written as SVG files: " << G4endl
 	 << " -SVGFormat     png    (png/jpg/pdf: converted from SVG if a converter is found; svg: no conversion) " << G4endl
 	 << " -SVGConverter  auto   (auto: look for rsvg-convert, inkscape, magick, convert in PATH; none; or program name/path) " << G4endl;

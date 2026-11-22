@@ -65,7 +65,7 @@ G4bool GmPSKineticEnergyVoxelSpectrum::ProcessHits(G4Step* aStep,G4TouchableHist
     G4Exception("GmPSKineticEnergyVoxelSpectrum::ProcessHits",
 		"",
 		FatalException,
-		("Scoring volume = "+LV->GetName()+" is not a solid, but a ",solid->GetEntityType()).c_str());
+		("Scoring volume = "+LV->GetName()+" is not a G4Box, but a "+solid->GetEntityType()).c_str());
   }
   G4AffineTransform transform = G4TransportationManager::GetTransportationManager()->
     GetNavigatorForTracking()->GetGlobalToLocalTransform();

@@ -7,9 +7,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
 #include "GamosCore/GamosBase/Base/include/GmGetParticleMgr.hh"
-#ifndef WIN32 //WINDEB
 #include "GamosCore/GamosSD/include/GmHitsEventMgr.hh"
-#endif
 #include "G4Event.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"

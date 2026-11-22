@@ -31,7 +31,11 @@ namespace seal {
 
 static const char SAFE [] = { "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 			      "abcdefghijklmnopqrstuvwxyz"
-			      "01234567890.,/_-" };
+			      "01234567890.,/_-"
+#ifdef _WIN32
+			      ":"	// drive letter in Windows paths (G:/...)
+#endif
+			    };
 static const char HEX [] = { "0123456789abcdef" };
 
 //<<<<<< PRIVATE TYPES                                                  >>>>>>
@@ -424,7 +428,7 @@ ModuleCache::scanModules (RegList &cache)
 	}
 
 	// Construct a fake registry document root for this file
-	std::string time = StringFormat ("%1").arg (statbuf.st_mtime);
+	std::string time = StringFormat ("%1").arg (std::to_string ((long long) statbuf.st_mtime));
 	ModuleDescriptor *top = new ModuleDescriptor (0, s_cacheTag);
 	new ModuleDescriptor (top, ModuleReg::tag (), *file, time, "1");
 

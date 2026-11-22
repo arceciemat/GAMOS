@@ -85,7 +85,7 @@ TempFile::file (Filename &name)
     IOFD		fd;
     std::string		result (name);
 
-    result.c_str ();
+    (void) result.c_str ();
     if ((fd = domkstemp (&result [0])) == IOFD_INVALID)
 	throw FileSystemError ("mkstemp()", errno);
 
@@ -111,7 +111,7 @@ TempFile::dir (Filename &name)
     // WIN32 replacement implementation sets errno to Windows error
     // codes, not CRTDLL ones.
     std::string result (name);
-    result.c_str ();
+    (void) result.c_str ();
     if (! domkdtemp (&result [0]))
 	throw FileSystemError ("mkdtemp()", errno);
 

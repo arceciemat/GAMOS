@@ -1,5 +1,5 @@
 #include "DCMPrintValueAlongLine.hh"
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TStyle.h"
 #include "TCanvas.h"
 #include "TFile.h"
@@ -24,7 +24,7 @@
 #include "GamosCore/GamosUtils/include/GmFileIn.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "ROOTUtilities/PlotData/Definitions.C"
 #include "ROOTUtilities/PlotData/PlotUtils.C"
 #include "ROOTUtilities/GenUtils.C"
@@ -263,7 +263,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	for( size_t ii=0; ii < 3; ii++ ){
 	  lineName += GmGenUtils::ftoa(pos[ii])+"_";
 	  } */
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	TH1F* histo = 0;
 	TCanvas* canvas = 0;
 #else
@@ -303,7 +303,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	  distToOut = distBefore0 - (pos-pos0).dot(dir.unit());
 	  if( DicomVerb(infoVerb) ) G4cout << "@@@@ DCMPrintValueAlongLine HISTO " << distBefore0 << " == " << pos << " + " << dir << " * " << distToOut << " - " << pos0 << " " << (pos+dir*distToOut-pos0) << distBefore0+distToOut << G4endl;
 	  	  if( DicomVerb(infoVerb) ) G4cout << "@@@@ DCMPrintValueAlongLine HISTO " << distBefore0-distToOut << " TO " << distBefore0 << G4endl;
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	  histo = new TH1F(lineName.c_str(), lineName.c_str(), 10000, distBefore0-distToOut,distBefore0);
 	  canvas = new TCanvas;
 	  canvas->Draw();
@@ -335,7 +335,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	  if( bHistos ) {
 	    //	    G4cout << " DISTHIS " << distHis << " " << value << " BIN " << int((distHis-histo->GetXaxis()->GetXmin())/histo->GetBinWidth(2)) << " " << distHis << " - " << histo->GetXaxis()->GetXmin() << " / " << histo->GetBinWidth(2) << G4endl; //GDEB
 	    //	    histo->Draw();
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	    TMarker* mark = new TMarker(distHis, value,21);
 	    mark->SetMarkerSize(0.03);
 	    if( iteiv != intersValues.begin() && value != 0. ) {
@@ -356,7 +356,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	      xvalold = distHis;
 	      yvalold = value;      
 	    }
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	    mark->Draw();
 #endif
 	    //	    histo->Fill( distHis, value ); // fill value at center of bin (accumulated dist + 0.5*voxel_dist)
@@ -367,7 +367,7 @@ void DCMPrintValueAlongLine::GetInfoFromImages()
 	//--- Draw Histos
 	if( bHistos ) {
 	  //	  canvas->Print((lineName+"."+theImageFormat).c_str());
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	  canvas->Print((lineName+".jpg").c_str());
 	  TFile* foutR = new TFile(("his"+lineName+".root").c_str(),"RECREATE");
 	  foutR->cd();

@@ -102,13 +102,13 @@ G4bool RTPhaseSpace_extUA::CreateIAEAheader(G4double zstop)
   strcpy(fiaeaphsp,fname.c_str());
   
   p_iaea_record->p_file = open_file(fiaeaphsp,(char *)(".IAEAphsp"),(char *)("wb"));
-  if(p_iaea_record->p_file == NULL) return(FAIL);
+  if(p_iaea_record->p_file == NULL) return(FALSE);
 #ifndef GAMOS_NO_VERBOSE
   if( RTVerb(infoVerb) ) G4cout << " Phase Space record file: " << fiaeaphsp << ".IAEAphsp" << G4endl;
 #endif
   
   // Setting default i/o flags 
-  if(p_iaea_record->initialize() != OK) return(FAIL);
+  if(p_iaea_record->initialize() != OK) return(FALSE);
  
   // Changing default i/o flags 
   p_iaea_record->iextralong = theNExtraInfoLong;
@@ -118,11 +118,11 @@ G4bool RTPhaseSpace_extUA::CreateIAEAheader(G4double zstop)
   // p_iaea_record->z = zstop/CLHEP::cm;        // Z constant 
   
   // Store read/write logical block in the PHSP header
-  if( p_iaea_header->set_record_contents(p_iaea_record) == FAIL) return FAIL;
+  if( p_iaea_header->set_record_contents(p_iaea_record) != OK) return FALSE;
   
   //  printf("\n DEFINED PHASE SPACE RECORD LENGTH = %i\n",p_iaea_header->record_length);
   
-  return(OK);
+  return(TRUE);
 }
 
 

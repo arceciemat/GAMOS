@@ -41,15 +41,8 @@ public:
   void SaveAllFormats(const G4String& name);
 
   static GmAnalysisMgr* GetInstance(const G4String& filename);
-#ifdef WIN32  //WINDEB                                                                                           
-#if defined GmBaseBase_ALLOC_EXPORT
-  G4DLLEXPORT std::map<G4String, GmAnalysisMgr*> GetAllInstances();
-#else
-  G4DLLIMPORT std::map<G4String, GmAnalysisMgr*> GetAllInstances();
-#endif
-#else
+  // Windows: exported through CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS, no declspec needed
   static std::map<G4String, GmAnalysisMgr*> GetAllInstances();
-#endif
     //  bool CreateHistogram1D(const G4String & path, const G4String & title, int nBins, double lowerEdge, double upperEdge, int nHisto = -1);
   bool CreateHisto1D(const G4String & pathAndTitle, int nBins, double lowerEdge, double upperEdge, int nHisto = -1 );
   //  bool CreateHisto1D(const G4String & pathAndTitle, int nBins, double lowerEdge, double upperEdge, int nHisto = -1 ) { 
@@ -107,15 +100,8 @@ public:
     return *GetInstancesTL();
   }
 
-#ifdef WIN32  //WINDEB                                                                       
-#if defined GmBaseBase_ALLOC_EXPORT
-  G4DLLEXPORT std::set<G4String> GetFileFormats();
-#else
-  G4DLLIMPORT std::set<G4String> GetFileFormats()
-#endif
-#else
+  // Windows: exported through CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS, no declspec needed
   static std::set<G4String> GetFileFormats();
-#endif
 
   G4String GetFileName() const {
     return theFileName;

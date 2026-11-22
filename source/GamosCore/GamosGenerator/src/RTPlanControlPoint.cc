@@ -44,13 +44,14 @@ RTPlanControlPoint::RTPlanControlPoint( const G4String& fileName, RTPlanBeam* be
   theSourceAxisDistanceY = theBeam->GetParam("SourceAxisDistance",1);
   theLimitingDeviceAngle = theBeam->GetParam("LimitingDeviceAngle",0.);
   theIndex = G4int(GetParam("ControlPointIndex",1));
-  G4double metersetWeight = GetParam("MetersetWeight",-1);
-  if( metersetWeight == -1 ) {
+  // (was GetParam("MetersetWeight",-1): -1 is the G4bool bMustExist, not a default value)
+  if( !ParamExists("MetersetWeight") ) {
     G4Exception("RTPlanControlPoint::RTPlanControlPoint",
 		"",
 		FatalException,
 		("Control Point "+GmGenUtils::itoa(theIndex)+" has no parameter 'MetersetWeight.   PLEASE CONTACT GAMOS AUTHORS").c_str());
   }
+  G4double metersetWeight = GetParam("MetersetWeight");
   G4double beamMS = 0.;  
   if( theBeam->ParamExists("BeamMeterset") ) {
     beamMS = theBeam->GetParam("BeamMeterset",0);

@@ -5,7 +5,11 @@
 #include "SealBase/RegexpError.h"
 #include "SealBase/DebugAids.h"
 //#include "pcre.h"
-#include <regex.h>
+#ifdef _WIN32
+# include "WindowsRegex.h"	// no POSIX <regex.h> with MSVC
+#else
+# include <regex.h>
+#endif
 #include <cstring>
 
 namespace seal {

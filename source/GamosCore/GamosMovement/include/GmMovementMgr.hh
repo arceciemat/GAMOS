@@ -24,15 +24,8 @@ class GmMovementMgr
   ~GmMovementMgr();
 
   //! Get the only instance 
-  #ifdef WIN32
-  #if defined GmMove_ALLOC_EXPORT 
-    G4DLLEXPORT static GmMovementMgr* GetInstance();
-  #else 
-    G4DLLIMPORT static GmMovementMgr* GetInstance();
-  #endif
-#else
-   static GmMovementMgr* GetInstance();
-#endif
+  // Windows: exported through CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS, no declspec needed
+  static GmMovementMgr* GetInstance();
 
   std::vector<GmVMovement*> GetNewMovements( G4int eventID, G4double time );
 

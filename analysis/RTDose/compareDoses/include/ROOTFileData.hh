@@ -1,4 +1,4 @@
-#ifndef GAMOS_NO_ROOT 
+#ifdef GAMOS_ROOT 
 #ifndef ROOTFileData__HH
 #define ROOTFileData__HH
 #include <vector>

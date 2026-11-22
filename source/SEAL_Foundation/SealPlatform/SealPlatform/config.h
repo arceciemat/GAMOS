@@ -6,8 +6,112 @@
 # define SEAL_PLATFORM_CONFIG_H
 
 # ifdef _WIN32
-#  define _WIN32_WINNT 0x0500
-# endif
+/* ====================================================================== */
+/* Windows / MSVC configuration.  The rest of this file (after #else) is  */
+/* the output of `configure' on Linux and must not be used on Windows.     */
+/* ====================================================================== */
+#  ifndef _WIN32_WINNT
+#   define _WIN32_WINNT 0x0601
+#  endif
+/* NB: do not define WIN32_LEAN_AND_MEAN: SEAL relies on <windows.h>
+   pulling in winsock definitions.  */
+#  ifndef NOMINMAX
+#   define NOMINMAX
+#  endif
+#  ifndef _CRT_SECURE_NO_WARNINGS
+#   define _CRT_SECURE_NO_WARNINGS
+#  endif
+#  ifndef _CRT_NONSTDC_NO_WARNINGS
+#   define _CRT_NONSTDC_NO_WARNINGS
+#  endif
+#  ifndef _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+#   define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+#  endif
+
+/* C++ features */
+#  define HAVE_NAMESPACES 1
+#  define HAVE_NAMESPACE_STD 1
+#  define HAVE_NAMESPACE_STD_REL_OPS 1
+#  define HAVE_FUNCTION 1
+#  undef  HAVE_LONG_LONG
+#  define HAVE_LONG_LONG 1
+#  define HAVE_BOOL 1
+#  define HAVE_EXPLICIT 1
+#  define HAVE_MUTABLE 1
+#  define HAVE_SIGNED 1
+#  define HAVE_USING 1
+#  define HAVE_TYPENAME 1
+#  define TYPENAME_IN_BASEDECL
+#  define HAVE_NEW_STYLE_CASTS 1
+#  define HAVE_DYNAMIC_CAST 1
+#  define HAVE_TYPEID 1
+#  define HAVE_ANSI_TEMPLATE_INSTANTIATION 1
+#  define HAVE_SEPARATE_TEMPLATE_SPEC_INST 1
+#  define HAVE_TEMPLATE_DEFAULT_ARGS 1
+#  define HAVE_TEMPLATE_NULL_ARGS 1
+#  define HAVE_TEMPLATE_NULL_SPEC 1
+#  define HAVE_TEMPLATE_PARTIAL_SPEC 1
+#  define HAVE_MEMBER_TEMPLATES 1
+#  define HAVE_ANSI_OPERATOR_ARROW 1
+#  define HAVE_NEW 1
+#  define HAVE_STD_NEW_HANDLER 1
+#  define HAVE_NEW_IOSTREAMS 1
+#  define HAVE_STREAMBUF_IN_IOSFWD 1
+#  define HAVE_OSTREAM_CHAR_OVERLOAD 1
+#  define HAVE_OSTREAM_LONG_DOUBLE_OVERLOAD 1
+#  define HAVE_OSTREAM_LONG_LONG_OVERLOAD 1
+#  define HAVE_ITERATOR_TRAITS 1
+#  define HAVE_ITERATOR 1
+#  define HAVE_REVERSE_ITERATOR_STYLE 1
+#  define HAVE_CXX_STDC_HEADERS 1
+#  define HAVE_TYPEINFO 1
+
+/* General system properties */
+#  define STDC_HEADERS 1
+#  define HAVE_LIMITS_H 1
+#  define HAVE_SYS_TYPES_H 1
+#  define HAVE_WINDOWS_H 1
+#  define HAVE_STRERROR 1
+#  define HAVE_STDINT_H 1
+
+/* POSIX types missing from the MSVC runtime */
+#  ifdef __cplusplus
+typedef int pid_t;
+#  endif
+
+#  define SEAL_INT8_MIN (-128)
+#  define SEAL_INT8_MAX (127)
+#  define SEAL_UINT8_MAX (255)
+#  define SEAL_INT16_MIN (-32767-1)
+#  define SEAL_INT16_MAX (32767)
+#  define SEAL_UINT16_MAX (65535)
+#  define SEAL_INT32_MIN (-2147483647-1)
+#  define SEAL_INT32_MAX (2147483647)
+#  define SEAL_UINT32_MAX (4294967295U)
+#  define SEAL_INT64_MIN (-9223372036854775807LL-1)
+#  define SEAL_INT64_MAX (9223372036854775807LL)
+#  define SEAL_UINT64_MAX (18446744073709551615ULL)
+
+/* Signals: no POSIX signals on Windows */
+#  define RETTYPE_SIGHANDLER void
+#  define ARGS_SIGHANDLER int
+#  define HAVE_RAISE 1
+#  define HAVE_RAISE_DECL 1
+
+/* I/O */
+#  define HAVE_FCNTL_H 1
+#  define HAVE_IO_H 1
+#  define SELECT_ARG_TYPE fd_set*
+
+/* Networking (winsock) */
+#  define RECV_ARG_TYPE char *
+#  define SOCKOPT_LEN_TYPE int
+#  define SOCKET_LEN_TYPE int
+
+/* Time */
+#  define HAVE_STRFTIME 1
+
+# else /* ! _WIN32 */
 
 /* ---------------------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -689,5 +793,7 @@
 
 /* Define if you have the <mach-o/dyld.h> header file.  */
 /* #undef HAVE_MACH_O_DYLD_H */
+
+# endif /* _WIN32 */
 
 #endif /* SEAL_PLATFORM_CONFIG_H */

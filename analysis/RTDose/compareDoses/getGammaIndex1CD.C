@@ -1,6 +1,6 @@
 // Gamma index (1D) between two dose profiles.
 // Uses GmHisto1: with ROOT it is a typedef of TH1F (GmAnalysisMgr.hh),
-// without ROOT (GAMOS_NO_ROOT) it is the GAMOS own histogram class.
+// without ROOT (GAMOS_ROOT not defined) it is the GAMOS own histogram class.
 #ifndef getGammaIndex1CD_C
 #define getGammaIndex1CD_C
 
@@ -15,7 +15,7 @@
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "DoserData.hh"  // mdpdd
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TFile.h"
 #include "TMarker.h"
 #include "TH1F.h"
@@ -130,7 +130,7 @@ GmHisto1* getGammaIndex1CD( mdpdd* dataVal, mdpdd* mcVal, double perCentLim, dou
   if( bDrawGGI ) {
     std::string hisName = std::string(histoGI->GetName());
     std::string hisNameG = std::string(histoGIG->GetName());
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
     gStyle->SetOptStat(1111111);
     theCanvas->cd();
     histoGI->Draw();

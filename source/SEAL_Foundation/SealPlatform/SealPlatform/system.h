@@ -66,10 +66,8 @@
 # endif
 
 # if !HAVE_RESTRICT
-#  if HAVE_PRIVATE_RESTRICT
+#  if HAVE_PRIVATE_RESTRICT && !defined(_MSC_VER)
 #   define restrict __restrict
-#  else
-#   define restrict
 #  endif
 # endif
 

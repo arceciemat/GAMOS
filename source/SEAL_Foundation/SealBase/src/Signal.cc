@@ -1012,7 +1012,7 @@ Signal::dumpInfo (IOFD fd, char *buf, int sig, const siginfo_t *info)
     else
 	MYWRITE (fd, buf, sprintf (buf, "Exception %lu\n",
 				   info->ExceptionCode));
-    MYWRITE (fd, buf, sprintf (buf, "  addr = %08lx", info->ExceptionAddress));
+    MYWRITE (fd, buf, sprintf (buf, "  addr = %p", info->ExceptionAddress));
 
 #elif HAVE_POSIX_SIGNALS
     // These should always be set.

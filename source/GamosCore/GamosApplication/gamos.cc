@@ -8,7 +8,9 @@
 #include "GamosCore/GamosUtils/include/GmMTMergeMgr.hh"
 
 #include "G4UImanager.hh"
+#ifndef _WIN32  // tcsh terminal: not available on Windows
 #include "G4UItcsh.hh"
+#endif
 #include "G4GeometryManager.hh"
 
 #ifdef WIN32

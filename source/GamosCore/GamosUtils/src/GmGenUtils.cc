@@ -20,13 +20,9 @@ G4double GmGenUtils::GetDoubleTgr( const G4String& str, G4double unitval )
 #include <fstream>
 #include <sstream>
 std::set<G4String> GmGenUtils::theUnits;
-#ifdef WIN32
- #if defined GmUtils_ALLOC_EXPORT 
-  G4bool GmGenUtils::bCheckTimeUnits = true;
- #endif
-#else
- G4bool GmGenUtils::bCheckTimeUnits = true;
-  G4double GmGenUtils::thePrecision = 1.e-6;
+G4bool GmGenUtils::bCheckTimeUnits = true;
+#ifndef WIN32  // on Windows the precision is a literal default argument (see header)
+G4double GmGenUtils::thePrecision = 1.e-6;
 #endif
 
 //------------------------------------------------------------------------

@@ -15,13 +15,7 @@
 #include "G4Ions.hh"
 
 
-#ifdef WIN32 
-#if defined GmGenerator_ALLOC_EXPORT 
- G4ThreadLocal G4double GmGenerDistTimeDecay::theCurrentActivity = 0.;
-#endif
-#else 
 G4ThreadLocal G4double GmGenerDistTimeDecay::theCurrentActivity = 0.;
-#endif
 
 //----------------------------------------------------------------------
 GmGenerDistTimeDecay::GmGenerDistTimeDecay() 

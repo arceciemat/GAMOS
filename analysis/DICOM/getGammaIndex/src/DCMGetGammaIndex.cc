@@ -23,7 +23,7 @@
 #include "GamosCore/GamosUtils/include/GmSVGCanvas.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 #include "TStyle.h"
 #endif
 #include <set>
@@ -266,7 +266,7 @@ void DCMGetGammaIndex::ProcessArguments(int argc,char** argv)
   bDumpPerSt = G4bool(theParamMgr->GetNumericValue("bDumpPerSt",bDumpPerSt));
   theOnly1StName = theParamMgr->GetStringValue("only1St","");
   G4int palette = G4int(theParamMgr->GetNumericValue("palette",55));
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   gStyle->SetPalette(palette);
 #endif
   GmSVGCanvas::SetPalette(palette); // SVG drawer: same palettes as ROOT (1, 51-113)
@@ -479,7 +479,7 @@ void DCMGetGammaIndex::ReadFilesAndGetImages()
   }
 
   //G4cout << " N IMAGES " << images.size() << G4endl; //GDEB
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
   DicomVDrawer* theDrawer = new DicomDrawerROOT();
 #else
   DicomVDrawer* theDrawer = new DicomDrawerSVG(); // SVG figures (converted to imageFormat if possible); histograms in GAMOS .csv format
@@ -870,7 +870,7 @@ void DCMGetGammaIndex::CalculateDumpPerSt()
 	structImage->DumpHeaderToTextFile(foutDcm);
 	structImage->DumpDataToTextFile(foutDcm);	  
 	delete structImage;
-#ifndef GAMOS_NO_ROOT
+#ifdef GAMOS_ROOT
 	DicomDrawerROOT*  theDrawer = new DicomDrawerROOT();
 #else
 	DicomDrawerSVG*  theDrawer = new DicomDrawerSVG();
@@ -939,7 +939,7 @@ void DCMGetGammaIndex::PrintHelp()
 	<< " -bOutputFile    write the 2D histograms in an output file getGammaIndex_PC_DIST_2D.root" << G4endl
 	<< " -verb          verbosity: sets the verbosity" << G4endl
 	<< " -help          prints the list of arguments " << G4endl;
-#ifdef GAMOS_NO_ROOT
+#ifndef GAMOS_ROOT
   G4cout << " Without ROOT the figures are drawn as SVG files and the -bOutputFile histograms are written in GAMOS .csv files (instead of .root): " << G4endl
 	 << " -imageFormat FORMAT   svg (no conversion), png, jpg (default), gif, bmp, tiff (built-in renderer), pdf, ps, eps, webp (converted from SVG if a converter is found) " << G4endl
 	 << " -jpgQuality N   quality (1-100, default 90) of jpg files written by the built-in renderer " << G4endl

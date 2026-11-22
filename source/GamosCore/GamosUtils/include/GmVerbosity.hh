@@ -24,10 +24,10 @@ public:
 public:
 	
 #ifdef WIN32
-  #if defined GmUtils_ALLOC_EXPORT 
-    G4DLLEXPORT static std::ostream & out;
+  #if defined GamosCore_GamosUtils_EXPORTS 
+    __declspec(dllexport) static std::ostream & out;
   #else 
-    G4DLLIMPORT static std::ostream & out;
+    __declspec(dllimport) static std::ostream & out;
   #endif
 #else
   static std::ostream & out;

@@ -138,6 +138,7 @@ gamos_add_module(lcg_SealBase
     IOSelectSigFd.h
     IOSelectWindows.h
     StringHack.h
+    WindowsRegex.h
   SOURCES
     Argz.cc
     AutoLoad.cc
@@ -258,6 +259,13 @@ gamos_module_link_libraries(lcg_SealBase
     ${CMAKE_DL_LIBS}
     Threads::Threads
 )
+
+# Windows: export (not import) SEAL_BASE_API symbols while building the DLL,
+# and link the system libraries SealBase uses (DbgHelp, winsock, advapi, netapi)
+target_compile_definitions(lcg_SealBase PRIVATE SEAL_BASE_BUILD_DLL)
+if(WIN32)
+  target_link_libraries(lcg_SealBase PUBLIC dbghelp ws2_32 advapi32 netapi32)
+endif()
 
 # SealPlatform: headers only, used by SealBase
 gamos_install_headers(

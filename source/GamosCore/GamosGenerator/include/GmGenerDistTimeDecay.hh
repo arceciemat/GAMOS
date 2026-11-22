@@ -21,15 +21,8 @@ public:
   void SetLifeTime( const G4double lf );
 
 public:
-#ifndef WIN32
-	static G4double GetCurrentActivity();
-#else
-	#if defined GmGenerator_ALLOC_EXPORT
-	  G4DLLEXPORT G4double GetCurrentActivity();
-  #else
-  	G4DLLIMPORT G4double GetCurrentActivity();
-  #endif
-#endif
+  // Windows: exported through CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS, no declspec needed
+  static G4double GetCurrentActivity();
 
 protected:
 	static G4ThreadLocal G4double theCurrentActivity;

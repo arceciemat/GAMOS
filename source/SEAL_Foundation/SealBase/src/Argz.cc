@@ -169,7 +169,7 @@ Argz::build (const char **argz)
 
     for (n = 0; *argz; ++n, ++argz)
 	m_data.append (*argz, strlen (*argz) + 1);
-    m_data.c_str ();
+    (void) m_data.c_str ();
 
     reargz (m_argz.size () + n);
 }
