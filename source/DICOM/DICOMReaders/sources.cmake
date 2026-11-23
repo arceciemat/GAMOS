@@ -2,6 +2,7 @@
 
 gamos_add_module(DICOMReaders
   PUBLIC_HEADERS
+    DicomOperResize.hh
     DicomROI.hh
     DicomROIContour.hh
     DicomReaderCT.hh
@@ -22,6 +23,7 @@ gamos_add_module(DICOMReaders
     DicomVReader.hh
     DicomVReaderImage.hh
   SOURCES
+    DicomOperResize.cc
     DicomROI.cc
     DicomROIContour.cc
     DicomReaderCT.cc

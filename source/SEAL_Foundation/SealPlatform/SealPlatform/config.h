@@ -75,7 +75,9 @@
 #  define HAVE_STDINT_H 1
 
 /* POSIX types missing from the MSVC runtime */
-#  ifdef __cplusplus
+/* dcmtk (osconfig.h) may already have done "#define pid_t int" */
+#  if defined(__cplusplus) && !defined(pid_t) && !defined(SEAL_HAVE_PID_T_TYPEDEF)
+#   define SEAL_HAVE_PID_T_TYPEDEF
 typedef int pid_t;
 #  endif
 

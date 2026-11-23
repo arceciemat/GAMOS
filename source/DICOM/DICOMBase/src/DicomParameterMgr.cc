@@ -1,6 +1,5 @@
 #include "DicomParameterMgr.hh"
 #include "DicomMgr.hh"
-#include "DicomOperResize.hh"
 #include "DicomOperExtendAir.hh"
 #include "DicomOperMultByNumber.hh"
 #include "DicomOperLog.hh"
@@ -34,6 +33,19 @@ DicomParameterMgr* DicomParameterMgr::GetInstance()
 //----------------------------------------------------------------------
 DicomParameterMgr::DicomParameterMgr()
 {
+}
+
+//----------------------------------------------------------------------
+DicomOperatorCreator& DicomParameterMgr::ResizeOperatorCreator()
+{
+  static DicomOperatorCreator theCreator = 0;
+  return theCreator;
+}
+
+//----------------------------------------------------------------------
+void DicomParameterMgr::SetResizeOperatorCreator( DicomOperatorCreator creator )
+{
+  ResizeOperatorCreator() = creator;
 }
 
 //----------------------------------------------------------------------
@@ -200,7 +212,15 @@ G4int DicomParameterMgr::ReadParameter(char** argv, size_t iPar)
   if( iAddPar == 0 ) iAddPar = 1;
 
   if( bResize ) {
-    if( DicomMgr::GetInstance()->FindOperator("DicomOperResize") == 0 ) new DicomOperResize(0,"DicomOperResize");
+    if( DicomMgr::GetInstance()->FindOperator("DicomOperResize") == 0 ) {
+      if( ResizeOperatorCreator() == 0 ) {
+	G4Exception("DicomParameterMgr::ReadParameter",
+		    "",
+		    FatalException,
+		    ("Cannot create DicomOperResize for parameter " + argvstr + " : library DICOMReaders is not loaded").c_str());
+      }
+      ResizeOperatorCreator()(0,"DicomOperResize");
+    }
     //-if( DicomMgr::GetInstance()->FindOperator("DicomOperExtendAir") == 0 ) new DicomOperExtendAir(0,"DicomOperExtendAir");
   }
 

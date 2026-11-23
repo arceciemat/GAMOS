@@ -782,4 +782,3 @@ std::map<G4int,G4String> DicomReaderMgr::GetStructIDsNames()
   return stIDsNames;
 
 }
-

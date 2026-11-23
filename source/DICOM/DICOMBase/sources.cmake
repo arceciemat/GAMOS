@@ -23,7 +23,6 @@ gamos_add_module(DICOMBase
     DicomOperPrintMax.hh
     DicomOperPrintValueAtPoint.hh
     DicomOperReflectY.hh
-    DicomOperResize.hh
     DicomOperRotateXY180.hh
     DicomOperSoften.hh
     DicomParameterMgr.hh
@@ -61,7 +60,6 @@ gamos_add_module(DICOMBase
     DicomOperPrintMax.cc
     DicomOperPrintValueAtPoint.cc
     DicomOperReflectY.cc
-    DicomOperResize.cc
     DicomOperRotateXY180.cc
     DicomOperSoften.cc
     DicomParameterMgr.cc
@@ -89,5 +87,6 @@ gamos_module_link_libraries(DICOMBase
     ${GAMOS_DCMTK_LIBRARIES}
 )
 
-# DICOMReaders uses DICOMBase and DICOMBase uses DICOMReaders: see above
+# DICOMBase does not link DICOMReaders, but whoever uses DICOMBase also gets DICOMReaders:
+# DicomParameterMgr needs DicomOperResize (in DICOMReaders), which DICOMReaders registers on load
 gamos_module_link_libraries(DICOMBase INTERFACE DICOMReaders)

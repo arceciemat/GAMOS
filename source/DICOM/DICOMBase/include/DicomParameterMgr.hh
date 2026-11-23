@@ -2,6 +2,11 @@
 #define DicomParameterMgr_hh
 
 #include "GamosCore/GamosBase/Base/include/GmParameterMgr.hh"
+class DicomVOperator;
+
+// Creates the DicomOperResize operator, which is in DICOMReaders (it uses the readers);
+// DICOMReaders registers it, as DICOMBase cannot depend on DICOMReaders (Windows DLLs)
+typedef DicomVOperator* (*DicomOperatorCreator)( G4int iOrder, const G4String& name );
 
 //------------------------------------------------------------------------
 class DicomParameterMgr : public GmParameterMgr
@@ -26,6 +31,10 @@ public:
 
   void PrintHelpInputFiles();
 
+  static void SetResizeOperatorCreator( DicomOperatorCreator creator );
+
+private:
+  static DicomOperatorCreator& ResizeOperatorCreator();
 };
 
 #endif

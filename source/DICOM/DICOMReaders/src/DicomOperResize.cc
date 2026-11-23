@@ -1,16 +1,29 @@
 #include "DicomOperResize.hh"
-#include "DicomVImage.hh"
-#include "DicomVImageStr.hh"
-#include "DicomParameterMgr.hh"
-#include "DicomVerbosity.hh"
-#include "DICOM/DICOMReaders/include/DicomVReader.hh"
-#include "DICOM/DICOMReaders/include/DicomReaderMgr.hh"
-#include "DICOM/DICOMReaders/include/DicomReaderRTStruct.hh"
-#include "DICOM/DICOMReaders/include/DicomReaderG4dcmCT.hh"
+#include "DicomVReader.hh"
+#include "DicomReaderMgr.hh"
+#include "DicomReaderRTStruct.hh"
+#include "DicomReaderG4dcmCT.hh"
+#include "DICOM/DICOMBase/include/DicomVImage.hh"
+#include "DICOM/DICOMBase/include/DicomVImageStr.hh"
+#include "DICOM/DICOMBase/include/DicomParameterMgr.hh"
+#include "DICOM/DICOMBase/include/DicomVerbosity.hh"
 #include "DICOM/DICOMBase/include/DicomPolygonSet.hh"
 
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 
+
+//-----------------------------------------------------------------------------
+// DicomParameterMgr (DICOMBase) creates the resize operator when -minX, -nVoxX, ...
+// are given, but it cannot depend on DICOMReaders: register here how to create it
+namespace {
+  DicomVOperator* CreateDicomOperResize( G4int iOrder, const G4String& name )
+  {
+    return new DicomOperResize( iOrder, name );
+  }
+  struct DicomOperResizeCreatorRegistrar {
+    DicomOperResizeCreatorRegistrar() { DicomParameterMgr::SetResizeOperatorCreator( &CreateDicomOperResize ); }
+  } theDicomOperResizeCreatorRegistrar;
+}
 
 //-----------------------------------------------------------------------------
 DicomOperResize::DicomOperResize( G4int iOrder, G4String name)
@@ -737,14 +750,14 @@ void DicomOperResize::OperateStr( DicomVImageStr* imageStr, G4int newNoVoxelsX, 
   imageStr->SetData(newData);
   //  G4cout << " N Readers(DRM_RTStruct 0 " << G4endl; //GDEB                             
  
-  //----- G4StructID SET NEW VOXELS TO 0 OR REDO WITH RTSTRUCT                                                  
+  //----- G4StructID SET NEW VOXELS TO 0 OR REDO WITH RTSTRUCT
   DicomReaderMgr* theReaderMgr = DicomReaderMgr::GetInstance();
   std::vector<DicomVReader*> RTStructReaders = theReaderMgr->GetReaders(DRM_RTStruct, false);
-  //  G4cout << " N Readers(DRM_RTStruct " << RTStructReaders.size() << G4endl; //GDEB                             
+  //  G4cout << " N Readers(DRM_RTStruct " << RTStructReaders.size() << G4endl; //GDEB
   std::vector<DicomVReader*> CTReaders = theReaderMgr->GetReaders(DRM_G4dcmCT, false);
-  // G4cout << " N Readers(DRM_G4dcmCT " << CTReaders.size() << G4endl; //GDEB                             
+  // G4cout << " N Readers(DRM_G4dcmCT " << CTReaders.size() << G4endl; //GDEB
   if( RTStructReaders.size() != 0 && CTReaders.size() != 0 ) {
-    //-- REDO G4StructID WITH RTSTRUCT       
+    //-- REDO G4StructID WITH RTSTRUCT
     //-    imageStr = new DicomVImageStr( imageStr, "RTStruct", DIM_RTStruct );
     DicomReaderRTStruct* structRead = (DicomReaderRTStruct*)(RTStructReaders[0]);
     DicomPolygonSet* polygonSet = structRead->GetPolygonSet();

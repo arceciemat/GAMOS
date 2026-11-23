@@ -2,7 +2,7 @@
 #include "DicomReaderMgr.hh"
 #include "DicomUIDInfo.hh"
 #include "DICOM/DICOMBase/include/DicomMgr.hh"
-#include "DICOM/DICOMBase/include/DicomOperResize.hh"
+#include "DICOM/DICOMReaders/include/DicomOperResize.hh"
 #include "DICOM/DICOMBase/include/DicomVerbosity.hh"
 #include "DICOM/DICOMBase/include/DicomParameterMgr.hh"
 
