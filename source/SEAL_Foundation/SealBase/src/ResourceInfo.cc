@@ -5,6 +5,7 @@
 #include "SealBase/DebugAids.h"
 #include "SealBase/sysapi/ResourceInfo.h"
 #include <cstring>
+#include <stdint.h>
 
 // FIXME: On Windows, call GetSystemInfo, GetSystemMetrics (only a few),
 // 

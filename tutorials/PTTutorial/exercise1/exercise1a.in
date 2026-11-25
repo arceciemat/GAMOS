@@ -1,14 +1,12 @@
 # VERBOSITY 
-/tracking/verbose 0
+/tracking/verbose 1
 
 # GEOMETRY
-/gamos/setParam GmGeometryFromText:FileName ../exercise0/phantom.geom
+/gamos/setParam GmGeometryFromText:FileName phantomBox.geom
 /gamos/geometry GmGeometryFromText
 
-#---------- exercise 1a ----------
-# PHYSICS
+# PHYSICS LIST
 /gamos/physicsList G4QGSP_BIC_HP
-#---------------------------------
 
 # PRIMARY GENERATOR
 /gamos/generator GmGenerator
@@ -16,27 +14,11 @@
 # GEANT4 INITIALISATION
 /run/initialize
 
-#---------- exercise 1a ----------
-# ADD DECAY PROCESSES
-/gamos/physics/addPhysics radioactiveDecay
-#---------------------------------
-
 # SOURCE
-/control/execute ../exercise0/pbsSource.in
+/control/execute ./pbsSource.in
 
 # STATISTICS
 /gamos/userAction GmCountTracksUA
 
-#---------- exercise 1a ----------
-# FILTER "IN PHANTOM"
-/gamos/filter inPhantomFilter GmInLogicalVolumeFilter phantom
-
-# FILTER "IN PHANTOM & ONLY SECONDARIES"
-/gamos/filter secondariesInPhantomFilter GmANDFilter inPhantomFilter GmSecondaryFilter
-
-# COUNT SECONDARY PARTICLES IN PHANTOM
-/gamos/userAction GmCountProcessesUA secondariesInPhantomFilter
-#---------------------------------
-
-# RUN  SIMULATION
-/run/beamOn 1000
+# RUN SIMULATION
+/run/beamOn 20
