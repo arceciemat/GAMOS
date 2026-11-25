@@ -56,7 +56,7 @@ if [ $NOGAMOS == "0" ]; then
 	grep beamOn $EXDIR/$2.in >> $2.inn
 	touch .start_job
 	gamos $2.inn < /dev/null > $EXDIR/Nout.$2.$seed 2>&1
-	grep "saving histograms in file" $EXDIR/Nout.$2.$seed | while read line; do
+	grep "saving histograms in file" $EXDIR/Nout.$2.$seed | tr -d "\r" | tr -d "\r" | while read line; do
 	    file=`echo $line | awk '{ print $7}' `
 	    mv $file $EXDIR/N$2.$seed.$file
 	done
@@ -88,7 +88,7 @@ else
 fi
 
 ### MERGE HISTO FILES
-grep "saving histograms in file" Nout.$2.$seed1st | while read line; do
+grep "saving histograms in file" Nout.$2.$seed1st | tr -d "\r" | tr -d "\r" | while read line; do
     file=`echo $line | awk '{ print $7}' `
     if [ "${file%.csv}" = "$file" ]; then
 	echo "!!! HISTOGRAM FILE $file IS NOT A CSV FILE, IT CANNOT BE MERGED WITHOUT ROOT"

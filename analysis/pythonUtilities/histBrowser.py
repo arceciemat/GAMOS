@@ -699,7 +699,7 @@ class UI(tk.Frame):
             elif ii == 5 :
                 dataSum = sum(histo.data)
                 dataSumErr = sum([xx**2 for xx in histo.data])
-                dataSumErr = sqrt(dataSumErr)
+                dataSumErr = np.sqrt(dataSumErr)
                 if ista >= 1 :
                     t2show += self.plotBestFormat("Integr= ",dataSum)
                 if ista >= 2 :

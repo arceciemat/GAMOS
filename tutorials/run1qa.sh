@@ -26,7 +26,7 @@ fi
 
 TUTODIR=$(cd "$(dirname "$0")" && pwd)
 STATTEST="${PYTHON:-python3} $TUTODIR/StatTest/statTest.py"
-GAMOS_RELEASE_OLD=${GAMOS_RELEASE_OLD:-/home/arce/gamos/GAMOS.7.0.1/tutorials/}
+GAMOS_RELEASE_OLD=${GAMOS_RELEASE_OLD:-/home/arce/gamos/GAMOS.7.0/tutorials/}
 OLDDIR=$GAMOS_RELEASE_OLD/$1/$2
 [ -d $OLDDIR ] && OLDDIR=$(cd $OLDDIR && pwd)   # absolute path, without '//'
 NEWDIR=$GAMOSINSTALL/tutorials/$1/$2
@@ -85,7 +85,7 @@ if [ ! -e $outFile ]; then
     echo "!!! NEITHER Nout.$EXER.1111 NOR out.$EXER FOUND: THE HISTOGRAM FILES ARE NOT KNOWN"
     exit 1
 fi
-grep "saving histograms in fi" $outFile | awk '{print $7}' | while read hf; do
+grep "saving histograms in fi" $outFile | tr -d "\r" | tr -d "\r" | awk '{print $7}' | while read hf; do
     if [ "${hf%.csv}" = "$hf" ]; then
 	echo "!!! HISTOGRAM FILE $hf IS NOT A CSV FILE, IT CANNOT BE TESTED"
 	continue
