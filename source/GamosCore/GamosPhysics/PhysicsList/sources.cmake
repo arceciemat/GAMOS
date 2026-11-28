@@ -41,7 +41,8 @@ gamos_add_module(GamosCore_GamosPhysics_PhysicsList
     GmPhysicsSingleCoulombScattering.hh
     GmPhysicsVerbosity.hh
     GmPhysicsXrayRefraction.hh
-    GmRadiotherapyPhysics.hh
+    GmProtontherapy.hh
+    GmRadiotherapy.hh
     GmRayleighScattering_XSChange.hh
     GmVPhysicsElectron.hh
     GmVPhysicsGamma.hh
@@ -91,7 +92,8 @@ gamos_add_module(GamosCore_GamosPhysics_PhysicsList
     GmPhysicsSingleCoulombScattering.cc
     GmPhysicsVerbosity.cc
     GmPhysicsXrayRefraction.cc
-    GmRadiotherapyPhysics.cc
+    GmProtontherapy.cc
+    GmRadiotherapy.cc
     GmRayleighScattering_XSChange.cc
     GmVPhysicsElectron.cc
     GmVPhysicsGamma.cc

@@ -17,6 +17,9 @@
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 #include "G4ios.hh"
+#include <cstdlib>
+#include <set>
+#include <vector>
 #include "G4tgbVolumeMgr.hh"
 #include "G4tgbMaterialMgr.hh"
 #include "G4tgrMessenger.hh"
@@ -304,7 +307,7 @@ void GmReadPhantomGeometry::ConstructPhantom(G4LogicalVolume* parentLV)
 
 
 //---------------------------------------------------------------------------
-G4Material* GmReadPhantomGeometry::BuildMaterialChangingDensity( G4Material* origMate, float density, G4String mateName )
+G4Material* GmReadPhantomGeometry::BuildMaterialChangingDensity( G4Material* origMate, float density, G4String mateName, const G4Material* baseMate )
 {
   if( density == 0 ) {
     G4Exception("GmReadPhantomGeometry::BuildMaterialChangingDensity",
@@ -316,12 +319,17 @@ G4Material* GmReadPhantomGeometry::BuildMaterialChangingDensity( G4Material* ori
   G4Material* mate = 0;
   if( bRecalculateMaterialDensities ) {
     G4int nelem = origMate->GetNumberOfElements();
-    mate = new G4Material( mateName, density*CLHEP::g/CLHEP::cm3, nelem, kStateUndefined, CLHEP::STP_Temperature );
+    if( baseMate ) {
+      //--- Geant4 base material: EM tables are computed once for the base material and scaled by density
+      mate = new G4Material( mateName, density*CLHEP::g/CLHEP::cm3, baseMate, kStateUndefined, CLHEP::STP_Temperature );
+    } else {
+      mate = new G4Material( mateName, density*CLHEP::g/CLHEP::cm3, nelem, kStateUndefined, CLHEP::STP_Temperature );
 
-    for( G4int ii = 0; ii < nelem; ii++ ){
-      G4double frac = origMate->GetFractionVector()[ii];
-      G4Element* elem = const_cast<G4Element*>(origMate->GetElement(ii));
-      mate->AddElement( elem, frac );
+      for( G4int ii = 0; ii < nelem; ii++ ){
+        G4double frac = origMate->GetFractionVector()[ii];
+        G4Element* elem = const_cast<G4Element*>(origMate->GetElement(ii));
+        mate->AddElement( elem, frac );
+      }
     }
     //    G4cout << " IONISATION POTENTIAL " << mate->GetName() << " = " << mate->GetIonisation()->GetMeanExcitationEnergy() << G4endl; //GDEB
     mate->GetIonisation()->SetMeanExcitationEnergy(origMate->GetIonisation()->GetMeanExcitationEnergy());
@@ -344,6 +352,36 @@ G4Material* GmReadPhantomGeometry::BuildMaterialChangingDensity( G4Material* ori
 }
 
 
+//-----------------------------------------------------------------------
+// Fast conversion of a plain decimal number ("-1.234", "0.00129", "1.2E-3").
+// Anything else (expressions, units, true/false, '\r', ...) returns false
+// and the caller must use GmGenUtils::GetValue, so behaviour is unchanged.
+// GmGenUtils itself is not modified: it is used by many other classes.
+static G4bool FastParsePlainNumber( const G4String& str, G4double& val )
+{
+  const char* c = str.c_str();
+  const char* p = c;
+  if( *p == '-' ) ++p;
+  G4int nDigits = 0;
+  while( *p >= '0' && *p <= '9' ) { ++p; ++nDigits; }
+  if( *p == '.' ) {
+    ++p;
+    while( *p >= '0' && *p <= '9' ) { ++p; ++nDigits; }
+  }
+  if( nDigits == 0 ) return false;
+  if( *p == 'e' || *p == 'E' ) {
+    ++p;
+    if( *p == '-' || *p == '+' ) ++p;
+    G4int nExp = 0;
+    while( *p >= '0' && *p <= '9' ) { ++p; ++nExp; }
+    if( nExp == 0 ) return false;
+  }
+  if( *p != '\0' ) return false;   // not a plain number
+  val = strtod( c, 0 );
+  return true;
+}
+
+//-----------------------------------------------------------------------
 void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
 {
 #ifndef GAMOS_NO_VERBOSE
@@ -375,7 +413,8 @@ void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
 	//	G4cout << " stemp " << stemp << G4endl;
 	fin >> stemp; 
 	//	if( ix == 0 && iy == 0 ) G4cout << ix << " " << iy << " " << iz << " density " << stemp << G4endl; //GDEB
-	G4double dens = GmGenUtils::GetValue(stemp.c_str() );
+	G4double dens;
+	if( !FastParsePlainNumber( stemp, dens ) ) dens = GmGenUtils::GetValue(stemp.c_str() );
 	G4int copyNo = ix + (iy)*nVoxelX + (iz)*nVoxelX*nVoxelY;
 	theMateDensities[copyNo] = dens;
 
@@ -488,24 +527,64 @@ void GmReadPhantomGeometry::ReadVoxelDensities( std::ifstream& fin )
   }
   // 
   //---- Build and add new materials
+  //--- Optional (default OFF): use Geant4 base materials, so that the EM physics tables are computed
+  //    once per group of density-split materials instead of once per material (faster initialisation)
+  //    Only groups (same original material) whose density max/min ratio is below BaseMaterialMaxDensityRatio are used
+  G4bool bUseBase = GmParameterMgr::GetInstance()->GetNumericValue("GmReadPhantomGeometry:Phantom:UseBaseMaterials", 0) != 0;
+  G4double baseMaxRatio = GmParameterMgr::GetInstance()->GetNumericValue("GmReadPhantomGeometry:Phantom:BaseMaterialMaxDensityRatio", 1.2);
+  typedef std::map< std::pair<G4Material*,G4int>, matInfo* >::iterator matIte;
+  std::map< G4Material*, std::vector<matIte> > groups;
+  std::map< G4Material*, const G4Material* > baseOfGroup;
+  std::set<G4int> baseIDs; // ids (matInfo::id) of the entries built as base materials
+  if( bUseBase ) {
+    matIte gite;
+    for( gite = newMateDens.begin(); gite != newMateDens.end(); gite++ ) groups[(*gite).first.first].push_back( gite );
+    std::map< G4Material*, std::vector<matIte> >::iterator grite;
+    for( grite = groups.begin(); grite != groups.end(); grite++ ) {
+      std::vector<matIte>& ents = (*grite).second;
+      if( ents.size() < 2 ) continue;
+      G4double dmin = DBL_MAX, dmax = -DBL_MAX;
+      for( size_t ie = 0; ie < ents.size(); ie++ ) {
+	G4double d = (*ents[ie]).second->sumdens/(*ents[ie]).second->nvoxels;
+	if( d < dmin ) dmin = d;
+	if( d > dmax ) dmax = d;
+      }
+      if( dmin <= 0. || dmax/dmin > baseMaxRatio ) continue;
+      //--- the base is the entry with the median density (entries are ordered by density bin)
+      matIte bite = ents[ents.size()/2];
+      G4double averdens = (*bite).second->sumdens/(*bite).second->nvoxels;
+      G4double saverdens = G4int(100000.001*averdens)/100000.;
+      G4String mateName = ((*bite).first).first->GetName() + "_" + GmGenUtils::ftoa(saverdens);
+      G4Material* bmate = BuildMaterialChangingDensity( (*bite).first.first, averdens, mateName );
+      thePhantomMaterials[(*bite).second->id+iim] = bmate;
+      baseOfGroup[(*grite).first] = bmate;
+      baseIDs.insert( (*bite).second->id );
+    }
+  }
   std::map< std::pair<G4Material*,G4int>, matInfo* >::iterator mppite;
   for( mppite= newMateDens.begin(); mppite != newMateDens.end(); mppite++ ){
+    if( baseIDs.find((*mppite).second->id) != baseIDs.end() ) continue; // already built as a base material
     G4double averdens = (*mppite).second->sumdens/(*mppite).second->nvoxels;
     G4double saverdens = G4int(100000.001*averdens)/100000.;
 #ifndef GAMOS_NO_VERBOSE
       if( GeomVerb(debugVerb) ) G4cout << "GmReadPhantomGeometry::ReadVoxelDensities AVER DENS " << averdens << " -> " << saverdens << " -> " << G4int(100000*averdens) << " " << G4int(100000.0001*averdens)/100000 << " " <<  G4int(100000*averdens)/100000. << G4endl;
 #endif
     G4String mateName = ((*mppite).first).first->GetName() + "_" + GmGenUtils::ftoa(saverdens);
-    //  thePhantomMaterials.push_back( BuildMaterialChangingDensity( (*mppite).first.first, averdens, mateName ) );
-    thePhantomMaterials[(*mppite).second->id+iim] = BuildMaterialChangingDensity( (*mppite).first.first, averdens, mateName );
+    const G4Material* baseMate = 0;
+    std::map< G4Material*, const G4Material* >::const_iterator bgite = baseOfGroup.find( (*mppite).first.first );
+    if( bgite != baseOfGroup.end() ) baseMate = (*bgite).second;
+    thePhantomMaterials[(*mppite).second->id+iim] = BuildMaterialChangingDensity( (*mppite).first.first, averdens, mateName, baseMate );
 #ifndef GAMOS_NO_VERBOSE
       if( GeomVerb(infoVerb) ) {
         G4cout << "GmReadPhantomGeometry::ReadVoxelDensities ADD MATERIAL " << (*mppite).second->id+iim	   << " ID " << thePhantomMaterials[(*mppite).second->id+iim]->GetName()
 	       << " from " << (*mppite).first.first->GetName()
 	       << " dens " << thePhantomMaterials[(*mppite).second->id+iim]->GetDensity()/CLHEP::g*CLHEP::cm3
-	       << " averdens " << averdens << " saverdens " << saverdens << G4endl;
+	       << " averdens " << averdens << " saverdens " << saverdens << (baseMate ? " (base material " + baseMate->GetName() + ")" : G4String("")) << G4endl;
       }
 #endif
+  }
+  if( bUseBase ) {
+    G4cout << "GmReadPhantomGeometry: UseBaseMaterials ON: " << baseOfGroup.size() << " groups of density-split materials use a base material (max density ratio " << baseMaxRatio << ")" << G4endl;
   }
 
   // for( size_t ii = 0; ii < thePhantomMaterials.size(); ii++ ) {

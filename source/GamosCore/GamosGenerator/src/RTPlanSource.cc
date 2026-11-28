@@ -48,6 +48,7 @@ RTPlanSource::RTPlanSource( const G4String& name, const G4String& partName): RTV
 
   ReadPlanData();
   RTPlanMgr::GetInstance()->SetBeams(theBeams);
+  PlacePhantomInMaster();
   
 }
 

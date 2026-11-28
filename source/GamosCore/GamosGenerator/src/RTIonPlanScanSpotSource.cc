@@ -51,6 +51,7 @@ RTIonPlanScanSpotSource::RTIonPlanScanSpotSource( const G4String& name, const G4
   
   ReadPlanData();
   RTPlanMgr::GetInstance()->SetBeams(theBeams);
+  PlacePhantomInMaster();
 }
 
 

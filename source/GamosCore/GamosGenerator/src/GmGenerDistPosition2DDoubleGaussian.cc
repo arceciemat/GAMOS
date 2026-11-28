@@ -26,16 +26,16 @@ G4ThreeVector GmGenerDistPosition2DDoubleGaussian::GeneratePosition( GmParticleS
   G4double posZ = 0.;
   // X
   if( CLHEP::RandFlat::shoot() <= theProbabilityX12 ) {
-    posX = sqrt(theSigmaX1M*log(1-CLHEP::RandFlat::shoot()) );
+    posX = CLHEP::RandGauss::shoot(0., theSigmaX1);
   } else {
-    posX = sqrt(theSigmaX2M*log(1-CLHEP::RandFlat::shoot()) );
+    posX = CLHEP::RandGauss::shoot(0., theSigmaX2);
   }
   
   // Y
   if( CLHEP::RandFlat::shoot() <= theProbabilityY12 ) {
-    posY = sqrt(theSigmaY1M*log(1-CLHEP::RandFlat::shoot()) );
+    posY = CLHEP::RandGauss::shoot(0., theSigmaY1);
   } else {
-    posY = sqrt(theSigmaY2M*log(1-CLHEP::RandFlat::shoot()) );
+    posY = CLHEP::RandGauss::shoot(0., theSigmaY2);
   }
   
   G4ThreeVector pos( posX, posY, posZ );
@@ -66,23 +66,19 @@ void GmGenerDistPosition2DDoubleGaussian::SetParams( const std::vector<G4String>
     G4Exception(" GmGenerDistPosition2DDoubleGaussian::SetParams",
 		"Wrong argument",
 		FatalErrorInArgument,
-		"To set point you have to add 1, 4 or 7 parameters: SIGMA (POS_X POS_Y POS_Z) (DIR_X DIR_Y DIR_Z");
+		"To set the distribution you have to add 6, 9 or 12 parameters: SIGMA_X1 SIGMA_X2 PROBABILITY_X1 SIGMA_Y1 SIGMA_Y2 PROBABILITY_Y1 (POS_X POS_Y POS_Z) (DIR_X DIR_Y DIR_Z)");
   }
-  G4double sigma = GmGenUtils::GetValue( params[0] )*sqrt(2.);
-  theSigmaX1M = -2.*sigma*sigma;
-  sigma = GmGenUtils::GetValue( params[1] )*sqrt(2.);
-  theSigmaX2M = -2.*sigma*sigma;
+  theSigmaX1 = GmGenUtils::GetValue( params[0] );
+  theSigmaX2 = GmGenUtils::GetValue( params[1] );
   theProbabilityX12 =  GmGenUtils::GetValue( params[2] );
-  sigma = GmGenUtils::GetValue( params[3] )*sqrt(2.);
-  theSigmaY1M = -2.*sigma*sigma;
-  sigma = GmGenUtils::GetValue( params[4] )*sqrt(2.);
-  theSigmaY2M = -2.*sigma*sigma;
+  theSigmaY1 = GmGenUtils::GetValue( params[3] );
+  theSigmaY2 = GmGenUtils::GetValue( params[4] );
   theProbabilityY12 =  GmGenUtils::GetValue( params[5] );
   
-  if( params.size() >= 7) {
+  if( params.size() >= 9) {
     theCentre = G4ThreeVector(GmGenUtils::GetValue( params[6] ), GmGenUtils::GetValue( params[7] ), GmGenUtils::GetValue( params[8] ) );
   }
-  if( params.size() >= 10) {
+  if( params.size() >= 12) {
     //normalize direction cosines
     G4ThreeVector dir(GmGenUtils::GetValue( params[9] ), GmGenUtils::GetValue( params[10] ), GmGenUtils::GetValue( params[11] ) );
     SetRotation( dir );

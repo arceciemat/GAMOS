@@ -57,6 +57,7 @@ protected:
   virtual void SetSpotSize( GmVGenerDistPosition2D* psitionDistribution2D, const RTBeamStateData& spdata ) = 0;
   void Initialize( const G4String& partName);
   void InitializeGeometry();
+  void PlacePhantomInMaster(); // multithreading: phantom is placed once in the master thread, before the workers start
   virtual void ReadPlanData() = 0;
 
   void BuildRTPlan2G4Associations();

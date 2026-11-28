@@ -1,3 +1,4 @@
+#include <memory>
 #include "GmDataInitialPhysicalVolume.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
@@ -46,6 +47,7 @@ G4String GmDataInitialPhysicalVolume::GetStringValueFromSecoTrack( const G4Track
 {
 
   G4TouchableHistory* touch = new G4TouchableHistory;
+  std::unique_ptr<G4TouchableHistory> touchGuard(touch); // REV: fix leak
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack1->GetVertexPosition(), touch, false ); 
   return GmG4Utils::GetNameNumberFromTouchable(touch);
 }
@@ -55,6 +57,7 @@ G4String GmDataInitialPhysicalVolume::GetStringValueFromSecoTrack( const G4Track
 G4String GmDataInitialPhysicalVolume::GetStringValueFromEvent( const G4Event* anEvent )
 { 
   G4TouchableHistory* touch = new G4TouchableHistory;
+  std::unique_ptr<G4TouchableHistory> touchGuard(touch); // REV: fix leak
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( anEvent->GetPrimaryVertex(0)->GetPosition(), touch, false ); 
 
    return GmG4Utils::GetNameNumberFromTouchable(touch);
@@ -65,6 +68,7 @@ G4String GmDataInitialPhysicalVolume::GetStringValueFromStackedTrack( const G4Tr
 { 
   
   G4TouchableHistory* touch = new G4TouchableHistory;
+  std::unique_ptr<G4TouchableHistory> touchGuard(touch); // REV: fix leak
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack->GetPosition(), touch, false );
   
   return GmG4Utils::GetNameNumberFromTouchable(touch);

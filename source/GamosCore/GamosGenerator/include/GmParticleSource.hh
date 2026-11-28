@@ -98,6 +98,9 @@ public:
   void SetWeight( G4double wei ) {
     theWeight = wei;
   }
+  //--- ID of the G4Event being generated (set by GmGenerator before calling GenerateVertices): in MT it is the global event ID
+  void SetCurrentEventID( G4int id ) { theCurrentEventID = id; }
+  G4int GetCurrentEventID() const { return theCurrentEventID; }
 
   G4int GetMaxBiasIterations() const {
     return theMaxBiasIterations; 
@@ -129,6 +132,7 @@ protected:
   std::map<G4String,GmVNumericDistribution*> theBiasDistributions;
   G4int theMaxBiasIterations;
   G4double theWeight;
+  G4int theCurrentEventID = -1;
   G4bool bBiasDistributions;
 
   G4ThreeVector theLocalVolumePosition;

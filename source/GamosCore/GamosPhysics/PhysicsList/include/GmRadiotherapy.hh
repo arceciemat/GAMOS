@@ -1,19 +1,19 @@
-#ifndef GmRadiotherapyPhysics_h
-#define GmRadiotherapyPhysics_h 1
+#ifndef GmRadiotherapy_h
+#define GmRadiotherapy_h 1
 
 #include "GmEMPhysics.hh"
 #include "globals.hh"
 
 class G4VPhysicsConstructor;
-class GmRadiotherapyPhysicsMessenger;
+class GmRadiotherapyMessenger;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class GmRadiotherapyPhysics: public GmEMPhysics
+class GmRadiotherapy: public GmEMPhysics
 {
 public:
-  GmRadiotherapyPhysics();
-  virtual ~GmRadiotherapyPhysics();
+  GmRadiotherapy();
+  virtual ~GmRadiotherapy();
 
 private:
 

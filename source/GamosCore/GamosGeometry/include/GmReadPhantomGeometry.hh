@@ -126,7 +126,7 @@ protected:
   virtual void ConstructPhantom(G4LogicalVolume* parentLV);
   
   std::pair<G4double,G4double> ReadVoxelDim( G4int nVoxel, std::ifstream& fin ); 
-  G4Material* BuildMaterialChangingDensity( G4Material* origMate, float density, G4String mateName );
+  G4Material* BuildMaterialChangingDensity( G4Material* origMate, float density, G4String mateName, const G4Material* baseMate = 0 );
 
   virtual void ReadVoxelDensities( std::ifstream& fin );
 protected:

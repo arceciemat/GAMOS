@@ -1,41 +1,58 @@
-# VERBOSITY 
-/tracking/verbose 0
+#/gamos/verbosity GmScoringVerbosity test
 
-# GEOMETRY
-/gamos/setParam GmGeometryFromText:FileName ../exercise0/phantom.geom
-/gamos/geometry GmGeometryFromText
+/gamos/setParam GmAnalysisMgr:FileNameSuffix _.patient
 
-# PHYSICS
-/gamos/physicsList G4QGSP_BIC_AllHP
+/P GmReadPhantomGeometry:Phantom:DensityNSplit 10
+/gamos/setParam GmReadPhantomGeometry:RecalculateMaterialDensities 1
+/gamos/setParam GmReadPhantomGeometry:FileName world.geom
+/gamos/setParam GmReadPhantomGeometry:Phantom:FileName testCT.g4dcm4x
+/gamos/setParam GmReadPhantomGeometry:InitialRotAngles -90*deg 0. 0. #HFS (HeadFirstSupine)
 
-# PRIMARY GENERATOR
+/gamos/geometry GmReadPhantomG4Geometry
+
+/gamos/physicsList G4QGSP_BIC_HP
+
 /gamos/generator GmGenerator
 
-# GEANT4 INITIALISATION
 /run/initialize
 
-# ACTIVATE  DECAYS
-/gamos/physics/addPhysics radioactiveDecay
+/gamos/setParam source:ControlPointFileNamePrefix RTIonPlanControlPoint
+/gamos/setParam source:BeamFileNamePrefix RTIonPlanBeam
+/gamos/setParam source:PlanFileNamePrefix RTIonPlan 
+/gamos/setParam source:MSUnitsToSkip 0 
+/gamos/setParam source:MSUnitsToRun 0.242539
+/gamos/generator/addRTIonPlanScanSpotSource source proton
+/gamos/generator/positionDist source GmGenerDistPositionDiscGaussian 3.0 0. 0. -510. 
+/gamos/generator/directionDist source GmGenerDistDirectionCone 0. 0. 1. 4.*mrad
 
-# SOURCE
-/control/execute ../exercise0/pbsSource.in
+/P GmGenerDistEnergyFromMultiFileE:FileListName enerDist.INCLXX.lis /
+/gamos/generator/energyDist source GmGenerDistEnergyConstant 146.1
+#/gamos/generator/RTPlan/associateBeamVolumes source rangeShifter 
 
-# STATISTICS
+/P GmCountTracksUA:EachNEvent 1000
 /gamos/userAction GmCountTracksUA
+#/gamos/userAction GmCountProcessesUA
 
-#---------- exercise 4a ----------
-# FILTERS
-/gamos/filter inPhantomFilter GmInLogicalVolumeFilter phantom
-/gamos/filter ProtonsInPhantomFilter GmANDFilter inPhantomFilter GmPrimaryFilter
+/gamos/scoring/createMFDetector Det phantom 
+#DOSE SCORER AND PRINTERS
+/P sqdoseDose_doseScorer:FileName sqdose_dose
+/gamos/scoring/addScorer2MFD doseScorer GmPSDoseDeposit Det
+/gamos/scoring/printer sqdoseDose GmPSPrinterSqdose
+/gamos/scoring/addPrinter2Scorer sqdoseDose doseScorer
+#/gamos/scoring/addPrinter2Scorer GmPSPrinterCout doseScorer
 
-# HISTOGRAMMING
-/gamos/setParam GmTrackDataHistosUA_ProtonsInPhantomFilter:FileName ProtonsFinalPos
-/gamos/analysis/histo1Min GmTrackDataHistosUA_ProtonsInPhantomFilter:FinalPosZ -200
-/gamos/analysis/histo1Max GmTrackDataHistosUA_ProtonsInPhantomFilter:FinalPosZ 200
-/gamos/analysis/histo1NBins GmTrackDataHistosUA_ProtonsInPhantomFilter:FinalPosZ 1200
-/gamos/setParam GmTrackDataHistosUA_ProtonsInPhantomFilter:DataList FinalPosZ
-/gamos/userAction GmTrackDataHistosUA ProtonsInPhantomFilter
-#---------------------------------
+#LET SCORER GmPSLET_dEdx_unrestrD
+/P sqdoseLETDu_LETDuScorer:FileName sqdose_LETDu     
+#/gamos/scoring/addScorer2MFD LETDuScorer GmPSLET_dEdx_unrestrD Det
+/gamos/scoring/addScorer2MFD LETDuScorer GmPSEnergyDeposit Det
+/gamos/scoring/addFilter2Scorer GmProtonFilter LETDuScorer
+/gamos/scoring/printNEventsType LETDuScorer ByNFilled
+/gamos/scoring/printer sqdoseLETDu GmPSPrinterSqdose
+/gamos/scoring/addPrinter2Scorer sqdoseLETDu LETDuScorer
 
-# RUN  SIMULATION
-/run/beamOn 10000
+
+/gamos/random/restoreSeeds 1138 1138
+
+#/tracking/verbose 1
+/run/beamOn 100000
+

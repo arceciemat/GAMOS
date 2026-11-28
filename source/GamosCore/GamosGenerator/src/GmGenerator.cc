@@ -292,6 +292,7 @@ void GmGenerator::GeneratePrimaries(G4Event* evt)
 #endif
 
   for( ite2 = currentSources.begin(); ite2 != currentSources.end(); ite2++ ){
+    (*ite2)->SetCurrentEventID( evt->GetEventID() );
     std::vector<G4PrimaryVertex*> vtxs = (*ite2)->GenerateVertices( theLastEventTime );
     for( size_t iv = 0; iv < vtxs.size(); iv++ ){
       G4PrimaryVertex* vtx = vtxs[iv];

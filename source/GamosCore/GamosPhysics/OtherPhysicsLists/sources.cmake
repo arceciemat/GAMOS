@@ -6,8 +6,6 @@ gamos_add_module(GamosCore_GamosPhysics_OtherPhysicsLists
     GmG4HadronicPhysicsLists.hh
     GmG4HadronicPhysicsListsMessenger.hh
     GmG4PhysicsLists.hh
-    GmQGSP_BIC_HP_EMopt3.hh
-    GmQGSP_BIC_HP_EMopt3.icc
     PhysListEmStandardSS.hh
   SOURCES
     GmDummyPhysics.cc

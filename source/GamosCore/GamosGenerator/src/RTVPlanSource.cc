@@ -1,3 +1,4 @@
+#include "G4Threading.hh"
 #include "RTVPlanSource.hh"
 #include "RTIonPlanBeam.hh"
 #include "GmGenerDistTimeConstant.hh"
@@ -69,6 +70,7 @@ RTVPlanSource::RTVPlanSource( const G4String& name): GmParticleSource( name )
   theTimeDistribution = 0;
   theAcceleratorVolume = "";  
   theAcceleratorPV = 0;
+  theLDAG4PV = 0;
   theLateralSpreadingDevice = "";  
   //  bPhantomMoved = false;
 
@@ -177,6 +179,12 @@ void RTVPlanSource::InitializeGeometry()
 #endif
   BuildRTPlan2G4Associations();
   BuildRTBeam2G4Associations();
+  if( G4Threading::IsMultithreadedApplication() && theRTPlanG4PVsAssoc.size() != 0 ) {
+    G4Exception("RTVPlanSource::InitializeGeometry",
+		"",
+		FatalException,
+		"RTPlan sources that move accelerator volumes (jaws, MLC...) between events cannot be used in multithreading mode: run with G4RUN_MANAGER_TYPE=Serial (in tcsh: setenv G4RUN_MANAGER_TYPE Serial)");
+  }
   
   //--- Store original phantom translation and rotation 
   std::vector<G4VPhysicalVolume*> PVs = theGeomUtils->GetPhysicalVolumes("phantomContainer",0);
@@ -188,6 +196,9 @@ void RTVPlanSource::InitializeGeometry()
     theOrigPhantomRotMat = *(pv->GetRotation());
     //   G4cout << "2RTPlanMgr::MovePhantom theOrigPhantomRotMat " << theOrigPhantomRotMat  << G4endl;   //GDEB
     bMovePhantom = true;
+    //--- Multithreading: the geometry voxels cannot be recalculated from a worker thread (G4GeometryManager::OpenGeometry/CloseGeometry
+    //--- only work in the master thread), so the phantom has been already placed in the master thread (PlacePhantomInMaster)
+    if( G4Threading::IsMultithreadedApplication() ) bMovePhantom = false;
   } else {
     bMovePhantom = false;
   }
@@ -216,7 +227,7 @@ G4PrimaryVertex* RTVPlanSource::GenerateVertex( G4double time )
   }
   
   G4bool bOK = true;
-  RTBeamStateData bsdata = theRTPlanMgr->GetRTBeamStateData(time, 0, bOK);
+  RTBeamStateData bsdata = theRTPlanMgr->GetRTBeamStateData(time, 0, bOK, GetCurrentEventID());
   //  G4cout << "  theRTPlanMgr->IsChangedBeamState() " <<  theRTPlanMgr->IsChangedBeamState() << " " << bInitProtonsPerMU << G4endl; //GDEB
     
   if( theRTPlanMgr->IsChangedBeamState() ) {
@@ -366,14 +377,17 @@ void RTVPlanSource::AssociateBeamVolumes( std::vector<G4String> wl )
 //------------------------------------------------------------------------
 void RTVPlanSource::AssociatePlanLimitingDeviceAngle( std::vector<G4String> wl )
 {
-  if( wl.size() != 2 ) {
+  // Accept both "VOLUME_NAME" and "SOURCE_NAME VOLUME_NAME". Not fatal here: it is ignored for RTIonPlan (plan type is not yet known)
+  if( wl.size() == 1 ) {
+    theLDAVolu = wl[0];
+  } else if( wl.size() == 2 ) {
+    theLDAVolu = wl[1];
+  } else {
     G4Exception("RTVPlanSource::AssociatePlanLimitingDeviceAngle",
 		"",
 		FatalException,
-		("Command should have twowords: SOURCE_NAME GEOMETRY_VOLUME_NAME , while it has " + GmGenUtils::itoa(wl.size())).c_str());
+		("Command should have one or two words: [SOURCE_NAME] GEOMETRY_VOLUME_NAME , while it has " + GmGenUtils::itoa(wl.size())).c_str());
   }
-
-  theLDAVolu = wl[1];
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(debugVerb) ) G4cout << " RTVPlanSource::AssociatePlanLimitingDeviceAngle" << theLDAVolu << G4endl;
 #endif
@@ -502,7 +516,14 @@ void RTVPlanSource::BuildRTPlan2G4Associations()
   }
 
 
-  if( theLDAVolu != "" ) {
+  G4bool bIonPlan = ( theBeams.size() != 0 && dynamic_cast<RTIonPlanBeam*>(theBeams[0]) != 0 );
+  if( bIonPlan ) { // LimitingDeviceAngle does not exist in RTIonPlan: ignore it
+    if( theLDAVolu != "" ) {
+      G4Exception("RTVPlanSource::BuildRTPlan2G4Associations","",JustWarning,
+		  "associatePlanLimitingDeviceAngle is ignored for RTIonPlan");
+    }
+    theLDAG4PV = 0;
+  } else if( theLDAVolu != "" ) {
     std::vector<G4VPhysicalVolume*> PVs = GmGeometryUtils::GetInstance()->GetPhysicalVolumes(theLDAVolu);
     if( PVs.size() != 1 ) {
       G4Exception("RTVPlanSource::AssociatePlanVolumes",
@@ -515,7 +536,7 @@ void RTVPlanSource::BuildRTPlan2G4Associations()
     G4Exception("RTVPlanSource::AssociatePlanVolumes",
 		"",
 		JustWarning,
-		"No volume associated to LimitingDeviceAngle, use /gamos/generator/RTPlan/associatePlanLimitingDeviceAngle <VOLUME_NAME> ");
+		"No volume associated to LimitingDeviceAngle, use /gamos/generator/RTPlan/associatePlanLimitingDeviceAngle [SOURCE_NAME] <VOLUME_NAME> ");
   }
   
 }
@@ -875,6 +896,7 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
   }
   
 
+  if( theLDAG4PV ) {
   G4RotationMatrix* rotmat = const_cast<G4RotationMatrix*>(theLDAG4PV->GetFrameRotation());
 #ifndef GAMOS_NO_VERBOSE
   if( GenerVerb(testVerb) ) G4cout << " theLDAG4PV rotmat " << *rotmat << G4endl; 
@@ -886,6 +908,7 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
 #endif
   theLastLimitingDeviceAngle = limitingDeviceAngle;
   theLDAG4PV->SetRotation(rotmat);
+  }
 
   geomMgr->CloseGeometry();
 
@@ -898,6 +921,44 @@ void RTVPlanSource::MoveAccelerator(const RTBeamStateData& bsdata )
 }
 
 //------------------------------------------------------------------------
+//-----------------------------------------------------------------------
+void RTVPlanSource::PlacePhantomInMaster()
+{
+  //--- In multithreading the (shared) geometry cannot be changed from the worker threads: G4GeometryManager::OpenGeometry/CloseGeometry
+  //--- only work in the master thread. The phantom position only depends on the isocenter (and snout position if IsocenterAtZero=0),
+  //--- so it is placed once here, if it is the same for all control points of all beams
+  if( !G4Threading::IsMultithreadedApplication() || !G4Threading::IsMasterThread() ) return;
+
+  GmGeometryUtils* geomUtils = GmGeometryUtils::GetInstance();
+  std::vector<G4VPhysicalVolume*> PVs = geomUtils->GetPhysicalVolumes("phantomContainer",0);
+  if( PVs.size() == 0 ) return;
+
+  theGeomUtils = geomUtils;
+  theOrigPhantomTranslation = PVs[0]->GetTranslation();
+  theOrigPhantomRotMat = *(PVs[0]->GetRotation());
+
+  G4bool bFirst = true;
+  RTBeamStateData bsFirst;
+  for( size_t ib = 0; ib < theBeams.size(); ib++ ) {
+    std::vector<RTVPlanControlPoint*> CPs = GetBeam( ib )->GetControlPoints();
+    for( size_t iicp = 0; iicp < CPs.size(); iicp++ ) {
+      RTBeamStateData bs = CPs[iicp]->GetBeamStateData( RTBeamStateData() );
+      if( bFirst ) {
+	bsFirst = bs;
+	bFirst = false;
+      } else if( (bs.IsocenterPosition-bsFirst.IsocenterPosition).mag() > 1.E-6*CLHEP::mm
+		 || ( !bIsocenterAtZero && std::fabs(bs.PositionZ-bsFirst.PositionZ) > 1.E-6*CLHEP::mm ) ) {
+	G4Exception("RTVPlanSource::PlacePhantomInMaster",
+		    "",
+		    FatalException,
+		    "The phantom position is not the same for all control points of all beams (different isocenters), and it cannot be moved between events in multithreading mode: run with G4RUN_MANAGER_TYPE=Serial (in tcsh: setenv G4RUN_MANAGER_TYPE Serial)");
+      }
+    }
+  }
+  if( bFirst ) return; // no control points
+  MovePhantom( bsFirst );
+}
+
 void RTVPlanSource::MovePhantom(const RTBeamStateData& bsdata )
 {
   std::vector<G4VPhysicalVolume*> PVs = theGeomUtils->GetPhysicalVolumes("phantomContainer",0); // you may use RTPlan with other geometry not phantoms, and then "phantom" cannot be moved

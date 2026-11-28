@@ -1,4 +1,5 @@
 #include "RTPlanMgr.hh"
+#include <algorithm>
 #include "RTVPlanSource.hh"
 #include "RTPlanBeam.hh"
 #include "GamosCore/GamosGenerator/include/GmIsotope.hh"
@@ -44,6 +45,7 @@ RTPlanMgr::RTPlanMgr()
   // to check if beam and control point changed since last event where CHANGED TO NEXT SCAN SPOT
   theLastBeamCHANGEDSubCPEvt = -1;
   theLastControlPointCHANGEDSubCPEvt = -1; 
+  theLastSpotID = -1;
   
 }
 
@@ -251,13 +253,15 @@ void RTPlanMgr::CalculateMetersetEvts()
 }
 
 //-----------------------------------------------------------------------
-RTBeamStateData RTPlanMgr::GetRTBeamStateData( G4double& time, G4Event* evt, G4bool& bOK ) // time is only used for printing 
+RTBeamStateData RTPlanMgr::GetRTBeamStateData( G4double& time, G4Event* evt, G4bool& bOK, G4int eventID ) // time is only used for printing 
 {
   //----- Get Position, direction angle and energy from BeamState's
   //  G4cout <<" theEvtMgr->GetConstCurrentEvent() " <<  theEvtMgr->GetConstCurrentEvent() << G4endl;//GDEB
   if( evt == 0 ) evt = theG4EventManager->GetNonconstCurrentEvent();
   if( evt ) { // first event G4EventManager is not initialized
     theEventID = evt->GetEventID();
+  } else if( eventID >= 0 ) { // global event ID given by the generator (in MT each thread only gets some events: a local counter would be wrong)
+    theEventID = eventID;
   } else {
     theEventID++;
   }
@@ -270,6 +274,41 @@ RTBeamStateData RTPlanMgr::GetRTBeamStateData( G4double& time, G4Event* evt, G4b
   bChangedBeamState = false;
   
   //-  theEventID += theNEventsToSkip;
+
+  //--- The scan spot only depends on the event ID: it is the first sub control point whose accumulated
+  //--- meterset (in events) is higher than the event ID. It is computed without using the history of
+  //--- previous events, because in multithreading each thread only gets a subset of the events (not in order)
+  {
+    G4int ieSpot = G4int( std::upper_bound( theMetersetEvt.begin(), theMetersetEvt.end(), theEventID ) - theMetersetEvt.begin() );
+    if( ieSpot >= G4int(theMetersetEvt.size()) ) {
+      G4Exception("RTPlanMgr::GenerateVertex",
+		  "",
+		  JustWarning,
+		  "All BeamState's from all beams have been run, and still asking for more events! Run will be aborted");
+      theG4RunManager->AbortRun();
+      bOK = false;
+      return bsdata;
+    }
+    if( ieSpot != theLastSpotID ) {
+      bsdata = GetNextBeamStateData(ieSpot);
+      bChangedBeamState = true;
+#ifndef GAMOS_NO_VERBOSE
+      if( GenerVerb(testVerb) ) G4cout << "@@!!  RTPlanMgr::GenerateVertex CHANGED TO NEXT SCAN SPOT in event " << theEventID << " CurrentMetersetEvtID " << ieSpot << G4endl; 
+#endif
+      if( theLastSpotID != -1 ) {
+	if( bDumpAtBeam &&
+	    theSubCPEvt[ieSpot]->GetControlPoint()->GetBeam()->GetIndex() != theSubCPEvt[theLastSpotID]->GetControlPoint()->GetBeam()->GetIndex() ) DumpHistosAndScorers(1);
+	if( bDumpAtCP &&
+	    theSubCPEvt[ieSpot]->GetControlPoint()->GetIndex() != theSubCPEvt[theLastSpotID]->GetControlPoint()->GetIndex() ) DumpHistosAndScorers(2);
+	if( bDumpAtScanSpot ) DumpHistosAndScorers(3);
+      }
+      theLastBeamCHANGEDSubCPEvt = ieSpot;
+      theLastControlPointCHANGEDSubCPEvt = ieSpot;
+      theLastSpotID = ieSpot;
+      theCurrentMetersetEvtID = ieSpot;
+    }
+    return bsdata;
+  }
 
   //--- Change theCurrentMetersetEvtID if theEventID is higher than current one metersetEvt
   // update theCurrentMetersetEvtID if there is a jump in event (ID like for RTGeneratorPhaseSpaceRTPlan)
@@ -505,6 +544,12 @@ void RTPlanMgr::BookHistoControlPoint(G4int iib, G4int iicp)
 //------------------------------------------------------------------------
 RTBeamStateData RTPlanMgr::GetNextBeamStateData(G4int ie)
 {
+  if( ie < 0 || ie >= G4int(theSubCPEvt.size()) || theSubCPEvt[ie] == 0 ) {
+    G4Exception("RTPlanMgr::GetNextBeamStateData","",FatalException,
+		("Invalid sub control point: index " + GmGenUtils::itoa(ie) + ", number of sub control points " + GmGenUtils::itoa(theSubCPEvt.size())
+		 + (( ie >= 0 && ie < G4int(theSubCPEvt.size()) ) ? ", it has zero meterset (null)" : ", index out of range")
+		 + ", event " + GmGenUtils::itoa(theEventID)).c_str());
+  }
   bChangedBeamState = true;
   // avance N beam states (check if control point and beam have changed
   if( theCurrentControlPoint == theSubCPEvt[ie]->GetControlPoint()->GetIndex() ) {

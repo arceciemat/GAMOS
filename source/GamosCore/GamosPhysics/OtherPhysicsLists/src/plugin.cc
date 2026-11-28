@@ -1,7 +1,6 @@
 #include "GmDummyPhysics.hh"
 #include "GmG4HadronicPhysicsLists.hh"
 #include "GmG4PhysicsLists.hh"
-#include "GmQGSP_BIC_HP_EMopt3.hh"
 
 #ifdef ROOT5
 #include "Reflex/PluginService.h"
@@ -35,7 +34,6 @@ PLUGINSVC_FACTORY(G4QBBC_ABLA,G4VUserPhysicsList*())
 PLUGINSVC_FACTORY(G4QGSP_BIC_HPT,G4VUserPhysicsList*())
 #endif
 
-PLUGINSVC_FACTORY(GmQGSP_BIC_HP_EMopt3,G4VUserPhysicsList*())
 
 PLUGINSVC_FACTORY(GmG4HadronicPhysicsLists,G4VUserPhysicsList*())
 
@@ -70,7 +68,6 @@ DEFINE_GAMOS_PHYSICS(G4QGSP_BIC_AllHP);
 DEFINE_GAMOS_PHYSICS(G4QBBC_ABLA);
 DEFINE_GAMOS_PHYSICS(G4QGSP_BIC_HPT);
 #endif
-DEFINE_GAMOS_PHYSICS(GmQGSP_BIC_HP_EMopt3);
 DEFINE_GAMOS_PHYSICS(G4FTFP_BERT_ATL);
 DEFINE_GAMOS_PHYSICS(G4FTFQGSP_BERT);
 DEFINE_GAMOS_PHYSICS(G4NuBeam);

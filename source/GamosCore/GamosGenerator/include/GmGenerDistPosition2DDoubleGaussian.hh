@@ -15,20 +15,13 @@ public:
   virtual G4ThreeVector GeneratePosition( GmParticleSource* source );
 
   virtual void SetParams( const std::vector<G4String>& params );
-  /*  G4double GetSigma() const {
-    return theSigmaM;
-  }
-  void SetSigma( G4double sig ) {
-    //    G4cout << " SetSigma " << sig << G4endl; //GDEB
-    theSigmaM = -2*sig*sig;
-    }*/
 
 private:
-  G4double theSigmaX1M;
-  G4double theSigmaX2M;
+  G4double theSigmaX1;
+  G4double theSigmaX2;
   G4double theProbabilityX12;
-  G4double theSigmaY1M;
-  G4double theSigmaY2M;
+  G4double theSigmaY1;
+  G4double theSigmaY2;
   G4double theProbabilityY12;
 };
 

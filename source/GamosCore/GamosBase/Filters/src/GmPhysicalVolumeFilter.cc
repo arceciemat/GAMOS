@@ -1,3 +1,4 @@
+#include <memory>
 #include "GmPhysicalVolumeFilter.hh"
 #include "GamosCore/GamosUtils/include/GmGenUtils.hh"
 #include "GamosCore/GamosUtils/include/GmG4Utils.hh"
@@ -32,6 +33,7 @@ G4bool GmPhysicalVolumeFilter::AcceptStep(const G4Step* aStep)
 G4bool GmPhysicalVolumeFilter::AcceptTrack(const G4Track* aTrack)
 {
   G4TouchableHistory* touch = new G4TouchableHistory;
+  std::unique_ptr<G4TouchableHistory> touchGuard(touch); // REV: fix leak
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack->GetVertexPosition(), touch, false );
   G4VPhysicalVolume* pv = touch->GetVolume();
 
@@ -45,6 +47,7 @@ G4bool GmPhysicalVolumeFilter::AcceptTrack(const G4Track* aTrack)
 G4bool GmPhysicalVolumeFilter::AcceptStackedTrack(const G4Track* aTrack)
 {
   G4TouchableHistory* touch = new G4TouchableHistory;
+  std::unique_ptr<G4TouchableHistory> touchGuard(touch); // REV: fix leak
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack->GetPosition(), touch, false );
   G4VPhysicalVolume* pv = touch->GetVolume();
 

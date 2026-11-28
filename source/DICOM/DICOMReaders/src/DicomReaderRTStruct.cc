@@ -339,7 +339,7 @@ void DicomReaderRTStruct::BuildPolygonSet()
 	std::vector<G4ThreeVector> dirs = roic->GetDirections();
 	DicomPolygon* polyg = new DicomPolygon(points,dirs,roi->GetName().c_str(), DPOrientXY);
 	polyList->AddLine(polyg);
-	if( DicomVerb(debugVerb) ) G4cout << "DicomReaderRTStruct::BuildPolygonSet AddPolygon FROM " << roi->GetName() << " ID " << roiID << " contour " << kk << " " << dirs[1] << " " << points[2] << " " << points[1] << " Npoly " << polyList->GetLines().size() << G4endl;
+	if( DicomVerb(-debugVerb) ) G4cout << "DicomReaderRTStruct::BuildPolygonSet AddPolygon FROM " << roi->GetName() << " ID " << roiID << " contour " << kk << " " << dirs[1] << " " << points[2] << " " << points[1] << " Npoly " << polyList->GetLines().size() << G4endl;
 	if( DicomVerb(testVerb) ) {
 	  for( size_t ii = 0; ii < points.size(); ii++ ) {
 	    G4cout << "DicomReaderRTStruct::BuildPolygonSet AddPolygon FROM " << roi->GetName() << " ID " << roiID << " contour " << kk << " pt " << ii << " " << points[ii] << G4endl;

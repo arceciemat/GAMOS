@@ -23,6 +23,7 @@
 // * acceptance of all terms of the GAMOS Software license.           *
 // ********************************************************************
 //
+#include <memory>
 #include "GmDataInitialUnitID.hh"
 
 #include "G4TouchableHistory.hh"
@@ -60,6 +61,7 @@ G4String GmDataInitialUnitID::GetStringValueFromStep( const G4Step* aStep)
 G4String GmDataInitialUnitID::GetStringValueFromTrack( const G4Track* aTrack )
 {
   G4TouchableHistory* touch = new G4TouchableHistory;
+  std::unique_ptr<G4TouchableHistory> touchGuard(touch); // REV: fix leak
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack->GetVertexPosition(), touch, false ); 
 
   return GetStringID( touch );
@@ -71,6 +73,7 @@ G4String GmDataInitialUnitID::GetStringValueFromSecoTrack(const G4Track* aTrack,
 {
 
   G4TouchableHistory* touch = new G4TouchableHistory;
+  std::unique_ptr<G4TouchableHistory> touchGuard(touch); // REV: fix leak
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack->GetVertexPosition(), touch, false ); 
 
   return GetStringID( touch );
@@ -82,6 +85,7 @@ G4String GmDataInitialUnitID::GetStringValueFromSecoTrack(const G4Track* aTrack,
 G4String GmDataInitialUnitID::GetStringValueFromEvent( const G4Event* anEvent )
 { 
   G4TouchableHistory* touch = new G4TouchableHistory;
+  std::unique_ptr<G4TouchableHistory> touchGuard(touch); // REV: fix leak
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( anEvent->GetPrimaryVertex(0)->GetPosition(), touch, false );
 
   return GetStringID( touch );
@@ -91,6 +95,7 @@ G4String GmDataInitialUnitID::GetStringValueFromEvent( const G4Event* anEvent )
 G4String GmDataInitialUnitID::GetStringValueFromStackedTrack( const G4Track* aTrack )
 {
   G4TouchableHistory* touch = new G4TouchableHistory;
+  std::unique_ptr<G4TouchableHistory> touchGuard(touch); // REV: fix leak
   G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->LocateGlobalPointAndUpdateTouchable( aTrack->GetPosition(), touch, false ); 
 
   return GetStringID( touch );

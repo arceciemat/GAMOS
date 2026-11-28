@@ -1,4 +1,4 @@
-#include "GmRadiotherapyPhysics.hh"
+#include "GmRadiotherapy.hh"
 
 #include "GmPhysicsGammaStandard.hh"
 #include "GmPhysicsElectronStandard.hh"
@@ -10,20 +10,20 @@
 using namespace CLHEP;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-GmRadiotherapyPhysics::GmRadiotherapyPhysics() : GmEMPhysics()
+GmRadiotherapy::GmRadiotherapy() : GmEMPhysics()
 {   
   // EM physics
   G4String name;
   name = "gamma-standard";
-  G4cout << "GmRadiotherapyPhysics PhysicsList: " << name << " is registered" << G4endl;
+  G4cout << "GmRadiotherapy PhysicsList: " << name << " is registered" << G4endl;
   ReplacePhysics( new GmPhysicsGammaStandard(name,22) );
 
   name = "electron-standard";
-  G4cout << "GmRadiotherapyPhysics PhysicsList: " << name << " is registered" << G4endl;
+  G4cout << "GmRadiotherapy PhysicsList: " << name << " is registered" << G4endl;
   ReplacePhysics( new GmPhysicsElectronStandard(name, 11) );
 
   /*  name = "positron-standard"; 
-  G4cout << "GmRadiotherapyPhysics PhysicsList: " << name << " is registered" << G4endl;
+  G4cout << "GmRadiotherapy PhysicsList: " << name << " is registered" << G4endl;
   RegisterPhysics( new GmPhysicsPositronStandard(name, 111) );
   */
   
@@ -52,7 +52,7 @@ GmRadiotherapyPhysics::GmRadiotherapyPhysics() : GmEMPhysics()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-GmRadiotherapyPhysics::~GmRadiotherapyPhysics()
+GmRadiotherapy::~GmRadiotherapy()
 {
   //  delete pMessenger;  
 }

@@ -459,7 +459,20 @@ void DCMDrawDICOM::DrawImages()
 
   //----- DRAW IMAGES
   if( ! bDrawMateID1Fig && ! bDrawStructID1Fig ) {
+    //--- if CT is overlaid below dose/NM images, do not also draw the CT images alone
+    G4bool bSkipCT = false;
+    if( bOverlayCT ) {
+      for( size_t ii = 0; ii < images.size(); ii ++ ) {
+	DIModality mod = images[ii]->GetModality();
+	if( images[ii]->IsDose() || mod == DIM_NM || mod == DIM_G4dcmNM || mod == DIM_Interfile ) {
+	  bSkipCT = true;
+	  break;
+	}
+      }
+    }
     for( size_t ii = 0; ii < images.size(); ii ++ ) {
+      DIModality mod = images[ii]->GetModality();
+      if( bSkipCT && (mod == DIM_CT || mod == DIM_G4dcmCT_MateDens || mod == DIM_InterfileCT) ) continue;
       DrawImage(images[ii],theVLineSets);
     }
   }

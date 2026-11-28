@@ -47,6 +47,7 @@ RTPlanPSSource::RTPlanPSSource( const G4String& name, const G4String& partName):
 
   ReadPlanData();
   RTPlanMgr::GetInstance()->SetBeams(theBeams);
+  PlacePhantomInMaster();
 }
 
 

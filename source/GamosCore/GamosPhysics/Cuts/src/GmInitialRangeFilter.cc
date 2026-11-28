@@ -21,8 +21,10 @@ GmInitialRangeFilter::~GmInitialRangeFilter()
 //-----------------------------------------------------------
 G4bool GmInitialRangeFilter::AcceptTrack(const G4Track* aTrack)
 {
-  G4EmCalculator* calculator = new G4EmCalculator();
-  if( aTrack->GetTrackStatus() == fStopAndKill ) return bAccept;
+  if( aTrack->GetTrackStatus() == fStopAndKill ) return bAccept;  // REV: was after 'new G4EmCalculator' (leak)
+#ifndef GAMOS_NO_VERBOSE
+  if( BaseVerb(debugVerb) ) { // REV: debug table dump (1000 iterations/track) only in debug verbosity
+  G4EmCalculator calculator;  // REV: stack object, was leaked 'new'
 
   //is wrong  G4double range = G4EnergyLossTables::GetRange(aTrack->GetDefinition(),aTrack->GetVertexKineticEnergy(),aTrack->GetVolume()->GetLogicalVolume()->GetMaterialCutsCouple());
   for( G4double zz = -5.; zz < 5; zz+=0.01) {
@@ -36,10 +38,12 @@ G4bool GmInitialRangeFilter::AcceptTrack(const G4Track* aTrack)
 	   << G4endl 
 	   << " energy= " << ener 
 	   << " r_LossTables= " << range2 
-	   << " r_Calcu= " << calculator->GetRange(ener,aTrack->GetDefinition(),aTrack->GetVolume()->GetLogicalVolume()->GetMaterial())
-	   << " r_CalcuCSDA= " << calculator->GetCSDARange(ener,aTrack->GetDefinition(),aTrack->GetVolume()->GetLogicalVolume()->GetMaterial())
+	   << " r_Calcu= " << calculator.GetRange(ener,aTrack->GetDefinition(),aTrack->GetVolume()->GetLogicalVolume()->GetMaterial())
+	   << " r_CalcuCSDA= " << calculator.GetCSDARange(ener,aTrack->GetDefinition(),aTrack->GetVolume()->GetLogicalVolume()->GetMaterial())
 	   << " r_GAMOS= " << range << G4endl;
   }
+  }
+#endif
 
   G4double range = theCutsEnergy2Range->ConvertSlow( aTrack->GetVertexKineticEnergy(), aTrack->GetDefinition(),aTrack->GetVolume()->GetLogicalVolume()->GetMaterialCutsCouple());
 #ifndef GAMOS_NO_VERBOSE

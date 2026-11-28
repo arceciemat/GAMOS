@@ -3,8 +3,6 @@
 gamos_add_module(GamosCore_GamosUtilsUA
   PUBLIC_HEADERS
     GmChangeWeightUA.hh
-    GmCopyWeightToRDSecondaryUA.hh
-    GmCopyWeightToSecondaryUA.hh
     GmCountProcessesUA.hh
     GmCountTracksAndStepsUA.hh
     GmCountTracksUA.hh
@@ -44,8 +42,6 @@ gamos_add_module(GamosCore_GamosUtilsUA
     KillNegativeLengthUA.hh
   SOURCES
     GmChangeWeightUA.cc
-    GmCopyWeightToRDSecondaryUA.cc
-    GmCopyWeightToSecondaryUA.cc
     GmCountProcessesUA.cc
     GmCountTracksAndStepsUA.cc
     GmCountTracksUA.cc

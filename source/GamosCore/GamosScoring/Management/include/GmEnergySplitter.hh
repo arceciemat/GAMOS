@@ -38,6 +38,7 @@
 #include "globals.hh"
 class G4PhantomParameterisation;
 class G4EnergyLossForExtrapolator;
+class G4EmCalculator;
 class G4VPhysicalVolume;
 class G4Material;
 class G4Step;
@@ -69,6 +70,8 @@ private:
   G4bool IsPhantomVolume( G4VPhysicalVolume* pv );
 
   G4EnergyLossForExtrapolator* theElossExt;
+  G4EmCalculator* theEmCalc; // REV: created lazily once (was built on every call)
+  std::vector<G4double> theStepLengthsBuf; // REV: reused buffer
   
   G4int theNIterations;
 

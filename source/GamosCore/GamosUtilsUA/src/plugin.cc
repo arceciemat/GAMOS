@@ -16,8 +16,6 @@
 #include "GmShowerShapeUA.hh"
 #include "GmGamosVerboseByEventUA.hh"
 #include "GmChangeWeightUA.hh"
-#include "GmCopyWeightToSecondaryUA.hh"
-#include "GmCopyWeightToRDSecondaryUA.hh"
 #include "GmStopRunAfterTimeUA.hh"
 #include "GmSaveHistosAfterNEvents.hh"
 #include "GmPrintEMParamsUA.hh"
@@ -48,8 +46,6 @@ PLUGINSVC_FACTORY(GmTimeStudyEventUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmShowerShapeUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmGamosVerboseByEventUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmChangeWeightUA,GmUserAction*())
-PLUGINSVC_FACTORY(GmCopyWeightToSecondaryUA,GmUserAction*())
-PLUGINSVC_FACTORY(GmCopyWeightToRDSecondaryUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmStopRunAfterTimeUA,GmUserAction*())
 PLUGINSVC_FACTORY(GmSaveHistosAfterNEvents,GmUserAction*())
 PLUGINSVC_FACTORY(GmPrintEMParamsUA,GmUserAction*())
@@ -86,8 +82,6 @@ DEFINE_GAMOS_USER_ACTION(GmTimeStudyEventUA);
 DEFINE_GAMOS_USER_ACTION(GmShowerShapeUA);
 DEFINE_GAMOS_USER_ACTION(GmGamosVerboseByEventUA);
 DEFINE_GAMOS_USER_ACTION(GmChangeWeightUA);
-DEFINE_GAMOS_USER_ACTION(GmCopyWeightToSecondaryUA);
-DEFINE_GAMOS_USER_ACTION(GmCopyWeightToRDSecondaryUA);
 DEFINE_GAMOS_USER_ACTION(GmStopRunAfterTimeUA);
 DEFINE_GAMOS_USER_ACTION(GmSaveHistosAfterNEvents);
 DEFINE_GAMOS_USER_ACTION(GmPrintEMParamsUA);

@@ -47,13 +47,17 @@ GmEnergySplitter::GmEnergySplitter()
 {
    theElossExt = new G4EnergyLossForExtrapolator(0);
    thePhantomParam = 0;
+   theEmCalc = 0;
    theNIterations = G4int(GmParameterMgr::GetInstance()->GetNumericValue("GmEnergySplitter:NIterations",2));
    //G4cout << "GmEnergySplitter::GmEnergySplitter" << G4endl; //GDEB
 		
 }
 
 GmEnergySplitter::~GmEnergySplitter()
-{;}
+{
+  delete theEmCalc;
+  delete theElossExt; // REV: was leaked
+}
 
 G4int GmEnergySplitter::SplitEnergyInVolumes(const G4Step* aStep )
 {
@@ -95,7 +99,7 @@ G4int GmEnergySplitter::SplitEnergyInVolumes(const G4Step* aStep )
   if( aStep == 0 ) return FALSE; // it is 0 when called by GmScoringMgr after last event
   
   //----- Distribute energy deposited in voxels 
-  std::vector< std::pair<G4int,G4double> > rnsl = G4RegularNavigationHelper::Instance()->theStepLengths; 
+  const std::vector< std::pair<G4int,G4double> >& rnsl = G4RegularNavigationHelper::Instance()->theStepLengths; // REV: reference, was a copy per step
 
   const G4ParticleDefinition* part = aStep->GetTrack()->GetDefinition();
   G4double kinEnergyPreOrig = aStep->GetPreStepPoint()->GetKineticEnergy();
@@ -158,9 +162,11 @@ G4int GmEnergySplitter::SplitEnergyInVolumes(const G4Step* aStep )
 #endif
       
     //--- energy at each interaction
-    G4EmCalculator emcalc;
+    if( !theEmCalc ) theEmCalc = new G4EmCalculator(); // REV: lazy, once
+    G4EmCalculator& emcalc = *theEmCalc;
     G4double totalELost = 0.;
-    std::vector<G4double> stepLengths;
+    std::vector<G4double>& stepLengths = theStepLengthsBuf;
+    stepLengths.clear();
     for( int iiter = 1; iiter <= theNIterations; iiter++ ) {
       //--- iter1: distribute true step length in each voxel: geom SL in each voxel is multiplied by a constant so that the sum gives the total true step length
       if( iiter == 1 ) {
